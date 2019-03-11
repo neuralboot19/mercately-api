@@ -1,5 +1,6 @@
 class Retailers::ProductsController < RetailersController
   before_action :set_product, only: %i[show edit update destroy]
+  before_action :authenticate_retailer_user!
 
   # GET /products
   def index
@@ -22,9 +23,10 @@ class Retailers::ProductsController < RetailersController
   # POST /products
   def create
     @product = Product.new(product_params)
+    @product.retailer_id = current_retailer_user.retailer_id
 
     if @product.save
-      redirect_to @product, notice: 'Product was successfully created.'
+      redirect_to retailers_product_path(@product), notice: 'Product was successfully created.'
     else
       render :new
     end
@@ -33,7 +35,7 @@ class Retailers::ProductsController < RetailersController
   # PATCH/PUT /products/1
   def update
     if @product.update(product_params)
-      redirect_to @product, notice: 'Product was successfully updated.'
+      redirect_to retailers_product_path(@product), notice: 'Product was successfully updated.'
     else
       render :edit
     end
@@ -42,7 +44,7 @@ class Retailers::ProductsController < RetailersController
   # DELETE /products/1
   def destroy
     @product.destroy
-    redirect_to products_url, notice: 'Product was successfully destroyed.'
+    redirect_to retailers_products_path, notice: 'Product was successfully destroyed.'
   end
 
   private
@@ -54,6 +56,6 @@ class Retailers::ProductsController < RetailersController
 
     # Only allow a trusted parameter "white list" through.
     def product_params
-      params.require(:product).permit(:title, :category_id, :price, :available_quantity, :buying_mode, :condition, :description, :retailer_id)
+      params.require(:product).permit(:title, :category_id, :price, :available_quantity, :buying_mode, :condition, :description)
     end
 end

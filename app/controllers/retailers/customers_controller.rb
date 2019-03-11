@@ -1,6 +1,6 @@
 class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: %i[show edit update destroy]
-  
+
   # GET /products
   def index
     @customers = Customer.all
