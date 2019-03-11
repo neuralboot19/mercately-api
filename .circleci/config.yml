@@ -30,6 +30,10 @@ jobs:
             - mercately-bundle-v1-
 
       - run:
+          name: Bundle upgrade
+          command: bundle update --bundler
+
+      - run:
           name: Bundle Install
           command: bundle install --jobs=4 --retry=3 --path vendor/bundle
 
