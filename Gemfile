@@ -21,6 +21,7 @@ gem 'sentry-raven', '~> 2.9'
 # Login and administration
 gem 'activeadmin', '~> 1.4', '>= 1.4.3'
 gem 'devise', '~> 4.6', '>= 4.6.1'
+gem 'simple_form'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
