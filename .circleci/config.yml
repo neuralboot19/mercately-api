@@ -1,0 +1,62 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.5.3-node-browsers-legacy
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+          PGHOST: 127.0.0.1
+          PGUSER: porstgres
+          RAILS_ENV: test
+      - image: circleci/postgres:11.1-alpine
+        environment:
+          POSTGRES_USER: porstgres
+          POSTGRES_DB: mercately_test
+          POSTGRES_PASSWORD: ""
+    steps:
+      - checkout
+
+      # Which version of bundler?
+      - run:
+          name: Which bundler?
+          command: bundle -v
+
+      # Restore bundle cache
+      - restore_cache:
+          keys:
+            - mercately-bundle-v1-{{ checksum "Gemfile.lock" }}
+            - mercately-bundle-v1-
+
+      - run:
+          name: Bundle Install
+          command: bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      # Store bundle cache
+      - save_cache:
+          key: mercately-bundle-v1-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Database setup
+          command: bin/rails db:schema:load --trace
+
+      - run:
+          name: Run Rubocop
+          command: bundle exec rubocop
+
+      # Run rspec
+      - run:
+          name: Run rspec in parallel
+          command: bundle exec rspec --format progress --format RspecJunitFormatter -o test_results/rspec/rspec.xml
+          when: always
+
+      # Save test results for timing analysis
+      - store_test_results:
+          path: test_results/rspec
