@@ -3,6 +3,6 @@ class Product < ApplicationRecord
   belongs_to :retailer
 
   def ml_condition
-    [ 'new', 'used', 'not_specified' ]
+    %w[new used not_specified]
   end
 end
