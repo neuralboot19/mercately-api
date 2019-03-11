@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
-  devise_for :retailer_owners
+  # root
+  root 'pages#index'
+
+  devise_for :retailers
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
