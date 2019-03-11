@@ -1,6 +1,5 @@
-class Retailers::ProductsController < ApplicationController
+class Retailers::ProductsController < RetailersController
   before_action :set_product, only: %i[show edit update destroy]
-  before_action :authenticate_retailer_user!
 
   # GET /products
   def index

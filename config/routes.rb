@@ -4,5 +4,8 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  resources :products
+  namespace :retailers do
+    resources :products
+    resources :customers
+  end
 end

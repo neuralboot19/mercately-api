@@ -1,0 +1,6 @@
+<%= simple_form_for [:retailers, @customer] do |f| %>
+  <%= f.input :first_name, placeholder: 'user@domain.com' %>
+  <%= f.input :last_name, placeholder: 'user@domain.com' %>
+  <%= f.input :email, placeholder: 'user@domain.com' %>
+  <%= f.button :submit %>
+<% end %>
