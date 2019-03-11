@@ -18,6 +18,10 @@ jobs:
     steps:
       - checkout
 
+      - run:
+          name: Bundle upgrade
+          command: gem update bundler
+
       # Which version of bundler?
       - run:
           name: Which bundler?
@@ -28,10 +32,6 @@ jobs:
           keys:
             - mercately-bundle-v1-{{ checksum "Gemfile.lock" }}
             - mercately-bundle-v1-
-
-      - run:
-          name: Bundle upgrade
-          command: bundle update --bundler
 
       - run:
           name: Bundle Install
@@ -57,9 +57,8 @@ jobs:
 
       # Run rspec
       - run:
-          name: Run rspec in parallel
+          name: Run rspec
           command: bundle exec rspec --format progress --format RspecJunitFormatter -o test_results/rspec/rspec.xml
-          when: always
 
       # Save test results for timing analysis
       - store_test_results:
