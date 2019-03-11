@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  devise_for :retailers
+  devise_for :retailer_owners
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  resources :products
 end
