@@ -74,3 +74,6 @@ Style/EmptyMethod:
 
 Style/ClassAndModuleChildren:
   Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
