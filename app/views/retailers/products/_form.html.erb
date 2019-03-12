@@ -1,0 +1,33 @@
+<%= semantic_form_for([:retailers, @product], local: true) do |f| %>
+  <div class="field">
+    <%= f.input :title %>
+  </div>
+
+  <div class="field">
+    <%= f.input :category_id %>
+  </div>
+
+  <div class="field">
+    <%= f.input :price %>
+  </div>
+
+  <div class="field">
+    <%= f.input :available_quantity %>
+  </div>
+
+  <div class="field">
+    <%= f.input :buying_mode %>
+  </div>
+
+  <div class="field">
+    <%= f.input :condition %>
+  </div>
+
+  <div class="field">
+    <%= f.input :description, as: :text %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

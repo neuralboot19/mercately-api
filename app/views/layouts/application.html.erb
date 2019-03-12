@@ -10,6 +10,21 @@
   </head>
 
   <body>
+    <nav>
+      <% if current_retailer_user %>
+        <ul>
+          <li>
+            <%= link_to 'Clientes',retailers_customers_path %>
+          </li>
+          <li>
+            <%= link_to 'Productos',retailers_products_path %>
+          </li>
+          <li>
+            <%= link_to('Logout', destroy_retailer_user_session_path, method: 'delete', class: "nav-link inside") %>
+          </li>
+        </ul>
+      <% end %>
+    </nav>
     <%= yield %>
   </body>
 </html>

@@ -71,3 +71,6 @@ Metrics/BlockLength:
 
 Style/EmptyMethod:
   EnforcedStyle: expanded
+
+Style/ClassAndModuleChildren:
+  Enabled: false

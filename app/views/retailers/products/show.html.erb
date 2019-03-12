@@ -35,10 +35,5 @@
   <%= @product.description %>
 </p>
 
-<p>
-  <strong>Retailer:</strong>
-  <%= @product.retailer %>
-</p>
-
-<%= link_to 'Edit', edit_product_path(@product) %> |
-<%= link_to 'Back', products_path %>
+<%= link_to 'Edit', edit_retailers_product_path(@product) %> |
+<%= link_to 'Back', retailers_products_path %>
