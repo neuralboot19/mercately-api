@@ -4,7 +4,7 @@ class Retailers::ProductsController < RetailersController
 
   # GET /products
   def index
-    @products = Product.all
+    @products = Product.where(retailer_id: current_retailer_user.retailer_id)
   end
 
   # GET /products/1
