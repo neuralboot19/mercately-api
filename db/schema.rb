@@ -50,6 +50,16 @@ ActiveRecord::Schema.define(version: 2019_03_13_215542) do
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
+  create_table "meli_infos", force: :cascade do |t|
+    t.string "access_token"
+    t.string "meli_user_id"
+    t.string "refresh_token"
+    t.bigint "retailer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_meli_infos_on_retailer_id"
+  end
+
   create_table "order_items", force: :cascade do |t|
     t.bigint "order_id"
     t.bigint "product_id"
@@ -104,4 +114,6 @@ ActiveRecord::Schema.define(version: 2019_03_13_215542) do
     t.string "slug"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
+
+  add_foreign_key "meli_infos", "retailers"
 end

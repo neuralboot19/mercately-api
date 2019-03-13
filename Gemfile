@@ -30,6 +30,7 @@ group :development, :test do
   gem 'rubocop-rspec', '~> 1.32'
   gem 'factory_bot_rails', '~> 5.0', '>= 5.0.1'
   gem 'faker'
+  gem 'dotenv-rails'
 end
 
 group :development do
