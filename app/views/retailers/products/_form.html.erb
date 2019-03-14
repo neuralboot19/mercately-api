@@ -1,57 +1,33 @@
-<%= form_with(model: product, local: true) do |form| %>
-  <% if product.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(product.errors.count, "error") %> prohibited this product from being saved:</h2>
-
-      <ul>
-      <% product.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
+<%= semantic_form_for([:retailers, @product], local: true) do |f| %>
   <div class="field">
-    <%= form.label :title %>
-    <%= form.text_field :title %>
+    <%= f.input :title %>
   </div>
 
   <div class="field">
-    <%= form.label :category_id %>
-    <%= form.text_field :category_id %>
+    <%= f.input :category_id %>
   </div>
 
   <div class="field">
-    <%= form.label :price %>
-    <%= form.text_field :price %>
+    <%= f.input :price %>
   </div>
 
   <div class="field">
-    <%= form.label :available_quantity %>
-    <%= form.number_field :available_quantity %>
+    <%= f.input :available_quantity %>
   </div>
 
   <div class="field">
-    <%= form.label :buying_mode %>
-    <%= form.text_field :buying_mode %>
+    <%= f.input :buying_mode %>
   </div>
 
   <div class="field">
-    <%= form.label :condition %>
-    <%= form.text_field :condition %>
+    <%= f.input :condition %>
   </div>
 
   <div class="field">
-    <%= form.label :description %>
-    <%= form.text_area :description %>
-  </div>
-
-  <div class="field">
-    <%= form.label :retailer_id %>
-    <%= form.text_field :retailer_id %>
+    <%= f.input :description, as: :text %>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= f.submit %>
   </div>
 <% end %>
