@@ -4,7 +4,7 @@
 <p>Conectarse a mercadolibre</p>
 
 
-<a href="https://auth.mercadolibre.com.ec/authorization?response_type=code&client_id=1378825069918166">Conectarse Con mercadolibre</a>
+<a href="<%= ec_auth_url %>">Conectarse Con mercadolibre</a>
 
 
 <h2>Meli info</h2>
@@ -12,3 +12,4 @@
 <p><%= current_retailer_user.retailer.meli_info.access_token %></p>
 <p><%= current_retailer_user.retailer.meli_info.meli_user_id %></p>
 <p><%= current_retailer_user.retailer.meli_info.refresh_token %></p>
+<p><%= current_retailer_user.retailer.meli_info.updated_at %></p>
