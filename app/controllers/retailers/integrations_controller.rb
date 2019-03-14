@@ -24,5 +24,3 @@ class Retailers::IntegrationsController < RetailersController
     @ml = MercadoLibre.new(current_retailer_user.retailer)
   end
 end
-
-
