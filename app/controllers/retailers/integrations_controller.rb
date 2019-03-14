@@ -16,11 +16,11 @@ class Retailers::IntegrationsController < RetailersController
 
   private
 
-  def get_ml_access_token(code)
-    @ml.get_access_token_from_url(code)
-  end
+    def get_ml_access_token(code)
+      @ml.get_access_token_from_url(code)
+    end
 
-  def set_ml
-    @ml = MercadoLibre.new(current_retailer_user.retailer)
-  end
+    def set_ml
+      @ml = MercadoLibre.new(current_retailer_user.retailer)
+    end
 end

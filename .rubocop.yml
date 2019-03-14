@@ -7,7 +7,7 @@ AllCops:
     - 'config/**/*'
     - 'vendor/bundle/**/*'
     - 'Gemfile'
-    - 'spec'
+    - 'spec/**/*'
 
 # Commonly used screens these days easily fit more than 80 characters.
 Metrics/LineLength:

@@ -20,14 +20,14 @@ class MercadoLibre
 
   private
 
-  def mercado_libre_url_ec(code)
-    params = {
-      grant_type: "authorization_code",
-      client_id: ENV['MERCADO_LIBRE_ID'],
-      client_secret: ENV['MERCADO_LIBRE_KEY'],
-      code: code,
-      redirect_uri: ENV['MERCADO_LIBRE_REDIRECT_URI']
-    }
-    "https://api.mercadolibre.com/oauth/token?#{params.to_query}"
-  end
+    def mercado_libre_url_ec(code)
+      params = {
+        grant_type: 'authorization_code',
+        client_id: ENV['MERCADO_LIBRE_ID'],
+        client_secret: ENV['MERCADO_LIBRE_KEY'],
+        code: code,
+        redirect_uri: ENV['MERCADO_LIBRE_REDIRECT_URI']
+      }
+      "https://api.mercadolibre.com/oauth/token?#{params.to_query}"
+    end
 end
