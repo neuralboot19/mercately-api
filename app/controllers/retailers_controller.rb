@@ -6,8 +6,6 @@ class RetailersController < ApplicationController
 
     def set_retailer
       @retailer = Retailer.find_by(slug: params[:slug])
-      unless @retailer
-        redirect_to root_path
-      end
+      redirect_to root_path unless @retailer
     end
 end
