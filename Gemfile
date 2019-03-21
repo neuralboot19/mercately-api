@@ -21,6 +21,7 @@ gem 'sentry-raven', '~> 2.9'
 # Login and administration
 gem 'activeadmin', '~> 1.4', '>= 1.4.3'
 gem 'devise', '~> 4.6', '>= 4.6.1'
+gem 'faraday', '~> 0.15.4'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -28,6 +29,7 @@ group :development, :test do
   gem 'rubocop-rspec', '~> 1.32'
   gem 'factory_bot_rails', '~> 5.0', '>= 5.0.1'
   gem 'faker'
+  gem 'dotenv-rails'
 end
 
 group :development do

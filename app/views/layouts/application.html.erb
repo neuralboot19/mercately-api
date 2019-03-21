@@ -20,7 +20,10 @@
             <%= link_to 'Productos',retailers_products_path %>
           </li>
           <li>
-            <%= link_to('Logout', destroy_retailer_user_session_path, method: 'delete', class: "nav-link inside") %>
+            <%= link_to 'Integraciones', retailers_integrations_path %>
+          </li>
+          <li>
+            <%= link_to('Logout', destroy_retailer_user_session_path, :method => 'delete', class: "nav-link inside") %> 
           </li>
         </ul>
       <% end %>

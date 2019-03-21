@@ -1,0 +1,16 @@
+<h1>Integraciones</h1>
+
+
+<p>Conectarse a mercadolibre</p>
+
+
+<a href="<%= ec_auth_url %>">Conectarse Con mercadolibre</a>
+
+
+<h2>Meli info</h2>
+<% if current_retailer_user.retailer.meli_info %>
+  <p><%= current_retailer_user.retailer.meli_info.access_token %></p>
+  <p><%= current_retailer_user.retailer.meli_info.meli_user_id %></p>
+  <p><%= current_retailer_user.retailer.meli_info.refresh_token %></p>
+  <p><%= current_retailer_user.retailer.meli_info.updated_at %></p>
+<% end %>

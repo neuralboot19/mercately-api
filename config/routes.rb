@@ -10,6 +10,8 @@ Rails.application.routes.draw do
       get 'dashboard', to: 'pages#dashboard', as: :retailers_dashboard
       resources :products
       resources :customers
+      get 'integrations', to: 'integrations#index'
+      get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     end
   end
 end
