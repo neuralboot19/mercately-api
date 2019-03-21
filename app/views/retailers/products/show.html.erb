@@ -35,5 +35,5 @@
   <%= @product.description %>
 </p>
 
-<%= link_to 'Edit', edit_retailers_product_path(@product) %> |
+<%= link_to 'Edit', edit_retailers_product_path(@retailer.slug, @product) %> |
 <%= link_to 'Back', retailers_products_path %>

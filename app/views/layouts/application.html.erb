@@ -11,7 +11,7 @@
 
   <body>
     <nav>
-      <% if current_retailer_user %>
+      <% if current_retailer_user && params[:slug] %>
         <ul>
           <li>
             <%= link_to 'Clientes',retailers_customers_path %>
