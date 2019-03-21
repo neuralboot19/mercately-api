@@ -3,6 +3,7 @@ class Retailer < ApplicationRecord
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
   has_one :meli_info
+
   validates :name, presence: true
 
   def generate_slug
