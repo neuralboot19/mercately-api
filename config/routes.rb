@@ -6,7 +6,10 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
 
   namespace :retailers do
-    resources :products
-    resources :customers
+    scope '/:slug' do
+      get 'dashboard', to: 'pages#dashboard', as: :retailers_dashboard
+      resources :products
+      resources :customers
+    end
   end
 end

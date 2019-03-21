@@ -1,5 +1,10 @@
 class ApplicationController < ActionController::Base
   before_action :set_raven_context
+  helper_method :current_retailer
+
+  def current_retailer
+    current_retailer_user.retailer
+  end
 
   private
 

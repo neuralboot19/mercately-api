@@ -27,20 +27,42 @@ Layout/CaseIndentation:
   EnforcedStyle: end
 
 Layout/ClassStructure:
+  Enabled: true
   Categories:
     module_inclusion:
-      - prepend
       - include
+      - prepend
       - extend
-    association:
-      - has_many
-      - has_one
-    attribute:
-      - attr_accessor
-      - attr_writer
+    attributes:
+      - attribute
       - attr_reader
-    ExpectedOrder:
+      - attr_writer
+      - attr_accessor
+    associations:
+      - belongs_to
+      - has_one
+      - has_many
+      - has_and_belongs_to_many
+    validations:
+      - validate
+      - validates
+      - validates_presence_of
+      - validates_uniqueness_of
+    hooks:
+      - before_initialize
+      - before_save
+      - before_create
+      - before_update
+      - after_initialize
+      - after_save
+      - after_create
+      - after_update
+  ExpectedOrder:
       - module_inclusion
+      - associations
+      - validations
+      - hooks
+      - attributes
       - constants
       - initializer
       - public_class_methods

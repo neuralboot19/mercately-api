@@ -18,9 +18,9 @@
         <td><%= customer.email %></td>
         <td><%= customer.first_name %></td>
         <td><%= customer.last_name %></td>
-        <td><%= link_to 'Show', retailers_customer_path(customer) %></td>
-        <td><%= link_to 'Edit', edit_retailers_customer_path(customer) %></td>
-        <td><%= link_to 'Destroy', retailers_customer_path(customer), method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Show', retailers_customer_path(@retailer.slug, customer) %></td>
+        <td><%= link_to 'Edit', edit_retailers_customer_path(@retailer.slug, customer) %></td>
+        <td><%= link_to 'Destroy', retailers_customer_path(@retailer.slug, customer), method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
