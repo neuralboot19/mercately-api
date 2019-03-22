@@ -10,7 +10,7 @@ class Retailer < ApplicationRecord
 
   def generate_slug
     downcased_name = name.downcase
-    if Retailer.find_by(["LOWER(name) LIKE ?","%#{downcased_name}%"])
+    if Retailer.find_by(['LOWER(name) LIKE ?', "%#{downcased_name}%"])
       update name: name << "-#{id}"
       update slug: downcased_name.gsub(/\s/, '-') << "-#{id}"
     else
