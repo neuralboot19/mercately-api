@@ -1,3 +1,7 @@
 Landing Pages
 
-<%= link_to 'dashboard', retailers_products_path(current_retailer_user.retailer.slug) %>
+<% if current_retailer_user %>
+  <%= link_to 'dashboard', retailers_products_path(current_retailer_user.retailer.slug) %>
+<% else %>
+  <%= link_to 'Sign Up', new_retailer_user_registration_path %>
+<% end %>

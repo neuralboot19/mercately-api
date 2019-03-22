@@ -1,0 +1,20 @@
+<%= semantic_form_for [:retailers, @order] do |f| %>
+  <%= f.semantic_errors %>
+  <%= f.inputs do %>
+    <%= f.input :status, include_blank: false %>
+    <%= f.input :customer_id, as: :select, collection: @retailer.customers.pluck(:email, :id), include_blank: false %>
+    <h3>Items en la orden</h3>
+    <div id="order_items">
+      <%= f.semantic_fields_for :order_items do |oi| %>
+        <%= render "order_items_fields", f: oi %>
+      <% end %>
+      <div class="links">
+        <%= link_to_add_association 'Añadir item', f, :order_items, partial: 'order_items_fields' %>
+      </div>
+    </div>
+  <% end %>
+
+  <%= f.actions do %>
+    <%= f.action :submit, as: :input %>
+  <% end %>
+<% end %>
