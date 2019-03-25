@@ -105,3 +105,6 @@ Style/UnlessElse:
 
 Metrics/AbcSize:
   Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
