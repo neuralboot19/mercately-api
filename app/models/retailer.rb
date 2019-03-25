@@ -5,6 +5,10 @@ class Retailer < ApplicationRecord
   has_one :meli_info
   validates :name, presence: true
 
+  def to_param
+    slug
+  end
+
   def generate_slug
     update slug: name.gsub(/\s/, '-')
   end
