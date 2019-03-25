@@ -7,7 +7,7 @@ Rails.application.routes.draw do
 
   namespace :retailers do
     scope '/:slug' do
-      get 'dashboard', to: 'pages#dashboard', as: :retailers_dashboard
+      get 'dashboard', to: 'pages#dashboard', as: :dashboard
       resources :products
       resources :orders
       resources :customers
