@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @order.status %>
+</p>
+
+<p>
+  <strong>Cliente:</strong>
+  <%= @order.customer.name %>
+</p>
+
+<% @order.order_items.each do |oi| %>
+<p>
+  <strong>Producto:</strong>
+  <%= oi.product.title %>
+</p>
+<p>
+  <strong>Cantidad:</strong>
+  <%= oi.quantity %>
+</p>
+<p>
+  <strong>Precio de la unidad:</strong>
+  <%= oi.unit_price %>
+</p>
+<% end %>
+
+<%= link_to 'Edit', edit_retailers_order_path(@retailer.slug, @order) %> |
+<%= link_to 'Back', retailers_orders_path(@retailer.slug) %>

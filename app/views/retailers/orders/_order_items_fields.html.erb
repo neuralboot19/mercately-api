@@ -1,0 +1,8 @@
+<div class="nested-fields">
+  <%= f.inputs do %>
+    <%= f.input :product_id, as: :select, collection: @retailer.products, include_blank: false %>
+    <%= f.input :quantity %>
+    <%= f.input :unit_price %>
+    <%= link_to_remove_association 'Remover item', f %>
+  <% end %>
+</div>

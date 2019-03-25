@@ -8,13 +8,12 @@ AllCops:
     - 'vendor/bundle/**/*'
     - 'Gemfile'
 
-# Commonly used screens these days easily fit more than 80 characters.
-Metrics/LineLength:
-  Max: 120
+Metrics/MethodLength:
+  Enabled: false
 
 # We do not need to support Ruby 1.9, so this is good to use.
 Style/SymbolArray:
-  Enabled: true
+  Enabled: false
 
 # Mixing the styles looks just silly.
 Style/HashSyntax:
@@ -98,4 +97,10 @@ Style/ClassAndModuleChildren:
   Enabled: false
 
 RSpec/FilePath:
+  Enabled: false
+
+Style/UnlessElse:
+  Enabled: false
+
+Metrics/AbcSize:
   Enabled: false

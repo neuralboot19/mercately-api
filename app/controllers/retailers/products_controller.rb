@@ -1,5 +1,5 @@
 class Retailers::ProductsController < RetailersController
-  before_action :set_product, only: %i[show edit update destroy]
+  before_action :set_product, only: [:show, :edit, :update, :destroy]
 
   # GET /products
   def index
@@ -22,7 +22,7 @@ class Retailers::ProductsController < RetailersController
   # POST /products
   def create
     @product = Product.new(product_params)
-    @product.retailer_id = current_retailer_user.retailer_id
+    @product.retailer_id = @retailer.id
 
     if @product.save
       redirect_to retailers_product_path(@retailer.slug, @product), notice: 'Product was successfully created.'

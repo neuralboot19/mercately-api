@@ -1,5 +1,5 @@
 class Retailers::CustomersController < RetailersController
-  before_action :set_customer, only: %i[show edit update destroy]
+  before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   # GET /products
   def index
@@ -22,6 +22,7 @@ class Retailers::CustomersController < RetailersController
   # POST /products
   def create
     @customer = Customer.new(customer_params)
+    @customer.retailer_id = @retailer.id
 
     if @customer.save
       redirect_to retailers_customer_path(@retailer.slug, @customer), notice: 'Customer was successfully created.'

@@ -8,9 +8,9 @@ class Retailers::IntegrationsController < RetailersController
     response = get_ml_access_token(params[:code])
     if response.status == 200
       @ml.save_access_token(JSON.parse(response.body))
-      redirect_to retailers_integrations_path, notice: 'Conectado existosamente'
+      redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
     else
-      redirect_to retailers_integrations_path, notice: 'Error al conectarse'
+      redirect_to retailers_integrations_path(@retailer.slug), notice: 'Error al conectarse'
     end
   end
 
@@ -21,6 +21,6 @@ class Retailers::IntegrationsController < RetailersController
     end
 
     def set_ml
-      @ml = MercadoLibre.new(current_retailer_user.retailer)
+      @ml = MercadoLibre.new(@retailer)
     end
 end

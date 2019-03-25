@@ -1,0 +1,6 @@
+<h1>Editing Order</h1>
+
+<%= render 'form', order: @order %>
+
+<%= link_to 'Show', retailers_order_path(@retailer.slug, @order) %> |
+<%= link_to 'Back', retailers_orders_path(@retailer.slug) %>
