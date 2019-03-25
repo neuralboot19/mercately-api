@@ -55,6 +55,12 @@ class Retailers::ProductsController < RetailersController
 
     # Only allow a trusted parameter "white list" through.
     def product_params
-      params.require(:product).permit(:title, :category_id, :price, :available_quantity, :buying_mode, :condition, :description)
+      params.require(:product).permit(:title,
+                                      :category_id,
+                                      :price,
+                                      :available_quantity,
+                                      :buying_mode,
+                                      :condition,
+                                      :description)
     end
 end
