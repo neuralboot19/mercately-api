@@ -8,6 +8,10 @@ AllCops:
     - 'vendor/bundle/**/*'
     - 'Gemfile'
 
+# Commonly used screens these days easily fit more than 80 characters.
+Metrics/LineLength:
+  Max: 120
+
 Metrics/MethodLength:
   Enabled: false
 
@@ -82,9 +86,6 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 
 Style/Documentation:
-  Enabled: false
-
-Metrics/LineLength:
   Enabled: false
 
 Metrics/BlockLength:

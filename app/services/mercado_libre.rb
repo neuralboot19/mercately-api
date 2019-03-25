@@ -15,7 +15,11 @@ class MercadoLibre
   end
 
   def save_access_token(params)
-    @meli_info.update_attributes(access_token: params['access_token'], meli_user_id: params['user_id'], refresh_token: params['refresh_token'])
+    @meli_info.update_attributes(
+      access_token: params['access_token'],
+      meli_user_id: params['user_id'],
+      refresh_token: params['refresh_token']
+    )
   end
 
   def refresh_access_token
@@ -27,7 +31,11 @@ class MercadoLibre
     end
     response = conn.post
     response = JSON.parse(response.body)
-    @meli_info.update_attributes(access_token: response['access_token'], meli_user_id: response['user_id'], refresh_token: response['refresh_token'])
+    @meli_info.update_attributes(
+      access_token: response['access_token'],
+      meli_user_id: response['user_id'],
+      refresh_token: response['refresh_token']
+    )
   end
 
   private
