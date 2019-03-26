@@ -10,9 +10,10 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-  # def create
-  #   super
-  # end
+  def create
+    super
+    PageMailer.welcome(@retailer_user).deliver_now if @retailer_user.persisted?
+  end
 
   # GET /resource/edit
   # def edit

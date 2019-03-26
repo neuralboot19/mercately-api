@@ -14,9 +14,9 @@ class Retailer < ApplicationRecord
   end
 
   def generate_slug
-    if Retailer.find_by(['LOWER(name) LIKE ?', "%#{name.downcase}%"])
-      update name: name << "-#{id}"
+    if Retailer.where(['LOWER(name) LIKE ?', "%#{name.downcase}%"]).where.not(id: id).count.positive?
       update slug: name.parameterize << "-#{id}"
+      update name: name << "-#{id}"
     else
       update slug: name.parameterize
     end
