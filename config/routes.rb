@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       resources :orders
       resources :customers
       get 'integrations', to: 'integrations#index'
+      get 'mercadolibre_import', to: 'integrations#mercadolibre_import'
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
   end

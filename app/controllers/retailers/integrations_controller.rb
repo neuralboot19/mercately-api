@@ -1,5 +1,6 @@
 class Retailers::IntegrationsController < RetailersController
   before_action :set_ml, only: [:connect_to_ml]
+  before_action :set_ml_products, only: [:connect_to_ml]
 
   def index
   end
@@ -14,6 +15,12 @@ class Retailers::IntegrationsController < RetailersController
     end
   end
 
+  def mercadolibre_import
+    byebug
+    
+    redirect_to retailers_integrations_path(@retailer.slug), notice: 'Productos han comenzado a importarse'
+  end
+
   private
 
     def get_ml_access_token(code)
@@ -22,5 +29,9 @@ class Retailers::IntegrationsController < RetailersController
 
     def set_ml
       @ml = MercadoLibre::Auth.new(@retailer)
+    end
+
+    def set_ml_products
+      @ml = MercadoLibre::Products.new(@retailer)
     end
 end
