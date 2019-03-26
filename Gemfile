@@ -24,6 +24,10 @@ gem 'devise', '~> 4.6', '>= 4.6.1'
 gem 'faraday', '~> 0.15.4'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
 
+# Img upload
+gem 'cloudinary', require: false
+gem 'activestorage-cloudinary-service'
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.8', '>= 3.8.2'

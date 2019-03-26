@@ -1,5 +1,15 @@
 <p id="notice"><%= notice %></p>
 
+<% if @product.images.attached? %>
+  <p>
+    <strong>Image:</strong>
+    <br>
+    <% @product.images.each do |img| %>
+      <%= image_tag url_for img %>
+    <% end %>
+  </p>
+<% end %>
+
 <p>
   <strong>Title:</strong>
   <%= @product.title %>
@@ -35,5 +45,5 @@
   <%= @product.description %>
 </p>
 
-<%= link_to 'Edit', edit_retailers_product_path(@retailer.slug, @product) %> |
+<%= link_to 'Edit', edit_retailers_product_path(@retailer, @product) %> |
 <%= link_to 'Back', retailers_products_path %>

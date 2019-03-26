@@ -1,4 +1,8 @@
-<%= semantic_form_for([:retailers, @product], local: true) do |f| %>
+<%= semantic_form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(@retailer, @product) : retailers_product_path(@retailer, @product), local: true) do |f| %>
+  <div class="field">
+    <%= f.input :images, as: :file, input_html: { multiple: true } %>
+  </div>
+
   <div class="field">
     <%= f.input :title %>
   </div>

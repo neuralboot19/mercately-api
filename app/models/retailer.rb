@@ -9,6 +9,10 @@ class Retailer < ApplicationRecord
 
   after_create :generate_slug
 
+  def to_param
+    slug
+  end
+
   def generate_slug
     if Retailer.where(['LOWER(name) LIKE ?', "%#{name.downcase}%"]).where.not(id: id).count.positive?
       update slug: name.parameterize << "-#{id}"
