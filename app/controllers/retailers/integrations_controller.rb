@@ -21,6 +21,6 @@ class Retailers::IntegrationsController < RetailersController
     end
 
     def set_ml
-      @ml = MercadoLibre.new(@retailer)
+      @ml = MercadoLibre::Auth.new(@retailer)
     end
 end
