@@ -1,6 +1,6 @@
 class Retailers::IntegrationsController < RetailersController
   before_action :set_ml, only: [:connect_to_ml]
-  before_action :set_ml_products, only: [:connect_to_ml]
+  before_action :set_ml_products, only: [:mercadolibre_import]
 
   def index
   end
@@ -17,7 +17,7 @@ class Retailers::IntegrationsController < RetailersController
 
   def mercadolibre_import
     byebug
-    
+    @ml_products.search_items
     redirect_to retailers_integrations_path(@retailer.slug), notice: 'Productos han comenzado a importarse'
   end
 
@@ -32,6 +32,6 @@ class Retailers::IntegrationsController < RetailersController
     end
 
     def set_ml_products
-      @ml = MercadoLibre::Products.new(@retailer)
+      @ml_products = MercadoLibre::Products.new(@retailer)
     end
 end
