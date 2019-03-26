@@ -25,7 +25,7 @@ class Retailers::CustomersController < RetailersController
     @customer.retailer_id = @retailer.id
 
     if @customer.save
-      redirect_to retailers_customer_path(@retailer.slug, @customer), notice: 'Customer was successfully created.'
+      redirect_to retailers_customer_path(@retailer, @customer), notice: 'Customer was successfully created.'
     else
       render :new
     end
@@ -34,7 +34,7 @@ class Retailers::CustomersController < RetailersController
   # PATCH/PUT /products/1
   def update
     if @customer.update(customer_params)
-      redirect_to retailers_customer_path(@retailer.slug, @customer), notice: 'Customer was successfully updated.'
+      redirect_to retailers_customer_path(@retailer, @customer), notice: 'Customer was successfully updated.'
     else
       render :edit
     end

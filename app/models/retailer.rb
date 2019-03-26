@@ -9,6 +9,10 @@ class Retailer < ApplicationRecord
 
   after_create :generate_slug
 
+  def to_param
+    slug
+  end
+
   def generate_slug
     if Retailer.find_by(['LOWER(name) LIKE ?', "%#{name.downcase}%"])
       update name: name << "-#{id}"
