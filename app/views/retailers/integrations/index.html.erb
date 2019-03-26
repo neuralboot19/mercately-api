@@ -6,6 +6,10 @@
 
 <a href="<%= ec_auth_url %>">Conectarse Con mercadolibre</a>
 
+<br>
+
+<%= link_to 'Importar productos de mercadolibre', retailers_mercadolibre_import_path(@retailer)%>
+
 
 <h2>Meli info</h2>
 <% if current_retailer_user.retailer.meli_info %>
