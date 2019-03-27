@@ -1,7 +1,4 @@
-Landing Pages
-
-<% if current_retailer_user %>
-  <%= link_to 'dashboard', retailers_products_path(current_retailer_user.retailer.slug) %>
-<% else %>
-  <%= link_to 'Sign In', new_retailer_user_session_path %>
-<% end %>
+<%= render "pages/shared/main" %>
+<%= render "pages/shared/proposal" %>
+<%= render "pages/shared/features" %>
+<%= render "pages/shared/cta" %>
