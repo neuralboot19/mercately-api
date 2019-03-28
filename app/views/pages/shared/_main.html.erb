@@ -1,9 +1,8 @@
 <section id="main">
-  <%= image_tag 'degradado.png', id: 'degradado' %>
   <div id="slogan" class="container-fluid">
     <div class="row reverse">
       <div class="col-xs-12 col-md-6">
-        <%= image_tag 'home_pc.png', id: 'home_img' %>
+        <%= image_tag 'home.png', class: 'hide-on-med-and-up' %>
       </div>
       <div class="col-xs-12 col-md-6">
         <h1 id="slogan_title">Aumenta tus ventas en<br/>
@@ -14,18 +13,22 @@
           optimizar tu negocio
         </h4>
         <div>
-          <a href="http://www.url.com" class="btn" target="_blank">Nombre de tu tienda</a>
-          <a href="http://www.url.com" class="btn cta" target="_blank">CTA</a>
+          <input type="text" value="" name="retailer[name]" id="retailer_name" class="btn" placeholder="Nombre de tu tienda"/>
+          <br class="hide-on-med-and-up"/>
+          <br class="hide-on-med-and-up"/>
+          <a href="http://www.url.com" class="btn cta" target="_blank">Empezar</a>
+          <br class="hide-on-med-and-up"/>
+          <br class="hide-on-med-and-up"/>
         </div>
       </div>
     </div>
   </div>
-  <%= image_tag 'image3.png', id: 'semi-circle' %>
-  <div class="container">
+  <%= image_tag 'image3.png', id: 'semi-circle', class: 'hide-on-med-and-down' %>
+  <div id="boxes" class="container">
     <div class="row center-xs boxes">
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
         <div class="card">
-          <img class='card-img' src="/assets/mercately-mercadolibre.png" style= alt="">
+          <%= image_tag 'mercately-mercadolibre.png', class: 'card-img' %>
           <h4>Lorem ipsum</h4>
           <article>Vivamus in diam turpis.
           In condimentum 
@@ -34,9 +37,9 @@
           odio diam turpis exide</article>
         </div>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
         <div class="card">
-          <img class='card-img' src="/assets/mercately-stock.png" alt="">
+          <%= image_tag 'mercately-stock.png', class: 'card-img' %>
           <h4>Lorem ipsum</h4>
           <article>Vivamus in diam turpis.
           In condimentum 
@@ -45,9 +48,9 @@
           odio diam turpis exide</article>
         </div>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
         <div class="card">
-          <img class='card-img' src="/assets/mercately-inventario.png" alt="">
+          <%= image_tag 'mercately-inventario.png', class: 'card-img' %>
           <h4>Lorem ipsum</h4>
           <article>Vivamus in diam turpis.
           In condimentum 
@@ -56,9 +59,9 @@
           odio diam turpis exide</article>
         </div>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
         <div class="card">
-          <img class='card-img' src="/assets/mercately-ecuador.png" alt="">
+          <%= image_tag 'mercately-ecuador.png', class: 'card-img' %>
           <h4>Lorem ipsum</h4>
           <article>Vivamus in diam turpis.
           In condimentum 
@@ -67,11 +70,9 @@
           odio diam turpis exide</article>
         </div>
       </div>
-    </div>
-    <div class="row center-xs boxes">
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
         <div class="card">
-          <img class='card-img' src="/assets/mercately-facturacion.png" alt="">
+          <%= image_tag 'mercately-facturacion.png', class: 'card-img' %>
           <h4>Lorem ipsum</h4>
           <article>Vivamus in diam turpis.
           In condimentum 
@@ -80,9 +81,9 @@
           odio diam turpis exide</article>
         </div>
       </div>
-      <div class="col-xs-6 col-md-3">
+      <div class="col-xs-6 col-md-4">
         <div class="card">
-          <img class='card-img' src="/assets/mercately-order.png" alt="">
+          <%= image_tag 'mercately-order.png', class: 'card-img' %>
           <h4>Lorem ipsum</h4>
           <article>Vivamus in diam turpis.
           In condimentum 
@@ -90,13 +91,6 @@
           Maecenas non laoreet 
           odio diam turpis exide</article>
         </div>
-      </div>
-      <div class="col-xs-6 col-md-3">
-        <div class="card aligner">
-          <img class='card-img' src="/assets/icon7.png" alt="">
-        </div>
-      </div>
-      <div class="col-xs-6 col-md-3">
       </div>
     </div>
   </div>

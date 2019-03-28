@@ -7,11 +7,24 @@
 
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   </head>
 
   <body>
     <%= render 'layouts/header' %>
     <%= yield %>
     <%= render "layouts/footer" %>
+
+    <script charset="utf-8">
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("menu-icon").onclick = function(){
+          if (document.getElementById("sidebar").style.left == "-300px") {
+            document.getElementById("sidebar").style.left = "0";
+          }else{
+            document.getElementById("sidebar").style.left = "-300px";
+          }
+        }
+      });
+    </script>
   </body>
 </html>

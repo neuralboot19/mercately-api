@@ -183,7 +183,7 @@ header {
   background: linear-gradient(to top, #ff000000, #160f3c);
   position: fixed;
   width: 100%;
-  z-index: 1;
+  z-index: 100;
 }
 
 h3, h4, h5, h6 {
@@ -229,6 +229,11 @@ em {
   font-size: 18px;
 }
 
+input.btn {
+  color: #f3f3f3;
+  border: none;
+}
+
 article {
   margin-bottom: 26px;
 }
@@ -259,17 +264,30 @@ footer {
   margin-top: 200px;
 }
 
-#degradado {
-  height: 350px;
-  width: 100%;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
-
 #mercately-logo {
   width: 265px;
   margin-top: 20px;
+}
+
+#menu-icon {
+  margin-top: 22px;
+}
+
+#boxes {
+  position: relative;
+  z-index: 1;
+}
+
+#sidebar {
+  width: 300px;
+  height: calc(100vh - 60px);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background-color: #242667;
+  color: #f3f3f3;
+  z-index: 100;
+  transition: all .5s;
 }
 
 #slogan_title {
@@ -308,6 +326,14 @@ footer {
 
 #copyright {
   color: #cbcacb;
+}
+
+#copyright-mercately {
+  padding-bottom: 8px;
+}
+
+#up {
+  text-align: end;
 }
 
 .h2 {
@@ -350,6 +376,7 @@ footer {
   border: 1px solid #d7d7d7;
   margin: 8px 0;
   padding: 30px;
+  background: #fff;
 }
 
 .card-img {
@@ -416,8 +443,10 @@ footer {
   padding-left: 180px !important;
 }
 
-div.center-xs:nth-child(2) > div:nth-child(3) > div:nth-child(1){
-  background-color:#eb1857;
+::placeholder {
+  color: #f3f3f3;
+  opacity: 1;
+  text-align: center;
 }
 
 @media screen and (min-width: 1024px) {
@@ -438,6 +467,11 @@ div.center-xs:nth-child(2) > div:nth-child(3) > div:nth-child(1){
     margin-bottom: 230px;
     padding-right: 0;
     padding-left: 0;
+    height: 100vh;
+    background-image: url('/assets/home_pc.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right top;
   }
 
   #home_img {
@@ -450,6 +484,10 @@ div.center-xs:nth-child(2) > div:nth-child(3) > div:nth-child(1){
   .container-fluid {
     padding-right: 4rem;
     padding-left: 4rem;
+  }
+
+  .hide-on-med-and-up {
+    display: none;
   }
 }
 
@@ -566,11 +604,87 @@ div.center-xs:nth-child(2) > div:nth-child(3) > div:nth-child(1){
 }
 
 @media screen and (max-width: 1024px) {
-  .hide-on-med-and-down {
-    display: none;
+  h1 {
+    font-size: 27px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  em {
+    font-size: 11px;
+  }
+
+  footer {
+    padding-left: 0;
+    background-size: cover;
+    background-position-x: right;
   }
 
   #slogan_title {
     margin-top: 0px;
+    font-size: 25px;
+    line-height: 31px;
+  }
+
+  #slogan_desc {
+    font-size: 12px;
+    line-height: 25px;
+  }
+
+  #mercately-logo {
+    width: 120px;
+  }
+
+  #main {
+    background-image: url('/assets/background-mobile.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  #slogan {
+    margin-left: 0;
+    text-align: center;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  #features-list {
+    background: none;
+  }
+
+  #boxes {
+    padding: 0 2rem;
+  }
+
+  #social-media {
+    margin-left: 8px;
+    margin-top: 1rem;
+  }
+
+  #cta, #copyright-mercately, #up {
+    text-align: center;
+  }
+
+  .h2 {
+    font-size: 25px;
+  }
+
+  .hide-on-med-and-down {
+    display: none;
+  }
+
+  .btn {
+    margin-right: 0;
+  }
+
+  .container-fluid {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .container.ml-180 {
+    margin: auto !important;
   }
 }

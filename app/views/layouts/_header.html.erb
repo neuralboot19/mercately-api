@@ -1,9 +1,20 @@
 <header>
+  <nav id="sidebar" style="left: -300px;">
+    <div class="menu-item">Home</div>
+    <div class="menu-item">Ayuda</div>
+    <div class="menu-item">Blog</div>
+    <%= link_to new_retailer_user_registration_path do%>
+      <div class="menu-item">Registrarse</div>
+    <% end %>
+    <%= link_to new_retailer_user_session_path do%>
+      <div class="menu-item">Ingresar</div>
+    <% end %>
+  </nav>
   <nav>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-xs-4"><%= image_tag 'mercately-logo-white.png', id: 'mercately-logo' %></div>
-        <div class="col-xs-8">
+        <div class="col-xs-6 col-md-4"><%= image_tag 'mercately-logo-white.png', id: 'mercately-logo' %></div>
+        <div class="col-xs-6 col-md-8">
           <div class="box hide-on-med-and-down">
             <div class="row end-xs">
               <div class="menu-item">Home</div>
@@ -15,6 +26,11 @@
               <%= link_to new_retailer_user_session_path do%>
                 <div class="menu-item">Ingresar</div>
               <% end %>
+            </div>
+          </div>
+          <div class="box hide-on-med-and-up">
+            <div class="row end-xs">
+              <%= image_tag 'menu-icon.png', id: 'menu-icon' %>
             </div>
           </div>
         </div>
