@@ -1,0 +1,690 @@
+@font-face {
+  font-family: 'Poppins-MediumItalic';
+  src: url('fonts/Poppins/Poppins-MediumItalic.eot');
+  src: url('fonts/Poppins/Poppins-MediumItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-MediumItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-MediumItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-MediumItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-SemiBoldItalic';
+  src: url('fonts/Poppins/Poppins-SemiBoldItalic.eot');
+  src: url('fonts/Poppins/Poppins-SemiBoldItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-SemiBoldItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-SemiBoldItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-SemiBoldItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-ExtraLightItalic';
+  src: url('fonts/Poppins/Poppins-ExtraLightItalic.eot');
+  src: url('fonts/Poppins/Poppins-ExtraLightItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-ExtraLightItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-ExtraLightItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-ExtraLightItalic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Bold';
+  src: url('fonts/Poppins/Poppins-Bold.eot');
+  src: url('fonts/Poppins/Poppins-Bold.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-Bold.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-Bold.woff') format('woff'),
+  url('fonts/Poppins/Poppins-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Italic';
+  src: url('fonts/Poppins/Poppins-Italic.eot');
+  src: url('fonts/Poppins/Poppins-Italic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-Italic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-Italic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-Italic.ttf') format('truetype');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Poppins-BoldItalic';
+  src: url('fonts/Poppins/Poppins-BoldItalic.eot');
+  src: url('fonts/Poppins/Poppins-BoldItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-BoldItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-BoldItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-BoldItalic.ttf') format('truetype');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Poppins-Regular';
+  src: url('fonts/Poppins/Poppins-Regular.eot');
+  src: url('fonts/Poppins/Poppins-Regular.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-Regular.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-Regular.woff') format('woff'),
+  url('fonts/Poppins/Poppins-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-LightItalic';
+  src: url('fonts/Poppins/Poppins-LightItalic.eot');
+  src: url('fonts/Poppins/Poppins-LightItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-LightItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-LightItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-LightItalic.ttf') format('truetype');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Poppins-Black';
+  src: url('fonts/Poppins/Poppins-Black.eot');
+  src: url('fonts/Poppins/Poppins-Black.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-Black.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-Black.woff') format('woff'),
+  url('fonts/Poppins/Poppins-Black.ttf') format('truetype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins-ThinItalic';
+  src: url('fonts/Poppins/Poppins-ThinItalic.eot');
+  src: url('fonts/Poppins/Poppins-ThinItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-ThinItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-ThinItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-ThinItalic.ttf') format('truetype');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Poppins-BlackItalic';
+  src: url('fonts/Poppins/Poppins-BlackItalic.eot');
+  src: url('fonts/Poppins/Poppins-BlackItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-BlackItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-BlackItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-BlackItalic.ttf') format('truetype');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Poppins-Medium';
+  src: url('fonts/Poppins/Poppins-Medium.eot');
+  src: url('fonts/Poppins/Poppins-Medium.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-Medium.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-Medium.woff') format('woff'),
+  url('fonts/Poppins/Poppins-Medium.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-ExtraLight';
+  src: url('fonts/Poppins/Poppins-ExtraLight.eot');
+  src: url('fonts/Poppins/Poppins-ExtraLight.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-ExtraLight.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-ExtraLight.woff') format('woff'),
+  url('fonts/Poppins/Poppins-ExtraLight.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-ExtraBold';
+  src: url('fonts/Poppins/Poppins-ExtraBold.eot');
+  src: url('fonts/Poppins/Poppins-ExtraBold.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-ExtraBold.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-ExtraBold.woff') format('woff'),
+  url('fonts/Poppins/Poppins-ExtraBold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Poppins-Light';
+  src: url('fonts/Poppins/Poppins-Light.eot');
+  src: url('fonts/Poppins/Poppins-Light.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-Light.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-Light.woff') format('woff'),
+  url('fonts/Poppins/Poppins-Light.ttf') format('truetype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins-SemiBold';
+  src: url('fonts/Poppins/Poppins-SemiBold.eot');
+  src: url('fonts/Poppins/Poppins-SemiBold.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-SemiBold.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-SemiBold.woff') format('woff'),
+  url('fonts/Poppins/Poppins-SemiBold.ttf') format('truetype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Poppins-ExtraBoldItalic';
+  src: url('fonts/Poppins/Poppins-ExtraBoldItalic.eot');
+  src: url('fonts/Poppins/Poppins-ExtraBoldItalic.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-ExtraBoldItalic.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-ExtraBoldItalic.woff') format('woff'),
+  url('fonts/Poppins/Poppins-ExtraBoldItalic.ttf') format('truetype');
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Poppins-Thin';
+  src: url('fonts/Poppins/Poppins-Thin.eot');
+  src: url('fonts/Poppins/Poppins-Thin.eot?#iefix') format('embedded-opentype'),
+  url('fonts/Poppins/Poppins-Thin.woff2') format('woff2'),
+  url('fonts/Poppins/Poppins-Thin.woff') format('woff'),
+  url('fonts/Poppins/Poppins-Thin.ttf') format('truetype');
+  font-style: normal;
+}
+
+* {
+  max-width: 100%;
+  font-family: 'Poppins-Regular';
+}
+
+body {
+  margin: 0;
+}
+
+header {
+  background: linear-gradient(to top, #ff000000, #160f3c);
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
+
+h3, h4, h5, h6 {
+  font-family: 'Poppins-Regular';
+}
+
+h1, h2 {
+  font-family: 'Poppins-Bold';
+  margin: 0;
+}
+
+h1 {
+  color: #f3f3f3;
+  line-height: 86px;
+  font-size: 50px;
+}
+
+h3 {
+  color: #eb1857;
+  font-family: 'Poppins-Light';
+  font-weight: 100;
+  font-size: 25px;
+  margin: 0;
+}
+
+h5 {
+  color:#2e3191;
+  font-size: 18px;
+  margin: 16px 0;
+  letter-spacing: 0.3px;
+}
+
+h6 {
+  font-size: 18px;
+  margin: 16px 0;
+  color: #fe1651;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+
+em {
+  color: #2e3191;
+  font-size: 18px;
+}
+
+input.btn {
+  color: #f3f3f3;
+  border: none;
+}
+
+article {
+  margin-bottom: 26px;
+}
+
+p {
+  margin: 0 0 0 12px;
+}
+
+a {
+  color: #f3f3f3;
+  text-decoration: none;
+}
+
+ul {
+  list-style-image: url('/assets/blue-arrow.png');
+}
+
+footer {
+  background-image: url('/assets/footer.png');
+  background-size: contain;
+  color: #f3f3f3;
+}
+
+#semi-circle {
+  position: absolute;
+  right: 0;
+  width: 200px;
+  margin-top: 200px;
+}
+
+#mercately-logo {
+  width: 265px;
+  margin-top: 20px;
+}
+
+#menu-icon {
+  margin-top: 22px;
+}
+
+#boxes {
+  position: relative;
+  z-index: 1;
+}
+
+#sidebar {
+  width: 300px;
+  height: calc(100vh - 60px);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background-color: #242667;
+  color: #f3f3f3;
+  z-index: 100;
+  transition: all .5s;
+}
+
+#slogan_title {
+  font-size: 50px;
+  margin-top: 220px;
+  margin-bottom: 0;
+}
+
+#slogan_desc {
+  color: #f3f3f3;
+  font-size: 20px;
+  font-weight: 100;
+  line-height: 36px;
+  margin-top: 0;
+  margin-bottom: 30px;
+  margin-left: 0;
+}
+
+#features-list {
+  background-image: url('/assets/phone.png');
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+}
+
+#footer-logo {
+  width: 265px;
+}
+
+#cta {
+  background-image: url('/assets/image4.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-top: 100px;
+}
+
+#copyright {
+  color: #cbcacb;
+}
+
+#copyright-mercately {
+  padding-bottom: 8px;
+}
+
+#up {
+  text-align: end;
+}
+
+.h2 {
+  color: #2e3191;
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 60px;
+  border-radius: 3px;
+  background-color: #242667;
+  font-size: 16px;
+  font-weight: 100;
+  margin-right: 25px;
+  letter-spacing: 1px;
+}
+
+.btn.cta {
+  background-color: #39b54a;
+}
+
+.menu-item {
+  font-family: 'Poppins-Bold';
+  width: auto;
+  padding: 43px 8px 0;
+  font-size: 17px;
+  font-weight: bold;
+  color: #f3f3f3;
+}
+
+.card {
+  height: 375px;
+  border: 1px solid #d7d7d7;
+  margin: 8px 0;
+  padding: 30px;
+  background: #fff;
+}
+
+.card-img {
+  width: 105px;
+  max-height: 108px;
+}
+
+.card-feature {
+  border-radius: 10px;
+  background-color: rgba(235, 235, 235, 0.29);
+  margin-bottom: 2rem;
+  padding: 20px 40px;
+  width: 600px;
+}
+
+.float-left {
+  float: left;
+}
+
+.social-media-icons {
+  width: 16px;
+  height: 16px;
+  padding: 3px;
+}
+
+.boxes {
+  width: 900px;
+  margin: auto;
+}
+
+.py-100 {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+.ml-0 {
+  margin-left: 0 !important;
+}
+
+.mr-0 {
+  margin-right: 0 !important;
+}
+
+.pl-0 {
+  padding-left: 0 !important;
+}
+
+.pr-0 {
+  padding-right: 0 !important;
+}
+.ml-20 {
+  margin-left: 20px;
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+.ml-180 {
+  margin-left: 180px !important;
+}
+
+.pl-180 {
+  padding-left: 180px !important;
+}
+
+::placeholder {
+  color: #f3f3f3;
+  opacity: 1;
+  text-align: center;
+}
+
+@media screen and (min-width: 1024px) {
+  #cta-row {
+    height: 700px;
+  }
+
+  #main {
+    background-image: url('/assets/back-header.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-top: 90px;
+  }
+
+  #slogan {
+    margin-right: 0px;
+    margin-left: 185px;
+    margin-bottom: 230px;
+    padding-right: 0;
+    padding-left: 0;
+    height: 100vh;
+    background-image: url('/assets/home_pc.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right top;
+  }
+
+  #home_img {
+    position: relative;
+    width: 1025px;
+    right: -16px;
+    top: 90px;
+  }
+
+  .container-fluid {
+    padding-right: 4rem;
+    padding-left: 4rem;
+  }
+
+  .hide-on-med-and-up {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1700px) {
+  h1 {
+    font-size: 40px;
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  em {
+    font-size: 16px;
+  }
+
+  footer {
+    padding-left: 105px;
+  }
+
+  #slogan_title {
+    margin-top: 110px;
+    font-size: 36px;
+  }
+
+  #slogan_desc {
+    font-size: 17px;
+  }
+
+  .h2{
+    font-size: 40px;
+  }
+
+  .ml-180 {
+    margin-left: 110px !important;
+  }
+
+  .pl-180 {
+    padding-left: 110px !important;
+  }
+
+  .btn {
+    padding: 8px 40px;
+  }
+
+  .container-fluid {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  * {
+    font-size: 12px;
+  }
+
+  h1 {
+    line-height: 50px;
+  }
+
+  h5 {
+    font-size: 14px;
+  }
+
+  h6 {
+    font-size: 12px;
+  }
+
+  #footer-logo {
+    width: 170px;
+  }
+
+  #slogan_title {
+    margin-top: 90px;
+    line-height: 60px;
+  }
+
+  #mercately-logo {
+    width: 170px;
+    margin-top: 12px;
+  }
+
+  #slogan {
+    margin-left: 110px;
+  }
+
+  #cta-row {
+    height: 440px;
+  }
+
+  #semi-circle {
+    width: 100px;
+  }
+
+  .menu-item {
+    padding: 27px 8px 0;
+    font-size: 15px;
+  }
+
+  .btn {
+    font-size: 12px;
+  }
+
+  .card-feature {
+    width: auto;
+    margin-bottom: 1rem;
+    padding: 1px 30px;
+  }
+
+  .card {
+    height: 375px;
+    height: 290px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  h1 {
+    font-size: 27px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+
+  em {
+    font-size: 11px;
+  }
+
+  footer {
+    padding-left: 0;
+    background-size: cover;
+    background-position-x: right;
+  }
+
+  #slogan_title {
+    margin-top: 0px;
+    font-size: 25px;
+    line-height: 31px;
+  }
+
+  #slogan_desc {
+    font-size: 12px;
+    line-height: 25px;
+  }
+
+  #mercately-logo {
+    width: 120px;
+  }
+
+  #main {
+    background-image: url('/assets/background-mobile.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  #slogan {
+    margin-left: 0;
+    text-align: center;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  #features-list {
+    background: none;
+  }
+
+  #boxes {
+    padding: 0 2rem;
+  }
+
+  #social-media {
+    margin-left: 8px;
+    margin-top: 1rem;
+  }
+
+  #cta, #copyright-mercately, #up {
+    text-align: center;
+  }
+
+  .h2 {
+    font-size: 25px;
+  }
+
+  .hide-on-med-and-down {
+    display: none;
+  }
+
+  .btn {
+    margin-right: 0;
+  }
+
+  .container-fluid {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .container.ml-180 {
+    margin: auto !important;
+  }
+}
