@@ -5,18 +5,18 @@ header {
   z-index: 100;
 }
 
-h1, h2 {
+.h1, .h2 {
   font-family: 'Poppins-Bold';
   margin: 0;
 }
 
-h1 {
+.h1 {
   color: #f3f3f3;
   line-height: 86px;
   font-size: 50px;
 }
 
-h3 {
+.h3 {
   color: #eb1857;
   font-family: 'Poppins-Light';
   font-weight: 100;
@@ -24,14 +24,14 @@ h3 {
   margin: 0;
 }
 
-h5 {
+.h5 {
   color:#2e3191;
   font-size: 18px;
   margin: 16px 0;
   letter-spacing: 0.3px;
 }
 
-h6 {
+.h6 {
   font-size: 18px;
   margin: 16px 0;
   color: #fe1651;
@@ -39,7 +39,7 @@ h6 {
   letter-spacing: 1px;
 }
 
-em {
+.spell {
   color: #2e3191;
   font-size: 18px;
 }
@@ -49,21 +49,17 @@ input.btn {
   border: none;
 }
 
-article {
+.article {
   margin-bottom: 26px;
 }
 
-p {
+.sentence {
   margin: 0 0 0 12px;
 }
 
-a {
+.a {
   color: #f3f3f3;
   text-decoration: none;
-}
-
-ul {
-  list-style-image: url('/assets/blue-arrow.png');
 }
 
 footer {
@@ -288,11 +284,11 @@ footer {
 }
 
 @media screen and (max-width: 1700px) {
-  h1 {
+  .h1 {
     font-size: 40px;
   }
 
-  h3 {
+  .h3 {
     font-size: 22px;
   }
 
@@ -340,15 +336,15 @@ footer {
     font-size: 12px;
   }
 
-  h1 {
+  .h1 {
     line-height: 50px;
   }
 
-  h5 {
+  .h5 {
     font-size: 14px;
   }
 
-  h6 {
+  .h6 {
     font-size: 12px;
   }
 
@@ -400,11 +396,11 @@ footer {
 }
 
 @media screen and (max-width: 1024px) {
-  h1 {
+  .h1 {
     font-size: 27px;
   }
 
-  h3 {
+  .h3 {
     font-size: 18px;
   }
 
