@@ -1,0 +1,14 @@
+<header>
+  <a class="menu-item hide-on-med-and-down" href="">
+    <%= image_tag 'dashboard/wallet-icon.png', class: 'menu-item-icon' %>
+  </a>
+  <div class="menu-item middle" id="user-profile">
+    <%= image_tag 'dashboard/man-icon.png', id: 'profile-icon' %>
+    <b id="profile-name"><%= current_retailer_user.email %></b>
+    <%= image_tag 'dashboard/down-white-arrow.png', id: 'arrow-down-icon' %>
+  </div>
+  <a class="menu-item hide-on-med-and-down" href="">
+    <%= image_tag 'dashboard/settings-icon.png', class: 'menu-item-icon' %>
+  </a>
+  <%= image_tag 'menu-icon.png', class: 'hide-on-med-and-up', id: 'menu-icon' %>
+</header>
