@@ -18,5 +18,4 @@ class RetailersController < ApplicationController
         @retailer = Retailer.find(session[:current_retailer]['id'])
       end
       redirect_to root_path unless @retailer
-    end
 end

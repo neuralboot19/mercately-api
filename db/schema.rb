@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_28_005210) do
+ActiveRecord::Schema.define(version: 2019_03_29_011935) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -79,6 +79,18 @@ ActiveRecord::Schema.define(version: 2019_03_28_005210) do
     t.bigint "retailer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "nickname"
+    t.string "email"
+    t.integer "points"
+    t.string "link"
+    t.string "seller_experience"
+    t.string "seller_reputation_level_id"
+    t.integer "transactions_canceled"
+    t.integer "transactions_completed"
+    t.integer "ratings_negative"
+    t.integer "ratings_neutral"
+    t.integer "ratings_positive"
+    t.integer "ratings_total"
     t.index ["retailer_id"], name: "index_meli_infos_on_retailer_id"
   end
 
@@ -147,6 +159,14 @@ ActiveRecord::Schema.define(version: 2019_03_28_005210) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
+    t.string "id_number"
+    t.integer "id_type"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
+    t.string "phone_number"
+    t.boolean "phone_verified"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 

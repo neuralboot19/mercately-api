@@ -6,7 +6,7 @@ class Retailer < ApplicationRecord
 
   validates :name, presence: true
   validates :slug, uniqueness: true
-
+  enum id_type: [:cedula, :pasaporte, :ruc]
   after_create :generate_slug
 
   def to_param
