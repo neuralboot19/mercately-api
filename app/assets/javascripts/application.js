@@ -15,3 +15,13 @@
 //= require activestorage
 //= require cocoon
 //= require_tree .
+
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById("menu-icon").onclick = function(){
+    if (document.getElementById("sidebar").style.left == "-300px") {
+      document.getElementById("sidebar").style.left = "0";
+    }else{
+      document.getElementById("sidebar").style.left = "-300px";
+    }
+  }
+});

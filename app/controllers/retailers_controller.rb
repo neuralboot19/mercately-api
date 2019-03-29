@@ -1,4 +1,5 @@
 class RetailersController < ApplicationController
+  layout 'dashboard'
   before_action :authenticate_retailer_user!
   before_action :set_retailer
   helper_method :current_retailer
