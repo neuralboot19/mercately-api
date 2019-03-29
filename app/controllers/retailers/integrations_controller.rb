@@ -9,7 +9,7 @@ class Retailers::IntegrationsController < RetailersController
     response = get_ml_access_token(params[:code])
     if response.status == 200
       @ml.save_access_token(JSON.parse(response.body))
-      # TODO Move this to a background job (Test only)
+      # TODO: Move this to a background job (Test only)
       MercadoLibre::Retailer.new(@retailer).update_retailer_info
       redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
     else

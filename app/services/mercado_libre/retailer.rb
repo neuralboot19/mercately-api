@@ -10,26 +10,32 @@ module MercadoLibre
       conn = prepare_connection(url)
       response = get_response(conn)
       save_retailer(response['identification'], response['address'], response['phone'])
-      update_meli_info(response['nickname'], response['email'], response['points'], response['permalink'], 
-        response['seller_reputation'], response['seller_experience'], response['seller_reputation']['transactions'])
+      update_meli_info(
+        response, response['seller_reputation'], response['seller_experience'],
+        response['seller_reputation']['transactions']
+      )
     end
 
     def save_retailer(identification, address, phone)
-      @retailer.update(id_number: identification['number'], id_type: identification['type'].downcase,
+      @retailer.update(
+        id_number: identification['number'], id_type: identification['type'].downcase,
         address: address['address'], city: address['city'], state: address['state'], zip_code: address['zip_code'],
-        phone_number: phone['number'], phone_verified: phone['verified'] )
+        phone_number: phone['number'], phone_verified: phone['verified']
+      )
     end
 
-    def update_meli_info(nickname, email, points, link, seller_reputation, seller_experience, trans)
-      @meli_info.update(nickname: nickname, email: email, points: points, link: link, seller_experience: seller_experience,
-        seller_reputation_level_id: seller_reputation['level_id'], transactions_canceled: trans['canceled'],
-        transactions_completed: trans['completed'], ratings_negative: trans['ratings']['negative'], 
-        ratings_neutral: trans['ratings']['neutral'], ratings_positive: trans['ratings']['positive'],
-        ratings_total: trans['total']
-       )
+    def update_meli_info(info, seller_reputation, seller_experience, trans)
+      @meli_info.update(
+        nickname: info['nickname'], email: info['email'], points: info['points'], link: info['permalink'],
+        seller_experience: seller_experience, seller_reputation_level_id: seller_reputation['level_id'],
+        transactions_canceled: trans['canceled'], transactions_completed: trans['completed'],
+        ratings_negative: trans['ratings']['negative'], ratings_neutral: trans['ratings']['neutral'],
+        ratings_positive: trans['ratings']['positive'], ratings_total: trans['total']
+      )
     end
 
     private
+
       def prepare_retailer_update_url
         params = {
           access_token: @meli_info.access_token
@@ -38,7 +44,7 @@ module MercadoLibre
       end
 
       def prepare_connection(url)
-        conn = Faraday.new(url: url) do |faraday|
+        Faraday.new(url: url) do |faraday|
           faraday.request  :url_encoded             # form-encode POST params
           faraday.response :logger                  # log requests to $stdout
           faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
@@ -47,7 +53,7 @@ module MercadoLibre
 
       def get_response(connection)
         response = connection.get
-        response = JSON.parse(response.body)
+        JSON.parse(response.body)
       end
   end
 end
