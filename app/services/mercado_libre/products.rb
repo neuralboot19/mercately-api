@@ -107,12 +107,12 @@ module MercadoLibre
           'price': product.price.to_f,
           'available_quantity': product.available_quantity || 0,
           'buying_mode': product.buying_mode,
-          'currency_id': "USD",
-          'listing_type_id': "free", # PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
+          'currency_id': 'USD',
+          'listing_type_id': 'free', # PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
           'condition': product.condition ? product.condition.downcase : 'not_specified',
           'description': { "plain_text": product.description || '' },
           'pictures': [
-            { "source": "http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg" } # PENDIENTE IMAGENES
+            { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
           ]
         }.to_json
       end
