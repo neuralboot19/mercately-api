@@ -3,7 +3,7 @@ class Product < ApplicationRecord
   has_many :order_items, dependent: :destroy
   has_many_attached :images
 
-  after_create :upload_ml
+  after_create :upload_ml, unless: Proc.new { |product| product.meli_product_id }
 
   def ml_condition
     %w[new used not_specified]

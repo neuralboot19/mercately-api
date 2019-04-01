@@ -102,16 +102,16 @@ module MercadoLibre
 
       def prepare_product(product)
         {
-          "title": product.title,
-          "category_id": product.category_id,
-          "price": product.price.to_f,
-          "available_quantity": product.available_quantity || 0,
-          "buying_mode": product.buying_mode,
-          "currency_id": "USD",
-          "listing_type_id": "free", # PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
-          "condition": product.condition ? product.condition.downcase : 'not_specified',
-          "description": product.description || '',
-          "pictures": [
+          'title': product.title,
+          'category_id': product.category_id,
+          'price': product.price.to_f,
+          'available_quantity': product.available_quantity || 0,
+          'buying_mode': product.buying_mode,
+          'currency_id': "USD",
+          'listing_type_id': "free", # PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
+          'condition': product.condition ? product.condition.downcase : 'not_specified',
+          'description': { "plain_text": product.description || '' },
+          'pictures': [
             { "source": "http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg" } # PENDIENTE IMAGENES
           ]
         }.to_json
