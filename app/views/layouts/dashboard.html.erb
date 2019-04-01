@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mercately</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'retailer', media: 'all' %>
+    <%= javascript_include_tag 'application' %>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  </head>
+
+  <body>
+    <%= render 'layouts/dashboard/sidebar' %>
+    <div id="content">
+      <%= render "layouts/dashboard/user_nav" %>
+      <%= yield %>
+      <%= render "layouts/dashboard/footer" %>
+    </div>
+
+    <script charset="utf-8">
+      document.addEventListener("DOMContentLoaded", function() {
+        var sidebar = document.getElementById("sidebar");
+        function hideSidebar(x) {
+          if (x.matches) {
+            sidebar.style.left = "-300px";
+          } else {
+            sidebar.style.left = "0";
+          }
+        }
+
+        var x = window.matchMedia("(max-width: 1024px)")
+        hideSidebar(x)
+        x.addListener(hideSidebar)
+      });
+    </script>
+  </body>
+</html>

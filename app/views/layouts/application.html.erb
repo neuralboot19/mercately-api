@@ -7,33 +7,12 @@
 
     <%= stylesheet_link_tag    'application', media: 'all' %>
     <%= javascript_include_tag 'application' %>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   </head>
 
   <body>
-    <nav>
-      <% if current_retailer_user && @retailer %>
-        <ul>
-          <li>
-            <%= link_to 'Clientes',retailers_customers_path %>
-          </li>
-          <li>
-            <%= link_to 'Productos',retailers_products_path %>
-          </li>
-          <li>
-            <%= link_to 'Ordenes', retailers_orders_path %>
-          </li>
-          <li>
-            <%= link_to 'Integraciones', retailers_integrations_path %>
-          </li>
-          <li>
-            <%= link_to 'Dashboard', retailers_dashboard_path %>
-          </li>
-          <li>
-            <%= link_to('Logout', destroy_retailer_user_session_path, :method => 'delete', class: "nav-link inside") %>
-          </li>
-        </ul>
-      <% end %>
-    </nav>
+    <%= render 'layouts/header' %>
     <%= yield %>
+    <%= render "layouts/footer" %>
   </body>
 </html>

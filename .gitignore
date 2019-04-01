@@ -1,4 +1,5 @@
 *.rbc
+*.png~
 capybara-*.html
 /log
 /tmp
