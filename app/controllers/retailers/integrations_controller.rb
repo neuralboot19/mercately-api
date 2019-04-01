@@ -16,7 +16,6 @@ class Retailers::IntegrationsController < RetailersController
   end
 
   def mercadolibre_import
-    byebug
     @ml_products.search_items
     redirect_to retailers_integrations_path(@retailer.slug), notice: 'Productos han comenzado a importarse'
   end
