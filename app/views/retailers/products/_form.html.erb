@@ -10,7 +10,7 @@
   </div>
 
   <div id="root">
-    <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);"></select>
+    <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9"></select>
   </div>
 
   <div class="field">
@@ -61,6 +61,7 @@
     } else {
       var select = document.createElement("select");
       select.id = `childs_${selectId}`;
+      select.size = 9;
       select.onchange = function() { appendSelect(select.id) };
       root.appendChild(select);
       var select = document.getElementById(`childs_${selectId}`);
