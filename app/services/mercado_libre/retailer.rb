@@ -7,8 +7,8 @@ module MercadoLibre
 
     def update_retailer_info
       url = prepare_retailer_update_url
-      conn = prepare_connection(url)
-      response = get_response(conn)
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
       save_retailer(response['identification'], response['address'], response['phone'])
       update_meli_info(
         response, response['seller_reputation'], response['seller_experience'],
@@ -41,19 +41,6 @@ module MercadoLibre
           access_token: @meli_info.access_token
         }
         "https://api.mercadolibre.com/users/#{@meli_info.meli_user_id}?#{params.to_query}"
-      end
-
-      def prepare_connection(url)
-        Faraday.new(url: url) do |faraday|
-          faraday.request  :url_encoded             # form-encode POST params
-          faraday.response :logger                  # log requests to $stdout
-          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-        end
-      end
-
-      def get_response(connection)
-        response = connection.get
-        JSON.parse(response.body)
       end
   end
 end

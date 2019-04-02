@@ -24,11 +24,12 @@
         Ventas/Reportes
       </div>
     </a>
-    <a href="">
+
+    <%= link_to retailers_integrations_path(current_retailer) do %>
       <div class="sidebar-item">
         <%= image_tag 'dashboard/integration-icon.png', class: 'sidebar-icon' %>
         Integraciones
       </div>
-    </a>
+    <% end %>
   </div>
 </nav>
