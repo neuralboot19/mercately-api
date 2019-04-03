@@ -18,5 +18,5 @@ Rails.application.routes.draw do
   end
 
   get 'categories', to: 'categories#roots'
-  get 'categories/:meli_id', to: 'categories#childs', as: :categories_childs
+  get 'categories/:id', to: 'categories#childs', as: :categories_childs
 end

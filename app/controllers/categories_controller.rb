@@ -5,7 +5,7 @@ class CategoriesController < ApplicationController
   end
 
   def childs
-    @child_categories = Category.find_by(meli_id: params[:meli_id]).children
+    @child_categories = Category.find(params[:id]).children
     render json: { child_categories: @child_categories }
   end
 end

@@ -84,7 +84,7 @@
           opt = child_categories[child_position]
           var el = document.createElement("option");
           el.textContent = opt.name;
-          el.value = opt.meli_id;
+          el.value = opt.id;
           select.appendChild(el)
         };
       }
@@ -101,7 +101,7 @@
       opt = roots[root_position]
       var el = document.createElement("option");
       el.textContent = opt.name;
-      el.value = opt.meli_id;
+      el.value = opt.id;
       childs_select.appendChild(el)
     };
   });

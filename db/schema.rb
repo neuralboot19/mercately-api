@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_01_160417) do
+ActiveRecord::Schema.define(version: 2019_04_03_134629) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -124,7 +124,6 @@ ActiveRecord::Schema.define(version: 2019_04_01_160417) do
 
   create_table "products", force: :cascade do |t|
     t.string "title"
-    t.string "category_id"
     t.decimal "price"
     t.integer "available_quantity"
     t.string "buying_mode"
@@ -146,6 +145,8 @@ ActiveRecord::Schema.define(version: 2019_04_01_160417) do
     t.datetime "meli_end_time"
     t.datetime "meli_expiration_time"
     t.string "meli_permalink"
+    t.integer "category_id"
+    t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
 
