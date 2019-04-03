@@ -1,5 +1,4 @@
 class Connection
-
   def self.prepare_connection(url)
     Faraday.new(url: url) do |faraday|
       faraday.request  :url_encoded             # form-encode POST params
@@ -12,5 +11,4 @@ class Connection
     response = connection.get
     JSON.parse(response.body)
   end
-
 end

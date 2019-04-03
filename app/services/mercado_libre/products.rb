@@ -24,7 +24,7 @@ module MercadoLibre
 
     def create(product)
       url = prepare_products_creation_url
-      # TODO refactor this
+      # TODO: refactor this
       conn = Faraday.new(url: 'https://api.mercadolibre.com') do |faraday|
         faraday.response :logger                  # log requests to $stdout
         faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
@@ -99,7 +99,7 @@ module MercadoLibre
           'available_quantity': product.available_quantity || 0,
           'buying_mode': product.buying_mode,
           'currency_id': 'USD',
-          'listing_type_id': 'free', # TODO PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
+          'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
           'condition': product.condition ? product.condition.downcase : 'not_specified',
           'description': { "plain_text": product.description || '' },
           'pictures': [

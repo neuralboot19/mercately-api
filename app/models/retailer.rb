@@ -28,5 +28,4 @@ class Retailer < ApplicationRecord
   def update_meli_info
     MercadoLibre::Retailer.new(self).update_retailer_info
   end
-
 end
