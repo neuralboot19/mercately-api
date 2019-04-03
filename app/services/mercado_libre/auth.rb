@@ -7,11 +7,7 @@ module MercadoLibre
 
     def get_access_token_from_url(code)
       url = prepare_access_token_params(code)
-      conn = Faraday.new(url: url) do |faraday|
-        faraday.request  :url_encoded             # form-encode POST params
-        faraday.response :logger                  # log requests to $stdout
-        faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-      end
+      conn = prepare_connection(url)
       conn.post
     end
 
@@ -25,11 +21,7 @@ module MercadoLibre
 
     def refresh_access_token
       url = prepare_refresh_token_params(@meli_info.refresh_token)
-      conn = Faraday.new(url: url) do |faraday|
-        faraday.request  :url_encoded             # form-encode POST params
-        faraday.response :logger                  # log requests to $stdout
-        faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-      end
+      conn = prepare_connection(url)
       response = conn.post
       response = JSON.parse(response.body)
       @meli_info.update_attributes(
@@ -60,6 +52,14 @@ module MercadoLibre
           refresh_token: refresh_token
         }
         "https://api.mercadolibre.com/oauth/token?#{params.to_query}"
+      end
+
+      def prepare_connection(url)
+        Faraday.new(url: url) do |faraday|
+          faraday.request  :url_encoded             # form-encode POST params
+          faraday.response :logger                  # log requests to $stdout
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+        end
       end
   end
 end

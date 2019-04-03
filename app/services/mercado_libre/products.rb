@@ -7,13 +7,8 @@ module MercadoLibre
 
     def search_items
       url = prepare_search_items_url
-      conn = Faraday.new(url: url) do |faraday|
-        faraday.request  :url_encoded             # form-encode POST params
-        faraday.response :logger                  # log requests to $stdout
-        faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-      end
-      response = conn.get
-      response = JSON.parse(response.body)
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
       products_to_import = response['results']
       import_product(products_to_import) if products_to_import
     end
@@ -21,19 +16,15 @@ module MercadoLibre
     def import_product(products)
       products.each do |product|
         url = prepare_products_search_url(product)
-        conn = Faraday.new(url: url) do |faraday|
-          faraday.request  :url_encoded             # form-encode POST params
-          faraday.response :logger                  # log requests to $stdout
-          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-        end
-        response = conn.get
-        response = JSON.parse(response.body)
+        conn = Connection.prepare_connection(url)
+        response = Connection.get_request(conn)
         save_product(response)
       end
     end
 
     def create(product)
       url = prepare_products_creation_url
+      # TODO: refactor this
       conn = Faraday.new(url: 'https://api.mercadolibre.com') do |faraday|
         faraday.response :logger                  # log requests to $stdout
         faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
@@ -108,7 +99,7 @@ module MercadoLibre
           'available_quantity': product.available_quantity || 0,
           'buying_mode': product.buying_mode,
           'currency_id': 'USD',
-          'listing_type_id': 'free', # PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
+          'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
           'condition': product.condition ? product.condition.downcase : 'not_specified',
           'description': { "plain_text": product.description || '' },
           'pictures': [
