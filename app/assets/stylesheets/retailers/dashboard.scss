@@ -1,3 +1,7 @@
+body {
+  background-color: #eceff4;
+}
+
 header {
   display: flex;
   flex-direction: row;
@@ -6,26 +10,26 @@ header {
   position: fixed;
   top: 0;
   width: inherit;
-  height: 80px;
+  height: 70px;
   background-color: #242667;
   z-index: 100;
 }
 
 a {
   color: #555;
-  font-size: 18px;
+  font-size: 12px;
   text-decoration: none;
 }
 
 #content {
   position: relative;
-  width: calc(100% - 300px);
-  margin-left: 300px;
-  margin-top: 80px;
+  width: calc(100% - 240px);
+  margin-left: 240px;
+  margin-top: 70px;
 }
 
 #sidebar {
-  width: 300px;
+  width: 240px;
   height: 100vh;
   position: fixed;
   left: 0;
@@ -42,11 +46,11 @@ a {
 }
 
 #sidebar-head h3 {
-  font-size: 30px;
+  font-size: 22px;
 }
 
 #sidebar-head h4 {
-  font-size: 15px;
+  font-size: 12px;
 }
 
 #sidebar-head h3, #sidebar-head h4 {
@@ -97,6 +101,68 @@ a {
 
 .menu-item-icon {
   height: 20px;
+}
+
+/* Dropdown */
+
+.dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.dd-button:hover {
+  cursor: pointer;
+}
+
+.dd-input {
+  display: none;
+}
+
+.dd-menu {
+  position: absolute;
+  top: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0;
+  margin: 2px 0 0 0;
+  box-shadow: 0 0 6px 0 rgba(0,0,0,0.1);
+  background-color: #ffffff;
+  list-style-type: none;
+}
+
+.dd-input + .dd-menu {
+  display: none;
+} 
+
+.dd-input:checked + .dd-menu {
+  display: block;
+} 
+
+.dd-menu li {
+  padding: 10px 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dd-menu li:hover {
+  background-color: #f6f6f6;
+}
+
+.dd-menu li a {
+  display: block;
+  margin: -10px -20px;
+  padding: 10px 20px;
+}
+
+.dd-menu li.divider{
+  padding: 0;
+  border-bottom: 1px solid #cccccc;
+}
+
+@media screen and (min-width: 1024px) {
+  .dd-menu {
+    right: 0;
+  }
 }
 
 @media screen and (max-width: 1024px) {

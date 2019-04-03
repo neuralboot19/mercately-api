@@ -32,6 +32,10 @@
         var x = window.matchMedia("(max-width: 1024px)")
         hideSidebar(x)
         x.addListener(hideSidebar)
+
+        <% if notice %>
+          showtoast("<%= notice %>")
+        <% end %>
       });
     </script>
   </body>

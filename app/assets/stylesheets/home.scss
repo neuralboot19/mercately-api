@@ -63,7 +63,7 @@ input.btn {
 }
 
 footer {
-  background-image: url('/assets/footer.png');
+  background-image: url(asset_path('footer.png'));
   background-size: contain;
   color: #f3f3f3;
 }
@@ -118,7 +118,7 @@ footer {
 }
 
 #features-list {
-  background-image: url('/assets/phone.png');
+  background-image: url(asset_path('phone.png'));
   background-size: 70%;
   background-repeat: no-repeat;
   background-position: right bottom;
@@ -129,7 +129,7 @@ footer {
 }
 
 #cta {
-  background-image: url('/assets/image4.png');
+  background-image: url(asset_path('image4.png'));
   background-size: cover;
   background-repeat: no-repeat;
   margin-top: 100px;
@@ -251,7 +251,7 @@ footer {
   }
 
   #main {
-    background-image: url('/assets/back-header.png');
+    background-image: url(asset_path('back-header.png'));
     background-size: contain;
     background-repeat: no-repeat;
     padding-top: 90px;
@@ -264,7 +264,7 @@ footer {
     padding-right: 0;
     padding-left: 0;
     height: 100vh;
-    background-image: url('/assets/home_pc.png');
+    background-image: url(asset_path('home_pc.png'));
     background-size: contain;
     background-repeat: no-repeat;
     background-position: right top;
@@ -430,7 +430,7 @@ footer {
   }
 
   #main {
-    background-image: url('/assets/background-mobile.png');
+    background-image: url(asset_path('background-mobile.png'));
     background-size: contain;
     background-repeat: no-repeat;
   }
