@@ -3,9 +3,25 @@
     <%= image_tag 'dashboard/wallet-icon.png', class: 'menu-item-icon' %>
   </a>
   <div class="menu-item middle" id="user-profile">
-    <%= image_tag 'dashboard/man-icon.png', id: 'profile-icon' %>
-    <b id="profile-name"><%= current_retailer_user.email %></b>
-    <%= image_tag 'dashboard/down-white-arrow.png', id: 'arrow-down-icon' %>
+    <label class="dropdown">
+      <div class="dd-button middle">
+        <%= image_tag 'dashboard/man-icon.png', id: 'profile-icon' %>
+        <b id="profile-name"><%= current_retailer_user.email %></b>
+        <%= image_tag 'dashboard/down-white-arrow.png', id: 'arrow-down-icon' %>
+      </div>
+
+      <input type="checkbox" class="dd-input" id="test">
+
+      <ul class="dd-menu">
+        <li>
+          <%= link_to 'Editar perfil', edit_retailer_user_registration_path %>
+        </li>
+        <li class="divider"></li>
+        <li>
+          <%= link_to 'Cerrar sesión', destroy_retailer_user_session_path, method: :delete %>
+        </li>
+      </ul>
+    </label>
   </div>
   <a class="menu-item hide-on-med-and-down" href="">
     <%= image_tag 'dashboard/settings-icon.png', class: 'menu-item-icon' %>

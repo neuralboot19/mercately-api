@@ -1,3 +1,5 @@
+$sides: (top, bottom, left, right);
+
 @font-face {
   font-family: 'Poppins-MediumItalic';
   src: url('fonts/Poppins/Poppins-MediumItalic.eot');
@@ -179,20 +181,61 @@ body {
   margin: 0;
 }
 
-.ml-0 {
-  margin-left: 0 !important;
+.row {
+  margin-left: 0;
 }
 
-.mr-0 {
-  margin-right: 0 !important;
+.inherit {
+  width: inherit;
 }
 
-.pl-0 {
-  padding-left: 0 !important;
+.inline-flex {
+  display: inline-flex;
 }
 
-.pr-0 {
-  padding-right: 0 !important;
+.t-left {
+  text-align: left;
+}
+
+.middle-left {
+  justify-content: flex-start;
+  display: flex;
+  align-items: center;
+}
+
+.middle-right {
+  justify-content: flex-end;
+  display: flex;
+  align-items: center;
+}
+
+.t-right {
+  text-align: right;
+}
+
+.aligner-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+@for $space from 0 through 100 {
+  .m-#{$space} {
+    margin: #{$space}px !important;
+  }
+
+  .p-#{$space} {
+    padding: #{$space}px !important;
+  }
+  @each $side in $sides {
+    .m#{str-slice($side, 0, 1)}-#{$space} {
+      margin-#{$side}: #{$space}px !important;
+    }
+  
+    .p#{str-slice($side, 0, 1)}-#{$space} {
+      padding-#{$side}: #{$space}px !important;
+    }
+  }
 }
 
 .w-100 {

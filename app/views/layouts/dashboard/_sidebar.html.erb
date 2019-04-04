@@ -6,18 +6,20 @@
     <h3>$ 2.478.00</h3>
   </div>
   <div class="aligner">
-    <a href="">
+    <%= link_to retailers_dashboard_path(current_retailer) do %>
       <div class="sidebar-item selected">
         <%= image_tag 'dashboard/user-icon.png', class: 'sidebar-icon' %>
         Cliente
       </div>
-    </a>
-    <a href="">
+    <% end %>
+
+    <%= link_to retailers_products_path(current_retailer) do %>
       <div class="sidebar-item">
         <%= image_tag 'dashboard/store-icon.png', class: 'sidebar-icon' %>
         Productos
       </div>
-    </a>
+    <% end %>
+
     <a href="">
       <div class="sidebar-item">
         <%= image_tag 'dashboard/order-icon.png', class: 'sidebar-icon' %>
