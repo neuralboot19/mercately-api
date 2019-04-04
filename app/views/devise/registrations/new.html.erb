@@ -1,0 +1,51 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="center">
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <h2 class="sign mt-100">Registrarse</h2>
+
+          <div class="group mt-0">
+            <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
+              <%= retailer.text_field :name, class: 'input-devise', autofocus: true, required: true %>
+              <%= retailer.label :name, class: 'label-devise' %>
+              <span class="bar"></span>
+            <% end %>
+          </div>
+
+          <div class="group">
+            <%= f.text_field :email, class: 'input-devise', autocomplete: "email", required: true %>
+            <%= f.label :email, class: 'label-devise' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group">
+            <%= f.password_field :password, class: 'input-devise', autocomplete: "new-password", required: true %>
+            <%= f.label :password, class: 'label-devise' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group mb-16">
+            <%= f.password_field :password_confirmation, class: 'input-devise', autocomplete: "new-password", required: true %>
+            <%= f.label :password_confirmation, class: 'label-devise' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group my-16">
+            <%= f.label :agree_terms do %>
+              <%= f.check_box :agree_terms, class: 'f-left' %>
+              Acepto los términos y condiciones
+            <% end %>
+          </div>
+
+          <div class="btn-box">
+            <%= f.submit 'Empezar', class: 'btn-btn btn-submit input-devise' %>
+          </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>

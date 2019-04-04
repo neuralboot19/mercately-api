@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mercately</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= javascript_include_tag 'application' %>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row middle-xs">
+        <div class="col-xs-12">
+          <%= link_to root_path do %>
+            <%= image_tag 'mercately-logo.png', id: 'mercately-logo' %>
+          <% end %>
+          <div id="contact-info" class="f-right">
+            <%= image_tag 'contact-icon.png', id: 'contact-img' %>
+            <p id="contact" class="ml-16">+1 234 234 34 34</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%= yield %>
+  </body>
+</html>
