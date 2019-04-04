@@ -16,4 +16,7 @@ Rails.application.routes.draw do
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
   end
+
+  get 'categories', to: 'categories#roots'
+  get 'categories/:id', to: 'categories#childs', as: :categories_childs
 end

@@ -1,4 +1,6 @@
 <%= semantic_form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(@retailer, @product) : retailers_product_path(@retailer, @product), local: true) do |f| %>
+  <%= f.input :category_id, as: :hidden %>
+
   <div class="field">
     <%= f.input :images, as: :file, input_html: { multiple: true } %>
   </div>
@@ -7,8 +9,8 @@
     <%= f.input :title %>
   </div>
 
-  <div class="field">
-    <%= f.input :category_id %>
+  <div id="root">
+    <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9"></select>
   </div>
 
   <div class="field">
@@ -35,3 +37,5 @@
     <%= f.submit %>
   </div>
 <% end %>
+
+<script src="<%= asset_path 'retailers/products' %>" charset="utf-8"></script>

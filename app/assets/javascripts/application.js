@@ -14,7 +14,6 @@
 //= require jquery
 //= require activestorage
 //= require cocoon
-//= require_tree .
 
 document.addEventListener("DOMContentLoaded", function() {
   document.getElementById("menu-icon").onclick = function(){
