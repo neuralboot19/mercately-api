@@ -1,3 +1,4 @@
+// index
 * {
   font-size: 12px;
 }
@@ -32,9 +33,12 @@ input[type=search] {
 }
 
 .card-header img {
-  width: 100%;
   border-radius: 3px;
   margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  max-height: 200px;
 }
 
 .card-body {
@@ -72,6 +76,13 @@ input[type=search] {
   height: 100%;
 }
 
+.info {
+  text-overflow: ellipsis;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .center {
   display: flex;
   flex-direction: column;
@@ -81,10 +92,12 @@ input[type=search] {
 }
 
 .cookie {
+  display: inline-block;
+  padding: 0 10px;
+  height: 18px;
+  line-height: 18px;
   border-radius: 23px;
   background-color: #1abf94;
-  float: right;
-  width: 48px;
   text-align: center;
   font-size: 12px;
   color: #fff;
@@ -97,11 +110,6 @@ input[type=search] {
   line-height: 48px;
   font-size: 10px;
   text-align: center;
-}
-
-.bg-pink {
-  color: #fff;
-  background-color: #fe1651;
 }
 
 .product-data {
@@ -123,4 +131,86 @@ input[type=search] {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+// Show
+
+#show-image {
+  width: calc(100% - 110px);
+  height: 400px;
+  max-height: 400px;
+  display: inline-block;
+}
+
+#show-image img {
+  margin: auto;
+  display: block;
+  max-height: 400px;
+}
+
+#gallery {
+  display: inline-block;
+  width: 100px;
+  height: 300px;
+  float: right;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#gallery img:hover {
+  cursor: pointer;
+}
+
+#product-title {
+  color: #333333;
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+#product-price {
+  right: -100px;
+  bottom: 0;
+}
+
+#product-base-price {
+  bottom: -24px;
+  right: 0;
+}
+
+.product-text {
+  color: #999999;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 26.4px;
+}
+
+.separator {
+  border: 1px solid #ebebeb;
+}
+
+.product-data-title {
+  color: #333333;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.circle.big-circle {
+  width: 90px;
+  height: 90px;
+  line-height: 90px;
+  font-size: 16px;
+}
+
+.stock-info {
+  display: inline-block;
+  font-size: 14px;
+  color: #333333;
+}
+
+.product-stock-info {
+  font-family: 'Poppins-ExtraLight';
+  font-size: 14px;
+  color: #d2d2d2;
 }

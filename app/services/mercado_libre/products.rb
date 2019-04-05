@@ -48,7 +48,7 @@ module MercadoLibre
       Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
-        category_id: product_info['category_id'],
+        category_id: Category.find_by(meli_id: product_info['category_id']).id,
         price: product_info['price'],
         base_price: product_info['base_price'],
         original_price: product_info['original_price'],
