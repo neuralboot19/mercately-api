@@ -1,0 +1,66 @@
+function getAjax(url, success) {
+  var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+  xhr.open('GET', url);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState>3 && xhr.status==200) success(xhr.responseText);
+  };
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.send();
+  return xhr;
+}
+
+function appendSelect(currentElement) {
+  var root = document.getElementById("root");
+  currentElement = document.getElementById(currentElement);
+  currentElementPosition = parseInt(currentElement.id.match(/\d+$/)[0]);
+  selectId = currentElementPosition + 1;
+
+  if(document.getElementById(`childs_${selectId}`)) {
+    var select = document.getElementById(`childs_${selectId}`);
+  } else {
+    var select = document.createElement("select");
+    select.id = `childs_${selectId}`;
+    select.size = 9;
+    select.onchange = function() { appendSelect(select.id) };
+    root.appendChild(select);
+    var select = document.getElementById(`childs_${selectId}`);
+  }
+
+  if(currentElementPosition < document.querySelectorAll('#root select').length - 1) {
+    for(i = selectId + 1; selectId + 1 <= document.querySelectorAll('#root select').length; i++) {
+      root.removeChild(document.getElementById(`childs_${i}`));
+    }
+  }
+
+  getAjax(`${window.location.origin}/categories/${currentElement.selectedOptions[0].value}`, function(data) {
+    select.innerHTML = '';
+    var json = JSON.parse(data);
+    var child_categories = json['child_categories'];
+    if(child_categories.length <= 0) {
+      root.removeChild(select);
+    } else {
+      for(var child_position in child_categories) {
+        opt = child_categories[child_position]
+        var el = document.createElement("option");
+        el.textContent = opt.name;
+        el.value = opt.id;
+        select.appendChild(el)
+      };
+    }
+    document.getElementById('product_category_id').value = document.querySelector('#root select:last-child').selectedOptions[0].value
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  var root = document.getElementById("root");
+  var childs_select = document.getElementById("childs_1");
+
+  var roots  = JSON.parse('<%= Category.roots.to_json.html_safe %>');
+  for(var root_position in roots) {
+    opt = roots[root_position]
+    var el = document.createElement("option");
+    el.textContent = opt.name;
+    el.value = opt.id;
+    childs_select.appendChild(el)
+  };
+});
