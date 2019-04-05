@@ -47,6 +47,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
                                           :email,
                                           :password,
                                           :password_confirmation,
+                                          :agree_terms,
                                           retailer_attributes: :name
                                         ])
     end
