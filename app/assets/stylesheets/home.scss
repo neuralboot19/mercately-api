@@ -1,5 +1,5 @@
 header {
-  background: linear-gradient(to top, #ff000000, #160f3c);
+  background-color: #080952;
   position: fixed;
   width: 100%;
   z-index: 100;
@@ -64,7 +64,7 @@ input.btn {
 
 footer {
   background-image: url(asset_path('footer.png'));
-  background-size: contain;
+  background-size: cover;
   color: #f3f3f3;
 }
 
@@ -263,7 +263,7 @@ footer {
     margin-bottom: 230px;
     padding-right: 0;
     padding-left: 0;
-    height: 100vh;
+    height: 110vh;
     background-image: url(asset_path('home_pc.png'));
     background-size: contain;
     background-repeat: no-repeat;
@@ -402,6 +402,10 @@ footer {
 
   .h3 {
     font-size: 18px;
+  }
+
+  header {
+    height: 60px;
   }
 
   em {

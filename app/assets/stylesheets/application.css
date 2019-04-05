@@ -13,5 +13,6 @@
  *= require flexboxgrid
  *= require global
  *= require home
+ *= require devise
  *= require_self
  */
