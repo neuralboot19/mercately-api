@@ -185,6 +185,16 @@ li {
   list-style: none;
 }
 
+.bg-pink {
+  color: #fff;
+  background-color: #fe1651;
+}
+
+.bg-green {
+  color: #fff;
+  background-color: #06DD75;
+}
+
 .row {
   margin-left: 0;
 }
@@ -270,6 +280,14 @@ li {
       padding-#{$side}: #{$space}px !important;
     }
   }
+}
+
+.p-absolute {
+  position: absolute;
+}
+
+.p-relative {
+  position: relative;
 }
 
 .w-100 {
