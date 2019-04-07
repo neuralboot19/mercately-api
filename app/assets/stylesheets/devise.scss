@@ -11,10 +11,11 @@ $width: 100%;
 
 textarea {
   resize: none;
+  height: 400px;
 }
 
-.input-devise,
-.textarea-devise {
+.group input,
+.group textarea {
   background: none;
   color: #000;
   font-size: 18px;
@@ -28,7 +29,7 @@ textarea {
     outline: none;
   }
   &:focus ~ label,
-  &:valid ~ label {
+  &:not(:placeholder-shown) ~ label {
     top: -14px;
     font-size: 12px;
     color: $hl-color;
@@ -38,19 +39,70 @@ textarea {
   }
 }
 
-input[type="password"] {
+.group input[type="password"] {
   letter-spacing: 0.3em;
 }
 
-input:required {
+.group input[type="file"] {
+  border: 0;
+}
+
+input:required, input:invalid {
   box-shadow:none;
 }
 
-input:invalid {
-  box-shadow:none;
+.group select {
+  position: relative;
+  font-family: inherit;
+  background-color: transparent;
+  width: $width;
+  padding: 10px 10px 10px 0;
+  font-size: 18px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0, 0.12);
+  &:focus {
+    outline: none;
+  }
+  &:focus ~ .bar:before {
+    width: $width;
+  }
+  &:after {
+    position: absolute;
+    top: 18px;
+    right: 10px;
+    /* Styling the down arrow */
+    width: 0;
+    height: 0;
+    padding: 0;
+    content: '';
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(0, 0, 0, 0.12);
+    pointer-events: none;
+  }
+  &:focus ~ .select-label, &:valid ~ .select-label {
+    color: $hl-color;
+    top: -14px;
+    transition: 0.2s ease all;
+    font-size: 12px;
+  }
+  appearance: none;
+  -webkit-appearance:none
 }
 
-.label-devise {
+.select-label {
+  color: rgba(0,0,0, 0.26);
+  font-size: 18px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 0;
+  top: 10px;
+  transition: 0.2s ease all;
+}
+
+.group label {
   color: $muted-color;
   font-size: 16px;
   font-weight: normal;

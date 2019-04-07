@@ -6,7 +6,9 @@ class Product < ApplicationRecord
 
   after_create :upload_ml, unless: proc { |product| product.meli_product_id }
 
-  def ml_condition
+  enum buying_mode: %w[buy_it_now auction]
+
+  def self.ml_conditions
     %w[new used not_specified]
   end
 

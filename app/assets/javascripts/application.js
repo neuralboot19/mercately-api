@@ -14,6 +14,7 @@
 //= require jquery
 //= require activestorage
 //= require cocoon
+//= require dropzone
 
 document.addEventListener("DOMContentLoaded", function() {
   if(document.getElementById("menu-icon")) {
@@ -51,6 +52,7 @@ function ToastBuilder(options) {
           var height = $this.outerHeight();
           var offset = 10;
           $this.css('top', topOffset + 'px');
+          $this.css('z-index', '99');
 
           topOffset += height + offset;
         });

@@ -229,12 +229,12 @@ li {
 
 .f-left {
   float: left;
-  width: auto;
+  width: auto !important;
 }
 
 .f-right {
   float: right;
-  width: auto;
+  width: auto !important;
 }
 
 .aligner-row {
@@ -288,6 +288,10 @@ li {
 
 .p-relative {
   position: relative;
+}
+
+.p-static {
+  position: static !important;
 }
 
 .w-100 {

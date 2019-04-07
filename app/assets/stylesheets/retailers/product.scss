@@ -127,7 +127,7 @@ input[type=search] {
 @-webkit-keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}  
+}
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -177,6 +177,14 @@ input[type=search] {
 #product-base-price {
   bottom: -24px;
   right: 0;
+}
+
+#edit_category ~ #categories {
+  display: none;
+}
+
+#edit_category:checked ~ #categories {
+  display: block;
 }
 
 .product-text {
