@@ -18,6 +18,9 @@ module MercadoLibre
         url = prepare_products_search_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
+        url = get_product_description(product)
+        conn = Connection.prepare_connection(url)
+        response = response.merge(Connection.get_request(conn))
         save_product(response)
       end
     end
@@ -48,6 +51,7 @@ module MercadoLibre
       Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
+        description: product_info['plain_text'],
         category_id: Category.find_by(meli_id: product_info['category_id']).id,
         price: product_info['price'],
         base_price: product_info['base_price'],
@@ -82,6 +86,13 @@ module MercadoLibre
           access_token: @meli_info.access_token
         }
         "https://api.mercadolibre.com/items/#{product}/?#{params.to_query}"
+      end
+
+      def get_product_description(product)
+        params = {
+          access_token: @meli_info.access_token
+        }
+        "https://api.mercadolibre.com/items/#{product}/description?#{params.to_query}"
       end
 
       def prepare_products_creation_url
