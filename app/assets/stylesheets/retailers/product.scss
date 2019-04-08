@@ -124,6 +124,18 @@ input[type=search] {
   font-size: 8px;
 }
 
+.pagination span {
+  border-radius: 5px;
+  margin: 4px;
+  padding: 4px;
+  padding-left: 8px;
+  background: #fff;
+}
+
+.pagination span.current {
+  color: #fe1651;
+}
+
 @-webkit-keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

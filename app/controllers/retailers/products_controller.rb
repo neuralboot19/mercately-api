@@ -3,7 +3,7 @@ class Retailers::ProductsController < RetailersController
 
   # GET /products
   def index
-    @products = Product.where(retailer_id: @retailer.id).with_attached_images
+    @products = Product.where(retailer_id: @retailer.id).with_attached_images.page(params[:page])
   end
 
   # GET /products/1
