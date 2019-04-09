@@ -1,4 +1,5 @@
 class Product < ApplicationRecord
+  paginates_per 25
   belongs_to :retailer
   belongs_to :category
   has_many :order_items, dependent: :destroy

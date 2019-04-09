@@ -25,6 +25,9 @@ gem 'faraday', '~> 0.15.4'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
 gem 'ancestry', '~> 3.0', '>= 3.0.5'
 
+# Pagination
+gem 'kaminari', '~> 1.1', '>= 1.1.1'
+
 # Img upload
 gem 'cloudinary', require: false
 gem 'activestorage-cloudinary-service'

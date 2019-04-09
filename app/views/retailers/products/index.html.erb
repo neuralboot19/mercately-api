@@ -8,7 +8,7 @@
 <div class="container-fluid">
   <div class="row middle-xs mt-8 mb-8">
     <div class="col-xs-6">
-      <p>Mostrando 7 productos</p>
+      <p>Mostrando <%= @products.count %> productos</p>
     </div>
     <div class="col-xs-6 middle-right">
       <input type="search" name="search" id="search" value="" placeholder="Buscar" />
@@ -64,5 +64,10 @@
         </div>
       </div>
     <% end %>
+  </div>
+  <div class="row middle-xs center-xs">
+    <div class="col-xs-12">
+      <%= paginate @products %>
+    </div>
   </div>
 </div>
