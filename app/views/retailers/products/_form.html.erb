@@ -18,7 +18,7 @@
           </div>
 
           <div id="root" class="col-xs-12">
-            <% if action_name == 'edit' %>
+            <% if action_name == 'edit' || action_name == 'update' %>
               <input type="checkbox" name="edit_category" id="edit_category" />
               <label for="edit_category">Editar categoria</label>
             <% end %>
@@ -86,6 +86,14 @@
       reader.readAsDataURL(input.files[value]);
     });
   }
+</script>
+
+<script charset="utf-8">
+  <% if @product&.errors&.any? %>
+    <% @product.errors.each do |attribute, message| %>
+      showtoast("<%= message %>")
+    <% end %>
+  <% end %>
 </script>
 
 <script src="<%= asset_path 'retailers/products' %>" charset="utf-8"></script>
