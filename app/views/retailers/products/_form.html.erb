@@ -57,11 +57,13 @@
             <span class="bar"></span>
           </div>
 
-          <div class="group fallback col-xs-12">
-            <%= f.file_field :images, input_html: { multiple: true } %>
+          <div class="uploader center w-100 col-xs-12">
+            <%= f.label :images, 'Arrastra las imagenes o has click aqui para seleccionarlas', class: 'py-20' %>
+            <%= f.file_field :images, multiple: true, onchange: 'readURL(this);', id: 'uploadedImages' %>
           </div>
+          <div id="up_images"></div>
 
-          <div class="btn-box">
+          <div class="btn-box col-xs-12">
             <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
           </div>
         </div>
@@ -69,5 +71,21 @@
     <% end %>
   </div>
 </div>
+
+<script type="text/javascript">
+  var readURL = function(input) {
+    $('#up_images').empty();
+    var number = 0;
+    $.each(input.files, function(value) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var id = (new Date).getTime();
+        number++;
+        $('#up_images').prepend('<img id='+id+' src='+e.target.result+' data-index='+number+' class="img_preview mx-4" />')
+      };
+      reader.readAsDataURL(input.files[value]);
+    });
+  }
+</script>
 
 <script src="<%= asset_path 'retailers/products' %>" charset="utf-8"></script>

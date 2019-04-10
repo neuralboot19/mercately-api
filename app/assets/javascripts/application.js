@@ -14,7 +14,6 @@
 //= require jquery
 //= require activestorage
 //= require cocoon
-//= require dropzone
 
 document.addEventListener("DOMContentLoaded", function() {
   if(document.getElementById("menu-icon")) {
