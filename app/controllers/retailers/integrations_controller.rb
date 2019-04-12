@@ -31,13 +31,13 @@ class Retailers::IntegrationsController < RetailersController
       when 'orders_v2'
         order_id = params[:resource].scan(/\d/).join
         MercadoLibre::Orders.new(@retailer).import(order_id)
-        render status: '200', json: {message: 'Success'}.to_json
+        render status: '200', json: { message: 'Success' }.to_json
       else
-        render status: '404', json: {message: "#{params[:topic]} topic not found"}.to_json
+        render status: '404', json: { message: "#{params[:topic]} topic not found" }.to_json
         Raven.capture_message "#{params[:topic]} topic not found"
       end
     else
-      render status: '404', json: {message: 'Retailer not found'}.to_json
+      render status: '404', json: { message: 'Retailer not found' }.to_json
     end
   end
 
