@@ -2,7 +2,7 @@ module MercadoLibre
   class Auth
     def initialize(retailer)
       @retailer = retailer
-      @meli_info = @retailer.meli_info || MeliInfo.new(retailer: @retailer)
+      @meli_retailer = @retailer.meli_retailer || MeliRetailer.new(retailer: @retailer)
     end
 
     def get_access_token_from_url(code)
@@ -12,7 +12,7 @@ module MercadoLibre
     end
 
     def save_access_token(params)
-      @meli_info.update_attributes(
+      @meli_retailer.update_attributes(
         access_token: params['access_token'],
         meli_user_id: params['user_id'],
         refresh_token: params['refresh_token']
@@ -20,11 +20,11 @@ module MercadoLibre
     end
 
     def refresh_access_token
-      url = prepare_refresh_token_params(@meli_info.refresh_token)
+      url = prepare_refresh_token_params(@meli_retailer.refresh_token)
       conn = prepare_connection(url)
       response = conn.post
       response = JSON.parse(response.body)
-      @meli_info.update_attributes(
+      @meli_retailer.update_attributes(
         access_token: response['access_token'],
         meli_user_id: response['user_id'],
         refresh_token: response['refresh_token']

@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       get 'mercadolibre_import', to: 'integrations#mercadolibre_import'
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
+    post 'callbacks', to: 'integrations#callbacks'
   end
 
   get 'categories', to: 'categories#roots'

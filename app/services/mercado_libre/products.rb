@@ -2,7 +2,7 @@ module MercadoLibre
   class Products
     def initialize(retailer)
       @retailer = retailer
-      @meli_info = @retailer.meli_info
+      @meli_retailer = @retailer.meli_retailer
     end
 
     def search_items
@@ -14,7 +14,7 @@ module MercadoLibre
     end
 
     def import_product(products)
-      products.each do |product|
+      products.map do |product|
         url = prepare_products_search_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
@@ -76,28 +76,28 @@ module MercadoLibre
 
       def prepare_search_items_url
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
-        "https://api.mercadolibre.com/users/#{@meli_info.meli_user_id}/items/search?#{params.to_query}"
+        "https://api.mercadolibre.com/users/#{@meli_retailer.meli_user_id}/items/search?#{params.to_query}"
       end
 
       def prepare_products_search_url(product)
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/items/#{product}/?#{params.to_query}"
       end
 
       def get_product_description(product)
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/items/#{product}/description?#{params.to_query}"
       end
 
       def prepare_products_creation_url
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
         "/items?#{params.to_query}"
       end

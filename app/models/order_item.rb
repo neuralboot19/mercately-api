@@ -5,6 +5,8 @@ class OrderItem < ApplicationRecord
   before_update :adjust_stock, if: :will_save_change_to_quantity?
   after_create :subtract_stock
 
+  delegate :meli_product_id, to: :product
+
   protected
 
     def subtract_stock
