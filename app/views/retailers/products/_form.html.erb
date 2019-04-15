@@ -46,7 +46,7 @@
           </div>
 
           <div class="group col-xs-12 col-md-3">
-            <%= f.select :condition, Product.ml_conditions %>
+            <%= f.select :condition, Product.conditions.keys.to_a %>
             <%= f.label :condition, class: 'select-label' %>
             <span class="bar"></span>
           </div>
