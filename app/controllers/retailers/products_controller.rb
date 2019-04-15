@@ -3,7 +3,7 @@ class Retailers::ProductsController < RetailersController
 
   # GET /products
   def index
-    @products = Product.where(retailer_id: @retailer.id).with_attached_images
+    @products = Product.where(retailer_id: @retailer.id).with_attached_images.page(params[:page])
   end
 
   # GET /products/1
@@ -23,7 +23,6 @@ class Retailers::ProductsController < RetailersController
   def create
     @product = Product.new(product_params)
     @product.retailer_id = @retailer.id
-
     if @product.save
       redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully created.'
     else

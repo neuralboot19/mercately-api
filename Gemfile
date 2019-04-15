@@ -25,6 +25,9 @@ gem 'faraday', '~> 0.15.4'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
 gem 'ancestry', '~> 3.0', '>= 3.0.5'
 
+# Pagination
+gem 'kaminari', '~> 1.1', '>= 1.1.1'
+
 # Img upload
 gem 'cloudinary', require: false
 gem 'activestorage-cloudinary-service'
@@ -43,6 +46,7 @@ group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'rb-readline'
 end
 
 group :test do

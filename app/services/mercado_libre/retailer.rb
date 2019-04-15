@@ -9,6 +9,7 @@ module MercadoLibre
       url = prepare_retailer_update_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
+      response = JSON.parse(response.body)
       save_retailer(response['identification'], response['address'], response['phone'])
       update_meli_info(
         response, response['seller_reputation'], response['seller_experience'],

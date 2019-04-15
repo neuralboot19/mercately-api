@@ -8,7 +8,13 @@ class Connection
   end
 
   def self.get_request(connection)
-    response = connection.get
-    JSON.parse(response.body)
+    connection.get
+  end
+
+  def self.post_request(connection, body)
+    connection.post do |req|
+      req.headers['Content-Type'] = 'application/json'
+      req.body = body
+    end
   end
 end

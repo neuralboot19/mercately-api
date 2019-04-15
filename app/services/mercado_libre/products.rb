@@ -9,6 +9,7 @@ module MercadoLibre
       url = prepare_search_items_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
+      response = JSON.parse(response.body)
       products_to_import = response['results']
       import_product(products_to_import) if products_to_import
     end
@@ -18,37 +19,39 @@ module MercadoLibre
         url = prepare_products_search_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
-        save_product(response)
+        product = JSON.parse(response.body)
+        description = import_product_description(product)
+        save_product(product, description)
       end
+    end
+
+    def import_product_description(product)
+      url = get_product_description(product['id'])
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      response = response.status == 200 ? JSON.parse(response.body) : ''
     end
 
     def create(product)
       url = prepare_products_creation_url
-      # TODO: refactor this
-      conn = Faraday.new(url: 'https://api.mercadolibre.com') do |faraday|
-        faraday.response :logger                  # log requests to $stdout
-        faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-      end
-      response = conn.post do |req|
-        req.url url
-        req.headers['Content-Type'] = 'application/json'
-        req.body = prepare_product(product)
-      end
+      conn = Connection.prepare_connection(url)
+      response = Connection.post_request(conn, prepare_product(product))
       if response.status == 201
         body = JSON.parse(response.body)
         product.update_ml(body)
       else
         puts '\n\n\n\n------- EXCEPTION IN ML -------\n'
-        puts response
+        puts response.body
         puts '\n-------------------------------\n\n\n\n'
       end
     end
 
-    def save_product(product_info)
+    def save_product(product_info, description)
       Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
-        category_id: product_info['category_id'],
+        description: description['plain_text'],
+        category_id: Category.find_by(meli_id: product_info['category_id']).id,
         price: product_info['price'],
         base_price: product_info['base_price'],
         original_price: product_info['original_price'],
@@ -84,17 +87,24 @@ module MercadoLibre
         "https://api.mercadolibre.com/items/#{product}/?#{params.to_query}"
       end
 
+      def get_product_description(product)
+        params = {
+          access_token: @meli_info.access_token
+        }
+        "https://api.mercadolibre.com/items/#{product}/description?#{params.to_query}"
+      end
+
       def prepare_products_creation_url
         params = {
           access_token: @meli_info.access_token
         }
-        "/items?#{params.to_query}"
+        "https://api.mercadolibre.com/items?#{params.to_query}"
       end
 
       def prepare_product(product)
         {
           'title': product.title,
-          'category_id': product.category_id,
+          'category_id': product.category.meli_id,
           'price': product.price.to_f,
           'available_quantity': product.available_quantity || 0,
           'buying_mode': product.buying_mode,
@@ -102,10 +112,17 @@ module MercadoLibre
           'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
           'condition': product.condition ? product.condition.downcase : 'not_specified',
           'description': { "plain_text": product.description || '' },
-          'pictures': [
-            { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
-          ]
+          'pictures': prepare_images(product)
         }.to_json
+      end
+
+      def prepare_images(product)
+        array = []
+        product.images.each do |img|
+          link = ENV['HOST_URL'] + Rails.application.routes.url_helpers.rails_blob_path(img, only_path: true)
+          array << { "source": "#{link}" }
+        end
+        return array
       end
   end
 end
