@@ -5,9 +5,13 @@ class Product < ApplicationRecord
   has_many :order_items, dependent: :destroy
   has_many_attached :images
 
+  validate :images_count
+
   after_create :upload_ml, unless: proc { |product| product.meli_product_id }
 
-  def ml_condition
+  enum buying_mode: %w[buy_it_now auction]
+
+  def self.ml_conditions
     %w[new used not_specified]
   end
 
@@ -28,5 +32,9 @@ class Product < ApplicationRecord
     def upload_ml
       p_ml = MercadoLibre::Products.new(retailer)
       p_ml.create(self)
+    end
+
+    def images_count
+      errors.add(:base, 'Máximo de imagenes: 10') if images.count > 10
     end
 end
