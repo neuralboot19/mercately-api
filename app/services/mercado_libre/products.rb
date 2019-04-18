@@ -72,10 +72,18 @@ module MercadoLibre
       product.price = product_info['price']
       product.base_price = product_info['base_price']
       product.original_price = product_info['original_price']
-      product.initial_quantity = product.initial_quantity ? product_info['initial_quantity'] + product.initial_quantity : product_info['initial_quantity']
+      product.initial_quantity = if product.initial_quantity
+                                   product_info['initial_quantity'] + product.initial_quantity
+                                 else
+                                   product_info['initial_quantity']
+                                 end
       product.available_quantity = product_info['available_quantity']
-      # TODO Push orders to keep sold_quantity updated
-      product.sold_quantity = product.sold_quantity > product_info['sold_quantity'] ? product.sold_quantity : product_info['sold_quantity']
+      # TODO: Push orders to keep sold_quantity updated
+      product.sold_quantity = if product.sold_quantity > product_info['sold_quantity']
+                                product.sold_quantity
+                              else
+                                product_info['sold_quantity']
+                              end
       product.meli_site_id = product_info['site_id']
       product.meli_start_time = product_info['start_time']
       product.meli_stop_time = product_info['stop_time']
@@ -164,7 +172,7 @@ module MercadoLibre
           'title': product.title,
           'price': product.price.to_f,
           'available_quantity': product.available_quantity || 0,
-          #'listing_type_id': 'free',
+          # 'listing_type_id': 'free',
           'pictures': [
             { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
           ]
