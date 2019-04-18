@@ -15,10 +15,10 @@ module MercadoLibre
 
     def import_product(products)
       products.map do |product|
-        url = prepare_products_search_url(product)
+        url = get_product_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
-        url = get_product_description(product)
+        url = get_product_description_url(product)
         conn = Connection.prepare_connection(url)
         response = response.merge(Connection.get_request(conn))
         save_product(response)
@@ -27,16 +27,8 @@ module MercadoLibre
 
     def create(product)
       url = prepare_products_creation_url
-      # TODO: refactor this
-      conn = Faraday.new(url: 'https://api.mercadolibre.com') do |faraday|
-        faraday.response :logger                  # log requests to $stdout
-        faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-      end
-      response = conn.post do |req|
-        req.url url
-        req.headers['Content-Type'] = 'application/json'
-        req.body = prepare_product(product)
-      end
+      conn = Connection.prepare_connection(url)
+      response = Connection.post_request(url, conn, prepare_product(product))
       if response.status == 201
         body = JSON.parse(response.body)
         product.update_ml(body)
@@ -72,6 +64,54 @@ module MercadoLibre
       ).find_or_create_by!(meli_product_id: product_info['id'])
     end
 
+    def update(product_info)
+      product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
+      product.title = product_info['title']
+      product.description = product_info['plain_text']
+      product.category_id = Category.find_by(meli_id: product_info['category_id']).id
+      product.price = product_info['price']
+      product.base_price = product_info['base_price']
+      product.original_price = product_info['original_price']
+      product.initial_quantity = product.initial_quantity ? product_info['initial_quantity'] + product.initial_quantity : product_info['initial_quantity']
+      product.available_quantity = product_info['available_quantity']
+      # TODO Push orders to keep sold_quantity updated
+      product.sold_quantity = product.sold_quantity > product_info['sold_quantity'] ? product.sold_quantity : product_info['sold_quantity']
+      product.meli_site_id = product_info['site_id']
+      product.meli_start_time = product_info['start_time']
+      product.meli_stop_time = product_info['stop_time']
+      product.meli_end_time = product_info['end_time']
+      product.buying_mode = product_info['buying_mode']
+      product.meli_listing_type_id = product_info['listing_type_id']
+      product.meli_expiration_time = product_info['expiration_time']
+      product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
+      product.meli_permalink = product_info['permalink']
+      product.retailer = @retailer
+      product.save!
+    end
+
+    def pull_update(product_id)
+      url = get_product_url product_id
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      url = get_product_description_url(product_id)
+      conn = Connection.prepare_connection(url)
+      response = response.merge(Connection.get_request(conn))
+      update(response) if response
+    end
+
+    def push_update(product)
+      url = get_product_url product.meli_product_id
+      conn = Connection.prepare_connection(url)
+      Connection.put_request(url, conn, prepare_product_update(product))
+      push_description_update(product)
+    end
+
+    def push_description_update(product)
+      url = get_product_description_url product.meli_product_id
+      conn = Connection.prepare_connection(url)
+      Connection.put_request(url, conn, prepare_product_description_update(product))
+    end
+
     private
 
       def prepare_search_items_url
@@ -81,14 +121,14 @@ module MercadoLibre
         "https://api.mercadolibre.com/users/#{@meli_retailer.meli_user_id}/items/search?#{params.to_query}"
       end
 
-      def prepare_products_search_url(product)
+      def get_product_url(product)
         params = {
           access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/items/#{product}/?#{params.to_query}"
       end
 
-      def get_product_description(product)
+      def get_product_description_url(product)
         params = {
           access_token: @meli_retailer.access_token
         }
@@ -99,23 +139,41 @@ module MercadoLibre
         params = {
           access_token: @meli_retailer.access_token
         }
-        "/items?#{params.to_query}"
+        "https://api.mercadolibre.com/items?#{params.to_query}"
       end
 
       def prepare_product(product)
         {
           'title': product.title,
-          'category_id': product.category_id,
+          'category_id': product.category.meli_id,
           'price': product.price.to_f,
           'available_quantity': product.available_quantity || 0,
           'buying_mode': product.buying_mode,
           'currency_id': 'USD',
           'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
           'condition': product.condition == 'new_product' ? 'new' : product.condition,
-          'description': { "plain_text": product.description || '' },
+          'description': { "plain_text": product.description },
           'pictures': [
             { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
           ]
+        }.to_json
+      end
+
+      def prepare_product_update(product)
+        {
+          'title': product.title,
+          'price': product.price.to_f,
+          'available_quantity': product.available_quantity || 0,
+          #'listing_type_id': 'free',
+          'pictures': [
+            { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
+          ]
+        }.to_json
+      end
+
+      def prepare_product_description_update(product)
+        {
+          'plain_text': product.description
         }.to_json
       end
   end

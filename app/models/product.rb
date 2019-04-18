@@ -8,6 +8,7 @@ class Product < ApplicationRecord
   validate :images_count
 
   after_create :upload_ml, unless: proc { |product| product.meli_product_id }
+  after_update :update_ml_info, if: proc { |product| product.meli_product_id }
 
   enum buying_mode: %w[buy_it_now auction]
   enum condition: %w[new_product used not_specified]
@@ -25,6 +26,11 @@ class Product < ApplicationRecord
   end
 
   private
+
+    def update_ml_info
+      p_ml = MercadoLibre::Products.new(retailer)
+      p_ml.push_update self
+    end
 
     def upload_ml
       p_ml = MercadoLibre::Products.new(retailer)

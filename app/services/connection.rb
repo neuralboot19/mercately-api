@@ -11,4 +11,21 @@ class Connection
     response = connection.get
     JSON.parse(response.body)
   end
+
+  def self.post_request(url, connection, body)
+    connection.post do |req|
+      req.url url
+      req.headers['Content-Type'] = 'application/json'
+      req.body = body
+    end
+  end
+
+  def self.put_request(url, connection, body)
+    connection.put do |req|
+      req.url url
+      req.headers['Content-Type'] = 'application/json'
+      req.headers['Accept'] = 'application/json'
+      req.body = body
+    end
+  end
 end
