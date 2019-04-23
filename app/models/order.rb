@@ -5,7 +5,7 @@ class Order < ApplicationRecord
   validate :check_stock
   enum status: %i[pending completed failed]
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
-  delegate :retailer, to: :customer
+  delegate :retailer_id, :retailer, to: :customer
 
   def total
     total = order_items.map do |order_item|

@@ -7,28 +7,28 @@
   </div>
   <div class="aligner">
     <%= link_to retailers_dashboard_path(current_retailer) do %>
-      <div class="sidebar-item selected">
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_dashboard_path) %>">
         <%= image_tag 'dashboard/user-icon.png', class: 'sidebar-icon' %>
         Cliente
       </div>
     <% end %>
 
     <%= link_to retailers_products_path(current_retailer) do %>
-      <div class="sidebar-item">
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_products_path) %>">
         <%= image_tag 'dashboard/store-icon.png', class: 'sidebar-icon' %>
         Productos
       </div>
     <% end %>
 
-    <a href="">
-      <div class="sidebar-item">
+    <%= link_to retailers_orders_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_orders_path) %>">
         <%= image_tag 'dashboard/order-icon.png', class: 'sidebar-icon' %>
         Ventas/Reportes
       </div>
-    </a>
+    <% end %>
 
     <%= link_to retailers_integrations_path(current_retailer) do %>
-      <div class="sidebar-item">
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_integrations_path) %>">
         <%= image_tag 'dashboard/integration-icon.png', class: 'sidebar-icon' %>
         Integraciones
       </div>
