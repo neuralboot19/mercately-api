@@ -66,7 +66,7 @@ module MercadoLibre
         buying_mode: product_info['buying_mode'],
         meli_listing_type_id: product_info['listing_type_id'],
         meli_expiration_time: product_info['expiration_time'],
-        condition: product_info['condition'],
+        condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
@@ -111,7 +111,7 @@ module MercadoLibre
           'buying_mode': product.buying_mode,
           'currency_id': 'USD',
           'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
-          'condition': product.condition ? product.condition.downcase : 'not_specified',
+          'condition': product.condition == 'new_product' ? 'new' : product.condition,
           'description': { "plain_text": product.description || '' },
           'pictures': [
             { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES

@@ -8,9 +8,9 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended that you check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system
 
-ActiveRecord::Schema.define(version: 2019_04_12_145820) do
+ActiveRecord::Schema.define(version: 2019_04_15_204548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -173,8 +173,8 @@ ActiveRecord::Schema.define(version: 2019_04_12_145820) do
     t.datetime "meli_expiration_time"
     t.string "meli_permalink"
     t.integer "category_id"
-    t.string "condition"
     t.integer "buying_mode"
+    t.integer "condition", default: 0
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
