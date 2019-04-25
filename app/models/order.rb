@@ -8,7 +8,7 @@ class Order < ApplicationRecord
   enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
 
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
-  delegate :retailer, to: :customer
+  delegate :retailer_id, :retailer, to: :customer
 
   def total
     total = order_items.map do |order_item|

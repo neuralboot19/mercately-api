@@ -2,6 +2,7 @@
  *= require flexboxgrid
  *= require retailers/dashboard
  *= require retailers/product
+ *= require retailers/orders
  *= require devise
  *= require global
  *= require_self

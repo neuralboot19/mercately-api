@@ -3,7 +3,7 @@ class Retailers::OrdersController < RetailersController
 
   # GET /orders
   def index
-    @orders = Order.all
+    @orders = Order.joins(:customer).where('customers.retailer_id = ?', @retailer.id.to_s).page(params[:page])
   end
 
   # GET /orders/1
