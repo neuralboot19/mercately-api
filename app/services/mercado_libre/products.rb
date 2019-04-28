@@ -28,7 +28,7 @@ module MercadoLibre
     def create(product)
       url = prepare_products_creation_url
       conn = Connection.prepare_connection(url)
-      response = Connection.post_request(url, conn, prepare_product(product))
+      response = Connection.post_request(conn, prepare_product(product))
       if response.status == 201
         body = JSON.parse(response.body)
         product.update_ml(body)
@@ -110,14 +110,14 @@ module MercadoLibre
     def push_update(product)
       url = get_product_url product.meli_product_id
       conn = Connection.prepare_connection(url)
-      Connection.put_request(url, conn, prepare_product_update(product))
+      Connection.put_request(conn, prepare_product_update(product))
       push_description_update(product)
     end
 
     def push_description_update(product)
       url = get_product_description_url product.meli_product_id
       conn = Connection.prepare_connection(url)
-      Connection.put_request(url, conn, prepare_product_description_update(product))
+      Connection.put_request(conn, prepare_product_description_update(product))
     end
 
     private

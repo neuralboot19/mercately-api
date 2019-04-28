@@ -28,11 +28,6 @@ config/secrets.yml
 /.bundle
 /vendor/bundle
 
-# These should all be checked in to normalize the environment:
-# Gemfile.lock
-.ruby-version
-.ruby-gemset
-
 # If using bower-rails ignore default bower_components path bower.json files
 /vendor/assets/bower_components
 *.bowerrc
