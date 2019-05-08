@@ -9,6 +9,7 @@ module MercadoLibre
       url = prepare_search_items_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
+      response = JSON.parse(response.body)
       products_to_import = response['results']
       import_product(products_to_import) if products_to_import
     end
@@ -18,11 +19,17 @@ module MercadoLibre
         url = get_product_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
-        url = get_product_description_url(product)
-        conn = Connection.prepare_connection(url)
-        response = response.merge(Connection.get_request(conn))
-        save_product(response)
+        product = JSON.parse(response.body)
+        description = import_product_description(product)
+        save_product(product, description)
       end
+    end
+
+    def import_product_description(product)
+      url = get_product_description(product['id'])
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      response = response.status == 200 ? JSON.parse(response.body) : ''
     end
 
     def create(product)
@@ -34,16 +41,16 @@ module MercadoLibre
         product.update_ml(body)
       else
         puts '\n\n\n\n------- EXCEPTION IN ML -------\n'
-        puts response
+        puts response.body
         puts '\n-------------------------------\n\n\n\n'
       end
     end
 
-    def save_product(product_info)
+    def save_product(product_info, description)
       Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
-        description: product_info['plain_text'],
+        description: description['plain_text'],
         category_id: Category.find_by(meli_id: product_info['category_id']).id,
         price: product_info['price'],
         base_price: product_info['base_price'],
@@ -159,12 +166,19 @@ module MercadoLibre
           'buying_mode': product.buying_mode,
           'currency_id': 'USD',
           'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
-          'condition': product.condition == 'new_product' ? 'new' : product.condition,
-          'description': { "plain_text": product.description },
-          'pictures': [
-            { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
-          ]
+          'condition': product.condition ? product.condition.downcase : 'not_specified',
+          'description': { "plain_text": product.description || '' },
+          'pictures': prepare_images(product)
         }.to_json
+      end
+
+      def prepare_images(product)
+        array = []
+        product.images.each do |img|
+          link = ENV['HOST_URL'] + Rails.application.routes.url_helpers.rails_blob_path(img, only_path: true)
+          array << { "source": "#{link}" }
+        end
+        return array
       end
 
       def prepare_product_update(product)

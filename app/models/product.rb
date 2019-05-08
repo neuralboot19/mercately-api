@@ -4,7 +4,6 @@ class Product < ApplicationRecord
   belongs_to :category
   has_many :order_items, dependent: :destroy
   has_many_attached :images
-
   validate :images_count
 
   after_create :upload_ml, unless: proc { |product| product.meli_product_id }
