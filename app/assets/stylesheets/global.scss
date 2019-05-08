@@ -211,6 +211,14 @@ li {
   text-align: left;
 }
 
+.t-right {
+  text-align: right;
+}
+
+.t-center {
+  text-align: center;
+}
+
 .middle-left {
   justify-content: flex-start;
   display: flex;
@@ -221,10 +229,6 @@ li {
   justify-content: flex-end;
   display: flex;
   align-items: center;
-}
-
-.t-right {
-  text-align: right;
 }
 
 .f-left {
@@ -290,6 +294,10 @@ li {
   position: relative;
 }
 
+.p-static {
+  position: static !important;
+}
+
 .w-100 {
   width: 100%;
 }
@@ -305,6 +313,18 @@ li {
   align-items: center;
   justify-content: center;
   height: 100%;
+}
+
+.normal {
+  text-decoration: none;
+}
+
+.black-text {
+  color: #4a5262;
+}
+
+.green-text {
+  color: #5ed2b4;
 }
 
 @media screen and (min-width: 1024px) {

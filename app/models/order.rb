@@ -2,10 +2,13 @@ class Order < ApplicationRecord
   belongs_to :customer
   has_many :order_items, inverse_of: :order, dependent: :destroy
   has_many :products, through: :order_items
+
   validate :check_stock
-  enum status: %i[pending completed failed]
+
+  enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
+
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
-  delegate :retailer, to: :customer
+  delegate :retailer_id, :retailer, to: :customer
 
   def total
     total = order_items.map do |order_item|

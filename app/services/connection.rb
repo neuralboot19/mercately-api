@@ -17,4 +17,19 @@ class Connection
       req.body = body
     end
   end
+
+  def self.post_request(connection, body)
+    connection.post do |req|
+      req.headers['Content-Type'] = 'application/json'
+      req.body = body
+    end
+  end
+
+  def self.put_request(connection, body)
+    connection.put do |req|
+      req.headers['Content-Type'] = 'application/json'
+      req.headers['Accept'] = 'application/json'
+      req.body = body
+    end
+  end
 end

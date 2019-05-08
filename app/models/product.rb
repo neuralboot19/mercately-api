@@ -4,11 +4,13 @@ class Product < ApplicationRecord
   belongs_to :category
   has_many :order_items, dependent: :destroy
   has_many_attached :images
-  after_create :upload_ml, unless: proc { |product| product.meli_product_id }
+  validate :images_count
 
-  def ml_condition
-    %w[new used not_specified]
-  end
+  after_create :upload_ml, unless: proc { |product| product.meli_product_id }
+  after_update :update_ml_info, if: proc { |product| product.meli_product_id }
+
+  enum buying_mode: %w[buy_it_now auction]
+  enum condition: %w[new_product used not_specified]
 
   def update_ml(p_ml)
     self.meli_site_id = p_ml['site_id']
@@ -24,8 +26,17 @@ class Product < ApplicationRecord
 
   private
 
+    def update_ml_info
+      p_ml = MercadoLibre::Products.new(retailer)
+      p_ml.push_update self
+    end
+
     def upload_ml
       p_ml = MercadoLibre::Products.new(retailer)
       p_ml.create(self)
+    end
+
+    def images_count
+      errors.add(:base, 'Máximo de imagenes: 10') if images.count > 10
     end
 end

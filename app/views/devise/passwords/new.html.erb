@@ -7,13 +7,13 @@
           <h2 class="sign mt-100">Olvidaste tu contraseña</h2>
 
           <div class="group">
-            <%= f.email_field :email, class: 'input-devise', autofocus: true, autocomplete: "email", required: true %>
-            <%= f.label :email, class: 'label-devise' %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: '' %>
+            <%= f.label :email %>
             <span class="bar"></span>
           </div>
 
           <div class="btn-box">
-            <%= f.submit 'Enviar instrucciones de recuperación', class: 'btn-btn btn-submit input-devise' %>
+            <%= f.submit 'Enviar instrucciones de recuperación', class: 'btn-btn btn-submit w-100' %>
           </div>
         <% end %>
 

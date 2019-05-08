@@ -2,7 +2,7 @@ module MercadoLibre
   class Products
     def initialize(retailer)
       @retailer = retailer
-      @meli_info = @retailer.meli_info
+      @meli_retailer = @retailer.meli_retailer
     end
 
     def search_items
@@ -15,8 +15,8 @@ module MercadoLibre
     end
 
     def import_product(products)
-      products.each do |product|
-        url = prepare_products_search_url(product)
+      products.map do |product|
+        url = get_product_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
         product = JSON.parse(response.body)
@@ -65,38 +65,94 @@ module MercadoLibre
         buying_mode: product_info['buying_mode'],
         meli_listing_type_id: product_info['listing_type_id'],
         meli_expiration_time: product_info['expiration_time'],
-        condition: product_info['condition'],
+        condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
+    end
+
+    def update(product_info)
+      product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
+      product.title = product_info['title']
+      product.description = product_info['plain_text']
+      product.category_id = Category.find_by(meli_id: product_info['category_id']).id
+      product.price = product_info['price']
+      product.base_price = product_info['base_price']
+      product.original_price = product_info['original_price']
+      product.initial_quantity = if product.initial_quantity
+                                   product_info['initial_quantity'] + product.initial_quantity
+                                 else
+                                   product_info['initial_quantity']
+                                 end
+      product.available_quantity = product_info['available_quantity']
+      # TODO: Push orders to keep sold_quantity updated
+      product.sold_quantity = if product.sold_quantity > product_info['sold_quantity']
+                                product.sold_quantity
+                              else
+                                product_info['sold_quantity']
+                              end
+      product.meli_site_id = product_info['site_id']
+      product.meli_start_time = product_info['start_time']
+      product.meli_stop_time = product_info['stop_time']
+      product.meli_end_time = product_info['end_time']
+      product.buying_mode = product_info['buying_mode']
+      product.meli_listing_type_id = product_info['listing_type_id']
+      product.meli_expiration_time = product_info['expiration_time']
+      product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
+      product.meli_permalink = product_info['permalink']
+      product.retailer = @retailer
+      product.save!
+    end
+
+    def pull_update(product_id)
+      url = get_product_url product_id
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      url = get_product_description_url(product_id)
+      conn = Connection.prepare_connection(url)
+      response = response.merge(Connection.get_request(conn))
+      update(response) if response
+    end
+
+    def push_update(product)
+      url = get_product_url product.meli_product_id
+      conn = Connection.prepare_connection(url)
+      Connection.put_request(conn, prepare_product_update(product))
+      push_description_update(product)
+    end
+
+    def push_description_update(product)
+      url = get_product_description_url product.meli_product_id
+      conn = Connection.prepare_connection(url)
+      Connection.put_request(conn, prepare_product_description_update(product))
     end
 
     private
 
       def prepare_search_items_url
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
-        "https://api.mercadolibre.com/users/#{@meli_info.meli_user_id}/items/search?#{params.to_query}"
+        "https://api.mercadolibre.com/users/#{@meli_retailer.meli_user_id}/items/search?#{params.to_query}"
       end
 
-      def prepare_products_search_url(product)
+      def get_product_url(product)
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/items/#{product}/?#{params.to_query}"
       end
 
-      def get_product_description(product)
+      def get_product_description_url(product)
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/items/#{product}/description?#{params.to_query}"
       end
 
       def prepare_products_creation_url
         params = {
-          access_token: @meli_info.access_token
+          access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/items?#{params.to_query}"
       end
@@ -123,6 +179,24 @@ module MercadoLibre
           array << { "source": "#{link}" }
         end
         return array
+      end
+
+      def prepare_product_update(product)
+        {
+          'title': product.title,
+          'price': product.price.to_f,
+          'available_quantity': product.available_quantity || 0,
+          # 'listing_type_id': 'free',
+          'pictures': [
+            { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
+          ]
+        }.to_json
+      end
+
+      def prepare_product_description_update(product)
+        {
+          'plain_text': product.description
+        }.to_json
       end
   end
 end

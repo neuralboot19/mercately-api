@@ -2,7 +2,7 @@
   <h3>Productos</h3>
   <div class="w-100 middle-right">
     <%= link_to 'Crear producto', new_retailers_product_path %>
-    <a class="btn ml-8" href="http://www.url.com" target="_blank">Help</a>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
 </div>
 <div class="container-fluid">
@@ -30,7 +30,7 @@
           </div>
           <div class="card-body">
             <div class="middle-left">
-              <p class="m-0 product-data">
+              <p class="product-data">
                 Orders: <b><%= product.order_items.count %></b>
                 Stock: <b><%= product.available_quantity %></b>
               </p>

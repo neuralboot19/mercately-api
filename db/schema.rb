@@ -8,9 +8,9 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended that you check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system
 
-ActiveRecord::Schema.define(version: 2019_04_04_172957) do
+ActiveRecord::Schema.define(version: 2019_04_15_204548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,10 +78,34 @@ ActiveRecord::Schema.define(version: 2019_04_04_172957) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
+    t.string "phone"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
-  create_table "meli_infos", force: :cascade do |t|
+  create_table "meli_customers", force: :cascade do |t|
+    t.string "access_token"
+    t.string "meli_user_id"
+    t.string "refresh_token"
+    t.string "nickname"
+    t.string "email"
+    t.integer "points"
+    t.string "link"
+    t.string "seller_experience"
+    t.string "seller_reputation_level_id"
+    t.integer "transactions_canceled"
+    t.integer "transactions_completed"
+    t.integer "ratings_negative"
+    t.integer "ratings_neutral"
+    t.integer "ratings_positive"
+    t.integer "ratings_total"
+    t.bigint "customer_id"
+    t.string "phone"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_meli_customers_on_customer_id"
+  end
+
+  create_table "meli_retailers", force: :cascade do |t|
     t.string "access_token"
     t.string "meli_user_id"
     t.string "refresh_token"
@@ -100,7 +124,10 @@ ActiveRecord::Schema.define(version: 2019_04_04_172957) do
     t.integer "ratings_neutral"
     t.integer "ratings_positive"
     t.integer "ratings_total"
-    t.index ["retailer_id"], name: "index_meli_infos_on_retailer_id"
+    t.bigint "customer_id"
+    t.string "phone"
+    t.index ["customer_id"], name: "index_meli_retailers_on_customer_id"
+    t.index ["retailer_id"], name: "index_meli_retailers_on_retailer_id"
   end
 
   create_table "order_items", force: :cascade do |t|
@@ -119,6 +146,7 @@ ActiveRecord::Schema.define(version: 2019_04_04_172957) do
     t.integer "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "meli_order_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
   end
 
@@ -126,8 +154,6 @@ ActiveRecord::Schema.define(version: 2019_04_04_172957) do
     t.string "title"
     t.decimal "price"
     t.integer "available_quantity"
-    t.string "buying_mode"
-    t.string "condition"
     t.text "description"
     t.bigint "retailer_id"
     t.datetime "created_at", null: false
@@ -146,6 +172,8 @@ ActiveRecord::Schema.define(version: 2019_04_04_172957) do
     t.datetime "meli_expiration_time"
     t.string "meli_permalink"
     t.integer "category_id"
+    t.integer "buying_mode"
+    t.integer "condition", default: 0
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
@@ -182,5 +210,6 @@ ActiveRecord::Schema.define(version: 2019_04_04_172957) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "meli_infos", "retailers"
+  add_foreign_key "meli_customers", "customers"
+  add_foreign_key "meli_retailers", "retailers"
 end

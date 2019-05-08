@@ -1,8 +1,20 @@
-<div class="nested-fields">
-  <%= f.inputs do %>
-    <%= f.input :product_id, as: :select, collection: @retailer.products, include_blank: false %>
-    <%= f.input :quantity %>
-    <%= f.input :unit_price %>
-    <%= link_to_remove_association 'Remover item', f %>
-  <% end %>
+<div class="box">
+    <div class="nested-fields row">
+      <div class="group col-xs-12 col-md-4">
+        <%= f.select :product_id, @retailer.products.pluck(:title, :id), include_blank: false %>
+        <%= f.label :product_id, class: 'select-label' %>
+        <span class="bar"></span>
+      </div>
+      <div class="group col-xs-12 col-md-4">
+        <%= f.number_field :quantity, placeholder: '' %>
+        <%= f.label :quantity %>
+        <span class="bar"></span>
+      </div>
+      <div class="group col-xs-12 col-md-4">
+        <%= f.number_field :unit_price, placeholder: '' %>
+        <%= f.label :unit_price %>
+        <span class="bar"></span>
+      </div>
+      <%= link_to_remove_association 'Remover item', f %>
+    </div>
 </div>

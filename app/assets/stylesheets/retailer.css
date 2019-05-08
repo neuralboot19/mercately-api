@@ -1,8 +1,10 @@
 /*
  *= require flexboxgrid
- *= require global
  *= require retailers/dashboard
  *= require retailers/product
+ *= require retailers/orders
+ *= require devise
+ *= require global
  *= require_self
  */
 
@@ -18,6 +20,7 @@
   color: #3B2F63;
   width: 40%;
   text-align: center;
+  z-index: 99;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;

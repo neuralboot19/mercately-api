@@ -16,33 +16,33 @@
 
 
   <h2>Meli info</h2>
-  <% if current_retailer_user.retailer.meli_info %>
-    <p>Access Token: <%= current_retailer_user.retailer.meli_info.access_token %></p>
-    <p>Meli User Id: <%= current_retailer_user.retailer.meli_info.meli_user_id %></p>
-    <p>Meli Refresh Token<%= current_retailer_user.retailer.meli_info.refresh_token %></p>
-    <p>Updated at <%= current_retailer_user.retailer.meli_info.updated_at %></p>
+  <% if current_retailer_user.retailer.meli_retailer %>
+    <p>Access Token: <%= current_retailer_user.retailer.meli_retailer.access_token %></p>
+    <p>Meli User Id: <%= current_retailer_user.retailer.meli_retailer.meli_user_id %></p>
+    <p>Meli Refresh Token<%= current_retailer_user.retailer.meli_retailer.refresh_token %></p>
+    <p>Updated at <%= current_retailer_user.retailer.meli_retailer.updated_at %></p>
 
-    <p>Nickname: <%= @retailer.meli_info.nickname %></p>
-    <p>email: <%= @retailer.meli_info.email %></p>
-    <p>points: <%= @retailer.meli_info.points %></p>
-    <p>Link <%= @retailer.meli_info.link %></p>
+    <p>Nickname: <%= @retailer.meli_retailer.nickname %></p>
+    <p>email: <%= @retailer.meli_retailer.email %></p>
+    <p>points: <%= @retailer.meli_retailer.points %></p>
+    <p>Link <%= @retailer.meli_retailer.link %></p>
 
 
-    <p>seller_experience <%= @retailer.meli_info.seller_experience %></p>
+    <p>seller_experience <%= @retailer.meli_retailer.seller_experience %></p>
 
-    <p>seller_reputation_level_id <%= @retailer.meli_info.seller_reputation_level_id %></p>
+    <p>seller_reputation_level_id <%= @retailer.meli_retailer.seller_reputation_level_id %></p>
 
-    <p>transactions_canceled <%= @retailer.meli_info.transactions_canceled %></p>
+    <p>transactions_canceled <%= @retailer.meli_retailer.transactions_canceled %></p>
 
-    <p>transactions_completed <%= @retailer.meli_info.transactions_completed %></p>
+    <p>transactions_completed <%= @retailer.meli_retailer.transactions_completed %></p>
 
-    <p>ratings_negative <%= @retailer.meli_info.ratings_negative %></p>
+    <p>ratings_negative <%= @retailer.meli_retailer.ratings_negative %></p>
 
-    <p>ratings_neutral <%= @retailer.meli_info.ratings_neutral %></p>
+    <p>ratings_neutral <%= @retailer.meli_retailer.ratings_neutral %></p>
 
-    <p>ratings_positive <%= @retailer.meli_info.ratings_positive %></p>
+    <p>ratings_positive <%= @retailer.meli_retailer.ratings_positive %></p>
 
-    <p>ratings_total <%= @retailer.meli_info.ratings_total %></p>
+    <p>ratings_total <%= @retailer.meli_retailer.ratings_total %></p>
 
   <% end %>
 

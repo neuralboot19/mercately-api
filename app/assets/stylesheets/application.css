@@ -11,8 +11,8 @@
  * It is generally better to create a new file per style scope.
  *
  *= require flexboxgrid
- *= require global
  *= require home
  *= require devise
+ *= require global
  *= require_self
  */
