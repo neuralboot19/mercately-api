@@ -1,6 +1,6 @@
 class Customer < ApplicationRecord
   belongs_to :retailer
-  has_one :meli_retailer, dependent: :destroy
+  has_one :meli_customer, dependent: :destroy
   has_many :orders, dependent: :destroy
 
   validates :email, presence: true

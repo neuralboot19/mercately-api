@@ -1,21 +1,78 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Nombre:</strong>
-  <%= @customer.first_name %>
-</p>
-
-<p>
-  <strong>Apellido:</strong>
-  <%= @customer.last_name %>
-</p>
-
-<p>
-  <strong>Email:</strong>
-  <%= @customer.email %>
-</p>
-
-
-
-<%= link_to 'Edit', edit_retailers_customer_path(@retailer, @customer) %> |
-<%= link_to 'Back', retailers_customers_path %>
+<div class="aligner-row head">
+  <h3>Cliente</h3>
+  <div class="w-100 middle-right">
+    <%= link_to 'Editar', edit_retailers_customer_path(@retailer, @customer) %>
+    <%= link_to 'Atrás', retailers_customers_path, class: 'ml-8' %>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="card mt-9">
+        <div class="box">
+          <div class="row">
+            <div class="col-xs-12 col-md-3">
+              <div class="box">
+                <div class="row center-xs">
+                  <div class="col-xs-12">
+                    <h3>Calificación en MercadoLibre</h3>
+                    <p class="product-text my-0">
+                      <b class="normal black-text">Email:</b> <%= @customer.email %><br/>
+                      <b class="normal black-text">Nombre:</b> <%= @customer.first_name %><br/>
+                      <b class="normal black-text">Apellido:</b> <%= @customer.last_name %><br/>
+                      <b class="normal black-text">Número:</b> <%= @customer.phone %>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-9">
+              <div class="box">
+                <div class="row">
+                  <% @customer.orders.each do |order| %>
+                    <div class="col-xs-12">
+                      <div class="card">
+                        <div class="box">
+                          <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                              <p class="product-text my-0">
+                                <b class="normal black-text mr-16">Monto</b> <%= order.total %>$<br/>
+                                <b class="normal black-text">Modo de pago</b> Tarjeta<%# order.email %><br/>
+                              </p>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                              <div class="box">
+                                <div class="row">
+                                  <div class="col-xs-6 col-md-4">
+                                    Estado&nbsp;&nbsp;&nbsp;
+                                    <div class="cookie"><%= order.status %></div>
+                                  </div>
+                                  <div class="col-xs-6 col-md-5">
+                                    <p class="product-text t-right my-0">
+                                      <b class="normal black-text">Ordenado el</b>   11-Feb <br class="hide-on-med-and-up"/><%# order.name %><br/>
+                                      <b class="normal black-text">Pagado el</b>   11-Feb <br class="hide-on-med-and-up"/><%# order.email %>
+                                    </p>
+                                  </div>
+                                  <div class="col-xs-12 col-md-3">
+                                    <%= link_to image_tag('dashboard/show-icon-index', class: 'w-20 mr-8'), retailers_order_path(@retailer.slug, order) %>
+                                    <%= link_to image_tag('dashboard/edit-icon-index', class: 'w-20 mr-8'), edit_retailers_order_path(@retailer.slug, order) %>
+                                    <%= link_to image_tag('dashboard/destroy-icon-index', class: 'w-20 mr-8'), retailers_order_path(@retailer.slug, order), method: :delete, data: { confirm: 'Are you sure?' } %>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

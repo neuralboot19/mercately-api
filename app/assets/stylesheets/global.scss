@@ -248,6 +248,10 @@ li {
 }
 
 @for $space from 0 through 100 {
+  .w-#{$space} {
+    width: #{$space}px;
+  }
+
   .m-#{$space} {
     margin: #{$space}px !important;
   }
@@ -300,6 +304,10 @@ li {
 
 .w-100 {
   width: 100%;
+}
+
+.h-100 {
+  height: 100%;
 }
 
 .middle {
