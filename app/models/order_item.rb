@@ -4,10 +4,17 @@ class OrderItem < ApplicationRecord
 
   before_update :adjust_stock, if: :will_save_change_to_quantity?
   after_create :subtract_stock
+  after_create :update_ml_stock
 
   delegate :meli_product_id, to: :product
 
-  protected
+  private
+
+    def update_ml_stock
+      if product.meli_product_id
+        MercadoLibre::Products.push_update(product)
+      end
+    end
 
     def subtract_stock
       product.update(available_quantity: product.available_quantity - quantity)
