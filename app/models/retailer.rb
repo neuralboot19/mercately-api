@@ -3,13 +3,11 @@ class Retailer < ApplicationRecord
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
-
   validates :name, presence: true
   validates :slug, uniqueness: true
-
   enum id_type: [:cedula, :pasaporte, :ruc]
   after_create :generate_slug
-
+  
   def to_param
     slug
   end
@@ -25,9 +23,5 @@ class Retailer < ApplicationRecord
 
   def update_meli_access_token
     MercadoLibre::Auth.new(self).refresh_access_token
-  end
-
-  def update_meli_retailer
-    MercadoLibre::Retailer.new(self).update_retailer_info
   end
 end

@@ -7,7 +7,7 @@ task refresh_ml_access_code: :environment do
   meli_retailers_to_update.each do |meli_retailer|
     retailer = meli_retailer.retailer
     retailer.update_meli_access_token
-    retailer.update_meli_retailer
+    meli_retailer.update_information
   end
   puts 'done.'
 end
