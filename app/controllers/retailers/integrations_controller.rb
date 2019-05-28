@@ -11,8 +11,6 @@ class Retailers::IntegrationsController < RetailersController
     response = get_ml_access_token(params[:code])
     if response.status == 200
       @ml.save_access_token(JSON.parse(response.body))
-      # TODO: Move this to be done the first time we get the access token
-      MercadoLibre::Retailer.new(@retailer).update_retailer_info
       redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
     else
       redirect_to retailers_integrations_path(@retailer.slug), notice: 'Error al conectarse'
