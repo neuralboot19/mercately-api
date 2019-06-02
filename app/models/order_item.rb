@@ -11,9 +11,7 @@ class OrderItem < ApplicationRecord
   private
 
     def update_ml_stock
-      if product.meli_product_id
-        MercadoLibre::Products.push_update(product)
-      end
+      MercadoLibre::Products.push_update(product) if product.meli_product_id
     end
 
     def subtract_stock

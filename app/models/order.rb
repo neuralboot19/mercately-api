@@ -37,13 +37,11 @@ class Order < ApplicationRecord
     end
 
     def adjust_ml_stock
-      if status == 'cancelled' || status == 'invalid_order'
-        order_items.each do |order_item|
-          product.update(available_quantity: product.available_quantity + quantity)
-          if product.meli_product_id
-            MercadoLibre::Products.push_update(product)
-          end
-        end
+      return if status == 'cancelled' || status == 'invalid_order'
+
+      order_items.each do |_order_item|
+        product.update(available_quantity: product.available_quantity + quantity)
+        MercadoLibre::Products.push_update(product) if product.meli_product_id
       end
     end
 end

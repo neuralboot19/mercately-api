@@ -29,7 +29,7 @@ module MercadoLibre
       url = get_product_description(product['id'])
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      response = response.status == 200 ? JSON.parse(response.body) : ''
+      response.status == 200 ? JSON.parse(response.body) : ''
     end
 
     def create(product)
@@ -176,9 +176,9 @@ module MercadoLibre
         array = []
         product.images.each do |img|
           link = ENV['HOST_URL'] + Rails.application.routes.url_helpers.rails_blob_path(img, only_path: true)
-          array << { "source": "#{link}" }
+          array << { "source": link.to_s }
         end
-        return array
+        array
       end
 
       def prepare_product_update(product)
