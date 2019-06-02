@@ -1,12 +1,19 @@
 task update_categories: :environment do
-  puts 'Updating categories'
+  puts 'Downloading categories'
   ActiveRecord::Base.transaction do
     faraday_request_get('https://api.mercadolibre.com/sites/MEC/categories').each do |res|
       father = Category.create(meli_id: res['id'], name: res['name'])
       ml_category_import(father, res['id'])
     end
   end
-  puts 'done.'
+  puts 'Done.'
+  puts 'Updating categories'
+  ActiveRecord::Base.transaction do
+    Product.where.not(meli_product_id: nil).each do |product|
+      MercadoLibre::Products.new(product.retailer).pull_update(product.meli_product_id)
+    end
+  end
+  puts 'Done.'
 end
 
 def ml_category_import(father, cat_id)
@@ -25,12 +32,7 @@ def ml_category_import(father, cat_id)
 end
 
 def faraday_request_get(url)
-  conn = Faraday.new(url: url) do |faraday|
-    faraday.request  :url_encoded
-    faraday.response :logger
-    faraday.adapter  Faraday.default_adapter
-  end
-
-  response = conn.get
-  response = JSON.parse(response.body)
+  conn = Connection.prepare_connection(url)
+  response = Connection.get_request(conn)
+  JSON.parse(response.body)
 end
