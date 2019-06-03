@@ -132,11 +132,11 @@ a {
 
 .dd-input + .dd-menu {
   display: none;
-} 
+}
 
 .dd-input:checked + .dd-menu {
   display: block;
-} 
+}
 
 .dd-menu li {
   padding: 10px 20px;
@@ -157,6 +157,31 @@ a {
 .dd-menu li.divider{
   padding: 0;
   border-bottom: 1px solid #cccccc;
+}
+
+.last-message {
+  border: 1px solid #e9e9e9;
+  opacity: 0.79;
+  padding: 8px;
+}
+
+.messages-box {
+  background-color: #ededed;
+  opacity: 0.79;
+  overflow-y: auto;
+}
+
+.message-send {
+  border: 1px solid #e9e9e9;
+  background-color: rgba(228, 235, 255, 0.59);
+  color: #1be73d;
+  padding: 12px;
+  opacity: 0.79;
+}
+
+.message-text {
+  border: 1px solid #e9e9e9;
+  opacity: 0.79;
 }
 
 @media screen and (min-width: 1024px) {

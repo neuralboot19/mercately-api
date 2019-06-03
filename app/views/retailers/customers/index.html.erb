@@ -1,31 +1,67 @@
-<p id="notice"><%= notice %></p>
+<div class="aligner-row head">
+  <h3>Clientes</h3>
+  <div class="w-100 middle-right">
+    <%= link_to 'Crear cliente', new_retailers_customer_path %>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
 
-<h1>Customers</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Email</th>
-      <th>first_name</th>
-      <th>last_name</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
+<div class="container-fluid">
+  <div class="row middle-xs mt-8 mb-8">
+    <div class="col-xs-6">
+      <p>Mostrando <%= @customers.count %> clientes</p>
+    </div>
+  </div>
+  <div class="row">
     <% @customers.each do |customer| %>
-      <tr>
-        <td><%= customer.email %></td>
-        <td><%= customer.first_name %></td>
-        <td><%= customer.last_name %></td>
-        <td><%= link_to 'Show', retailers_customer_path(@retailer, customer) %></td>
-        <td><%= link_to 'Edit', edit_retailers_customer_path(@retailer, customer) %></td>
-        <td><%= link_to 'Destroy', retailers_customer_path(@retailer, customer), method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
+      <div class="col-xs-12">
+        <div class="card">
+          <div class="box">
+            <div class="row">
+              <div class="col-xs-12 col-md-2">
+                <p class="product-text my-0">
+                  <b class="normal black-text">Email:</b> <%= customer.email %><br/>
+                  <b class="normal black-text">Nombre:</b> <%= customer.first_name %><br/>
+                  <b class="normal black-text">Apellido:</b> <%= customer.last_name %><br/>
+                  <b class="normal black-text">Número:</b> <%= customer.phone %>
+                </p>
+              </div>
+              <div class="col-xs-12 col-md-1"><p class="normal black-text t-center mb-0 mt-3">Ordenes</p></div>
+              <div class="col-xs-12 col-md-3">
+                <p class="product-text my-0">
+                  Completas: 23<br/>
+                  En proceso: 23<br/>
+                  Canceladas: 23
+                </p>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <div class="box h-100">
+                  <div class="row middle-xs h-100">
+                    <div class="col-xs-12">
+                      <% if customer.meli_customer %>
+                        <% 5.times do %>
+                          <%= image_tag 'star', class: 'w-20' %>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <div class="box h-100">
+                  <div class="row middle-xs h-100">
+                    <div class="col-xs-12">
+                      <%= link_to image_tag('dashboard/show-icon-index', class: 'w-20 mr-8'), retailers_customer_path(@retailer, customer) %>
+                      <%= link_to image_tag('dashboard/edit-icon-index', class: 'w-20 mr-8'), edit_retailers_customer_path(@retailer, customer) %>
+                      <%= link_to image_tag('dashboard/destroy-icon-index', class: 'w-20 mr-8'), retailers_customer_path(@retailer, customer), method: :delete, data: { confirm: 'Are you sure?' } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Customer', new_retailers_customer_path %>
+  </div>
+</div>
