@@ -4,6 +4,7 @@ class Order < ApplicationRecord
   has_many :products, through: :order_items
 
   validate :check_stock
+  before_update :adjust_ml_stock, if: :will_save_change_to_status?
 
   enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
 
@@ -17,7 +18,7 @@ class Order < ApplicationRecord
     total.sum
   end
 
-  protected
+  private
 
     def check_stock
       o_valid = true
@@ -33,5 +34,14 @@ class Order < ApplicationRecord
         end
       end
       o_valid
+    end
+
+    def adjust_ml_stock
+      return if status == 'cancelled' || status == 'invalid_order'
+
+      order_items.each do |_order_item|
+        product.update(available_quantity: product.available_quantity + quantity)
+        MercadoLibre::Products.push_update(product) if product.meli_product_id
+      end
     end
 end

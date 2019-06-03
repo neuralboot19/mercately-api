@@ -13,8 +13,8 @@ class RetailerUser < ApplicationRecord
 
     # Send email after create
     def send_welcome_email
-      # TODO change this to a proper email
-      PageMailer.welcome(self).deliver_now if self.persisted?
+      # TODO: change this to a proper email
+      PageMailer.welcome(self).deliver_now if persisted?
     end
 
     def agree_terms_to_bool
