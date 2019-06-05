@@ -8,7 +8,7 @@
 
           <div class="group mt-0">
             <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
-              <%= retailer.text_field :name, autofocus: true, placeholder: '' %>
+              <%= retailer.text_field :name, autofocus: true, placeholder: '', value: "#{params[:name].presence || ''}" %>
               <%= retailer.label :name %>
               <span class="bar"></span>
             <% end %>
