@@ -6,29 +6,29 @@
           <%= render "devise/shared/error_messages", resource: resource %>
           <h2 class="sign mt-100">Registrarse</h2>
 
-          <div class="group mt-0">
+          <div class="group">
             <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
               <%= retailer.text_field :name, autofocus: true, placeholder: '' %>
-              <%= retailer.label :name %>
+              <%= retailer.label :nombre %>
               <span class="bar"></span>
             <% end %>
           </div>
 
           <div class="group">
             <%= f.text_field :email, autocomplete: "email", placeholder: '' %>
-            <%= f.label :email %>
+            <%= f.label :correo %>
             <span class="bar"></span>
           </div>
 
           <div class="group">
             <%= f.password_field :password, autocomplete: "new-password", placeholder: '' %>
-            <%= f.label :password %>
+            <%= f.label :contraseña %>
             <span class="bar"></span>
           </div>
 
           <div class="group mb-16">
             <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '' %>
-            <%= f.label :password_confirmation %>
+            <%= f.label :confirme_contraseña %>
             <span class="bar"></span>
           </div>
 
