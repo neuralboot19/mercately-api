@@ -9,26 +9,26 @@
           <div class="group">
             <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
               <%= retailer.text_field :name, autofocus: true, placeholder: '', value: "#{params[:name].presence || ''}" %>
-              <%= retailer.label :nombre_del_comercio %>
+              <%= retailer.label :name, 'Nombre del comercio' %>
               <span class="bar"></span>
             <% end %>
           </div>
 
           <div class="group">
             <%= f.text_field :email, autocomplete: "email", placeholder: '' %>
-            <%= f.label :correo %>
+            <%= f.label :email, 'Correo' %>
             <span class="bar"></span>
           </div>
 
           <div class="group">
             <%= f.password_field :password, autocomplete: "new-password", placeholder: '' %>
-            <%= f.label :contraseña %>
+            <%= f.label :password, 'Contraseña' %>
             <span class="bar"></span>
           </div>
 
           <div class="group mb-16">
             <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '' %>
-            <%= f.label :confirme_contraseña %>
+            <%= f.label :password_confirmation, 'Confirme contraseña' %>
             <span class="bar"></span>
           </div>
 
