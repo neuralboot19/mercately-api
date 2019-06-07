@@ -1,113 +1,114 @@
-<div style="width:600px;height:1285px;background-color:#0F0739;padding-left:50px;padding-top:35px;">
-  <div style="width: 550px;height: 1250px;border-radius: 10px;background-color: #ffffff;position: relative;">
-    <div style="text-align:center;">
-      <%= image_tag 'mailer/logo.png', style:"margin-top:25px;" %>
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container ff-welcome-mail">
+  <div class="inner-container">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo" %>
     </div>
 
-    <div style="font-weight:bold;font-size:20px;margin-top:50px;margin-left:45px;">
-      <p style="color:#00001D;"> Hola <%= @user.retailer.name %> </p>
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color"> Hola <%= @user.retailer.name %> </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 20px;width:249px;">
-      <p style="color:#BBBBBB;font-size:18px;">
+    <div class="ml-45 welcome-text">
+      <p class="p-color fs-16">
         Bienvenido a Mercately, la mejor herramienta para la gestion y analisis de tu negocio.
         Nuestra herramienta te ayudara a ahorrar tiempo en mantener tu stock actualizado,
         tus pedidos en orden y a tus clientes felices.
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;width:249px;">
-      <p style="font-size:15px;font-weight:bold;color:#2A2E92;">
+    <div class="ml-45 t-container mt-35">
+      <p class="fs-15 t-color fw-bold">
         ¿Qué hace MERCATELY por ti?
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;width:235px;">
-      <p style="font-size:15px;font-weight:bold;color:#2A2E92;">
+    <div class="ml-45 mt-35 t1-container">
+      <p class="fs-15 fw-bold t-color">
         1. Sincroniza y actualiza tu inventario:
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 20px;width:235px;">
-      <p style="font-size:18px;color:#BBBBBB;">
+    <div class="ml-45 mt-20 t1-container">
+      <p class="fs-16 p-color">
         Una vez que se ha generado la compra en Mercado Libre,
         Mercately lo registra y actualiza el inventario en la plataforma.
       </p>
     </div>
 
-    <div style="position: absolute;top: 176px;right: 303px;">
-      <%= image_tag 'mailer/Rectangulo_1.png', style:"position: absolute;" %>
+    <div class="image-rectangle-container p-absolute">
+      <%= image_tag 'mailer/Rectangulo_1.png', class: "image-rectangle p-absolute" %>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;margin-right:45px;">
-      <p style="font-size:15px;font-weight:bold;color:#2A2E92;">
+    <div class="ml-45 mt-35 mr-45">
+      <p class="fs-15 fw-bold t-color">
         2. Responde a tus clientas de forma rapida y efectiva:
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 20px;margin-right:45px;">
-      <p style="font-size:18px;color:#BBBBBB;">
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color">
         Con la utilizacion de plantillas de las preguntas más frecuentes.
         Aseguras una comunicación ideal con tu cliente.
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;margin-right:45px;">
-      <p style="font-size:15px;font-weight:bold;color:#2A2E92;">
+    <div class="ml-45 mt-35 mr-45">
+      <p class="fs-15 fw-bold t-color">
         3. Consulta tus clientes:
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 20px;margin-right:45px;">
-      <p style="font-size:18px;color:#BBBBBB;">
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color">
         Con la información de tus clientes podrás desarrollar tus estrategias de ventas,
         logrando fidelizar a tus clientes.
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;margin-right:45px;">
-      <p style="font-size:15px;font-weight:bold;color:#2A2E92;">
+    <div class="ml-45 mt-35 mr-45">
+      <p class="fs-15 fw-bold t-color">
         4. Genera un reporte de ventas y ganancias:
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 20px;margin-right:45px;">
-      <p style="font-size:18px;color:#BBBBBB;">
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color">
         Podrás planificar tus objetivos de negocio,
         conociendo detalladamente la situacion de las ventas de tus productos.
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;margin-right:45px;">
-      <p style="font-size:15px;color:#BBBBBB;font-weight:bold;">
+    <div class="ml-45 mt-35 mr-45">
+      <p class="fs-15 fw-bold p-color">
         Gracias por confiar en nosotros. Ahora eres parte de la familia Mercately.
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;margin-right:45px;">
-      <p style="font-size:15px;color:#BBBBBB;font-weight:bold;">
+    <div class="ml-45 mt-35 mr-45">
+      <p class="fs-15 fw-bold p-color">
         En nuestro <a href="https://www.mercately.com/help">Centro de ayuda</a> 
         podrás realizar todas las preguntas sobre Mercately,
         para que tu experiencia con nosotros sea la mejor.
       </p>
     </div>
 
-    <div style="margin-left:45px;margin-top: 35px;">
-      <p style="font-size:15px;color:#BBBBBB;font-weight:bold;">
+    <div class="ml-45 mt-35">
+      <p class="fs-15 fw-bold p-color">
         Visitanos <a href="https://www.mercately.com">https://www.mercately.com</a>
       </p>
     </div>
 
-    <div style="margin-top: 50px;text-align:center;">
-      <p style="font-size:18px;color:#BBBBBB;font-weight:bold;">
+    <div class="sign-container">
+      <p class="fs-16 p-color fw-bold">
         2019 MERCATELY
       </p>
     </div>
 
-    <div id="social-media" style="text-align:center;">
-      <%= image_tag 'facebook-logo.png', style:"width: 16px;height: 16px;padding: 3px;" %>
-      <%= image_tag 'twitter.png', style:"width: 16px;height: 16px;padding: 3px;" %>
-      <%= image_tag 'instagram.png', style:"width: 16px;height: 16px;padding: 3px;" %>
+    <div id="social-media" class="social-media-container">
+      <%= image_tag 'facebook-logo.png', class:"social-media-icons" %>
+      <%= image_tag 'twitter.png', class:"social-media-icons" %>
+      <%= image_tag 'instagram.png', class:"social-media-icons" %>
     </div>
   </div>
 </div>
