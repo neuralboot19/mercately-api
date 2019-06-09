@@ -3,6 +3,7 @@
  *= require retailers/dashboard
  *= require retailers/product
  *= require retailers/orders
+ *= require retailers/integrations
  *= require devise
  *= require global
  *= require_self

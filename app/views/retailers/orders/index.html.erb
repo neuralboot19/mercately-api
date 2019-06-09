@@ -60,9 +60,9 @@
                       </p>
                     </div>
                     <div class="col-xs-12 col-md-3">
-                      <%= link_to 'Show', retailers_order_path(@retailer.slug, order) %>
-                      <%= link_to 'Edit', edit_retailers_order_path(@retailer.slug, order) %>
-                      <%= link_to 'Destroy', retailers_order_path(@retailer.slug, order), method: :delete, data: { confirm: 'Are you sure?' } %>
+                      <%= link_to image_tag('dashboard/show-icon-index', class: 'w-20 mr-8'), retailers_order_path(@retailer, order) %>
+                      <%= link_to image_tag('dashboard/edit-icon-index', class: 'w-20 mr-8'), edit_retailers_order_path(@retailer, order) %>
+                      <%= link_to image_tag('dashboard/destroy-icon-index', class: 'w-20 mr-8'), retailers_order_path(@retailer, order), method: :delete, data: { confirm: 'Are you sure?' } %>
                     </div>
                   </div>
                 </div>
