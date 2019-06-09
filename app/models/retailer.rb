@@ -3,6 +3,7 @@ class Retailer < ApplicationRecord
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
+  has_many :templates, dependent: :destroy
   validates :name, presence: true
   validates :slug, uniqueness: true
   enum id_type: [:cedula, :pasaporte, :ruc]

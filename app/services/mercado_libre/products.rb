@@ -86,11 +86,7 @@ module MercadoLibre
                                  end
       product.available_quantity = product_info['available_quantity']
       # TODO: Push orders to keep sold_quantity updated
-      product.sold_quantity = if product.sold_quantity > product_info['sold_quantity']
-                                product.sold_quantity
-                              else
-                                product_info['sold_quantity']
-                              end
+      product.sold_quantity = product_info['sold_quantity']
       product.meli_site_id = product_info['site_id']
       product.meli_start_time = product_info['start_time']
       product.meli_stop_time = product_info['stop_time']
@@ -108,9 +104,10 @@ module MercadoLibre
       url = get_product_url product_id
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
+      response = JSON.parse response.body
       url = get_product_description_url(product_id)
       conn = Connection.prepare_connection(url)
-      response = response.merge(Connection.get_request(conn))
+      response = response.merge(JSON.parse(Connection.get_request(conn).body))
       update(response) if response
     end
 

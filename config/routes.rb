@@ -11,8 +11,9 @@ Rails.application.routes.draw do
       resources :products
       resources :orders
       resources :customers
-      resources :messages
-      get 'message', to: 'messages#show'
+      resources :messages, only: [:index, :show]
+      resources :templates
+      put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
       get 'mercadolibre_import', to: 'integrations#mercadolibre_import'
     end
