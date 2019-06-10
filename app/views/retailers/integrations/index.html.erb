@@ -1,14 +1,27 @@
+<div class="aligner-row head">
+  <h3>Integraciones</h3>
+  <div class="w-100 middle-right">
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
 
-<div style="padding-top: 60px; margin-bottom: 60px;">
-  
+<div class="container-fluid">
+  <div class="row col-xs-12 col-md-12 main-container">
+    <div class="col-xs-12 col-md-12">
+      <p class="pt-title">Plataformas</p>
+    </div>
+    <div class="row col-xs-12 col-md-6 in1-container">
+      <div class="col-xs-6 col-md-6 in1-logo-container">
+        <%= image_tag 'mercado-libre-logo-5.png' %>
+      </div>
+      <div class="col-xs-6 col-md-6 in1-button-container">
+        <%= button_to('Más Información', '', class: 'general-button button-info') %>
+        <%= button_to('Conectar con Mercado Libre', ec_auth_url, class: 'general-button button-connect') %>
+      </div>
+    </div>
+    
 
-  <h1>Integraciones</h1>
-
-
-  <p>Conectarse a mercadolibre</p>
-
-
-  <a href="<%= ec_auth_url %>">Conectarse Con mercadolibre</a>
+  <!--<a href="<%= ec_auth_url %>">Conectarse Con mercadolibre</a>
 
   <br>
 
@@ -56,6 +69,6 @@
 
    <p>phone_number: <%= @retailer.phone_number %></p>
    <p>phone_verified: <%= @retailer.phone_verified %></p>
-
-
+   -->
+   </div>
 </div>
