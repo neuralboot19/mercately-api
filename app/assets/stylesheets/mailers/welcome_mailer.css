@@ -1,17 +1,17 @@
 .main-container {
   width: 600px;
-  height: 1245px;
   background-color:#0F0739;
   padding-left: 50px;
   padding-top: 35px;
+  padding-bottom: 35px;
 }
 
 .inner-container {
   width: 550px;
-  height: 1210px;
   border-radius: 10px;
   background-color: #ffffff;
   position: relative;
+  padding-bottom: 25px;
 }
 
 .logo-container {
