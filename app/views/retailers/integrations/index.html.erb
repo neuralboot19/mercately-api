@@ -15,11 +15,16 @@
         <%= image_tag 'mercado-libre-logo-5.png' %>
       </div>
       <div class="col-xs-6 col-md-6 in1-button-container">
-        <%= button_to('Más Información', '', class: 'general-button button-info') %>
-        <%= button_to('Conectar con Mercado Libre', ec_auth_url, class: 'general-button button-connect') %>
+        <!--<%= button_to('Más Información', '', class: 'general-button button-info') %>-->
+        <% if @connected %>
+          <p class="connected-text">Conectado con Mercado Libre</p>
+          <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(@retailer), class: 'general-button button-connect') %>
+        <% else %>
+          <%= button_to('Conectar con Mercado Libre', ec_auth_url, class: 'general-button button-connect') %>
+        <% end %>
       </div>
     </div>
-    
+
 
   <!--<a href="<%= ec_auth_url %>">Conectarse Con mercadolibre</a>
 

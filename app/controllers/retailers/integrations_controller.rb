@@ -5,6 +5,7 @@ class Retailers::IntegrationsController < RetailersController
   before_action :set_ml_products, only: [:mercadolibre_import]
 
   def index
+    @connected = @retailer.meli_retailer&.access_token
   end
 
   def connect_to_ml
