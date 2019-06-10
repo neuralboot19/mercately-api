@@ -16,7 +16,7 @@
       </div>
       <div class="col-xs-6 col-md-6 in1-button-container">
         <!--<%= button_to('Más Información', '', class: 'general-button button-info') %>-->
-        <% if @connected %>
+        <% if @retailer.present? && @retailer.is_connected_to_ml %>
           <p class="connected-text">Conectado con Mercado Libre</p>
           <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(@retailer), class: 'general-button button-connect') %>
         <% else %>
