@@ -25,7 +25,7 @@ class Retailer < ApplicationRecord
     MercadoLibre::Auth.new(self).refresh_access_token
   end
 
-  def is_connected_to_ml
-    meli_retailer.present? && meli_retailer.access_token.present?
+  def connected_to_ml?
+    meli_retailer.present?
   end
 end
