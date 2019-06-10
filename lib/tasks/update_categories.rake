@@ -23,7 +23,7 @@ def ml_category_import(father, cat_id)
       .find_or_create_by(meli_id: children_category['id'])
     child.update(parent_id: father.id) unless child.parent
     grandchild_count = faraday_request_get("#{meli_url}#{children_category['id']}")['children_categories'].count
-    if grandchild_count > 0
+    if grandchild_count.positive?
       ml_category_import(child, children_category['id'])
     else
       child
