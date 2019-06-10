@@ -7,6 +7,6 @@ class PageMailer < ApplicationMailer
   def welcome(user)
     @user = user
 
-    mail to: user.email
+    mail to: user.email, subject: 'Bienvenido a Mercately'
   end
 end

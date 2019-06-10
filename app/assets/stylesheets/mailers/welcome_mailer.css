@@ -1,0 +1,114 @@
+.main-container {
+  width: 600px;
+  background-color:#0F0739;
+  padding-left: 50px;
+  padding-top: 35px;
+  padding-bottom: 35px;
+}
+
+.inner-container {
+  width: 550px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  position: relative;
+  padding-bottom: 25px;
+}
+
+.logo-container {
+  text-align: center;
+}
+
+.image-logo {
+  margin-top: 25px;
+}
+
+.gretting-container {
+  font-size: 20px;
+  margin-top: 50px;
+}
+
+.greeting-color {
+  color:#00001D;
+}
+
+.ml-45 {
+  margin-left: 45px;
+}
+
+.welcome-text {
+  margin-top: 20px;
+  width: 249px;
+}
+
+.p-color {
+  color:#BBBBBB;
+}
+
+.fs-16 {
+  font-size: 16px;
+}
+
+.t-container {
+  width: 249px;
+}
+
+.fs-15 {
+  font-size: 15px;
+}
+
+.t-color {
+  color:#2A2E92;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.mt-35 {
+  margin-top: 35px;
+}
+
+.t1-container {
+  width: 235px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.image-rectangle-container {
+  top: 150px;
+  right: 285px;
+}
+
+.image-rectangle {
+  width: 285px;
+  height: 344px;
+}
+
+.p-absolute {
+  position: absolute;
+}
+
+.mr-45 {
+  margin-right: 45px;
+}
+
+.sign-container {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.social-media-container {
+  text-align: center;
+}
+
+.social-media-icons {
+  width: 16px;
+  height: 16px;
+  padding: 3px;
+}
+
+.ff-welcome-mail {
+  font-family: sans-serif;
+}
