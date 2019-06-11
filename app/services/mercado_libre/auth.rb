@@ -15,7 +15,8 @@ module MercadoLibre
       @meli_retailer.update_attributes(
         access_token: params['access_token'],
         meli_user_id: params['user_id'],
-        refresh_token: params['refresh_token']
+        refresh_token: params['refresh_token'],
+        meli_token_updated_at: DateTime.current
       )
     end
 
@@ -27,7 +28,8 @@ module MercadoLibre
       @meli_retailer.update_attributes(
         access_token: response['access_token'],
         meli_user_id: response['user_id'],
-        refresh_token: response['refresh_token']
+        refresh_token: response['refresh_token'],
+        meli_token_updated_at: DateTime.current
       )
     end
 

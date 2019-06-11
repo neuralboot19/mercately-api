@@ -31,7 +31,8 @@ module MercadoLibre
         seller_experience: seller_experience, seller_reputation_level_id: seller_reputation['level_id'],
         transactions_canceled: trans['canceled'], transactions_completed: trans['completed'],
         ratings_negative: trans['ratings']['negative'], ratings_neutral: trans['ratings']['neutral'],
-        ratings_positive: trans['ratings']['positive'], ratings_total: trans['total'], has_meli_info: true
+        ratings_positive: trans['ratings']['positive'], ratings_total: trans['total'], has_meli_info: true,
+        meli_info_updated_at: DateTime.current
       )
     end
 
