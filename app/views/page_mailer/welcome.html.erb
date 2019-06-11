@@ -5,6 +5,12 @@
       <%= image_tag 'mailer/logo.png', class: "image-logo" %>
     </div>
 
+    <div>
+      <div class="image-rectangle-inner-container">
+        <%= image_tag 'mailer/Rectangulo_1.png', class: "image-rectangle" %>
+      </div>
+    </div>
+
     <div class="ml-45 gretting-container fw-bold">
       <p class="greeting-color"> Hola <%= @user.retailer.name %> </p>
     </div>
@@ -34,10 +40,6 @@
         Una vez que se ha generado la compra en Mercado Libre,
         Mercately lo registra y actualiza el inventario en la plataforma.
       </p>
-    </div>
-
-    <div class="image-rectangle-container p-absolute">
-      <%= image_tag 'mailer/Rectangulo_1.png', class: "image-rectangle p-absolute" %>
     </div>
 
     <div class="ml-45 mt-35 mr-45">
