@@ -13,7 +13,7 @@ ActiveAdmin.register Retailer do
   filter :created_at
 
   show do
-    attributes_table title: "Detalles del Retailer" do
+    attributes_table title: 'Detalles del Retailer' do
       row :id
       row :name
       row :slug
