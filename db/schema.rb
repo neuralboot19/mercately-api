@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_18_174923) do
+ActiveRecord::Schema.define(version: 2019_06_11_184243) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,8 @@ ActiveRecord::Schema.define(version: 2019_05_18_174923) do
     t.bigint "customer_id"
     t.string "phone"
     t.boolean "has_meli_info", default: false
+    t.datetime "meli_token_updated_at"
+    t.datetime "meli_info_updated_at"
     t.index ["customer_id"], name: "index_meli_retailers_on_customer_id"
     t.index ["retailer_id"], name: "index_meli_retailers_on_retailer_id"
   end
