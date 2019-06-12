@@ -92,5 +92,5 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  config.action_mailer.asset_host = 'https://mercately-staging.herokuapp.com'
+  config.action_mailer.asset_host = ENV["ACTION_MAILER_ASSET_HOST"]
 end
