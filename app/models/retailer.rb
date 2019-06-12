@@ -23,7 +23,7 @@ class Retailer < ApplicationRecord
 
   def update_meli_access_token
     return if meli_retailer.meli_token_updated_at.present? &&
-                meli_retailer.meli_token_updated_at > DateTime.current - 4.hours
+              meli_retailer.meli_token_updated_at > DateTime.current - 4.hours
 
     MercadoLibre::Auth.new(self).refresh_access_token
   end
