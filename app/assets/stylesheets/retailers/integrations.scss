@@ -10,7 +10,8 @@
 }
 
 .in1-logo-container {
-  padding: 30px;
+  padding-top: 20px;
+  text-align: center;
 }
 
 .in1-button-container {
@@ -24,7 +25,7 @@
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 12px;
+  font-size: 2vmin;
   margin: 4px 2px;
   cursor: pointer;
 }
@@ -50,4 +51,10 @@
 .connected-text {
   margin: 10px 2px;
   color: green;
+  font-size: 2vmin;
+}
+
+.logo-integration-platform {
+  width: 350px;
+  height: 98px;
 }
