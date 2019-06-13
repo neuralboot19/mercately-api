@@ -18,7 +18,7 @@
         <!--<%= button_to('Más Información', '', class: 'general-button button-info') %>-->
         <% if @retailer.connected_to_ml? %>
           <p class="connected-text">Conectado con Mercado Libre</p>
-          <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(@retailer), class: 'general-button button-connect') %>
+          <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(@retailer), {method: :get, class: 'general-button button-connect'}) %>
         <% else %>
           <%= button_to('Conectar con Mercado Libre', ec_auth_url, class: 'general-button button-connect') %>
         <% end %>
