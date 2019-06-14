@@ -226,3 +226,23 @@ input:required, input:invalid {
     font-size: 12px;
   }
 }
+
+.error-title-container {
+  width: 215px;
+
+  .error-list {
+    padding-left: 20px;
+    font-size: 12px;
+  
+    li {
+      list-style-type: circle;
+    }
+  }
+}
+
+.login_error_message {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 12px;
+  width: 190px;
+}

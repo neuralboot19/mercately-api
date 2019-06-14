@@ -8,32 +8,38 @@
 
           <div class="group">
             <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
-              <%= retailer.text_field :name, autofocus: true, placeholder: '', value: "#{params[:name].presence || ''}" %>
+              <%= retailer.text_field :name, autofocus: true, placeholder: '', value: "#{params[:name].presence || 
+              (@new_retailer['retailer_attributes'].present? && @new_retailer['retailer_attributes']['name'].present? ?
+              @new_retailer['retailer_attributes']['name'] : '')}" %>
               <%= retailer.label :name, 'Nombre del comercio' %>
               <span class="bar"></span>
             <% end %>
           </div>
 
           <div class="group">
-            <%= f.text_field :email, autocomplete: "email", placeholder: '' %>
+            <%= f.text_field :email, autocomplete: "email", placeholder: '', value: "#{@new_retailer.present? &&
+            @new_retailer['email'].present? ? @new_retailer['email'] : ''}" %>
             <%= f.label :email, 'Correo' %>
             <span class="bar"></span>
           </div>
 
           <div class="group">
-            <%= f.password_field :password, autocomplete: "new-password", placeholder: '' %>
+            <%= f.password_field :password, autocomplete: "new-password", placeholder: '', value: "#{@new_retailer.present? &&
+            @new_retailer['password'].present? ? @new_retailer['password'] : ''}" %>
             <%= f.label :password, 'Contraseña' %>
             <span class="bar"></span>
           </div>
 
           <div class="group mb-16">
-            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '' %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '', value: "#{@new_retailer.present? &&
+            @new_retailer['password_confirmation'].present? ? @new_retailer['password_confirmation'] : ''}" %>
             <%= f.label :password_confirmation, 'Confirme contraseña' %>
             <span class="bar"></span>
           </div>
 
           <div class="group my-16">
-              <%= f.check_box :agree_terms, class: 'f-left' %>
+              <%= f.check_box :agree_terms, class: 'f-left', value: "#{@new_retailer.present? &&
+              @new_retailer['agree_terms'].present? ? @new_retailer['agree_terms'] : ''}" %>
               <%= f.label :agree_terms, 'Acepto los términos y condiciones', class: 'p-static' %>
           </div>
 
