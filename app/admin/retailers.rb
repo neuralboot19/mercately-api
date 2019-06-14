@@ -30,7 +30,7 @@ ActiveAdmin.register Retailer do
     end
 
     panel 'Información de Mercado Libre' do
-      meli_information = MeliRetailer.find_by(retailer_id: params['id'])
+      meli_information = MeliRetailer.find_by(retailer_id: retailer.id)
       attributes_table_for meli_information do
         row :id
         row :nickname
@@ -72,5 +72,9 @@ ActiveAdmin.register Retailer do
       f.input :phone_number
     end
     f.actions
+  end
+
+  controller do
+    defaults finder: :find_by_slug
   end
 end
