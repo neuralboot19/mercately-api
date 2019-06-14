@@ -26,7 +26,7 @@ module MercadoLibre
     end
 
     def import_product_description(product)
-      url = get_product_description(product['id'])
+      url = get_product_description_url(product['id'])
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       response.status == 200 ? JSON.parse(response.body) : ''
