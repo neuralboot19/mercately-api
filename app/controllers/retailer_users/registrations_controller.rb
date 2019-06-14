@@ -6,7 +6,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
 
   # GET /resource/sign_up
   def new
-    @new_retailer = Hash.new
+    @new_retailer = {}
     super
   end
 
