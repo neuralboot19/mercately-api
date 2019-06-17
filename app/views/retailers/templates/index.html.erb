@@ -1,0 +1,57 @@
+<div class="aligner-row head">
+  <h3>Plantillas</h3>
+  <div class="w-100 middle-right">
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row middle-xs mt-8 mb-8">
+    <div class="col-xs-6">
+      <p>Mostrando <%= @templates.count %> mensajes</p>
+    </div>
+  </div>
+  <div class="row">
+    <% if @templates.count == 0 %>
+      <div class="center-xs middle-xs">
+        <h1>No tienes :(</h1>
+      </div>
+    <% end %>
+    <% @templates.each do |template| %>
+      <div class="col-xs-12">
+        <div class="card">
+          <div class="box">
+            <div class="row">
+              <div class="col-xs-12 col-md-3">
+                <p class="product-text my-0">
+                  <%= template.title %><br/>
+                </p>
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <p class="product-text my-0 last-template">
+                  <%= template.answer %>
+                </p>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <div class="box h-100">
+                  <div class="row middle-xs h-100">
+                    <div class="col-xs-12 t-right">
+                      <%= link_to image_tag('dashboard/show-icon-index', class: 'w-20 mr-8'), retailers_template_path(current_retailer, template) %>
+                      <%= link_to image_tag('dashboard/edit-icon-index', class: 'w-20 mr-8'), edit_retailers_template_path(current_retailer, template) %>
+                      <%= link_to image_tag('dashboard/destroy-icon-index', class: 'w-20 mr-8'), retailers_template_path(current_retailer, template), method: :delete, data: { confirm: 'Are you sure?' } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="row middle-xs center-xs">
+    <div class="col-xs-12">
+      <%= paginate @templates %>
+    </div>
+  </div>
+</div>
