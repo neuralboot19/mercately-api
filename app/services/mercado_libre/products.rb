@@ -9,7 +9,6 @@ module MercadoLibre
       url = prepare_search_items_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      response = JSON.parse(response.body)
       products_to_import = response['results']
       import_product(products_to_import) if products_to_import
     end
@@ -19,17 +18,15 @@ module MercadoLibre
         url = get_product_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
-        product = JSON.parse(response.body)
-        description = import_product_description(product)
-        save_product(product, description)
+        description = import_product_description(response)
+        save_product(response, description)
       end
     end
 
     def import_product_description(product)
       url = get_product_description_url(product['id'])
       conn = Connection.prepare_connection(url)
-      response = Connection.get_request(conn)
-      response.status == 200 ? JSON.parse(response.body) : ''
+      Connection.get_request(conn)
     end
 
     def create(product)
