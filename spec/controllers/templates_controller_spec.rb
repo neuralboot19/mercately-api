@@ -23,7 +23,7 @@ require 'rails_helper'
 # removed from Rails core in Rails 5, but can be added back in via the
 # `rails-controller-testing` gem.
 
-RSpec.describe TemplatesController, type: :controller do
+RSpec.describe Retailers::TemplatesController, type: :controller, skip: true do
   # This should return the minimal set of attributes required to create a valid
   # Template. As you add validations to Template, be sure to
   # adjust the attributes here as well.
