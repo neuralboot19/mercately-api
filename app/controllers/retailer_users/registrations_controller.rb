@@ -7,12 +7,18 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
   # GET /resource/sign_up
   def new
     @new_retailer = {}
+    @new_retailer['name'] = params['name']
     super
   end
 
   # POST /resource
   def create
-    @new_retailer = params['retailer_user']
+    @new_retailer ||= {}
+    @new_retailer['name'] = params['retailer_user']['retailer_attributes']['name'] if params['retailer_user']['retailer_attributes'].present?
+    @new_retailer['email'] = params['retailer_user']['email'].presence
+    @new_retailer['password'] = params['retailer_user']['password'].presence
+    @new_retailer['password_confirmation'] = params['retailer_user']['password_confirmation'].presence
+    @new_retailer['agree_terms'] = params['retailer_user']['agree_terms'].presence
     super
   end
 
