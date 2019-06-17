@@ -1,0 +1,33 @@
+<div class="aligner-row head">
+  <h3>Ordenes</h3>
+  <div class="w-100 middle-right">
+    <%= link_to 'Editar', edit_retailers_template_path(current_retailer, @template) %>
+    <%= link_to 'Atrás', retailers_templates_path, class: 'ml-8' %>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="card mt-9">
+        <div class="box">
+          <div class="row">
+            <div class="col-xs-12">
+              <p class="m-0 product-text">
+                <b class="normal black-text"><%= @template.title %></b>
+                <hr class="my-12 separator">
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-3">
+              <p class="product-text">
+                <%= @template.answer %>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

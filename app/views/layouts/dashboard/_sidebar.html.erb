@@ -33,5 +33,19 @@
         Integraciones
       </div>
     <% end %>
+
+    <%= link_to retailers_messages_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_messages_path) %>">
+        <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
+        Mensajes
+      </div>
+    <% end %>
+
+    <%= link_to retailers_templates_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_templates_path) %>">
+        <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
+        Plantillas
+      </div>
+    <% end %>
   </div>
 </nav>

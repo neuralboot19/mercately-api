@@ -8,7 +8,7 @@ class Connection
   end
 
   def self.get_request(connection)
-    connection.get
+    JSON.parse(connection.get.body)
   end
 
   def self.post_request(connection, body)
