@@ -45,27 +45,27 @@ module MercadoLibre
 
     def save_product(product_info, description)
       product = Product.create_with(
-                  title: product_info['title'],
-                  subtitle: product_info['subtitle'],
-                  description: description['plain_text'],
-                  category_id: Category.find_by(meli_id: product_info['category_id']).id,
-                  price: product_info['price'],
-                  base_price: product_info['base_price'],
-                  original_price: product_info['original_price'],
-                  initial_quantity: product_info['initial_quantity'],
-                  available_quantity: product_info['available_quantity'],
-                  sold_quantity: product_info['sold_quantity'],
-                  meli_site_id: product_info['site_id'],
-                  meli_start_time: product_info['start_time'],
-                  meli_stop_time: product_info['stop_time'],
-                  meli_end_time: product_info['end_time'],
-                  buying_mode: product_info['buying_mode'],
-                  meli_listing_type_id: product_info['listing_type_id'],
-                  meli_expiration_time: product_info['expiration_time'],
-                  condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
-                  meli_permalink: product_info['permalink'],
-                  retailer: @retailer
-                ).find_or_create_by!(meli_product_id: product_info['id'])
+        title: product_info['title'],
+        subtitle: product_info['subtitle'],
+        description: description['plain_text'],
+        category_id: Category.find_by(meli_id: product_info['category_id']).id,
+        price: product_info['price'],
+        base_price: product_info['base_price'],
+        original_price: product_info['original_price'],
+        initial_quantity: product_info['initial_quantity'],
+        available_quantity: product_info['available_quantity'],
+        sold_quantity: product_info['sold_quantity'],
+        meli_site_id: product_info['site_id'],
+        meli_start_time: product_info['start_time'],
+        meli_stop_time: product_info['stop_time'],
+        meli_end_time: product_info['end_time'],
+        buying_mode: product_info['buying_mode'],
+        meli_listing_type_id: product_info['listing_type_id'],
+        meli_expiration_time: product_info['expiration_time'],
+        condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
+        meli_permalink: product_info['permalink'],
+        retailer: @retailer
+      ).find_or_create_by!(meli_product_id: product_info['id'])
 
       if product
         images = product_info['pictures']
