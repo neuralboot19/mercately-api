@@ -70,8 +70,7 @@ module MercadoLibre
       if product
         images = product_info['pictures']
         images.each do |img|
-          uri = URI.parse(img['url'])
-          product.images.attach(io: uri.open, filename: img['id'])
+          product.images.attach(io: open(img['url']), filename: img['id'])
         end
       end
 
