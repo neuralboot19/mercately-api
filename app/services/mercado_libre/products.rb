@@ -67,6 +67,7 @@ module MercadoLibre
         meli_expiration_time: product_info['expiration_time'],
         condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
+        images: prepare_images_url(product_info['pictures']),
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
     end
@@ -194,6 +195,12 @@ module MercadoLibre
         {
           'plain_text': product.description
         }.to_json
+      end
+
+      def prepare_images_url(pictures)
+        return [] unless pictures.present?
+
+        pictures.map {|p| p['url'] }        
       end
   end
 end
