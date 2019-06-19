@@ -25,7 +25,7 @@
           <div class="row">
             <div class="col-xs-12 col-md-7">
               <div id="show-image" class="p-relative">
-                <%= image_tag url_for @product.images.first %>
+                <%= cl_image_tag("#{@product.images.first.key}") %>
 
                 <div id="product-price" class="circle big-circle bg-pink p-absolute">
                   <%= @product.price %>$
@@ -39,7 +39,7 @@
                 <% if @product.images.attached? %>
                   <% @product.images.each do |img| %>
                     <div class="card m-8">
-                      <%= image_tag url_for img %>
+                      <%= cl_image_tag("#{img.key}") %>
                     </div>
                   <% end %>
                 <% end %>
