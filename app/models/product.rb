@@ -35,12 +35,12 @@ class Product < ApplicationRecord
 
     tempfile = MiniMagick::Image.open(url)
     tempfile.resize '500x500'
-    tempfile.write('./public/upload.jpg')
+    tempfile.write('./public/upload-' + filename + '.jpg')
 
     return unless File.exist?(tempfile.path)
 
     images.attach(io: File.open(tempfile.path), filename: filename)
-    File.delete('./public/upload.jpg')
+    File.delete('./public/upload-' + filename + '.jpg')
   end
 
   private
