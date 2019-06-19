@@ -24,6 +24,17 @@ class Product < ApplicationRecord
     save
   end
 
+  def attach_image(url, filename)
+    tempfile = open(url)
+    md5_digest = Digest::MD5.file(tempfile).base64digest
+
+    return if ActiveStorage::Blob.joins(:attachments)
+                                 .where({ checksum: md5_digest, active_storage_attachments: {name: 'images',
+                                   record_type: 'Product', record_id: id }}).exists?
+
+    images.attach(io: tempfile, filename: filename)
+  end
+
   private
 
     def update_ml_info
