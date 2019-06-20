@@ -24,6 +24,18 @@ class Product < ApplicationRecord
     save
   end
 
+  def attach_image(url, filename)
+    return if ActiveStorage::Blob.joins(:attachments)
+      .where(filename: filename, active_storage_attachments:
+      {
+        name: 'images',
+        record_type: 'Product',
+        record_id: id
+      }).exists?
+
+    images.attach(io: open(url), filename: filename)
+  end
+
   private
 
     def update_ml_info

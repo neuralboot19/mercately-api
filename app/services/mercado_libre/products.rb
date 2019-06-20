@@ -44,7 +44,7 @@ module MercadoLibre
     end
 
     def save_product(product_info, description)
-      Product.create_with(
+      product = Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
         description: description['plain_text'],
@@ -66,6 +66,15 @@ module MercadoLibre
         meli_permalink: product_info['permalink'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
+
+      if product
+        images = product_info['pictures']
+        images.each do |img|
+          product.attach_image(img['url'], img['id'])
+        end
+      end
+
+      product
     end
 
     def update(product_info)

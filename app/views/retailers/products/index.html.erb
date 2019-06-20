@@ -23,7 +23,7 @@
           </div>
           <div class="card-header mt-18">
             <% if product.images.attached? %>
-              <%= image_tag url_for product.images.first %>
+              <%= cl_image_tag("#{product.images.first.key}") %>
             <% else %>
                 <img src="http://http2.mlstatic.com/resources/frontend/statics/img-not-available/1.1.0/O.gif" alt="Sin imagen">
             <% end %>
