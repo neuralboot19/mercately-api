@@ -178,7 +178,7 @@ module MercadoLibre
       def prepare_images(product)
         array = []
         product.images.each do |img|
-          link = ENV['HOST_URL'] + Rails.application.routes.url_helpers.rails_blob_path(img, only_path: true)
+          link = 'http://res.cloudinary.com/' + ENV['CLOUDINARY_CLOUD_NAME'] + '/image/upload/' + img.key
           array << { "source": link.to_s }
         end
         array

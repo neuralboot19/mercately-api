@@ -21,6 +21,7 @@ class Retailers::ProductsController < RetailersController
 
   # POST /products
   def create
+    params[:product][:images] = process_images(params[:product][:images])
     @product = Product.new(product_params)
     @product.retailer_id = @retailer.id
     if @product.save
@@ -52,9 +53,23 @@ class Retailers::ProductsController < RetailersController
       @product = Product.find(params[:id])
     end
 
+    def process_images(images)
+      return [] unless images.present?
+
+      output_images = []
+      images.each do |img|
+        tempfile = MiniMagick::Image.open(File.open(img.tempfile))
+        tempfile.resize '300x300'
+        output_images << tempfile
+      end
+
+      output_images
+    end
+
     # Only allow a trusted parameter "white list" through.
     def product_params
       params.require(:product).permit(:title,
+                                      :subtitle,
                                       :category_id,
                                       :price,
                                       :available_quantity,
