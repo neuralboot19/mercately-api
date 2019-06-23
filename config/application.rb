@@ -31,8 +31,6 @@ module Mercately
 
     config.i18n.default_locale = :es
 
-    config.action_view.field_error_proc = Proc.new { |html_tag, instance| 
-      html_tag
-    }
+    config.action_view.field_error_proc = proc { |html_tag, instance| html_tag }
   end
 end

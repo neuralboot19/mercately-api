@@ -228,12 +228,12 @@ input:required, input:invalid {
 }
 
 .error-title-container {
-  width: 215px;
+  width: 100%;
 
   .error-list {
     padding-left: 20px;
     font-size: 12px;
-  
+
     li {
       list-style-type: circle;
     }

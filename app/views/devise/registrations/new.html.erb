@@ -8,34 +8,33 @@
 
           <div class="group">
             <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
-              <%= retailer.text_field :name, autofocus: true, placeholder: '', value: "#{@new_retailer['name'] || ''}" %>
+              <%= retailer.text_field :name, autofocus: true, placeholder: '' %>
               <%= retailer.label :name, 'Nombre del comercio' %>
               <span class="bar"></span>
             <% end %>
           </div>
 
           <div class="group">
-            <%= f.text_field :email, autocomplete: "email", placeholder: '', value: "#{@new_retailer['email'] || ''}" %>
+            <%= f.text_field :email, autocomplete: "email", placeholder: '' %>
             <%= f.label :email, 'Correo' %>
             <span class="bar"></span>
           </div>
 
           <div class="group">
-            <%= f.password_field :password, autocomplete: "new-password", placeholder: '', value: "#{@new_retailer['password'] || ''}" %>
+            <%= f.password_field :password, autocomplete: "new-password", placeholder: '' %>
             <%= f.label :password, 'Contraseña' %>
             <span class="bar"></span>
           </div>
 
           <div class="group mb-16">
-            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '',
-            value: "#{@new_retailer['password_confirmation'] || ''}" %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '' %>
             <%= f.label :password_confirmation, 'Confirme contraseña' %>
             <span class="bar"></span>
           </div>
 
           <div class="group my-16">
-              <%= f.check_box :agree_terms, class: 'f-left', value: "#{@new_retailer['agree_terms'] || ''}" %>
-              <%= f.label :agree_terms, 'Acepto los términos y condiciones', class: 'p-static' %>
+            <%= f.check_box :agree_terms, class: 'f-left w-auto', style: 'width: auto;' %>
+            <%= f.label :agree_terms, 'Acepto los términos y condiciones', class: 'p-static' %>
           </div>
 
           <div class="btn-box">
