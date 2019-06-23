@@ -91,7 +91,7 @@
             <%= hidden_field_tag :answer, template.answer %>
             <h3 class="template__title"><%= template.title %></h3>
             <p class="template__body"><%= template.answer.truncate(140) %></p>
-            <%= submit_tag 'Enviar', class: 'w-100 message-send', style: 'height: 100px;' %>
+            <%= submit_tag 'Enviar', class: 'w-100 message-send' %>
             <hr/>
           <% end %>
         <% end %>
