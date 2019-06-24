@@ -1,18 +1,8 @@
 # frozen_string_literal: true
 
 class RetailerUsers::RegistrationsController < Devise::RegistrationsController
-  before_action :configure_sign_up_params, only: [:create]
-  # before_action :configure_account_update_params, only: [:update]
-
-  # GET /resource/sign_up
-  # def new
-  #   super
-  # end
-
-  # POST /resource
-  def create
-    super
-  end
+  before_action :configure_sign_up_params, only: :create
+  before_action :set_locale
 
   protected
 
@@ -25,5 +15,9 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
                                           :agree_terms,
                                           retailer_attributes: :name
                                         ])
+    end
+
+    def set_locale
+      I18n.locale = :es
     end
 end
