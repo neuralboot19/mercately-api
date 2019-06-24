@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   root 'pages#index'
 
-  devise_for :retailer_users, controllers: { registrations: 'retailer_users/registrations' }
+  devise_for :retailer_users, controllers: { registrations: 'retailer_users/registrations',
+    sessions: 'retailer_users/sessions' }
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
