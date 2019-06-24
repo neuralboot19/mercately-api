@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_11_184243) do
+ActiveRecord::Schema.define(version: 2019_06_16_184007) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -181,6 +181,18 @@ ActiveRecord::Schema.define(version: 2019_06_11_184243) do
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.bigint "product_id"
+    t.string "answer"
+    t.string "question"
+    t.string "meli_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "customer_id"
+    t.index ["customer_id"], name: "index_questions_on_customer_id"
+    t.index ["product_id"], name: "index_questions_on_product_id"
+  end
+
   create_table "retailer_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -212,7 +224,17 @@ ActiveRecord::Schema.define(version: 2019_06_11_184243) do
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 
+  create_table "templates", force: :cascade do |t|
+    t.string "title"
+    t.text "answer"
+    t.bigint "retailer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_templates_on_retailer_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "meli_customers", "customers"
   add_foreign_key "meli_retailers", "retailers"
+  add_foreign_key "questions", "products"
 end

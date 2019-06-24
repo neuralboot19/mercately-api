@@ -3,7 +3,7 @@
     <div class="col-xs-12">
       <div class="center">
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-          <%= flash[:alert] %>
+          <p class="login_error_message"><%= flash[:alert] %></p>
           <%= render "devise/shared/error_messages", resource: resource %>
           <h2 class="sign mt-100">Iniciar sesión</h2>
           <div class="group">
