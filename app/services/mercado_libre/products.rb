@@ -3,10 +3,12 @@ module MercadoLibre
     def initialize(retailer)
       @retailer = retailer
       @meli_retailer = @retailer.meli_retailer
+      @api = MercadoLibre::Api.new(@meli_retailer)
+      @utility = MercadoLibre::ProductsUtility.new
     end
 
     def search_items
-      url = prepare_search_items_url
+      url = @api.prepare_search_items_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       products_to_import = response['results']
@@ -15,7 +17,7 @@ module MercadoLibre
 
     def import_product(products)
       products.map do |product|
-        url = get_product_url(product)
+        url = @api.get_product_url(product)
         conn = Connection.prepare_connection(url)
         response = Connection.get_request(conn)
         description = import_product_description(response)
@@ -24,15 +26,16 @@ module MercadoLibre
     end
 
     def import_product_description(product)
-      url = get_product_description_url(product['id'])
+      url = @api.get_product_description_url(product['id'])
       conn = Connection.prepare_connection(url)
       Connection.get_request(conn)
     end
 
     def create(product)
-      url = prepare_products_creation_url
+      load_pictures_to_ml(product)
+      url = @api.prepare_products_creation_url
       conn = Connection.prepare_connection(url)
-      response = Connection.post_request(conn, prepare_product(product))
+      response = Connection.post_request(conn, @utility.prepare_product(product.reload))
       if response.status == 201
         body = JSON.parse(response.body)
         product.update_ml(body)
@@ -44,6 +47,8 @@ module MercadoLibre
     end
 
     def save_product(product_info, description)
+      product_exist = Product.find_by(meli_product_id: product_info['id']).present?
+
       product = Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
@@ -67,11 +72,11 @@ module MercadoLibre
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
-      if product
-        images = product_info['pictures']
-        images.each do |img|
-          product.attach_image(img['url'], img['id'])
-        end
+      return product if product_exist
+
+      images = product_info['pictures']
+      images.each do |img|
+        product.attach_image(img['url'], img['id'])
       end
 
       product
@@ -104,102 +109,97 @@ module MercadoLibre
       product.meli_permalink = product_info['permalink']
       product.retailer = @retailer
       product.save!
+
+      pull_images(product, product_info['pictures'])
+
+      product
     end
 
     def pull_update(product_id)
-      url = get_product_url product_id
+      url = @api.get_product_url product_id
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      response = JSON.parse response.body
-      url = get_product_description_url(product_id)
+      url = @api.get_product_description_url(product_id)
       conn = Connection.prepare_connection(url)
-      response = response.merge(JSON.parse(Connection.get_request(conn).body))
+      response = response.merge(Connection.get_request(conn))
       update(response) if response
     end
 
     def push_update(product)
-      url = get_product_url product.meli_product_id
+      url = @api.get_product_url product.meli_product_id
       conn = Connection.prepare_connection(url)
-      Connection.put_request(conn, prepare_product_update(product))
+      response = Connection.put_request(conn, @utility.prepare_product_update(product))
       push_description_update(product)
+      if response.status == 200
+        load_pictures_to_ml(product)
+      else
+        puts response.body
+      end
     end
 
     def push_description_update(product)
-      url = get_product_description_url product.meli_product_id
+      url = @api.get_product_description_url product.meli_product_id
       conn = Connection.prepare_connection(url)
-      Connection.put_request(conn, prepare_product_description_update(product))
+      Connection.put_request(conn, @utility.prepare_product_description_update(product))
     end
 
     private
 
-      def prepare_search_items_url
-        params = {
-          access_token: @meli_retailer.access_token
-        }
-        "https://api.mercadolibre.com/users/#{@meli_retailer.meli_user_id}/items/search?#{params.to_query}"
-      end
+      def load_pictures_to_ml(product)
+        return if product.images.blank?
 
-      def get_product_url(product)
-        params = {
-          access_token: @meli_retailer.access_token
-        }
-        "https://api.mercadolibre.com/items/#{product}/?#{params.to_query}"
-      end
-
-      def get_product_description_url(product)
-        params = {
-          access_token: @meli_retailer.access_token
-        }
-        "https://api.mercadolibre.com/items/#{product}/description?#{params.to_query}"
-      end
-
-      def prepare_products_creation_url
-        params = {
-          access_token: @meli_retailer.access_token
-        }
-        "https://api.mercadolibre.com/items?#{params.to_query}"
-      end
-
-      def prepare_product(product)
-        {
-          'title': product.title,
-          'category_id': product.category.meli_id,
-          'price': product.price.to_f,
-          'available_quantity': product.available_quantity || 0,
-          'buying_mode': product.buying_mode,
-          'currency_id': 'USD',
-          'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
-          'condition': product.condition ? product.condition.downcase : 'not_specified',
-          'description': { "plain_text": product.description || '' },
-          'pictures': prepare_images(product)
-        }.to_json
-      end
-
-      def prepare_images(product)
-        array = []
+        url = @api.prepare_load_pictures_url
+        url_pic_product = @api.prepare_link_pictures_to_product_url(product)
         product.images.each do |img|
-          link = ENV['HOST_URL'] + Rails.application.routes.url_helpers.rails_blob_path(img, only_path: true)
-          array << { "source": link.to_s }
+          next unless img.filename.to_s.include?('.')
+
+          file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
+
+          tempfile = { source: file.to_s }.to_json
+          conn = Connection.prepare_connection(url)
+          response = Connection.post_request(conn, tempfile)
+
+          if product.meli_product_id.blank?
+            body = JSON.parse(response.body)
+            ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id'])
+            next
+          end
+
+          if response.status == 201
+            body = JSON.parse(response.body)
+
+            params = { id: body['id'] }.to_json
+            conn = Connection.prepare_connection(url_pic_product)
+            response = Connection.post_request(conn, params)
+
+            ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id']) if response.status == 200
+          else
+            puts response.body
+          end
         end
-        array
       end
 
-      def prepare_product_update(product)
-        {
-          'title': product.title,
-          'price': product.price.to_f,
-          'available_quantity': product.available_quantity || 0,
-          # 'listing_type_id': 'free',
-          'pictures': [
-            { "source": 'http://mla-s2-p.mlstatic.com/968521-MLA20805195516_072016-O.jpg' } # PENDIENTE IMAGENES
-          ]
-        }.to_json
-      end
+      def pull_images(product, pictures)
+        if product.images.blank?
+          pictures.each do |pic|
+            product.attach_image(pic['url'], pic['id'])
+          end
+        else
+          current_images = product.images.map { |im| im.filename.to_s }
+          pictures.each do |pic|
+            if current_images.include?(pic['id'])
+              current_images -= [pic['id']]
+              next
+            end
 
-      def prepare_product_description_update(product)
-        {
-          'plain_text': product.description
-        }.to_json
+            product.attach_image(pic['url'], pic['id'])
+          end
+
+          if current_images.present?
+            deleted_ids = ActiveStorage::Blob.where(filename: current_images).pluck(:id)
+            product.images.where(blob_id: deleted_ids).purge
+          end
+        end
       end
   end
 end
