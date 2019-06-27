@@ -12,12 +12,17 @@ module MercadoLibre
     end
 
     def save_access_token(params)
-      @meli_retailer.update_attributes(
-        access_token: params['access_token'],
-        meli_user_id: params['user_id'],
-        refresh_token: params['refresh_token'],
-        meli_token_updated_at: DateTime.current
-      )
+      if params['access_token'].present? && params['user_id'].present? &&
+         params['refresh_token'].present?
+        @meli_retailer.update_attributes(
+          access_token: params['access_token'],
+          meli_user_id: params['user_id'],
+          refresh_token: params['refresh_token'],
+          meli_token_updated_at: DateTime.current
+        )
+      end
+
+      @meli_retailer
     end
 
     def refresh_access_token
@@ -25,12 +30,17 @@ module MercadoLibre
       conn = Connection.prepare_connection(url)
       response = conn.post
       response = JSON.parse(response.body)
-      @meli_retailer.update_attributes(
-        access_token: response['access_token'],
-        meli_user_id: response['user_id'],
-        refresh_token: response['refresh_token'],
-        meli_token_updated_at: DateTime.current
-      )
+      if response['access_token'].present? && response['user_id'].present? &&
+         response['refresh_token'].present?
+        @meli_retailer.update_attributes(
+          access_token: response['access_token'],
+          meli_user_id: response['user_id'],
+          refresh_token: response['refresh_token'],
+          meli_token_updated_at: DateTime.current
+        )
+      end
+
+      @meli_retailer
     end
 
     private

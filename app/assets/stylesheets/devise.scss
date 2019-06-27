@@ -37,6 +37,10 @@ textarea {
   &:focus ~ .bar:before {
     width: $width;
   }
+
+  &.input-standarization {
+    width: 359px;
+  }
 }
 
 .group input[type="password"] {

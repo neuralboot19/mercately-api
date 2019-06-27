@@ -1,5 +1,6 @@
 class Retailers::ProductsController < RetailersController
   before_action :set_product, only: [:show, :edit, :update, :destroy]
+  before_action :set_categories, only: [:show, :edit, :update, :new]
 
   # GET /products
   def index
@@ -33,6 +34,7 @@ class Retailers::ProductsController < RetailersController
 
   # PATCH/PUT /products/1
   def update
+    params[:product][:images] = process_images(params[:product][:images])
     if @product.update(product_params)
       redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully updated.'
     else
@@ -59,11 +61,16 @@ class Retailers::ProductsController < RetailersController
       output_images = []
       images.each do |img|
         tempfile = MiniMagick::Image.open(File.open(img.tempfile))
-        tempfile.resize '300x300'
-        output_images << tempfile
+        tempfile.resize '500x500'
+        img.tempfile = tempfile.tempfile
+        output_images << img
       end
 
       output_images
+    end
+
+    def set_categories
+      @categories = Category.all.pluck(:name, :id)
     end
 
     # Only allow a trusted parameter "white list" through.
