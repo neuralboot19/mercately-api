@@ -2,6 +2,7 @@ class Product < ApplicationRecord
   belongs_to :retailer
   belongs_to :category
   has_many :order_items, dependent: :destroy
+  has_many :questions, dependent: :destroy
   has_many_attached :images
 
   validate :images_count

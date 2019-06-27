@@ -30,5 +30,7 @@ module Mercately
     # the framework and any gems in your application.
 
     config.action_view.field_error_proc = proc { |html_tag, instance| html_tag }
+
+    config.active_job.queue_adapter = :sidekiq
   end
 end
