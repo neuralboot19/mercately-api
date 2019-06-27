@@ -1,5 +1,5 @@
 module MercadoLibre
-  class Utility
+  class ProductsUtility
     def prepare_product(product)
       {
         'title': product.title,

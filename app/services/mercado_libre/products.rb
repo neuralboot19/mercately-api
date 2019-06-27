@@ -4,7 +4,7 @@ module MercadoLibre
       @retailer = retailer
       @meli_retailer = @retailer.meli_retailer
       @api = MercadoLibre::Api.new(@meli_retailer)
-      @utility = MercadoLibre::Utility.new
+      @utility = MercadoLibre::ProductsUtility.new
     end
 
     def search_items
