@@ -39,7 +39,7 @@
                     <div class="col-xs-6">
                       <p class="product-text my-0">
                         <b class="normal black-text mr-16">Monto</b> <%= order.total %>$<br/>
-                        <b class="normal black-text">Modo de pago</b> Tarjeta<%# order.email %><br/>
+                        <b class="normal black-text">Modo de pago</b> Acordar con el comprador<%# order.email %><br/>
                       </p>
                     </div>
                   </div>
@@ -55,8 +55,8 @@
                     </div>
                     <div class="col-xs-6 col-md-5">
                       <p class="product-text t-right my-0">
-                        <b class="normal black-text">Ordenado el</b>   11-Feb <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.name %><br/>
-                        <b class="normal black-text">Pagado el</b>   11-Feb <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.email %>
+                        <b class="normal black-text">Ordenado el</b>   <%= order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.name %><br/>
+                        <b class="normal black-text">Pagado el</b>   <%= order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.email %>
                       </p>
                     </div>
                     <div class="col-xs-12 col-md-3">

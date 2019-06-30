@@ -18,6 +18,8 @@ module MercadoLibre
       order_info['status'] = 'invalid_order' if order_info['status'] == 'invalid'
       order = Order.create_with(
         customer: customer,
+        total_amount: order_info['total_amount'],
+        currency_id: order_info['currency_id'],
         status: order_info['status']
       ).find_or_create_by!(meli_order_id: order_info['id'])
 
