@@ -60,3 +60,5 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'premailer-rails'
 
 gem 'mini_magick'
+
+gem 'sidekiq'

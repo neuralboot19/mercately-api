@@ -2,7 +2,6 @@ class Retailers::IntegrationsController < RetailersController
   skip_before_action :authenticate_retailer_user!, only: :callbacks
   skip_before_action :verify_authenticity_token, only: :callbacks
   before_action :set_ml, only: [:connect_to_ml]
-  before_action :set_ml_products, only: [:mercadolibre_import]
 
   def index
   end
@@ -18,7 +17,7 @@ class Retailers::IntegrationsController < RetailersController
   end
 
   def mercadolibre_import
-    @ml_products.search_items
+    Products::ImportProductsJob.perform_later(@retailer.id)
     redirect_to retailers_integrations_path(@retailer.slug), notice: 'Productos han comenzado a importarse'
   end
 
@@ -55,9 +54,5 @@ class Retailers::IntegrationsController < RetailersController
 
     def set_ml
       @ml = MercadoLibre::Auth.new(@retailer)
-    end
-
-    def set_ml_products
-      @ml_products = MercadoLibre::Products.new(@retailer)
     end
 end
