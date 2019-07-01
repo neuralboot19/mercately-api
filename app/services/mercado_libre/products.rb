@@ -74,6 +74,8 @@ module MercadoLibre
 
       return product if product_exist
 
+      save_variations(product, product_info['variations']) if product_info['variations'].present?
+
       images = product_info['pictures']
       images.each do |img|
         product.attach_image(img['url'], img['id'])
@@ -109,6 +111,8 @@ module MercadoLibre
       product.meli_permalink = product_info['permalink']
       product.retailer = @retailer
       product.save!
+
+      save_variations(product, product_info['variations']) if product_info['variations'].present?
 
       pull_images(product, product_info['pictures'])
 
@@ -199,6 +203,15 @@ module MercadoLibre
             deleted_ids = ActiveStorage::Blob.where(filename: current_images).pluck(:id)
             product.images.where(blob_id: deleted_ids).purge
           end
+        end
+      end
+
+      def save_variations(product, variations)
+        variations.each do |var|
+          product_variation = product.product_variations
+            .find_or_initialize_by(variation_meli_id: var['id'])
+          product_variation.data = var
+          product_variation.save!
         end
       end
   end

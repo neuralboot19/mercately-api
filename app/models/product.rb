@@ -4,6 +4,7 @@ class Product < ApplicationRecord
   has_many :order_items, dependent: :destroy
   has_many :questions, dependent: :destroy
   has_many_attached :images
+  has_many :product_variations, dependent: :destroy
 
   validate :images_count
 

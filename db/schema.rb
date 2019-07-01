@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_16_184007) do
+ActiveRecord::Schema.define(version: 2019_07_01_155601) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(version: 2019_06_16_184007) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "ancestry"
+    t.jsonb "template", default: []
     t.index ["ancestry"], name: "index_categories_on_ancestry"
   end
 
@@ -151,6 +152,15 @@ ActiveRecord::Schema.define(version: 2019_06_16_184007) do
     t.datetime "updated_at", null: false
     t.string "meli_order_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
+  end
+
+  create_table "product_variations", force: :cascade do |t|
+    t.bigint "product_id"
+    t.bigint "variation_meli_id"
+    t.jsonb "data", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_product_variations_on_product_id"
   end
 
   create_table "products", force: :cascade do |t|

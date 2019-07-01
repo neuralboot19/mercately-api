@@ -39,6 +39,7 @@ function appendSelect(currentElement) {
     var json = JSON.parse(data);
     var child_categories = json['child_categories'];
     if(child_categories.length <= 0) {
+      template = json['template'];
       root.removeChild(select);
     } else {
       for(var child_position in child_categories) {
