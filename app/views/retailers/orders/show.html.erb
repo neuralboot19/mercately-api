@@ -48,8 +48,8 @@
             <div class="col-xs-12 col-md-3">
               <p class="product-text">
                 <b class="normal black-text mr-16"></b><br/>
-                <b class="normal black-text">Ordenado el</b>   <%= order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.name %><br/>
-                <b class="normal black-text">Pagado el</b>   <%= order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.email %>
+                <b class="normal black-text">Ordenado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.name %><br/>
+                <b class="normal black-text">Pagado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.email %>
               </p>
             </div>
             <div class="col-xs-12">Lista de productos</div>
@@ -61,7 +61,7 @@
               <div class="col-xs-3">Precio</div>
               <div class="col-xs-3">Total</div>
             </div>
-            <% order.order_items.each do |oi| %>
+            <% @order.order_items.each do |oi| %>
               <hr class="separator">
               <div class="row center-xs">
                 <div class="col-xs-3"><%= oi.product.title %></div>
