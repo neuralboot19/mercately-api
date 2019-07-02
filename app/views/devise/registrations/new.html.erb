@@ -8,7 +8,7 @@
 
           <div class="group">
             <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
-              <%= retailer.text_field :name, autofocus: true, placeholder: '', class: 'input-standarization' %>
+              <%= retailer.text_field :name, value: @retailer_name, autofocus: true, placeholder: '', class: 'input-standarization' %>
               <%= retailer.label :name, 'Nombre del comercio' %>
               <span class="bar"></span>
             <% end %>

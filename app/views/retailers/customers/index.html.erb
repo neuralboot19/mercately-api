@@ -20,18 +20,23 @@
             <div class="row">
               <div class="col-xs-12 col-md-2">
                 <p class="product-text my-0">
-                  <b class="normal black-text">Email:</b> <%= customer.email %><br/>
-                  <b class="normal black-text">Nombre:</b> <%= customer.first_name %><br/>
-                  <b class="normal black-text">Apellido:</b> <%= customer.last_name %><br/>
-                  <b class="normal black-text">Número:</b> <%= customer.phone %>
+                  <% if customer.meli_customer.email %>
+                    <b class="normal black-text">Usuario:</b> <%= customer.meli_customer.nickname %><br/>
+                    <b class="normal black-text">Email:</b> <%= customer.email %><br/>
+                    <b class="normal black-text">Nombre:</b> <%= customer.first_name %><br/>
+                    <b class="normal black-text">Apellido:</b> <%= customer.last_name %><br/>
+                    <b class="normal black-text">Número:</b> <%= customer.phone %>
+                  <% else %>
+                    <b class="normal black-text">Usuario:</b> <%= customer.meli_customer.nickname %><br/>
+                  <% end %>
                 </p>
               </div>
               <div class="col-xs-12 col-md-1"><p class="normal black-text t-center mb-0 mt-3">Ordenes</p></div>
               <div class="col-xs-12 col-md-3">
                 <p class="product-text my-0">
-                  Completas: 23<br/>
-                  En proceso: 23<br/>
-                  Canceladas: 23
+                  Completas: <%= customer.orders.paid.count %><br/>
+                  En proceso: <%= customer.orders.confirmed.count %><br/>
+                  Canceladas: <%= customer.orders.cancelled.count %>
                 </p>
               </div>
               <div class="col-xs-12 col-md-3">
