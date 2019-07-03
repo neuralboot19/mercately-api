@@ -8,8 +8,6 @@ ActiveAdmin.register Order do
         column :product
         column :quantity
         column :created_at
-        column :points
-        column :link
         column :updated_at
       end
     end
