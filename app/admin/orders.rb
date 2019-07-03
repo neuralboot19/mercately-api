@@ -8,6 +8,7 @@ ActiveAdmin.register Order do
         column :product
         column :quantity
         column :created_at
+        column :unit_price
         column :updated_at
       end
     end
