@@ -22,6 +22,10 @@ jobs:
           name: Bundle upgrade
           command: gem update bundler
 
+      - run:
+          name: Copy database.yml.example to database.yml
+          command: cp config/database.yml.example config/database.yml
+
       # Which version of bundler?
       - run:
           name: Which bundler?

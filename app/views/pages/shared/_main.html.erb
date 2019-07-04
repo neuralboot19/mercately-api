@@ -1,0 +1,99 @@
+<section id="main">
+  <div id="slogan" class="container-fluid mb-80">
+    <div class="row reverse">
+      <div class="col-xs-12 col-md-6">
+        <div class="hide-on-med-and-up py-100"></div>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <h1 class="h1" id="slogan_title">Aumenta tus ventas en<br/>
+        MercadoLibre</h1>
+        <h4 class="h4" id="slogan_desc">
+          Automatiza tu negocio con nuestras herramientas de<br/>
+          gestión y análisis para incrementar tus ganancias y<br/>
+          optimizar tu negocio
+        </h4>
+        <div>
+          <%= form_tag new_retailer_user_registration_path, method: :get do %>
+            <%= text_field_tag :name, "", {placeholder: "Nombre de tu tienda", class: "btn" }%>
+            <br class="hide-on-med-and-up"/>
+            <br class="hide-on-med-and-up"/>
+            <%= submit_tag "Empezar", class: "btn a cta" %>
+            <br class="hide-on-med-and-up"/>
+            <br class="hide-on-med-and-up"/>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= image_tag 'image3.png', id: 'semi-circle', class: 'hide-on-med-and-down' %>
+  <div id="boxes" class="container mb-100">
+    <div class="row center-xs boxes">
+      <div class="col-xs-6 col-md-4">
+        <div class="card">
+          <%= image_tag 'mercately-mercadolibre.png', class: 'card-img' %>
+          <h4 class="h4">Lorem ipsum</h4>
+          <article class="article">Vivamus in diam turpis.
+          In condimentum 
+          maximus tristique. 
+          Maecenas non laoreet 
+          odio diam turpis exide</article>
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <div class="card">
+          <%= image_tag 'mercately-stock.png', class: 'card-img' %>
+          <h4 class="h4">Lorem ipsum</h4>
+          <article class="article">Vivamus in diam turpis.
+          In condimentum 
+          maximus tristique. 
+          Maecenas non laoreet 
+          odio diam turpis exide</article>
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <div class="card">
+          <%= image_tag 'mercately-inventario.png', class: 'card-img' %>
+          <h4 class="h4">Lorem ipsum</h4>
+          <article class="article">Vivamus in diam turpis.
+          In condimentum 
+          maximus tristique. 
+          Maecenas non laoreet 
+          odio diam turpis exide</article>
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <div class="card">
+          <%= image_tag 'mercately-ecuador.png', class: 'card-img' %>
+          <h4 class="h4">Lorem ipsum</h4>
+          <article class="article">Vivamus in diam turpis.
+          In condimentum 
+          maximus tristique. 
+          Maecenas non laoreet 
+          odio diam turpis exide</article>
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <div class="card">
+          <%= image_tag 'mercately-facturacion.png', class: 'card-img' %>
+          <h4 class="h4">Lorem ipsum</h4>
+          <article class="article">Vivamus in diam turpis.
+          In condimentum 
+          maximus tristique. 
+          Maecenas non laoreet 
+          odio diam turpis exide</article>
+        </div>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <div class="card">
+          <%= image_tag 'mercately-order.png', class: 'card-img' %>
+          <h4 class="h4">Lorem ipsum</h4>
+          <article class="article">Vivamus in diam turpis.
+          In condimentum 
+          maximus tristique. 
+          Maecenas non laoreet 
+          odio diam turpis exide</article>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

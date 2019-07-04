@@ -1,39 +1,117 @@
-<p id="notice"><%= notice %></p>
+<div class="aligner-row head">
+  <h3>Productos</h3>
+  <div class="w-100 middle-right">
+    <%= link_to 'Editar', edit_retailers_product_path(@retailer, @product) %>
+    <%= link_to 'Atrás', retailers_products_path, class: 'ml-8' %>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="card mt-9">
+        <div class="box">
+          <div class="row">
+            <div class="col-xs-12">
+              <b id="product-title"><%= @product.title %></b>
+              <b class="product-text mx-4"> / </b>
+              <b class="product-text"><%= @product.category.name %></b>
+              <p class="m-0 product-text">
+                <%= @product.subtitle %>
+              </p>
+              <hr class="my-28 separator">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-7">
+              <div id="show-image" class="p-relative">
+                <%= cl_image_tag("#{@product.images.first.key}") %>
 
-<p>
-  <strong>Title:</strong>
-  <%= @product.title %>
-</p>
+                <div id="product-price" class="circle big-circle bg-pink p-absolute">
+                  <%= @product.price %>$
+                </div>
 
-<p>
-  <strong>Category:</strong>
-  <%= @product.category_id %>
-</p>
+                <div id="product-base-price" class="circle bg-green p-absolute">
+                  <%= @product.base_price %>$
+                </div>
+              </div>
+              <div id="gallery">
+                <% if @product.images.attached? %>
+                  <% @product.images.each do |img| %>
+                    <div class="card m-8">
+                      <%= cl_image_tag("#{img.key}") %>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
 
-<p>
-  <strong>Price:</strong>
-  <%= @product.price %>
-</p>
+              <p class="stock-info mr-12">
+                <strong class="product-stock-info">Cantidad inicial:</strong>
+                <%= @product.initial_quantity %>
+              </p>
 
-<p>
-  <strong>Available quantity:</strong>
-  <%= @product.available_quantity %>
-</p>
+              <p class="stock-info mr-12">
+                <strong class="product-stock-info">Disponible:</strong>
+                <%= @product.available_quantity %>
+              </p>
 
-<p>
-  <strong>Buying mode:</strong>
-  <%= @product.buying_mode %>
-</p>
+              <p class="stock-info mr-12">
+                <strong class="product-stock-info">Vendido:</strong>
+                <%= @product.sold_quantity %>
+              </p>
+            </div>
+            <div class="col-xs-12 col-md-5">
+              <p class="product-text">
+                <strong class="product-data-title">Inicio de la publicación:</strong><br/>
+                <%= @product.meli_start_time %>
+              </p>
 
-<p>
-  <strong>Condition:</strong>
-  <%= @product.condition %>
-</p>
+              <p class="product-text">
+                <strong class="product-data-title">Expiración:</strong><br/>
+                <%= @product.meli_expiration_time %>
+              </p>
 
-<p>
-  <strong>Description:</strong>
-  <%= @product.description %>
-</p>
+              <p class="product-text">
+                <strong class="product-data-title">Description:</strong><br/>
+                <%= @product.description %>
+              </p>
 
-<%= link_to 'Edit', edit_retailers_product_path(@product) %> |
-<%= link_to 'Back', retailers_products_path %>
+              <p class="product-text">
+                <strong class="product-data-title">Buying mode:</strong><br/>
+                <%= @product.buying_mode %>
+              </p>
+
+              <p class="product-text">
+                <strong class="product-data-title">Link:</strong><br/>
+                <a href="<%= @product.meli_permalink %>" target="_blank"><%= @product.meli_permalink %></a>
+              </p>
+
+              <p>
+                <div class="cookie">
+                  <%= @product.condition %>
+                </div>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <h2 class="product-data-title">Ganancias:</h2>
+              <%= image_tag 'example_graph.png', class: 'w-100' %>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script charset="utf-8">
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('#gallery .card img').forEach(function(el) {
+      el.onclick = function() {
+        document.querySelector('#show-image img').src = el.src;
+      }
+    });
+  });
+</script>

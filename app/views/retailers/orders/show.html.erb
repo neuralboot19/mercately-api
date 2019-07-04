@@ -1,0 +1,91 @@
+<div class="aligner-row head">
+  <h3>Ordenes</h3>
+  <div class="w-100 middle-right">
+    <%= link_to 'Editar', edit_retailers_order_path(@retailer, @order) %>
+    <%= link_to 'Atrás', retailers_orders_path, class: 'ml-8' %>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="card mt-9">
+        <div class="box">
+          <div class="row">
+            <div class="col-xs-12">
+              <p class="m-0 product-text">
+                <b class="normal black-text">Orden&nbsp;&nbsp;</b>- 34344
+                <span class="f-right">
+                  <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
+                  <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
+                </span>
+              </p>
+              <hr class="my-12 separator">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-3">
+              <p class="product-text">
+                <b class="normal black-text mr-16">Cliente:</b><br/>
+                <%= @order.customer.name %><br/>
+                <%= @order.customer.email %><br/>
+                <%# @order.address %>example<br/>
+                <%# @order.customer.phone %>example<br/>
+              </p>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <p class="product-text">
+                <b class="normal black-text mr-16">Estado:</b><br/>
+                <div class="cookie"><%= @order.status %></div>
+              </p>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <p class="product-text">
+                <b class="normal black-text mr-16">Tienda:</b><br/>
+                MercadoLibre
+              </p>
+            </div>
+            <div class="col-xs-12 col-md-3">
+              <p class="product-text">
+                <b class="normal black-text mr-16"></b><br/>
+                <b class="normal black-text">Ordenado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.name %><br/>
+                <b class="normal black-text">Pagado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.email %>
+              </p>
+            </div>
+            <div class="col-xs-12">Lista de productos</div>
+          </div>
+          <div class="box cta--dashboard px-0">
+            <div class="row center-xs">
+              <div class="col-xs-3">Nombre</div>
+              <div class="col-xs-3">Cantidad</div>
+              <div class="col-xs-3">Precio</div>
+              <div class="col-xs-3">Total</div>
+            </div>
+            <% @order.order_items.each do |oi| %>
+              <hr class="separator">
+              <div class="row center-xs">
+                <div class="col-xs-3"><%= oi.product.title %></div>
+                <div class="col-xs-3"><%= oi.quantity %></div>
+                <div class="col-xs-3"><%= oi.unit_price %>$</div>
+                <div class="col-xs-3"><%= number_with_precision oi.quantity * oi.unit_price, precision: 2 %>$</div>
+              </div>
+            <% end %>
+          </div>
+          <div class="row middle-xs center-xs end-md">
+            <div class="col-xs-12">
+              <p id="total">Total <b id="price" class="cta--dashboard green-text"><%= number_with_precision @order.total_amount, precision: 2 %>$</b></p>
+            </div>
+          </div>
+          <div style="display: none;" class="box">
+            Pagos
+            <div class="row">
+              <div class="col-xs-12 col-md-4"></div>
+              <div class="col-xs-12 col-md-4"></div>
+              <div class="col-xs-12 col-md-4"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

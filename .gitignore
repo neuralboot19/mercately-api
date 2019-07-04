@@ -1,9 +1,12 @@
 *.rbc
+*.png~
+tags
 capybara-*.html
 /log
 /tmp
 /public/system
 /coverage/
+/storage/
 /spec/tmp
 *.orig
 rerun.txt
@@ -24,11 +27,6 @@ config/secrets.yml
 ## Environment normalization:
 /.bundle
 /vendor/bundle
-
-# These should all be checked in to normalize the environment:
-# Gemfile.lock
-.ruby-version
-.ruby-gemset
 
 # If using bower-rails ignore default bower_components path bower.json files
 /vendor/assets/bower_components

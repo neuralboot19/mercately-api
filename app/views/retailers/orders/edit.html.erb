@@ -1,0 +1,17 @@
+<div class="aligner-row head">
+  <h3 class="w-100">Editar orden</h3>
+  <div class="w-100 middle-right">
+    <%= link_to 'Ir a la orden', retailers_order_path(@retailer, @order) %>
+    <%= link_to 'Atrás', retailers_orders_path, class: 'ml-8' %>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="card mt-9">
+        <%= render 'form', order: @order %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<nav id="sidebar">
+  <div id="sidebar-head">
+    <%= image_tag 'mercately-logo.png', class: 'w-100' %>
+    <%= image_tag 'dashboard/sidebar-graph.png', class: 'w-100' %>
+    <h4>Total Earnings - June 2019</h4>
+    <h3>$ 2.478.00</h3>
+  </div>
+  <div class="aligner">
+    <%= link_to retailers_dashboard_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_dashboard_path) %>">
+        <%= image_tag 'dashboard/user-icon.png', class: 'sidebar-icon' %>
+        Clientes
+      </div>
+    <% end %>
+
+    <%= link_to retailers_products_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_products_path) %>">
+        <%= image_tag 'dashboard/store-icon.png', class: 'sidebar-icon' %>
+        Productos
+      </div>
+    <% end %>
+
+    <%= link_to retailers_orders_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_orders_path) %>">
+        <%= image_tag 'dashboard/order-icon.png', class: 'sidebar-icon' %>
+        Ventas/Reportes
+      </div>
+    <% end %>
+
+    <%= link_to retailers_integrations_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_integrations_path) %>">
+        <%= image_tag 'dashboard/integration-icon.png', class: 'sidebar-icon' %>
+        Integraciones
+      </div>
+    <% end %>
+
+    <%= link_to retailers_messages_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_messages_path) %>">
+        <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
+        Mensajes
+      </div>
+    <% end %>
+
+    <%= link_to retailers_templates_path(current_retailer) do %>
+      <div class="sidebar-item <%= 'selected' if current_page?(retailers_templates_path) %>">
+        <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
+        Plantillas
+      </div>
+    <% end %>
+  </div>
+</nav>

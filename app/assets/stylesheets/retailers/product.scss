@@ -1,0 +1,270 @@
+// index
+* {
+  font-size: 12px;
+}
+
+input[type=search] {
+  border-radius: 29px;
+  border: 1px solid #ebebeb;
+  background-color: #ffffff;
+  padding: 8px 16px;
+}
+
+.head {
+  height: 60px;
+  background-color: #ffffff;
+  padding: 0 16px;
+}
+
+.btn {
+  border-radius: 33px;
+  border: 1px solid #242667;
+  width: 60px;
+  text-align: center;
+  padding: 5px;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 3px;
+  padding: 1rem;
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.card-header img {
+  border-radius: 3px;
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  height: 200px;
+  width: 200px;
+}
+
+.card-body {
+  position: relative;
+  bottom: 16px;
+}
+
+.card-hover {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.center .inline-flex {
+  z-index: 1;
+}
+
+.card:hover .card-hover {
+  display: block;
+  -webkit-animation: fadeIn .5s;
+  animation: fadeIn .5s;
+}
+
+.center:before {
+  content: "";
+  filter: blur(2px);
+  position: absolute;
+  background-color: rgba(255, 255, 255, .9);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.info {
+  text-overflow: ellipsis;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.cookie {
+  display: inline-block;
+  padding: 0 10px;
+  height: 18px;
+  line-height: 18px;
+  border-radius: 23px;
+  background-color: #1abf94;
+  text-align: center;
+  font-size: 12px;
+  color: #fff;
+}
+
+.circle {
+  border-radius: 50%;
+  width: 48px !important;
+  height: 48px;
+  line-height: 48px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.product-data {
+  border-top: 1px solid #ebebeb;
+  width: calc(100% - 48px);
+  text-align: right;
+  margin-right: 10px !important;
+  font-size: 8px;
+}
+
+.product-data b {
+  font-size: 8px;
+}
+
+.pagination span {
+  border-radius: 5px;
+  margin: 4px;
+  padding: 4px;
+  padding-left: 8px;
+  background: #fff;
+}
+
+.pagination span.current {
+  color: #fe1651;
+}
+
+@-webkit-keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// Show
+
+#show-image {
+  width: calc(100% - 110px);
+  height: 400px;
+  max-height: 400px;
+  display: inline-block;
+}
+
+#show-image img {
+  margin: auto;
+  display: block;
+  max-height: 400px;
+}
+
+#gallery {
+  display: inline-block;
+  width: 100px;
+  height: 300px;
+  float: right;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#gallery img:hover {
+  cursor: pointer;
+}
+
+#product-title {
+  color: #333333;
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+#product-price {
+  right: -100px;
+  bottom: 0;
+}
+
+#product-base-price {
+  bottom: -24px;
+  right: 0;
+}
+
+#edit_category ~ #categories {
+  display: none;
+}
+
+#edit_category:checked ~ #categories {
+  display: block;
+}
+
+.product-text {
+  color: #999999;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 26.4px;
+}
+
+.separator {
+  border: 1px solid #ebebeb;
+}
+
+.product-data-title {
+  color: #333333;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.circle.big-circle {
+  width: 90px !important;
+  height: 90px;
+  line-height: 90px;
+  font-size: 16px;
+}
+
+.stock-info {
+  display: inline-block;
+  font-size: 14px;
+  color: #333333;
+}
+
+.product-stock-info {
+  font-family: 'Poppins-ExtraLight';
+  font-size: 14px;
+  color: #d2d2d2;
+}
+
+// Form
+#up_images {
+  overflow-x: auto;
+  max-height: 200px;
+  display: flex;
+  overflow-y: hidden;
+}
+
+#uploadedImages {
+  position: absolute;
+  width: 100%;
+  height: 200px;
+  top: -50px;
+  left: 0;
+  z-index: 2;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.uploader {
+    position: relative; 
+    overflow: hidden; 
+    width: 100%; 
+    height: 150px;
+    background: #f3f3f3; 
+    border: 2px dashed #e8e8e8;
+    margin-bottom: 8px;
+}
+
+.img_preview {
+  height: 100%;
+}

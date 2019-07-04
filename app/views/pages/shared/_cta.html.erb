@@ -1,0 +1,18 @@
+<section id="cta">
+  <div class="container ml-180">
+    <div id="cta-row" class="row middle-xs">
+      <div class="col-xs-12">
+        <h1 class="h1">Construido para comercios<br/>como el tuyo</h1>
+        <h3 class="h3">300+ negocios utilizan nuestras herramientas para incrementar sus ventas</h3>
+        <div class="mt-40">
+          <%= form_tag new_retailer_user_registration_path, method: :get do %>
+            <%= text_field_tag :name, "", {placeholder: "Nombre de tu tienda", class: "btn" }%>
+            <br class="hide-on-med-and-up"/>
+            <br class="hide-on-med-and-up"/>
+            <%= submit_tag "Empezar", class: "btn a cta" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

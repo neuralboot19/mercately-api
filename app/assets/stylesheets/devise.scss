@@ -1,0 +1,252 @@
+$bg-color: #424242;
+$hl-color: #fe1651;
+$muted-color: #cac8c8;
+$trans-time: 300ms;
+$width: 100%;
+
+.group {
+  position: relative;
+  margin: 45px 0;
+}
+
+textarea {
+  resize: none;
+  height: 400px;
+}
+
+.group input,
+.group textarea {
+  background: none;
+  color: #000;
+  font-size: 18px;
+  padding: 10px 0px;
+  display: block;
+  width: $width;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid $muted-color;
+  &:focus {
+    outline: none;
+  }
+  &:focus ~ label,
+  &:not(:placeholder-shown) ~ label {
+    top: -14px;
+    font-size: 12px;
+    color: $hl-color;
+  }
+  &:focus ~ .bar:before {
+    width: $width;
+  }
+
+  &.input-standarization {
+    width: 359px;
+  }
+}
+
+.group input[type="password"] {
+  letter-spacing: 0.3em;
+}
+
+.group input[type="file"] {
+  border: 0;
+}
+
+input:required, input:invalid {
+  box-shadow:none;
+}
+
+.group select {
+  position: relative;
+  font-family: inherit;
+  background-color: transparent;
+  width: $width;
+  padding: 10px 10px 10px 0;
+  font-size: 18px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(0,0,0, 0.12);
+  &:focus {
+    outline: none;
+  }
+  &:focus ~ .bar:before {
+    width: $width;
+  }
+  &:after {
+    position: absolute;
+    top: 18px;
+    right: 10px;
+    /* Styling the down arrow */
+    width: 0;
+    height: 0;
+    padding: 0;
+    content: '';
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(0, 0, 0, 0.12);
+    pointer-events: none;
+  }
+  &:focus ~ .select-label, &:valid ~ .select-label {
+    color: $hl-color;
+    top: -14px;
+    transition: 0.2s ease all;
+    font-size: 12px;
+  }
+  appearance: none;
+  -webkit-appearance:none
+}
+
+.select-label {
+  color: rgba(0,0,0, 0.26);
+  font-size: 18px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  left: 0;
+  top: 10px;
+  transition: 0.2s ease all;
+}
+
+.group label {
+  color: $muted-color;
+  font-size: 16px;
+  font-weight: normal;
+  position: absolute;
+  pointer-events: none;
+  top: 10px;
+  transition: $trans-time ease all;
+}
+
+.bar {
+  position: relative;
+  display: block;
+  width: $width;
+  &:before {
+    content: '';
+    height: 2px;
+    width: 0;
+    bottom: 0px;
+    position: absolute;
+    background: $hl-color;
+    transition: $trans-time ease all;
+    left: 0%;
+  }
+}
+
+.btn-btn {
+  background: #fff;
+  color: mix(black, $muted-color, 25%);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 3px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
+  &:hover {
+    color: mix(black, $muted-color, 30%);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.18), 0 5px 5px rgba(0, 0, 0, 0.12);
+  }
+  &.btn-link {
+    background: $hl-color;
+    color: mix(white, $hl-color, 80%);
+    &:hover {
+      background: darken($hl-color, 5%);
+      color: mix(white, $hl-color, 85%);
+    }
+  }
+  &.btn-submit {
+    background-color: #242667;
+    color: #f6f6f6;
+    &:hover {
+      background: darken(#242667, 5%);
+      color: #f6f6f6;
+    }
+  }
+  &.btn-cancel {
+    background: #eee;
+    &:hover {
+      background: darken(#eee, 5%);
+      color: mix(black, $muted-color, 30%);
+    }
+  }
+}
+
+.btn-box {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.sign {
+  color: #333333;
+  font-size: 14px;
+}
+
+.a-devise {
+  color: #fb0545;
+  text-decoration: none;
+}
+
+#contact {
+  display: inline-block;
+  line-height: 41px;
+  float: right;
+  margin: 0;
+}
+
+#contact-info {
+  margin-top: 40px;
+}
+
+@media  screen and (max-width: 1280px) {
+  #contact-info {
+    margin-top: 20px;
+  }
+
+  #contact-img {
+    height: 32px;
+  }
+
+  #contact {
+    line-height: 32px;
+  }
+}
+
+@media  screen and (max-width: 1024px) {
+  #contact-info {
+    margin-top: 17px;
+  }
+
+  #contact-img {
+    height: 24px;
+  }
+
+  #contact {
+    line-height: 24px;
+  }
+
+  .btn-box input {
+    font-size: 12px;
+  }
+}
+
+.error-title-container {
+  width: 100%;
+
+  .error-list {
+    padding-left: 20px;
+    font-size: 12px;
+
+    li {
+      list-style-type: circle;
+    }
+  }
+}
+
+.login_error_message {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 12px;
+  width: 190px;
+}

@@ -1,0 +1,483 @@
+header {
+  background-color: #080952;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
+
+.h1, .h2 {
+  font-family: 'Poppins-Bold';
+  margin: 0;
+}
+
+.h1 {
+  color: #f3f3f3;
+  line-height: 86px;
+  font-size: 50px;
+}
+
+.h3 {
+  color: #eb1857;
+  font-family: 'Poppins-Light';
+  font-weight: 100;
+  font-size: 25px;
+  margin: 0;
+}
+
+.h5 {
+  color:#2e3191;
+  font-size: 18px;
+  margin: 16px 0;
+  letter-spacing: 0.3px;
+}
+
+.h6 {
+  font-size: 18px;
+  margin: 16px 0;
+  color: #fe1651;
+  font-weight: 100;
+  letter-spacing: 1px;
+}
+
+.spell {
+  color: #2e3191;
+  font-size: 18px;
+}
+
+input.btn {
+  color: #f3f3f3;
+  border: none;
+}
+
+.article {
+  margin-bottom: 26px;
+}
+
+.sentence {
+  margin: 0 0 0 12px;
+}
+
+.a {
+  color: #f3f3f3;
+  text-decoration: none;
+}
+
+footer {
+  background-image: url(asset_path('footer.png'));
+  background-size: cover;
+  color: #f3f3f3;
+}
+
+#semi-circle {
+  position: absolute;
+  right: 0;
+  width: 200px;
+  margin-top: 200px;
+}
+
+#mercately-logo {
+  width: 265px;
+  margin-top: 20px;
+}
+
+#menu-icon {
+  margin-top: 22px;
+}
+
+#boxes {
+  position: relative;
+  z-index: 1;
+}
+
+#sidebar {
+  width: 300px;
+  height: calc(100vh - 60px);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background-color: #242667;
+  color: #f3f3f3;
+  z-index: 100;
+  transition: all .5s;
+}
+
+#slogan_title {
+  font-size: 50px;
+  margin-top: 220px;
+  margin-bottom: 0;
+}
+
+#slogan_desc {
+  color: #f3f3f3;
+  font-size: 20px;
+  font-weight: 100;
+  line-height: 36px;
+  margin-top: 0;
+  margin-bottom: 30px;
+  margin-left: 0;
+}
+
+#features-list {
+  background-image: url(asset_path('phone.png'));
+  background-size: 70%;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+}
+
+#footer-logo {
+  width: 265px;
+}
+
+#cta {
+  background-image: url(asset_path('image4.png'));
+  background-size: cover;
+  background-repeat: no-repeat;
+  margin-top: 100px;
+}
+
+#copyright {
+  color: #cbcacb;
+}
+
+#copyright-mercately {
+  padding-bottom: 8px;
+}
+
+#up {
+  text-align: end;
+}
+
+.h2 {
+  color: #2e3191;
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.aligner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 60px;
+  border-radius: 3px;
+  background-color: #242667;
+  font-size: 16px;
+  font-weight: 100;
+  margin-right: 25px;
+  letter-spacing: 1px;
+}
+
+.btn.cta {
+  background-color: #39b54a;
+  cursor: pointer;
+}
+
+.menu-item {
+  font-family: 'Poppins-Bold';
+  width: auto;
+  padding: 43px 8px 0;
+  font-size: 17px;
+  font-weight: bold;
+  color: #f3f3f3;
+}
+
+.card {
+  height: 375px;
+  border: 1px solid #d7d7d7;
+  margin: 8px 0;
+  padding: 30px;
+  background: #fff;
+}
+
+.card-img {
+  width: 105px;
+  max-height: 108px;
+}
+
+.card-feature {
+  border-radius: 10px;
+  background-color: rgba(235, 235, 235, 0.29);
+  margin-bottom: 2rem;
+  padding: 20px 40px;
+  width: 600px;
+}
+
+.float-left {
+  float: left;
+}
+
+.social-media-icons {
+  width: 16px;
+  height: 16px;
+  padding: 3px;
+}
+
+.boxes {
+  width: 900px;
+  margin: auto;
+}
+
+.py-100 {
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+.ml-20 {
+  margin-left: 20px;
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+.ml-180 {
+  margin-left: 180px !important;
+}
+
+.pl-180 {
+  padding-left: 180px !important;
+}
+
+::placeholder {
+  color: #f3f3f3;
+  opacity: 1;
+  text-align: center;
+}
+
+@media screen and (min-width: 1024px) {
+  #cta-row {
+    height: 700px;
+  }
+
+  #main {
+    background-image: url(asset_path('back-header.png'));
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-top: 90px;
+  }
+
+  #slogan {
+    margin-right: 0px;
+    margin-left: 185px;
+    margin-bottom: 230px;
+    padding-right: 0;
+    padding-left: 0;
+    height: 110vh;
+    background-image: url(asset_path('home_pc.png'));
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: right top;
+  }
+
+  #home_img {
+    position: relative;
+    width: 1025px;
+    right: -16px;
+    top: 90px;
+  }
+
+  .container-fluid {
+    padding-right: 4rem;
+    padding-left: 4rem;
+  }
+}
+
+@media screen and (max-width: 1700px) {
+  .h1 {
+    font-size: 40px;
+  }
+
+  .h3 {
+    font-size: 22px;
+  }
+
+  em {
+    font-size: 16px;
+  }
+
+  footer {
+    padding-left: 105px;
+  }
+
+  #slogan_title {
+    margin-top: 110px;
+    font-size: 36px;
+  }
+
+  #slogan_desc {
+    font-size: 17px;
+  }
+
+  .h2{
+    font-size: 40px;
+  }
+
+  .ml-180 {
+    margin-left: 110px !important;
+  }
+
+  .pl-180 {
+    padding-left: 110px !important;
+  }
+
+  .btn {
+    padding: 8px 40px;
+  }
+
+  .container-fluid {
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  * {
+    font-size: 12px;
+  }
+
+  .h1 {
+    line-height: 50px;
+  }
+
+  .h5 {
+    font-size: 14px;
+  }
+
+  .h6 {
+    font-size: 12px;
+  }
+
+  #footer-logo {
+    width: 170px;
+  }
+
+  #slogan_title {
+    margin-top: 90px;
+    line-height: 60px;
+  }
+
+  #mercately-logo {
+    width: 170px;
+    margin-top: 12px;
+  }
+
+  #slogan {
+    margin-left: 110px;
+  }
+
+  #cta-row {
+    height: 440px;
+  }
+
+  #semi-circle {
+    width: 100px;
+  }
+
+  .menu-item {
+    padding: 27px 8px 0;
+    font-size: 15px;
+  }
+
+  .btn {
+    font-size: 12px;
+  }
+
+  .card-feature {
+    width: auto;
+    margin-bottom: 1rem;
+    padding: 1px 30px;
+  }
+
+  .card {
+    height: 375px;
+    height: 290px;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .h1 {
+    font-size: 27px;
+  }
+
+  .h3 {
+    font-size: 18px;
+  }
+
+  header {
+    height: 60px;
+  }
+
+  em {
+    font-size: 11px;
+  }
+
+  footer {
+    padding-left: 0;
+    background-size: cover;
+    background-position-x: right;
+  }
+
+  #slogan_title {
+    margin-top: 0px;
+    font-size: 25px;
+    line-height: 31px;
+  }
+
+  #slogan_desc {
+    font-size: 12px;
+    line-height: 25px;
+  }
+
+  #mercately-logo {
+    width: 120px;
+  }
+
+  #main {
+    background-image: url(asset_path('background-mobile.png'));
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  #slogan {
+    margin-left: 0;
+    text-align: center;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  #features-list {
+    background: none;
+  }
+
+  #boxes {
+    padding: 0 2rem;
+  }
+
+  #social-media {
+    margin-left: 8px;
+    margin-top: 1rem;
+  }
+
+  #cta, #copyright-mercately, #up {
+    text-align: center;
+  }
+
+  .h2 {
+    font-size: 25px;
+  }
+
+  .btn {
+    margin-right: 0;
+  }
+
+  .container-fluid {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .container.ml-180 {
+    margin: auto !important;
+  }
+}

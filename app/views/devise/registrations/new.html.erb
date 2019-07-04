@@ -1,0 +1,49 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="center">
+        <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <h2 class="sign mt-100">Registrarse</h2>
+
+          <div class="group">
+            <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
+              <%= retailer.text_field :name, value: @retailer_name, autofocus: true, placeholder: '', class: 'input-standarization' %>
+              <%= retailer.label :name, 'Nombre del comercio' %>
+              <span class="bar"></span>
+            <% end %>
+          </div>
+
+          <div class="group">
+            <%= f.text_field :email, autocomplete: "email", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :email, 'Correo' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group">
+            <%= f.password_field :password, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :password, 'Contraseña' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group mb-16">
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :password_confirmation, 'Confirme contraseña' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group my-16">
+            <%= f.check_box :agree_terms, class: 'f-left w-auto', style: 'width: auto;' %>
+            <%= f.label :agree_terms, 'Acepto los términos y condiciones', class: 'p-static' %>
+          </div>
+
+          <div class="btn-box">
+            <%= f.submit 'Empezar', class: 'btn-btn btn-submit w-100' %>
+          </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>
