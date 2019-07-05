@@ -47,5 +47,11 @@
         Plantillas
       </div>
     <% end %>
+
+    <% if session["admin_session_id"]%>
+      <div class="sidebar-item">
+        <%= link_to "Regresar al administrador", go_back_as_admin_admin_retailer_path(current_retailer) %>
+      </div>
+    <% end %>
   </div>
 </nav>

@@ -10,9 +10,9 @@ ActiveAdmin.register Customer do
     actions
   end
 
-  show do 
+  show do
     default_main_content
-    panel "Usuario de ML" do
+    panel 'Usuario de ML' do
       customer = Customer.find(params['id']).meli_customer
       table_for customer do
         column :access_token
