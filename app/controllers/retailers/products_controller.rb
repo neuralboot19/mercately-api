@@ -22,6 +22,7 @@ class Retailers::ProductsController < RetailersController
 
   # POST /products
   def create
+    params[:product][:images] = process_images(params[:product][:images])
     @product = Product.new(product_params)
     check_for_errors(params)
 
@@ -30,7 +31,6 @@ class Retailers::ProductsController < RetailersController
       return
     end
 
-    params[:product][:images] = process_images(params[:product][:images])
     @product.retailer_id = @retailer.id
 
     @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
