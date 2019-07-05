@@ -6,6 +6,9 @@ ActiveAdmin.register Retailer do
     column :slug
     column :created_at
     actions
+    column 'Login' do |resource|
+      link_to 'Login as', login_as_admin_retailer_path(resource), class: 'member_link edit_link'
+    end
   end
 
   filter :name
@@ -76,5 +79,22 @@ ActiveAdmin.register Retailer do
 
   controller do
     defaults finder: :find_by_slug
+  end
+
+  # Methods
+  member_action :login_as do
+    retailer_user = Retailer.find_by(slug: params['id']).retailer_users.first
+    session['admin_session_id'] = current_admin_user.id
+    session['retailer_session_id'] = retailer_user.id
+    sign_in(:retailer_user, retailer_user)
+    redirect_to root_path
+  end
+
+  member_action :go_back_as_admin do
+    admin_user = AdminUser.find_by(id: session['admin_session_id'])
+    session['admin_session_id'] = nil
+    session['retailer_session_id'] = nil
+    sign_in(:admin_user, admin_user)
+    redirect_to admin_root_path
   end
 end

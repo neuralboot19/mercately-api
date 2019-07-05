@@ -6,8 +6,12 @@ class Category < ApplicationRecord
   validates :name, presence: true
 
   def clean_template_variations
-    template.reject { |temp| temp['tags']['fixed'] == true ||
-      temp['tags']['hidden'] == true || temp['tags']['read_only'] == true ||
-      temp['tags']['restricted_values'] == true }
+    attributes = []
+    template.each do |temp|
+      attributes << temp if
+        temp['tags']['allow_variations'] || temp['tags']['catalog_required'] || temp['tags']['required']
+    end
+
+    attributes
   end
 end

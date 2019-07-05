@@ -23,6 +23,7 @@ class Product < ApplicationRecord
     self.meli_expiration_time = p_ml['expiration_time']
     self.meli_permalink = p_ml['permalink']
     self.meli_product_id = p_ml['id']
+    self.ml_attributes = p_ml['attributes']
     save
   end
 
@@ -43,6 +44,11 @@ class Product < ApplicationRecord
 
     images.attach(io: File.open(tempfile.path), filename: filename)
     File.delete('./public/upload-' + filename + '.jpg')
+  end
+
+  def upload_variations_to_ml
+    p_ml = MercadoLibre::ProductVariations.new(retailer)
+    p_ml.create_product_variations(self)
   end
 
   private

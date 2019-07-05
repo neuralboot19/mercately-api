@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_01_155601) do
+ActiveRecord::Schema.define(version: 2019_07_03_221127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,9 @@ ActiveRecord::Schema.define(version: 2019_07_01_155601) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "meli_order_id"
+    t.string "currency_id"
+    t.float "total_amount"
+    t.datetime "date_closed"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
   end
 
@@ -187,6 +190,7 @@ ActiveRecord::Schema.define(version: 2019_07_01_155601) do
     t.integer "category_id"
     t.integer "buying_mode"
     t.integer "condition", default: 0
+    t.jsonb "ml_attributes", default: []
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
@@ -199,6 +203,9 @@ ActiveRecord::Schema.define(version: 2019_07_01_155601) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "customer_id"
+    t.boolean "deleted_from_listing", default: false
+    t.boolean "hold", default: false
+    t.integer "status"
     t.index ["customer_id"], name: "index_questions_on_customer_id"
     t.index ["product_id"], name: "index_questions_on_product_id"
   end

@@ -5,6 +5,7 @@ module MercadoLibre
       @meli_retailer = @retailer.meli_retailer
       @api = MercadoLibre::Api.new(@meli_retailer)
       @utility = MercadoLibre::ProductsUtility.new
+      @product_variations = MercadoLibre::ProductVariations.new(@retailer)
     end
 
     def search_items
@@ -69,12 +70,14 @@ module MercadoLibre
         meli_expiration_time: product_info['expiration_time'],
         condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
+        ml_attributes: product_info['attributes'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
       return product if product_exist
 
-      save_variations(product, product_info['variations']) if product_info['variations'].present?
+      @product_variations.save_variations(product, product_info['variations']) if
+        product_info['variations'].present?
 
       images = product_info['pictures']
       images.each do |img|
@@ -109,10 +112,12 @@ module MercadoLibre
       product.meli_expiration_time = product_info['expiration_time']
       product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
       product.meli_permalink = product_info['permalink']
+      product.ml_attributes = product_info['attributes']
       product.retailer = @retailer
       product.save!
 
-      save_variations(product, product_info['variations']) if product_info['variations'].present?
+      @product_variations.save_variations(product, product_info['variations']) if
+        product_info['variations'].present?
 
       pull_images(product, product_info['pictures'])
 
@@ -203,15 +208,6 @@ module MercadoLibre
             deleted_ids = ActiveStorage::Blob.where(filename: current_images).pluck(:id)
             product.images.where(blob_id: deleted_ids).purge
           end
-        end
-      end
-
-      def save_variations(product, variations)
-        variations.each do |var|
-          product_variation = product.product_variations
-            .find_or_initialize_by(variation_meli_id: var['id'])
-          product_variation.data = var
-          product_variation.save!
         end
       end
   end

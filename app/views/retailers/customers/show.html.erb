@@ -18,10 +18,15 @@
                   <div class="col-xs-12">
                     <h3>Calificación en MercadoLibre</h3>
                     <p class="product-text my-0">
-                      <b class="normal black-text">Email:</b> <%= @customer.email %><br/>
-                      <b class="normal black-text">Nombre:</b> <%= @customer.first_name %><br/>
-                      <b class="normal black-text">Apellido:</b> <%= @customer.last_name %><br/>
-                      <b class="normal black-text">Número:</b> <%= @customer.phone %>
+                      <% if @customer.meli_customer.email %>
+                        <b class="normal black-text">Usuario:</b> <%= @customer.meli_customer.nickname %><br/>
+                        <b class="normal black-text">Email:</b> <%= @customer.email %><br/>
+                        <b class="normal black-text">Nombre:</b> <%= @customer.first_name %><br/>
+                        <b class="normal black-text">Apellido:</b> <%= @customer.last_name %><br/>
+                        <b class="normal black-text">Número:</b> <%= @customer.phone %>
+                      <% else %>
+                        <b class="normal black-text">Usuario:</b> <%= @customer.meli_customer.nickname %><br/>
+                      <% end %>
                     </p>
                   </div>
                 </div>
@@ -37,8 +42,8 @@
                           <div class="row">
                             <div class="col-xs-12 col-md-6">
                               <p class="product-text my-0">
-                                <b class="normal black-text mr-16">Monto</b> <%= order.total %>$<br/>
-                                <b class="normal black-text">Modo de pago</b> Tarjeta<%# order.email %><br/>
+                                <b class="normal black-text mr-16">Monto</b> <%= order.total_amount %>$<br/>
+                                <b class="normal black-text">Modo de pago</b> Acordar con el comprador<%# order.email %><br/>
                               </p>
                             </div>
                             <div class="col-xs-12 col-md-6">
@@ -50,8 +55,8 @@
                                   </div>
                                   <div class="col-xs-6 col-md-5">
                                     <p class="product-text t-right my-0">
-                                      <b class="normal black-text">Ordenado el</b>   11-Feb <br class="hide-on-med-and-up"/><%# order.name %><br/>
-                                      <b class="normal black-text">Pagado el</b>   11-Feb <br class="hide-on-med-and-up"/><%# order.email %>
+                                      <b class="normal black-text">Ordenado el</b>   <%= order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/><%# order.name %><br/>
+                                      <b class="normal black-text">Pagado el</b>   <%= order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/><%# order.email %>
                                     </p>
                                   </div>
                                   <div class="col-xs-12 col-md-3">

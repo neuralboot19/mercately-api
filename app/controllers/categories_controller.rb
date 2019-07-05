@@ -7,6 +7,9 @@ class CategoriesController < ApplicationController
   def childs
     category = Category.find(params[:id])
     @child_categories = category.children
-    render json: { child_categories: @child_categories, template: category.clean_template_variations }
+    render json: {
+      child_categories: @child_categories,
+      template: category.clean_template_variations
+    }
   end
 end
