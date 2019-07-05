@@ -162,6 +162,7 @@ class Retailers::ProductsController < RetailersController
         update_variations
       end
 
+      @product.reload
       @product.upload_variations_to_ml
     end
 

@@ -26,15 +26,24 @@ module MercadoLibre
     end
 
     def prepare_product_update(product)
-      {
+      variations = prepare_variations_for_update(product)
+
+      info = {
         'title': product.title,
-        'price': product.price.to_f,
         'category_id': product.category.meli_id,
-        'available_quantity': product.available_quantity || 0,
         'buying_mode': product.buying_mode,
-        'condition': final_condition(product)
+        'condition': final_condition(product),
+        'variations': variations,
+        'attributes': product.ml_attributes
         # 'listing_type_id': 'free'
-      }.to_json
+      }
+
+      unless variations.present?
+        info['price'] = product.price.to_f
+        info['available_quantity'] = product.available_quantity || 0
+      end
+
+      info.to_json
     end
 
     def prepare_product_description_update(product)
@@ -64,6 +73,12 @@ module MercadoLibre
       load_variations << variation.data
 
       { 'variations': load_variations }.to_json
+    end
+
+    def prepare_variations_for_update(product)
+      return [] unless product.product_variations.present?
+
+      product.product_variations.map { |pv| { 'id': pv.data['id'] } }
     end
   end
 end
