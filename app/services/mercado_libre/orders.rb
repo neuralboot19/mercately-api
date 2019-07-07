@@ -9,6 +9,7 @@ module MercadoLibre
       url = get_order_url(order_id)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
+      byebug
       save_order(response) if response
     end
 

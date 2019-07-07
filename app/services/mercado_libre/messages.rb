@@ -37,9 +37,9 @@ module MercadoLibre
           "to": [
             {
               "user_id": message.customer.meli_user_id,
-              "resource": "orders",
+              "resource": 'orders',
               "resource_id": message.order.meli_order_id,
-              "site_id": "MEC"
+              "site_id": 'MEC'
             }
           ],
           "text": {
