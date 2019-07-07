@@ -11,7 +11,10 @@ Rails.application.routes.draw do
       # get 'dashboard', to: 'pages#dashboard', as: :dashboard
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
       resources :products
-      resources :orders
+      resources :orders do
+        get 'messages', to: 'messages#chat'
+        post 'send_message', to: 'messages#send_message', as: :send_message
+      end
       resources :customers
       resources :messages, only: [:index, :show]
       resources :templates

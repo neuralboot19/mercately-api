@@ -2,6 +2,7 @@ class Order < ApplicationRecord
   belongs_to :customer
   has_many :order_items, inverse_of: :order, dependent: :destroy
   has_many :products, through: :order_items
+  has_many :messages
 
   validate :check_stock
   before_update :adjust_ml_stock, if: :will_save_change_to_status?

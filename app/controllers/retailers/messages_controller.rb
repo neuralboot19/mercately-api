@@ -1,5 +1,5 @@
 class Retailers::MessagesController < RetailersController
-  before_action :set_question, only: [:show, :answer_question]
+  before_action :set_question, only: %i(show answer_question)
 
   # GET /messages
   def index
@@ -14,6 +14,23 @@ class Retailers::MessagesController < RetailersController
   def answer_question
     @question.update!(answer: params[:answer])
     redirect_to retailers_messages_path(@retailer), notice: 'Respuesta enviada'
+  end
+
+  def send_message
+    @message = Message.new(
+      order_id: params[:order_id],
+      question: params[:question],
+      sender_id: current_retailer_user.id
+    )
+    if @message.save
+      redirect_to retailers_messages_path(@retailer), notice: 'Mensage enviado'
+    else
+      redirect_to retailers_messages_path(@retailer), notice: 'No pudo enviarse'
+    end
+  end
+
+  def chat
+    @order = Order.find(params[:id])
   end
 
   private
