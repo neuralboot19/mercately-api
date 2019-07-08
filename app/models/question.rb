@@ -1,4 +1,5 @@
 class Question < ApplicationRecord
+  default_scope -> { where('questions.product_id IS NOT NULL') }
   belongs_to :product
   belongs_to :customer
 

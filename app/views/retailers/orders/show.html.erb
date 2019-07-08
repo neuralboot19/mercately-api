@@ -16,6 +16,7 @@
               <p class="m-0 product-text">
                 <b class="normal black-text">Orden&nbsp;&nbsp;</b>- 34344
                 <span class="f-right">
+                  <a class="cta--dashboard mr-8" href="">Chat de la orden</a>
                   <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
                   <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
                 </span>
@@ -29,8 +30,6 @@
                 <b class="normal black-text mr-16">Cliente:</b><br/>
                 <%= @order.customer.name %><br/>
                 <%= @order.customer.email %><br/>
-                <%# @order.address %>example<br/>
-                <%# @order.customer.phone %>example<br/>
               </p>
             </div>
             <div class="col-xs-12 col-md-3">
@@ -43,6 +42,10 @@
               <p class="product-text">
                 <b class="normal black-text mr-16">Tienda:</b><br/>
                 MercadoLibre
+              </p>
+              <p class="product-text">
+                <b class="normal black-text mr-16">Producto:</b><br/>
+                <%= @order.product.title %>
               </p>
             </div>
             <div class="col-xs-12 col-md-3">
