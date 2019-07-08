@@ -206,7 +206,12 @@ ActiveRecord::Schema.define(version: 2019_07_03_221127) do
     t.boolean "deleted_from_listing", default: false
     t.boolean "hold", default: false
     t.integer "status"
+    t.datetime "date_read"
+    t.string "site_id"
+    t.integer "sender_id"
+    t.bigint "order_id"
     t.index ["customer_id"], name: "index_questions_on_customer_id"
+    t.index ["order_id"], name: "index_questions_on_order_id"
     t.index ["product_id"], name: "index_questions_on_product_id"
   end
 
