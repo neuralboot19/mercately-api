@@ -60,6 +60,7 @@ function appendSelect(currentElement) {
         appendAttributes();
         showVariationTitle();
         showVariationContainer();
+        disableAvailableQuantity();
 
         if (originalCategoryId && originalCategoryId === categoryId) {
           for (pv in productVariations) {
@@ -71,6 +72,7 @@ function appendSelect(currentElement) {
       } else {
         hideVariationTitle();
         hideVariationContainer();
+        enableAvailableQuantity();
         showUploader();
       }
 
@@ -78,6 +80,7 @@ function appendSelect(currentElement) {
     } else {
       hideVariationTitle();
       hideVariationContainer();
+      enableAvailableQuantity();
       showUploader();
 
       for(var child_position in child_categories) {
@@ -144,12 +147,12 @@ function appendTemplate() {
 }
 
 function addCommonVariationElements(container) {
-  commonElements = [{
+  commonElements = [/*{
     "name": "price",
     "element": "input",
     "element_type": "number",
     "label": "Precio"
-  },
+  },*/
   {
     "name": "available_quantity",
     "element": "input",
@@ -383,6 +386,7 @@ function getProduct() {
     if (productVariations.length > 0) {
       showVariationTitle();
       showVariationContainer();
+      disableAvailableQuantity();
       for (pv in productVariations) {
         currentTemplate = productVariations[pv];
         appendTemplate();
@@ -420,6 +424,16 @@ function showVariationTitle() {
 function hideVariationTitle() {
   var container = document.getElementById("variations-title");
   container.className = "not-display";
+}
+
+function disableAvailableQuantity() {
+  inputAvailableQuantity = document.getElementById("product_available_quantity");
+  inputAvailableQuantity.setAttribute("disabled", "disabled");
+}
+
+function enableAvailableQuantity() {
+  inputAvailableQuantity = document.getElementById("product_available_quantity");
+  inputAvailableQuantity.removeAttribute("disabled");
 }
 
 document.addEventListener("DOMContentLoaded", function() {

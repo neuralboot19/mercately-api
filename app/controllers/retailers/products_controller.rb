@@ -104,6 +104,8 @@ class Retailers::ProductsController < RetailersController
       return [] unless params[:product][:variations].present?
 
       @variations = []
+      total_available = 0
+      total_sold = 0
 
       category = Category.find(params[:product][:category_id])
       params[:product][:variations].each do |var|
@@ -118,9 +120,17 @@ class Retailers::ProductsController < RetailersController
           else
             temp_var[t[0]] = t[1]
           end
+
+          total_available += t[1].to_i if t[0] == 'available_quantity'
+          total_sold += t[1].to_i if t[0] == 'sold_quantity'
         end
+
+        temp_var['price'] = params[:product][:price]
         @variations << temp_var
       end
+
+      params[:product][:available_quantity] = total_available
+      params[:product][:sold_quantity] = total_sold
     end
 
     def process_attributes(attributes)

@@ -78,7 +78,7 @@ module MercadoLibre
     def prepare_variations_for_update(product)
       return [] unless product.product_variations.present?
 
-      product.product_variations.map { |pv| { 'id': pv.data['id'] } }
+      product.product_variations.map { |pv| { 'id': pv.data['id'], 'price': product.price } }
     end
   end
 end
