@@ -95,11 +95,7 @@ module MercadoLibre
       product.price = product_info['price']
       product.base_price = product_info['base_price']
       product.original_price = product_info['original_price']
-      product.initial_quantity = if product.initial_quantity
-                                   product_info['initial_quantity'] + product.initial_quantity
-                                 else
-                                   product_info['initial_quantity']
-                                 end
+      product.initial_quantity = product_info['initial_quantity']
       product.available_quantity = product_info['available_quantity']
       # TODO: Push orders to keep sold_quantity updated
       product.sold_quantity = product_info['sold_quantity']

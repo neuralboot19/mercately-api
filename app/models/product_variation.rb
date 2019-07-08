@@ -1,5 +1,6 @@
 class ProductVariation < ApplicationRecord
   belongs_to :product
+  validates :variation_meli_id, uniqueness: true, allow_nil: true
 
   def update_data(ml_data)
     variation_ids = ml_data['variations'].map { |var| var['id'] }.compact

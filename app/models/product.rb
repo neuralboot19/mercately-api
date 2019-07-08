@@ -7,9 +7,10 @@ class Product < ApplicationRecord
   has_many :product_variations, dependent: :destroy
 
   validate :images_count
+  validates :meli_product_id, uniqueness: true, allow_nil: true
 
-  #after_create :upload_ml, if: proc { !retailer.meli_retailer.nil? }
-  #after_update :update_ml_info, if: proc { |product| product.meli_product_id }
+  after_create :upload_ml, if: proc { !retailer.meli_retailer.nil? }
+  after_update :update_ml_info, if: proc { |product| product.meli_product_id }
 
   enum buying_mode: %w[buy_it_now auction]
   enum condition: %w[new_product used not_specified]
