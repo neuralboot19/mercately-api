@@ -57,7 +57,11 @@ document.addEventListener("DOMContentLoaded", function() {
   var root = document.getElementById("root");
   var childs_select = document.getElementById("childs_1");
 
-  var roots  = JSON.parse('<%= Category.roots.to_json.html_safe %>');
+  <% if Category.any? %>
+    var roots  = JSON.parse('<%= Category.roots.to_json.html_safe %>');
+  <% else %>
+    var roots  = JSON.parse('{}');
+  <% end %>
   for(var root_position in roots) {
     opt = roots[root_position]
     var el = document.createElement("option");
