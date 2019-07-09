@@ -1,8 +1,7 @@
 ActiveAdmin.register Order do
-
-  show do 
+  show do
     default_main_content
-    panel "Usuario de ML" do
+    panel 'Usuario de ML' do
       order_items = Order.find(params['id']).order_items
       table_for order_items do
         column :product

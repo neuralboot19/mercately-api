@@ -32,5 +32,12 @@ module Mercately
     config.action_view.field_error_proc = proc { |html_tag, instance| html_tag }
 
     config.active_job.queue_adapter = :sidekiq
+
+    # Reverse Proxy for Blog
+    config.middleware.insert(0, Rack::ReverseProxy) do
+      reverse_proxy_options preserve_host: true
+      reverse_proxy '/blog', 'https://blog.mercately.com/'
+    end
+
   end
 end

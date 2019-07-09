@@ -4,10 +4,13 @@ class RetailerUser < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   belongs_to :retailer
+  has_many :questions, foreign_key: :sender_id
+
   validates :agree_terms, presence: true
   before_create :agree_terms_to_bool
-  accepts_nested_attributes_for :retailer
   after_create :send_welcome_email
+
+  accepts_nested_attributes_for :retailer
 
   protected
 
