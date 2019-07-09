@@ -115,8 +115,14 @@ class Retailers::ProductsController < RetailersController
         }
 
         var[1].each do |t|
-          if category.template.any? { |temp| temp['id'] == t[0] && temp['tags']['allow_variations'] }
-            temp_var[:attribute_combinations] << { id: t[0], value_id: t[1] }
+          temp_aux = category.template.select { |temp| temp['id'] == t[0] && temp['tags']['allow_variations'] }
+
+          if temp_aux.present?
+            temp_var[:attribute_combinations] << if temp_aux.first['value_type'] == 'list'
+                                                   { id: t[0], value_id: t[1] }
+                                                 else
+                                                   { id: t[0], value_name: t[1] }
+                                                 end
           else
             temp_var[t[0]] = t[1]
           end
@@ -184,8 +190,10 @@ class Retailers::ProductsController < RetailersController
 
     def update_variations
       @variations.each do |var|
-        if var['id'].present?
+        if var['id'].present? && var['id'] != 'undefined'
           @product.product_variations.find_by(variation_meli_id: var['id']).update(data: var)
+        elsif var['variation_id'].present? && var['variation_id'] != 'undefined'
+          @product.product_variations.find(var['variation_id']).update(data: var)
         else
           @product.product_variations.create(data: var)
         end

@@ -206,6 +206,13 @@ function addCommonVariationElements(container) {
     newElement.setAttribute("id", `product_variations_${countVariations - 1}_id`);
     newElement.setAttribute("value", `${currentTemplate["data"]["id"]}`);
     container.appendChild(newElement);
+
+    newElement = document.createElement("input");
+    newElement.setAttribute("type", "hidden");
+    newElement.setAttribute("name", `product[variations][${countVariations - 1}][variation_id]`);
+    newElement.setAttribute("id", `product_variations_${countVariations - 1}_variation_id`);
+    newElement.setAttribute("value", `${currentTemplate["id"]}`);
+    container.appendChild(newElement);
   }
 
   return container;
@@ -237,8 +244,8 @@ function buildElement(template, index) {
   elementInfo = dataTypes.find(x => x.type === template[index]["value_type"]);
 
   newElement = document.createElement(elementInfo["element"]);
-  if (template[index]["values"] !== undefined && template[index]["values"].length > 0) {
-    newElement = document.createElement("select");
+  if (elementInfo["element"] === "select" && template[index]["values"] !== undefined &&
+    template[index]["values"].length > 0) {
     values = template[index]["values"];
     for (val in values) {
       option = document.createElement("option");
@@ -429,11 +436,15 @@ function hideVariationTitle() {
 function disableAvailableQuantity() {
   inputAvailableQuantity = document.getElementById("product_available_quantity");
   inputAvailableQuantity.setAttribute("disabled", "disabled");
+  inputAvailableQuantity.setAttribute("class", "opacity-5");
+  inputAvailableQuantity.setAttribute("title", "Debe llenar este campo en variaciones");
 }
 
 function enableAvailableQuantity() {
   inputAvailableQuantity = document.getElementById("product_available_quantity");
   inputAvailableQuantity.removeAttribute("disabled");
+  inputAvailableQuantity.removeAttribute("class");
+  inputAvailableQuantity.removeAttribute("title");
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -465,7 +476,7 @@ document.addEventListener("DOMContentLoaded", function() {
       "element_type": ""
     }];
 
-  var roots  = JSON.parse('<%= Category.roots.to_json.html_safe %>');
+  var roots  = JSON.parse('<%= Category.roots.except("template").to_json.html_safe %>');
   for(var root_position in roots) {
     opt = roots[root_position]
     var el = document.createElement("option");
