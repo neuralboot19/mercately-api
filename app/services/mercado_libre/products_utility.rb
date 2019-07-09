@@ -30,9 +30,6 @@ module MercadoLibre
 
       info = {
         'title': product.title,
-        'category_id': product.category.meli_id,
-        'buying_mode': product.buying_mode,
-        'condition': final_condition(product),
         'variations': variations,
         'attributes': product.ml_attributes
         # 'listing_type_id': 'free'
@@ -41,6 +38,12 @@ module MercadoLibre
       unless variations.present?
         info['price'] = product.price.to_f
         info['available_quantity'] = product.available_quantity || 0
+      end
+
+      if product.sold_quantity.blank? || product.sold_quantity.zero?
+        info['category_id'] = product.category.meli_id
+        info['buying_mode'] = product.buying_mode
+        info['condition'] = final_condition(product)
       end
 
       info.to_json
@@ -87,7 +90,7 @@ module MercadoLibre
 
       variations = []
       product.product_variations.each do |var|
-        variations << { 'id': var.data['id'], 'price': product.price } if
+        variations << { 'id': var.data['id'], 'price': product.price.to_f } if
           var.data['id'].present? && var.data['id'] != 'undefined'
       end
 
