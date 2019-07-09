@@ -5,6 +5,7 @@ module MercadoLibre
       @meli_retailer = @retailer.meli_retailer
       @api = MercadoLibre::Api.new(@meli_retailer)
       @utility = MercadoLibre::ProductsUtility.new
+      @product_variations = MercadoLibre::ProductVariations.new(@retailer)
     end
 
     def search_items
@@ -69,10 +70,14 @@ module MercadoLibre
         meli_expiration_time: product_info['expiration_time'],
         condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
+        ml_attributes: product_info['attributes'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
       return product if product_exist
+
+      @product_variations.save_variations(product, product_info['variations']) if
+        product_info['variations'].present?
 
       images = product_info['pictures']
       images.each do |img|
@@ -90,11 +95,7 @@ module MercadoLibre
       product.price = product_info['price']
       product.base_price = product_info['base_price']
       product.original_price = product_info['original_price']
-      product.initial_quantity = if product.initial_quantity
-                                   product_info['initial_quantity'] + product.initial_quantity
-                                 else
-                                   product_info['initial_quantity']
-                                 end
+      product.initial_quantity = product_info['initial_quantity']
       product.available_quantity = product_info['available_quantity']
       # TODO: Push orders to keep sold_quantity updated
       product.sold_quantity = product_info['sold_quantity']
@@ -107,8 +108,12 @@ module MercadoLibre
       product.meli_expiration_time = product_info['expiration_time']
       product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
       product.meli_permalink = product_info['permalink']
+      product.ml_attributes = product_info['attributes']
       product.retailer = @retailer
       product.save!
+
+      @product_variations.save_variations(product, product_info['variations']) if
+        product_info['variations'].present?
 
       pull_images(product, product_info['pictures'])
 

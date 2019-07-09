@@ -4,8 +4,10 @@ class Product < ApplicationRecord
   has_many :order_items, dependent: :destroy
   has_many :questions, dependent: :destroy
   has_many_attached :images
+  has_many :product_variations, dependent: :destroy
 
   validate :images_count
+  validates :meli_product_id, uniqueness: true, allow_nil: true
 
   after_create :upload_ml, if: proc { !retailer.meli_retailer.nil? }
   after_update :update_ml_info, if: proc { |product| product.meli_product_id }
@@ -22,6 +24,7 @@ class Product < ApplicationRecord
     self.meli_expiration_time = p_ml['expiration_time']
     self.meli_permalink = p_ml['permalink']
     self.meli_product_id = p_ml['id']
+    self.ml_attributes = p_ml['attributes']
     save
   end
 
@@ -42,6 +45,11 @@ class Product < ApplicationRecord
 
     images.attach(io: File.open(tempfile.path), filename: filename)
     File.delete('./public/upload-' + filename + '.jpg')
+  end
+
+  def upload_variations_to_ml
+    p_ml = MercadoLibre::ProductVariations.new(retailer)
+    p_ml.create_product_variations(self)
   end
 
   private
