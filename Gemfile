@@ -32,6 +32,9 @@ gem 'kaminari', '~> 1.1', '>= 1.1.1'
 gem 'cloudinary', require: false
 gem 'activestorage-cloudinary-service'
 
+gem "rack-reverse-proxy", require: "rack/reverse_proxy"
+
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.8', '>= 3.8.2'
