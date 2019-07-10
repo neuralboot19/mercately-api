@@ -35,7 +35,7 @@ module Mercately
 
     # Reverse Proxy for Blog
     config.middleware.insert(0, Rack::ReverseProxy) do
-      reverse_proxy_options preserve_host: false
+      reverse_proxy_options preserve_host: true
       if Rails.env.production? or Rails.env.staging?
         reverse_proxy_options force_ssl: true, replace_response_host: true
       end
