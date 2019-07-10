@@ -29,7 +29,7 @@
           </div>
 
           <div class="group col-xs-12 col-md-3">
-            <%= f.number_field :price, placeholder: '' %>
+            <%= f.text_field :price, placeholder: '' %>
             <%= f.label :price %>
             <span class="bar"></span>
           </div>
@@ -96,6 +96,13 @@
       reader.readAsDataURL(input.files[value]);
     });
   }
+
+  $('#product_price').on('change, keyup', function() {
+    var currentInput = $(this).val();
+    var fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*()]/g, '');
+    fixedInput = fixedInput.replace(',', '.');
+    $(this).val(fixedInput);
+  });
 </script>
 
 <script charset="utf-8">

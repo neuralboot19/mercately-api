@@ -30,9 +30,6 @@ module MercadoLibre
 
       info = {
         'title': product.title,
-        'category_id': product.category.meli_id,
-        'buying_mode': product.buying_mode,
-        'condition': final_condition(product),
         'variations': variations,
         'attributes': product.ml_attributes
         # 'listing_type_id': 'free'
@@ -41,6 +38,12 @@ module MercadoLibre
       unless variations.present?
         info['price'] = product.price.to_f
         info['available_quantity'] = product.available_quantity || 0
+      end
+
+      if product.sold_quantity.blank? || product.sold_quantity.zero?
+        info['category_id'] = product.category.meli_id
+        info['buying_mode'] = product.buying_mode
+        info['condition'] = final_condition(product)
       end
 
       info.to_json
@@ -70,7 +73,14 @@ module MercadoLibre
 
       current_images = product.images.map { |im| im.filename.to_s }
       variation.data['picture_ids'] = current_images
-      load_variations << variation.data
+
+      data = if variation.data['id'].present? && variation.data['id'] == 'undefined'
+               variation.data.except('id')
+             else
+               variation.data
+             end
+
+      load_variations << data
 
       { 'variations': load_variations }.to_json
     end
@@ -78,7 +88,13 @@ module MercadoLibre
     def prepare_variations_for_update(product)
       return [] unless product.product_variations.present?
 
-      product.product_variations.map { |pv| { 'id': pv.data['id'], 'price': product.price } }
+      variations = []
+      product.product_variations.each do |var|
+        variations << { 'id': var.data['id'], 'price': product.price.to_f } if
+          var.data['id'].present? && var.data['id'] != 'undefined'
+      end
+
+      variations
     end
   end
 end

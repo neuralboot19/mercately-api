@@ -104,33 +104,49 @@ class Retailers::ProductsController < RetailersController
       return [] unless params[:product][:variations].present?
 
       @variations = []
-      total_available = 0
-      total_sold = 0
+      @total_available = 0
+      @total_sold = 0
 
       category = Category.find(params[:product][:category_id])
       params[:product][:variations].each do |var|
-        temp_var = {
-          attribute_combinations: [],
-          picture_ids: []
-        }
-
-        var[1].each do |t|
-          if category.template.any? { |temp| temp['id'] == t[0] && temp['tags']['allow_variations'] }
-            temp_var[:attribute_combinations] << { id: t[0], value_id: t[1] }
-          else
-            temp_var[t[0]] = t[1]
-          end
-
-          total_available += t[1].to_i if t[0] == 'available_quantity'
-          total_sold += t[1].to_i if t[0] == 'sold_quantity'
-        end
-
+        temp_var = build_variation(var[1], category)
         temp_var['price'] = params[:product][:price]
         @variations << temp_var
       end
 
-      params[:product][:available_quantity] = total_available
-      params[:product][:sold_quantity] = total_sold
+      params[:product][:available_quantity] = @total_available
+      params[:product][:sold_quantity] = @total_sold
+    end
+
+    def build_variation(variation, category)
+      temp_var = {
+        attribute_combinations: [],
+        picture_ids: []
+      }
+
+      variation.each do |t|
+        temp_aux = category.template.select { |temp| temp['id'] == t[0] && temp['tags']['allow_variations'] }
+        temp_var = fill_temp(temp_aux, temp_var, t)
+
+        @total_available += t[1].to_i if t[0] == 'available_quantity'
+        @total_sold += t[1].to_i if t[0] == 'sold_quantity'
+      end
+
+      temp_var
+    end
+
+    def fill_temp(temp_aux, temp_var, record)
+      if temp_aux.present?
+        temp_var[:attribute_combinations] << if temp_aux.first['value_type'] == 'list'
+                                               { id: record[0], value_id: record[1] }
+                                             else
+                                               { id: record[0], value_name: record[1] }
+                                             end
+      else
+        temp_var[record[0]] = record[1]
+      end
+
+      temp_var
     end
 
     def process_attributes(attributes)
@@ -184,13 +200,16 @@ class Retailers::ProductsController < RetailersController
 
     def update_variations
       @variations.each do |var|
-        if var['id'].present?
+        if var['id'].present? && var['id'] != 'undefined'
           @product.product_variations.find_by(variation_meli_id: var['id']).update(data: var)
+        elsif var['variation_id'].present? && var['variation_id'] != 'undefined'
+          @product.product_variations.find(var['variation_id']).update(data: var)
         else
           @product.product_variations.create(data: var)
         end
       end
       delete_variations
+      delete_variations_by_ids
     end
 
     def delete_variations
@@ -201,7 +220,20 @@ class Retailers::ProductsController < RetailersController
 
       return unless current_variations.present?
 
-      @product.product_variations.where(variation_meli_id: current_variations).delete_all
+      @product.product_variations.where(variation_meli_id: current_variations).delete_all if
+        current_variations.present?
+    end
+
+    def delete_variations_by_ids
+      current_variation_ids = @product.product_variations.pluck(:id).compact
+      variation_merc_ids = @variations.map { |vari| vari['variation_id'].to_i }.compact
+
+      current_variation_ids -= variation_merc_ids if current_variation_ids.present?
+
+      return unless current_variation_ids.present?
+
+      @product.product_variations.where(id: current_variation_ids).delete_all if
+        current_variation_ids.present?
     end
 
     # Only allow a trusted parameter "white list" through.
