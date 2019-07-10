@@ -6,15 +6,30 @@ function getAjax(url, success) {
   };
   xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   xhr.send();
-  let category_id;
   return xhr;
 }
 
+let dataTypes;
+let categoryId;
+let template;
+let countVariations = 0;
+let elementInfo;
+let productId;
+let productInfo;
+let productVariations;
+let currentTemplate;
+let originalCategoryId;
+
 function appendSelect(currentElement) {
   var root = document.getElementById("root");
+  var variations = document.getElementById("variations-container");
+  var attributes = document.getElementById("attributes-container");
+  variations.innerHTML = "";
+  attributes.innerHTML = "";
+  countVariations = 0;
   currentElement = document.getElementById(currentElement);
   currentElementPosition = parseInt(currentElement.id.match(/\d+$/)[0]);
-  category_id = currentElement.value;
+  categoryId = currentElement.value;
   selectId = currentElementPosition + 1;
 
   if(document.getElementById(`childs_${selectId}`)) {
@@ -39,8 +54,35 @@ function appendSelect(currentElement) {
     var json = JSON.parse(data);
     var child_categories = json['child_categories'];
     if(child_categories.length <= 0) {
+      template = json['template'];
+
+      if (template.length > 0) {
+        appendAttributes();
+        showVariationTitle();
+        showVariationContainer();
+        disableAvailableQuantity();
+
+        if (originalCategoryId && originalCategoryId === categoryId) {
+          for (pv in productVariations) {
+            currentTemplate = productVariations[pv];
+            appendTemplate();
+            currentTemplate = undefined;
+          }
+        }
+      } else {
+        hideVariationTitle();
+        hideVariationContainer();
+        enableAvailableQuantity();
+        showUploader();
+      }
+
       root.removeChild(select);
     } else {
+      hideVariationTitle();
+      hideVariationContainer();
+      enableAvailableQuantity();
+      showUploader();
+
       for(var child_position in child_categories) {
         opt = child_categories[child_position]
         var el = document.createElement("option");
@@ -49,15 +91,392 @@ function appendSelect(currentElement) {
         select.appendChild(el)
       };
     }
-    document.getElementById('product_category_id').value = category_id;
+    document.getElementById("product_category_id").value = categoryId;
   });
+}
+
+function appendAttributes() {
+  var attrContainer = document.getElementById("attributes-container");
+
+  for (temp in template) {
+    if (template[temp]['tags']['allow_variations'] !== undefined) {
+      continue;
+    }
+
+    attrContainer.appendChild(buildElement(template, temp));
+
+    /*if (elementInfo["type"] === "number_unit") {
+      attrContainer.appendChild(manageNumberUnit(template, temp));
+    }*/
+  }
+}
+
+function appendTemplate() {
+  countVariations += 1;
+  var container = document.getElementById("variations-container");
+  var variationElement = document.createElement("div");
+  variationElement.setAttribute("id", `variation-element-${countVariations - 1}`);
+  variationElement.setAttribute("class", "row variation-element col-xs-12");
+  variationDiv = document.createElement("div");
+  variationDiv.setAttribute("class", "group col-xs-12 remove-variation-container");
+  pElement = document.createElement('p');
+  pElement.setAttribute("id", `remove-variation-${countVariations - 1}`)
+  pElement.setAttribute("onclick", "removeVariation(this);");
+  pElement.setAttribute("class", "remove-variation");
+  pElement.innerHTML = "Eliminar variación";
+  variationDiv.appendChild(pElement);
+  variationElement.appendChild(variationDiv);
+
+  for (temp in template) {
+    if (template[temp]['tags']['allow_variations'] === undefined) {
+      continue;
+    }
+
+    variationElement.appendChild(buildElement(template, temp));
+
+    /*
+    if (elementInfo["type"] === "number_unit") {
+      variationElement.appendChild(manageNumberUnit(template, temp));
+    }
+    */
+  }
+
+  container.appendChild(addCommonVariationElements(variationElement));
+
+  //container.appendChild(includeImages(variationElement));
+}
+
+function addCommonVariationElements(container) {
+  commonElements = [/*{
+    "name": "price",
+    "element": "input",
+    "element_type": "number",
+    "label": "Precio"
+  },*/
+  {
+    "name": "available_quantity",
+    "element": "input",
+    "element_type": "number",
+    "label": "Cantidad disponible"
+  },
+  {
+    "name": "sold_quantity",
+    "element": "input",
+    "element_type": "number",
+    "label": "Cantidad vendida"
+  }];
+
+  for (comElem in commonElements) {
+    variationDiv = document.createElement("div");
+    variationDiv.setAttribute("class", "group col-xs-12 col-md-6");
+
+    attrName = `product[variations][${countVariations - 1}][${commonElements[comElem]["name"]}]`;
+    attrId = `product_variations_${countVariations - 1}_${commonElements[comElem]["name"]}`;
+    htmlFor = `product_variations_${countVariations - 1}_${commonElements[comElem]["name"]}`;
+    labelText = commonElements[comElem]["label"];
+
+    newElement = document.createElement(commonElements[comElem]["element"]);
+    newElement.setAttribute("name", attrName);
+    newElement.setAttribute("id", attrId);
+    newElement.setAttribute("type", commonElements[comElem]["element_type"]);
+
+    if (currentTemplate && currentTemplate["data"][commonElements[comElem]["name"]] !== undefined) {
+      newElement.setAttribute("value", `${currentTemplate["data"][commonElements[comElem]["name"]]}`);
+    }
+
+    variationDiv.appendChild(newElement);
+
+    label = document.createElement("label");
+    label.innerHTML = labelText;
+    label.htmlFor = htmlFor;
+    label.setAttribute("class", "select-label");
+    variationDiv.appendChild(label);
+
+    span = document.createElement("span");
+    span.setAttribute("class", "bar");
+    variationDiv.appendChild(span);
+
+    container.appendChild(variationDiv);
+  }
+
+  if (currentTemplate) {
+    newElement = document.createElement("input");
+    newElement.setAttribute("type", "hidden");
+    newElement.setAttribute("name", `product[variations][${countVariations - 1}][id]`);
+    newElement.setAttribute("id", `product_variations_${countVariations - 1}_id`);
+    newElement.setAttribute("value", `${currentTemplate["data"]["id"]}`);
+    container.appendChild(newElement);
+
+    newElement = document.createElement("input");
+    newElement.setAttribute("type", "hidden");
+    newElement.setAttribute("name", `product[variations][${countVariations - 1}][variation_id]`);
+    newElement.setAttribute("id", `product_variations_${countVariations - 1}_variation_id`);
+    newElement.setAttribute("value", `${currentTemplate["id"]}`);
+    container.appendChild(newElement);
+  }
+
+  return container;
+}
+
+function manageNumberUnit(template, index) {
+  variationDiv = document.createElement("div");
+  variationDiv.setAttribute("class", "group col-xs-6 col-md-3");
+
+  newElement = document.createElement("select");
+  values = template[index]["allowed_units"];
+
+  if (values !== undefined && values.length > 0) {
+    for (val in values) {
+      option = document.createElement("option");
+      option.textContent = values[val]["name"];
+      option.value = values[val]["id"];
+      newElement.appendChild(option);
+    }
+    setElement(variationDiv, newElement, template, index, true);
+  }
+
+  return variationDiv;
+}
+
+function buildElement(template, index) {
+  variationDiv = document.createElement("div");
+
+  elementInfo = dataTypes.find(x => x.type === template[index]["value_type"]);
+
+  newElement = document.createElement(elementInfo["element"]);
+  if (elementInfo["element"] === "select" && template[index]["values"] !== undefined &&
+    template[index]["values"].length > 0) {
+    values = template[index]["values"];
+    for (val in values) {
+      option = document.createElement("option");
+      option.textContent = values[val]["name"];
+      option.value = values[val]["id"];
+      newElement.appendChild(option);
+    }
+  }
+
+  //if (elementInfo["type"] === "number_unit") {
+  //  variationDiv.setAttribute("class", "group col-xs-6 col-md-3");
+  //} else {
+    variationDiv.setAttribute("class", "group col-xs-12 col-md-6");
+  //}
+
+  setElement(variationDiv, newElement, template, index, false);
+
+  return variationDiv;
+}
+
+function includeImages(container) {
+  divImagesContainer = document.createElement("div");
+  divImagesContainer.setAttribute("class", "uploader center w-100 col-xs-12 dinamic-uploaders");
+
+  variationImages = document.createElement("input");
+  variationImages.setAttribute("id", `uploadedImages-${countVariations - 1}`);
+  variationImages.setAttribute("name", `product[variations][${countVariations - 1}][images][]`);
+  variationImages.setAttribute("type", "file");
+  variationImages.setAttribute("multiple", "multiple");
+  variationImages.setAttribute("onchange", "readVariationURL(this);");
+  variationImages.setAttribute("class", "inserted-uploaders");
+  divImagesContainer.appendChild(variationImages);
+
+  label = document.createElement("label");
+  label.innerHTML = "Arrastra las imagenes o has click aqui para seleccionarlas";
+  label.htmlFor = `uploadedImages-${countVariations - 1}`;
+  label.setAttribute("class", "py-20");
+  divImagesContainer.appendChild(label);
+  container.appendChild(divImagesContainer);
+
+  divShowImages = document.createElement("div");
+  divShowImages.setAttribute("id", `up-images-${countVariations - 1}`);
+  container.appendChild(divShowImages);
+
+  return container;
+}
+
+function setElement(container, element, template, index, isNumberUnit) {
+  attrName = attrId = htmlFor = labelText = "";
+
+  if (template[index]['tags']['allow_variations'] !== undefined) {
+    if (isNumberUnit) {
+      attrName = `product[variations][${countVariations - 1}][${template[index]["id"]}]["unit"]`;
+      attrId = `product_variations_${countVariations - 1}_${template[index]["id"]}_unit`;
+      htmlFor = `product_variations_${countVariations - 1}_${template[index]["id"]}_unit`;
+      labelText = "Unidad";
+    } else {
+      attrName = `product[variations][${countVariations - 1}][${template[index]["id"]}]`;
+      attrId = `product_variations_${countVariations - 1}_${template[index]["id"]}`;
+      htmlFor = `product_variations_${countVariations - 1}_${template[index]["id"]}`;
+      labelText = template[index]["name"];
+    }
+  } else {
+    if (isNumberUnit) {
+      attrName = `product[ml_attributes][${template[index]["id"]}]["unit"]`;
+      attrId = `product_ml_attributes_${template[index]["id"]}_unit`;
+      htmlFor = `product_ml_attributes_${template[index]["id"]}_unit`;
+      labelText = "Unidad";
+    } else {
+      attrName = `product[ml_attributes][${template[index]["id"]}]`;
+      attrId = `product_ml_attributes_${template[index]["id"]}`;
+      htmlFor = `product_ml_attributes_${template[index]["id"]}`;
+      labelText = template[index]["name"];
+    }
+  }
+
+  element.setAttribute("name", attrName);
+  element.setAttribute("id", attrId);
+  element.setAttribute("type", elementInfo["element_type"]);
+
+  if (productInfo && currentTemplate === undefined) {
+    for (pi in productInfo['ml_attributes']) {
+      if (productInfo['ml_attributes'][pi]["id"] === template[index]["id"]) {
+        element.setAttribute("value", `${productInfo['ml_attributes'][pi]["value_name"]}`);
+        break;
+      }
+    }
+  } else if (currentTemplate) {
+    for (ct in currentTemplate["data"]['attribute_combinations']) {
+      if (template[index]["id"] === currentTemplate["data"]['attribute_combinations'][ct]["id"]) {
+        if (element.tagName === 'SELECT') {
+          element.value = `${currentTemplate["data"]['attribute_combinations'][ct]["value_id"]}`;
+        } else {
+          element.setAttribute("value", `${currentTemplate["data"]['attribute_combinations'][ct]["value_name"]}`);
+        }
+        break;
+      }
+    }
+  }
+
+  container.appendChild(element);
+
+  label = document.createElement("label");
+  label.innerHTML = labelText;
+  label.htmlFor = htmlFor;
+  label.setAttribute("class", "select-label");
+  container.appendChild(label);
+
+  span = document.createElement("span");
+  span.setAttribute("class", "bar");
+  container.appendChild(span);
+}
+
+function readVariationURL(input) {
+  inputId = input.id.substring(input.id.lastIndexOf('-') + 1);
+
+  $(`#up-images-${inputId}`).empty();
+  var number = 0;
+  $.each(input.files, function(value) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var id = (new Date).getTime();
+      number++;
+      $(`#up-images-${inputId}`).prepend('<img id='+id+' src='+e.target.result+' data-index='+number+' class="img_preview mx-4" />')
+    };
+    reader.readAsDataURL(input.files[value]);
+  });
+}
+
+function removeVariation(input) {
+  inputId = input.id.substring(input.id.lastIndexOf('-') + 1);
+  variation = document.getElementById("variations-container");
+  variation.removeChild(document.getElementById(`variation-element-${inputId}`));
+}
+
+function getProduct() {
+  getAjax(`${window.location.origin}/retailers/products/${productId}/product_with_variations`, function(data) {
+    var json = JSON.parse(data);
+
+    productInfo = json['product'];
+    productVariations = json['variations'];
+    template = json['template'];
+    appendAttributes();
+
+    if (productVariations.length > 0) {
+      showVariationTitle();
+      showVariationContainer();
+      disableAvailableQuantity();
+      for (pv in productVariations) {
+        currentTemplate = productVariations[pv];
+        appendTemplate();
+        currentTemplate = undefined;
+      }
+    }
+  });
+}
+
+function showUploader() {
+  var uploader = document.getElementById("uploaderImages");
+  uploader.className = "uploader center w-100 col-xs-12";
+}
+
+function hideUploader() {
+  var uploader = document.getElementById("uploaderImages");
+  uploader.className = "not-display";
+}
+
+function showVariationContainer() {
+  var container = document.getElementById("variations-container");
+  container.className = "row col-xs-12";
+}
+
+function hideVariationContainer() {
+  var container = document.getElementById("variations-container");
+  container.className = "not-display";
+}
+
+function showVariationTitle() {
+  var container = document.getElementById("variations-title");
+  container.className = "group variations-container-title col-xs-12";
+}
+
+function hideVariationTitle() {
+  var container = document.getElementById("variations-title");
+  container.className = "not-display";
+}
+
+function disableAvailableQuantity() {
+  inputAvailableQuantity = document.getElementById("product_available_quantity");
+  inputAvailableQuantity.setAttribute("disabled", "disabled");
+  inputAvailableQuantity.setAttribute("class", "opacity-5");
+  inputAvailableQuantity.setAttribute("title", "Debe llenar este campo en variaciones");
+}
+
+function enableAvailableQuantity() {
+  inputAvailableQuantity = document.getElementById("product_available_quantity");
+  inputAvailableQuantity.removeAttribute("disabled");
+  inputAvailableQuantity.removeAttribute("class");
+  inputAvailableQuantity.removeAttribute("title");
 }
 
 document.addEventListener("DOMContentLoaded", function() {
   var root = document.getElementById("root");
   var childs_select = document.getElementById("childs_1");
+  dataTypes = [{
+      "type": "string",
+      "element": "input",
+      "element_type": "text"
+    },
+    {
+      "type": "number",
+      "element": "input",
+      "element_type": "number"
+    },
+    {
+      "type": "number_unit",
+      "element": "input",
+      "element_type": "number"
+    },
+    {
+      "type": "boolean",
+      "element": "input",
+      "element_type": "boolean"
+    },
+    {
+      "type": "list",
+      "element": "select",
+      "element_type": ""
+    }];
 
-  var roots  = JSON.parse('<%= Category.roots.to_json.html_safe %>');
+  var roots  = JSON.parse('<%= Category.roots.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
   for(var root_position in roots) {
     opt = roots[root_position]
     var el = document.createElement("option");
@@ -65,4 +484,13 @@ document.addEventListener("DOMContentLoaded", function() {
     el.value = opt.id;
     childs_select.appendChild(el)
   };
+
+  hideVariationContainer();
+  hideVariationTitle();
+
+  productId = document.getElementById('product_id').value;
+  if (productId) {
+    originalCategoryId = document.getElementById("product_category_id").value;
+    getProduct();
+  }
 });

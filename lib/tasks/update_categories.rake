@@ -17,6 +17,8 @@ task update_categories: :environment do
 end
 
 def ml_category_import(father, cat_id)
+  template = faraday_request_get("https://api.mercadolibre.com/categories/#{cat_id}/attributes")
+  father.update(template: template) if template.present?
   meli_url = 'https://api.mercadolibre.com/categories/'
   faraday_request_get("#{meli_url}#{cat_id}")['children_categories'].each do |children_category|
     child = Category.create_with(name: children_category['name'], parent_id: father.id)
@@ -26,6 +28,8 @@ def ml_category_import(father, cat_id)
     if grandchild_count.positive?
       ml_category_import(child, children_category['id'])
     else
+      template = faraday_request_get("https://api.mercadolibre.com/categories/#{child.meli_id}/attributes")
+      child.update(template: template) if template.present?
       child
     end
   end
@@ -33,6 +37,5 @@ end
 
 def faraday_request_get(url)
   conn = Connection.prepare_connection(url)
-  response = Connection.get_request(conn)
-  JSON.parse(response.body)
+  Connection.get_request(conn)
 end

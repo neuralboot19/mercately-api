@@ -45,5 +45,12 @@ module MercadoLibre
       }
       "https://api.mercadolibre.com/items/#{product.meli_product_id}/pictures?#{params.to_query}"
     end
+
+    def prepare_variation_product__create_url(meli_product_id)
+      params = {
+        access_token: @meli_retailer.access_token
+      }
+      "https://api.mercadolibre.com/items/#{meli_product_id}/variations?#{params.to_query}"
+    end
   end
 end
