@@ -58,6 +58,9 @@ class Retailers::ProductsController < RetailersController
       params[:product][:ml_attributes].present?
 
     if @product.update(product_params)
+      @product.reload
+      @product.update_ml_info
+      delete_images(params[:product][:delete_images]) if params[:product][:delete_images].present?
       upload_variations
       redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully updated.'
     else
@@ -234,6 +237,22 @@ class Retailers::ProductsController < RetailersController
 
       @product.product_variations.where(id: current_variation_ids).delete_all if
         current_variation_ids.present?
+    end
+
+    def delete_images(images)
+      return unless images.present?
+
+      ids = []
+      images.each do |img|
+        ids << img[1]
+      end
+
+      @product.images.where(id: ids).purge if ids.present?
+
+      unless @variation.present?
+        p_ml = MercadoLibre::Products.new(@retailer)
+        p_ml.push_update(@product.reload)
+      end
     end
 
     # Only allow a trusted parameter "white list" through.

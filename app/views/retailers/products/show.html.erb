@@ -25,7 +25,9 @@
           <div class="row">
             <div class="col-xs-12 col-md-7">
               <div id="show-image" class="p-relative">
-                <%= cl_image_tag("#{@product.images.first.key}") %>
+                <% if @product.images.attached? %>
+                  <%= cl_image_tag("#{@product.images.first.key}") %>
+                <% end %>
 
                 <div id="product-price" class="circle big-circle bg-pink p-absolute">
                   <%= @product.price %>$

@@ -238,10 +238,10 @@ input[type=search] {
 
 // Form
 #up_images {
-  overflow-x: auto;
+  /*overflow-x: auto;
   max-height: 200px;
   display: flex;
-  overflow-y: hidden;
+  overflow-y: hidden;*/
 }
 
 #uploadedImages {
@@ -321,4 +321,39 @@ input[type=search] {
 
 .opacity-5 {
   opacity: 0.5;
+}
+
+.edit-card {
+  height: 200px;
+  border: 1px solid gray;
+  position: relative;
+
+  .image-tag {
+    width: 100%;
+    height: 100%;
+  }
+
+  .delete-icon {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    margin-top: 10px;
+    right: 10px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.current-images-container {
+  margin-top: 0px !important;
+  
+  h2 {
+    font-size: 18px;
+  }
 }

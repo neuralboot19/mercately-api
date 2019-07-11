@@ -19,8 +19,17 @@ module MercadoLibre
     def prepare_images(product)
       array = []
       product.images.each do |img|
-        link = img.filename.to_s
-        array << { "id": link }
+        array << { "id": img.filename.to_s }
+      end
+      array
+    end
+
+    def prepare_images_update(product)
+      array = []
+      product.images.each do |img|
+        next if img.filename.to_s.include?('.')
+
+        array << { "id": img.filename.to_s }
       end
       array
     end
@@ -31,7 +40,8 @@ module MercadoLibre
       info = {
         'title': product.title,
         'variations': variations,
-        'attributes': product.ml_attributes
+        'attributes': product.ml_attributes,
+        'pictures': prepare_images_update(product)
         # 'listing_type_id': 'free'
       }
 

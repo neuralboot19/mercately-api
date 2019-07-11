@@ -19,6 +19,8 @@ let productInfo;
 let productVariations;
 let currentTemplate;
 let originalCategoryId;
+let posImage = 0;
+let posNewImage = 0;
 
 function appendSelect(currentElement) {
   var root = document.getElementById("root");
@@ -445,6 +447,30 @@ function enableAvailableQuantity() {
   inputAvailableQuantity.removeAttribute("disabled");
   inputAvailableQuantity.removeAttribute("class");
   inputAvailableQuantity.removeAttribute("title");
+}
+
+function removeImage(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  container = document.getElementById("image-gallery");
+  containerImage = document.getElementById(`image-container-${imageId}`);
+
+  newElement = document.createElement("input");
+  newElement.setAttribute("type", "hidden");
+  newElement.setAttribute("name", `product[delete_images][${posImage}]`);
+  newElement.setAttribute("id", `product_delete_images_${posImage}`);
+  newElement.setAttribute("value", `${imageId}`);
+  container.appendChild(newElement);
+
+  container.removeChild(containerImage);
+
+  posImage++;
+}
+
+function removeNewImage(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  container = document.getElementById("up_images");
+  containerImage = document.getElementById(`new-image-container-${imageId}`);
+  container.removeChild(containerImage);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
