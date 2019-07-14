@@ -30,7 +30,7 @@ class Retailers::MessagesController < RetailersController
   end
 
   def chat
-    @order = Order.find(params[:id])
+    @order = Order.find(params[:order_id])
   end
 
   private
