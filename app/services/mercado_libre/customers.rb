@@ -36,7 +36,6 @@ module MercadoLibre
         email: @order_params['email'],
         retailer: @retailer
       ).find_or_create_by!(email: @order_params['email'])
-      customer
     end
 
     private

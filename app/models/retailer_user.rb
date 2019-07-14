@@ -4,7 +4,6 @@ class RetailerUser < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   belongs_to :retailer
-  has_many :questions, foreign_key: :sender_id
 
   validates :agree_terms, presence: true
   before_create :agree_terms_to_bool
