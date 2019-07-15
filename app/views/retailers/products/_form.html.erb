@@ -68,20 +68,27 @@
           <div id="variations-container" class="row col-xs-12"></div>
 
           <div id="uploaderImages" class="uploader center w-100 col-xs-12">
-            <%= f.label :images, 'Arrastra las imagenes o has click aqui para seleccionarlas', class: 'py-20' %>
+            <%= f.label :images, 'Arrastra las imágenes o haz click aquí para seleccionarlas', class: 'py-20 uploader-text' %>
             <%= f.file_field :images, multiple: true, onchange: 'readURL(this);', id: 'uploadedImages' %>
           </div>
           <div id="up_images" class="row col-xs-12 col-md-12 edit-gallery"></div>
 
           <div id="image-gallery" class="row col-xs-12 col-md-12 edit-gallery">
+            <%= f.hidden_field :main_picture_id %>
+            <input type="hidden" id="new-main-image" name="new_main_image" />
+            <input type="hidden" id="new-main-image-name" name="new_main_image_name" />
+            <%= image_tag 'dashboard/delete-icon.png', class: 'not-display', id: "delete-image" %>
+            <%= image_tag 'star.png', class: 'not-display', id: "star-image" %>
+
             <% if @product.images.attached? %>
               <div class="col-xs-12 col-md-12 current-images-container">
                 <h2>Imágenes actuales:</h2>
               </div>
               <% @product.images.each do |img| %>
-                <div id="image-container-<%= img.id.to_s %>" class="col-xs-12 col-md-3 edit-card">
+                <div id="image-container-<%= img.id.to_s %>" class="col-xs-12 col-md-3 edit-card" onmouseover="showMain(this);" onmouseleave="hideMain(this);">
                   <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', onclick: 'removeImage(this);', id: "delete-#{img.id.to_s}" %>
                   <%= cl_image_tag("#{img.key}", class: "image-tag", id: "image-#{img.id.to_s}") %>
+                  <p class="main-image-text" id="main-image-<%= img.id.to_s %>" onclick="setMainImage(this);">Foto principal</p>
                 </div>
               <% end %>
             <% end %>
@@ -97,23 +104,6 @@
 </div>
 
 <script type="text/javascript">
-  var readURL = function(input) {
-    $.each(input.files, function(value) {
-      var reader = new FileReader();
-      reader.onload = function (e) {
-        var id = (new Date).getTime();
-        posNewImage++;
-        $('#up_images').prepend(
-          '<div id=' + 'new-image-container-' + posNewImage + ' class="col-xs-12 col-md-3 edit-card">' +
-          '<img id='+ 'delete-new-' + posNewImage + ' class="delete-icon" src="/assets/dashboard/delete-icon.png" onclick="removeNewImage(this);" />' +
-          '<img id='+id+' src='+e.target.result+' data-index='+posNewImage+' class="image-tag" />' +
-          '</div>'
-        )
-      };
-      reader.readAsDataURL(input.files[value]);
-    });
-  }
-
   $('#product_price').on('change, keyup', function() {
     var currentInput = $(this).val();
     var fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*()]/g, '');

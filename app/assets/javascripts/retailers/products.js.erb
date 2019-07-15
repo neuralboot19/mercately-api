@@ -461,6 +461,11 @@ function removeImage(image) {
   newElement.setAttribute("value", `${imageId}`);
   container.appendChild(newElement);
 
+  hiddenMainImage = document.getElementById("product_main_picture_id");
+  if (imageId === hiddenMainImage.value) {
+    hiddenMainImage.removeAttribute("value");
+  }
+
   container.removeChild(containerImage);
 
   posImage++;
@@ -471,6 +476,119 @@ function removeNewImage(image) {
   container = document.getElementById("up_images");
   containerImage = document.getElementById(`new-image-container-${imageId}`);
   container.removeChild(containerImage);
+
+  hiddenMainImage = document.getElementById("new-main-image");
+  if (imageId === hiddenMainImage.value) {
+    hiddenMainImage.removeAttribute("value");
+  }
+}
+
+function setMainImage(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  hiddenMainImage = document.getElementById("product_main_picture_id");
+
+  if (hiddenMainImage.value !== imageId) {
+    if (hiddenMainImage.value) {
+      pastMainImage = document.getElementById(`main-image-${hiddenMainImage.value}`);
+      pastMainImage.setAttribute("class", "main-image-text");
+    }
+
+    hiddenMainImage.setAttribute("value", `${imageId}`);
+    image.setAttribute("class", "main-image-text do-display");
+
+    hiddenMainImage = document.getElementById("new-main-image");
+    if (hiddenMainImage.value) {
+      pastMainImage = document.getElementById(`main-new-image-${hiddenMainImage.value}`);
+      pastMainImage.setAttribute("class", "main-image-text");
+      hiddenMainImage.removeAttribute("value");
+    }
+  }
+}
+
+function showMain(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  mainImage = document.getElementById(`main-image-${imageId}`);
+  mainImage.setAttribute("class", "main-image-text do-display");
+}
+
+function hideMain(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  hiddenMainImage = document.getElementById("product_main_picture_id");
+
+  if (imageId !== hiddenMainImage.value) {
+    mainImage = document.getElementById(`main-image-${imageId}`);
+    mainImage.setAttribute("class", "not-display");
+  }
+}
+
+function setMainNewImage(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  hiddenMainImage = document.getElementById("new-main-image");
+
+  if (hiddenMainImage.value !== imageId) {
+    if (hiddenMainImage.value) {
+      pastMainImage = document.getElementById(`main-new-image-${hiddenMainImage.value}`);
+      pastMainImage.setAttribute("class", "main-image-text");
+    }
+
+    hiddenMainImage.setAttribute("value", `${imageId}`);
+    image.setAttribute("class", "main-image-text do-display");
+
+    hiddenMainImage = document.getElementById("product_main_picture_id");
+    if (hiddenMainImage.value) {
+      pastMainImage = document.getElementById(`main-image-${hiddenMainImage.value}`);
+      pastMainImage.setAttribute("class", "main-image-text");
+      hiddenMainImage.removeAttribute("value");
+    }
+
+    hiddenImageName = document.getElementById("new-main-image-name");
+    selectedImage = document.getElementById(`new-main-image-name-${imageId}`);
+    hiddenImageName.setAttribute("value", selectedImage.value);
+  }
+}
+
+function showNewMain(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  mainImage = document.getElementById(`main-new-image-${imageId}`);
+  mainImage.setAttribute("class", "main-image-text do-display");
+}
+
+function hideNewMain(image) {
+  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
+  hiddenMainImage = document.getElementById("new-main-image");
+
+  if (imageId !== hiddenMainImage.value) {
+    mainImage = document.getElementById(`main-new-image-${imageId}`);
+    mainImage.setAttribute("class", "not-display");
+  }
+}
+
+var readURL = function(input) {
+  $('#up_images').empty();
+  hiddenMainImage = document.getElementById("new-main-image");
+  hiddenMainImage.removeAttribute("value");
+  $.each(input.files, function(value) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      posNewImage++;
+      $('#up_images').prepend(
+        '<div id=' + 'new-image-container-' + posNewImage + ' class="col-xs-12 col-md-3 edit-card" onmouseover="showNewMain(this);" onmouseleave="hideNewMain(this);">' +
+        '<img id='+ 'delete-new-' + posNewImage + ' class="delete-icon" onclick="removeNewImage(this);" />' +
+        '<img id=new-image-' + posNewImage + ' src='+e.target.result+' data-index='+posNewImage+' class="image-tag" />' +
+        '<p class="main-image-text" id=' + 'main-new-image-' + posNewImage + ' onclick="setMainNewImage(this);">Foto principal</p>' +
+        '<input type="hidden" id=new-main-image-name-' + posNewImage + ' />' +
+        '</div>'
+      )
+
+      deleteImage = document.getElementById("delete-image");
+      deleteIcon = document.getElementById(`delete-new-${posNewImage}`);
+      deleteIcon.src = deleteImage.src;
+
+      element = document.getElementById(`new-main-image-name-${posNewImage}`);
+      element.setAttribute("value", `${input.files[value].name}`);
+    };
+    reader.readAsDataURL(input.files[value]);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -518,5 +636,11 @@ document.addEventListener("DOMContentLoaded", function() {
   if (productId) {
     originalCategoryId = document.getElementById("product_category_id").value;
     getProduct();
+
+    mainPictureId = document.getElementById('product_main_picture_id').value;
+    if (mainPictureId) {
+      mainImage = document.getElementById(`main-image-${mainPictureId}`);
+      mainImage.setAttribute("class", "main-image-text do-display");
+    }
   }
 });

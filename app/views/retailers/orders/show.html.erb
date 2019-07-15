@@ -44,8 +44,10 @@
                 MercadoLibre
               </p>
               <p class="product-text">
-                <b class="normal black-text mr-16">Producto:</b><br/>
-                <%= @order.product.title %>
+                <b class="normal black-text mr-16">Productos:</b><br/>
+                <% @order.products.each do |p| %>
+                  <% p.title %><br/>
+                <% end %>
               </p>
             </div>
             <div class="col-xs-12 col-md-3">
