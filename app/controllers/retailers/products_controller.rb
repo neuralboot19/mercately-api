@@ -37,7 +37,10 @@ class Retailers::ProductsController < RetailersController
       params[:product][:ml_attributes].present?
 
     if @product.save
-      upload_variations
+      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
+      @product.reload
+      @product.upload_ml
+      @product.upload_variations(action_name, @variations)
       redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully created.'
     else
       render :new
@@ -58,7 +61,11 @@ class Retailers::ProductsController < RetailersController
       params[:product][:ml_attributes].present?
 
     if @product.update(product_params)
-      upload_variations
+      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
+      @product.delete_images(params[:product][:delete_images], @variations) if params[:product][:delete_images].present?
+      @product.reload
+      @product.update_ml_info
+      @product.upload_variations(action_name, @variations)
       redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully updated.'
     else
       render :edit
@@ -179,63 +186,6 @@ class Retailers::ProductsController < RetailersController
       @product.errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.')
     end
 
-    def upload_variations
-      return unless @variations.present?
-
-      if action_name == 'new' || action_name == 'create'
-        create_variations
-      elsif action_name == 'edit' || action_name == 'update'
-        update_variations
-      end
-
-      @product.reload
-      @product.upload_variations_to_ml
-    end
-
-    def create_variations
-      @variations.each do |var|
-        @product.product_variations.create(data: var)
-      end
-    end
-
-    def update_variations
-      @variations.each do |var|
-        if var['id'].present? && var['id'] != 'undefined'
-          @product.product_variations.find_by(variation_meli_id: var['id']).update(data: var)
-        elsif var['variation_id'].present? && var['variation_id'] != 'undefined'
-          @product.product_variations.find(var['variation_id']).update(data: var)
-        else
-          @product.product_variations.create(data: var)
-        end
-      end
-      delete_variations
-      delete_variations_by_ids
-    end
-
-    def delete_variations
-      current_variations = @product.product_variations.pluck(:variation_meli_id).compact
-      variation_ids = @variations.map { |vari| vari['id'].to_i }.compact
-
-      current_variations -= variation_ids if current_variations.present?
-
-      return unless current_variations.present?
-
-      @product.product_variations.where(variation_meli_id: current_variations).delete_all if
-        current_variations.present?
-    end
-
-    def delete_variations_by_ids
-      current_variation_ids = @product.product_variations.pluck(:id).compact
-      variation_merc_ids = @variations.map { |vari| vari['variation_id'].to_i }.compact
-
-      current_variation_ids -= variation_merc_ids if current_variation_ids.present?
-
-      return unless current_variation_ids.present?
-
-      @product.product_variations.where(id: current_variation_ids).delete_all if
-        current_variation_ids.present?
-    end
-
     # Only allow a trusted parameter "white list" through.
     def product_params
       params.require(:product).permit(:title,
@@ -246,6 +196,8 @@ class Retailers::ProductsController < RetailersController
                                       :buying_mode,
                                       :condition,
                                       :description,
+                                      :main_picture_id,
+                                      :sold_quantity,
                                       images: [],
                                       ml_attributes: [])
     end

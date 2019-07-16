@@ -19,8 +19,27 @@ module MercadoLibre
     def prepare_images(product)
       array = []
       product.images.each do |img|
-        link = img.filename.to_s
-        array << { "id": link }
+        if img.id == product.main_picture_id
+          array.unshift("id": img.filename.to_s)
+          next
+        end
+
+        array << { "id": img.filename.to_s }
+      end
+      array
+    end
+
+    def prepare_images_update(product)
+      array = []
+      product.images.each do |img|
+        next if img.filename.to_s.include?('.')
+
+        if img.id == product.main_picture_id
+          array.unshift("id": img.filename.to_s)
+          next
+        end
+
+        array << { "id": img.filename.to_s }
       end
       array
     end
@@ -31,7 +50,8 @@ module MercadoLibre
       info = {
         'title': product.title,
         'variations': variations,
-        'attributes': product.ml_attributes
+        'attributes': product.ml_attributes,
+        'pictures': prepare_images_update(product)
         # 'listing_type_id': 'free'
       }
 
@@ -71,8 +91,14 @@ module MercadoLibre
         load_variations << { 'id': vid }
       end
 
-      current_images = product.images.map { |im| im.filename.to_s }
-      variation.data['picture_ids'] = current_images
+      product.images.each do |img|
+        if img.id == product.main_picture_id
+          variation.data['picture_ids'].unshift(img.filename.to_s)
+          next
+        end
+
+        variation.data['picture_ids'] << img.filename.to_s
+      end
 
       data = if variation.data['id'].present? && variation.data['id'] == 'undefined'
                variation.data.except('id')
