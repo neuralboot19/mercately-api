@@ -1,0 +1,33 @@
+<%= stylesheet_link_tag "application" %>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="center">
+        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <%= f.hidden_field :reset_password_token %>
+
+          <h2 class="sign mt-100">Reiniciar contraseña</h2>
+
+          <div class="group">
+            <%= f.password_field :password, autofocus: true, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :password, "Nueva Contraseña" %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group">
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :password_confirmation, "Confirmar Contraseña" %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="btn-box">
+            <%= f.submit 'Actualizar contraseña', class: 'btn-btn btn-submit w-100' %>
+          </div>
+        <% end %>
+
+        <%= render "devise/shared/links" %>
+      </div>
+    </div>
+  </div>
+</div>

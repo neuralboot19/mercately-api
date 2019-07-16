@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   root 'pages#index'
 
   devise_for :retailer_users, controllers: { registrations: 'retailer_users/registrations',
-    sessions: 'retailer_users/sessions' }
+    sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords' }
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   get '/blog' => redirect("https://blog.mercately/blog/")

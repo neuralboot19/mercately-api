@@ -80,8 +80,8 @@ module MercadoLibre
         product_info['variations'].present?
 
       images = product_info['pictures']
-      images.each do |img|
-        product.attach_image(img['url'], img['id'])
+      images.each_with_index do |img, index|
+        product.attach_image(img['url'], img['id'], index)
       end
 
       product
@@ -148,56 +148,67 @@ module MercadoLibre
       Connection.put_request(conn, @utility.prepare_product_description_update(product))
     end
 
+    def load_main_picture(product, only_main_picture)
+      load_pictures_to_ml(product, only_main_picture)
+    end
+
     private
 
-      def load_pictures_to_ml(product)
+      def load_pictures_to_ml(product, only_main_picture = false)
         return if product.images.blank?
 
-        url = @api.prepare_load_pictures_url
-        url_pic_product = @api.prepare_link_pictures_to_product_url(product)
+        @url = @api.prepare_load_pictures_url
+        @url_pic_product = @api.prepare_link_pictures_to_product_url(product)
         product.images.each do |img|
           next unless img.filename.to_s.include?('.')
+          next if img.id != product.main_picture_id && only_main_picture
 
-          file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
+          load_image(product, img)
+        end
+      end
 
-          tempfile = { source: file.to_s }.to_json
-          conn = Connection.prepare_connection(url)
-          response = Connection.post_request(conn, tempfile)
+      def load_image(product, img)
+        file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
 
-          if product.meli_product_id.blank?
-            body = JSON.parse(response.body)
-            ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id'])
-            next
-          end
+        tempfile = { source: file.to_s }.to_json
+        conn = Connection.prepare_connection(@url)
+        response = Connection.post_request(conn, tempfile)
 
-          if response.status == 201
-            body = JSON.parse(response.body)
+        if product.meli_product_id.blank?
+          body = JSON.parse(response.body)
+          ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id'])
+          return
+        end
 
-            params = { id: body['id'] }.to_json
-            conn = Connection.prepare_connection(url_pic_product)
-            response = Connection.post_request(conn, params)
+        if response.status == 201
+          body = JSON.parse(response.body)
 
-            ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id']) if response.status == 200
-          else
-            puts response.body
-          end
+          params = { id: body['id'] }.to_json
+          conn = Connection.prepare_connection(@url_pic_product)
+          response = Connection.post_request(conn, params)
+
+          ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id']) if response.status == 200
+        else
+          puts response.body
         end
       end
 
       def pull_images(product, pictures)
         if product.images.blank?
-          pictures.each do |pic|
-            product.attach_image(pic['url'], pic['id'])
+          pictures.each_with_index do |pic, index|
+            product.attach_image(pic['url'], pic['id'], index)
           end
         else
           current_images = product.images.map { |im| im.filename.to_s }
-          pictures.each do |pic|
+          pictures.each_with_index do |pic, index|
             if current_images.include?(pic['id'])
+              update_main_picture_product(product, pic['id']) if index.zero?
+
               current_images -= [pic['id']]
               next
             end
 
-            product.attach_image(pic['url'], pic['id'])
+            product.attach_image(pic['url'], pic['id'], index)
           end
 
           if current_images.present?
@@ -205,6 +216,12 @@ module MercadoLibre
             product.images.where(blob_id: deleted_ids).purge
           end
         end
+      end
+
+      def update_main_picture_product(product, image_id)
+        id = ActiveStorage::Blob.find_by(filename: image_id)&.id
+        attach_id = product.images.find_by(blob_id: id)&.id if id.present?
+        product.update(main_picture_id: attach_id) if attach_id.present?
       end
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_08_185130) do
+ActiveRecord::Schema.define(version: 2019_07_11_153953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.index ["filename", "checksum"], name: "index_active_storage_blobs_on_filename_and_checksum", unique: true
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -192,6 +193,7 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.integer "buying_mode"
     t.integer "condition", default: 0
     t.jsonb "ml_attributes", default: []
+    t.bigint "main_picture_id"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
