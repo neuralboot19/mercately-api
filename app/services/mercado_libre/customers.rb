@@ -23,12 +23,12 @@ module MercadoLibre
 
       meli_customer = update_or_create_meli_customer(customer_info)
 
-      update_or_create_customer(customer_info, meli_customer)
+      update_or_create_customer(meli_customer)
     end
 
     private
 
-      def update_or_create_customer(customer_info, meli_customer)
+      def update_or_create_customer(meli_customer)
         customer = find_customer
         return unless customer.present?
 
