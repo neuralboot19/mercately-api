@@ -16,7 +16,7 @@
               <p class="m-0 product-text">
                 <b class="normal black-text">Orden&nbsp;&nbsp;</b>- 34344
                 <span class="f-right">
-                  <a class="cta--dashboard mr-8" href="">Chat de la orden</a>
+                  <%= link_to 'Chat de la orden', retailers_order_messages_path(@retailer, @order) %>
                   <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
                   <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
                 </span>

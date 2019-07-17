@@ -16,7 +16,7 @@ module MercadoLibre
       customer = MercadoLibre::Customers.new(@retailer).import(message_info['from']['user_id'])
       Message.create_with(
         order: Order.find_by(meli_order_id: message_info['resource_id']),
-        message: message_info['text']['plain'],
+        question: message_info['text']['plain'],
         customer: customer
       ).find_or_create_by!(meli_id: message_info['id'])
     end
@@ -36,7 +36,7 @@ module MercadoLibre
           },
           "to": [
             {
-              "user_id": message.customer.meli_user_id,
+              "user_id": message.customer.meli_customer.meli_user_id,
               "resource": 'orders',
               "resource_id": message.order.meli_order_id,
               "site_id": 'MEC'

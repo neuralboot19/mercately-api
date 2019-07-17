@@ -14,15 +14,7 @@ module MercadoLibre
     end
 
     def create(customer_info)
-      customer = Customer.create_with(
-        first_name: @order_params['first_name'],
-        last_name: @order_params['last_name'],
-        email: @order_params['email'],
-        retailer: @retailer
-      ).find_or_create_by!(email: @order_params['email'])
-
-      MeliCustomer.create_with(
-        customer: customer,
+      meli_customer = MeliCustomer.create_with(
         email: @order_params['email'],
         phone: @order_params['phone']&.[]('number'),
         nickname: @order_params['nickname'],
@@ -37,7 +29,13 @@ module MercadoLibre
         seller_reputation_level_id: customer_info['seller_reputation']['level_id']
       ).find_or_create_by!(meli_user_id: customer_info['id'])
 
-      customer
+      Customer.create_with(
+        meli_customer: meli_customer,
+        first_name: @order_params['first_name'],
+        last_name: @order_params['last_name'],
+        email: @order_params['email'],
+        retailer: @retailer
+      ).find_or_create_by!(email: @order_params['email'])
     end
 
     private
