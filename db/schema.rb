@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(version: 2019_07_17_165840) do
     t.integer "retailer_id"
     t.string "phone"
     t.string "meli_nickname"
+    t.integer "meli_customer_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -101,11 +102,9 @@ ActiveRecord::Schema.define(version: 2019_07_17_165840) do
     t.integer "ratings_neutral"
     t.integer "ratings_positive"
     t.integer "ratings_total"
-    t.bigint "customer_id"
     t.string "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["customer_id"], name: "index_meli_customers_on_customer_id"
   end
 
   create_table "meli_retailers", force: :cascade do |t|
@@ -264,7 +263,6 @@ ActiveRecord::Schema.define(version: 2019_07_17_165840) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "meli_customers", "customers"
   add_foreign_key "meli_retailers", "retailers"
   add_foreign_key "questions", "products"
 end
