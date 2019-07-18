@@ -3,12 +3,23 @@ class Retailers::MessagesController < RetailersController
 
   # GET /messages
   def index
-    @questions = Question.includes(:product).where(products: { retailer_id: current_retailer.id })
-      .order(created_at: 'DESC').page(params[:page])
+    @questions = Question.all
   end
 
   # GET /messages/1
   def show
+  end
+
+  def questions
+    @questions = Question.includes(:product).where(meli_question_type: params[:meli_question_type],
+      products: { retailer_id: current_retailer.id })
+      .order(created_at: 'DESC').page(params[:page])
+  end
+
+  def chats
+    @chats = Message.includes(order: :customer).where(meli_question_type: params[:meli_question_type],
+      customers: { retailer_id: current_retailer.id })
+      .order(created_at: 'DESC').page(params[:page])
   end
 
   def answer_question

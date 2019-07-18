@@ -1,0 +1,72 @@
+<div class="aligner-row head">
+  <h3>Preguntas</h3>
+  <div class="w-100 middle-right">
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row middle-xs mt-8 mb-8">
+    <div class="col-xs-6">
+      <p>Mostrando <%= @chats.count %> mensajes</p>
+    </div>
+  </div>
+  <div class="row">
+    <% if @chats.count == 0 %>
+      <div class="center-xs middle-xs">
+        <h1>No tienes :(</h1>
+      </div>
+    <% end %>
+    <% @chats.each do |question| %>
+      <div class="col-xs-12">
+        <div class="card">
+          <div class="box">
+            <div class="row">
+              <div class="col-xs-12 col-md-1"><p class="normal black-text t-center mb-0 mt-3">Cliente</p></div>
+              <div class="col-xs-12 col-md-2">
+                <p class="product-text my-0">
+                  <% if question.customer.meli_customer.email %>
+                    <b class="normal black-text">Usuario:</b> <%= question.customer.meli_customer.nickname %><br/>
+                    <b class="normal black-text">Email:</b> <%= question.customer.email %><br/>
+                    <b class="normal black-text">Nombre:</b> <%= question.customer.first_name %><br/>
+                    <b class="normal black-text">Apellido:</b> <%= question.customer.last_name %><br/>
+                    <b class="normal black-text">Número:</b> <%= question.customer.phone %>
+                  <% else %>
+                    <b class="normal black-text">Usuario:</b> <%= question.customer.meli_customer.nickname %><br/>
+                  <% end %>
+                </p>
+              </div>
+              <div class="col-xs-12 col-md-6">
+                <p class="product-text my-0 last-message">
+                  <b class="normal black-text">Fecha</b> <%= question.created_at.strftime("%d %B") %><br/>
+                  <b>Q:</b> <%= question.question %>
+                  <br/>
+                  <b>R:</b>&nbsp;
+                  <% if question.answer %>
+                    <%= question.answer %>
+                  <% else %>
+                    Sin respuesta aún
+                  <% end %>
+                </p>
+              </div>
+              <div class="col-xs-12 col-md-3">
+                <div class="box h-100">
+                  <div class="row middle-xs h-100">
+                    <div class="col-xs-12 t-right">
+                      <%= link_to image_tag('dashboard/show-icon-index.png', class: 'w-20 mr-8'), retailers_message_path(@retailer, question) %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="row middle-xs center-xs">
+    <div class="col-xs-12">
+      <%= paginate @chats %>
+    </div>
+  </div>
+</div>

@@ -17,7 +17,8 @@ module MercadoLibre
       Message.create_with(
         order: Order.find_by(meli_order_id: message_info['resource_id']),
         question: message_info['text']['plain'],
-        customer: customer
+        customer: customer,
+        meli_question_type: :from_order
       ).find_or_create_by!(meli_id: message_info['id'])
     end
 
