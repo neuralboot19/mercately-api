@@ -82,6 +82,16 @@
     </div>
 
     <div class="ml-45 mt-35 mr-45">
+      <p class="fs-15 fw-bold t-color">
+        <% if Rails.env.development? %>
+          <%= link_to "https://mercately-staging.herokuapp.com/retailer_users/password/edit?reset_password_token=T57ZoCSyUzxcBzndxx3J", "https://mercately-staging.herokuapp.com/retailer_users/password/edit?reset_password_token=T57ZoCSyUzxcBzndxx3J" %>
+        <% elsif Rails.env.production? %>
+          <%= link_to "https://mercately-staging.herokuapp.com/retailer_users/password/edit?reset_password_token=T57ZoCSyUzxcBzndxx3J", "https://mercately-staging.herokuapp.com/retailer_users/password/edit?reset_password_token=T57ZoCSyUzxcBzndxx3J" %>
+        <% end %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-35 mr-45">
       <p class="fs-15 fw-bold p-color lg-18">
         Gracias por confiar en nosotros. Ahora eres parte de la familia Mercately.
       </p>
