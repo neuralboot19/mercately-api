@@ -6,6 +6,8 @@ class Question < ApplicationRecord
   after_update :ml_answer_question, if: :saved_change_to_answer?
 
   enum status: %i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]
+  enum answer_status: %i[ACTIVE DISABLED]
+
   delegate :retailer, to: :product
 
   private

@@ -14,15 +14,20 @@ module MercadoLibre
 
     def save_question(question_info)
       customer = MercadoLibre::Customers.new(@retailer).import(question_info['from']['id'])
-      Question.create_with(
+      question = Question.find_or_initialize_by(meli_id: question_info['id'])
+
+      question.update_attributes!(
         product: Product.find_by(meli_product_id: question_info['item_id']),
         question: question_info['text'],
         hold: ActiveModel::Type::Boolean.new.cast(question_info['hold']),
         deleted_from_listing: ActiveModel::Type::Boolean.new.cast(question_info['deleted_from_listing']),
         status: question_info['status'],
         answer: question_info['answer']&.[]('text'),
-        customer: customer
-      ).find_or_create_by!(meli_id: question_info['id'])
+        customer: customer,
+        answer_status: question_info['answer']&.[]('status'),
+        date_created_answer: question_info['answer']&.[]('date_created'),
+        date_created_question: question_info['date_created']
+      )
     end
 
     def answer_question(question)
