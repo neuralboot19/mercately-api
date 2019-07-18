@@ -6,9 +6,8 @@ class RetailerUsers::PasswordsController < Devise::PasswordsController
   # POST /resource/password
   def create
     super do |resource|
-      if successfully_sent?(resource)
-        flash[:message] = 'Se han enviado las instrucciones al email proporcionado'
-      end
+      flash[:message] = 'Se han enviado las instrucciones al email proporcionado' if
+        successfully_sent?(resource)
     end
   end
 
