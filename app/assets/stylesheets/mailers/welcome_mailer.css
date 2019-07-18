@@ -120,3 +120,18 @@
 .lg-18 {
   line-height: 18px;
 }
+
+.main-container-reset {
+  width: 400px;
+  background-color:#0F0739;
+  padding-left: 50px;
+  padding-top: 35px;
+  padding-bottom: 35px;
+}
+
+.inner-container-reset {
+  width: 350px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  padding-bottom: 25px;
+}
