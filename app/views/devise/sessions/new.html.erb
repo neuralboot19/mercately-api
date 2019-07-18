@@ -5,6 +5,9 @@
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
           <p class="login_error_message"><%= flash[:alert] %></p>
           <%= render "devise/shared/error_messages", resource: resource %>
+          <% if flash[:message] %>
+            <p class="flash-message-login"><%= flash[:message] %></p>
+          <% end %>
           <h2 class="sign mt-100">Iniciar sesión</h2>
           <div class="group">
             <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: '', class: 'input-standarization' %>
