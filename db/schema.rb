@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_17_165840) do
+ActiveRecord::Schema.define(version: 2019_07_18_170651) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -217,6 +217,7 @@ ActiveRecord::Schema.define(version: 2019_07_17_165840) do
     t.integer "answer_status"
     t.datetime "date_created_question"
     t.datetime "date_created_answer"
+    t.integer "meli_question_type"
     t.index ["customer_id"], name: "index_questions_on_customer_id"
     t.index ["order_id"], name: "index_questions_on_order_id"
     t.index ["product_id"], name: "index_questions_on_product_id"
