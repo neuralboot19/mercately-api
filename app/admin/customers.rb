@@ -7,6 +7,7 @@ ActiveAdmin.register Customer do
     column :email
     column :first_name
     column :last_name
+    column :retailer
     actions
   end
 
@@ -14,23 +15,23 @@ ActiveAdmin.register Customer do
     default_main_content
     panel 'Usuario de ML' do
       customer = Customer.find(params['id']).meli_customer
-      table_for customer do
-        column :access_token
-        column :meli_user_id
-        column :nickname
-        column :email
-        column :points
-        column :link
-        column :seller_experience
-        column :seller_reputation_level_id
-        column :transactions_canceled
-        column :transactions_completed
-        column :ratings_negative
-        column :ratings_neutral
-        column :ratings_positive
-        column :ratings_total
-        column :customer_id
-        column :phone
+      attributes_table_for customer do
+        row :access_token
+        row :meli_user_id
+        row :nickname
+        row :email
+        row :points
+        row :link
+        row :seller_experience
+        row :seller_reputation_level_id
+        row :transactions_canceled
+        row :transactions_completed
+        row :ratings_negative
+        row :ratings_neutral
+        row :ratings_positive
+        row :ratings_total
+        row :customer_id
+        row :phone
       end
     end
   end
