@@ -40,7 +40,7 @@
                   <% if order.last_message.answer %>
                     <%= order.last_message.answer %>
                   <% elsif order.last_message.question %>
-                    order.last_message.question
+                    <%= order.last_message.question %>
                   <% end %>
                 </p>
               </div>
