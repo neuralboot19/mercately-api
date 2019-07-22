@@ -7,7 +7,7 @@ class Question < ApplicationRecord
 
   enum status: %i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]
   enum answer_status: %i[ACTIVE DISABLED]
-  enum meli_question_type: %w[from_order, from_product]
+  enum meli_question_type: %w[from_order from_product]
 
   delegate :retailer, to: :product
 

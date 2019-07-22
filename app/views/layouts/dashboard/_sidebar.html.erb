@@ -42,14 +42,14 @@
       </div>
     <% end %>
 
-    <%= link_to retailers_questions_path(current_retailer, meli_question_type: :from_product) do %>
+    <%= link_to retailers_questions_path(current_retailer) do %>
       <div class="sidebar-item <%= 'selected' if current_page?(retailers_questions_path) %>">
         <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
         Preguntas
       </div>
     <% end %>
 
-    <%= link_to retailers_chats_path(current_retailer, meli_question_type: :from_order) do %>
+    <%= link_to retailers_chats_path(current_retailer) do %>
       <div class="sidebar-item <%= 'selected' if current_page?(retailers_chats_path) %>">
         <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
         Chats

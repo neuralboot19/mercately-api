@@ -8,7 +8,7 @@
 <div class="container-fluid">
   <div class="row middle-xs mt-8 mb-8">
     <div class="col-xs-6">
-      <p>Mostrando <%= @questions.count %> mensajes</p>
+      <p>Mostrando <%= @questions.count %> preguntas</p>
     </div>
   </div>
   <div class="row">
@@ -22,19 +22,12 @@
         <div class="card">
           <div class="box">
             <div class="row">
-              <div class="col-xs-12 col-md-1"><p class="normal black-text t-center mb-0 mt-3">Cliente</p></div>
               <div class="col-xs-12 col-md-2">
                 <p class="product-text my-0">
-                  <% if question.customer.meli_customer.email %>
-                    <b class="normal black-text">Usuario:</b> <%= question.customer.meli_customer.nickname %><br/>
-                    <b class="normal black-text">Email:</b> <%= question.customer.email %><br/>
-                    <b class="normal black-text">Nombre:</b> <%= question.customer.first_name %><br/>
-                    <b class="normal black-text">Apellido:</b> <%= question.customer.last_name %><br/>
-                    <b class="normal black-text">Número:</b> <%= question.customer.phone %>
-                  <% else %>
-                    <b class="normal black-text">Usuario:</b> <%= question.customer.meli_customer.nickname %><br/>
-                  <% end %>
-                </p>
+                  <b class="normal black-text">Usuario:</b> <%= question.customer.first_name.present? ? question.customer.name() : (question.customer.meli_nickname ||
+                  question.customer.meli_customer.nickname) %><br/>
+                  <b class="normal black-text">Producto:</b> <%= question.product&.title || 'No existe el producto' %>
+                  </p>
               </div>
               <div class="col-xs-12 col-md-6">
                 <p class="product-text my-0 last-message">
@@ -53,7 +46,7 @@
                 <div class="box h-100">
                   <div class="row middle-xs h-100">
                     <div class="col-xs-12 t-right">
-                      <%= link_to image_tag('dashboard/show-icon-index.png', class: 'w-20 mr-8'), retailers_message_path(@retailer, question) %>
+                      <%= link_to image_tag('dashboard/show-icon-index.png', class: 'w-20 mr-8'), retailers_path(@retailer, question) %>
                     </div>
                   </div>
                 </div>

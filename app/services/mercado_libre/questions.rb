@@ -27,7 +27,7 @@ module MercadoLibre
         answer_status: question_info['answer']&.[]('status'),
         date_created_answer: question_info['answer']&.[]('date_created'),
         date_created_question: question_info['date_created'],
-        meli_question_type: :from_product
+        meli_question_type: Question.meli_question_types[:from_product]
       )
     end
 
