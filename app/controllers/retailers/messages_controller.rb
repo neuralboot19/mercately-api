@@ -3,17 +3,37 @@ class Retailers::MessagesController < RetailersController
 
   # GET /messages
   def index
-    @questions = Question.includes(:product).where(products: { retailer_id: current_retailer.id })
-      .order(created_at: 'DESC').page(params[:page])
+    @questions = Question.all
   end
 
   # GET /messages/1
   def show
   end
 
+  def questions
+    @questions = Question.includes(:product).where(meli_question_type: :from_product, products:
+      {
+        retailer_id: current_retailer.id
+      }).order(created_at: 'DESC').page(params[:page])
+  end
+
+  def chats
+    @chats = Order.includes(:customer, :messages)
+      .where(customers:
+      {
+        retailer_id: current_retailer.id
+      }).order(created_at: 'DESC')
+
+    @chats = @chats.where('questions.order_id = orders.id').page(params[:page])
+  end
+
+  def question
+    @question = Question.find(params[:question_id])
+  end
+
   def answer_question
     @question.update!(answer: params[:answer])
-    redirect_to retailers_messages_path(@retailer), notice: 'Respuesta enviada'
+    redirect_to retailers_questions_path(@retailer), notice: 'Respuesta enviada'
   end
 
   def send_message
@@ -22,9 +42,11 @@ class Retailers::MessagesController < RetailersController
       order_id: order.id,
       customer_id: order.customer_id,
       answer: params[:answer],
-      sender_id: current_retailer_user.id
+      sender_id: current_retailer_user.id,
+      meli_question_type: Question.meli_question_types[:from_order]
     )
-    MercadoLibre::Messages.new(@retailer).answer_message(@message)
+    msg = MercadoLibre::Messages.new(@retailer).answer_message(@message)
+    @message.meli_id = msg[0]&.[]('message_id')
     if @message.save
       redirect_to retailers_order_messages_path(@retailer, order), notice: 'Mensage enviado'
     else
@@ -33,6 +55,7 @@ class Retailers::MessagesController < RetailersController
   end
 
   def chat
+    @return_to = params[:return_to]
     @order = Order.find(params[:order_id])
   end
 

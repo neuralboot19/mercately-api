@@ -1,7 +1,7 @@
 <div class="aligner-row head">
-  <h3>Mensaje</h3>
+  <h3>Chat</h3>
   <div class="w-100 middle-right">
-    <%= link_to 'Atrás', retailers_messages_path, class: 'ml-8' %>
+    <%= link_to 'Atrás', @return_to == 'order' ? retailers_order_path(@retailer, @order) : retailers_chats_path(@retailer), class: 'ml-8' %>
     <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
 </div>
@@ -16,21 +16,20 @@
                 <div class="row center-xs">
                   <div class="col-xs-12">
                     <p class="product-text my-0">
-                      <% if @order.customer.meli_customer.email %>
-                        <b class="normal black-text">Usuario:</b> <%= @order.customer.meli_customer.nickname %><br/>
-                        <b class="normal black-text">Email:</b> <%= @order.customer.email %><br/>
-                        <b class="normal black-text">Nombre:</b> <%= @order.customer.first_name %><br/>
-                        <b class="normal black-text">Apellido:</b> <%= @order.customer.last_name %><br/>
-                        <b class="normal black-text">Número:</b> <%= @order.customer.phone %>
+                      <b class="normal black-text">Orden:</b> <%= @order.id %><br/>
+                      <b class="normal black-text">Usuario:</b> <%= @order.customer.first_name.present? ? @order.customer.name() : (@order.customer.meli_nickname ||
+                      @order.customer.meli_customer.nickname) %><br/>
+                      <% if @order.products.present? %>
+                        <b class="normal black-text">Producto:</b> <%= @order.products.first.title %><br/>
                       <% else %>
-                        <b class="normal black-text">Usuario:</b> <%= @order.customer.meli_customer.nickname %><br/>
+                        <b class="normal black-text">Producto:</b> No existen productos<br/>
                       <% end %>
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <% @order.messages.each do |m| %>
+            <% @order.messages.order(:created_at).each do |m| %>
               <div class="col-xs-12 col-md-9">
                 <div class="box">
                   <div class="row">

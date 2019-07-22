@@ -34,9 +34,6 @@ module MercadoLibre
         return unless customer.present?
 
         customer.update_attributes!(
-          first_name: @first_name,
-          last_name: @last_name,
-          email: @email,
           retailer: @retailer,
           meli_nickname: @nickname,
           meli_customer: meli_customer,
@@ -49,6 +46,10 @@ module MercadoLibre
           country_id: customer_info['country_id']
         )
 
+        customer.update!(first_name: @first_name) if @first_name.present?
+        customer.update!(last_name: @last_name) if @last_name.present?
+        customer.update!(email: @email) if @email.present?
+
         customer
       end
 
@@ -56,8 +57,6 @@ module MercadoLibre
         meli_customer = MeliCustomer.find_or_initialize_by(meli_user_id: customer_info['id'])
 
         meli_customer.update_attributes!(
-          email: @email,
-          phone: @phone,
           nickname: @nickname,
           link: customer_info['permalink'],
           points: customer_info['points'],
@@ -80,15 +79,14 @@ module MercadoLibre
           phone_verified: customer_info['phone']&.[]('verified')
         )
 
+        meli_customer.update!(email: @email) if @email.present?
+        meli_customer.update!(phone: @phone) if @phone.present?
+
         meli_customer
       end
 
       def find_customer
-        if @exist_order.present?
-          Customer.find_or_initialize_by(retailer_id: @retailer.id, email: @email)
-        else
-          Customer.find_or_initialize_by(retailer_id: @retailer.id, meli_nickname: @nickname)
-        end
+        Customer.find_or_initialize_by(retailer_id: @retailer.id, meli_nickname: @nickname)
       end
   end
 end
