@@ -37,7 +37,7 @@ module MercadoLibre
           retailer: @retailer,
           meli_nickname: @nickname,
           meli_customer: meli_customer,
-          id_type: customer_info['identification']&.[]('type'),
+          id_type: customer_info['identification']&.[]('type').downcase,
           id_number: customer_info['identification']&.[]('number'),
           address: customer_info['address']&.[]('address'),
           city: customer_info['address']&.[]('city'),
@@ -68,12 +68,18 @@ module MercadoLibre
           ratings_negative: customer_info['seller_reputation']['transactions']['ratings']['negative'],
           seller_reputation_level_id: customer_info['seller_reputation']['level_id'],
           buyer_canceled_transactions: customer_info['buyer_reputation']&.[]('canceled_transactions'),
-          buyer_completed_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('completed'),
-          buyer_canceled_paid_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('canceled')&.[]('paid'),
-          buyer_unrated_paid_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('unrated')&.[]('paid'),
-          buyer_unrated_total_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('unrated')&.[]('total'),
-          buyer_not_yet_rated_paid_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('not_yet_rated')&.[]('paid'),
-          buyer_not_yet_rated_total_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('not_yet_rated')&.[]('total'),
+          buyer_completed_transactions: customer_info['buyer_reputation']
+            &.[]('transactions')&.[]('completed'),
+          buyer_canceled_paid_transactions: customer_info['buyer_reputation']
+            &.[]('transactions')&.[]('canceled')&.[]('paid'),
+          buyer_unrated_paid_transactions: customer_info['buyer_reputation']
+            &.[]('transactions')&.[]('unrated')&.[]('paid'),
+          buyer_unrated_total_transactions: customer_info['buyer_reputation']
+            &.[]('transactions')&.[]('unrated')&.[]('total'),
+          buyer_not_yet_rated_paid_transactions: customer_info['buyer_reputation']
+            &.[]('transactions')&.[]('not_yet_rated')&.[]('paid'),
+          buyer_not_yet_rated_total_transactions: customer_info['buyer_reputation']
+            &.[]('transactions')&.[]('not_yet_rated')&.[]('total'),
           meli_registration_date: customer_info['registration_date'],
           phone_area: customer_info['phone']&.[]('area_code'),
           phone_verified: customer_info['phone']&.[]('verified')
