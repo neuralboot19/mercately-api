@@ -4,6 +4,8 @@ class Customer < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_many :questions, dependent: :destroy
 
+  enum id_type: [:cedula, :pasaporte, :ruc]
+
   def name
     "#{first_name} #{last_name}"
   end

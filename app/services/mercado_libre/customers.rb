@@ -5,10 +5,11 @@ module MercadoLibre
       @order_params = order_params
       @meli_retailer = @retailer.meli_retailer
       @exist_order = @order_params.present?
+      @api = MercadoLibre::Api.new(@meli_retailer)
     end
 
     def import(customer_id)
-      url = get_customer_url(customer_id)
+      url = @api.get_customer_url(customer_id)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       create(response) if response
@@ -23,12 +24,12 @@ module MercadoLibre
 
       meli_customer = update_or_create_meli_customer(customer_info)
 
-      update_or_create_customer(meli_customer)
+      update_or_create_customer(customer_info, meli_customer)
     end
 
     private
 
-      def update_or_create_customer(meli_customer)
+      def update_or_create_customer(customer_info, meli_customer)
         customer = find_customer
         return unless customer.present?
 
@@ -38,7 +39,14 @@ module MercadoLibre
           email: @email,
           retailer: @retailer,
           meli_nickname: @nickname,
-          meli_customer: meli_customer
+          meli_customer: meli_customer,
+          id_type: customer_info['identification']&.[]('type'),
+          id_number: customer_info['identification']&.[]('number'),
+          address: customer_info['address']&.[]('address'),
+          city: customer_info['address']&.[]('city'),
+          state: customer_info['address']&.[]('state'),
+          zip_code: customer_info['address']&.[]('zip_code'),
+          country_id: customer_info['country_id']
         )
 
         customer
@@ -59,7 +67,17 @@ module MercadoLibre
           ratings_neutral: customer_info['seller_reputation']['transactions']['ratings']['neutral'],
           ratings_positive: customer_info['seller_reputation']['transactions']['ratings']['positive'],
           ratings_negative: customer_info['seller_reputation']['transactions']['ratings']['negative'],
-          seller_reputation_level_id: customer_info['seller_reputation']['level_id']
+          seller_reputation_level_id: customer_info['seller_reputation']['level_id'],
+          buyer_canceled_transactions: customer_info['buyer_reputation']&.[]('canceled_transactions'),
+          buyer_completed_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('completed'),
+          buyer_canceled_paid_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('canceled')&.[]('paid'),
+          buyer_unrated_paid_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('unrated')&.[]('paid'),
+          buyer_unrated_total_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('unrated')&.[]('total'),
+          buyer_not_yet_rated_paid_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('not_yet_rated')&.[]('paid'),
+          buyer_not_yet_rated_total_transactions: customer_info['buyer_reputation']&.[]('transactions')&.[]('not_yet_rated')&.[]('total'),
+          meli_registration_date: customer_info['registration_date'],
+          phone_area: customer_info['phone']&.[]('area_code'),
+          phone_verified: customer_info['phone']&.[]('verified')
         )
 
         meli_customer
@@ -71,13 +89,6 @@ module MercadoLibre
         else
           Customer.find_or_initialize_by(retailer_id: @retailer.id, meli_nickname: @nickname)
         end
-      end
-
-      def get_customer_url(customer_id)
-        params = {
-          access_token: @meli_retailer.access_token
-        }
-        "https://api.mercadolibre.com/users/#{customer_id}?#{params.to_query}"
       end
   end
 end
