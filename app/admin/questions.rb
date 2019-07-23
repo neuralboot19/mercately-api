@@ -3,7 +3,9 @@ ActiveAdmin.register Question do
     selectable_column
     id_column
     column :question
-    column :customer
+    column :customer do |cust|
+      link_to cust.customer.meli_nickname, admin_customer_path(cust.customer)
+    end
     column :answer
     column :product
     column :status
@@ -14,7 +16,9 @@ ActiveAdmin.register Question do
     attributes_table title: 'Pregunta' do
       row :id
       row :question
-      row :customer
+      row :customer do |cust|
+        link_to cust.customer.meli_nickname, admin_customer_path(cust.customer)
+      end
       row :answer
       row :product
       row :meli_id

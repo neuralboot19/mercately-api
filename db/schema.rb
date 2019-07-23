@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_17_165840) do
+ActiveRecord::Schema.define(version: 2019_07_22_181034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -83,6 +83,13 @@ ActiveRecord::Schema.define(version: 2019_07_17_165840) do
     t.string "phone"
     t.string "meli_nickname"
     t.integer "meli_customer_id"
+    t.integer "id_type"
+    t.string "id_number"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
+    t.string "country_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -105,6 +112,16 @@ ActiveRecord::Schema.define(version: 2019_07_17_165840) do
     t.string "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "buyer_canceled_transactions"
+    t.integer "buyer_completed_transactions"
+    t.integer "buyer_canceled_paid_transactions"
+    t.integer "buyer_unrated_paid_transactions"
+    t.integer "buyer_unrated_total_transactions"
+    t.integer "buyer_not_yet_rated_paid_transactions"
+    t.integer "buyer_not_yet_rated_total_transactions"
+    t.datetime "meli_registration_date"
+    t.string "phone_area"
+    t.boolean "phone_verified"
   end
 
   create_table "meli_retailers", force: :cascade do |t|
@@ -217,6 +234,7 @@ ActiveRecord::Schema.define(version: 2019_07_17_165840) do
     t.integer "answer_status"
     t.datetime "date_created_question"
     t.datetime "date_created_answer"
+    t.integer "meli_question_type"
     t.index ["customer_id"], name: "index_questions_on_customer_id"
     t.index ["order_id"], name: "index_questions_on_order_id"
     t.index ["product_id"], name: "index_questions_on_product_id"

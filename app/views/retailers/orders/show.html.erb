@@ -14,9 +14,9 @@
           <div class="row">
             <div class="col-xs-12">
               <p class="m-0 product-text">
-                <b class="normal black-text">Orden&nbsp;&nbsp;</b>- 34344
+                <b class="normal black-text">Orden&nbsp;&nbsp;</b>- <%= @order.id %>
                 <span class="f-right">
-                  <%= link_to 'Chat de la orden', retailers_order_messages_path(@retailer, @order) %>
+                  <%= link_to 'Chat de la orden', retailers_order_messages_path(@retailer, @order, return_to: 'order') %>
                   <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
                   <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
                 </span>

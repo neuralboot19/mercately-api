@@ -19,6 +19,12 @@ class Order < ApplicationRecord
     total.sum
   end
 
+  def last_message
+    return @last_message unless @last_message.blank? || @last_message.order_id != id
+
+    @last_message = messages.order(created_at: 'DESC').first
+  end
+
   private
 
     def check_stock
