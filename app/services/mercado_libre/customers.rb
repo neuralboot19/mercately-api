@@ -33,11 +33,14 @@ module MercadoLibre
         customer = find_customer
         return unless customer.present?
 
+        id_type = customer_info['identification']&.[]('type')
+        id_type.downcase! if id_type.present?
+
         customer.update_attributes!(
           retailer: @retailer,
           meli_nickname: @nickname,
           meli_customer: meli_customer,
-          id_type: customer_info['identification']&.[]('type').downcase,
+          id_type: id_type,
           id_number: customer_info['identification']&.[]('number'),
           address: customer_info['address']&.[]('address'),
           city: customer_info['address']&.[]('city'),
