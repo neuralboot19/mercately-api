@@ -16,6 +16,7 @@ ActiveAdmin.register Customer do
     column :email
     column :first_name
     column :last_name
+    column :meli_nickname
     actions
   end
 
