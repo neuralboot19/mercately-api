@@ -20,14 +20,14 @@
             <div class="row">
               <div class="col-xs-12 col-md-2">
                 <p class="product-text my-0">
-                  <% if customer.meli_customer.email %>
+                  <% if customer.meli_customer&.email %>
                     <b class="normal black-text">Usuario:</b> <%= customer.meli_customer.nickname %><br/>
                     <b class="normal black-text">Email:</b> <%= customer.email %><br/>
                     <b class="normal black-text">Nombre:</b> <%= customer.first_name %><br/>
                     <b class="normal black-text">Apellido:</b> <%= customer.last_name %><br/>
                     <b class="normal black-text">Número:</b> <%= customer.phone %>
                   <% else %>
-                    <b class="normal black-text">Usuario:</b> <%= customer.meli_customer.nickname %><br/>
+                    <b class="normal black-text">Usuario:</b> <%= customer.meli_customer&.nickname %><br/>
                   <% end %>
                 </p>
               </div>
