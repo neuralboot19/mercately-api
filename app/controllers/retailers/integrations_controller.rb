@@ -55,8 +55,8 @@ class Retailers::IntegrationsController < RetailersController
       response = JSON.parse(response.body)
 
       if MeliRetailer.any? { |mr| mr.meli_user_id == response['user_id'].to_s }
-        redirect_to retailers_integrations_path(@retailer.slug),
-          notice: 'Esta cuenta de MercadoLibre ya ha sido conectada'
+        redirect_to retailers_integrations_path(@retailer.slug), notice:
+          'Esta cuenta de MercadoLibre ya ha sido conectada'
       else
         @ml.save_access_token(response)
         redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
