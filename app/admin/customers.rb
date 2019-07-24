@@ -17,6 +17,7 @@ ActiveAdmin.register Customer do
     column :first_name
     column :last_name
     column :meli_nickname
+    column :retailer
     actions
   end
 
@@ -51,6 +52,37 @@ ActiveAdmin.register Customer do
         row :buyer_not_yet_rated_paid_transactions
         row :buyer_not_yet_rated_total_transactions
         row :meli_registration_date
+      end
+    end
+
+    panel 'Preguntas' do
+      questions = customer.questions.where(meli_question_type: :from_product)
+      table_for questions do
+        column :id
+        column :product
+        column :question
+        column :answer
+        column :answer_status
+        column :meli_id
+        column :status
+        column :date_created_question
+        column :date_created_answer
+      end
+    end
+
+    panel 'Chats' do
+      questions = customer.messages.where(meli_question_type: Question.meli_question_types[:from_order])
+        .order(:created_at)
+      table_for questions do
+        column :id
+        column :order
+        column :question
+        column :answer
+        column :meli_id
+        column :date_read
+        column :sender
+        column :created_at
+        column :updated_at
       end
     end
   end
