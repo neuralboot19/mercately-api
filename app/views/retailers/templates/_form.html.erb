@@ -9,6 +9,18 @@
             <span class="bar"></span>
           </div>
 
+          <div class="group col-xs-12 col-md-6">
+            <%= f.check_box :enable_for_questions, placeholder: '', class: 'f-left w-auto', style: 'width: auto;' %>
+            <%= f.label :enable_for_questions, 'Para preguntas', class: 'p-static' %>
+            <p><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
+            direcciones exactas o nombres personales</i></p>
+          </div>
+
+          <div class="group col-xs-12 col-md-6">
+            <%= f.check_box :enable_for_chats, placeholder: '', class: 'f-left w-auto', style: 'width: auto;' %>
+            <%= f.label :enable_for_chats, 'Para chats', class: 'p-static' %>
+          </div>
+
           <div class="group col-xs-12">
             <%= f.text_area :answer, placeholder: '' %>
             <%= f.label :answer %>

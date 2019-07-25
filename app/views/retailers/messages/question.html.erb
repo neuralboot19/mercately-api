@@ -65,6 +65,8 @@
                       <div class="group col-xs-12 col-md-11 pr-4 mt-0">
                         <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'w-100', style: 'height: 77px;' %>
                         <span class="bar"></span>
+                        <p><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
+                        direcciones exactas o nombres personales</i></p>
                       </div>
                       <div class="col-md-1 col-xs-12 pl-0">
                         <%= submit_tag 'Enviar', class: 'w-100 message-send', style: 'height: 100px;' %>
@@ -80,7 +82,7 @@
     </div>
     <% unless @question.answer %>
       <div id="templates" class="col-xs-12 col-sm-3">
-        <% current_retailer.templates.each do |template| %>
+        <% Retailer.filter_templates(current_retailer, 'questions').each do |template| %>
           <%= form_tag retailers_answer_question_path(@retailer, @question), method: :put do %>
             <%= hidden_field_tag :answer, template.answer %>
             <h3 class="template__title"><%= template.title %></h3>
