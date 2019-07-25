@@ -35,9 +35,11 @@ module Mercately
 
     # Reverse Proxy for Blog
     config.middleware.insert(0, Rack::ReverseProxy) do
-      reverse_proxy_options preserve_host: true
-      reverse_proxy '/blog', 'https://blog.mercately.com/'
-      reverse_proxy /^\/blog(\/.*)$/, 'https://blog.mercately.com$1'
+      reverse_proxy_options preserve_host: false
+      if Rails.env.production? or Rails.env.staging?
+        reverse_proxy_options force_ssl: true, replace_response_host: true
+      end
+      reverse_proxy /^\/blog(\/?.*)$/, 'http://blog.mercately.com/blog$1'
     end
   end
 end
