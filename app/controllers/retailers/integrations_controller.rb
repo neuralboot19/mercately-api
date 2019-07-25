@@ -9,8 +9,7 @@ class Retailers::IntegrationsController < RetailersController
   def connect_to_ml
     response = get_ml_access_token(params[:code])
     if response.status == 200
-      @ml.save_access_token(JSON.parse(response.body))
-      redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
+      save_access_token(response)
     else
       redirect_to retailers_integrations_path(@retailer.slug), notice: 'Error al conectarse'
     end
@@ -51,6 +50,18 @@ class Retailers::IntegrationsController < RetailersController
   end
 
   private
+
+    def save_access_token(response)
+      response = JSON.parse(response.body)
+
+      if MeliRetailer.check_unique_user_id(response['user_id'])
+        redirect_to retailers_integrations_path(@retailer.slug), notice:
+          'Esta cuenta de MercadoLibre ya ha sido conectada'
+      else
+        @ml.save_access_token(response)
+        redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
+      end
+    end
 
     def get_ml_access_token(code)
       @ml.get_access_token_from_url(code)
