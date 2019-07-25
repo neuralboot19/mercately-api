@@ -90,7 +90,7 @@
       </div>
     </div>
     <div id="templates" class="col-xs-12 col-sm-3">
-      <% current_retailer.templates.where(enable_for_chats: true).each do |template| %>
+      <% Retailer.filter_templates(current_retailer, 'chats').each do |template| %>
         <%= form_tag retailers_order_send_message_path(@retailer, @order), method: :post do %>
           <%= hidden_field_tag :answer, template.answer %>
           <h3 class="template__title"><%= template.title %></h3>
