@@ -12,7 +12,8 @@ module MercadoLibre
         'condition': final_condition(product),
         'description': { "plain_text": product.description || '' },
         'pictures': prepare_images(product),
-        'attributes': product.ml_attributes
+        'attributes': product.ml_attributes,
+        'status': product.meli_status
       }.to_json
     end
 
@@ -51,7 +52,8 @@ module MercadoLibre
         'title': product.title,
         'variations': variations,
         'attributes': product.ml_attributes,
-        'pictures': prepare_images_update(product)
+        'pictures': prepare_images_update(product),
+        'status': product.meli_status
         # 'listing_type_id': 'free'
       }
 

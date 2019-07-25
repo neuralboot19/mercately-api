@@ -198,6 +198,8 @@ class Retailers::ProductsController < RetailersController
                                       :description,
                                       :main_picture_id,
                                       :sold_quantity,
+                                      :status,
+                                      :meli_status,
                                       images: [],
                                       ml_attributes: [])
     end

@@ -11,6 +11,8 @@ class Product < ApplicationRecord
 
   enum buying_mode: %w[buy_it_now classified]
   enum condition: %w[new_product used not_specified]
+  enum status: %w[active archived], _prefix: true
+  enum meli_status: %w[active payment_required paused closed under_review inactive]
 
   def update_ml(p_ml)
     self.meli_site_id = p_ml['site_id']
@@ -22,6 +24,7 @@ class Product < ApplicationRecord
     self.meli_permalink = p_ml['permalink']
     self.meli_product_id = p_ml['id']
     self.ml_attributes = p_ml['attributes']
+    self.meli_status = p_ml['status']
     save
   end
 
@@ -103,6 +106,10 @@ class Product < ApplicationRecord
 
     reload
     update_ml_info
+  end
+
+  def self.meli_statuses_updating
+    meli_statuses.except(:payment_required, :under_review, :inactive)
   end
 
   private

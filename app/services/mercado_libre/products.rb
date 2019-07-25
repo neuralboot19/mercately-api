@@ -71,6 +71,7 @@ module MercadoLibre
         condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
         ml_attributes: product_info['attributes'],
+        meli_status: product_info['status'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -109,6 +110,7 @@ module MercadoLibre
       product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
       product.meli_permalink = product_info['permalink']
       product.ml_attributes = product_info['attributes']
+      product.meli_status = product_info['status']
       product.retailer = @retailer
       product.save!
 
