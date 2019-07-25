@@ -10,7 +10,7 @@ class Retailer < ApplicationRecord
   enum id_type: [:cedula, :pasaporte, :ruc]
   after_create :generate_slug
 
-  scope :filter_templates, ->(retailer, type) {
+  scope :filter_templates, lambda { |retailer, type|
     if type == 'questions'
       retailer.templates.where(enable_for_questions: true)
     elsif type == 'chats'
