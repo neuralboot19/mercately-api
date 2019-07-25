@@ -54,7 +54,7 @@ class Retailers::IntegrationsController < RetailersController
     def save_access_token(response)
       response = JSON.parse(response.body)
 
-      if MeliRetailer.any? { |mr| mr.meli_user_id == response['user_id'].to_s }
+      if MeliRetailer.check_unique_user_id(response['user_id'])
         redirect_to retailers_integrations_path(@retailer.slug), notice:
           'Esta cuenta de MercadoLibre ya ha sido conectada'
       else
