@@ -9,7 +9,7 @@ class Product < ApplicationRecord
   validate :images_count
   validates :meli_product_id, uniqueness: true, allow_nil: true
 
-  enum buying_mode: %w[buy_it_now auction]
+  enum buying_mode: %w[buy_it_now classified]
   enum condition: %w[new_product used not_specified]
 
   def update_ml(p_ml)
