@@ -63,9 +63,6 @@
                 <%= link_to edit_retailers_product_path(@retailer, product) do %>
                   <%= image_tag 'dashboard/edit-icon.png' %>
                 <% end %>
-                <%= link_to retailers_product_path(@retailer, product), method: :delete, data: { confirm: 'Are you sure?' } do %>
-                  <%= image_tag 'dashboard/delete-icon.png' %>
-                <% end %>
               </div>
             </div>
           </div>

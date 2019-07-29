@@ -1,5 +1,5 @@
 class Retailers::ProductsController < RetailersController
-  before_action :set_product, only: [:show, :edit, :update, :destroy, :product_with_variations]
+  before_action :set_product, only: [:show, :edit, :update, :product_with_variations]
   before_action :compile_variation_images, only: [:create, :update]
   before_action :set_products, only: [:index]
 
@@ -73,13 +73,6 @@ class Retailers::ProductsController < RetailersController
     else
       render :edit
     end
-  end
-
-  # DELETE /products/1
-  def destroy
-    status = @product.status
-    @product.destroy
-    redirect_to retailers_products_path(@retailer, status: status), notice: 'Product was successfully destroyed.'
   end
 
   def product_with_variations
