@@ -15,9 +15,8 @@ class Product < ApplicationRecord
   enum status: %w[active archived], _prefix: true
   enum meli_status: %w[active payment_required paused closed under_review inactive]
 
-  scope :retailer_products, lambda { |retailer_id, status| 
-    Product.where('retailer_id = ? and status = ?', retailer_id,
-      Product.statuses[status])
+  scope :retailer_products, lambda { |retailer_id, status|
+    Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
 
   def update_ml(p_ml)
