@@ -1,11 +1,10 @@
 class Retailers::ProductsController < RetailersController
   before_action :set_product, only: [:show, :edit, :update, :destroy, :product_with_variations]
   before_action :compile_variation_images, only: [:create, :update]
+  before_action :set_products, only: [:index]
 
   # GET /products
   def index
-    @products = Product.where(retailer_id: @retailer.id, status: params['status'])
-      .with_attached_images.page(params[:page])
   end
 
   # GET /products/1
@@ -92,6 +91,11 @@ class Retailers::ProductsController < RetailersController
   end
 
   private
+
+    def set_products
+      @products = Product.retailer_products(@retailer.id, params['status'])
+        .with_attached_images.page(params[:page])
+    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_product

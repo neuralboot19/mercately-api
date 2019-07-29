@@ -7,6 +7,7 @@ module MercadoLibre
       @utility = MercadoLibre::ProductsUtility.new
       @product_variations = MercadoLibre::ProductVariations.new(@retailer)
       @product_publish = MercadoLibre::ProductPublish.new(@retailer)
+      @ml_questions = MercadoLibre::Questions.new(@retailer)
     end
 
     def search_items
@@ -91,6 +92,8 @@ module MercadoLibre
 
     def update(product_info)
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
+      new_product = product.new_record? && product_info['parent_item_id'].present?
+
       product.title = product_info['title']
       product.description = product_info['plain_text']
       product.category_id = Category.find_by(meli_id: product_info['category_id']).id
@@ -122,6 +125,8 @@ module MercadoLibre
         product_info['variations'].present?
 
       pull_images(product, product_info['pictures'])
+
+      @ml_questions.import_inherited_questions(product) if new_product
 
       product
     end

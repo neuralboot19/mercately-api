@@ -3,6 +3,7 @@ module MercadoLibre
     def initialize(retailer)
       @retailer = retailer
       @meli_retailer = @retailer.meli_retailer
+      @api = MercadoLibre::Api.new(@meli_retailer)
     end
 
     def import(question_id)
@@ -35,6 +36,21 @@ module MercadoLibre
       url = post_answer_url
       conn = Connection.prepare_connection(url)
       Connection.post_request(conn, prepare_question_answer(question))
+    end
+
+    def import_inherited_questions(product)
+      url = @api.get_questions_url(product.meli_product_id, 'UNANSWERED')
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      questions = response['questions']
+
+      return unless questions.present?
+
+      questions.each do |q|
+        next if Question.check_unique_question_id(q['id'])
+
+        save_question(q)
+      end
     end
 
     private
