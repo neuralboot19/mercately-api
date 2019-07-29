@@ -4,7 +4,8 @@ class Retailers::ProductsController < RetailersController
 
   # GET /products
   def index
-    @products = Product.where(retailer_id: @retailer.id).with_attached_images.page(params[:page])
+    @products = Product.where(retailer_id: @retailer.id, status: params['status'])
+      .with_attached_images.page(params[:page])
   end
 
   # GET /products/1
@@ -60,11 +61,14 @@ class Retailers::ProductsController < RetailersController
     @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
       params[:product][:ml_attributes].present?
 
+    past_meli_status = @product.meli_status
+
     if @product.update(product_params)
       @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
-      @product.delete_images(params[:product][:delete_images], @variations) if params[:product][:delete_images].present?
+      @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
+        params[:product][:delete_images].present?
       @product.reload
-      @product.update_ml_info
+      @product.update_ml_info(past_meli_status)
       @product.upload_variations(action_name, @variations)
       redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully updated.'
     else
@@ -74,8 +78,9 @@ class Retailers::ProductsController < RetailersController
 
   # DELETE /products/1
   def destroy
+    status = @product.status
     @product.destroy
-    redirect_to retailers_products_path, notice: 'Product was successfully destroyed.'
+    redirect_to retailers_products_path(@retailer, status: status), notice: 'Product was successfully destroyed.'
   end
 
   def product_with_variations

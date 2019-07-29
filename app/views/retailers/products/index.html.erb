@@ -6,6 +6,14 @@
   </div>
 </div>
 <div class="container-fluid">
+  <div class="row col-xs-12 tabs-container">
+    <div class="col-xs-6 col-md-2 tabs-item <%= 'active' if current_page? (retailers_products_path(@retailer, status: 'active')) %>">
+      <%= link_to 'Activos', retailers_products_path(@retailer, status: 'active') %>
+    </div>
+    <div class="col-xs-6 col-md-2 tabs-item <%= 'active' if current_page? (retailers_products_path(@retailer, status: 'archived')) %>">
+      <%= link_to 'Archivados', retailers_products_path(@retailer, status: 'archived') %>
+    </div>
+  </div>
   <div class="row middle-xs mt-8 mb-8">
     <div class="col-xs-6">
       <p>Mostrando <%= @products.count %> productos</p>

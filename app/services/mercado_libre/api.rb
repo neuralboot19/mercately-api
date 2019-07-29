@@ -59,5 +59,12 @@ module MercadoLibre
       }
       "https://api.mercadolibre.com/users/#{customer_id}?#{params.to_query}"
     end
+
+    def get_re_public_product_url(meli_product_id)
+      params = {
+        access_token: @meli_retailer.access_token
+      }
+      "https://api.mercadolibre.com/items/#{meli_product_id}/relist?#{params.to_query}"
+    end
   end
 end

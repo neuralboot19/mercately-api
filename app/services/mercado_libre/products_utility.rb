@@ -12,8 +12,7 @@ module MercadoLibre
         'condition': final_condition(product),
         'description': { "plain_text": product.description || '' },
         'pictures': prepare_images(product),
-        'attributes': product.ml_attributes,
-        'status': product.meli_status
+        'attributes': product.ml_attributes
       }.to_json
     end
 
@@ -45,17 +44,19 @@ module MercadoLibre
       array
     end
 
-    def prepare_product_update(product)
+    def prepare_product_update(product, past_meli_status = nil)
       variations = prepare_variations_for_update(product)
 
       info = {
         'title': product.title,
         'variations': variations,
         'attributes': product.ml_attributes,
-        'pictures': prepare_images_update(product),
-        'status': product.meli_status
+        'pictures': prepare_images_update(product)
         # 'listing_type_id': 'free'
       }
+
+      info['status'] = product.meli_status if
+        %w[active paused].include? past_meli_status
 
       unless variations.present?
         info['price'] = product.price.to_f
@@ -123,6 +124,29 @@ module MercadoLibre
       end
 
       variations
+    end
+
+    def prepare_re_public_product(product)
+      info = {
+        'listing_type_id': 'free'
+      }
+
+      if product.product_variations.present?
+        info['variations'] = []
+
+        product.product_variations.each do |var|
+          info['variations'] << {
+            'id': var.variation_meli_id,
+            'price': var.data['price'].to_f,
+            'quantity': var.data['available_quantity']
+          }
+        end
+      else
+        info['price'] = product.price.to_f
+        info['quantity'] = product.available_quantity
+      end
+
+      info.to_json
     end
   end
 end

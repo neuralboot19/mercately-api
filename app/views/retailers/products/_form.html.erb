@@ -60,7 +60,7 @@
             </div>
 
             <div class="group col-xs-12 col-md-6">
-              <%= f.select :meli_status, Product.meli_statuses_updating.keys.to_a %>
+              <%= f.select :meli_status, Product.meli_statuses.keys.to_a, disabled: @product.disabled_meli_statuses %>
               <%= f.label :meli_status, 'Status de la publicación', class: 'select-label' %>
               <span class="bar"></span>
             </div>

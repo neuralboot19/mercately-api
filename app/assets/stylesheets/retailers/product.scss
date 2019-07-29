@@ -381,3 +381,29 @@ input[type=search] {
   font-weight: 300;
   line-height: 26.4px;
 }
+
+.tabs-container {
+  border-bottom: 1px solid white;
+  padding-left: 0px;
+  margin-top: 5px;
+
+  .tabs-item {
+    background-color: #ECEFF4;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+  
+    a {
+      font-size: 15px;
+      color: #85bfee;
+    }
+
+    &:hover, &.active {
+      background-color: white;
+
+      a {
+        color: #057AF5;
+      }
+    }
+  }
+}
