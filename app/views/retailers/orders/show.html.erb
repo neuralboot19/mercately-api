@@ -62,7 +62,7 @@
             <% @order.order_items.each do |oi| %>
               <hr class="separator">
               <div class="row center-xs">
-                <div class="col-xs-3"><%= oi.product.title %></div>
+                <div class="col-xs-3"><%= oi.product&.title %></div>
                 <div class="col-xs-3"><%= oi.quantity %></div>
                 <div class="col-xs-3"><%= oi.unit_price %>$</div>
                 <div class="col-xs-3"><%= number_with_precision oi.quantity * oi.unit_price, precision: 2 %>$</div>
