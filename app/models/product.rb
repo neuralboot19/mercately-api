@@ -116,11 +116,12 @@ class Product < ApplicationRecord
   def disabled_meli_statuses
     disabled = %w[payment_required under_review inactive]
 
+    return disabled + %w[active paused closed] if status == 'archived'
+    return disabled + %w[active paused closed] if
+      disabled.include? meli_status
     return disabled if meli_status == 'active'
     return disabled + %w[paused] if meli_status == 'closed'
     return disabled + %w[closed] if meli_status == 'paused'
-    return disabled + %w[active paused closed] if
-      disabled.include? meli_status
   end
 
   private

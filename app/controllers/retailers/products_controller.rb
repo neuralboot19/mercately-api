@@ -61,6 +61,7 @@ class Retailers::ProductsController < RetailersController
       params[:product][:ml_attributes].present?
 
     past_meli_status = @product.meli_status
+    params['product']['meli_status'] = 'closed' if params['product']['status'] == 'archived'
 
     if @product.update(product_params)
       @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?

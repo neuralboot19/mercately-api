@@ -591,6 +591,13 @@ var readURL = function(input) {
   });
 }
 
+function updateMeliStatus(input) {
+  if (input.value === "archived") {
+    meliStatus = document.getElementById('product_meli_status');
+    meliStatus.value = "closed";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   var root = document.getElementById("root");
   var childs_select = document.getElementById("childs_1");
