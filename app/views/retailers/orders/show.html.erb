@@ -29,7 +29,7 @@
               <p class="product-text">
                 <b class="normal black-text mr-16">Cliente:</b><br/>
                 <%= @order.customer.name %><br/>
-                <%= @order.customer.email %><br/>
+                <%= @order.customer&.meli_customer&.phone %><br/>
               </p>
             </div>
             <div class="col-xs-12 col-md-3">
@@ -43,18 +43,11 @@
                 <b class="normal black-text mr-16">Tienda:</b><br/>
                 MercadoLibre
               </p>
-              <p class="product-text">
-                <b class="normal black-text mr-16">Productos:</b><br/>
-                <% @order.products.each do |p| %>
-                  <% p.title %><br/>
-                <% end %>
-              </p>
             </div>
             <div class="col-xs-12 col-md-3">
               <p class="product-text">
-                <b class="normal black-text mr-16"></b><br/>
-                <b class="normal black-text">Ordenado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.name %><br/>
-                <b class="normal black-text">Pagado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.email %>
+                <b class="normal black-text mr-16">Ordenado el:</b><br/>
+                <b class="normal black-text"></b><%= @order.created_at.strftime("%d - %B") %>
               </p>
             </div>
             <div class="col-xs-12">Lista de productos</div>
