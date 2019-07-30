@@ -77,5 +77,12 @@ module MercadoLibre
 
       "https://api.mercadolibre.com/questions/search?#{params.to_query}"
     end
+
+    def get_order_url(order_id)
+      params = {
+        access_token: @meli_retailer.access_token
+      }
+      "https://api.mercadolibre.com/orders/#{order_id}?#{params.to_query}"
+    end
   end
 end
