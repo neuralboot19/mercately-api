@@ -2,7 +2,7 @@
   <h3>Productos</h3>
   <div class="w-100 middle-right">
     <%= link_to 'Editar', edit_retailers_product_path(@retailer, @product) %>
-    <%= link_to 'Atrás', retailers_products_path, class: 'ml-8' %>
+    <%= link_to 'Atrás', retailers_products_path(@retailer, status: @product.status), class: 'ml-8' %>
     <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
 </div>
@@ -81,6 +81,16 @@
               <p class="product-text">
                 <strong class="product-data-title">Buying mode:</strong><br/>
                 <%= @product.buying_mode %>
+              </p>
+
+              <p class="product-text">
+                <strong class="product-data-title">Status del producto:</strong><br/>
+                <%= @product.status %>
+              </p>
+
+              <p class="product-text">
+                <strong class="product-data-title">Status de la publicación:</strong><br/>
+                <%= @product.meli_status %>
               </p>
 
               <p class="product-text">

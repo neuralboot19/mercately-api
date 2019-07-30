@@ -9,6 +9,8 @@ ActiveAdmin.register Product do
                 :description,
                 :main_picture_id,
                 :sold_quantity,
+                :status,
+                :meli_status,
                 ml_attributes: [],
                 images: []
 
@@ -49,6 +51,8 @@ ActiveAdmin.register Product do
       row :category_id
       row :buying_mode
       row :condition
+      row :status
+      row :meli_status
       row :main_picture_id
       row :ml_attributes
     end

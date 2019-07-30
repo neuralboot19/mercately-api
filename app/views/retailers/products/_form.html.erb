@@ -52,6 +52,20 @@
             <span class="bar"></span>
           </div>
 
+          <% if action_name == 'edit' || action_name == 'update' %>
+            <div class="group col-xs-12 col-md-6">
+              <%= f.select :status, Product.statuses.keys.to_a %>
+              <%= f.label :status, 'Status del producto', class: 'select-label' %>
+              <span class="bar"></span>
+            </div>
+
+            <div class="group col-xs-12 col-md-6">
+              <%= f.select :meli_status, Product.meli_statuses.keys.to_a, disabled: @product.disabled_meli_statuses %>
+              <%= f.label :meli_status, 'Status de la publicación', class: 'select-label' %>
+              <span class="bar"></span>
+            </div>
+          <% end %>
+
           <div id="attributes-container" class="row col-xs-12"></div>
 
           <div class="group col-xs-12">

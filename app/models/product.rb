@@ -8,9 +8,16 @@ class Product < ApplicationRecord
 
   validate :images_count
   validates :meli_product_id, uniqueness: true, allow_nil: true
+  validate :ml_status
 
   enum buying_mode: %w[buy_it_now classified]
   enum condition: %w[new_product used not_specified]
+  enum status: %w[active archived], _prefix: true
+  enum meli_status: %w[active payment_required paused closed under_review inactive]
+
+  scope :retailer_products, lambda { |retailer_id, status|
+    Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
+  }
 
   def update_ml(p_ml)
     self.meli_site_id = p_ml['site_id']
@@ -22,6 +29,7 @@ class Product < ApplicationRecord
     self.meli_permalink = p_ml['permalink']
     self.meli_product_id = p_ml['id']
     self.ml_attributes = p_ml['attributes']
+    self.meli_status = p_ml['status']
     save
   end
 
@@ -46,11 +54,11 @@ class Product < ApplicationRecord
     File.delete('./public/upload-' + filename + '.jpg')
   end
 
-  def update_ml_info
+  def update_ml_info(past_meli_status)
     return unless meli_product_id.present?
 
     p_ml = MercadoLibre::Products.new(retailer)
-    p_ml.push_update(self)
+    p_ml.push_update(self, past_meli_status)
   end
 
   def update_main_picture(filename)
@@ -89,7 +97,7 @@ class Product < ApplicationRecord
     upload_variations_to_ml
   end
 
-  def delete_images(delete_images, variations)
+  def delete_images(delete_images, variations, past_meli_status)
     return unless delete_images.present?
 
     ids = []
@@ -102,7 +110,17 @@ class Product < ApplicationRecord
     return if variations.present?
 
     reload
-    update_ml_info
+    update_ml_info(past_meli_status)
+  end
+
+  def disabled_meli_statuses
+    disabled = %w[payment_required under_review inactive]
+
+    return disabled if meli_status == 'active'
+    return disabled + %w[paused] if meli_status == 'closed'
+    return disabled + %w[closed] if meli_status == 'paused'
+    return disabled + %w[active paused closed] if
+      disabled.include? meli_status
   end
 
   private
@@ -158,5 +176,16 @@ class Product < ApplicationRecord
 
       product_variations.where(id: current_variation_ids).delete_all if
         current_variation_ids.present?
+    end
+
+    def ml_status
+      errors.add(:base, 'Sólo puede seleccionar los status active, paused y closed') if
+        %w[payment_required under_review inactive].include? meli_status
+
+      errors.add(:base, 'Del status paused sólo puede pasar a active') if
+        meli_status == 'closed' && meli_status_was == 'paused'
+
+      errors.add(:base, 'Del status closed sólo puede pasar a active') if
+        meli_status == 'paused' && meli_status_was == 'closed'
     end
 end
