@@ -10,13 +10,12 @@ module MercadoLibre
       url = @api.get_order_url(order_id)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      puts "ORDER #{response}"
       save_order(response) if response
     end
 
     def save_order(order_info)
       customer = MercadoLibre::Customers.new(@retailer, order_info['buyer']).import(order_info['buyer']['id'])
-      puts "CUSTOMER #{customer.to_json}"
+
       order_info['status'] = 'invalid_order' if order_info['status'] == 'invalid'
       order = Order.find_or_initialize_by(meli_order_id: order_info['id'])
 
@@ -29,7 +28,7 @@ module MercadoLibre
 
       order_info['order_items'].each do |order_item|
         product = MercadoLibre::Products.new(@retailer).import_product([order_item['item']['id']]).first
-        puts "PRODUCTO #{product.to_json}"
+
         item = OrderItem.find_or_initialize_by(order_id: order.id, product_id: product.id)
 
         item.update_attributes!(
