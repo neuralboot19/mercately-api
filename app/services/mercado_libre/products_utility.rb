@@ -126,7 +126,7 @@ module MercadoLibre
       variations
     end
 
-    def prepare_re_public_product(product)
+    def prepare_re_publish_product(product)
       info = {
         'listing_type_id': 'free'
       }

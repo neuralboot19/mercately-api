@@ -60,7 +60,7 @@ module MercadoLibre
       "https://api.mercadolibre.com/users/#{customer_id}?#{params.to_query}"
     end
 
-    def get_re_public_product_url(meli_product_id)
+    def get_re_publish_product_url(meli_product_id)
       params = {
         access_token: @meli_retailer.access_token
       }

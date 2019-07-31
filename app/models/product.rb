@@ -57,8 +57,9 @@ class Product < ApplicationRecord
   def update_ml_info(past_meli_status)
     return unless meli_product_id.present?
 
+    set_active = meli_status == 'active' || status == 'active'
     p_ml = MercadoLibre::Products.new(retailer)
-    p_ml.push_update(self, past_meli_status)
+    p_ml.push_update(self, past_meli_status, set_active)
   end
 
   def update_main_picture(filename)
