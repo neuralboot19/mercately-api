@@ -141,11 +141,12 @@ module MercadoLibre
       update(response) if response
     end
 
-    def push_update(product, past_meli_status = nil)
-      if past_meli_status == 'closed' && product.meli_status == 'active'
-        @product_publish.re_public_product(product)
-      elsif product.meli_status != 'closed' || (past_meli_status == 'active' &&
-        product.meli_status == 'closed')
+    def push_update(product, past_meli_status = nil, set_active = nil)
+      set_closed = past_meli_status == 'active' && product.meli_status == 'closed'
+
+      if past_meli_status == 'closed' && set_active
+        @product_publish.re_publish_product(product)
+      elsif product.meli_status != 'closed' || set_closed
         @product_publish.send_update(product, past_meli_status)
       end
     end

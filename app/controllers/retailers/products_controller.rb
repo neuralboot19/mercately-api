@@ -2,6 +2,7 @@ class Retailers::ProductsController < RetailersController
   before_action :set_product, only: [:show, :edit, :update, :product_with_variations]
   before_action :compile_variation_images, only: [:create, :update]
   before_action :set_products, only: [:index]
+  before_action :update_meli_status, only: [:update]
 
   # GET /products
   def index
@@ -84,6 +85,10 @@ class Retailers::ProductsController < RetailersController
   end
 
   private
+
+    def update_meli_status
+      params['product']['meli_status'] = 'closed' if params['product']['status'] == 'archived'
+    end
 
     def set_products
       @products = Product.retailer_products(@retailer.id, params['status'])

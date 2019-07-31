@@ -57,8 +57,9 @@ class Product < ApplicationRecord
   def update_ml_info(past_meli_status)
     return unless meli_product_id.present?
 
+    set_active = meli_status == 'active' || status == 'active'
     p_ml = MercadoLibre::Products.new(retailer)
-    p_ml.push_update(self, past_meli_status)
+    p_ml.push_update(self, past_meli_status, set_active)
   end
 
   def update_main_picture(filename)
@@ -116,11 +117,12 @@ class Product < ApplicationRecord
   def disabled_meli_statuses
     disabled = %w[payment_required under_review inactive]
 
+    return disabled + %w[active paused closed] if status == 'archived'
+    return disabled + %w[active paused closed] if
+      disabled.include? meli_status
     return disabled if meli_status == 'active'
     return disabled + %w[paused] if meli_status == 'closed'
     return disabled + %w[closed] if meli_status == 'paused'
-    return disabled + %w[active paused closed] if
-      disabled.include? meli_status
   end
 
   private

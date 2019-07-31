@@ -7,10 +7,10 @@ module MercadoLibre
       @utility = MercadoLibre::ProductsUtility.new
     end
 
-    def re_public_product(product)
-      url = @api.get_re_public_product_url(product.meli_product_id)
+    def re_publish_product(product)
+      url = @api.get_re_publish_product_url(product.meli_product_id)
       conn = Connection.prepare_connection(url)
-      response = Connection.post_request(conn, @utility.prepare_re_public_product(product))
+      response = Connection.post_request(conn, @utility.prepare_re_publish_product(product))
       puts response.body if response.status != 201
     end
 
