@@ -5,7 +5,7 @@ Rails.application.routes.draw do
     sessions: 'retailer_users/sessions' }
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  get '/blog' => redirect("https://mercately.com/blog/")
+  get '/blog' => redirect("https://www.mercately.com/blog/")
 
   namespace :retailers do
     scope '/:slug' do
