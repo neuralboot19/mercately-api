@@ -35,7 +35,7 @@
             <div class="col-xs-12 col-md-3">
               <p class="product-text">
                 <b class="normal black-text mr-16">Estado:</b><br/>
-                <div class="cookie"><%= @order.status %></div>
+                <div class="cookie"><%= @order.status || @order.merc_status %></div>
               </p>
             </div>
             <div class="col-xs-12 col-md-3">

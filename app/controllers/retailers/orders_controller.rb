@@ -57,6 +57,7 @@ class Retailers::OrdersController < RetailersController
       params.require(:order).permit(
         :status,
         :customer_id,
+        :merc_status,
         order_items_attributes: [
           :id,
           :product_id,

@@ -3,14 +3,21 @@
     <%= form_for [:retailers, @order], html: { class: 'col-xs-12' } do |f| %>
       <div class="box">
         <div class="row">
+          <% if (action_name == 'edit' || action_name == 'update') && @order.meli_order_id.present? %>
+            <div class="group col-xs-12 col-md-6">
+              <%= f.select :status, Order.statuses.keys.to_a, include_blank: false %>
+              <%= f.label :status, 'Status MercadoLibre', class: 'select-label' %>
+              <span class="bar"></span>
+            </div>
+          <% end %>
           <div class="group col-xs-12 col-md-6">
-            <%= f.select :status, Order.statuses.keys.to_a, include_blank: false %>
-            <%= f.label :status, class: 'select-label' %>
+            <%= f.select :customer_id, @retailer.customers.pluck(:meli_nickname, :id), include_blank: false %>
+            <%= f.label :customer_id, class: 'select-label' %>
             <span class="bar"></span>
           </div>
-          <div class="group col-xs-12 col-md-6">
-            <%= f.select :customer_id, @retailer.customers.pluck(:email, :id), include_blank: false %>
-            <%= f.label :customer_id, class: 'select-label' %>
+          <div class="group col-xs-12 col-md-12">
+            <%= f.select :merc_status, Order.merc_statuses.keys.to_a, include_blank: false %>
+            <%= f.label :merc_status, 'Status', class: 'select-label' %>
             <span class="bar"></span>
           </div>
           <h3>Items en la orden</h3>
@@ -31,3 +38,5 @@
     <% end %>
   </div>
 </div>
+
+<script src="<%= asset_path 'orders/orders.js' %>" charset="utf-8"></script>

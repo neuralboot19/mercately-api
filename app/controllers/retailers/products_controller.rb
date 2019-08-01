@@ -1,5 +1,6 @@
 class Retailers::ProductsController < RetailersController
-  before_action :set_product, only: [:show, :edit, :update, :product_with_variations]
+  before_action :set_product, only: [:show, :edit, :update, :product_with_variations,
+    :price_quantity]
   before_action :compile_variation_images, only: [:create, :update]
   before_action :set_products, only: [:index]
   before_action :update_meli_status, only: [:update]
@@ -81,6 +82,15 @@ class Retailers::ProductsController < RetailersController
       product: @product,
       variations: @product.product_variations,
       template: @product.category.clean_template_variations
+    }
+  end
+
+  def price_quantity
+    render json: {
+      id: @product.id,
+      price: @product.price,
+      quantity: @product.available_quantity,
+      variations: @product.product_variations
     }
   end
 

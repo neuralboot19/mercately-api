@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_25_194826) do
+ActiveRecord::Schema.define(version: 2019_07_31_161937) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -172,6 +172,7 @@ ActiveRecord::Schema.define(version: 2019_07_25_194826) do
     t.string "currency_id"
     t.float "total_amount"
     t.datetime "date_closed"
+    t.integer "merc_status", default: 0
     t.index ["customer_id"], name: "index_orders_on_customer_id"
   end
 

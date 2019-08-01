@@ -4,10 +4,10 @@ class Order < ApplicationRecord
   has_many :products, through: :order_items
   has_many :messages
 
-  validate :check_stock
-  before_update :adjust_ml_stock, if: :will_save_change_to_status?
+  before_update :adjust_ml_stock, if: :will_save_change_to_merc_status?
 
   enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
+  enum merc_status: %i[pending success cancelled], _prefix: true
 
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   delegate :retailer_id, :retailer, to: :customer
@@ -27,28 +27,24 @@ class Order < ApplicationRecord
 
   private
 
-    def check_stock
-      o_valid = true
-      order_items.map(&:product_id).uniq.each do |p_id|
-        product = Product.find(p_id)
-        p_order_quantity = 0
-        order_items.map { |oi| oi if oi.product_id == p_id }.compact.each do |oi|
-          p_order_quantity += oi.quantity
-        end
-        if p_order_quantity > product.available_quantity
-          errors.add(:base, "No hay sufucientes #{product.title}")
-          o_valid = false
+    def adjust_ml_stock
+      order_items.each do |order_item|
+        product = order_item.product
+
+        if (merc_status_was == 'pending' || merc_status_was == 'success') && merc_status == 'cancelled'
+          product.update(available_quantity: product.available_quantity + order_item.quantity,
+            sold_quantity: product.sold_quantity - order_item.quantity)
+          update_ml_stock(product)
+        elsif (merc_status == 'pending' || merc_status == 'success') && merc_status_was == 'cancelled'
+          product.update(available_quantity: product.available_quantity - order_item.quantity,
+            sold_quantity: product.sold_quantity + order_item.quantity)
+          update_ml_stock(product)
         end
       end
-      o_valid
     end
 
-    def adjust_ml_stock
-      return if status == 'cancelled' || status == 'invalid_order'
-
-      order_items.each do |_order_item|
-        product.update(available_quantity: product.available_quantity + quantity)
-        MercadoLibre::Products.push_update(product) if product.meli_product_id
-      end
+    def update_ml_stock(product)
+      MercadoLibre::Products.new(product&.retailer).push_update(product.reload) if
+        product.meli_product_id
     end
 end

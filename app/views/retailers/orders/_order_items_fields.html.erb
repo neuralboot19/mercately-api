@@ -1,17 +1,17 @@
 <div class="box">
     <div class="nested-fields row">
       <div class="group col-xs-12 col-md-4">
-        <%= f.select :product_id, @retailer.products.pluck(:title, :id), include_blank: false %>
+        <%= f.select :product_id, Retailer.active_products(@retailer).pluck(:title, :id), { include_blank: false }, onchange: 'getProductInfo(this);' %>
         <%= f.label :product_id, class: 'select-label' %>
         <span class="bar"></span>
       </div>
       <div class="group col-xs-12 col-md-4">
-        <%= f.number_field :quantity, placeholder: '' %>
+        <%= f.number_field :quantity, { placeholder: '', min: 1 } %>
         <%= f.label :quantity %>
         <span class="bar"></span>
       </div>
       <div class="group col-xs-12 col-md-4">
-        <%= f.number_field :unit_price, placeholder: '' %>
+        <%= f.text_field :unit_price, placeholder: '', onkeyup: 'editPrice(this);' %>
         <%= f.label :unit_price %>
         <span class="bar"></span>
       </div>

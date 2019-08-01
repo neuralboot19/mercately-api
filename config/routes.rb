@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
     get 'products/:id/product_with_variations', to: 'products#product_with_variations'
+    get 'products/:id/price_quantity', to: 'products#price_quantity'
   end
 
   get 'categories', to: 'categories#roots'
