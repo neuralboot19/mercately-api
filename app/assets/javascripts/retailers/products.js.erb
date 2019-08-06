@@ -122,7 +122,7 @@ function appendTemplate() {
   variationDiv = document.createElement("div");
   variationDiv.setAttribute("class", "group col-xs-12 remove-variation-container");
   pElement = document.createElement('p');
-  pElement.setAttribute("id", `remove-variation-${countVariations - 1}`)
+  pElement.setAttribute("id", `remove-variation-${countVariations - 1}`);
   pElement.setAttribute("onclick", "removeVariation(this);");
   pElement.setAttribute("class", "remove-variation");
   pElement.innerHTML = "Eliminar variación";

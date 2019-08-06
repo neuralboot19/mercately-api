@@ -1,6 +1,5 @@
 class Retailers::ProductsController < RetailersController
-  before_action :set_product, only: [:show, :edit, :update, :product_with_variations,
-    :price_quantity]
+  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity]
   before_action :compile_variation_images, only: [:create, :update]
   before_action :set_products, only: [:index]
   before_action :update_meli_status, only: [:update]

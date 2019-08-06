@@ -118,8 +118,7 @@ module MercadoLibre
       product.retailer = @retailer
       product.save!
 
-      old_product = Product.find_by(meli_product_id: product_info['parent_item_id'])
-      old_product.destroy! if old_product.present?
+      delete_parent_product(product_info)
 
       @product_variations.save_variations(product, product_info['variations']) if
         product_info['variations'].present?
@@ -138,7 +137,14 @@ module MercadoLibre
       url = @api.get_product_description_url(product_id)
       conn = Connection.prepare_connection(url)
       response = response.merge(Connection.get_request(conn))
-      update(response) if response
+
+      return unless response
+
+      return Product.new if response['status'] == 'closed' && Product.none? do |p|
+        p.meli_product_id == response['id']
+      end
+
+      update(response)
     end
 
     def push_update(product, past_meli_status = nil, set_active = nil)
@@ -186,6 +192,11 @@ module MercadoLibre
         id = ActiveStorage::Blob.find_by(filename: image_id)&.id
         attach_id = product.images.find_by(blob_id: id)&.id if id.present?
         product.update(main_picture_id: attach_id) if attach_id.present?
+      end
+
+      def delete_parent_product(product_info)
+        old_product = Product.find_by(meli_product_id: product_info['parent_item_id'])
+        old_product.destroy! if old_product.present?
       end
   end
 end

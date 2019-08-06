@@ -19,7 +19,7 @@ class Retailer < ApplicationRecord
   }
 
   scope :active_products, lambda { |retailer|
-    retailer.products.where(status: 0).where("meli_status is null or meli_status = ?", 0)
+    retailer.products.where(status: 0).where('meli_status is null or meli_status = ?', 0)
   }
 
   def to_param

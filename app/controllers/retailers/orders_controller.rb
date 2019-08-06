@@ -21,6 +21,8 @@ class Retailers::OrdersController < RetailersController
 
   # POST /orders
   def create
+    params[:order][:order_items_attributes] = process_items(params[:order][:order_items_attributes])
+
     @order = Order.new(order_params)
 
     if @order.save
@@ -32,6 +34,8 @@ class Retailers::OrdersController < RetailersController
 
   # PATCH/PUT /orders/1
   def update
+    params[:order][:order_items_attributes] = process_items(params[:order][:order_items_attributes])
+
     if @order.update(order_params)
       redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Order was successfully updated.'
     else
@@ -39,17 +43,21 @@ class Retailers::OrdersController < RetailersController
     end
   end
 
-  # DELETE /orders/1
-  def destroy
-    @order.destroy
-    redirect_to retailers_orders_url(@retailer.slug), notice: 'Order was successfully destroyed.'
-  end
-
   private
 
     # Use callbacks to share common setup or constraints between actions.
     def set_order
       @order = Order.find(params[:id])
+    end
+
+    def process_items(items)
+      output_items = []
+
+      items.each do |oi|
+        output_items << oi[1] if oi[1]['quantity'].present? && oi[1]['unit_price'].present?
+      end
+
+      output_items
     end
 
     # Only allow a trusted parameter "white list" through.
@@ -65,6 +73,7 @@ class Retailers::OrdersController < RetailersController
           :unit_price,
           :created_at,
           :updated_at,
+          :product_variation_id,
           :_destroy
         ]
       )

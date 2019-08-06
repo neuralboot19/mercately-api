@@ -125,15 +125,15 @@ class Product < ApplicationRecord
     return disabled + %w[closed] if meli_status == 'paused'
   end
 
+  def upload_variations_to_ml
+    p_ml = MercadoLibre::ProductVariations.new(retailer)
+    p_ml.create_product_variations(self)
+  end
+
   private
 
     def images_count
       errors.add(:base, 'Máximo de imagenes: 10') if images.count > 10
-    end
-
-    def upload_variations_to_ml
-      p_ml = MercadoLibre::ProductVariations.new(retailer)
-      p_ml.create_product_variations(self)
     end
 
     def create_variations(variations)

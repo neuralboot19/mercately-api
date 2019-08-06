@@ -25,26 +25,50 @@ class Order < ApplicationRecord
     @last_message = messages.order(created_at: 'DESC').first
   end
 
+  def grouped_order_items
+    grouped_orders = {}
+    order_items.map { |ord| (grouped_orders[ord.product_id] ||= []) << ord }
+
+    output = grouped_orders.map { |item| item[1] }
+
+    output.flatten
+  end
+
+  def disabled_statuses
+    return %w[pending success cancelled] if merc_status != 'pending'
+  end
+
   private
 
     def adjust_ml_stock
+      return unless (merc_status_was == 'pending' ||
+                    merc_status_was == 'success') &&
+                    merc_status == 'cancelled'
+
       order_items.each do |order_item|
         product = order_item.product
+        product_variation = order_item.product_variation
 
-        if (merc_status_was == 'pending' || merc_status_was == 'success') && merc_status == 'cancelled'
-          product.update(available_quantity: product.available_quantity + order_item.quantity,
-            sold_quantity: product.sold_quantity - order_item.quantity)
-          update_ml_stock(product)
-        elsif (merc_status == 'pending' || merc_status == 'success') && merc_status_was == 'cancelled'
-          product.update(available_quantity: product.available_quantity - order_item.quantity,
-            sold_quantity: product.sold_quantity + order_item.quantity)
-          update_ml_stock(product)
+        if product_variation.present?
+          data = product_variation.data
+          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity
+          data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
+          product_variation.update(data: data)
+        else
+          product.update(available_quantity: product.available_quantity +
+            order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
         end
+
+        update_ml_stock(product)
       end
     end
 
     def update_ml_stock(product)
-      MercadoLibre::Products.new(product&.retailer).push_update(product.reload) if
-        product.meli_product_id
+      p_ml = MercadoLibre::Products.new(product&.retailer)
+
+      return unless product.meli_product_id
+
+      p_ml.push_update(product.reload)
+      product.upload_variations_to_ml
     end
 end
