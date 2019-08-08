@@ -84,5 +84,12 @@ module MercadoLibre
       }
       "https://api.mercadolibre.com/orders/#{order_id}?#{params.to_query}"
     end
+
+    def prepare_order_feedback_url(meli_order_id)
+      params = {
+        access_token: @meli_retailer.access_token
+      }
+      "https://api.mercadolibre.com/orders/#{meli_order_id}/feedback?#{params.to_query}"
+    end
   end
 end

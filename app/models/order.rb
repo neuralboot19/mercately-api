@@ -4,10 +4,14 @@ class Order < ApplicationRecord
   has_many :products, through: :order_items
   has_many :messages
 
+  validates :feedback_message, length: { maximum: 160 }, if: :feedback_message?
+
   before_update :adjust_ml_stock, if: :will_save_change_to_merc_status?
 
   enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
   enum merc_status: %i[pending success cancelled], _prefix: true
+  enum feedback_reason: %i[SELLER_OUT_OF_STOCK SELLER_DIDNT_TRY_TO_CONTACT_BUYER BUYER_NOT_ENOUGH_MONEY BUYER_REGRETS]
+  enum feedback_rating: %i[positive negative neutral]
 
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   delegate :retailer_id, :retailer, to: :customer
@@ -38,12 +42,17 @@ class Order < ApplicationRecord
     return %w[pending success cancelled] if merc_status != 'pending'
   end
 
+  def self.build_feedback_reasons
+    [['No hay disponibilidad', 'SELLER_OUT_OF_STOCK'],
+     ['No se contactó al comprador', 'SELLER_DIDNT_TRY_TO_CONTACT_BUYER'],
+     ['Comprador sin fondos', 'BUYER_NOT_ENOUGH_MONEY'],
+     ['Comprador se retracta', 'BUYER_REGRETS']]
+  end
+
   private
 
     def adjust_ml_stock
-      return unless (merc_status_was == 'pending' ||
-                    merc_status_was == 'success') &&
-                    merc_status == 'cancelled'
+      return unless merc_status_was == 'pending' && merc_status == 'cancelled'
 
       order_items.each do |order_item|
         product = order_item.product
@@ -58,17 +67,14 @@ class Order < ApplicationRecord
           product.update(available_quantity: product.available_quantity +
             order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
         end
-
-        update_ml_stock(product)
       end
+
+      push_feedback
     end
 
-    def update_ml_stock(product)
-      p_ml = MercadoLibre::Products.new(product&.retailer)
+    def push_feedback
+      return unless meli_order_id.present?
 
-      return unless product.meli_product_id
-
-      p_ml.push_update(product.reload)
-      product.upload_variations_to_ml
+      MercadoLibre::Orders.new(products&.first&.retailer).push_feedback(self)
     end
 end

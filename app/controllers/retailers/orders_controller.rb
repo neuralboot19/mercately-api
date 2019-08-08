@@ -66,6 +66,9 @@ class Retailers::OrdersController < RetailersController
         :status,
         :customer_id,
         :merc_status,
+        :feedback_reason,
+        :feedback_rating,
+        :feedback_message,
         order_items_attributes: [
           :id,
           :product_id,
