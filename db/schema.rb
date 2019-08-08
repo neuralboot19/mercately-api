@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_02_134137) do
+ActiveRecord::Schema.define(version: 2019_08_07_230431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -175,6 +175,9 @@ ActiveRecord::Schema.define(version: 2019_08_02_134137) do
     t.float "total_amount"
     t.datetime "date_closed"
     t.integer "merc_status", default: 0
+    t.integer "feedback_reason"
+    t.string "feedback_message"
+    t.integer "feedback_rating"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
   end
 

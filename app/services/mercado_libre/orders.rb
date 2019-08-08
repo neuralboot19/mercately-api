@@ -4,6 +4,7 @@ module MercadoLibre
       @retailer = retailer
       @meli_retailer = @retailer.meli_retailer
       @api = MercadoLibre::Api.new(@meli_retailer)
+      @order_utility = MercadoLibre::OrdersUtility.new
     end
 
     def import(order_id)
@@ -31,13 +32,25 @@ module MercadoLibre
 
         item = OrderItem.find_or_initialize_by(order_id: order.id, product_id: product.id)
 
+        product_variation = ProductVariation.find_by(variation_meli_id: order_item['item']['variation_id']) if
+          order_item['item']['variation_id'].present?
+
         item.update_attributes!(
           quantity: order_item['quantity'],
-          unit_price: order_item['unit_price']
+          unit_price: order_item['unit_price'],
+          product_variation_id: product_variation&.id
         )
       end
 
       order
+    end
+
+    def push_feedback(order)
+      url = @api.prepare_order_feedback_url(order.meli_order_id)
+      conn = Connection.prepare_connection(url)
+      response = Connection.post_request(conn, @order_utility.prepare_order_feedback(order))
+
+      puts response.body if response.status != 201
     end
   end
 end

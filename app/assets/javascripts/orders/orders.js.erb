@@ -96,6 +96,20 @@ function insertVariation(variation, parentContainer, index) {
   $(parentContainer).append(insertionString);
 }
 
+function showHideFeedback(input) {
+  if (input.value === "cancelled") {
+    $('#feedback-container').show();
+    $('#order_feedback_reason').prop('disabled', false);
+    $('#order_feedback_rating').prop('disabled', false);
+    $('#order_feedback_message').prop('disabled', false);
+  } else {
+    $('#feedback-container').hide();
+    $('#order_feedback_reason').prop('disabled', true);
+    $('#order_feedback_rating').prop('disabled', true);
+    $('#order_feedback_message').prop('disabled', true);
+  }
+}
+
 $(document).ready(function() {
   $('#order_items').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
     getProductInfo(insertedItem.find('select')[0]);
@@ -108,4 +122,16 @@ $(document).ready(function() {
       $('#variations-container-' + inputTime).remove();
     }
   });
+
+  $('#feedback-container').hide();
+  $('#order_feedback_reason').prop('disabled', true);
+  $('#order_feedback_rating').prop('disabled', true);
+  $('#order_feedback_message').prop('disabled', true);
+
+  if ($('#hidden-merc-status').val() === "cancelled") {
+    $('#feedback-container').show();
+    $('#order_feedback_reason').prop('disabled', false);
+    $('#order_feedback_rating').prop('disabled', false);
+    $('#order_feedback_message').prop('disabled', false);
+  }
 });
