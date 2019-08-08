@@ -104,9 +104,9 @@ module MercadoLibre
       end
 
       data = if variation.data['id'].present? && variation.data['id'] == 'undefined'
-               variation.data.except('id')
+               variation.data.except('id', 'catalog_product_id')
              else
-               variation.data
+               variation.data.except('catalog_product_id')
              end
 
       load_variations << data

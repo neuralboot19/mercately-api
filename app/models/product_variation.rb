@@ -1,5 +1,6 @@
 class ProductVariation < ApplicationRecord
   belongs_to :product
+  has_many :order_items, dependent: :destroy
   validates :variation_meli_id, uniqueness: true, allow_nil: true
 
   def update_data(ml_data)
