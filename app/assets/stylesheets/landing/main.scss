@@ -1,6 +1,5 @@
 *{
 	font-family: 'Poppins-Regular';
-
 }
 footer{
 	background: #0e1022;
@@ -391,6 +390,14 @@ p{
   font-weight: 300;
 }
 
-.taste-free-container {
+.trial-free-container {
   text-align: center;
+}
+
+.box-actions {
+  display: flex;
+
+  .bg-primary {
+    margin-right: 7px;
+  }
 }

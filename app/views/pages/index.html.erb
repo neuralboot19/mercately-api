@@ -5,9 +5,9 @@
     desde un solo lugar</h1>
     <p>Optimice su negocio con herramientas de gestión y 
     análisis para vender en mercadolibre</p>
-    <div class="box-actions">
-      <button class="btn-landing bg-primary">PROBAR GRATIS</button>
-      <button class="btn-landing bg-secondary">SABER MÁS</button>
+    <div class="center-landing box-actions">
+      <%= button_to 'PROBAR GRATIS', new_retailer_user_registration_path, method: :get, class: 'btn-landing bg-primary' %>
+      <%= button_to 'SABER MÁS', root_path, method: :get, class: 'btn-landing bg-secondary' %>
     </div>
   </div>
 </div>
@@ -67,7 +67,7 @@
     mejor sistema</h1>
     <p>NO CON PROCESOS MANUALES</p>
     <b>40% incremento de productividad</b><br /><br />
-    <button class="know-more-button">SABER MÁS</button>
+    <%= button_to 'SABER MÁS', root_path, method: :get, class: 'know-more-button' %>
   </div>
 </div>
 <div class="section mountain">
@@ -88,8 +88,8 @@
         <li>Saber los productos más y menos vendidos.</li>
         <li>Maneje varias cuentas desde un mismo lugar.</li>
       </ul>
-      <div class="taste-free-container">
-        <button class="btn-landing bg-secondary-big">PRUEBA GRATIS</button>
+      <div class="trial-free-container">
+        <%= button_to 'PRUEBA GRATIS', new_retailer_user_registration_path, method: :get, class: 'btn-landing bg-secondary-big' %>
       </div>
     </div>
     <%= image_tag 'landing/graph.png', width: '350' %>
