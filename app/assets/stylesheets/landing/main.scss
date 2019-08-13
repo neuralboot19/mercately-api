@@ -197,7 +197,7 @@ p{
 .btn-landing {
 	outline: 0;
 	border: 0;
-	border-radius: 10px;
+	border-radius: 5px;
 	padding: 7px;
 	font-size: 8px;
 	cursor: pointer;
@@ -363,4 +363,34 @@ p{
 .in-icon {
   width: 23px;
   height: 19px;
+}
+
+.not-margin-bottom {
+  margin-bottom: 0px;
+}
+
+.know-more-button {
+  width: 186px;
+  height: 47px;
+  border-radius: 5px;
+  border: 2px solid #ffffff;
+  background: transparent;
+  color: #f3f3f3;
+  font-size: 15px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.bg-secondary-big {
+  width: 186px;
+  height: 48px;
+  border-radius: 5px;
+  background-color: #26abe2;
+  color: #f3f3f3;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.taste-free-container {
+  text-align: center;
 }
