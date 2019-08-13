@@ -14,5 +14,8 @@
  *= require home
  *= require devise
  *= require global
+ *= require landing/main
+ *= require landing/responsive
+ *= require fonts/Poppins/stylesheet
  *= require_self
  */

@@ -1,40 +1,24 @@
-<header>
-  <nav id="sidebar" style="left: -300px;">
-    <div class="menu-item">Home</div>
-    <div class="menu-item">Ayuda</div>
-    <div class="menu-item">Blog</div>
-    <%= link_to new_retailer_user_registration_path do%>
-      <div class="menu-item">Registrarse</div>
-    <% end %>
-    <%= link_to new_retailer_user_session_path do%>
-      <div class="menu-item">Ingresar</div>
-    <% end %>
-  </nav>
-  <nav>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-6 col-md-4"><%= image_tag 'mercately-logo-white.png', id: 'mercately-logo' %></div>
-        <div class="col-xs-6 col-md-8">
-          <div class="box hide-on-med-and-down">
-            <div class="row end-xs">
-              <div class="menu-item">Home</div>
-              <div class="menu-item">Ayuda</div>
-              <div class="menu-item">Blog</div>
-              <%= link_to new_retailer_user_registration_path, class: 'a' do%>
-                <div class="menu-item">Registrarse</div>
-              <% end %>
-              <%= link_to new_retailer_user_session_path, class: 'a' do%>
-                <div class="menu-item">Ingresar</div>
-              <% end %>
-            </div>
-          </div>
-          <div class="box hide-on-med-and-up">
-            <div class="row end-xs">
-              <%= image_tag 'menu-icon.png', id: 'menu-icon' %>
-            </div>
-          </div>
-        </div>
-      </div>
+<header class="menu">
+  <div class="close">
+    <%= image_tag 'landing/logo.png' %>
+    <div class="hamburger"> 
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
-  </nav>
-</header>
+  </div>
+  <div class="content">
+    <div class="close">
+      <%= image_tag 'landing/logo.png', width: '200' %>
+      <span class="hamburger">&times;</span>
+    </div>
+
+    <div class="items">
+      <a href="#what-is-it">¿Qué es mercately?</a>
+      <a href="/blog">Blog</a>
+      <a href="/">Ayuda</a>
+      <%= link_to 'Ingresar', new_retailer_user_session_path %>
+      <%= link_to 'Registrarse', new_retailer_user_registration_path %>
+    </div>
+  </div>
+</header><!-- /header -->
