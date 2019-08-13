@@ -39,7 +39,9 @@ class Order < ApplicationRecord
   end
 
   def disabled_statuses
-    return %w[pending success cancelled] if merc_status != 'pending'
+    return [] if merc_status == 'pending'
+    return %w[pending success cancelled] if merc_status == 'cancelled'
+    return %w[pending] if merc_status == 'success'
   end
 
   def self.build_feedback_reasons
