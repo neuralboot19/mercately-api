@@ -1,7 +1,7 @@
 <header class="menu">
   <div class="close">
     <%= image_tag 'landing/logo.png' %>
-    <div class="hamburger"> 
+    <div class="hamburger">
       <span></span>
       <span></span>
       <span></span>
@@ -14,11 +14,13 @@
     </div>
 
     <div class="items">
-      <a href="#what-is-it">¿Qué es mercately?</a>
+      <a class="inner-landing-link" href="#what-is-it">¿Qué es mercately?</a>
       <a href="/blog">Blog</a>
-      <a href="/">Ayuda</a>
+      <a class="inner-landing-link" href="#help-info">Ayuda</a>
       <%= link_to 'Ingresar', new_retailer_user_session_path %>
       <%= link_to 'Registrarse', new_retailer_user_registration_path %>
     </div>
   </div>
-</header><!-- /header -->
+</header>
+
+<script src="<%= asset_path 'landing/index.js' %>" charset="utf-8"></script>
