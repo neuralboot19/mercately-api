@@ -54,7 +54,9 @@ class Order < ApplicationRecord
   private
 
     def adjust_ml_stock
-      return unless merc_status_was == 'pending' && merc_status == 'cancelled'
+      return unless (merc_status_was == 'pending' ||
+                    merc_status_was == 'success') &&
+                    merc_status == 'cancelled'
 
       order_items.each do |order_item|
         product = order_item.product
