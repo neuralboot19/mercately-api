@@ -37,7 +37,13 @@ p{
 
 .primary{color: #753580;}
 .secondary{color: #26abe2;}
-.base{color: #ffffff;}
+.base{
+	color: #ffffff;
+
+	a {
+		color: #ffffff;
+	}
+}
 
 .container{
 	text-align: center;
@@ -54,7 +60,7 @@ p{
 .container .p-blue{
 	color: #26abe2;
 	font-family: 'Poppins-Regular';
-	font-size: 15px;
+	font-size: 25px;
 	font-weight: 300;
 }
 .dark{
@@ -244,6 +250,7 @@ p{
 
 .box h1 {
 	color: white;
+	margin-top: 0px;
 }
 
 .box p {
@@ -317,6 +324,11 @@ p{
 }
 .noStyle li{
 	color: #26abe2;
+
+	a {
+		color: #26abe2;
+		text-decoration: none;
+	}
 }
 .list:not(.noStyle) li::before {
 	content: "";
