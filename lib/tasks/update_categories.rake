@@ -2,7 +2,7 @@ task update_categories: :environment do
   puts 'Downloading categories'
   ActiveRecord::Base.transaction do
     faraday_request_get('https://api.mercadolibre.com/sites/MEC/categories').each do |res|
-      father = Category.create(meli_id: res['id'], name: res['name'])
+      father = Category.find_or_create_by(meli_id: res['id'], name: res['name'])
       ml_category_import(father, res['id'])
     end
   end
