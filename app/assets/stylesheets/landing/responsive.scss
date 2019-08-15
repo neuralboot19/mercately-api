@@ -5,7 +5,14 @@
 
 /* Portrait tablet to landscape and desktop */
 @media (min-width: 768px) and (max-width: 979px) { 
+	.giftcenter{
+		display: none;
+	}
 
+	.box {
+		margin-top: 100px;
+		position: initial;
+	}
 }
 
 /* Landscape phone to portrait tablet */
@@ -13,8 +20,7 @@
 	.mountain img{display: none}
 	.noStyle{margin-top: 4em;}
 	.giftcenter{
-		margin-top: 70px;
-		width: 100%;
+		display: none;
 	}
 
 	h1{
@@ -28,10 +34,14 @@
 		width: initial;
 	}
 
-	.box{display: none}
+	.box {
+		margin-top: 100px;
+		position: initial;
+	}
+
 	.menu{
 		padding: 10px;
-		background: white;
+		background: #f2f2f2;
 		position: fixed;
 		width: 100%;
 	}
@@ -78,11 +88,10 @@
 		width: 100vw;
 		height: 100vh;
 		position: fixed;
-		opacity: 0;
 		visibility: hidden;
 		display: flex;
 		flex-direction: column;
-		background: #ffffff;
+		background: #f2f2f2;
 		align-items: center;
 	}
 	.menu.active .content{
@@ -98,13 +107,13 @@
 	.menu .content .items{
 		width: 100%;
 		height: 100vh;
-		background: #753580;
+		background: #f2f2f2;
 		display: flex;
 		flex-direction: column;
 		overflow-y: auto;
 	}
 	.menu .content a{
-		color: white;
+		color: #0e1022;
 		padding: 10px 1em;
 	}
 	.menu .content img{
@@ -112,6 +121,17 @@
 		display: inline-block;
 	}
 
+	.box-actions .bg-primary {
+		margin-bottom: 7px;
+		margin-right: 0px;
+	}
+}
+
+@media (min-width: 481px) and (max-width: 766px) {
+	.box-actions .bg-primary {
+		margin-bottom: 7px;
+		margin-right: 0px;
+	}
 }
 
 /* Landscape phones and down */
@@ -127,5 +147,11 @@
 	header{
 		display: flex;
 		flex-direction: column;
+	}
+
+	.box {
+		margin-top: 100px;
+		position: initial;
+		width: 300px;
 	}
 }

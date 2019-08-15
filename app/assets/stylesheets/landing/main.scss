@@ -1,6 +1,5 @@
 *{
 	font-family: 'Poppins-Regular';
-
 }
 footer{
 	background: #0e1022;
@@ -198,9 +197,10 @@ p{
 	outline: 0;
 	border: 0;
 	border-radius: 5px;
-	padding: 7px;
-	font-size: 8px;
+	padding: 13px 0px;
 	cursor: pointer;
+	width: 175px;
+  font-size: 16px;
 }
 
 /* END Estilos de ubicacion y centrado Flexbox END */
@@ -235,19 +235,24 @@ p{
 
 /* Modal */
 .box{
-	width: 400px;
+	width: 500px;
 	text-align: center;
 	background: #0e1022;
 	position: absolute;
 	padding: 2em;
 }
 
-.box h1,.box p{
+.box h1 {
 	color: white;
 }
 
+.box p {
+	color: white;
+	font-size: 20px;
+}
+
 .box h1{
-	font-size: 28px;
+	font-size: 40px;
 	font-weight: 700;
 	line-height: 35px;
 }
@@ -273,14 +278,14 @@ p{
 	left: 0;
 }
 .mountain::after{
-	background-image: url('../landing/mountain-1.png');
+	background-image: url(image_path('landing/mountain-1.png'));
 	width: 170%;
 	left: -100px;
 	bottom: -125px;
 }
 
 .mountain::before{
-	background-image: url('../landing/mountain-2.png');
+	background-image: url(image_path('landing/mountain-2.png'));
 }
 
 /* END contenedor con mountain image END */
@@ -316,7 +321,7 @@ p{
 .list:not(.noStyle) li::before {
 	content: "";
 	margin-right: 1em;
-	background-image: url('../landing/arrow.png');
+	background-image: url(image_path('landing/arrow.png'));
 	position: relative;
 	width: 15px;
 	background-size: contain;
@@ -391,6 +396,14 @@ p{
   font-weight: 300;
 }
 
-.taste-free-container {
+.trial-free-container {
   text-align: center;
+}
+
+.box-actions {
+  display: flex;
+
+  .bg-primary {
+    margin-right: 7px;
+  }
 }

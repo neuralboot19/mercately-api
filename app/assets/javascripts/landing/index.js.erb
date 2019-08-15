@@ -1,0 +1,25 @@
+mercately = {
+	menu: {
+		init: function (className) {
+			let classList = Array.from(document.getElementsByClassName('hamburger'));
+
+			classList.map(function(element) {
+				element.addEventListener('click', function (e) {
+					document.getElementsByClassName(className)[0].classList.toggle('active')
+				});
+			});
+
+      let classListMenu = Array.from(document.getElementsByClassName('inner-landing-link'));
+
+			classListMenu.map(function(element) {
+				element.addEventListener('click', function (e) {
+					document.getElementsByClassName(className)[0].classList.toggle('active')
+				});
+			});
+		}
+	}
+}
+
+window.onload = function () {
+	mercately.menu.init('menu');
+}
