@@ -56,24 +56,11 @@ class Order < ApplicationRecord
   private
 
     def adjust_ml_stock
-      if (merc_status_was == 'pending' || merc_status_was == 'success') &&
-        merc_status == 'cancelled'
+      if (merc_status_was == 'pending' ||
+         merc_status_was == 'success') &&
+         merc_status == 'cancelled'
 
-        order_items.each do |order_item|
-          product = order_item.product
-          product_variation = order_item.product_variation
-
-          if product_variation.present?
-            data = product_variation.data
-            data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity
-            data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
-            product_variation.update(data: data)
-          else
-            product.update(available_quantity: product.available_quantity +
-              order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
-          end
-        end
-
+        update_items
         push_feedback
       elsif merc_status == 'success'
         push_feedback
@@ -88,5 +75,22 @@ class Order < ApplicationRecord
 
     def set_positive_rating
       self.feedback_rating = 'positive' if merc_status == 'success'
+    end
+
+    def update_items
+      order_items.each do |order_item|
+        product = order_item.product
+        product_variation = order_item.product_variation
+
+        if product_variation.present?
+          data = product_variation.data
+          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity
+          data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
+          product_variation.update(data: data)
+        else
+          product.update(available_quantity: product.available_quantity +
+            order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
+        end
+      end
     end
 end
