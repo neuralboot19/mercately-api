@@ -6,6 +6,7 @@ class Order < ApplicationRecord
 
   validates :feedback_message, length: { maximum: 160 }, if: :feedback_message?
 
+  before_save :set_positive_rating, if: :will_save_change_to_merc_status?
   before_update :adjust_ml_stock, if: :will_save_change_to_merc_status?
 
   enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
@@ -39,6 +40,7 @@ class Order < ApplicationRecord
   end
 
   def disabled_statuses
+    return %w[cancelled] if new_record?
     return [] if merc_status == 'pending'
     return %w[pending success cancelled] if merc_status == 'cancelled'
     return %w[pending] if merc_status == 'success'
@@ -54,10 +56,28 @@ class Order < ApplicationRecord
   private
 
     def adjust_ml_stock
-      return unless (merc_status_was == 'pending' ||
-                    merc_status_was == 'success') &&
-                    merc_status == 'cancelled'
+      if (merc_status_was == 'pending' ||
+         merc_status_was == 'success') &&
+         merc_status == 'cancelled'
 
+        update_items
+        push_feedback
+      elsif merc_status == 'success'
+        push_feedback
+      end
+    end
+
+    def push_feedback
+      return unless meli_order_id.present?
+
+      MercadoLibre::Orders.new(products&.first&.retailer).push_feedback(self)
+    end
+
+    def set_positive_rating
+      self.feedback_rating = 'positive' if merc_status == 'success'
+    end
+
+    def update_items
       order_items.each do |order_item|
         product = order_item.product
         product_variation = order_item.product_variation
@@ -72,13 +92,5 @@ class Order < ApplicationRecord
             order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
         end
       end
-
-      push_feedback
-    end
-
-    def push_feedback
-      return unless meli_order_id.present?
-
-      MercadoLibre::Orders.new(products&.first&.retailer).push_feedback(self)
     end
 end
