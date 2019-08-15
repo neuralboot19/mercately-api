@@ -1,4 +1,4 @@
-<% if Rails.env.production? %>
+<% if ENV['ENVIRONMENT'] == 'production' %>
   <head>
     <title>Mercately | Sincronice el Inventario de Mercadolibre</title>
 
