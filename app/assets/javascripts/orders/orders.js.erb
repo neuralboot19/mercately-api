@@ -99,8 +99,17 @@ function insertVariation(variation, parentContainer, index) {
 function showHideFeedback(input) {
   if (input.value === "cancelled") {
     $('#feedback-container').show();
+    $('#feedback-reason-container').show();
+    $('#feedback-rating-container').show();
     $('#order_feedback_reason').prop('disabled', false);
     $('#order_feedback_rating').prop('disabled', false);
+    $('#order_feedback_message').prop('disabled', false);
+  } else if (input.value === "success") {
+    $('#feedback-container').show();
+    $('#feedback-reason-container').hide();
+    $('#feedback-rating-container').hide();
+    $('#order_feedback_reason').prop('disabled', true);
+    $('#order_feedback_rating').prop('disabled', true);
     $('#order_feedback_message').prop('disabled', false);
   } else {
     $('#feedback-container').hide();
@@ -132,6 +141,11 @@ $(document).ready(function() {
     $('#feedback-container').show();
     $('#order_feedback_reason').prop('disabled', false);
     $('#order_feedback_rating').prop('disabled', false);
+    $('#order_feedback_message').prop('disabled', false);
+  } else if ($('#hidden-merc-status').val() === "success") {
+    $('#feedback-container').show();
+    $('#feedback-reason-container').hide();
+    $('#feedback-rating-container').hide();
     $('#order_feedback_message').prop('disabled', false);
   }
 });

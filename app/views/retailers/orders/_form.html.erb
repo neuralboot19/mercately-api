@@ -25,12 +25,12 @@
             <div class="w-100">
               <h3>Información de Feedback</h3>
             </div>
-            <div class="group col-xs-12 col-md-6">
+            <div id="feedback-reason-container" class="group col-xs-12 col-md-6">
               <%= f.select :feedback_reason, Order.build_feedback_reasons %>
               <%= f.label :feedback_reason, 'Motivo', class: 'select-label' %>
               <span class="bar"></span>
             </div>
-            <div class="group col-xs-12 col-md-6">
+            <div id="feedback-rating-container" class="group col-xs-12 col-md-6">
               <%= f.select :feedback_rating, Order.feedback_ratings.keys.to_a, disabled: ['positive'] %>
               <%= f.label :feedback_rating, 'Calificación', class: 'select-label' %>
               <span class="bar"></span>
