@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_08_185130) do
+ActiveRecord::Schema.define(version: 2019_08_07_230431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.index ["filename", "checksum"], name: "index_active_storage_blobs_on_filename_and_checksum", unique: true
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -80,6 +81,15 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
+    t.string "meli_nickname"
+    t.integer "meli_customer_id"
+    t.integer "id_type"
+    t.string "id_number"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
+    t.string "country_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -99,11 +109,19 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.integer "ratings_neutral"
     t.integer "ratings_positive"
     t.integer "ratings_total"
-    t.bigint "customer_id"
     t.string "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["customer_id"], name: "index_meli_customers_on_customer_id"
+    t.integer "buyer_canceled_transactions"
+    t.integer "buyer_completed_transactions"
+    t.integer "buyer_canceled_paid_transactions"
+    t.integer "buyer_unrated_paid_transactions"
+    t.integer "buyer_unrated_total_transactions"
+    t.integer "buyer_not_yet_rated_paid_transactions"
+    t.integer "buyer_not_yet_rated_total_transactions"
+    t.datetime "meli_registration_date"
+    t.string "phone_area"
+    t.boolean "phone_verified"
   end
 
   create_table "meli_retailers", force: :cascade do |t|
@@ -141,8 +159,10 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.decimal "unit_price"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "product_variation_id"
     t.index ["order_id"], name: "index_order_items_on_order_id"
     t.index ["product_id"], name: "index_order_items_on_product_id"
+    t.index ["product_variation_id"], name: "index_order_items_on_product_variation_id"
   end
 
   create_table "orders", force: :cascade do |t|
@@ -154,6 +174,10 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.string "currency_id"
     t.float "total_amount"
     t.datetime "date_closed"
+    t.integer "merc_status", default: 0
+    t.integer "feedback_reason"
+    t.string "feedback_message"
+    t.integer "feedback_rating"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
   end
 
@@ -192,6 +216,9 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.integer "buying_mode"
     t.integer "condition", default: 0
     t.jsonb "ml_attributes", default: []
+    t.bigint "main_picture_id"
+    t.integer "status", default: 0
+    t.integer "meli_status", default: 0
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
@@ -212,6 +239,10 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.string "site_id"
     t.integer "sender_id"
     t.bigint "order_id"
+    t.integer "answer_status"
+    t.datetime "date_created_question"
+    t.datetime "date_created_answer"
+    t.integer "meli_question_type"
     t.index ["customer_id"], name: "index_questions_on_customer_id"
     t.index ["order_id"], name: "index_questions_on_order_id"
     t.index ["product_id"], name: "index_questions_on_product_id"
@@ -254,11 +285,12 @@ ActiveRecord::Schema.define(version: 2019_07_08_185130) do
     t.bigint "retailer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "enable_for_questions", default: false
+    t.boolean "enable_for_chats", default: false
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "meli_customers", "customers"
   add_foreign_key "meli_retailers", "retailers"
   add_foreign_key "questions", "products"
 end

@@ -54,6 +54,11 @@ class Retailers::TemplatesController < RetailersController
 
     # Only allow a trusted parameter "white list" through.
     def template_params
-      params.require(:template).permit(:title, :answer)
+      params.require(:template).permit(
+        :title,
+        :answer,
+        :enable_for_questions,
+        :enable_for_chats
+      )
     end
 end

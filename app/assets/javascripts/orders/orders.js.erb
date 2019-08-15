@@ -1,0 +1,137 @@
+function getAjax(url, success) {
+  var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+  xhr.open('GET', url);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState>3 && xhr.status==200) success(xhr.responseText);
+  };
+  xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+  xhr.send();
+  return xhr;
+}
+
+function editPrice(input) {
+  var currentInput = $(input).val();
+  var fixedInput = currentInput.replace(/[A-Za-z!@#$%^&*()]/g, '');
+  fixedInput = fixedInput.replace(',', '.');
+  $(input).val(fixedInput);
+}
+
+function getProductInfo(input) {
+  productId = input.value;
+
+  getAjax(`${window.location.origin}/retailers/products/${productId}/price_quantity`, function(data) {
+    var json = JSON.parse(data);
+
+    inputTime = input.id.replace("order_order_items_attributes_", "");
+    inputTime = inputTime.replace("_product_id", "");
+    $('#variations-container-' + inputTime).remove();
+
+    priceInputId = input.id.replace("_product_id", "_unit_price");
+    priceInput = document.getElementById(priceInputId);
+
+    quantityInputId = input.id.replace("_product_id", "_quantity");
+    quantityInput = document.getElementById(quantityInputId);
+
+    if (json['variations'].length === 0) {
+      priceInput.value = json['price'];
+      priceInput.removeAttribute("readonly");
+      priceInput.removeAttribute("title");
+
+      quantityInput.setAttribute("min", "1");
+      quantityInput.setAttribute("max", `${json['quantity']}`);
+      quantityInput.removeAttribute("readonly");
+      quantityInput.removeAttribute("title");
+    } else {
+      variations = json['variations'];
+      priceInput.setAttribute("readonly", true);
+      priceInput.value = "";
+      priceInput.setAttribute("title", "Debe llenar este campo en variaciones");
+
+      quantityInput.setAttribute("readonly", true);
+      quantityInput.setAttribute("title", "Debe llenar este campo en variaciones");
+
+      parentContainer = input.parentNode.parentNode.parentNode;
+
+      $(parentContainer).append('<div id="variations-container-' + inputTime + '"></div>');
+      varContainer = document.getElementById(`variations-container-${inputTime}`);
+
+      for (v in variations) {
+        insertVariation(variations[v], varContainer, v);
+      }
+    }
+  });
+}
+
+function insertVariation(variation, parentContainer, index) {
+  inputTimeStamp = new Date().getTime();
+  inputTimeStamp += index.toString();
+
+  insertionString = '<div class="nested-fields row">' +
+                    '<input type="hidden" value=' + variation['id'] + ' name="order[order_items_attributes][' + inputTimeStamp + '][product_variation_id]" id="order_order_items_attributes_' + inputTimeStamp + '_product_variation_id" />' +
+                    '<input type="hidden" value=' + variation['product_id'] + ' name="order[order_items_attributes][' + inputTimeStamp + '][product_id]" id="order_order_items_attributes_' + inputTimeStamp + '_product_id" />' +
+                    '<div class="variation-details-group col-xs-12 col-md-4">' +
+                    '<p class="variation-details-label">Detalles</p>';
+
+  combinations = variation['data']['attribute_combinations'];
+
+  for (d in combinations) {
+    label = combinations[d]['name'] || combinations[d]['id'];
+    content = combinations[d]['value_name'] || combinations[d]['value_id'];
+
+    insertionString += '<label class="variation-detail-label">' + label + ':</label>&nbsp;&nbsp;&nbsp;';
+    insertionString += '<label class="variation-detail-content">' + content + '</label><br />';
+  }
+
+  insertionString += '</div>';
+  insertionString += '<div class="group col-xs-12 col-md-4">' +
+                     '<input placeholder="" type="number" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity" min="1" max=' + variation['data']['available_quantity'] + '>' +
+                     '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Quantity</label>' +
+                     '<span class="bar"></span></div>' +
+                     '<div class="group col-xs-12 col-md-4">' +
+                     '<input placeholder="" onkeyup="editPrice(this);" type="text" name="order[order_items_attributes][' + inputTimeStamp + '][unit_price]" id="order_order_items_attributes_' + inputTimeStamp + '_unit_price" value=' + variation['data']['price'] + '>' +
+                     '<label for="order_order_items_attributes_' + inputTimeStamp + '_unit_price">Unit price</label>' +
+                     '<span class="bar"></span></div>';
+
+  insertionString += '</div></div>';
+  $(parentContainer).append(insertionString);
+}
+
+function showHideFeedback(input) {
+  if (input.value === "cancelled") {
+    $('#feedback-container').show();
+    $('#order_feedback_reason').prop('disabled', false);
+    $('#order_feedback_rating').prop('disabled', false);
+    $('#order_feedback_message').prop('disabled', false);
+  } else {
+    $('#feedback-container').hide();
+    $('#order_feedback_reason').prop('disabled', true);
+    $('#order_feedback_rating').prop('disabled', true);
+    $('#order_feedback_message').prop('disabled', true);
+  }
+}
+
+$(document).ready(function() {
+  $('#order_items').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
+    getProductInfo(insertedItem.find('select')[0]);
+  }).on('cocoon:before-remove', function(e, removedItem) {
+    input = removedItem.find('select')[0];
+
+    if (input) {
+      inputTime = input.id.replace("order_order_items_attributes_", "");
+      inputTime = inputTime.replace("_product_id", "");
+      $('#variations-container-' + inputTime).remove();
+    }
+  });
+
+  $('#feedback-container').hide();
+  $('#order_feedback_reason').prop('disabled', true);
+  $('#order_feedback_rating').prop('disabled', true);
+  $('#order_feedback_message').prop('disabled', true);
+
+  if ($('#hidden-merc-status').val() === "cancelled") {
+    $('#feedback-container').show();
+    $('#order_feedback_reason').prop('disabled', false);
+    $('#order_feedback_rating').prop('disabled', false);
+    $('#order_feedback_message').prop('disabled', false);
+  }
+});

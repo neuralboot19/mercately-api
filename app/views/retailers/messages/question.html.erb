@@ -1,0 +1,97 @@
+<div class="aligner-row head">
+  <h3>Pregunta</h3>
+  <div class="w-100 middle-right">
+    <%= link_to 'Atrás', retailers_questions_path(@retailer), class: 'ml-8' %>
+    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+  </div>
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12 col-sm-9">
+      <div class="card mt-9">
+        <div class="box">
+          <div class="row">
+            <div class="col-xs-12 col-md-3">
+              <div class="box">
+                <div class="row center-xs">
+                  <div class="col-xs-12">
+                    <p class="product-text my-0">
+                      <b class="normal black-text">Usuario:</b> <%= @question.customer.first_name.present? ? @question.customer.name() : (@question.customer.meli_nickname ||
+                      @question.customer.meli_customer.nickname) %><br/>
+                      <b class="normal black-text">Producto:</b> <%= @question.product&.title || 'No existe el producto' %>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-9">
+              <div class="box">
+                <div class="row">
+                    <div class="col-xs-12">
+                      <div class="messages-box">
+                        <div class="box">
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <div class="box">
+                                <div class="row">
+                                  <div class="col-xs-10">
+                                    <p class="message-buyer">
+                                      <b class="normal black-text">Fecha</b> <%= @question.created_at.strftime("%d %B") %><br/>
+                                      <%= @question.question %>
+                                    </p>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-xs-2"></div>
+                                  <div class="col-xs-10">
+                                    <p class="message-seller t-right">
+                                      <% if @question.answer %>
+                                        <b class="normal black-text">Fecha</b> <%= @question.updated_at.strftime("%d %B") %><br/>
+                                        <%= @question.answer %>
+                                      <% end %>
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <% unless @question.answer %>
+                  <%= form_tag retailers_answer_question_path(@retailer, @question), method: :put do %>
+                    <div class="row">
+                      <div class="group col-xs-12 col-md-11 pr-4 mt-0">
+                        <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'w-100', style: 'height: 77px;' %>
+                        <span class="bar"></span>
+                        <p><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
+                        direcciones exactas o nombres personales</i></p>
+                      </div>
+                      <div class="col-md-1 col-xs-12 pl-0">
+                        <%= submit_tag 'Enviar', class: 'w-100 message-send', style: 'height: 100px;' %>
+                      </div>
+                    </div>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% unless @question.answer %>
+      <div id="templates" class="col-xs-12 col-sm-3">
+        <% Retailer.filter_templates(current_retailer, 'questions').each do |template| %>
+          <%= form_tag retailers_answer_question_path(@retailer, @question), method: :put do %>
+            <%= hidden_field_tag :answer, template.answer %>
+            <h3 class="template__title"><%= template.title %></h3>
+            <p class="template__body"><%= template.answer.truncate(140) %></p>
+            <%= submit_tag 'Enviar', class: 'w-100 message-send' %>
+            <hr/>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

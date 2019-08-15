@@ -2,7 +2,7 @@
   <h3 class="w-100">Editar producto</h3>
   <div class="w-100 middle-right">
     <%= link_to 'Ir al producto', retailers_product_path(@retailer, @product) %>
-    <%= link_to 'Atrás', retailers_products_path, class: 'ml-8' %>
+    <%= link_to 'Atrás', retailers_products_path(@retailer, status: @product.status), class: 'ml-8' %>
     <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
 </div>

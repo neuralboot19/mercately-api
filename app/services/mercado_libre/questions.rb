@@ -3,6 +3,7 @@ module MercadoLibre
     def initialize(retailer)
       @retailer = retailer
       @meli_retailer = @retailer.meli_retailer
+      @api = MercadoLibre::Api.new(@meli_retailer)
     end
 
     def import(question_id)
@@ -14,21 +15,42 @@ module MercadoLibre
 
     def save_question(question_info)
       customer = MercadoLibre::Customers.new(@retailer).import(question_info['from']['id'])
-      Question.create_with(
+      question = Question.find_or_initialize_by(meli_id: question_info['id'])
+
+      question.update_attributes!(
         product: Product.find_by(meli_product_id: question_info['item_id']),
         question: question_info['text'],
         hold: ActiveModel::Type::Boolean.new.cast(question_info['hold']),
         deleted_from_listing: ActiveModel::Type::Boolean.new.cast(question_info['deleted_from_listing']),
         status: question_info['status'],
         answer: question_info['answer']&.[]('text'),
-        customer: customer
-      ).find_or_create_by!(meli_id: question_info['id'])
+        customer: customer,
+        answer_status: question_info['answer']&.[]('status'),
+        date_created_answer: question_info['answer']&.[]('date_created'),
+        date_created_question: question_info['date_created'],
+        meli_question_type: Question.meli_question_types[:from_product]
+      )
     end
 
     def answer_question(question)
       url = post_answer_url
       conn = Connection.prepare_connection(url)
       Connection.post_request(conn, prepare_question_answer(question))
+    end
+
+    def import_inherited_questions(product)
+      url = @api.get_questions_url(product.meli_product_id, 'UNANSWERED')
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      questions = response['questions']
+
+      return unless questions.present?
+
+      questions.each do |q|
+        next if Question.check_unique_question_id(q['id'])
+
+        save_question(q)
+      end
     end
 
     private

@@ -1,5 +1,5 @@
 <div class="aligner-row head">
-  <h3>Ordenes</h3>
+  <h3>Plantilla</h3>
   <div class="w-100 middle-right">
     <%= link_to 'Editar', edit_retailers_template_path(current_retailer, @template) %>
     <%= link_to 'Atrás', retailers_templates_path, class: 'ml-8' %>
@@ -20,10 +20,22 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-xs-12 col-md-3">
+            <div class="col-xs-12 col-md-10">
               <p class="product-text">
                 <%= @template.answer %>
               </p>
+            </div>
+            <div class="col-xs-12 col-md-2">
+            <% if @template.enable_for_questions %>
+              <p class="product-tags">
+                Pregunta
+              </p>
+            <% end %>
+            <% if @template.enable_for_chats %>
+              <p class="product-tags">
+                Chat
+              </p>
+            <% end %>
             </div>
           </div>
         </div>

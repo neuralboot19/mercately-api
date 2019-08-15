@@ -1,0 +1,421 @@
+*{
+	font-family: 'Poppins-Regular';
+}
+footer{
+	background: #0e1022;
+	padding: 4em;
+	padding-bottom: 1em;
+}
+body{
+	background: #f2f2f2;
+	padding: 0;
+	margin: 0;
+	/* width: 100vw; */
+}
+h1{
+	color: #0e1022;
+}
+
+p{
+	color: #4c536a;
+}
+.bg-primary{
+	background: #753580;
+	color: #ffffff;
+	font-weight: bold;
+}
+.bg-secondary{
+	background: #26abe2;
+	color: #ffffff;
+	font-weight: bold;
+}
+.bg-base{
+	background: #753580;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+.primary{color: #753580;}
+.secondary{color: #26abe2;}
+.base{
+	color: #ffffff;
+
+	a {
+		color: #ffffff;
+	}
+}
+
+.container{
+	text-align: center;
+	width: 80%; 
+	margin: 0 auto;
+}
+
+.container p{
+	color: #4c536a;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 17px;
+}
+.container .p-blue{
+	color: #26abe2;
+	font-family: 'Poppins-Regular';
+	font-size: 25px;
+	font-weight: 300;
+}
+.dark{
+	background-image: linear-gradient(234deg, #2671e2 0%, #753580 100%);
+	color: #ffffff;
+}
+
+.dark h1, .dark p{
+	color: #ffffff;
+	font-weight: inherit;
+}
+.dark h1{
+	font-family: 'Poppins-Regular';
+	font-size: 58px;
+	font-weight: 400;
+	line-height: 69px;
+}
+
+
+/* Estilo de lista con iconos */
+
+.icon-list{
+	padding-left: 0;
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	color: #753580;
+	margin: 0 auto;
+	margin-top: 4em;
+}
+.icon-list li{
+	font-size: 15px;
+	margin: 1em auto;
+	width: 40%;
+	padding: 1em;
+	background-color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid #80808040;
+}
+.icon-list li img{
+	margin: 24px;
+	width: 102px;
+	height: 103px;
+}
+
+.icon-list li .content{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.icon-list li strong{
+	font-size: 20px;
+}
+
+/* END Estilo de lista con iconos END*/
+
+.section	{
+	flex-direction: column;
+	padding: 2em;
+	display: flex;
+	position: relative;
+	overflow: hidden; 
+	justify-content: center;
+}
+
+
+/* Estilo contenedor angosto esquina derecha */
+.section.tinyleft{
+	padding: 14em 0;
+}
+
+.section.tinyleft::after, .section.tinyleft::before	{
+	content: "";
+	position: absolute;
+	bottom: -100px;
+	left: -50px;
+	height: 200px;
+	width: 130%;
+	background-color: #f2f2f2;
+	-webkit-transform: rotate(-4deg);
+	-ms-transform: rotate(-4deg);
+	transform: rotate(-4deg);
+	z-index: 10;
+}
+
+.section.tinyleft::before{
+	top: -100px;
+	bottom: initial;
+	-webkit-transform: rotate(4deg);
+	-ms-transform: rotate(4deg);
+	transform: rotate(4deg);
+	z-index: 10;
+
+}
+
+.section.tinyleft.mount{
+	padding-bottom: 4em;	
+}
+.section.tinyleft.mount::before{
+	background-color: #dccdf9;
+}
+.section.tinyleft.mount::after{
+	background-color: transparent;
+}
+
+/* END Estilo contenedor angosto esquina derecha END */
+
+
+/* Estilos de ubicacion y centrado Flexbox + boton */
+.giftcenter{
+	width: 100%;
+	margin-top: -100px;
+	animation: float 6s ease-in-out infinite;
+}
+.center-landing {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.between{
+	justify-content: space-between;
+}
+
+
+.title{
+	text-align: center;
+}
+
+.title h1{
+	color: #0e1022;
+	font-size: 58px;
+	font-weight: 400;
+	line-height: 69px;
+}
+
+.btn-landing {
+	outline: 0;
+	border: 0;
+	border-radius: 5px;
+	padding: 13px 0px;
+	cursor: pointer;
+	width: 175px;
+  font-size: 16px;
+}
+
+/* END Estilos de ubicacion y centrado Flexbox END */
+
+
+/* Menu Custom Improvisado */
+
+.menu{
+	position: relative;
+	display: flex;
+	align-items: center;
+	padding: 10px 4em;
+	justify-content: space-between;
+	z-index: 11;
+}
+
+.menu a { 
+	cursor: pointer;
+	font-style: initial;
+	text-decoration: none;
+	color: #0e1022;
+	font-family: 'Poppins-Regular';
+	font-size: 20px;
+	font-weight: 600;
+	padding: 0 10px;
+} 
+.menu .content .close,.menu .content img{
+	display: none;
+}
+
+/* END Menu Custom Improvisado END */
+
+/* Modal */
+.box{
+	width: 500px;
+	text-align: center;
+	background: #0e1022;
+	position: absolute;
+	padding: 2em;
+}
+
+.box h1 {
+	color: white;
+	margin-top: 0px;
+}
+
+.box p {
+	color: white;
+	font-size: 20px;
+}
+
+.box h1{
+	font-size: 40px;
+	font-weight: 700;
+	line-height: 35px;
+}
+
+/* END Modal END */
+
+/* contenedor con mountain image */
+
+.mountain *{
+	z-index: 1;
+}
+.mountain img{
+	margin-right: -100px;
+}
+
+.mountain::before, .mountain::after{
+	content: '';
+	position: absolute;
+	bottom: -20px;
+	width: 110%;
+	height: 60%;
+	background-size: 90% 100%;
+	left: 0;
+}
+.mountain::after{
+	background-image: url(image_path('landing/mountain-1.png'));
+	width: 170%;
+	left: -100px;
+	bottom: -125px;
+}
+
+.mountain::before{
+	background-image: url(image_path('landing/mountain-2.png'));
+}
+
+/* END contenedor con mountain image END */
+
+/* Lista con vineta(imagen) */
+.card{
+	padding: 1em;
+	position: relative;
+}
+
+.list.torigth{
+	margin-right: 6em;
+}
+.list {
+	list-style: none;
+	line-height: 4;
+	margin-left: 0;
+	padding-left: 0;
+}
+.list li {
+	color: #4c536a;
+	font-family: 'Poppins-Regular';
+	font-size: 16px;
+	font-weight: 600;
+	text-align: left;
+}
+.noStyle{
+	line-height: 2;
+}
+.noStyle li{
+	color: #26abe2;
+
+	a {
+		color: #26abe2;
+		text-decoration: none;
+	}
+}
+.list:not(.noStyle) li::before {
+	content: "";
+	margin-right: 1em;
+	background-image: url(image_path('landing/arrow.png'));
+	position: relative;
+	width: 15px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	display: inline-block;
+	height: 20px;
+	margin-bottom: -4px;
+}
+
+/* END Lista con vineta(imagen) END */
+
+/* Social network list */
+
+.social-list{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+}
+.social-list li{
+	margin: 0 5px;
+}
+
+/* END Social network list END */
+
+/* animations */
+
+@keyframes float {
+	0% {
+		/* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6); */
+		transform: translatey(0px);
+	}
+	50% {
+		/* box-shadow: 0 25px 15px 0px rgba(0,0,0,0.2); */
+		transform: translatey(-20px);
+	}
+	100% {
+		/* box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6); */
+		transform: translatey(0px);
+	}
+}
+
+.in-icon {
+  width: 23px;
+  height: 19px;
+}
+
+.not-margin-bottom {
+  margin-bottom: 0px;
+}
+
+.know-more-button {
+  width: 186px;
+  height: 47px;
+  border-radius: 5px;
+  border: 2px solid #ffffff;
+  background: transparent;
+  color: #f3f3f3;
+  font-size: 15px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+.bg-secondary-big {
+  width: 186px;
+  height: 48px;
+  border-radius: 5px;
+  background-color: #26abe2;
+  color: #f3f3f3;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.trial-free-container {
+  text-align: center;
+}
+
+.box-actions {
+  display: flex;
+
+  .bg-primary {
+    margin-right: 7px;
+  }
+}

@@ -4,10 +4,14 @@ class Order < ApplicationRecord
   has_many :products, through: :order_items
   has_many :messages
 
-  validate :check_stock
-  before_update :adjust_ml_stock, if: :will_save_change_to_status?
+  validates :feedback_message, length: { maximum: 160 }, if: :feedback_message?
+
+  before_update :adjust_ml_stock, if: :will_save_change_to_merc_status?
 
   enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
+  enum merc_status: %i[pending success cancelled], _prefix: true
+  enum feedback_reason: %i[SELLER_OUT_OF_STOCK SELLER_DIDNT_TRY_TO_CONTACT_BUYER BUYER_NOT_ENOUGH_MONEY BUYER_REGRETS]
+  enum feedback_rating: %i[positive negative neutral]
 
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   delegate :retailer_id, :retailer, to: :customer
@@ -19,30 +23,62 @@ class Order < ApplicationRecord
     total.sum
   end
 
+  def last_message
+    return @last_message unless @last_message.blank? || @last_message.order_id != id
+
+    @last_message = messages.order(created_at: 'DESC').first
+  end
+
+  def grouped_order_items
+    grouped_orders = {}
+    order_items.map { |ord| (grouped_orders[ord.product_id] ||= []) << ord }
+
+    output = grouped_orders.map { |item| item[1] }
+
+    output.flatten
+  end
+
+  def disabled_statuses
+    return [] if merc_status == 'pending'
+    return %w[pending success cancelled] if merc_status == 'cancelled'
+    return %w[pending] if merc_status == 'success'
+  end
+
+  def self.build_feedback_reasons
+    [['No hay disponibilidad', 'SELLER_OUT_OF_STOCK'],
+     ['No se contactó al comprador', 'SELLER_DIDNT_TRY_TO_CONTACT_BUYER'],
+     ['Comprador sin fondos', 'BUYER_NOT_ENOUGH_MONEY'],
+     ['Comprador se retracta', 'BUYER_REGRETS']]
+  end
+
   private
 
-    def check_stock
-      o_valid = true
-      order_items.map(&:product_id).uniq.each do |p_id|
-        product = Product.find(p_id)
-        p_order_quantity = 0
-        order_items.map { |oi| oi if oi.product_id == p_id }.compact.each do |oi|
-          p_order_quantity += oi.quantity
-        end
-        if p_order_quantity > product.available_quantity
-          errors.add(:base, "No hay sufucientes #{product.title}")
-          o_valid = false
+    def adjust_ml_stock
+      return unless (merc_status_was == 'pending' ||
+                    merc_status_was == 'success') &&
+                    merc_status == 'cancelled'
+
+      order_items.each do |order_item|
+        product = order_item.product
+        product_variation = order_item.product_variation
+
+        if product_variation.present?
+          data = product_variation.data
+          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity
+          data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
+          product_variation.update(data: data)
+        else
+          product.update(available_quantity: product.available_quantity +
+            order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
         end
       end
-      o_valid
+
+      push_feedback
     end
 
-    def adjust_ml_stock
-      return if status == 'cancelled' || status == 'invalid_order'
+    def push_feedback
+      return unless meli_order_id.present?
 
-      order_items.each do |_order_item|
-        product.update(available_quantity: product.available_quantity + quantity)
-        MercadoLibre::Products.push_update(product) if product.meli_product_id
-      end
+      MercadoLibre::Orders.new(products&.first&.retailer).push_feedback(self)
     end
 end

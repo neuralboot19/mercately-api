@@ -19,21 +19,44 @@ module MercadoLibre
     def prepare_images(product)
       array = []
       product.images.each do |img|
-        link = img.filename.to_s
-        array << { "id": link }
+        if img.id == product.main_picture_id
+          array.unshift("id": img.filename.to_s)
+          next
+        end
+
+        array << { "id": img.filename.to_s }
       end
       array
     end
 
-    def prepare_product_update(product)
+    def prepare_images_update(product)
+      array = []
+      product.images.each do |img|
+        next if img.filename.to_s.include?('.')
+
+        if img.id == product.main_picture_id
+          array.unshift("id": img.filename.to_s)
+          next
+        end
+
+        array << { "id": img.filename.to_s }
+      end
+      array
+    end
+
+    def prepare_product_update(product, past_meli_status = nil)
       variations = prepare_variations_for_update(product)
 
       info = {
         'title': product.title,
         'variations': variations,
-        'attributes': product.ml_attributes
+        'attributes': product.ml_attributes,
+        'pictures': prepare_images_update(product)
         # 'listing_type_id': 'free'
       }
+
+      info['status'] = product.meli_status if
+        %w[active paused].include? past_meli_status
 
       unless variations.present?
         info['price'] = product.price.to_f
@@ -71,13 +94,19 @@ module MercadoLibre
         load_variations << { 'id': vid }
       end
 
-      current_images = product.images.map { |im| im.filename.to_s }
-      variation.data['picture_ids'] = current_images
+      product.images.each do |img|
+        if img.id == product.main_picture_id
+          variation.data['picture_ids'].unshift(img.filename.to_s)
+          next
+        end
+
+        variation.data['picture_ids'] << img.filename.to_s
+      end
 
       data = if variation.data['id'].present? && variation.data['id'] == 'undefined'
-               variation.data.except('id')
+               variation.data.except('id', 'catalog_product_id')
              else
-               variation.data
+               variation.data.except('catalog_product_id')
              end
 
       load_variations << data
@@ -95,6 +124,29 @@ module MercadoLibre
       end
 
       variations
+    end
+
+    def prepare_re_publish_product(product)
+      info = {
+        'listing_type_id': 'free'
+      }
+
+      if product.product_variations.present?
+        info['variations'] = []
+
+        product.product_variations.each do |var|
+          info['variations'] << {
+            'id': var.variation_meli_id,
+            'price': var.data['price'].to_f,
+            'quantity': var.data['available_quantity']
+          }
+        end
+      else
+        info['price'] = product.price.to_f
+        info['quantity'] = product.available_quantity
+      end
+
+      info.to_json
     end
   end
 end

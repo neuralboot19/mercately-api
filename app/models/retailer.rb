@@ -1,5 +1,6 @@
 class Retailer < ApplicationRecord
   has_one :meli_retailer, dependent: :destroy
+  has_one :retailer_user, dependent: :destroy
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
@@ -8,6 +9,18 @@ class Retailer < ApplicationRecord
   validates :slug, uniqueness: true
   enum id_type: [:cedula, :pasaporte, :ruc]
   after_create :generate_slug
+
+  scope :filter_templates, lambda { |retailer, type|
+    if type == 'questions'
+      retailer.templates.where(enable_for_questions: true)
+    elsif type == 'chats'
+      retailer.templates.where(enable_for_chats: true)
+    end
+  }
+
+  scope :active_products, lambda { |retailer|
+    retailer.products.where(status: 0)
+  }
 
   def to_param
     slug

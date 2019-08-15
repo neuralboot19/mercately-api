@@ -1,7 +1,7 @@
 <div class="aligner-row head">
-  <h3>Mensaje</h3>
+  <h3>Chat</h3>
   <div class="w-100 middle-right">
-    <%= link_to 'Atrás', retailers_messages_path, class: 'ml-8' %>
+    <%= link_to 'Atrás', @return_to == 'order' ? retailers_order_path(@retailer, @order) : retailers_chats_path(@retailer), class: 'ml-8' %>
     <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
 </div>
@@ -16,24 +16,23 @@
                 <div class="row center-xs">
                   <div class="col-xs-12">
                     <p class="product-text my-0">
-                      <% if @order.customer.meli_customer.email %>
-                        <b class="normal black-text">Usuario:</b> <%= @order.customer.meli_customer.nickname %><br/>
-                        <b class="normal black-text">Email:</b> <%= @order.customer.email %><br/>
-                        <b class="normal black-text">Nombre:</b> <%= @order.customer.first_name %><br/>
-                        <b class="normal black-text">Apellido:</b> <%= @order.customer.last_name %><br/>
-                        <b class="normal black-text">Número:</b> <%= @order.customer.phone %>
+                      <b class="normal black-text">Orden:</b> <%= @order.id %><br/>
+                      <b class="normal black-text">Usuario:</b> <%= @order.customer.first_name.present? ? @order.customer.name() : (@order.customer.meli_nickname ||
+                      @order.customer.meli_customer.nickname) %><br/>
+                      <% if @order.products.present? %>
+                        <b class="normal black-text">Producto:</b> <%= @order.products.first.title %><br/>
                       <% else %>
-                        <b class="normal black-text">Usuario:</b> <%= @order.customer.meli_customer.nickname %><br/>
+                        <b class="normal black-text">Producto:</b> No existen productos<br/>
                       <% end %>
                     </p>
                   </div>
                 </div>
               </div>
             </div>
-            <% @order.messages.each do |m| %>
-            <div class="col-xs-12 col-md-9">
-              <div class="box">
-                <div class="row">
+            <% @order.messages.order(:created_at).each do |m| %>
+              <div class="col-xs-12 col-md-9">
+                <div class="box">
+                  <div class="row">
                     <div class="col-xs-12">
                       <div class="messages-box">
                         <div class="box">
@@ -41,26 +40,26 @@
                             <div class="col-xs-12">
                               <div class="box">
                                 <% if m.sender_id != current_retailer_user.id %>
-                                <div class="row">
-                                  <div class="col-xs-10">
-                                    <p class="message-buyer">
-                                      <b class="normal black-text">Fecha</b> <%= m.created_at.strftime("%d %B") %><br/>
-                                      <%= m.question %>
-                                    </p>
+                                  <div class="row">
+                                    <div class="col-xs-10">
+                                      <p class="message-buyer">
+                                        <b class="normal black-text">Fecha</b> <%= m.created_at.strftime("%d %B") %><br/>
+                                        <%= m.question %>
+                                      </p>
+                                    </div>
                                   </div>
-                                </div>
                                 <% else %>
-                                <div class="row">
-                                  <div class="col-xs-2"></div>
-                                  <div class="col-xs-10">
-                                    <p class="message-seller t-right">
-                                      <% if m.answer %>
-                                        <b class="normal black-text">Fecha</b> <%= m.updated_at.strftime("%d %B") %><br/>
-                                        <%= m.answer %>
-                                      <% end %>
-                                    </p>
+                                  <div class="row">
+                                    <div class="col-xs-2"></div>
+                                    <div class="col-xs-10">
+                                      <p class="message-seller t-right">
+                                        <% if m.answer %>
+                                          <b class="normal black-text">Fecha</b> <%= m.updated_at.strftime("%d %B") %><br/>
+                                          <%= m.answer %>
+                                        <% end %>
+                                      </p>
+                                    </div>
                                   </div>
-                                </div>
                                 <% end %>
                               </div>
                             </div>
@@ -68,25 +67,38 @@
                         </div>
                       </div>
                     </div>
+                  </div>
                 </div>
-                  <%= form_tag retailers_order_send_message_path do %>
-                    <%= hidden_field_tag :order_id, @order.id %>
-                    <div class="row">
-                      <div class="group col-xs-12 col-md-11 pr-4 mt-0">
-                        <%= text_area_tag :question, nil, placeholder: 'Texto de respuesta', class: 'w-100', style: 'height: 77px;' %>
-                        <span class="bar"></span>
-                      </div>
-                      <div class="col-md-1 col-xs-12 pl-0">
-                        <%= submit_tag 'Enviar', class: 'w-100 message-send', style: 'height: 100px;' %>
-                      </div>
-                    </div>
-                  <% end %>
               </div>
-            </div>
             <% end %>
+            <div class="col-xs-12">
+              <%= form_tag retailers_order_send_message_path do %>
+                <%= hidden_field_tag :order_id, @order.id %>
+                <div class="row">
+                  <div class="group col-xs-12 col-md-11 pr-4 mt-0">
+                    <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'w-100', style: 'height: 77px;' %>
+                    <span class="bar"></span>
+                  </div>
+                  <div class="col-md-1 col-xs-12 pl-0">
+                    <%= submit_tag 'Enviar', class: 'w-100 message-send', style: 'height: 100px;' %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <div id="templates" class="col-xs-12 col-sm-3">
+      <% Retailer.filter_templates(current_retailer, 'chats').each do |template| %>
+        <%= form_tag retailers_order_send_message_path(@retailer, @order), method: :post do %>
+          <%= hidden_field_tag :answer, template.answer %>
+          <h3 class="template__title"><%= template.title %></h3>
+          <p class="template__body"><%= template.answer.truncate(140) %></p>
+          <%= submit_tag 'Enviar', class: 'w-100 message-send' %>
+          <hr/>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </div>

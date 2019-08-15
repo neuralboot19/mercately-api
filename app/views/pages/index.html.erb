@@ -1,4 +1,129 @@
-<%= render "pages/shared/main" %>
-<%= render "pages/shared/proposal" %>
-<%= render "pages/shared/features" %>
-<%= render "pages/shared/cta" %>
+<% if Rails.env.production? %>
+  <head>
+    <title>Mercately | Sincronice el Inventario de Mercadolibre</title>
+
+    <meta name="description" content="Venda con éxito en Mercadolibre. Sincronice su inventario de productos, gestione pedidos, responda preguntas y mucho más. Todo en un solo lugar." />
+
+    <link rel="canonical" href="https://www.mercately.com/" />
+    <link rel="alternate" hreflang="es-EC" href="https://www.mercately.com/"/>
+    <link rel="alternate" hreflang="es-CO" href="https://www.mercately.com/"/>
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@mercately">
+    <meta name="twitter:title" content="Mercately | Sincronice el Inventario de Mercadolibre">
+    <meta name="twitter:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar.">
+    <meta name="twitter:image" content="https://www.mercately.com/profile.jpg">
+
+    <meta property="og:title" content="Mercately | Sincronice el Inventario de Mercadolibre" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.mercately.com/" />
+    <meta property="og:locale" content="es_LA" />
+    <meta property="og:image" content="https://www.mercately.com/facebook_preview.jpg" />
+    <meta property="og:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar." />
+    <meta property="og:site_name" content="Mercately" />
+  </head>
+<% end %>
+<div class="center-landing">
+  <%= image_tag 'landing/animacion.gif', class: 'giftcenter' %>
+  <div class="box">
+    <h1>Sincroniza Mercadolibre
+    desde un solo lugar</h1>
+    <p>Optimiza tu negocio con herramientas de gestión y 
+    análisis para vender en mercadolibre</p>
+    <div class="center-landing box-actions">
+      <%= button_to 'PRUEBA GRATIS', new_retailer_user_registration_path, method: :get, class: 'btn-landing bg-primary' %>
+      <%= button_to 'SABER MÁS', '#know-more', method: :get, class: 'btn-landing bg-secondary' %>
+    </div>
+  </div>
+</div>
+<div class="section container">
+
+  <div class="title">
+    <h1 id="what-is-it">Plataforma de sincronización para
+    vender en mercadolibre</h1>
+    <p class="p-blue">DEDÍCATE A VENDER MÁS, Y DÉJANOS EL TRABAJO DURO A NOSOTROS</p>
+    <p>Mercately es la primera y única plataforma que sincroniza automáticamente
+      tu cuenta de vendedor en mercadolibre para gestionar todas tus 
+    características desde un solo lugar</p>
+  </div>
+
+  <ul class="icon-list">
+    <li>
+      <div>
+        <%= image_tag 'landing/file-transfer.png' %>
+      </div>
+      <div class="content">
+        <strong>Sincronizador de inventario</strong>
+        <p>Mantén actualizado el stock de tus productos.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <%= image_tag 'landing/conversation.png' %>
+      </div>
+      <div class="content">
+        <strong>Responde a tus clientes de forma rápida</strong>
+        <p>Envía mensajes instantáneos a tus compradores.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <%= image_tag 'landing/check.png' %>
+      </div>
+      <div class="content">
+        <strong>Genera reportes de ventas y ganancias</strong>
+        <p>Entérate exactamente de cuánto vendes y cuales son tus ganancias.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <%= image_tag 'landing/consumer.png' %>
+      </div>
+      <div class="content">
+        <strong>Conoce a tus clientes</strong>
+        <p>Obtén datos de tus clientes para fidelizarlos.</p>
+      </div>
+    </li>
+  </ul>
+</div>
+<div class="section dark tinyleft">
+  <div class="container">
+    <h1 class="not-margin-bottom">Vender más se logra con el
+    mejor sistema</h1>
+    <p>NO CON PROCESOS MANUALES</p>
+    <b>40% incremento de productividad</b><br /><br />
+    <%= button_to 'REGÍSTRATE GRATIS', new_retailer_user_registration_path, method: :get, class: 'know-more-button' %>
+  </div>
+</div>
+<div class="section mountain">
+  <div class="container">			
+    <div class="title">
+      <h1 id="know-more">Creado para negocios 
+      como el tuyo</h1>
+      <p class="p-blue">REGÍSTRATE AHORA Y COMIENZA GRATIS A:</p>
+    </div>
+  </div>
+  <div class="center-landing">
+    <div>
+      <ul class="list torigth">
+        <li>Vender más productos con menos esfuerzo.</li>
+        <li>Mantener tu inventario automáticamente.</li>
+        <li>Mejorar la comunicación con tus clientes.</li>
+        <li>Conocer tus ganancias en tiempo real.</li>
+        <li>Saber los productos más y menos vendidos.</li>
+        <li>Maneja varias cuentas desde un mismo lugar.</li>
+      </ul>
+      <div class="trial-free-container">
+        <%= button_to 'PRUEBA GRATIS', new_retailer_user_registration_path, method: :get, class: 'btn-landing bg-secondary-big' %>
+      </div>
+    </div>
+    <%= image_tag 'landing/graph.png', width: '350' %>
+  </div>
+
+</div>
+<div id="help-info" class="section bg-primary tinyleft mount">
+  <div class="container">
+    <b>¿Tienes alguna pregunta? ingresa a nuestro <a href="" class="secondary">centro de ayuda</a> y estaremos felices de ayudarte con 
+    cualquier duda que tengas. Si deseas reportar errores, también puedes escribirnos.</b>
+  </div>
+</div>

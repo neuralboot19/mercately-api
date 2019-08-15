@@ -6,6 +6,8 @@ module MercadoLibre
       @api = MercadoLibre::Api.new(@meli_retailer)
       @utility = MercadoLibre::ProductsUtility.new
       @product_variations = MercadoLibre::ProductVariations.new(@retailer)
+      @product_publish = MercadoLibre::ProductPublish.new(@retailer)
+      @ml_questions = MercadoLibre::Questions.new(@retailer)
     end
 
     def search_items
@@ -33,7 +35,7 @@ module MercadoLibre
     end
 
     def create(product)
-      load_pictures_to_ml(product)
+      @product_publish.load_pictures_to_ml(product)
       url = @api.prepare_products_creation_url
       conn = Connection.prepare_connection(url)
       response = Connection.post_request(conn, @utility.prepare_product(product.reload))
@@ -71,6 +73,7 @@ module MercadoLibre
         condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
         ml_attributes: product_info['attributes'],
+        meli_status: product_info['status'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -80,8 +83,8 @@ module MercadoLibre
         product_info['variations'].present?
 
       images = product_info['pictures']
-      images.each do |img|
-        product.attach_image(img['url'], img['id'])
+      images.each_with_index do |img, index|
+        product.attach_image(img['url'], img['id'], index)
       end
 
       product
@@ -89,6 +92,8 @@ module MercadoLibre
 
     def update(product_info)
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
+      new_product = product.new_record? && product_info['parent_item_id'].present?
+
       product.title = product_info['title']
       product.description = product_info['plain_text']
       product.category_id = Category.find_by(meli_id: product_info['category_id']).id
@@ -109,13 +114,18 @@ module MercadoLibre
       product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
       product.meli_permalink = product_info['permalink']
       product.ml_attributes = product_info['attributes']
+      product.meli_status = product_info['status']
       product.retailer = @retailer
       product.save!
+
+      delete_parent_product(product_info)
 
       @product_variations.save_variations(product, product_info['variations']) if
         product_info['variations'].present?
 
       pull_images(product, product_info['pictures'])
+
+      @ml_questions.import_inherited_questions(product) if new_product
 
       product
     end
@@ -127,77 +137,48 @@ module MercadoLibre
       url = @api.get_product_description_url(product_id)
       conn = Connection.prepare_connection(url)
       response = response.merge(Connection.get_request(conn))
-      update(response) if response
+
+      return unless response
+
+      return Product.new if response['status'] == 'closed' && Product.none? do |p|
+        p.meli_product_id == response['id']
+      end
+
+      update(response)
     end
 
-    def push_update(product)
-      url = @api.get_product_url product.meli_product_id
-      conn = Connection.prepare_connection(url)
-      response = Connection.put_request(conn, @utility.prepare_product_update(product))
-      push_description_update(product)
-      if response.status == 200
-        load_pictures_to_ml(product)
-      else
-        puts response.body
+    def push_update(product, past_meli_status = nil, set_active = nil)
+      set_closed = past_meli_status == 'active' && product.meli_status == 'closed'
+
+      if past_meli_status == 'closed' && set_active
+        @product_publish.re_publish_product(product)
+      elsif product.meli_status != 'closed' || set_closed
+        @product_publish.send_update(product, past_meli_status)
       end
     end
 
-    def push_description_update(product)
-      url = @api.get_product_description_url product.meli_product_id
-      conn = Connection.prepare_connection(url)
-      Connection.put_request(conn, @utility.prepare_product_description_update(product))
+    def load_main_picture(product, only_main_picture)
+      @product_publish.load_pictures_to_ml(product, only_main_picture)
     end
 
     private
 
-      def load_pictures_to_ml(product)
-        return if product.images.blank?
-
-        url = @api.prepare_load_pictures_url
-        url_pic_product = @api.prepare_link_pictures_to_product_url(product)
-        product.images.each do |img|
-          next unless img.filename.to_s.include?('.')
-
-          file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
-
-          tempfile = { source: file.to_s }.to_json
-          conn = Connection.prepare_connection(url)
-          response = Connection.post_request(conn, tempfile)
-
-          if product.meli_product_id.blank?
-            body = JSON.parse(response.body)
-            ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id'])
-            next
-          end
-
-          if response.status == 201
-            body = JSON.parse(response.body)
-
-            params = { id: body['id'] }.to_json
-            conn = Connection.prepare_connection(url_pic_product)
-            response = Connection.post_request(conn, params)
-
-            ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id']) if response.status == 200
-          else
-            puts response.body
-          end
-        end
-      end
-
       def pull_images(product, pictures)
         if product.images.blank?
-          pictures.each do |pic|
-            product.attach_image(pic['url'], pic['id'])
+          pictures.each_with_index do |pic, index|
+            product.attach_image(pic['url'], pic['id'], index)
           end
         else
           current_images = product.images.map { |im| im.filename.to_s }
-          pictures.each do |pic|
+          pictures.each_with_index do |pic, index|
             if current_images.include?(pic['id'])
+              update_main_picture_product(product, pic['id']) if index.zero?
+
               current_images -= [pic['id']]
               next
             end
 
-            product.attach_image(pic['url'], pic['id'])
+            product.attach_image(pic['url'], pic['id'], index)
           end
 
           if current_images.present?
@@ -205,6 +186,17 @@ module MercadoLibre
             product.images.where(blob_id: deleted_ids).purge
           end
         end
+      end
+
+      def update_main_picture_product(product, image_id)
+        id = ActiveStorage::Blob.find_by(filename: image_id)&.id
+        attach_id = product.images.find_by(blob_id: id)&.id if id.present?
+        product.update(main_picture_id: attach_id) if attach_id.present?
+      end
+
+      def delete_parent_product(product_info)
+        old_product = Product.find_by(meli_product_id: product_info['parent_item_id'])
+        old_product.destroy! if old_product.present?
       end
   end
 end

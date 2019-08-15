@@ -14,9 +14,9 @@
           <div class="row">
             <div class="col-xs-12">
               <p class="m-0 product-text">
-                <b class="normal black-text">Orden&nbsp;&nbsp;</b>- 34344
+                <b class="normal black-text">Orden&nbsp;&nbsp;</b>- <%= @order.id %>
                 <span class="f-right">
-                  <a class="cta--dashboard mr-8" href="">Chat de la orden</a>
+                  <%= link_to 'Chat de la orden', retailers_order_messages_path(@retailer, @order, return_to: 'order') %>
                   <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
                   <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
                 </span>
@@ -29,13 +29,13 @@
               <p class="product-text">
                 <b class="normal black-text mr-16">Cliente:</b><br/>
                 <%= @order.customer.name %><br/>
-                <%= @order.customer.email %><br/>
+                <%= @order.customer&.meli_customer&.phone %><br/>
               </p>
             </div>
             <div class="col-xs-12 col-md-3">
               <p class="product-text">
                 <b class="normal black-text mr-16">Estado:</b><br/>
-                <div class="cookie"><%= @order.status %></div>
+                <div class="cookie"><%= @order.status || @order.merc_status %></div>
               </p>
             </div>
             <div class="col-xs-12 col-md-3">
@@ -43,16 +43,11 @@
                 <b class="normal black-text mr-16">Tienda:</b><br/>
                 MercadoLibre
               </p>
-              <p class="product-text">
-                <b class="normal black-text mr-16">Producto:</b><br/>
-                <%= @order.product.title %>
-              </p>
             </div>
             <div class="col-xs-12 col-md-3">
               <p class="product-text">
-                <b class="normal black-text mr-16"></b><br/>
-                <b class="normal black-text">Ordenado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.name %><br/>
-                <b class="normal black-text">Pagado el</b>   <%= @order.created_at.strftime("%d - %B") %> <br class="hide-on-med-and-up"/>( 2 months ago )<%# order.email %>
+                <b class="normal black-text mr-16">Ordenado el:</b><br/>
+                <b class="normal black-text"></b><%= @order.created_at.strftime("%d - %B") %>
               </p>
             </div>
             <div class="col-xs-12">Lista de productos</div>
@@ -67,7 +62,7 @@
             <% @order.order_items.each do |oi| %>
               <hr class="separator">
               <div class="row center-xs">
-                <div class="col-xs-3"><%= oi.product.title %></div>
+                <div class="col-xs-3"><%= oi.product&.title %></div>
                 <div class="col-xs-3"><%= oi.quantity %></div>
                 <div class="col-xs-3"><%= oi.unit_price %>$</div>
                 <div class="col-xs-3"><%= number_with_precision oi.quantity * oi.unit_price, precision: 2 %>$</div>

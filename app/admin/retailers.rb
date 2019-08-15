@@ -81,20 +81,21 @@ ActiveAdmin.register Retailer do
     defaults finder: :find_by_slug
   end
 
-  # Methods
+  # Custom actions
   member_action :login_as do
-    retailer_user = Retailer.find_by(slug: params['id']).retailer_users.first
-    session['admin_session_id'] = current_admin_user.id
-    session['retailer_session_id'] = retailer_user.id
+    retailer_user = Retailer.find_by(slug: params[:id]).retailer_users.first
+    session[:old_retailer_id] = current_retailer_user.id if current_retailer_user
+    session[:current_retailer] = retailer_user
     sign_in(:retailer_user, retailer_user)
     redirect_to root_path
   end
 
   member_action :go_back_as_admin do
-    admin_user = AdminUser.find_by(id: session['admin_session_id'])
-    session['admin_session_id'] = nil
-    session['retailer_session_id'] = nil
-    sign_in(:admin_user, admin_user)
+    if session[:old_retailer_id].present?
+      retailer_user = RetailerUser.find(session[:old_retailer_id])
+      sign_in(:retailer_user, retailer_user)
+      session.delete(:old_retailer_id)
+    end
     redirect_to admin_root_path
   end
 end
