@@ -140,11 +140,12 @@ module MercadoLibre
 
       return unless response
 
-      return Product.new if response['status'] == 'closed' && Product.none? do |p|
+      return if response['status'] == 'closed' && Product.none? do |p|
         p.meli_product_id == response['id']
       end
 
-      update(response)
+      product = update(response)
+      @product_publish.automatic_re_publish(product)
     end
 
     def push_update(product, past_meli_status = nil, set_active = nil)
