@@ -70,5 +70,13 @@ module MercadoLibre
         puts response.body
       end
     end
+
+    def automatic_re_publish(product)
+      return unless product.meli_status == 'closed' &&
+                    product.meli_stop_time == product.meli_end_time &&
+                    product.status == 'active'
+
+      re_publish_product(product)
+    end
   end
 end

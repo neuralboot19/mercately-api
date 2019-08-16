@@ -145,12 +145,7 @@ module MercadoLibre
       end
 
       product = update(response)
-
-      return unless product.meli_status == 'closed' &&
-                    product.meli_stop_time == product.meli_end_time &&
-                    product.status == 'active'
-
-      @product_publish.re_publish_product(product)
+      @product_publish.automatic_re_publish(product)
     end
 
     def push_update(product, past_meli_status = nil, set_active = nil)
