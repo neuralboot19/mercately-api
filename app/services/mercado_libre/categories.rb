@@ -32,7 +32,7 @@ module MercadoLibre
 
       ancestors.each_with_index do |ancestor, index|
         cat = Category.find_or_create_by(meli_id: ancestor['id'], name: ancestor['name'])
-        return if index + 1 >= ancestors_size
+        break if index + 1 >= ancestors_size
 
         child = Category.find_or_create_by(meli_id: ancestors[index + 1]['id'], name: ancestors[index + 1]['name'])
         child.update(parent_id: cat.id)
