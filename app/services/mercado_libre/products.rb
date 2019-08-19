@@ -8,6 +8,7 @@ module MercadoLibre
       @product_variations = MercadoLibre::ProductVariations.new(@retailer)
       @product_publish = MercadoLibre::ProductPublish.new(@retailer)
       @ml_questions = MercadoLibre::Questions.new(@retailer)
+      @ml_categories = MercadoLibre::Categories.new(@retailer)
     end
 
     def search_items
@@ -51,12 +52,13 @@ module MercadoLibre
 
     def save_product(product_info, description)
       product_exist = Product.find_by(meli_product_id: product_info['id']).present?
+      category = @ml_categories.import_category(product_info['category_id'])
 
       product = Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
         description: description['plain_text'],
-        category_id: Category.find_by(meli_id: product_info['category_id']).id,
+        category_id: category.id,
         price: product_info['price'],
         base_price: product_info['base_price'],
         original_price: product_info['original_price'],
@@ -94,9 +96,11 @@ module MercadoLibre
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
       new_product = product.new_record? && product_info['parent_item_id'].present?
 
+      category = @ml_categories.import_category(product_info['category_id'])
+
       product.title = product_info['title']
       product.description = product_info['plain_text']
-      product.category_id = Category.find_by(meli_id: product_info['category_id']).id
+      product.category_id = category.id
       product.price = product_info['price']
       product.base_price = product_info['base_price']
       product.original_price = product_info['original_price']
