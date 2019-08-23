@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   get '/blog' => redirect("https://www.mercately.com/blog/")
 
+  get '/privacidad', to: 'pages#privacy', as: :privacy
+  get '/terminos', to: 'pages#terms', as: :terms
+
   namespace :retailers do
     scope '/:slug' do
       # get 'dashboard', to: 'pages#dashboard', as: :dashboard

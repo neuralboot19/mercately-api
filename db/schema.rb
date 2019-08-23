@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 2019_08_07_230431) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.string "meli_nickname"
     t.integer "meli_customer_id"
+    t.string "meli_nickname"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
