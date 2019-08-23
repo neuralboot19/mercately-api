@@ -19,6 +19,8 @@ class Product < ApplicationRecord
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
 
+  after_save :delete_duplicated
+
   def update_ml(p_ml)
     self.meli_site_id = p_ml['site_id']
     self.meli_start_time = p_ml['start_time']
@@ -189,5 +191,18 @@ class Product < ApplicationRecord
 
       errors.add(:base, 'Del status closed sólo puede pasar a active') if
         meli_status == 'paused' && meli_status_was == 'closed'
+    end
+
+    def delete_duplicated
+      return unless meli_product_id.present?
+
+      delete_product = Product.find_by(meli_product_id: parent_meli_id) if
+        parent_meli_id.present?
+
+      delete_product.destroy if delete_product.present?
+
+      delete_own_product = Product.find_by(parent_meli_id: meli_product_id)
+
+      self.destroy if delete_own_product.present?
     end
 end
