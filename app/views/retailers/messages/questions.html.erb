@@ -1,61 +1,100 @@
-<div class="aligner-row head">
-  <h3>Preguntas</h3>
-  <div class="w-100 middle-right">
-    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
-  </div>
-</div>
-
-<div class="container-fluid">
-  <div class="row middle-xs mt-8 mb-8">
-    <div class="col-xs-6">
-      <p>Mostrando <%= @questions.count %> preguntas</p>
-    </div>
-  </div>
-  <div class="row">
-    <% if @questions.count == 0 %>
-      <div class="center-xs middle-xs">
-        <h1>No tienes :(</h1>
-      </div>
-    <% end %>
-    <% @questions.each do |question| %>
-      <div class="col-xs-12">
-        <div class="card">
-          <div class="box">
-            <div class="row">
-              <div class="col-xs-12 col-md-2">
-                <p class="product-text my-0">
-                  <b class="normal black-text">Usuario:</b> <%= question.customer.first_name.present? ? question.customer.name() : (question.customer.meli_nickname ||
-                  question.customer.meli_customer.nickname) %><br/>
-                  <b class="normal black-text">Producto:</b> <%= question.product&.title || 'No existe el producto' %>
-                  </p>
-              </div>
-              <div class="col-xs-12 col-md-6">
-                <p class="product-text my-0 last-message">
-                  <b class="normal black-text">Fecha</b> <%= question.created_at.strftime("%d %B") %><br/>
-                  <b>Q:</b> <%= question.question %>
-                  <br/>
-                  <b>R:</b>&nbsp;
-                  <% if question.answer %>
-                    <%= question.answer %>
-                  <% else %>
-                    Sin respuesta aún
-                  <% end %>
-                </p>
-              </div>
-              <div class="col-xs-12 col-md-3">
-                <div class="box h-100">
-                  <div class="row middle-xs h-100">
-                    <div class="col-xs-12 t-right">
-                      <%= link_to image_tag('dashboard/show-icon-index.png', class: 'w-20 mr-8'), retailers_path(@retailer, question) %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row middle-xs">
+        <div class="col-xs-12 col-sm-4">
+          <h1 class="d-inline index__title">Preguntas</h1>
+          <div class="index__desc">
+            Lista de preguntas
           </div>
         </div>
       </div>
-    <% end %>
+    </div>
+
+    <div class="container-fluid products">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="table box">
+            <div class="table__header row hide-on-tablet-and-down center-sm">
+              <div class="col-sm-1">Usuario</div>
+              <div class="col-sm-4">Producto</div>
+              <div class="col-sm-5"></div>
+              <div class="col-sm-1">Fecha</div>
+              <div class="col-sm-1"></div>
+            </div>
+            <% if @questions.count == 0 %>
+              <div class="center-xs middle-xs">
+                <h1>No tienes :(</h1>
+              </div>
+            <% end %>
+            <% @questions.each do |question| %>
+              <div class="divider"></div>
+              <div class="table__item row">
+                <div class="col-xs-10 col-sm-1 t-center">
+                  <%= question.customer.email %>
+                </div>
+                <div class="col-xs-10 col-sm-4 t-center">
+                  <%= question.product.title %>
+                </div>
+                <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
+                  <label class="item__dropdown d-inline">
+                    <div class="dropdown__button middle">
+                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                    </div>
+
+                    <input type="checkbox" class="dropdown__input"/>
+
+                    <ul class="dropdown__menu">
+                      <li>
+                        <%= link_to retailers_order_messages_path(current_retailer, question), class: 'c-black no-style' do %>
+                          <i class="fas fa-eye mr-8"></i>
+                          Ver
+                        <% end %>
+                      </li>
+                    </ul>
+                  </label>
+                </div>
+                <div class="col-xs-12 col-sm-5 c-grey">
+                  <br class="hide-on-md-and-up"/>
+                    <span class="c-secondary">
+                      Pregunta:
+                    </span> <%= question.question %>
+                    <br/>
+                    <br/>
+                    <span class="c-secondary">
+                      Respuesta:
+                    </span> <%= question.answer %>
+                </div>
+                <div class="col-xs-10 col-sm-1 t-center">
+                  <%= show_date(question.created_at) %>
+                </div>
+                <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
+                  <%= link_to retailers_order_messages_path(current_retailer, question), class: 'c-black no-style' do %>
+                    <i class="fas fa-eye"></i>
+                  <% end %>
+                </div>
+                <div class="hide-on-sm-and-down hide-on-2k m-auto">
+                  <label class="item__dropdown dropdown d-inline">
+                    <a class="dropdown__button midd" href="#!">
+                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                    </a>
+
+                    <ul class="dropdown__menu">
+                      <li>
+                        <%= link_to retailers_order_messages_path(current_retailer, question), class: 'c-black no-style' do %>
+                          <i class="fas fa-eye mr-8"></i>
+                          Ver
+                        <% end %>
+                      </li>
+                    </ul>
+                  </label>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="row middle-xs center-xs">
     <div class="col-xs-12">

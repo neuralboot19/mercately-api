@@ -1,77 +1,134 @@
-<div class="aligner-row head">
-  <h3>Ordenes</h3>
-  <div class="w-100 middle-right">
-    <%= link_to 'Crear orden', new_retailers_order_path %>
-    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
-  </div>
-</div>
-
-<div class="container-fluid">
-  <div class="row middle-xs mt-8 mb-8">
-    <div class="col-xs-6">
-      <p>Mostrando <%= @orders.count %> ordenes</p>
-    </div>
-  </div>
-  <div class="row">
-    <% @orders.each do |order| %>
-      <div class="col-xs-12">
-        <div class="card">
-          <div class="box">
-            <div class="row">
-              <div class="col-xs-12 col-md-5">
-                <div class="box">
-                  <div class="row">
-                    <div class="col-xs-6">
-                      <div class="box">
-                        <div class="row">
-                          <div class="col-xs-12 col-md-12">
-                            <p class="product-text my-0">
-                              <b class="normal black-text">Usuario:</b> <%= order.customer.name %><br/>
-                              <b class="normal black-text">Teléfono:</b> <%= order.customer&.meli_customer&.phone %>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-xs-6 col-md-6">
-                      <p class="product-text my-0">
-                        <b class="normal black-text mr-16">Producto:</b> <%= order.products&.first&.title %><br/>
-                        <b class="normal black-text mr-16">Cantidad:</b> <%= order.order_items&.first&.quantity %><br/>
-                        <b class="normal black-text mr-16">Monto:</b> <%= order.total %>$
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xs-12 col-md-7">
-                <div class="box">
-                  <div class="row">
-                    <div class="col-xs-6 col-md-4">
-                      Estado&nbsp;&nbsp;&nbsp;
-                      <div class="cookie"><%= order.merc_status %></div>
-                    </div>
-                    <div class="col-xs-12 col-md-5">
-                      <p class="product-text t-right my-0">
-                        <b class="normal black-text">Ordenado el</b> <%= order.created_at.strftime("%d - %B") %>
-                      </p>
-                    </div>
-                    <div class="col-xs-12 col-md-3 t-right">
-                      <%= link_to image_tag('dashboard/show-icon-index.png', class: 'w-20 mr-8'), retailers_order_path(@retailer, order) %>
-                      <%= link_to image_tag('dashboard/edit-icon-index.png', class: 'w-20 mr-8'), edit_retailers_order_path(@retailer, order) %>
-                      <%= link_to image_tag('dashboard/destroy-icon-index.png', class: 'w-20 mr-8'), retailers_order_path(@retailer, order), method: :delete, data: { confirm: 'Are you sure?' } %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row middle-xs">
+        <div class="col-xs-12 col-sm-4">
+          <h1 class="d-inline index__title">Ordenes</h1>
+          <div class="index__desc">
+            Lista de ordenes
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-8 hide-on-tablet-and-down">
+          <div class="index__ctas f-right">
+            <%= link_to new_retailers_order_path, class: 'btn btn--cta' do %>
+              <i class="fas fa-plus mr-5"></i>
+              Crear orden
+            <% end %>
           </div>
         </div>
       </div>
-    <% end %>
-  </div>
-  <div class="row middle-xs center-xs">
-    <div class="col-xs-12">
-      <%= paginate @orders %>
+    </div>
+
+    <div class="worm container-fluid">
+      <div class="row center-xs start-sm">
+        <div class="col-xs-12">
+          <div class="worm__btn worm__btn--selected">Todas</div
+          ><div class="worm__btn">Completadas</div
+          ><div class="worm__btn">Canceladas</div
+          ><div class="worm__btn">Pendientes</div
+          >
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid orders">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="table box">
+            <div class="table__header row hide-on-tablet-and-down center-sm">
+              <div class="col-sm-3">Estado</div>
+              <div class="col-sm-3">Cliente</div>
+              <div class="col-sm-2">Total de compra</div>
+              <div class="col-sm-3">Fecha de compra</div>
+              <div class="col-sm-1"></div>
+            </div>
+            <% @orders.each do |order| %>
+              <div class="divider"></div>
+              <div class="table__item row middle-xs">
+                <div class="col-xs-9 mb-12 col-sm-3 t-center">
+                  <b class="cookie <%= cookie(order.merc_status) %>"><%= order.merc_status %></b>
+                </div>
+                <div class="col-xs-3 table__action-dots p-0 hide-on-md-and-up">
+                  <label class="item__dropdown d-inline">
+                    <div class="dropdown__button middle">
+                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                    </div>
+
+                    <input type="checkbox" class="dropdown__input"/>
+
+                    <ul class="dropdown__menu">
+                      <li>
+                        <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+                          <i class="fas fa-eye mr-8"></i>
+                          Ver
+                        <% end %>
+                      </li>
+                      <li class="divider"></li>
+                      <li>
+                        <%= link_to edit_retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+                          <i class="fas fa-edit mr-8"></i>
+                          Editar
+                        <% end %>
+                      </li>
+                    </ul>
+                  </label>
+                </div>
+                <div class="col-xs-4 col-sm-3 t-center c-grey">
+                  <%= order.customer.email %>
+                </div>
+                <div class="col-xs-4 col-sm-2 t-center money">
+                  $<%= order.total %>
+                </div>
+                <div class="col-xs-4 col-sm-3 t-center">
+                  <%= show_date(order.created_at) %>
+                </div>
+                <div class="col-xs-12 hide-on-1080-and-down orders__actions col-sm-1 t-center">
+                  <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+                    <i class="fas fa-eye"></i>
+                  <% end %>
+                  <%= link_to edit_retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+                    <i class="fas fa-edit"></i>
+                  <% end %>
+                </div>
+                <div class="hide-on-sm-and-down hide-on-2k m-auto">
+                  <label class="item__dropdown dropdown d-inline">
+                    <a class="dropdown__button midd" href="#!">
+                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                    </a>
+
+                    <ul class="dropdown__menu">
+                      <li>
+                        <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+                          <i class="fas fa-eye mr-8"></i>
+                          Ver
+                        <% end %>
+                      </li>
+                      <li class="divider"></li>
+                      <li>
+                        <%= link_to edit_retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+                          <i class="fas fa-edit mr-8"></i>
+                          Editar
+                        <% end %>
+                      </li>
+                    </ul>
+                  </label>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
+<div class="row middle-xs center-xs">
+  <div class="col-xs-12">
+    <%= paginate @orders %>
+  </div>
+</div>
+
+<div class="bubble hide-on-pc">
+  <%= link_to new_retailers_order_path do %>
+    <i class="fas fa-plus"></i>
+  <% end %>
 </div>

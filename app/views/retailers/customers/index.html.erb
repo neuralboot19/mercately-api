@@ -1,72 +1,323 @@
-<div class="aligner-row head">
-  <h3>Clientes</h3>
-  <div class="w-100 middle-right">
-    <%= link_to 'Crear cliente', new_retailers_customer_path %>
-    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
-  </div>
-</div>
-
-<div class="container-fluid">
-  <div class="row middle-xs mt-8 mb-8">
-    <div class="col-xs-6">
-      <p>Mostrando <%= @customers.count %> clientes</p>
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row middle-xs">
+        <div class="col-xs-12 col-sm-4">
+          <h1 class="d-inline name">Clientes</h1>
+          <div class="index__desc">
+            Lista de clientes
+          </div>
+        </div>
+        <div class="col-xs-12 col-sm-8 hide-on-tablet-and-down">
+          <div class="index__ctas f-right">
+            <%= link_to new_retailers_customer_path, class: 'btn btn--cta' do %>
+              <i class="fas fa-plus mr-5"></i>
+              Crear cliente
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <% @customers.each do |customer| %>
-      <div class="col-xs-12">
-        <div class="card">
-          <div class="box">
-            <div class="row">
-              <div class="col-xs-12 col-md-2">
-                <p class="product-text my-0">
-                  <% if customer.meli_customer&.email %>
-                    <b class="normal black-text">Usuario:</b> <%= customer.meli_customer.nickname %><br/>
-                    <b class="normal black-text">Email:</b> <%= customer.email %><br/>
-                    <b class="normal black-text">Nombre:</b> <%= customer.first_name %><br/>
-                    <b class="normal black-text">Apellido:</b> <%= customer.last_name %><br/>
-                    <b class="normal black-text">Número:</b> <%= customer.phone %>
-                  <% else %>
-                    <b class="normal black-text">Usuario:</b> <%= customer.meli_customer&.nickname %><br/>
-                  <% end %>
-                </p>
-              </div>
-              <div class="col-xs-12 col-md-1"><p class="normal black-text t-center mb-0 mt-3">Ordenes</p></div>
-              <div class="col-xs-12 col-md-3">
-                <p class="product-text my-0">
-                  Completas: <%= customer.orders.paid.count %><br/>
-                  En proceso: <%= customer.orders.confirmed.count %><br/>
-                  Canceladas: <%= customer.orders.cancelled.count %>
-                </p>
-              </div>
-              <div class="col-xs-12 col-md-3">
-                <div class="box h-100">
-                  <div class="row middle-xs h-100">
-                    <div class="col-xs-12">
-                      <% if customer.meli_customer %>
-                        <% 5.times do %>
-                          <%= image_tag 'star.png', class: 'w-20' %>
+
+    <div class="container-fluid products">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="table box">
+            <div class="table__header row hide-on-tablet-and-down center-sm">
+              <div class="col-sm-1">Nombres</div>
+              <div class="col-sm-2">Telefono</div>
+              <div class="col-sm-3">Ordenes</div>
+              <div class="col-sm-2">Total Vendido $</div>
+              <div class="col-sm-4"></div>
+            </div>
+            <% @customers.each do |customer| %>
+              <div class="divider"></div>
+              <div class="table__item row middle-xs">
+                <div class="col-xs-4 col-sm-1">
+                  <div class="t-center"><%= customer.name %></div>
+                </div>
+                <div class="col-xs-4 col-sm-2 c-grey">
+                  <div class="t-center"><%= customer.phone %></div>
+                </div>
+                <div class="hide-on-md-and-up hide-on-2k m-auto">
+                  <label class="item__dropdown dropdown d-inline">
+                    <a class="dropdown__button midd" href="#!">
+                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                    </a>
+
+                    <ul class="dropdown__menu">
+                      <label class="c-black modal__toggler" for="modal--toggle"
+                                                            data-customer_email="<%= customer.email %>"
+                                                            data-customer_phone="<%= customer.phone %>"
+                                                            data-customer_address="<%= customer.address %>"
+                                                            data-customer_state="<%= customer.state %>"
+                                                            data-customer_country_id="<%= customer.country_id %>"
+                                                            data-customer_orders="<%= customer.orders.count %>"
+                                                            data-customer_sales="<%= customer.orders.merc_status_success.count %>"
+                                                            data-customer_total_income="<%= customer.orders.merc_status_success.count %>"
+                                                            data-customer_has_meli="<%= customer.meli_customer_id.present? %>"
+                                                            data-meli_nickname="<%= customer.meli_customer&.nickname %>"
+                                                            data-meli_ratings_total="<%= customer.meli_customer&.ratings_total %>"
+                                                            data-meli_transactions_canceled="<%= customer.meli_customer&.transactions_canceled %>"
+                                                            data-meli_transactions_completed="<%= customer.meli_customer&.transactions_completed %>"
+                                                            data-meli_buyer_canceled_paid_transactions="<%= customer.meli_customer&.buyer_canceled_paid_transactions %>"
+                                                            >
+                        <li>
+                          <i class="far fa-eye mr-8"></i>
+                          Ver
+                        </li>
+                      </label>
+                      <li>
+                        <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+                          <i class="fas fa-edit mr-8"></i>
+                          Editar
                         <% end %>
-                      <% end %>
+                      </li>
+                    </ul>
+                  </label>
+                </div>
+                <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
+                  <div class="box">
+                    <div class="row">
+                      <div class="col-xs-4 col-sm-6 item__descriptor">Completadas:</div>
+                      <div class="col-xs-2 col-sm-6"><%= customer.orders.merc_status_success.count %></div>
+                      <div class="col-xs-4 col-sm-6 item__descriptor">Pendintes:</div>
+                      <div class="col-xs-2 col-sm-6"><%= customer.orders.merc_status_pending.count %></div>
+                      <div class="col-xs-4 col-sm-6 item__descriptor">Canceladas:</div>
+                      <div class="col-xs-2 col-sm-6"><%= customer.orders.merc_status_cancelled.count %></div>
                     </div>
                   </div>
                 </div>
+                <div class="col-xs-12 col-sm-2 t-center">
+                  <b class="c-green">$<%= customer.earnings %></b>
+                </div>
+                <div class="col-sm-2 hide-on-1080-and-down"></div>
+                <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-2 t-center">
+                  <label class="c-black modal__toggler" for="modal--toggle"
+                                                        data-customer_email="<%= customer.email %>"
+                                                        data-customer_phone="<%= customer.phone %>"
+                                                        data-customer_address="<%= customer.address %>"
+                                                        data-customer_state="<%= customer.state %>"
+                                                        data-customer_country_id="<%= customer.country_id %>"
+                                                        data-customer_orders="<%= customer.orders.count %>"
+                                                        data-customer_sales="<%= customer.orders.merc_status_success.count %>"
+                                                        data-customer_total_income="<%= customer.orders.merc_status_success.count %>"
+                                                        data-customer_has_meli="<%= customer.meli_customer_id.present? %>"
+                                                        data-meli_nickname="<%= customer.meli_customer&.nickname %>"
+                                                        data-meli_ratings_total="<%= customer.meli_customer&.ratings_total %>"
+                                                        data-meli_transactions_canceled="<%= customer.meli_customer&.transactions_canceled %>"
+                                                        data-meli_transactions_completed="<%= customer.meli_customer&.transactions_completed %>"
+                                                        data-meli_buyer_canceled_paid_transactions="<%= customer.meli_customer&.buyer_canceled_paid_transactions %>"
+                                                        >
+                    <i class="far fa-eye"></i>
+                  </label>
+                  <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+                    <i class="far fa-edit"></i>
+                  <% end %>
+                </div>
+                <div class="hide-on-sm-and-down hide-on-2k m-auto">
+                  <label class="item__dropdown dropdown d-inline">
+                    <a class="dropdown__button midd" href="#!">
+                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                    </a>
+
+                    <ul class="dropdown__menu">
+                      <label class="c-black modal__toggler" for="modal--toggle"
+                                                            data-customer_email="<%= customer.email %>"
+                                                            data-customer_phone="<%= customer.phone %>"
+                                                            data-customer_address="<%= customer.address %>"
+                                                            data-customer_state="<%= customer.state %>"
+                                                            data-customer_country_id="<%= customer.country_id %>"
+                                                            data-customer_orders="<%= customer.orders.count %>"
+                                                            data-customer_sales="<%= customer.orders.merc_status_success.count %>"
+                                                            data-customer_total_income="<%= customer.orders.merc_status_success.count %>"
+                                                            data-customer_has_meli="<%= customer.meli_customer_id.present? %>"
+                                                            data-meli_nickname="<%= customer.meli_customer&.nickname %>"
+                                                            data-meli_ratings_total="<%= customer.meli_customer&.ratings_total %>"
+                                                            data-meli_transactions_canceled="<%= customer.meli_customer&.transactions_canceled %>"
+                                                            data-meli_transactions_completed="<%= customer.meli_customer&.transactions_completed %>"
+                                                            data-meli_buyer_canceled_paid_transactions="<%= customer.meli_customer&.buyer_canceled_paid_transactions %>"
+                                                            >
+                        <li>
+                          <i class="far fa-eye mr-8"></i>
+                          Ver
+                        </li>
+                      </label>
+                      <li>
+                        <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+                          <i class="fas fa-edit mr-8"></i>
+                          Editar
+                        <% end %>
+                      </li>
+                    </ul>
+                  </label>
+                </div>
               </div>
-              <div class="col-xs-12 col-md-3">
-                <div class="box h-100">
-                  <div class="row middle-xs h-100">
-                    <div class="col-xs-12">
-                      <%= link_to image_tag('dashboard/show-icon-index.png', class: 'w-20 mr-8'), retailers_customer_path(@retailer, customer) %>
-                      <%= link_to image_tag('dashboard/edit-icon-index.png', class: 'w-20 mr-8'), edit_retailers_customer_path(@retailer, customer) %>
-                      <%= link_to image_tag('dashboard/destroy-icon-index.png', class: 'w-20 mr-8'), retailers_customer_path(@retailer, customer), method: :delete, data: { confirm: 'Are you sure?' } %>
-                    </div>
-                  </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bubble hide-on-pc">
+  <%= link_to new_retailers_customer_path do %>
+    <i class="fas fa-plus"></i>
+  <% end %>
+</div>
+<input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" />
+<div class="modal">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal__background" for="modal--toggle"></label>
+        <div class="modal__window box p-16">
+          <div class="row middle-xs">
+            <div class="col-xs-11 col-sm-4">
+              <h1 class="d-inline name">John Doe</h1>
+            </div>
+            <div class="col-xs-12 col-sm-8 hide-on-sm-and-down">
+              <div class="index__ctas f-right">
+                <a class="btn btn--cta" href="#!">
+                  <i class="fas fa-edit mr-5"></i>
+                  Editar
+                </a>
+                <label class="btn btn--no-border c-red" for="modal--toggle">
+                  <i class="fas fa-times mr-5"></i>
+                  Cerrar
+                </label>
+              </div>
+            </div>
+            <div class="col-xs-1 hide-on-md-and-up">
+              <label class="item__dropdown dropdown d-inline">
+                <a class="dropdown__button midd" href="#!">
+                  <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                </a>
+
+                <ul class="dropdown__menu">
+                  <li>
+                    <a class="c-black no-style" href="#!">
+                      <i class="fas fa-edit mr-8"></i>
+                      Editar
+                    </a>
+                  </li>
+                  <label class="c-red" for="modal--toggle">
+                    <li>
+                      <i class="far fa-times mr-8"></i>
+                      Cerrar
+                    </li>
+                  </label>
+                </ul>
+              </label>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="card__title"><i class="fas fa-user c-primary"></i> Información</div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-6">
+              <table class="table_details table_details--underlined w-100">
+                <tr>
+                  <td class="table_details__descriptor">Email:</td>
+                  <td id="customer_email" class="table_details__value">email@example.com</td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">Teléfono</td>
+                  <td id="customer_phone" class="table_details__value">+584247208831</td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">Dirección</td>
+                  <td id="customer_address" class="table_details__value">21s, 1401 Kirkham, San Francisco</td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">Estado</td>
+                  <td id="customer_state" class="table_details__value">California</td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">País</td>
+                  <td id="customer_country_id" class="table_details__value truncate">Estados Unidos de America</td>
+                </tr>
+              </table>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-6">
+              <div class="row card__submodule center-xs">
+                <div class="col-xs-12 submodule">
+                  <h2 id="customer_orders">40</h2>
+                  <h6>Ordenes</h6>
+                </div>
+                <div class="col-xs-12 submodule">
+                  <h2 id="customer_sales">40</h2>
+                  <h6>Ventas</h6>
+                </div>
+                <div class="col-xs-12 submodule">
+                  <h2 id="customer_total_income">$4500</h2>
+                  <h6>Ganancia</h6>
                 </div>
               </div>
             </div>
           </div>
+          <div id="ml-info" class="row mb-8">
+            <div class="col-xs-12">
+              <div class="card__title mt-32"><i class="fas fa-shopping-cart c-primary"></i> Mercado Libre Info</div>
+              <table class="table_details table_details--underlined w-100">
+                <tr>
+                  <td class="table_details__descriptor">Usuario</td>
+                  <td id="meli_nickname" class="table_details__value">Nick name</td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">Reputación</td>
+                  <td id="meli_ratings_total" class="table_details__value"><b class="cookie cookie--green">Excelente</b></td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">Ordenes canceladas</td>
+                  <td id="meli_transactions_canceled" class="table_details__value">5</td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">Ordenes completas</td>
+                  <td id="meli_transactions_completed" class="table_details__value truncate">10</td>
+                </tr>
+                <tr>
+                  <td class="table_details__descriptor">Ordenes pagas canceladas</td>
+                  <td id="meli_buyer_canceled_paid_transactions" class="table_details__value">1</td>
+                </tr>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-    <% end %>
+    </div>
   </div>
 </div>
+
+<script charset="utf-8">
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('modal--toggle').checked = false;
+  });
+
+  document.querySelectorAll('.modal__toggler').forEach(function(mt) {
+    mt.onclick = function(e) {
+      console.log(mt.dataset.customer_has_meli)
+      document.getElementById('customer_email').innerHTML = mt.dataset.customer_email;
+      document.getElementById('customer_phone').innerHTML = mt.dataset.customer_phone;
+      document.getElementById('customer_address').innerHTML = mt.dataset.customer_address;
+      document.getElementById('customer_state').innerHTML = mt.dataset.customer_state;
+      document.getElementById('customer_country_id').innerHTML = mt.dataset.customer_country_id;
+      document.getElementById('customer_orders').innerHTML = mt.dataset.customer_orders;
+      document.getElementById('customer_sales').innerHTML = mt.dataset.customer_sales;
+      document.getElementById('customer_total_income').innerHTML = mt.dataset.customer_total_income;
+      if (mt.dataset.customer_has_meli == true) {
+        document.getElementById('meli_nickname').innerHTML = mt.dataset.dataset;
+        document.getElementById('meli_ratings_total').innerHTML = mt.dataset.meli_ratings_total;
+        document.getElementById('meli_transactions_canceled').innerHTML = mt.dataset.meli_transactions_canceled;
+        document.getElementById('meli_transactions_completed').innerHTML = mt.dataset.meli_transactions_completed;
+        document.getElementById('meli_buyer_canceled_paid_transactions').innerHTML = mt.dataset.meli_buyer_canceled_paid_transactions;
+        document.getElementById('ml-info').style.display = 'block';
+      } else {
+        document.getElementById('ml-info').style.display = 'none';
+      }
+    }
+  })
+</script>
