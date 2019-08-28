@@ -150,7 +150,11 @@ module MercadoLibre
     end
 
     def assign_product(product, product_info, retailer, category, new_product)
-      product.meli_product_id = product_info['id'] if new_product
+      if new_product
+        product.meli_product_id = product_info['id']
+        product.status = 'active'
+      end
+
       product.title = product_info['title']
       product.description = product_info['plain_text']
       product.category_id = category.id
