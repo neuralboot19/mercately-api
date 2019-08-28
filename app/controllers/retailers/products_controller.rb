@@ -216,6 +216,7 @@ class Retailers::ProductsController < RetailersController
                                       :sold_quantity,
                                       :status,
                                       :meli_status,
+                                      :parent_meli_id,
                                       images: [],
                                       ml_attributes: [])
     end

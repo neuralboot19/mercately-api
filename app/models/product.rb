@@ -1,10 +1,10 @@
 class Product < ApplicationRecord
   belongs_to :retailer
   belongs_to :category
-  has_many :order_items, dependent: :destroy
-  has_many :questions, dependent: :destroy
+  has_many :order_items
+  has_many :questions
   has_many_attached :images
-  has_many :product_variations, dependent: :destroy
+  has_many :product_variations
 
   validate :images_count
   validates :meli_product_id, uniqueness: true, allow_nil: true
@@ -18,8 +18,6 @@ class Product < ApplicationRecord
   scope :retailer_products, lambda { |retailer_id, status|
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
-
-  after_save :delete_duplicated
 
   def update_ml(p_ml)
     self.meli_site_id = p_ml['site_id']
@@ -191,18 +189,5 @@ class Product < ApplicationRecord
 
       errors.add(:base, 'Del status closed sólo puede pasar a active') if
         meli_status == 'paused' && meli_status_was == 'closed'
-    end
-
-    def delete_duplicated
-      return unless meli_product_id.present?
-
-      delete_product = Product.find_by(meli_product_id: parent_meli_id) if
-        parent_meli_id.present?
-
-      delete_product.destroy if delete_product.present?
-
-      delete_own_product = Product.find_by(parent_meli_id: meli_product_id)
-
-      self.destroy if delete_own_product.present?
     end
 end
