@@ -176,7 +176,6 @@ module MercadoLibre
       product.meli_permalink = product_info['permalink']
       product.ml_attributes = product_info['attributes']
       product.meli_status = product_info['status']
-      product.parent_meli_id = product_info['parent_item_id']
       product.retailer = retailer
 
       product

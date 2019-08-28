@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_27_204904) do
+ActiveRecord::Schema.define(version: 2019_08_28_172744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 2019_08_27_204904) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.integer "meli_customer_id"
     t.string "meli_nickname"
+    t.integer "meli_customer_id"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -220,10 +220,8 @@ ActiveRecord::Schema.define(version: 2019_08_27_204904) do
     t.bigint "main_picture_id"
     t.integer "status", default: 0
     t.integer "meli_status", default: 0
-    t.string "parent_meli_id"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
-    t.index ["parent_meli_id"], name: "index_products_on_parent_meli_id", unique: true, where: "(parent_meli_id IS NOT NULL)"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
 

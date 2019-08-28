@@ -76,7 +76,6 @@ module MercadoLibre
         meli_permalink: product_info['permalink'],
         ml_attributes: product_info['attributes'],
         meli_status: product_info['status'],
-        parent_meli_id: product_info['parent_item_id'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
