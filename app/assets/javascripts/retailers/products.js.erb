@@ -644,7 +644,7 @@ document.addEventListener("DOMContentLoaded", function() {
       "element_type": ""
     }];
 
-  var roots  = JSON.parse('<%= Category.roots.active_categories.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
+  var roots  = JSON.parse('<%= Category.roots.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
   for(var root_position in roots) {
     opt = roots[root_position]
     var el = document.createElement("option");

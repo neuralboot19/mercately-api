@@ -7,8 +7,6 @@ class Category < ApplicationRecord
 
   enum status: %w[active inactive]
 
-  scope :active_categories, -> { where('categories.status = 0') }
-
   def clean_template_variations
     attributes = []
     template.each do |temp|
