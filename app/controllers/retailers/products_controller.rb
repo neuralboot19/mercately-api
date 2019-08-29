@@ -130,7 +130,7 @@ class Retailers::ProductsController < RetailersController
       @total_available = 0
       @total_sold = 0
 
-      category = Category.find(params[:product][:category_id])
+      category = Category.active_categories.find(params[:product][:category_id])
       params[:product][:variations].each do |var|
         temp_var = build_variation(var[1], category)
         temp_var['price'] = params[:product][:price]
@@ -185,7 +185,7 @@ class Retailers::ProductsController < RetailersController
     def check_for_variations(category_id)
       return false if category_id.blank?
 
-      category = Category.find(category_id)
+      category = Category.active_categories.find(category_id)
       return false if category.blank?
 
       template = category.clean_template_variations
