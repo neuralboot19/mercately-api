@@ -18,7 +18,7 @@ ActiveAdmin.register Category do
       row :meli_id
       row :status
       row :ancestry
-      row("Productos") { category.products.size }
+      row('Productos') { category.products.size }
       row :template
       row :created_at
       row :updated_at
