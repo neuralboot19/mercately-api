@@ -8,9 +8,9 @@ class OrderItem < ApplicationRecord
   before_update :adjust_stock, if: :will_save_change_to_quantity?
   before_destroy :replace_stock, prepend: true
   after_update :update_ml_stock, if: :saved_change_to_quantity?
-  after_commit :update_order_total
+  after_save :update_order_total
   after_create :subtract_stock
-  after_create :update_ml_stock
+  after_create -> { update_ml_stock('create') }
 
   delegate :meli_product_id, to: :product
 
@@ -25,16 +25,19 @@ class OrderItem < ApplicationRecord
       end
     end
 
-    def update_ml_stock
-      p_ml = MercadoLibre::Products.new(product.retailer)
-
+    def update_ml_stock(action = 'update')
+      return if action == 'create' && order.meli_order_id.present?
       return unless product.meli_product_id
+
+      p_ml = MercadoLibre::Products.new(product.retailer)
 
       p_ml.push_update(product.reload)
       product.upload_variations_to_ml
     end
 
     def subtract_stock
+      return if order.meli_order_id.present?
+
       if product_variation.present?
         data = product_variation.data
         data['available_quantity'] = data['available_quantity'].to_i - quantity

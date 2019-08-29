@@ -1,10 +1,10 @@
 class Product < ApplicationRecord
   belongs_to :retailer
   belongs_to :category
-  has_many :order_items, dependent: :destroy
-  has_many :questions, dependent: :destroy
+  has_many :order_items
+  has_many :questions
   has_many_attached :images
-  has_many :product_variations, dependent: :destroy
+  has_many :product_variations
 
   validate :images_count
   validates :meli_product_id, uniqueness: true, allow_nil: true

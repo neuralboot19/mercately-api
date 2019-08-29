@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_07_230431) do
+ActiveRecord::Schema.define(version: 2019_08_28_172744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,7 +47,6 @@ ActiveRecord::Schema.define(version: 2019_08_07_230431) do
     t.bigint "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
-    t.index ["filename", "checksum"], name: "index_active_storage_blobs_on_filename_and_checksum", unique: true
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -71,6 +70,7 @@ ActiveRecord::Schema.define(version: 2019_08_07_230431) do
     t.string "ancestry"
     t.jsonb "template", default: []
     t.index ["ancestry"], name: "index_categories_on_ancestry"
+    t.index ["meli_id"], name: "index_categories_on_meli_id", unique: true, where: "(meli_id IS NOT NULL)"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -81,8 +81,8 @@ ActiveRecord::Schema.define(version: 2019_08_07_230431) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.integer "meli_customer_id"
     t.string "meli_nickname"
+    t.integer "meli_customer_id"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -187,8 +187,9 @@ ActiveRecord::Schema.define(version: 2019_08_07_230431) do
     t.jsonb "data", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "status", default: 0
     t.index ["product_id"], name: "index_product_variations_on_product_id"
-    t.index ["variation_meli_id"], name: "index_product_variations_on_variation_meli_id", unique: true
+    t.index ["variation_meli_id"], name: "index_product_variations_on_variation_meli_id", unique: true, where: "(variation_meli_id IS NOT NULL)"
   end
 
   create_table "products", force: :cascade do |t|
@@ -220,7 +221,7 @@ ActiveRecord::Schema.define(version: 2019_08_07_230431) do
     t.integer "status", default: 0
     t.integer "meli_status", default: 0
     t.index ["category_id"], name: "index_products_on_category_id"
-    t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true
+    t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
 

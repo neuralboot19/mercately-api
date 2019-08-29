@@ -121,12 +121,16 @@ function appendTemplate() {
   variationElement.setAttribute("class", "row variation-element col-xs-12");
   variationDiv = document.createElement("div");
   variationDiv.setAttribute("class", "group col-xs-12 remove-variation-container");
-  pElement = document.createElement('p');
-  pElement.setAttribute("id", `remove-variation-${countVariations - 1}`);
-  pElement.setAttribute("onclick", "removeVariation(this);");
-  pElement.setAttribute("class", "remove-variation");
-  pElement.innerHTML = "Eliminar variación";
-  variationDiv.appendChild(pElement);
+
+  if (currentTemplate == undefined) {
+    pElement = document.createElement('p');
+    pElement.setAttribute("id", `remove-variation-${countVariations - 1}`);
+    pElement.setAttribute("onclick", "removeVariation(this);");
+    pElement.setAttribute("class", "remove-variation");
+    pElement.innerHTML = "Eliminar variación";
+    variationDiv.appendChild(pElement);
+  }
+
   variationElement.appendChild(variationDiv);
 
   for (temp in template) {
@@ -426,6 +430,19 @@ function hideVariationContainer() {
 }
 
 function showVariationTitle() {
+  theres_variation = false;
+
+  for (temp in template) {
+    if (template[temp]['tags']['allow_variations'] !== undefined) {
+      theres_variation = true;
+      break;
+    }
+  }
+
+  if (!theres_variation) {
+    return;
+  }
+
   var container = document.getElementById("variations-title");
   container.className = "group variations-container-title col-xs-12";
 }

@@ -148,5 +148,37 @@ module MercadoLibre
 
       info.to_json
     end
+
+    def assign_product(product, product_info, retailer, category, new_product)
+      if new_product
+        product.meli_product_id = product_info['id']
+        product.status = 'active'
+      end
+
+      product.title = product_info['title']
+      product.description = product_info['plain_text']
+      product.category_id = category.id
+      product.price = product_info['price']
+      product.base_price = product_info['base_price']
+      product.original_price = product_info['original_price']
+      product.initial_quantity = product_info['initial_quantity']
+      product.available_quantity = product_info['available_quantity']
+      # TODO: Push orders to keep sold_quantity updated
+      product.sold_quantity = product_info['sold_quantity']
+      product.meli_site_id = product_info['site_id']
+      product.meli_start_time = product_info['start_time']
+      product.meli_stop_time = product_info['stop_time']
+      product.meli_end_time = product_info['end_time']
+      product.buying_mode = product_info['buying_mode']
+      product.meli_listing_type_id = product_info['listing_type_id']
+      product.meli_expiration_time = product_info['expiration_time']
+      product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
+      product.meli_permalink = product_info['permalink']
+      product.ml_attributes = product_info['attributes']
+      product.meli_status = product_info['status']
+      product.retailer = retailer
+
+      product
+    end
   end
 end
