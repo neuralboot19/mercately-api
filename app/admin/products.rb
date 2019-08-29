@@ -62,6 +62,7 @@ ActiveAdmin.register Product do
       attributes_table_for variations do
         row :id
         row :variation_meli_id
+        row :status
         row :data
         row :created_at
         row :updated_at
