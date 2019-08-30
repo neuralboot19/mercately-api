@@ -30,19 +30,19 @@
             <% @questions.each do |question| %>
               <div class="divider"></div>
               <div class="table__item row">
-                <div class="col-xs-10 col-sm-1 t-center">
-                  <%= question.customer.email %>
+                <div class="col-xs-10 col-sm-1 t-center hide-on-sm-and-down">
+                  <div class="truncate">
+                    <%= question.customer.email %>
+                  </div>
                 </div>
                 <div class="col-xs-10 col-sm-4 t-center">
                   <%= question.product.title %>
                 </div>
                 <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
                   <label class="item__dropdown d-inline">
-                    <div class="dropdown__button middle">
+                    <a class="dropdown__button middle t-center no-style" href="#!">
                       <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </div>
-
-                    <input type="checkbox" class="dropdown__input"/>
+                    </a>
 
                     <ul class="dropdown__menu">
                       <li>
@@ -65,7 +65,7 @@
                       Respuesta:
                     </span> <%= question.answer %>
                 </div>
-                <div class="col-xs-10 col-sm-1 t-center">
+                <div class="col-xs-12 col-sm-1 t-center">
                   <%= show_date(question.created_at) %>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">

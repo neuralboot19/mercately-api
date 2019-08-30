@@ -25,7 +25,7 @@
           <div class="table box">
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Nombres</div>
-              <div class="col-sm-2">Telefono</div>
+              <div class="col-sm-2">Email</div>
               <div class="col-sm-3">Ordenes</div>
               <div class="col-sm-2">Total Vendido $</div>
               <div class="col-sm-4"></div>
@@ -37,11 +37,11 @@
                   <div class="t-center"><%= customer.name %></div>
                 </div>
                 <div class="col-xs-4 col-sm-2 c-grey">
-                  <div class="t-center"><%= customer.phone %></div>
+                  <div class="t-center truncate"><%= customer.email %></div>
                 </div>
                 <div class="hide-on-md-and-up hide-on-2k m-auto">
                   <label class="item__dropdown dropdown d-inline">
-                    <a class="dropdown__button midd" href="#!">
+                    <a class="dropdown__button middle t-center no-style" href="#!">
                       <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
                     </a>
 
@@ -222,7 +222,7 @@
               <table class="table_details table_details--underlined w-100">
                 <tr>
                   <td class="table_details__descriptor">Email:</td>
-                  <td id="customer_email" class="table_details__value">email@example.com</td>
+                  <td id="customer_email" class="table_details__value truncate">email@example.com</td>
                 </tr>
                 <tr>
                   <td class="table_details__descriptor">Teléfono</td>
@@ -299,7 +299,6 @@
 
   document.querySelectorAll('.modal__toggler').forEach(function(mt) {
     mt.onclick = function(e) {
-      console.log(mt.dataset.customer_has_meli)
       document.getElementById('customer_email').innerHTML = mt.dataset.customer_email;
       document.getElementById('customer_phone').innerHTML = mt.dataset.customer_phone;
       document.getElementById('customer_address').innerHTML = mt.dataset.customer_address;

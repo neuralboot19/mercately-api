@@ -192,7 +192,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 1px;
 }
 
 .dropdown {
@@ -214,6 +213,7 @@
     background-color: #FFF;
     list-style-type: none;
     right: 0;
+    z-index: 1000;
   }
 
   &__input {

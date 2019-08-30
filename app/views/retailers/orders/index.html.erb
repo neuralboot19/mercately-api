@@ -50,11 +50,9 @@
                 </div>
                 <div class="col-xs-3 table__action-dots p-0 hide-on-md-and-up">
                   <label class="item__dropdown d-inline">
-                    <div class="dropdown__button middle">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </div>
-
-                    <input type="checkbox" class="dropdown__input"/>
+                    <a class="dropdown__button middle t-center no-style" href="#!">
+                      <i class="fas fa-ellipsis-v m-auto c-black"></i>
+                    </a>
 
                     <ul class="dropdown__menu">
                       <li>
@@ -74,7 +72,9 @@
                   </label>
                 </div>
                 <div class="col-xs-4 col-sm-3 t-center c-grey">
-                  <%= order.customer.email %>
+                  <div class="truncate">
+                    <%= order.customer.email %>
+                  </div>
                 </div>
                 <div class="col-xs-4 col-sm-2 t-center money">
                   $<%= order.total %>
