@@ -1,7 +1,11 @@
 class ProductVariation < ApplicationRecord
+  default_scope -> { where('product_variations.status = 0') }
+
   belongs_to :product
-  has_many :order_items, dependent: :destroy
+  has_many :order_items
   validates :variation_meli_id, uniqueness: true, allow_nil: true
+
+  enum status: %w[active inactive]
 
   def update_data(ml_data)
     variation_ids = ml_data['variations'].map { |var| var['id'] }.compact
