@@ -5,6 +5,8 @@ class Category < ApplicationRecord
   validates :meli_id, uniqueness: true
   validates :name, presence: true
 
+  enum status: %w[active inactive]
+
   def clean_template_variations
     attributes = []
     template.each do |temp|
