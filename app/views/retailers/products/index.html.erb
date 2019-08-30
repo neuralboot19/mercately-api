@@ -56,11 +56,9 @@
                 <div class="col-xs-7 col-sm-3 t-center"><%= product.title %></div>
                 <div class="col-xs-1 table__action-dots p-0 hide-on-md-and-up">
                   <label class="item__dropdown d-inline">
-                    <div class="dropdown__button middle">
+                    <a class="dropdown__button middle" href="#!">
                       <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </div>
-
-                    <input type="checkbox" class="dropdown__input"/>
+                    </a>
 
                     <ul class="dropdown__menu">
                       <li>
@@ -156,6 +154,6 @@
 
 <div class="bubble hide-on-pc">
   <%= link_to new_retailers_product_path do %>
-    <i class="fas fa-plus m-20"></i>
+    <i class="fas fa-plus"></i>
   <% end %>
 </div>
