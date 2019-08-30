@@ -152,10 +152,12 @@
                     </tr>
                     <tr>
                       <td class="table_details__descriptor">Enlace:</td>
-                      <td class="table_details__value truncate">
-                        <a href="<%= @product.meli_permalink %>">
-                          <%= @product.meli_permalink %>
-                        </a>
+                      <td class="table_details__value">
+                        <div class="truncate">
+                          <a href="<%= @product.meli_permalink %>">
+                            <%= @product.meli_permalink %>
+                          </a>
+                        </div>
                       </td>
                     </tr>
                   </table>
