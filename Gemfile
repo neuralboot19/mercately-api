@@ -34,6 +34,8 @@ gem 'activestorage-cloudinary-service'
 
 gem "rack-reverse-proxy", require: "rack/reverse_proxy"
 
+# FontAwesome
+gem 'font_awesome5_rails', '~> 0.8.0'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

@@ -14,6 +14,10 @@ class OrderItem < ApplicationRecord
 
   delegate :meli_product_id, to: :product
 
+  def subtotal
+    quantity * unit_price
+  end
+
   private
 
     def check_stock

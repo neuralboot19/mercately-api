@@ -16,9 +16,9 @@
       </div>
       <div class="col-xs-12 col-md-12 in1-button-container">
         <!--<%= button_to('Más Información', '', class: 'general-button button-info') %>-->
-        <% if @retailer.connected_to_ml? %>
+        <% if current_retailer.connected_to_ml? %>
           <p class="connected-text">Conectado con Mercado Libre</p>
-          <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(@retailer), {method: :get, class: 'general-button button-connect'}) %>
+          <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(current_retailer), {method: :get, class: 'general-button button-connect'}) %>
         <% else %>
           <%= button_to('Conectar con Mercado Libre', ec_auth_url, class: 'general-button button-connect') %>
         <% end %>
@@ -30,7 +30,7 @@
 
   <br>
 
-  <%= link_to 'Importar productos de mercadolibre', retailers_mercadolibre_import_path(@retailer)%>
+  <%= link_to 'Importar productos de mercadolibre', retailers_mercadolibre_import_path(current_retailer)%>
 
 
   <h2>Meli info</h2>
@@ -40,40 +40,40 @@
     <p>Meli Refresh Token<%= current_retailer_user.retailer.meli_retailer.refresh_token %></p>
     <p>Updated at <%= current_retailer_user.retailer.meli_retailer.updated_at %></p>
 
-    <p>Nickname: <%= @retailer.meli_retailer.nickname %></p>
-    <p>email: <%= @retailer.meli_retailer.email %></p>
-    <p>points: <%= @retailer.meli_retailer.points %></p>
-    <p>Link <%= @retailer.meli_retailer.link %></p>
+    <p>Nickname: <%= current_retailer.meli_retailer.nickname %></p>
+    <p>email: <%= current_retailer.meli_retailer.email %></p>
+    <p>points: <%= current_retailer.meli_retailer.points %></p>
+    <p>Link <%= current_retailer.meli_retailer.link %></p>
 
 
-    <p>seller_experience <%= @retailer.meli_retailer.seller_experience %></p>
+    <p>seller_experience <%= current_retailer.meli_retailer.seller_experience %></p>
 
-    <p>seller_reputation_level_id <%= @retailer.meli_retailer.seller_reputation_level_id %></p>
+    <p>seller_reputation_level_id <%= current_retailer.meli_retailer.seller_reputation_level_id %></p>
 
-    <p>transactions_canceled <%= @retailer.meli_retailer.transactions_canceled %></p>
+    <p>transactions_canceled <%= current_retailer.meli_retailer.transactions_canceled %></p>
 
-    <p>transactions_completed <%= @retailer.meli_retailer.transactions_completed %></p>
+    <p>transactions_completed <%= current_retailer.meli_retailer.transactions_completed %></p>
 
-    <p>ratings_negative <%= @retailer.meli_retailer.ratings_negative %></p>
+    <p>ratings_negative <%= current_retailer.meli_retailer.ratings_negative %></p>
 
-    <p>ratings_neutral <%= @retailer.meli_retailer.ratings_neutral %></p>
+    <p>ratings_neutral <%= current_retailer.meli_retailer.ratings_neutral %></p>
 
-    <p>ratings_positive <%= @retailer.meli_retailer.ratings_positive %></p>
+    <p>ratings_positive <%= current_retailer.meli_retailer.ratings_positive %></p>
 
-    <p>ratings_total <%= @retailer.meli_retailer.ratings_total %></p>
+    <p>ratings_total <%= current_retailer.meli_retailer.ratings_total %></p>
 
   <% end %>
 
   <h1>Retailer Info</h1>
-   <p>ID: <%= @retailer.id_number %></p> 
-   <p>ID Type: <%= @retailer.id_type %></p>
-   <p>Address: <%= @retailer.address %></p>
-   <p>City: <%= @retailer.city %></p>
-   <p>state: <%= @retailer.state %></p>
-   <p>zip_code: <%= @retailer.zip_code %></p>
+   <p>ID: <%= current_retailer.id_number %></p> 
+   <p>ID Type: <%= current_retailer.id_type %></p>
+   <p>Address: <%= current_retailer.address %></p>
+   <p>City: <%= current_retailer.city %></p>
+   <p>state: <%= current_retailer.state %></p>
+   <p>zip_code: <%= current_retailer.zip_code %></p>
 
-   <p>phone_number: <%= @retailer.phone_number %></p>
-   <p>phone_verified: <%= @retailer.phone_verified %></p>
+   <p>phone_number: <%= current_retailer.phone_number %></p>
+   <p>phone_verified: <%= current_retailer.phone_verified %></p>
    -->
    </div>
 </div>

@@ -1,5 +1,5 @@
 $bg-color: #424242;
-$hl-color: #fe1651;
+$primary-color: #6E2A79;
 $muted-color: #cac8c8;
 $trans-time: 300ms;
 $width: 100%;
@@ -32,7 +32,7 @@ textarea {
   &:not(:placeholder-shown) ~ label {
     top: -14px;
     font-size: 12px;
-    color: $hl-color;
+    color: $primary-color;
   }
   &:focus ~ .bar:before {
     width: $width;
@@ -86,7 +86,7 @@ input:required, input:invalid {
     pointer-events: none;
   }
   &:focus ~ .select-label, &:valid ~ .select-label {
-    color: $hl-color;
+    color: $primary-color;
     top: -14px;
     transition: 0.2s ease all;
     font-size: 12px;
@@ -126,7 +126,7 @@ input:required, input:invalid {
     width: 0;
     bottom: 0px;
     position: absolute;
-    background: $hl-color;
+    background: $primary-color;
     transition: $trans-time ease all;
     left: 0%;
   }
@@ -149,11 +149,11 @@ input:required, input:invalid {
     box-shadow: 0 7px 14px rgba(0, 0, 0, 0.18), 0 5px 5px rgba(0, 0, 0, 0.12);
   }
   &.btn-link {
-    background: $hl-color;
-    color: mix(white, $hl-color, 80%);
+    background: $primary-color;
+    color: mix(white, $primary-color, 80%);
     &:hover {
-      background: darken($hl-color, 5%);
-      color: mix(white, $hl-color, 85%);
+      background: darken($primary-color, 5%);
+      color: mix(white, $primary-color, 85%);
     }
   }
   &.btn-submit {

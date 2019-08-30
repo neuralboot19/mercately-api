@@ -1,7 +1,7 @@
 <div class="aligner-row head">
   <h3 class="w-100">Editar cliente</h3>
   <div class="w-100 middle-right">
-    <%= link_to 'Ver cliente', retailers_customer_path(@retailer, @customer) %>
+    <%= link_to 'Ver cliente', retailers_customer_path(current_retailer, @customer) %>
     <%= link_to 'Atrás', retailers_customers_path, class: 'ml-8' %>
     <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
