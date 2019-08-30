@@ -1,30 +1,49 @@
-<header class="header">
-  <a class="menu-item hide-on-med-and-down" href="">
-    <%= image_tag 'dashboard/wallet-icon.png', class: 'menu-item-icon' %>
-  </a>
-  <div class="menu-item middle" id="user-profile">
-    <label class="dropdown">
-      <div class="dd-button middle">
-        <%= image_tag 'dashboard/man-icon.png', id: 'profile-icon' %>
-        <b id="profile-name"><%= current_retailer_user.email %></b>
-        <%= image_tag 'dashboard/down-white-arrow.png', id: 'arrow-down-icon' %>
+<header class="header--dashboard">
+  <div class="retailer container-fluid">
+    <div class="row middle-xs">
+      <div class="col-xs-3 pl-0">
+        <div class="dropdown__button middle hide-on-pc">
+          <label for="sidebar--toggle">
+            <i class="fas fa-bars"></i>
+          </label>
+        </div>
+
+        <div class="retailer__info">
+          <div class="d-inline info__logo"><strong><%= two_upper_case_letters(current_retailer.name) %></strong></div>
+          <div class="d-inline info__name"><strong><%= current_retailer.name %></strong></div>
+        </div>
       </div>
+      <div class="col-xs-6 t-center">
+        <%= image_tag 'dashboard/logo.png', class: "hide-on-pc" %>
+      </div>
+      <div class="col-xs-3">
+        <div id="user" class="f-right middle">
+          <label class="user__dropdown">
+            <div class="dropdown__button middle">
+              <strong class="hide-on-tablet-and-down"><%= current_retailer_user.email %></strong>
+              <i class="fas fa-sort-down mb-8 ml-8"></i>
+            </div>
 
-      <input type="checkbox" class="dd-input" id="test">
+            <input type="checkbox" class="dropdown__input"/>
 
-      <ul class="dd-menu">
-        <li>
-          <%= link_to 'Editar perfil', edit_retailer_user_registration_path %>
-        </li>
-        <li class="divider"></li>
-        <li>
-          <%= link_to 'Cerrar sesión', destroy_retailer_user_session_path, method: :delete %>
-        </li>
-      </ul>
-    </label>
+            <ul class="dropdown__menu">
+              <li>
+                <%= link_to edit_retailer_user_registration_path, class: 'no-style' do %>
+                  <i class="fas fa-user-cog mr-8"></i>
+                  Editar perfil
+                <% end %>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <%= link_to destroy_retailer_user_session_path, method: :delete, class: 'no-style' do %>
+                  <i class="fas fa-sign-out-alt mr-8"></i>
+                  Cerrar sesión
+                <% end %>
+              </li>
+            </ul>
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
-  <a class="menu-item hide-on-med-and-down" href="">
-    <%= image_tag 'dashboard/settings-icon.png', class: 'menu-item-icon' %>
-  </a>
-  <%= image_tag 'menu-icon.png', class: 'hide-on-med-and-up', id: 'menu-icon' %>
 </header>

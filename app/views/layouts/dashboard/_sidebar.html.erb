@@ -1,72 +1,52 @@
-<nav id="sidebar">
-  <div id="sidebar-head">
-    <%= image_tag 'mercately-logo.png', class: 'w-100' %>
-    <%= image_tag 'dashboard/sidebar-graph.png', class: 'w-100' %>
-    <h4>Total Earnings - June 2019</h4>
-    <h3>$ 2.478.00</h3>
+<input type="checkbox" id="sidebar--toggle" class="d-none" />
+<section id="sidebar">
+  <div id="sidebar__logo">
+    <%= image_tag 'dashboard/logo.png' %>
   </div>
-  <div class="aligner">
-
-    <%= link_to retailers_dashboard_path(current_retailer) do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_dashboard_path) %>">
-        <%= image_tag 'dashboard/user-icon.png', class: 'sidebar-icon' %>
-        Dashboard
-      </div>
-    <% end %>
-
-    <%= link_to retailers_customers_path(current_retailer) do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_customers_path) %>">
-        <%= image_tag 'dashboard/user-icon.png', class: 'sidebar-icon' %>
-        Clientes
-      </div>
-    <% end %>
-
-    <%= link_to retailers_products_path(current_retailer, status: 'active') do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_products_path) %>">
-        <%= image_tag 'dashboard/store-icon.png', class: 'sidebar-icon' %>
-        Productos
-      </div>
-    <% end %>
-
-    <%= link_to retailers_orders_path(current_retailer) do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_orders_path) %>">
-        <%= image_tag 'dashboard/order-icon.png', class: 'sidebar-icon' %>
-        Ventas/Reportes
-      </div>
-    <% end %>
-
-    <%= link_to retailers_integrations_path(current_retailer) do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_integrations_path) %>">
-        <%= image_tag 'dashboard/integration-icon.png', class: 'sidebar-icon' %>
-        Integraciones
-      </div>
-    <% end %>
-
-    <%= link_to retailers_questions_path(current_retailer) do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_questions_path) %>">
-        <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
-        Preguntas
-      </div>
-    <% end %>
-
-    <%= link_to retailers_chats_path(current_retailer) do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_chats_path) %>">
-        <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
-        Chats
-      </div>
-    <% end %>
-
-    <%= link_to retailers_templates_path(current_retailer) do %>
-      <div class="sidebar-item <%= 'selected' if current_page?(retailers_templates_path) %>">
-        <%= image_tag 'dashboard/message-icon.png', class: 'sidebar-icon' %>
-        Plantillas
-      </div>
-    <% end %>
-
-    <% if session[:old_retailer_id] %>
-      <div class="sidebar-item">
-        <%= link_to "Regresar al administrador", go_back_as_admin_admin_retailer_path(current_retailer) %>
-      </div>
-    <% end %>
+  <div id="sidebar__menu">
+    <ul class="menu no-style">
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_customers_path) %>">
+        <i class="item__icon fas fa-users"></i>
+        <%= link_to 'Clientes', retailers_customers_path(current_retailer), class: 'item__name no-style' %>
+      </li>
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_products_path) %>">
+        <i class="item__icon fas fa-poll"></i>
+        <%= link_to 'Productos', retailers_products_path(current_retailer, status: 'active'), class: 'item__name no-style' %>
+      </li>
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_orders_path) %>">
+        <i class="item__icon fas fa-clipboard-check"></i>
+        <%= link_to 'Ventas / Reportes', retailers_orders_path(current_retailer), class: 'item__name no-style' %>
+      </li>
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_chats_path) ||
+        current_page?(retailers_questions_path) || current_page?(retailers_templates_path) %>">
+        <input type="checkbox" id="item--inbox" class="item__checkbox" />
+        <i class="item__icon fas fa-mail-bulk"></i>
+        <label for="item--inbox" class="item__name">Inbox</label>
+        <i class="item__arrow right"></i>
+        <!--<b class="item__cookie">3</b>-->
+        <ul class="submenu no-style">
+          <li class="submenu__item">
+            <%= link_to 'Mensajes', retailers_chats_path(current_retailer), class: 'item__name no-style' %>
+            <!--<b class="item__cookie">1</b>-->
+          </li>
+          <li class="submenu__item">
+            <%= link_to 'Preguntas', retailers_questions_path(current_retailer), class: 'item__name no-style' %>
+            <!--<b class="item__cookie">2</b>-->
+          </li>
+          <li class="submenu__item">
+            <%= link_to 'Plantillas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
+          </li>
+        </ul>
+      </li>
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_integrations_path) %>">
+        <i class="item__icon fas fa-link"></i>
+        <%= link_to 'Integraciones', retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
+      </li>
+      <% if session[:old_retailer_id] %>
+        <li class="menu__item">
+          <%= link_to "Regresar al administrador", go_back_as_admin_admin_retailer_path(current_retailer) %>
+        </li>
+      <% end %>
+    </ul>
   </div>
-</nav>
+</section>

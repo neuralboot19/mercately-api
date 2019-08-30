@@ -1,0 +1,249 @@
+* {
+  max-width: 100%;
+  font-family: 'Poppins-Regular';
+}
+
+.slider {
+  max-width: none;
+  * {
+    max-width: none;
+  }
+
+  img {
+    width: 100%;
+  }
+}
+
+.row {
+  margin: 0 !important;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #ECEFF4;
+}
+
+ul, ol {
+  &.no-style {
+    list-style: none;
+    font-weight: normal;
+  }
+}
+
+a, b, i, u, strong, em {
+  &.no-style {
+    text-decoration: none;
+    font-weight: normal;
+  }
+}
+
+label:hover, a:hover {
+  cursor: pointer;
+}
+
+@for $space from 0 through 100 {
+  .w-#{$space} {
+    width: #{$space}px;
+  }
+
+  .m-#{$space} {
+    margin: #{$space}px !important;
+  }
+
+  .p-#{$space} {
+    padding: #{$space}px !important;
+  }
+
+  .my-#{$space} {
+    margin-top: #{$space}px !important;
+    margin-bottom: #{$space}px !important;
+  }
+
+  .py-#{$space} {
+    padding-top: #{$space}px !important;
+    padding-bottom: #{$space}px !important;
+  }
+
+  .mx-#{$space} {
+    margin-left: #{$space}px !important;
+    margin-right: #{$space}px !important;
+  }
+
+  .px-#{$space} {
+    padding-left: #{$space}px !important;
+    padding-right: #{$space}px !important;
+  }
+  @each $side in $sides {
+    .m#{str-slice($side, 0, 1)}-#{$space} {
+      margin-#{$side}: #{$space}px !important;
+    }
+
+    .p#{str-slice($side, 0, 1)}-#{$space} {
+      padding-#{$side}: #{$space}px !important;
+    }
+  }
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.mr-auto {
+  margin-right: auto;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.mb-auto {
+  margin-bottom: auto;
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.d-none {
+  display: none;
+}
+
+.d-inline {
+  display: inline;
+
+  &-block {
+    display: inline-block;
+  }
+}
+
+.t-right {
+  text-align: right;
+}
+
+.t-left {
+  text-align: left;
+}
+
+.t-center {
+  text-align: center;
+}
+
+.t-justify {
+  text-align: justify;
+}
+
+.f-right {
+  float: right;
+}
+
+.f-left {
+  float: left;
+}
+
+.middle {
+  display: flex;
+  align-items: center;
+}
+
+.c-primary {
+  color: $primary-color;
+}
+
+.c-secondary {
+  color: $secondary-color;
+}
+
+.c-grey {
+  color: #AAA;
+}
+
+.c-green {
+  color: #1DBF73;
+}
+
+.c-red {
+  color: #F00;
+}
+
+.c-black {
+  color: #000;
+}
+
+@media screen and (min-width: 1680px) {
+  .hide-on-2k {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1366px) {
+  .hide-on-lg {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1025px) {
+  .hide-on-pc {
+    display: none;
+  }
+}
+
+@media screen and (min-width: $screen-sm) {
+  .hide-on-md-and-up {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 480px) {
+  .hide-on-sm-and-up {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1680px) {
+  .hide-on-1080-and-down {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1366px) {
+  .hide-on-lg-and-down {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .hide-on-tablet-and-down {
+    display: none;
+  }
+
+  .reduced-container-padding {
+    padding: 0 1rem;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .hide-on-sm-and-down {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hide-on-xs {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .header--dashboard, #sidebar, .table__header, .btn {
+    font-size: 14px;
+  }
+
+  .table__item {
+    font-size: 13px;
+  }
+}

@@ -10,4 +10,10 @@ class Customer < ApplicationRecord
   def name
     "#{first_name} #{last_name}"
   end
+
+  def earnings
+    order_earnings = orders.map(&:total)
+
+    order_earnings.sum
+  end
 end

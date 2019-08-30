@@ -1,175 +1,194 @@
-<div class="aligner-row head">
-  <h3>Productos</h3>
-  <div class="w-100 middle-right">
-    <%= link_to 'Editar', edit_retailers_product_path(@retailer, @product) %>
-    <%= link_to 'Atrás', retailers_products_path(@retailer, status: @product.status), class: 'ml-8' %>
-    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
-  </div>
-</div>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-xs-12">
-      <div class="card mt-9">
-        <div class="box">
-          <div class="row">
-            <div class="col-xs-12">
-              <b id="product-title"><%= @product.title %></b>
-              <b class="product-text mx-4"> / </b>
-              <b class="product-text"><%= @product.category.name %></b>
-              <p class="m-0 product-text">
-                <%= @product.subtitle %>
-              </p>
-              <hr class="my-28 separator">
-            </div>
+<div class="container-fluid product">
+  <div class="row card">
+    <div class="col-xs-12 col-md-6">
+      <h1 class="my-0"><%= @product.title %></h1>
+      <div class="product__categories mt-0"><%= @product.category.name %></div>
+    </div>
+    <div class="col-xs-12 col-md-6 mt-16 t-right">
+      <%= link_to retailers_products_path(current_retailer, status: @product.status), class: 'btn btn--cta' do %>
+        <i class="fas fa-arrow-left mr-5"></i>
+        Volver
+      <% end %>
+      <%= link_to edit_retailers_product_path(current_retailer, @product), class: 'btn btn--cta' do %>
+        <i class="far fa-edit mr-5"></i>
+        Editar
+      <% end %>
+      <%= link_to edit_retailers_product_path(current_retailer, @product), class: 'btn btn--destroy' do %>
+        <i class="far fa-trash-alt mr-5"></i>
+        Archivar
+      <% end %>
+    </div>
+    <div class="col-xs-12 col-md-7 product__info">
+      <div class="box">
+        <div class="row center-xs middle-xs">
+          <div class="col-xs-9">
+            <section class="lazy slider">
+              <%= @product.images.each do |img| %>
+                <div>
+                  <%= cl_image_tag("#{img&.key}") %>
+                </div>
+              <% end %>
+            </section>
           </div>
-          <div class="row">
-            <div class="col-xs-12 col-md-7">
-              <div id="show-image" class="p-relative">
-                <% if @product.images.attached? %>
-                  <%= cl_image_tag("#{@product.images.first.key}") %>
-                <% end %>
-
-                <div id="product-price" class="circle big-circle bg-pink p-absolute">
-                  <%= @product.price %>$
+          <div class="col-xs-3">
+            <section class="vertical slider">
+              <%= @product.images.each do |img| %>
+                <div>
+                  <%= cl_image_tag("#{img&.key}") %>
                 </div>
-
-                <div id="product-base-price" class="circle bg-green p-absolute">
-                  <%= @product.base_price %>$
-                </div>
-              </div>
-              <div id="gallery">
-                <% if @product.images.attached? %>
-                  <% @product.images.each do |img| %>
-                    <div class="card m-8">
-                      <%= cl_image_tag("#{img.key}") %>
-                    </div>
-                  <% end %>
-                <% end %>
-              </div>
-
-              <p class="stock-info mr-12">
-                <strong class="product-stock-info">Cantidad inicial:</strong>
-                <%= @product.initial_quantity %>
-              </p>
-
-              <p class="stock-info mr-12">
-                <strong class="product-stock-info">Disponible:</strong>
-                <%= @product.available_quantity %>
-              </p>
-
-              <p class="stock-info mr-12">
-                <strong class="product-stock-info">Vendido:</strong>
-                <%= @product.sold_quantity %>
-              </p>
-            </div>
-            <div class="col-xs-12 col-md-5">
-              <p class="product-text">
-                <strong class="product-data-title">Inicio de la publicación:</strong><br/>
-                <%= @product.meli_start_time %>
-              </p>
-
-              <p class="product-text">
-                <strong class="product-data-title">Expiración:</strong><br/>
-                <%= @product.meli_expiration_time %>
-              </p>
-
-              <p class="product-text">
-                <strong class="product-data-title">Description:</strong><br/>
-                <%= @product.description %>
-              </p>
-
-              <p class="product-text">
-                <strong class="product-data-title">Buying mode:</strong><br/>
-                <%= @product.buying_mode %>
-              </p>
-
-              <p class="product-text">
-                <strong class="product-data-title">Status del producto:</strong><br/>
-                <%= @product.status %>
-              </p>
-
-              <p class="product-text">
-                <strong class="product-data-title">Status de la publicación:</strong><br/>
-                <%= @product.meli_status %>
-              </p>
-
-              <p class="product-text">
-                <strong class="product-data-title">Link:</strong><br/>
-                <a href="<%= @product.meli_permalink %>" target="_blank"><%= @product.meli_permalink %></a>
-              </p>
-
-              <p>
-                <div class="cookie">
-                  <%= @product.condition %>
-                </div>
-              </p>
-            </div>
+              <% end %>
+            </section>
           </div>
-          <% if @product.ml_attributes.present? %>
-            <div class="row">
-              <div class="col-xs-12 col-md-12">
-                <h2 class="product-data-title">Detalles:</h2>
-              </div>
-              <div class="row col-xs-12 col-md-12">
-                <% @product.ml_attributes.each do |attribute| %>
-                  <div class="col-xs-12 col-md-6">
-                    <h3><%= attribute["name"] || attribute["id"] %></h3>
-                  </div>
-                  <div class="col-xs-12 col-md-6">
-                    <p><%= attribute["value_name"] %></p>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-          <% if @product.product_variations.present? %>
-            <div class="row">
-              <div class="col-xs-12 col-md-12">
-                <h2 class="product-data-title">Variaciones:</h2>
-              </div>
-              <div class="row col-xs-12 col-md-12">
-                <% @product.product_variations.each do |variation| %>
-                  <div class="row col-xs-12 col-md-12" style="border: 1px solid black;margin-top:10px;">
-                    <% variation.data['attribute_combinations'].each do |var| %>
-                      <div class="col-xs-12 col-md-6">
-                        <h3><%= var["name"] || var["id"] %></h3>
-                      </div>
-                      <div class="col-xs-12 col-md-6">
-                        <p><%= var["value_name"] || var["value_id"] %></p>
-                      </div>
-                    <% end %>
-                    <% variation.data.keys.reject {|k| k == 'attribute_combinations' }.each do |var| %>
-                      <div class="col-xs-12 col-md-6">
-                        <h3><%= var %></h3>
-                      </div>
-                      <div class="col-xs-12 col-md-6">
-                        <p><%= variation.data[var] %></p>
-                      </div>
-                    <% end %>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          <% end %>
-          <div class="row">
-            <div class="col-xs-12">
-              <h2 class="product-data-title">Ganancias:</h2>
-              <%= image_tag 'example_graph.png', class: 'w-100' %>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 c-grey my-8">Descripción:</div>
+          <div class="col-xs-12">
+            <div class="p-16 c-grey t-justify">
+              <%= @product.description %>
             </div>
           </div>
         </div>
-
+        <div class="row info__details">
+          <div class="col-xs-12 col-sm-6">
+            <% if @product.ml_attributes.present? %>
+              <table class="table_details mt-40">
+                <% @product.ml_attributes.each do |attribute| %>
+                  <tr>
+                    <td class="table_details__descriptor">
+                      <%= attribute["name"] || attribute["id"] %>
+                    </td>
+                    <td class="table_details__value">
+                      <%= attribute["value_name"] %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            <% end %>
+          </div>
+          <div class="col-xs-12 col-sm-6">
+            <table class="table_details mt-40">
+              <tr>
+                <td class="table_details__descriptor">Precio</td>
+                <td class="table_details__value">$<%= @product.price %></td>
+              </tr>
+              <% if @product.product_variations.present? %>
+                <% @product.product_variations.each do |variation| %>
+                  <% variation.data['attribute_combinations'].each do |var| %>
+                    <tr>
+                      <td class="table_details__descriptor">Origen</td>
+                      <%= var["name"] || var["id"] %>
+                      </td>
+                      <td class="table_details__value truncate">
+                        <%= var["value_name"] || var["value_id"] %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-5">
+      <div class="box">
+        <div class="row">
+          <div class="col-xs-12 card__module p-0">
+            <div class="card__title"><i class="fas fa-money-bill-alt c-primary"></i> Finanzas</div>
+            <div class="box">
+              <div class="row card__submodule center-xs">
+                <div class="col-xs-12 submodule col-sm-4">
+                  <h2><%= @product.order_items.count %></h2>
+                  <h6>Ordenes</h6>
+                </div>
+                <div class="col-xs-12 submodule col-sm-4">
+                  <h2><%= @product.order_items.includes(:order).where(orders: { merc_status: 'success' }).count %></h2>
+                  <h6>Ventas</h6>
+                </div>
+                <div class="col-xs-12 submodule col-sm-4">
+                  <h2>$<%= @product.earned %></h2>
+                  <h6>Ganancia</h6>
+                </div>
+              </div>
+              <div class="row card__submodule middle-xs center-xs">
+                <div class="col-xs-12">
+                  <div class="circle my-16">
+                    <h2><%= @product.available_quantity.to_i %></h2>
+                    <h6>Disponible</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 card__module">
+            <div class="card__title"><i class="fas fa-shopping-cart c-primary"></i> Mercado Libre Info</div>
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 col-sm-6">
+                  <table class="table_details table_details--underlined w-100">
+                    <tr>
+                      <td class="table_details__descriptor">Preguntas:</td>
+                      <td class="table_details__value"><%= @product.questions.count %></td>
+                    </tr>
+                    <tr>
+                      <td class="table_details__descriptor">Visitas:</td>
+                      <td class="table_details__value">500</td>
+                    </tr>
+                    <tr>
+                      <td class="table_details__descriptor">Expiracion:</td>
+                      <td class="table_details__value"><%= @product.meli_expiration_time %></td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  <table class="table_details table_details--underlined w-100">
+                    <tr>
+                      <td class="table_details__descriptor">Condición:</td>
+                      <td class="table_details__value"><%= humanize_ml_condition(@product.condition) %></td>
+                    </tr>
+                    <tr>
+                      <td class="table_details__descriptor">Tipo:</td>
+                      <td class="table_details__value"><%= @product.meli_listing_type_id %></td>
+                    </tr>
+                    <tr>
+                      <td class="table_details__descriptor">Enlace:</td>
+                      <td class="table_details__value">
+                        <div class="truncate">
+                          <a href="<%= @product.meli_permalink %>">
+                            <%= @product.meli_permalink %>
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<script charset="utf-8">
-  document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll('#gallery .card img').forEach(function(el) {
-      el.onclick = function() {
-        document.querySelector('#show-image img').src = el.src;
-      }
+<script type="text/javascript">
+  $(document).on('ready', function() {
+    $(".vertical").slick({
+      vertical: true,
+      verticalSwiping: true,
+      slidesToShow: 3,
+      asNavFor: '.lazy',
+      focusOnSelect: true,
+      centerMode: true,
+      arrows: false,
+      slidesToScroll: 5
+    });
+    $(".lazy").slick({
+      asNavFor: '.vertical',
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      arrows: false,
+      fade: true
     });
   });
 </script>

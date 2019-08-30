@@ -1,4 +1,6 @@
 class Product < ApplicationRecord
+  paginates_per 50
+
   belongs_to :retailer
   belongs_to :category
   has_many :order_items
@@ -128,6 +130,14 @@ class Product < ApplicationRecord
   def upload_variations_to_ml
     p_ml = MercadoLibre::ProductVariations.new(retailer)
     p_ml.create_product_variations(self)
+  end
+
+  def earned
+    earned = []
+    order_items.each do |oi|
+      earned << (oi.quantity * oi.unit_price)
+    end
+    earned.sum
   end
 
   private
