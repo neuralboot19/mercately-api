@@ -19,19 +19,20 @@
       </div>
     </div>
 
-    <!--
     <div class="worm container-fluid">
       <div class="row center-xs start-sm">
         <div class="col-xs-12">
-          <div class="worm__btn worm__btn--selected">Todas</div
-          ><div class="worm__btn">Completadas</div
-          ><div class="worm__btn">Canceladas</div
-          ><div class="worm__btn">Pendientes</div
-          >
+          <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'all')) %>">
+            <%= link_to 'Todas', retailers_orders_path(current_retailer, status: 'all') %></div
+          ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'pending')) %>">
+            <%= link_to 'Pendientes', retailers_orders_path(current_retailer, status: 'pending') %></div
+          ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'success')) %>">
+            <%= link_to 'Exitosas', retailers_orders_path(current_retailer, status: 'success') %></div
+          ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'cancelled')) %>">
+            <%= link_to 'Canceladas', retailers_orders_path(current_retailer, status: 'cancelled') %></div>
         </div>
       </div>
     </div>
-    -->
 
     <div class="container-fluid orders">
       <div class="row">
