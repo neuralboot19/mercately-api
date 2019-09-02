@@ -34,7 +34,7 @@
               <i class="fas fa-comment-alt mr-5"></i>
               Chat de la orden
             <% end %>
-            <%= link_to retailers_orders_path, class: 'btn btn--cta' do %>
+            <%= link_to retailers_orders_path(current_retailer, status: @order.merc_status), class: 'btn btn--cta' do %>
               <i class="fas fa-arrow-left mr-5"></i>
               Volver
             <% end %>
