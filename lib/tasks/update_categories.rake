@@ -1,8 +1,10 @@
 task update_categories: :environment do
   puts 'Downloading categories'
   ActiveRecord::Base.transaction do
+    @ml_array = []
     faraday_request_get('https://api.mercadolibre.com/sites/MEC/categories').each do |res|
-      father = Category.find_or_create_by(meli_id: res['id'], name: res['name'])
+      father = Category.find_or_create_by(meli_id: res['id'])
+      father.update(name: res['name'])
       ml_category_import(father, res['id'])
     end
   end
@@ -12,22 +14,30 @@ task update_categories: :environment do
     Product.where.not(meli_product_id: nil).each do |product|
       MercadoLibre::Products.new(product.retailer).pull_update(product.meli_product_id)
     end
+
+    @ml_array = @ml_array.compact.uniq
+    current_array = Category.pluck(:meli_id).compact.uniq
+    current_array -= @ml_array
+
+    Category.where(meli_id: current_array).update_all(status: 'inactive')
   end
   puts 'Done.'
 end
 
 def ml_category_import(father, cat_id)
+  @ml_array << cat_id
   template = faraday_request_get("https://api.mercadolibre.com/categories/#{cat_id}/attributes")
   father.update(template: template) if template.present?
   meli_url = 'https://api.mercadolibre.com/categories/'
   faraday_request_get("#{meli_url}#{cat_id}")['children_categories'].each do |children_category|
-    child = Category.create_with(name: children_category['name'], parent_id: father.id)
-      .find_or_create_by(meli_id: children_category['id'])
-    child.update(parent_id: father.id) unless child.parent
+    child = Category.find_or_create_by(meli_id: children_category['id'])
+    child.update(name: children_category['name'], parent_id: father.id)
+
     grandchild_count = faraday_request_get("#{meli_url}#{children_category['id']}")['children_categories'].count
     if grandchild_count.positive?
       ml_category_import(child, children_category['id'])
     else
+      @ml_array << child.meli_id
       template = faraday_request_get("https://api.mercadolibre.com/categories/#{child.meli_id}/attributes")
       child.update(template: template) if template.present?
       child

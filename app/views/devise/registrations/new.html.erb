@@ -34,7 +34,8 @@
 
           <div class="group my-16">
             <%= f.check_box :agree_terms, class: 'f-left w-auto', style: 'width: auto;' %>
-            <%= f.label :agree_terms, 'Acepto los términos y condiciones', class: 'p-static' %>
+            <%= f.label :agree_terms, 'Acepto los', class: 'p-static' %>
+            <%= link_to 'términos y condiciones', terms_path, target: :_blank, class: 'link-register-terms' %>
           </div>
 
           <div class="btn-box">

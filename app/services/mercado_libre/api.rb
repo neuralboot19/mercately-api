@@ -91,5 +91,13 @@ module MercadoLibre
       }
       "https://api.mercadolibre.com/orders/#{meli_order_id}/feedback?#{params.to_query}"
     end
+
+    def get_category_url(category_meli_id)
+      "https://api.mercadolibre.com/categories/#{category_meli_id}"
+    end
+
+    def get_category_attributes_url(category_meli_id)
+      "https://api.mercadolibre.com/categories/#{category_meli_id}/attributes"
+    end
   end
 end

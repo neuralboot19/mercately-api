@@ -7,6 +7,9 @@ Rails.application.routes.draw do
   ActiveAdmin.routes(self)
   get '/blog' => redirect("https://www.mercately.com/blog/")
 
+  get '/privacidad', to: 'pages#privacy', as: :privacy
+  get '/terminos', to: 'pages#terms', as: :terms
+
   namespace :retailers do
     scope '/:slug' do
       # get 'dashboard', to: 'pages#dashboard', as: :dashboard
@@ -16,7 +19,7 @@ Rails.application.routes.draw do
         get 'messages', to: 'messages#chat'
         post 'send_message', to: 'messages#send_message', as: :send_message
       end
-      resources :customers
+      resources :customers, except: [:destroy, :show]
       resources :messages, only: [:index, :show]
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question

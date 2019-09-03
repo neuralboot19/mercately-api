@@ -1,7 +1,7 @@
 <div class="aligner-row head">
   <h3>Chat</h3>
   <div class="w-100 middle-right">
-    <%= link_to 'Atrás', @return_to == 'order' ? retailers_order_path(@retailer, @order) : retailers_chats_path(@retailer), class: 'ml-8' %>
+    <%= link_to 'Atrás', @return_to == 'order' ? retailers_order_path(current_retailer, @order) : retailers_chats_path(current_retailer), class: 'ml-8' %>
     <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
 </div>
@@ -91,7 +91,7 @@
     </div>
     <div id="templates" class="col-xs-12 col-sm-3">
       <% Retailer.filter_templates(current_retailer, 'chats').each do |template| %>
-        <%= form_tag retailers_order_send_message_path(@retailer, @order), method: :post do %>
+        <%= form_tag retailers_order_send_message_path(current_retailer, @order), method: :post do %>
           <%= hidden_field_tag :answer, template.answer %>
           <h3 class="template__title"><%= template.title %></h3>
           <p class="template__body"><%= template.answer.truncate(140) %></p>

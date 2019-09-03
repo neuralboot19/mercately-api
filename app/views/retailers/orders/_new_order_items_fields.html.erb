@@ -1,7 +1,7 @@
 <div class="box">
   <div class="nested-fields row">
     <div class="group col-xs-12 col-md-4">
-      <%= f.select :product_id, Retailer.active_products(@retailer).pluck(:title, :id), { include_blank: false }, onchange: 'getProductInfo(this);' %>
+      <%= f.select :product_id, Retailer.active_products(current_retailer).pluck(:title, :id), { include_blank: false }, onchange: 'getProductInfo(this);' %>
       <%= f.label :product_id, class: 'select-label' %>
       <span class="bar"></span>
     </div>

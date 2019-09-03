@@ -1,7 +1,7 @@
 <div class="aligner-row head">
   <h3>Pregunta</h3>
   <div class="w-100 middle-right">
-    <%= link_to 'Atrás', retailers_questions_path(@retailer), class: 'ml-8' %>
+    <%= link_to 'Atrás', retailers_questions_path(current_retailer), class: 'ml-8' %>
     <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
   </div>
 </div>
@@ -60,7 +60,7 @@
                     </div>
                 </div>
                 <% unless @question.answer %>
-                  <%= form_tag retailers_answer_question_path(@retailer, @question), method: :put do %>
+                  <%= form_tag retailers_answer_question_path(current_retailer, @question), method: :put do %>
                     <div class="row">
                       <div class="group col-xs-12 col-md-11 pr-4 mt-0">
                         <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'w-100', style: 'height: 77px;' %>
@@ -83,7 +83,7 @@
     <% unless @question.answer %>
       <div id="templates" class="col-xs-12 col-sm-3">
         <% Retailer.filter_templates(current_retailer, 'questions').each do |template| %>
-          <%= form_tag retailers_answer_question_path(@retailer, @question), method: :put do %>
+          <%= form_tag retailers_answer_question_path(current_retailer, @question), method: :put do %>
             <%= hidden_field_tag :answer, template.answer %>
             <h3 class="template__title"><%= template.title %></h3>
             <p class="template__body"><%= template.answer.truncate(140) %></p>
