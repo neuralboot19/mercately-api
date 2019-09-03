@@ -62,7 +62,7 @@ class Retailers::OrdersController < RetailersController
 
     def set_orders
       @orders = Order.retailer_orders(@retailer.id, params['status'])
-        .order("created_at desc").page(params[:page])
+        .order('created_at desc').page(params[:page])
     end
 
     # Only allow a trusted parameter "white list" through.
