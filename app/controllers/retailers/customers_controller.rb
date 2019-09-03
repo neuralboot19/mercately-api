@@ -1,9 +1,9 @@
 class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :set_customers, only: :index
 
   # GET /products
   def index
-    @customers = Customer.all
   end
 
   # GET /products/1
@@ -25,7 +25,7 @@ class Retailers::CustomersController < RetailersController
     @customer.retailer_id = @retailer.id
 
     if @customer.save
-      redirect_to retailers_customer_path(@retailer, @customer), notice: 'Customer was successfully created.'
+      redirect_to retailers_customers_path(@retailer), notice: 'Cliente creado con éxito.'
     else
       render :new
     end
@@ -34,7 +34,7 @@ class Retailers::CustomersController < RetailersController
   # PATCH/PUT /products/1
   def update
     if @customer.update(customer_params)
-      redirect_to retailers_customer_path(@retailer, @customer), notice: 'Customer was successfully updated.'
+      redirect_to retailers_customers_path(@retailer), notice: 'Cliente actualizado con éxito.'
     else
       render :edit
     end
@@ -51,6 +51,10 @@ class Retailers::CustomersController < RetailersController
     # Use callbacks to share common setup or constraints between actions.
     def set_customer
       @customer = Customer.find(params[:id])
+    end
+
+    def set_customers
+      @customers = Customer.retailer_customers(current_retailer.id)
     end
 
     # Only allow a trusted parameter "white list" through.
