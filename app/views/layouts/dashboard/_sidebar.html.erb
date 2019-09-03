@@ -5,20 +5,20 @@
   </div>
   <div id="sidebar__menu">
     <ul class="menu no-style">
-      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_customers_path) %>">
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_customers_path(current_retailer)) %>">
         <i class="item__icon fas fa-users"></i>
         <%= link_to 'Clientes', retailers_customers_path(current_retailer), class: 'item__name no-style' %>
       </li>
-      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_products_path) %>">
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_products_path(current_retailer)) %>">
         <i class="item__icon fas fa-poll"></i>
         <%= link_to 'Productos', retailers_products_path(current_retailer, status: 'active'), class: 'item__name no-style' %>
       </li>
-      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_orders_path) %>">
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_orders_path(current_retailer)) %>">
         <i class="item__icon fas fa-clipboard-check"></i>
         <%= link_to 'Ventas / Reportes', retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
       </li>
-      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_chats_path) ||
-        current_page?(retailers_questions_path) || current_page?(retailers_templates_path) %>">
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_chats_path(current_retailer)) ||
+        current_page?(retailers_questions_path(current_retailer)) || current_page?(retailers_templates_path(current_retailer)) %>">
         <input type="checkbox" id="item--inbox" class="item__checkbox" />
         <i class="item__icon fas fa-mail-bulk"></i>
         <label for="item--inbox" class="item__name">Inbox</label>
@@ -38,7 +38,7 @@
           </li>
         </ul>
       </li>
-      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_integrations_path) %>">
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_integrations_path(current_retailer)) %>">
         <i class="item__icon fas fa-link"></i>
         <%= link_to 'Integraciones', retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
       </li>
