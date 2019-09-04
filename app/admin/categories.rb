@@ -1,5 +1,5 @@
 ActiveAdmin.register Category do
-  scope :active
+  scope :active, default: true
   scope :inactive
 
   index do
