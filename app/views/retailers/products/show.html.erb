@@ -49,9 +49,14 @@
           </div>
         </div>
         <div class="row info__details">
-          <div class="col-xs-12 col-sm-6">
+          <div class="col-xs-12 c-grey my-8">Características:</div>
+          <div class="col-xs-12 col-sm-12">
             <% if @product.ml_attributes.present? %>
-              <table class="table_details mt-40">
+              <table class="table_details w-100">
+                <tr>
+                  <td class="table_details__descriptor">Precio</td>
+                  <td class="table_details__value">$<%= @product.price %></td>
+                </tr>
                 <% @product.ml_attributes.each do |attribute| %>
                   <tr>
                     <td class="table_details__descriptor">
@@ -65,28 +70,43 @@
               </table>
             <% end %>
           </div>
-          <div class="col-xs-12 col-sm-6">
-            <table class="table_details mt-40">
-              <tr>
-                <td class="table_details__descriptor">Precio</td>
-                <td class="table_details__value">$<%= @product.price %></td>
-              </tr>
-              <% if @product.product_variations.present? %>
-                <% @product.product_variations.each do |variation| %>
-                  <% variation.data['attribute_combinations'].each do |var| %>
+          <% if @product.product_variations.present? %>
+            <div class="col-xs-12 c-grey my-8">Variaciones:</div>
+            <div class="col-xs-12 col-sm-12">
+              <table class="table_details w-100">
+                <% @product.product_variations[0..-2].each do |variation| %>
+                  <% variation.data['attribute_combinations'][0..-2].each do |var| %>
                     <tr>
-                      <td class="table_details__descriptor">Origen</td>
-                      <%= var["name"] || var["id"] %>
+                      <td class="table_details__descriptor">
+                        <%= var["name"] || var["id"] %>
                       </td>
                       <td class="table_details__value truncate">
                         <%= var["value_name"] || var["value_id"] %>
                       </td>
                     </tr>
                   <% end %>
+                  <tr class="bottom-divider">
+                    <td class="table_details__descriptor">
+                      <%= variation.data['attribute_combinations'].last["name"] || variation.data['attribute_combinations'].last["id"] %>
+                    </td>
+                    <td class="table_details__value truncate">
+                      <%= variation.data['attribute_combinations'].last["value_name"] || variation.data['attribute_combinations'].last["value_id"] %>
+                    </td>
+                  </tr>
                 <% end %>
-              <% end %>
-            </table>
-          </div>
+                <% @product.product_variations.last.data['attribute_combinations'].each do |var| %>
+                  <tr>
+                    <td class="table_details__descriptor">
+                      <%= var["name"] || var["id"] %>
+                    </td>
+                    <td class="table_details__value truncate">
+                      <%= var["value_name"] || var["value_id"] %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
@@ -99,7 +119,7 @@
               <div class="row card__submodule center-xs">
                 <div class="col-xs-12 submodule col-sm-4">
                   <h2><%= @product.order_items.count %></h2>
-                  <h6>Ordenes</h6>
+                  <h6>Órdenes</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">
                   <h2><%= @product.order_items.includes(:order).where(orders: { merc_status: 'success' }).count %></h2>
@@ -154,8 +174,8 @@
                       <td class="table_details__descriptor">Enlace:</td>
                       <td class="table_details__value">
                         <div class="truncate">
-                          <a href="<%= @product.meli_permalink %>">
-                            <%= @product.meli_permalink %>
+                          <a href="<%= @product.meli_permalink %>" target="_blank">
+                            Ver
                           </a>
                         </div>
                       </td>
