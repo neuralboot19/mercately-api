@@ -7,10 +7,6 @@ class Customer < ApplicationRecord
 
   enum id_type: [:cedula, :pasaporte, :ruc]
 
-  scope :retailer_customers, lambda { |retailer_id|
-    Customer.where(retailer_id: retailer_id)
-  }
-
   def name
     "#{first_name} #{last_name}"
   end

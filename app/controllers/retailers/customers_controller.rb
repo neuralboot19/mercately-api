@@ -1,9 +1,9 @@
 class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
-  before_action :set_customers, only: :index
 
   # GET /products
   def index
+    @customers = current_retailer.customers
   end
 
   # GET /products/1
@@ -51,10 +51,6 @@ class Retailers::CustomersController < RetailersController
     # Use callbacks to share common setup or constraints between actions.
     def set_customer
       @customer = Customer.find(params[:id])
-    end
-
-    def set_customers
-      @customers = Customer.retailer_customers(current_retailer.id)
     end
 
     # Only allow a trusted parameter "white list" through.
