@@ -1,20 +1,15 @@
-<div class="box">
-  <div class="nested-fields row">
-    <div class="group col-xs-12 col-md-4">
-      <%= f.select :product_id, Retailer.active_products(current_retailer).pluck(:title, :id), { include_blank: false }, onchange: 'getProductInfo(this);' %>
-      <%= f.label :product_id, class: 'select-label' %>
-      <span class="bar"></span>
-    </div>
-    <div class="group col-xs-12 col-md-4">
-      <%= f.number_field :quantity, placeholder: '' %>
-      <%= f.label :quantity %>
-      <span class="bar"></span>
-    </div>
-    <div class="group col-xs-12 col-md-4">
-      <%= f.text_field :unit_price, placeholder: '', onkeyup: 'editPrice(this);' %>
-      <%= f.label :unit_price %>
-      <span class="bar"></span>
-    </div>
-    <%= link_to_remove_association 'Remover item', f %>
+<div class="nested-fields">
+  <div class="my-16">
+    <%= f.label :product_id %>
+    <%= f.select :product_id, Retailer.active_products(current_retailer).pluck(:title, :id), { include_blank: false, class: 'input' }, onchange: 'getProductInfo(this);' %>
   </div>
+  <div class="my-16">
+    <%= f.label :quantity %>
+    <%= f.number_field :quantity, class: 'input' %>
+  </div>
+  <div class="my-16">
+    <%= f.label :unit_price %>
+    <%= f.number_field :unit_price, class: 'input', onkeyup: 'editPrice(this);' %>
+  </div>
+  <%= link_to_remove_association 'Remover item', f, class: 'btn btn--destroy mb-16' %>
 </div>

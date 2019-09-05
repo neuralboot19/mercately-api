@@ -1,56 +1,42 @@
 <div class="box">
   <div class="row">
-    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'dropzone col-xs-12' }) do |f| %>
+    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'p-0 col-xs-12' }) do |f| %>
       <div class="box">
         <div class="row">
           <%= f.hidden_field :category_id %>
           <%= f.hidden_field :id %>
 
-          <div class="group col-xs-12 col-md-6">
-            <%= f.text_field :title, placeholder: '' %>
-            <%= f.label :title %>
-            <span class="bar"></span>
-          </div>
+          <fieldset class="col-xs-12 fieldset">
+            <legend>Información básica</legend>
+            <div class="mb-8">
+              <%= f.label :title, 'Título' %><br/>
+              <%= f.text_field :title, class: 'input' %>
+            </div>
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 pl-0 col-sm-4">
+                  <%= f.label :condition, 'Condición' %><br/>
+                  <%= f.select :condition, Product.conditions.keys.to_a, class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-sm-4">
+                  <%= f.label :price, 'Precio' %><br/>
+                  <%= f.text_field :price, class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-sm-4 pr-0">
+                  <%= f.label :available_quantity, 'Cantidad disponible' %><br/>
+                  <%= f.number_field :available_quantity, class: 'input' %>
+                </div>
+              </div>
+            </div>
+          </fieldset>
 
-          <div class="group col-xs-12 col-md-6">
-            <%= f.text_field :subtitle, placeholder: '' %>
-            <%= f.label :subtitle %>
-            <span class="bar"></span>
-          </div>
-
-          <div id="root" class="col-xs-12">
-            <% if action_name == 'edit' || action_name == 'update' %>
-              <input type="checkbox" name="edit_category" id="edit_category" />
-              <label for="edit_category">Editar categoria</label>
-            <% end %>
-            <div id="categories">
+          <% if action_name == 'new' || action_name == 'create' %>
+            <div id="root" class="col-xs-12">
+              <%# <input type="checkbox" name="edit_category" id="edit_category" /> %>
+              <%# <label for="edit_category">Editar categoria</label> %>
               <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9"></select>
             </div>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.text_field :price, placeholder: '' %>
-            <%= f.label :price %>
-            <span class="bar"></span>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.number_field :available_quantity, placeholder: '' %>
-            <%= f.label :available_quantity %>
-            <span class="bar"></span>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.select :buying_mode, Product.buying_modes.keys.to_a %>
-            <%= f.label :buying_mode, class: 'select-label' %>
-            <span class="bar"></span>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.select :condition, Product.conditions.keys.to_a %>
-            <%= f.label :condition, class: 'select-label' %>
-            <span class="bar"></span>
-          </div>
+          <% end %>
 
           <% if action_name == 'edit' || action_name == 'update' %>
             <div class="group col-xs-12 col-md-6">
@@ -77,12 +63,11 @@
             <span class="bar"></span>
           </div>
 
-          <div id="variations-title" class="group variations-container-title col-xs-12">
-            <h2>Variaciones</h2>
-            <p onclick="appendTemplate();">Agregar variación</p>
-          </div>
-
-          <div id="variations-container" class="row col-xs-12"></div>
+          <fieldset class="col-xs-12 fieldset">
+            <legend>Variaciones</legend>
+            <div id="variations-container" class="row col-xs-12"></div>
+            <a class="btn btn--cta" onclick="appendTemplate();">Agregar variación</a>
+          </fieldset>
 
           <div id="uploaderImages" class="uploader center w-100 col-xs-12">
             <%= f.label :images, 'Arrastra las imágenes o haz click aquí para seleccionarlas', class: 'py-20 uploader-text' %>
