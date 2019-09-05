@@ -1,0 +1,49 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="center">
+        <%= form_for(resource, as: resource_name, url: retailers_update_profile_path(resource_name), method: :put) do |f| %>
+          <%= render "devise/shared/error_messages", resource: resource %>
+          <h2 class="sign mt-100">Actualizar cuenta</h2>
+
+          <div class="group">
+            <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
+              <%= retailer.text_field :name, autofocus: true, placeholder: '', class: 'input-standarization' %>
+              <%= retailer.label :name, 'Nombre del comercio' %>
+              <span class="bar"></span>
+            <% end %>
+          </div>
+
+          <div class="group">
+            <%= f.text_field :email, autocomplete: "email", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :email, 'Correo' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group">
+            <%= f.password_field :current_password, autocomplete: "current-password", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :current_password, 'Contraseña actual' %>
+            <span class="bar"></span>
+            <i><small>Ingresar sólo para cambio de contraseña</small></i>
+          </div>
+
+          <div class="group">
+            <%= f.password_field :password, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :password, 'Nueva contraseña' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="group mb-16">
+            <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+            <%= f.label :password_confirmation, 'Confirme contraseña' %>
+            <span class="bar"></span>
+          </div>
+
+          <div class="btn-box">
+            <%= f.submit 'Actualizar', class: 'btn-btn btn-submit w-100' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
