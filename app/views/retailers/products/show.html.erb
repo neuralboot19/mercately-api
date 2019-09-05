@@ -25,7 +25,7 @@
             <section class="lazy slider">
               <% @product.images.each do |img| %>
                 <div>
-                  <%= cl_image_tag("#{img&.key}") %>
+                  <%# cl_image_tag("#{img&.key}") %>
                 </div>
               <% end %>
             </section>
@@ -34,7 +34,7 @@
             <section class="vertical slider">
               <% @product.images.each do |img| %>
                 <div>
-                  <%= cl_image_tag("#{img&.key}") %>
+                  <%# cl_image_tag("#{img&.key}") %>
                 </div>
               <% end %>
             </section>

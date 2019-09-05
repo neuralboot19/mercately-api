@@ -12,7 +12,7 @@
         <% end %>
         <div class="my-16">
           <%= f.label :customer_id %>
-          <%= f.select :customer_id, current_retailer.customers.pluck(:meli_nickname, :id), include_blank: false, class: 'input' %>
+          <%= f.select :customer_id, current_retailer.customers.pluck(:meli_nickname, :id), { include_blank: false }, class: 'input' %>
         </div>
         <div class="my-16">
           <%= f.label :merc_status, 'Status' %>
@@ -35,21 +35,24 @@
             <%= f.text_area :feedback_message, class: 'feedback-message' %>
           </div>
         </div>
-        <fieldset class="fieldset mt-16">
+        <fieldset class="fieldset mt-61">
           <legend>Items en la orden</legend>
           <div id="order_items" class="w-100">
             <%= f.fields_for :order_items do |oi| %>
               <%= render "order_items_fields", f: oi %>
             <% end %>
             <% if @order.id.blank? || @order.merc_status == 'pending' %>
-              <div class="links mt-16">
-                <%= link_to_add_association 'Añadir item', f, :order_items, partial: 'new_order_items_fields', class: 'btn btn--cta' %>
+              <div class="links mt-16 mb-24 t-right">
+                <%= link_to_add_association f, :order_items, partial: 'new_order_items_fields', class: 'btn btn--cta' do %>
+                  <i class="fas fa-plus mr-5"></i>
+                  Añadir Item
+                <% end %>
               </div>
             <% end %>
           </div>
         </fieldset>
         <div class="btn-box col-xs-12">
-          <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+          <%= f.submit 'Guardar', class: 'btn-btn btn-submit m-0' %>
         </div>
       </fieldset>
     <% end %>
