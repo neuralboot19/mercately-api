@@ -17,6 +17,12 @@ class Order < ApplicationRecord
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
   delegate :retailer_id, :retailer, to: :customer
 
+  scope :retailer_orders, lambda { |retailer_id, status|
+    orders = Order.joins(:customer).where('customers.retailer_id = ?', retailer_id)
+    orders = orders.where(merc_status: Order.merc_statuses[status]) if status.present? && status != 'all'
+    orders
+  }
+
   def total
     total = order_items.map do |order_item|
       order_item.unit_price * order_item.quantity

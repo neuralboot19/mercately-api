@@ -3,7 +3,8 @@ task update_categories: :environment do
   ActiveRecord::Base.transaction do
     @ml_array = []
     faraday_request_get('https://api.mercadolibre.com/sites/MEC/categories').each do |res|
-      father = Category.find_or_create_by(meli_id: res['id'], name: res['name'])
+      father = Category.find_or_create_by(meli_id: res['id'])
+      father.update(name: res['name'])
       ml_category_import(father, res['id'])
     end
   end
@@ -29,9 +30,9 @@ def ml_category_import(father, cat_id)
   father.update(template: template) if template.present?
   meli_url = 'https://api.mercadolibre.com/categories/'
   faraday_request_get("#{meli_url}#{cat_id}")['children_categories'].each do |children_category|
-    child = Category.create_with(name: children_category['name'], parent_id: father.id)
-      .find_or_create_by(meli_id: children_category['id'])
-    child.update(parent_id: father.id) unless child.parent
+    child = Category.find_or_create_by(meli_id: children_category['id'])
+    child.update(name: children_category['name'], parent_id: father.id)
+
     grandchild_count = faraday_request_get("#{meli_url}#{children_category['id']}")['children_categories'].count
     if grandchild_count.positive?
       ml_category_import(child, children_category['id'])

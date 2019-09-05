@@ -124,7 +124,8 @@ module MercadoLibre
       conn = Connection.prepare_connection(url)
       response = response.merge(Connection.get_request(conn))
 
-      return unless response
+      return if response.blank? ||
+                response['error'].present?
 
       product = update(response)
       @product_publish.automatic_re_publish(product)

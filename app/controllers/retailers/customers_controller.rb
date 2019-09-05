@@ -3,7 +3,7 @@ class Retailers::CustomersController < RetailersController
 
   # GET /products
   def index
-    @customers = Customer.all
+    @customers = current_retailer.customers
   end
 
   # GET /products/1
@@ -25,7 +25,7 @@ class Retailers::CustomersController < RetailersController
     @customer.retailer_id = @retailer.id
 
     if @customer.save
-      redirect_to retailers_customer_path(@retailer, @customer), notice: 'Customer was successfully created.'
+      redirect_to retailers_customers_path(@retailer), notice: 'Cliente creado con éxito.'
     else
       render :new
     end
@@ -34,7 +34,7 @@ class Retailers::CustomersController < RetailersController
   # PATCH/PUT /products/1
   def update
     if @customer.update(customer_params)
-      redirect_to retailers_customer_path(@retailer, @customer), notice: 'Customer was successfully updated.'
+      redirect_to retailers_customers_path(@retailer), notice: 'Cliente actualizado con éxito.'
     else
       render :edit
     end

@@ -1,8 +1,14 @@
 ActiveAdmin.register Category do
+  scope :active, default: true
+  scope :inactive
+
   index do
     selectable_column
     id_column
     column :name
+    column 'Productos' do |cat|
+      cat.products.size
+    end
     column :meli_id
     column :status
     actions

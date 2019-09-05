@@ -1,9 +1,9 @@
 class Retailers::OrdersController < RetailersController
   before_action :set_order, only: [:show, :edit, :update, :destroy]
+  before_action :set_orders, only: [:index]
 
   # GET /orders
   def index
-    @orders = Order.joins(:customer).where('customers.retailer_id = ?', @retailer.id.to_s).page(params[:page])
   end
 
   # GET /orders/1
@@ -58,6 +58,11 @@ class Retailers::OrdersController < RetailersController
       end
 
       output_items
+    end
+
+    def set_orders
+      @orders = Order.retailer_orders(@retailer.id, params['status'])
+        .order('created_at desc').page(params[:page])
     end
 
     # Only allow a trusted parameter "white list" through.

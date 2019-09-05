@@ -30,6 +30,16 @@
       <meta property="og:image" content="https://www.mercately.com/facebook_preview.jpg" />
       <meta property="og:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar." />
       <meta property="og:site_name" content="Mercately" />
+
+      <!-- Global site tag (gtag.js) - Google Analytics -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=<%=ENV['GOOGLE_TRACKING_ID']%>"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', "<%= ENV['GOOGLE_TRACKING_ID'] %>");
+      </script>
     <% end %>
   </head>
 
