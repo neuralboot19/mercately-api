@@ -89,7 +89,7 @@
               <% @product.images.each do |img| %>
                 <div id="image-container-<%= img.id.to_s %>" class="col-xs-12 col-md-3 edit-card" onmouseover="showMain(this);" onmouseleave="hideMain(this);">
                   <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', onclick: 'removeImage(this);', id: "delete-#{img.id.to_s}" %>
-                  <%# cl_image_tag("#{img.key}", class: "image-tag", id: "image-#{img.id.to_s}") %>
+                  <%= cl_image_tag("#{img.key}", class: "image-tag", id: "image-#{img.id.to_s}") %>
                   <p class="main-image-text" id="main-image-<%= img.id.to_s %>" onclick="setMainImage(this);">Foto principal</p>
                 </div>
               <% end %>
