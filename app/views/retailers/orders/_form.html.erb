@@ -12,7 +12,7 @@
         <% end %>
         <div class="my-16">
           <%= f.label :customer_id %>
-          <%= f.select :customer_id, current_retailer.customers.pluck(:meli_nickname, :id), { include_blank: false }, class: 'input' %>
+          <%= f.select :customer_id, current_retailer.customers.map { |c| [c.name, c.id] }, { include_blank: false }, class: 'input' %>
         </div>
         <div class="my-16">
           <%= f.label :merc_status, 'Status' %>
