@@ -6,17 +6,17 @@
         <input type="hidden" id="hidden-merc-status" value="<%= @order.merc_status %>" />
         <% if (action_name == 'edit' || action_name == 'update') && @order.meli_order_id.present? %>
           <div class="my-16">
-          <%= f.select :status, Order.statuses.keys.to_a, include_blank: false, disabled: Order.statuses.keys.to_a, class: 'input' %>
+            <%= f.select :status, Order.statuses.keys.collect { |s| [ Order.enum_translation(:status, s), s ]}, include_blank: false, disabled: Order.statuses.keys.to_a, class: 'input' %>
             <%= f.label :status, 'Status MercadoLibre' %>
           </div>
         <% end %>
         <div class="my-16">
           <%= f.label :customer_id %>
-          <%= f.select :customer_id, current_retailer.customers.pluck(:meli_nickname, :id), include_blank: false, class: 'input' %>
+          <%= f.select :customer_id, current_retailer.customers.collect { |c| [ c.full_name, c.id ]}, include_blank: false, class: 'input' %>
         </div>
         <div class="my-16">
           <%= f.label :merc_status, 'Status' %>
-          <%= f.select :merc_status, Order.merc_statuses.keys.to_a, { include_blank: false, disabled: @order.disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
+           <%= f.select :merc_status, Order.merc_statuses.keys.collect { |s| [ Order.enum_translation(:merc_statuses, s), s ]}, { include_blank: false, disabled: @order.disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
         </div>
         <div id="feedback-container" class="row w-100">
           <div class="w-100">
