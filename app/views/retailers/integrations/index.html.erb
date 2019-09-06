@@ -1,79 +1,32 @@
-<div class="aligner-row head">
-  <h3>Integraciones</h3>
-  <div class="w-100 middle-right">
-    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row middle-xs">
+        <div class="col-xs-12 col-sm-12">
+          <h1 class="d-inline name">Integraciones</h1>
+          <div class="index__desc">
+            Plataformas
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 integration-item-container">
+          <div class="col-xs-12 integration-logo-container">
+            <%= image_tag 'mercado-libre-logo-5.png', class: 'logo-integration-platform' %>
+          </div>
+          <div class="col-xs-12 col-md-12 btn-box">
+            <% if current_retailer.connected_to_ml? %>
+              <p class="connected-text">Conectado con Mercado Libre</p>
+              <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(current_retailer), {method: :get, class: 'general-button btn-btn btn-submit'}) %>
+            <% else %>
+              <%= button_to('Conectar con Mercado Libre', ec_auth_url, class: 'general-button btn-btn btn-submit') %>
+            <% end %>
+          </div>
+        </div>
+      </div>    
+    </div>
   </div>
-</div>
-
-<div class="container-fluid">
-  <div class="row col-xs-12 col-md-12 main-container">
-    <div class="col-xs-12 col-md-12">
-      <p class="pt-title">Plataformas</p>
-    </div>
-    <div class="row col-xs-12 col-md-6 in1-container">
-      <div class="col-xs-12 col-md-12 in1-logo-container">
-        <%= image_tag 'mercado-libre-logo-5.png', class: 'logo-integration-platform' %>
-      </div>
-      <div class="col-xs-12 col-md-12 in1-button-container">
-        <!--<%= button_to('Más Información', '', class: 'general-button button-info') %>-->
-        <% if current_retailer.connected_to_ml? %>
-          <p class="connected-text">Conectado con Mercado Libre</p>
-          <%= button_to('Importar productos de Mercado Libre', retailers_mercadolibre_import_path(current_retailer), {method: :get, class: 'general-button button-connect'}) %>
-        <% else %>
-          <%= button_to('Conectar con Mercado Libre', ec_auth_url, class: 'general-button button-connect') %>
-        <% end %>
-      </div>
-    </div>
-
-
-  <!--<a href="<%= ec_auth_url %>">Conectarse Con mercadolibre</a>
-
-  <br>
-
-  <%= link_to 'Importar productos de mercadolibre', retailers_mercadolibre_import_path(current_retailer)%>
-
-
-  <h2>Meli info</h2>
-  <% if current_retailer_user.retailer.meli_retailer %>
-    <p>Access Token: <%= current_retailer_user.retailer.meli_retailer.access_token %></p>
-    <p>Meli User Id: <%= current_retailer_user.retailer.meli_retailer.meli_user_id %></p>
-    <p>Meli Refresh Token<%= current_retailer_user.retailer.meli_retailer.refresh_token %></p>
-    <p>Updated at <%= current_retailer_user.retailer.meli_retailer.updated_at %></p>
-
-    <p>Nickname: <%= current_retailer.meli_retailer.nickname %></p>
-    <p>email: <%= current_retailer.meli_retailer.email %></p>
-    <p>points: <%= current_retailer.meli_retailer.points %></p>
-    <p>Link <%= current_retailer.meli_retailer.link %></p>
-
-
-    <p>seller_experience <%= current_retailer.meli_retailer.seller_experience %></p>
-
-    <p>seller_reputation_level_id <%= current_retailer.meli_retailer.seller_reputation_level_id %></p>
-
-    <p>transactions_canceled <%= current_retailer.meli_retailer.transactions_canceled %></p>
-
-    <p>transactions_completed <%= current_retailer.meli_retailer.transactions_completed %></p>
-
-    <p>ratings_negative <%= current_retailer.meli_retailer.ratings_negative %></p>
-
-    <p>ratings_neutral <%= current_retailer.meli_retailer.ratings_neutral %></p>
-
-    <p>ratings_positive <%= current_retailer.meli_retailer.ratings_positive %></p>
-
-    <p>ratings_total <%= current_retailer.meli_retailer.ratings_total %></p>
-
-  <% end %>
-
-  <h1>Retailer Info</h1>
-   <p>ID: <%= current_retailer.id_number %></p> 
-   <p>ID Type: <%= current_retailer.id_type %></p>
-   <p>Address: <%= current_retailer.address %></p>
-   <p>City: <%= current_retailer.city %></p>
-   <p>state: <%= current_retailer.state %></p>
-   <p>zip_code: <%= current_retailer.zip_code %></p>
-
-   <p>phone_number: <%= current_retailer.phone_number %></p>
-   <p>phone_verified: <%= current_retailer.phone_verified %></p>
-   -->
-   </div>
 </div>
