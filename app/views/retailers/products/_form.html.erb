@@ -16,7 +16,7 @@
               <div class="row">
                 <div class="col-xs-12 pl-0 col-sm-4">
                   <%= f.label :condition, 'Condición' %><br/>
-                  <%= f.select :condition, Product.conditions.keys.to_a, class: 'input' %>
+                   <%= f.select :condition, Product.conditions.keys.collect { |c| [ Product.enum_translation(:condition, c), c ]}, class: 'input' %>
                 </div>
                 <div class="col-xs-12 col-sm-4">
                   <%= f.label :price, 'Precio' %><br/>
@@ -40,7 +40,7 @@
 
           <% if action_name == 'edit' || action_name == 'update' %>
             <div class="group col-xs-12 col-md-6">
-              <%= f.select :status, Product.statuses.keys.to_a, {}, onchange: 'updateMeliStatus(this);' %>
+              <%= f.select :status, Product.statuses.keys.collect { |s| [ Product.enum_translation(:status, s), s ]}, {}, onchange: 'updateMeliStatus(this);' %>
               <%= f.label :status, 'Status del producto', class: 'select-label' %>
               <span class="bar"></span>
               <% if @product.meli_product_id && @product.status != 'archived' %>
@@ -49,7 +49,7 @@
             </div>
 
             <div class="group col-xs-12 col-md-6">
-              <%= f.select :meli_status, Product.meli_statuses.keys.to_a, disabled: @product.disabled_meli_statuses %>
+              <%= f.select :meli_status, Product.meli_statuses.keys.collect { |s| [ Product.enum_translation(:meli_status, s), s ]}, disabled: @product.disabled_meli_statuses %>
               <%= f.label :meli_status, 'Status de la publicación', class: 'select-label' %>
               <span class="bar"></span>
             </div>

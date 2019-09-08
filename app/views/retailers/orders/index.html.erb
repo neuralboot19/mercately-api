@@ -49,7 +49,7 @@
               <div class="divider"></div>
               <div class="table__item row middle-xs">
                 <div class="col-xs-9 mb-12 col-sm-3 t-center">
-                  <b class="cookie <%= cookie(order.merc_status) %>"><%= order.merc_status %></b>
+                  <b class="cookie <%= cookie(order.merc_status) %>"><%= Order.enum_translation(:merc_status, order.merc_status)  %></b>
                 </div>
                 <div class="col-xs-3 table__action-dots p-0 hide-on-md-and-up">
                   <label class="item__dropdown d-inline">
