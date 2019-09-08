@@ -14,17 +14,19 @@
 //= require jquery
 //= require activestorage
 //= require cocoon
+//= require select2
+//= require select2_locale_es
 
-document.addEventListener("DOMContentLoaded", function() {
-  if(document.getElementById("menu-icon")) {
-    document.getElementById("menu-icon").onclick = function(){
-      if (document.getElementById("sidebar").style.left == "-300px") {
-        document.getElementById("sidebar").style.left = "0";
-      }else{
-        document.getElementById("sidebar").style.left = "-300px";
-      }
-    }
-  }
+$(document).ready(function () {
+  $( "select" ).select2({
+    language: "es-ES"
+  });
+
+  $('.fieldset').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
+    $( "select" ).select2({
+      language: "es-ES"
+    });
+  });
 });
 
 function ToastBuilder(options) {

@@ -1,10 +1,27 @@
-<div class="box">
-  <div class="nested-fields row">
+<div class="nested-fields box">
+  <div class="row my-16 bottom-xs">
     <%= f.hidden_field :id %>
-    <div class="my-16">
-      <%= f.hidden_field :product_id %>
-      <label for="product_name">Producto</label>
-      <p id="product_name" class="p-content"><%= f.object.product.title %></p>
+    <%= f.hidden_field :product_id %>
+    <div class="col-xs-12 col-sm-4">
+      <div class="input">
+        <%= f.object.product.title %>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+      <%= f.label :quantity, 'Cantidad' %>
+      <%= f.number_field :quantity, readonly: f.object.order.merc_status != 'pending', value: 1, class: 'input' %>
+    </div>
+    <div class="col-xs-12 col-sm-3">
+      <%= f.label :unit_price, 'Precio unitario' %>
+      <%= f.number_field :unit_price, readonly: f.object.order.merc_status != 'pending', class: 'input', onkeyup: 'editPrice(this);' %>
+    </div>
+    <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mt-16">
+      <% if f.object.order.merc_status == 'pending' %>
+        <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
+          <i class="fas fa-times mr-5"></i>
+          Remover item
+        <% end %>
+      <% end %>
     </div>
     <% if f.object.product_variation_id.present? %>
       <%= f.hidden_field :product_variation_id %>
@@ -15,16 +32,9 @@
         <% end %>
       </div>
     <% end %>
-    <div class="my-16">
-      <%= f.label :quantity %>
-      <%= f.number_field :quantity, readonly: f.object.order.merc_status != 'pending' %>
+
+    <div class="col-xs-12 pr-0">
+      <div class="divider mt-24"></div>
     </div>
-    <div class="my-16">
-      <%= f.label :unit_price %>
-      <%= f.text_field :unit_price, readonly: f.object.order.merc_status != 'pending', onkeyup: 'editPrice(this);' %>
-    </div>
-    <% if f.object.order.merc_status == 'pending' %>
-      <%= link_to_remove_association 'Remover item', f, class: 'btn btn--destroy' %>
-    <% end %>
   </div>
 </div>
