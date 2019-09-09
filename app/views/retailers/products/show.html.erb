@@ -4,7 +4,7 @@
       <h1 class="my-0"><%= @product.title %></h1>
       <div class="product__categories mt-0"><%= @product.category.name %></div>
     </div>
-    <div class="col-xs-12 col-md-6 mt-16 t-right">
+    <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
       <%= link_to retailers_products_path(current_retailer, status: @product.status), class: 'btn btn--cta' do %>
         <i class="fas fa-arrow-left mr-5"></i>
         Volver
@@ -25,13 +25,13 @@
             <section class="lazy slider">
               <% @product.images.each do |img| %>
                 <div class="image-slider-container">
-                  <%= cl_image_tag("#{img&.key}") %>
+                  <%= cl_image_tag("#{img&.key}", class: 'my-35') %>
                 </div>
               <% end %>
             </section>
           </div>
           <div class="col-xs-3">
-            <section class="vertical slider draggable-container">
+            <section class="vertical slider draggable-container my-35">
               <% @product.images.each do |img| %>
                 <div>
                   <%= cl_image_tag("#{img&.key}") %>

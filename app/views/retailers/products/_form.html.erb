@@ -32,8 +32,6 @@
 
           <% if action_name == 'new' || action_name == 'create' %>
             <div id="root" class="col-xs-12 my-16">
-              <%# <input type="checkbox" name="edit_category" id="edit_category" /> %>
-              <%# <label for="edit_category">Editar categoria</label> %>
               <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9">
                 <option value="" selected>Seleccione una categoría</option>
               </select>
@@ -97,7 +95,7 @@
             <%= f.hidden_field :main_picture_id %>
             <input type="hidden" id="new-main-image" name="new_main_image" />
             <input type="hidden" id="new-main-image-name" name="new_main_image_name" />
-            <%= image_tag 'dashboard/delete-icon.png', class: 'not-display', id: "delete-image" %>
+            <%= image_tag 'dashboard/delete-icon.png', class: 'd-none', id: "delete-image" %>
 
             <% if @product.images.attached? %>
               <div class="col-xs-12 col-md-12 current-images-container">

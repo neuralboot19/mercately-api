@@ -422,7 +422,7 @@ function showUploader() {
 
 function hideUploader() {
   var uploader = document.getElementById("uploaderImages");
-  uploader.className = "not-display";
+  uploader.className = "d-none";
 }
 
 function showVariationContainer() {
@@ -432,7 +432,7 @@ function showVariationContainer() {
 
 function hideVariationContainer() {
   var container = document.getElementById("variations-container");
-  container.className = "not-display";
+  container.className = "d-none";
 }
 
 function showVariationTitle() {
@@ -455,7 +455,7 @@ function showVariationTitle() {
 
 function hideVariationTitle() {
   var container = document.getElementById("variations-title");
-  container.className = "not-display";
+  container.className = "d-none";
 }
 
 function disableAvailableQuantity() {
@@ -518,7 +518,7 @@ function setMainImage(image) {
     }
 
     hiddenMainImage.setAttribute("value", `${imageId}`);
-    image.setAttribute("class", "main-image-text do-display");
+    image.setAttribute("class", "main-image-text d-block");
 
     hiddenMainImage = document.getElementById("new-main-image");
     if (hiddenMainImage.value) {
@@ -532,7 +532,7 @@ function setMainImage(image) {
 function showMain(image) {
   imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
   mainImage = document.getElementById(`main-image-${imageId}`);
-  mainImage.setAttribute("class", "main-image-text do-display");
+  mainImage.setAttribute("class", "main-image-text d-block");
 }
 
 function hideMain(image) {
@@ -541,7 +541,7 @@ function hideMain(image) {
 
   if (imageId !== hiddenMainImage.value) {
     mainImage = document.getElementById(`main-image-${imageId}`);
-    mainImage.setAttribute("class", "not-display");
+    mainImage.setAttribute("class", "d-none");
   }
 }
 
@@ -556,7 +556,7 @@ function setMainNewImage(image) {
     }
 
     hiddenMainImage.setAttribute("value", `${imageId}`);
-    image.setAttribute("class", "main-image-text do-display");
+    image.setAttribute("class", "main-image-text d-block");
 
     hiddenMainImage = document.getElementById("product_main_picture_id");
     if (hiddenMainImage.value) {
@@ -574,7 +574,7 @@ function setMainNewImage(image) {
 function showNewMain(image) {
   imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
   mainImage = document.getElementById(`main-new-image-${imageId}`);
-  mainImage.setAttribute("class", "main-image-text do-display");
+  mainImage.setAttribute("class", "main-image-text d-block");
 }
 
 function hideNewMain(image) {
@@ -583,7 +583,7 @@ function hideNewMain(image) {
 
   if (imageId !== hiddenMainImage.value) {
     mainImage = document.getElementById(`main-new-image-${imageId}`);
-    mainImage.setAttribute("class", "not-display");
+    mainImage.setAttribute("class", "d-none");
   }
 }
 
@@ -674,7 +674,7 @@ document.addEventListener("DOMContentLoaded", function() {
     mainPictureId = document.getElementById('product_main_picture_id').value;
     if (mainPictureId) {
       mainImage = document.getElementById(`main-image-${mainPictureId}`);
-      mainImage.setAttribute("class", "main-image-text do-display");
+      mainImage.setAttribute("class", "main-image-text d-block");
     }
   }
 });
