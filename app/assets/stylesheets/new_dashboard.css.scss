@@ -1,10 +1,28 @@
 @import 'font_awesome5_webfont';
+@import 'select2';
 @import 'new_dashboard/_fonts';
 @import 'new_dashboard/_vars';
 @import 'new_dashboard/_components';
 @import 'new_dashboard/_helpers';
 @import 'devise';
 @import 'retailers/integrations';
+
+.select2-container--default .select2-selection--single {
+  border-color: #ddd;
+}
+
+.select2-container .select2-selection--single {
+  height: auto;
+  padding: 5px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 100%;
+}
+
+.select2-container {
+  width: 100% !important;
+}
 
 // Sidebar v2
 #sidebar {
