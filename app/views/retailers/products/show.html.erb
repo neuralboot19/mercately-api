@@ -13,9 +13,11 @@
         <i class="far fa-edit mr-5"></i>
         Editar
       <% end %>
-      <%= link_to edit_retailers_product_path(current_retailer, @product), class: 'btn btn--destroy' do %>
-        <i class="far fa-trash-alt mr-5"></i>
-        Archivar
+      <% if @product.status != 'archived' %>
+        <%= link_to retailers_archive_product_path(current_retailer, @product), method: :put, data: { confirm: 'Está seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
+          <i class="far fa-trash-alt mr-5"></i>
+          Archivar
+        <% end %>
       <% end %>
     </div>
     <div class="col-xs-12 col-md-7 product__info">
@@ -43,7 +45,7 @@
         <div class="row">
           <div class="col-xs-12 c-grey my-8">Descripción:</div>
           <div class="col-xs-12">
-            <div class="p-16 c-grey t-justify">
+            <div class="p-16 c-grey t-justify text-overflow">
               <%= @product.description %>
             </div>
           </div>
@@ -96,9 +98,12 @@
                     <td class="table_details__value truncate">
                       <%= variation.data['attribute_combinations'].last["value_name"] || variation.data['attribute_combinations'].last["value_id"] %>
                     </td>
+                    <td class="table_details__value truncate">
+                      <%= variation.data["available_quantity"].to_s + ' disponibles' %>
+                    </td>
                   </tr>
                 <% end %>
-                <% @product.product_variations.last.data['attribute_combinations'].each do |var| %>
+                <% @product.product_variations.last.data['attribute_combinations'].each_with_index do |var, index| %>
                   <tr>
                     <td class="table_details__descriptor">
                       <%= var["name"] || var["id"] %>
@@ -106,6 +111,11 @@
                     <td class="table_details__value truncate">
                       <%= var["value_name"] || var["value_id"] %>
                     </td>
+                    <% if index == @product.product_variations.last.data['attribute_combinations'].size - 1 %>
+                      <td class="table_details__value truncate">
+                        <%= @product.product_variations.last.data["available_quantity"].to_s  + ' disponibles' %>
+                      </td>
+                    <% end %>
                   </tr>
                 <% end %>
               </table>

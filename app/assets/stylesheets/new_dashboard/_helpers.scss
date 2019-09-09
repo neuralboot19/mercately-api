@@ -182,6 +182,12 @@ label:hover, a:hover {
   opacity: 0.5;
 }
 
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
 @media screen and (min-width: 1680px) {
   .hide-on-2k {
     display: none;
