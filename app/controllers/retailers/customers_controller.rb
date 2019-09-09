@@ -3,7 +3,7 @@ class Retailers::CustomersController < RetailersController
 
   # GET /products
   def index
-    @customers = current_retailer.customers
+    @customers = current_retailer.customers.page(params[:page])
   end
 
   # GET /products/1

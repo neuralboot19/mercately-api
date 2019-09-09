@@ -55,7 +55,13 @@ function appendSelect(currentElement) {
     select.innerHTML = '';
     var json = JSON.parse(data);
     var child_categories = json['child_categories'];
-    if(child_categories.length <= 0) {
+
+    if (!currentElement.selectedOptions[0].value) {
+      var selectDelete = document.getElementById("childs_2");
+      root.removeChild(selectDelete);
+    }
+
+    if(currentElement.selectedOptions[0].value && child_categories.length <= 0) {
       template = json['template'];
 
       if (template.length > 0) {
@@ -120,7 +126,7 @@ function appendTemplate() {
   variationElement.setAttribute("id", `variation-element-${countVariations - 1}`);
   variationElement.setAttribute("class", "row variation-element col-xs-12");
   variationDiv = document.createElement("div");
-  variationDiv.setAttribute("class", "group col-xs-12 remove-variation-container");
+  variationDiv.setAttribute("class", "col-xs-12 remove-variation-container");
 
   if (currentTemplate == undefined) {
     pElement = document.createElement('p');
@@ -174,33 +180,33 @@ function addCommonVariationElements(container) {
 
   for (comElem in commonElements) {
     variationDiv = document.createElement("div");
-    variationDiv.setAttribute("class", "group col-xs-12 col-md-6");
+    variationDiv.setAttribute("class", "col-xs-12 pl-0 col-md-6");
 
     attrName = `product[variations][${countVariations - 1}][${commonElements[comElem]["name"]}]`;
     attrId = `product_variations_${countVariations - 1}_${commonElements[comElem]["name"]}`;
     htmlFor = `product_variations_${countVariations - 1}_${commonElements[comElem]["name"]}`;
     labelText = commonElements[comElem]["label"];
 
+    label = document.createElement("label");
+    label.innerHTML = labelText;
+    label.htmlFor = htmlFor;
+    label.setAttribute("class", "variations-label");
+    variationDiv.appendChild(label);
+
+    br = document.createElement("br");
+    variationDiv.appendChild(br);
+
     newElement = document.createElement(commonElements[comElem]["element"]);
     newElement.setAttribute("name", attrName);
     newElement.setAttribute("id", attrId);
     newElement.setAttribute("type", commonElements[comElem]["element_type"]);
+    newElement.setAttribute("class", "input");
 
     if (currentTemplate && currentTemplate["data"][commonElements[comElem]["name"]] !== undefined) {
       newElement.setAttribute("value", `${currentTemplate["data"][commonElements[comElem]["name"]]}`);
     }
 
     variationDiv.appendChild(newElement);
-
-    label = document.createElement("label");
-    label.innerHTML = labelText;
-    label.htmlFor = htmlFor;
-    label.setAttribute("class", "select-label");
-    variationDiv.appendChild(label);
-
-    span = document.createElement("span");
-    span.setAttribute("class", "bar");
-    variationDiv.appendChild(span);
 
     container.appendChild(variationDiv);
   }
@@ -226,7 +232,7 @@ function addCommonVariationElements(container) {
 
 function manageNumberUnit(template, index) {
   variationDiv = document.createElement("div");
-  variationDiv.setAttribute("class", "group col-xs-6 col-md-3");
+  variationDiv.setAttribute("class", "col-xs-6 col-md-3");
 
   newElement = document.createElement("select");
   values = template[index]["allowed_units"];
@@ -262,9 +268,9 @@ function buildElement(template, index) {
   }
 
   //if (elementInfo["type"] === "number_unit") {
-  //  variationDiv.setAttribute("class", "group col-xs-6 col-md-3");
+  //  variationDiv.setAttribute("class", "col-xs-6 col-md-3");
   //} else {
-    variationDiv.setAttribute("class", "group col-xs-12 col-md-6");
+    variationDiv.setAttribute("class", "col-xs-12 pl-0 col-md-6");
   //}
 
   setElement(variationDiv, newElement, template, index, false);
@@ -328,9 +334,19 @@ function setElement(container, element, template, index, isNumberUnit) {
     }
   }
 
+  label = document.createElement("label");
+  label.innerHTML = labelText;
+  label.htmlFor = htmlFor;
+  label.setAttribute("class", "variations-label");
+  container.appendChild(label);
+
+  br = document.createElement("br");
+  container.appendChild(br);
+
   element.setAttribute("name", attrName);
   element.setAttribute("id", attrId);
   element.setAttribute("type", elementInfo["element_type"]);
+  element.setAttribute("class", "input");
 
   if (productInfo && currentTemplate === undefined) {
     for (pi in productInfo['ml_attributes']) {
@@ -353,16 +369,6 @@ function setElement(container, element, template, index, isNumberUnit) {
   }
 
   container.appendChild(element);
-
-  label = document.createElement("label");
-  label.innerHTML = labelText;
-  label.htmlFor = htmlFor;
-  label.setAttribute("class", "select-label");
-  container.appendChild(label);
-
-  span = document.createElement("span");
-  span.setAttribute("class", "bar");
-  container.appendChild(span);
 }
 
 function readVariationURL(input) {
@@ -444,7 +450,7 @@ function showVariationTitle() {
   }
 
   var container = document.getElementById("variations-title");
-  container.className = "group variations-container-title col-xs-12";
+  container.className = "variations-container-title col-xs-12";
 }
 
 function hideVariationTitle() {
@@ -455,7 +461,7 @@ function hideVariationTitle() {
 function disableAvailableQuantity() {
   inputAvailableQuantity = document.getElementById("product_available_quantity");
   inputAvailableQuantity.setAttribute("disabled", "disabled");
-  inputAvailableQuantity.setAttribute("class", "opacity-5");
+  inputAvailableQuantity.setAttribute("class", "opacity-5 input");
   inputAvailableQuantity.setAttribute("title", "Debe llenar este campo en variaciones");
 }
 
@@ -463,6 +469,7 @@ function enableAvailableQuantity() {
   inputAvailableQuantity = document.getElementById("product_available_quantity");
   inputAvailableQuantity.removeAttribute("disabled");
   inputAvailableQuantity.removeAttribute("class");
+  inputAvailableQuantity.setAttribute("class", "input");
   inputAvailableQuantity.removeAttribute("title");
 }
 
@@ -644,19 +651,22 @@ document.addEventListener("DOMContentLoaded", function() {
       "element_type": ""
     }];
 
-  var roots  = JSON.parse('<%= Category.active.roots.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
-  for(var root_position in roots) {
-    opt = roots[root_position]
-    var el = document.createElement("option");
-    el.textContent = opt.name;
-    el.value = opt.id;
-    childs_select.appendChild(el)
-  };
+  productId = document.getElementById('product_id').value;
+
+  if (!productId) {
+    var roots  = JSON.parse('<%= Category.active.roots.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
+    for(var root_position in roots) {
+      opt = roots[root_position]
+      var el = document.createElement("option");
+      el.textContent = opt.name;
+      el.value = opt.id;
+      childs_select.appendChild(el)
+    };
+  }
 
   hideVariationContainer();
   hideVariationTitle();
 
-  productId = document.getElementById('product_id').value;
   if (productId) {
     originalCategoryId = document.getElementById("product_category_id").value;
     getProduct();

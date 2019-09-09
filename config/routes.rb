@@ -3,6 +3,10 @@ Rails.application.routes.draw do
 
   devise_for :retailer_users, controllers: { registrations: 'retailer_users/registrations',
     sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords' }
+  as :retailer_user do
+    get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info
+  end
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   get '/blog' => redirect("https://www.mercately.com/blog/")
@@ -12,7 +16,6 @@ Rails.application.routes.draw do
 
   namespace :retailers do
     scope '/:slug' do
-      # get 'dashboard', to: 'pages#dashboard', as: :dashboard
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
       resources :products
       resources :orders do

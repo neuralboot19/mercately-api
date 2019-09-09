@@ -1,88 +1,91 @@
 <div class="box">
   <div class="row">
-    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'dropzone col-xs-12' }) do |f| %>
+    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'p-0 col-xs-12' }) do |f| %>
       <div class="box">
         <div class="row">
           <%= f.hidden_field :category_id %>
           <%= f.hidden_field :id %>
 
-          <div class="group col-xs-12 col-md-6">
-            <%= f.text_field :title, placeholder: '' %>
-            <%= f.label :title %>
-            <span class="bar"></span>
-          </div>
-
-          <div class="group col-xs-12 col-md-6">
-            <%= f.text_field :subtitle, placeholder: '' %>
-            <%= f.label :subtitle %>
-            <span class="bar"></span>
-          </div>
-
-          <div id="root" class="col-xs-12">
-            <% if action_name == 'edit' || action_name == 'update' %>
-              <input type="checkbox" name="edit_category" id="edit_category" />
-              <label for="edit_category">Editar categoria</label>
-            <% end %>
-            <div id="categories">
-              <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9"></select>
+          <fieldset class="col-xs-12 fieldset">
+            <legend>Información básica</legend>
+            <div class="mb-8 my-16">
+              <%= f.label :title, 'Título' %><br/>
+              <%= f.text_field :title, class: 'input' %>
             </div>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.text_field :price, placeholder: '' %>
-            <%= f.label :price %>
-            <span class="bar"></span>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.number_field :available_quantity, placeholder: '' %>
-            <%= f.label :available_quantity %>
-            <span class="bar"></span>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.select :buying_mode, Product.buying_modes.keys.to_a %>
-            <%= f.label :buying_mode, class: 'select-label' %>
-            <span class="bar"></span>
-          </div>
-
-          <div class="group col-xs-12 col-md-3">
-            <%= f.select :condition, Product.conditions.keys.to_a %>
-            <%= f.label :condition, class: 'select-label' %>
-            <span class="bar"></span>
-          </div>
-
-          <% if action_name == 'edit' || action_name == 'update' %>
-            <div class="group col-xs-12 col-md-6">
-              <%= f.select :status, Product.statuses.keys.to_a, {}, onchange: 'updateMeliStatus(this);' %>
-              <%= f.label :status, 'Status del producto', class: 'select-label' %>
-              <span class="bar"></span>
-              <% if @product.meli_product_id && @product.status != 'archived' %>
-                <p><i>Nota: Si se archiva el producto, la publicación en MercadoLibre se cerrará</i></p>
-              <% end %>
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 pl-0 col-sm-4 my-16">
+                  <%= f.label :condition, 'Condición' %><br/>
+                   <%= f.select :condition, Product.conditions.keys.collect { |c| [ Product.enum_translation(:condition, c), c ]}, class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-sm-4 my-16">
+                  <%= f.label :price, 'Precio' %><br/>
+                  <%= f.text_field :price, class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-sm-4 pr-0 my-16">
+                  <%= f.label :available_quantity, 'Cantidad disponible' %><br/>
+                  <%= f.number_field :available_quantity, class: 'input' %>
+                </div>
+              </div>
             </div>
+          </fieldset>
 
-            <div class="group col-xs-12 col-md-6">
-              <%= f.select :meli_status, Product.meli_statuses.keys.to_a, disabled: @product.disabled_meli_statuses %>
-              <%= f.label :meli_status, 'Status de la publicación', class: 'select-label' %>
-              <span class="bar"></span>
+          <% if action_name == 'new' || action_name == 'create' %>
+            <div id="root" class="col-xs-12 my-16">
+              <%# <input type="checkbox" name="edit_category" id="edit_category" /> %>
+              <%# <label for="edit_category">Editar categoria</label> %>
+              <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9">
+                <option value="" selected>Seleccione una categoría</option>
+              </select>
             </div>
           <% end %>
 
-          <div id="attributes-container" class="row col-xs-12"></div>
+          <% if action_name == 'edit' || action_name == 'update' %>
+            <fieldset class="col-xs-12 fieldset">
+              <div class="box">
+                <div class="row">
+                  <div class="col-xs-12 pl-0 col-sm-6 my-16">
+                    <%= f.label :status, 'Status del producto' %><br/>
+                    <%= f.select :status, Product.statuses.keys.to_a, class: 'input', onchange: 'updateMeliStatus(this);' %>
+                    <% if @product.meli_product_id && @product.status != 'archived' %>
+                      <p class="note-archived"><i>Nota: Si se archiva el producto, la publicación en MercadoLibre se cerrará</i></p>
+                    <% end %>
+                  </div>
 
-          <div class="group col-xs-12">
-            <%= f.text_area :description, placeholder: '' %>
-            <%= f.label :description %>
-            <span class="bar"></span>
-          </div>
+                  <div class="col-xs-12 col-sm-6 my-16">
+                    <%= f.label :meli_status, 'Status de la publicación' %><br/>
+                    <%= f.select :meli_status, Product.meli_statuses.keys.to_a, disabled: @product.disabled_meli_statuses, class: 'input' %>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+          <% end %>
 
-          <div id="variations-title" class="group variations-container-title col-xs-12">
-            <h2>Variaciones</h2>
-            <p onclick="appendTemplate();">Agregar variación</p>
-          </div>
+          <fieldset class="col-xs-12 fieldset">
+            <legend>Características</legend>
+            <div class="box">
+              <div id="attributes-container" class="row pl-0 col-xs-12 my-16"></div>
+            </div>
+          </fieldset>
 
-          <div id="variations-container" class="row col-xs-12"></div>
+          <fieldset class="col-xs-12 fieldset">
+            <div class="box">
+              <div class="col-xs-12 pl-0 my-16">
+                <%= f.label :description, 'Descripción' %>
+                <%= f.text_area :description, placeholder: '', class: 'input' %>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset id="variations-title" class="col-xs-12 variations-container-title fieldset">
+            <legend>Variaciones</legend>
+            <div class="box">
+              <div id="variations-container" class="row col-xs-12 my-16"></div>
+            </div>
+            <div class="my-16">
+              <a class="btn btn--cta" onclick="appendTemplate();">Agregar variación</a>
+            </div>
+          </fieldset>
 
           <div id="uploaderImages" class="uploader center w-100 col-xs-12">
             <%= f.label :images, 'Arrastra las imágenes o haz click aquí para seleccionarlas', class: 'py-20 uploader-text' %>
@@ -95,11 +98,10 @@
             <input type="hidden" id="new-main-image" name="new_main_image" />
             <input type="hidden" id="new-main-image-name" name="new_main_image_name" />
             <%= image_tag 'dashboard/delete-icon.png', class: 'not-display', id: "delete-image" %>
-            <%= image_tag 'star.png', class: 'not-display', id: "star-image" %>
 
             <% if @product.images.attached? %>
               <div class="col-xs-12 col-md-12 current-images-container">
-                <h2>Imágenes actuales:</h2>
+                <h3>Imágenes actuales:</h3>
               </div>
               <% @product.images.each do |img| %>
                 <div id="image-container-<%= img.id.to_s %>" class="col-xs-12 col-md-3 edit-card" onmouseover="showMain(this);" onmouseleave="hideMain(this);">

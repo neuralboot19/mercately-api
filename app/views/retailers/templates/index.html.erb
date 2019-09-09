@@ -75,7 +75,7 @@
                 </div>
                 <div class="hide-on-sm-and-down hide-on-2k m-auto">
                   <label class="item__dropdown dropdown d-inline">
-                    <a class="dropdown__button midd" href="#!">
+                    <a class="dropdown__button midd" tabindex="-1" href="#!">
                       <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
                     </a>
 
@@ -84,6 +84,12 @@
                         <%= link_to retailers_template_path(current_retailer, template), class: 'c-black no-style' do %>
                           <i class="fas fa-eye mr-8"></i>
                           Ver
+                        <% end %>
+                      </li>
+                      <li>
+                        <%= link_to edit_retailers_template_path(current_retailer, template), class: 'c-black no-style' do %>
+                          <i class="fas fa-edit mr-8"></i>
+                          Editar
                         <% end %>
                       </li>
                     </ul>
