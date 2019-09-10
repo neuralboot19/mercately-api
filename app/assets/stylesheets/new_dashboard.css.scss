@@ -5,7 +5,6 @@
 @import 'new_dashboard/_components';
 @import 'new_dashboard/_helpers';
 @import 'devise';
-@import 'retailers/integrations';
 
 .select2-container--default .select2-selection--single {
   border-color: #ddd;
@@ -280,6 +279,11 @@
 
 .img_preview {
   height: 100%;
+}
+
+.logo-integration-platform {
+  width: 350px;
+  height: 98px;
 }
 
 @media screen and (max-width: 1366px) {

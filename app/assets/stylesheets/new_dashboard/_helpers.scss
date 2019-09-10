@@ -74,6 +74,11 @@ label:hover, a:hover {
     padding-left: #{$space}px !important;
     padding-right: #{$space}px !important;
   }
+
+  .pt-#{$space} {
+    padding-top: #{$space}px !important;
+  }
+
   @each $side in $sides {
     .m#{str-slice($side, 0, 1)}-#{$space} {
       margin-#{$side}: #{$space}px !important;
@@ -174,6 +179,23 @@ label:hover, a:hover {
   color: #000;
 }
 
+@mixin fs-mixin ($size) {
+  font-size: $size;
+}
+
+@for $size from 0 through 100 {
+  .fs-#{$size} {
+    font-size: #{$size}px;
+  }
+}
+
+@for $space from 0 through 100 {
+  .my-perc-#{$space} {
+    margin-top: #{$space}% !important;
+    margin-bottom: #{$space}% !important;
+  }
+}
+
 @media screen and (min-width: 1680px) {
   .hide-on-2k {
     display: none;
@@ -245,5 +267,13 @@ label:hover, a:hover {
 
   .table__item {
     font-size: 13px;
+  }
+}
+
+@media (max-width: 390px) {
+  @for $size from 0 through 100 {
+    .fs-sm-and-down-#{$size} {
+      @include fs-mixin(#{$size}px);
+    }
   }
 }
