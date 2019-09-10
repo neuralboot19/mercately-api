@@ -140,6 +140,14 @@ class Product < ApplicationRecord
     earned.sum
   end
 
+  def editable_attributes
+    attributes = []
+    editables = category.required_product_attributes
+    ml_attributes.map { |atr| attributes << atr if editables.include? atr['id'] }
+
+    attributes
+  end
+
   private
 
     def images_count
@@ -162,32 +170,6 @@ class Product < ApplicationRecord
           product_variations.create(data: var)
         end
       end
-      delete_variations(variations)
-      delete_variations_by_ids(variations)
-    end
-
-    def delete_variations(variations)
-      current_variations = product_variations.pluck(:variation_meli_id).compact
-      variation_ids = variations.map { |vari| vari['id'].to_i }.compact
-
-      current_variations -= variation_ids if current_variations.present?
-
-      return unless current_variations.present?
-
-      product_variations.where(variation_meli_id: current_variations).delete_all if
-        current_variations.present?
-    end
-
-    def delete_variations_by_ids(variations)
-      current_variation_ids = product_variations.pluck(:id).compact
-      variation_merc_ids = variations.map { |vari| vari['variation_id'].to_i }.compact
-
-      current_variation_ids -= variation_merc_ids if current_variation_ids.present?
-
-      return unless current_variation_ids.present?
-
-      product_variations.where(id: current_variation_ids).delete_all if
-        current_variation_ids.present?
     end
 
     def ml_status

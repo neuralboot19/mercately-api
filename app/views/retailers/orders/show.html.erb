@@ -22,7 +22,7 @@
             </tr>
               <tr>
                 <td class="table_order_details__descriptor">Estado</td>
-                <td class="table_order_details__value"><b class="cookie <%= cookie(@order.merc_status) %>"><%= @order.merc_status %></b></td>
+                <td class="table_order_details__value"><b class="cookie <%= cookie(@order.merc_status) %>"><%= Order.enum_translation(:merc_status, @order.merc_status) %></b></td>
               </tr>
           </table>
         </div>
