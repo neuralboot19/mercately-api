@@ -22,12 +22,12 @@ class Retailer < ApplicationRecord
     retailer.products.where(status: 0)
   }
 
-  scope :messages_total, lambda { |current_retailer_id|
-    Message.includes(:customer).where(date_read: nil, answer: nil, customers: { retailer_id: current_retailer_id }).size
+  scope :unread_messages, lambda { |current_retailer_id|
+    Message.includes(:customer).where(date_read: nil, answer: nil, customers: { retailer_id: current_retailer_id })
   }
 
-  scope :questions_total, lambda { |current_retailer_id|
-    Question.includes(:customer).where(date_read: nil, customers: { retailer_id: current_retailer_id }).size
+  scope :unread_questions, lambda { |current_retailer_id|
+    Question.includes(:customer).where(date_read: nil, customers: { retailer_id: current_retailer_id })
   }
 
   def to_param
