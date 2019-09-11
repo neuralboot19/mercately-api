@@ -59,6 +59,10 @@ class Order < ApplicationRecord
      ['Comprador se retracta', 'BUYER_REGRETS']]
   end
 
+  def unread_messages_quantity
+    messages.where(answer: nil, date_read: nil).size
+  end
+
   private
 
     def adjust_ml_stock

@@ -46,7 +46,7 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_message_path(current_retailer, question), class: 'c-black no-style' do %>
+                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
                           <i class="fas fa-eye mr-8"></i>
                           Ver
                         <% end %>
@@ -81,7 +81,7 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_message_path(current_retailer, question), class: 'c-black no-style' do %>
+                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
                           <i class="fas fa-eye mr-8"></i>
                           Ver
                         <% end %>
@@ -91,14 +91,14 @@
                 </div>
               </div>
             <% end %>
+            <div class="row middle-xs center-xs">
+              <div class="col-xs-12">
+                <%= paginate @questions %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row middle-xs center-xs">
-    <div class="col-xs-12">
-      <%= paginate @questions %>
     </div>
   </div>
 </div>

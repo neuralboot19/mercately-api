@@ -18,7 +18,8 @@
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Usuario</div>
               <div class="col-sm-4">Producto</div>
-              <div class="col-sm-5"></div>
+              <div class="col-sm-4"></div>
+              <div class="col-sm-1 hide-on-sm-and-down"></div>
               <div class="col-sm-1">Fecha</div>
               <div class="col-sm-1"></div>
             </div>
@@ -54,7 +55,7 @@
                     </ul>
                   </label>
                 </div>
-                <div class="col-xs-12 col-sm-5 c-grey">
+                <div class="col-xs-12 col-sm-4 c-grey">
                   <br class="hide-on-md-and-up"/>
                   <% order.messages.last(2).each do |m| %>
                     <div class="c-secondary truncate">
@@ -67,6 +68,9 @@
                     <br/>
                     <br/>
                   <% end %>
+                </div>
+                <div class="col-xs-12 col-sm-1 t-center hide-on-sm-and-down">
+                  <b class="cookie__box"><%= order.unread_messages_quantity %></b>
                 </div>
                 <div class="col-xs-12 col-sm-1 t-center">
                   <%= show_date(order.created_at) %>
@@ -94,14 +98,14 @@
                 </div>
               </div>
             <% end %>
+            <div class="row middle-xs center-xs">
+              <div class="col-xs-12">
+                <%= paginate @chats %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row middle-xs center-xs">
-    <div class="col-xs-12">
-      <%= paginate @chats %>
     </div>
   </div>
 </div>

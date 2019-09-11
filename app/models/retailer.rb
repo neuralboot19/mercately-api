@@ -22,6 +22,14 @@ class Retailer < ApplicationRecord
     retailer.products.where(status: 0)
   }
 
+  scope :messages_total, lambda { |current_retailer_id|
+    Message.includes(:customer).where(date_read: nil, answer: nil, customers: { retailer_id: current_retailer_id }).size
+  }
+
+  scope :questions_total, lambda { |current_retailer_id|
+    Question.includes(:customer).where(date_read: nil, customers: { retailer_id: current_retailer_id }).size
+  }
+
   def to_param
     slug
   end
