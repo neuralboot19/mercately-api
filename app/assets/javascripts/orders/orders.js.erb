@@ -93,7 +93,6 @@ function insertVariation(variation, parentContainer, index) {
                      '</div>';
 
   insertionString += '</div></div>';
-  $(parentContainer.parentNode).find('input[type=number]').prop('disabled', true);
   $(parentContainer).append(insertionString);
 }
 

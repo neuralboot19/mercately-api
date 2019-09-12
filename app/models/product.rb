@@ -149,11 +149,17 @@ class Product < ApplicationRecord
   def update_status_publishment(re_publish = false)
     return if meli_product_id.blank? || status == 'archived'
 
-    return unless (available_quantity.zero? && meli_status == 'active') ||
-                  (available_quantity.positive? && meli_status == 'closed' &&
-                  re_publish)
+    if available_quantity.zero? && meli_status == 'active'
+      self.meli_status = 'closed'
+      save
 
-    process_publishment
+      set_ml_products.push_change_status(reload)
+    elsif available_quantity.positive? && meli_status == 'closed' && re_publish
+      self.meli_status = 'active'
+      save
+
+      set_ml_product_publish.re_publish_product(self)
+    end
   end
 
   def update_variations_quantities
@@ -202,20 +208,6 @@ class Product < ApplicationRecord
 
       errors.add(:base, 'Del status closed sólo puede pasar a active') if
         meli_status == 'paused' && meli_status_was == 'closed'
-    end
-
-    def process_publishment
-      if available_quantity.zero?
-        self.meli_status = 'closed'
-        save
-  
-        set_ml_products.push_change_status(reload)
-      else
-        self.meli_status = 'active'
-        save
-  
-        set_ml_product_publish.re_publish_product(self)
-      end
     end
 
     def set_ml_products
