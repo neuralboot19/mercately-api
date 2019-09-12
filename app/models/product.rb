@@ -9,7 +9,6 @@ class Product < ApplicationRecord
   has_many :product_variations
 
   validate :images_count
-  validates :meli_product_id, uniqueness: true, allow_nil: true
   validate :ml_status
 
   enum buying_mode: %w[buy_it_now classified]
@@ -149,14 +148,15 @@ class Product < ApplicationRecord
   def update_status_publishment(re_publish = false)
     return if meli_product_id.blank? || status == 'archived'
 
-    if available_quantity.zero? && meli_status == 'active'
-      self.meli_status = 'closed'
-      save
+    change_status = (available_quantity.zero? || available_quantity.negative?) && meli_status == 'active'
+    go_re_publish = available_quantity.positive? && meli_status == 'closed' && re_publish
+
+    if change_status
+      set_meli_status_and_save('closed')
 
       set_ml_products.push_change_status(reload)
-    elsif available_quantity.positive? && meli_status == 'closed' && re_publish
-      self.meli_status = 'active'
-      save
+    elsif go_re_publish
+      set_meli_status_and_save('active')
 
       set_ml_product_publish.re_publish_product(self)
     end
@@ -208,6 +208,11 @@ class Product < ApplicationRecord
 
       errors.add(:base, 'Del status closed sólo puede pasar a active') if
         meli_status == 'paused' && meli_status_was == 'closed'
+    end
+
+    def set_meli_status_and_save(status)
+      self.meli_status = status
+      save
     end
 
     def set_ml_products
