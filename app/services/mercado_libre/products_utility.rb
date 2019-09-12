@@ -149,7 +149,7 @@ module MercadoLibre
     end
 
     def prepare_product_status_update(product)
-      info = {
+      {
         'status': product.meli_status
       }.to_json
     end

@@ -153,17 +153,7 @@ class Product < ApplicationRecord
                   (available_quantity.positive? && meli_status == 'closed' &&
                   re_publish)
 
-    if available_quantity.zero?
-      self.meli_status = 'closed'
-      save
-
-      set_ml_products.push_change_status(self.reload)
-    else
-      self.meli_status = 'active'
-      save
-
-      set_ml_product_publish.re_publish_product(self)
-    end
+    process_publishment
   end
 
   def update_variations_quantities
@@ -214,11 +204,25 @@ class Product < ApplicationRecord
         meli_status == 'paused' && meli_status_was == 'closed'
     end
 
+    def process_publishment
+      if available_quantity.zero?
+        self.meli_status = 'closed'
+        save
+  
+        set_ml_products.push_change_status(reload)
+      else
+        self.meli_status = 'active'
+        save
+  
+        set_ml_product_publish.re_publish_product(self)
+      end
+    end
+
     def set_ml_products
-      @p_ml ||= MercadoLibre::Products.new(retailer)
+      @set_ml_products ||= MercadoLibre::Products.new(retailer)
     end
 
     def set_ml_product_publish
-      @publish_ml ||= MercadoLibre::ProductPublish.new(retailer)
+      @set_ml_product_publish ||= MercadoLibre::ProductPublish.new(retailer)
     end
 end
