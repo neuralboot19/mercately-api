@@ -148,15 +148,12 @@ class Product < ApplicationRecord
   def update_status_publishment(re_publish = false)
     return if meli_product_id.blank? || status == 'archived'
 
-    change_status = (available_quantity.zero? || available_quantity.negative?) && meli_status == 'active'
-    go_re_publish = available_quantity.positive? && meli_status == 'closed' && re_publish
-
-    if change_status
-      set_meli_status_and_save('closed')
+    if change_status_publishment?
+      update_meli_status_and_save('closed')
 
       set_ml_products.push_change_status(reload)
-    elsif go_re_publish
-      set_meli_status_and_save('active')
+    elsif go_re_publish? && re_publish
+      update_meli_status_and_save('active')
 
       set_ml_product_publish.re_publish_product(self)
     end
@@ -210,9 +207,17 @@ class Product < ApplicationRecord
         meli_status == 'paused' && meli_status_was == 'closed'
     end
 
-    def set_meli_status_and_save(status)
+    def update_meli_status_and_save(status)
       self.meli_status = status
       save
+    end
+
+    def change_status_publishment?
+      (available_quantity.zero? || available_quantity.negative?) && meli_status == 'active'
+    end
+
+    def go_re_publish?
+      available_quantity.positive? && meli_status == 'closed'
     end
 
     def set_ml_products
