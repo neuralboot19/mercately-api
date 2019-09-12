@@ -1,10 +1,6 @@
 class Retailers::MessagesController < RetailersController
   before_action :set_question, only: %i[show answer_question]
 
-  # GET /messages
-  def index
-  end
-
   # GET /messages/1
   def show
   end

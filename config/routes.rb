@@ -23,7 +23,7 @@ Rails.application.routes.draw do
         post 'send_message', to: 'messages#send_message', as: :send_message
       end
       resources :customers, except: [:destroy, :show]
-      resources :messages, only: [:index, :show]
+      resources :messages, only: [:show]
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
