@@ -3,8 +3,6 @@ class OrderItem < ApplicationRecord
   belongs_to :product
   belongs_to :product_variation, required: false
 
-  validate :check_stock
-
   before_update :adjust_stock, if: :will_save_change_to_quantity?
   before_destroy :replace_stock, prepend: true
   after_update :update_ml_stock, if: :saved_change_to_quantity?
@@ -19,15 +17,6 @@ class OrderItem < ApplicationRecord
   end
 
   private
-
-    def check_stock
-      if product_variation.present?
-        errors.add(:base, "No hay suficientes #{product.title}") if
-          product_variation.data['available_quantity'].to_i + quantity_was.to_i < quantity.to_i
-      elsif product.available_quantity + quantity_was.to_i < quantity.to_i
-        errors.add(:base, "No hay suficientes #{product.title}")
-      end
-    end
 
     def update_ml_stock(action = 'update')
       return if action == 'create' && order.meli_order_id.present?
