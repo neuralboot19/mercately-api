@@ -159,13 +159,7 @@ function appendTemplate() {
 }
 
 function addCommonVariationElements(container) {
-  commonElements = [/*{
-    "name": "price",
-    "element": "input",
-    "element_type": "number",
-    "label": "Precio"
-  },*/
-  {
+  commonElements = [{
     "name": "available_quantity",
     "element": "input",
     "element_type": "number",
@@ -201,6 +195,10 @@ function addCommonVariationElements(container) {
     newElement.setAttribute("id", attrId);
     newElement.setAttribute("type", commonElements[comElem]["element_type"]);
     newElement.setAttribute("class", "input");
+
+    if (commonElements[comElem]["name"] === "sold_quantity") {
+      newElement.setAttribute("readonly", "true");
+    }
 
     if (currentTemplate && currentTemplate["data"][commonElements[comElem]["name"]] !== undefined) {
       newElement.setAttribute("value", `${currentTemplate["data"][commonElements[comElem]["name"]]}`);

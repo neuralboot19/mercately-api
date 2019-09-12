@@ -145,6 +145,10 @@ module MercadoLibre
       @product_publish.load_pictures_to_ml(product, only_main_picture)
     end
 
+    def push_change_status(product)
+      @product_publish.send_status_update(product)
+    end
+
     private
 
       def pull_images(product, pictures)

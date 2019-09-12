@@ -126,7 +126,8 @@ module MercadoLibre
 
     def prepare_re_publish_product(product)
       info = {
-        'listing_type_id': 'free'
+        'listing_type_id': 'free',
+        'title': product.title
       }
 
       if product.product_variations.present?
@@ -136,7 +137,7 @@ module MercadoLibre
           info['variations'] << {
             'id': var.variation_meli_id,
             'price': var.data['price'].to_f,
-            'quantity': var.data['available_quantity']
+            'quantity': var.data['available_quantity'].to_i
           }
         end
       else
@@ -145,6 +146,12 @@ module MercadoLibre
       end
 
       info.to_json
+    end
+
+    def prepare_product_status_update(product)
+      info = {
+        'status': product.meli_status
+      }.to_json
     end
 
     def assign_product(product, product_info, retailer, category, new_product)
@@ -160,9 +167,6 @@ module MercadoLibre
       product.base_price = product_info['base_price']
       product.original_price = product_info['original_price']
       product.initial_quantity = product_info['initial_quantity']
-      product.available_quantity = product_info['available_quantity']
-      # TODO: Push orders to keep sold_quantity updated
-      product.sold_quantity = product_info['sold_quantity']
       product.meli_site_id = product_info['site_id']
       product.meli_start_time = product_info['start_time']
       product.meli_stop_time = product_info['stop_time']
@@ -175,6 +179,11 @@ module MercadoLibre
       product.ml_attributes = product_info['attributes']
       product.meli_status = product_info['status']
       product.retailer = retailer
+
+      if product_info['status'] != 'closed'
+        product.available_quantity = product_info['available_quantity']
+        product.sold_quantity = product_info['sold_quantity']
+      end
 
       product
     end

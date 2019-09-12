@@ -47,10 +47,14 @@ class OrderItem < ApplicationRecord
         data['available_quantity'] = data['available_quantity'].to_i - quantity
         data['sold_quantity'] = data['sold_quantity'].to_i + quantity
         product_variation.update(data: data)
+
+        product.update_variations_quantities
       else
         product.update(available_quantity: product.available_quantity - quantity, sold_quantity:
           product.sold_quantity + quantity)
       end
+
+      product.update_status_publishment(true)
     end
 
     def adjust_stock
@@ -59,11 +63,15 @@ class OrderItem < ApplicationRecord
         data['available_quantity'] = data['available_quantity'].to_i + quantity_was - quantity
         data['sold_quantity'] = data['sold_quantity'].to_i - quantity_was + quantity
         product_variation.update(data: data)
+
+        product.update_variations_quantities
       else
         product.update(available_quantity: product.available_quantity +
           quantity_was - quantity, sold_quantity: product.sold_quantity -
           quantity_was + quantity)
       end
+
+      product.update_status_publishment(true)
     end
 
     def update_order_total
@@ -76,11 +84,14 @@ class OrderItem < ApplicationRecord
         data['available_quantity'] = data['available_quantity'].to_i + quantity
         data['sold_quantity'] = data['sold_quantity'].to_i - quantity
         product_variation.update(data: data)
+
+        product.update_variations_quantities
       else
         product.update(available_quantity: product.available_quantity +
           quantity, sold_quantity: product.sold_quantity - quantity)
       end
 
       update_ml_stock
+      product.update_status_publishment(true)
     end
 end

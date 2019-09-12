@@ -78,5 +78,13 @@ module MercadoLibre
 
       re_publish_product(product)
     end
+
+    def send_status_update(product)
+      url = @api.get_product_url product.meli_product_id
+      conn = Connection.prepare_connection(url)
+      response = Connection.put_request(conn, @utility.prepare_product_status_update(product))
+
+      puts response.body if response.status != 200
+    end
   end
 end

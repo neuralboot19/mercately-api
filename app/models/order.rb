@@ -93,10 +93,14 @@ class Order < ApplicationRecord
           data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity
           data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
           product_variation.update(data: data)
+
+          product.update_variations_quantities
         else
           product.update(available_quantity: product.available_quantity +
             order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
         end
+
+        product.update_status_publishment(true)
       end
     end
 end

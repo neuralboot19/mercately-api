@@ -59,9 +59,9 @@ class Product < ApplicationRecord
   def update_ml_info(past_meli_status)
     return unless meli_product_id.present?
 
-    set_active = meli_status == 'active' || status == 'active'
-    p_ml = MercadoLibre::Products.new(retailer)
-    p_ml.push_update(self, past_meli_status, set_active)
+    reload
+    set_active = (meli_status == 'active' || status == 'active') && available_quantity.positive?
+    set_ml_products.push_update(self, past_meli_status, set_active)
   end
 
   def update_main_picture(filename)
@@ -76,15 +76,13 @@ class Product < ApplicationRecord
     attach_id = images.find_by(blob_id: blob_id)&.id if blob_id.present?
     update(main_picture_id: attach_id) if attach_id.present?
 
-    p_ml = MercadoLibre::Products.new(retailer)
-    p_ml.load_main_picture(reload, true)
+    set_ml_products.load_main_picture(reload, true)
   end
 
   def upload_ml
     return if retailer.meli_retailer.nil?
 
-    p_ml = MercadoLibre::Products.new(retailer)
-    p_ml.create(self)
+    set_ml_products.create(self)
   end
 
   def upload_variations(action_name, variations)
@@ -148,6 +146,39 @@ class Product < ApplicationRecord
     attributes
   end
 
+  def update_status_publishment(re_publish = false)
+    return if meli_product_id.blank? || status == 'archived'
+
+    return unless (available_quantity.zero? && meli_status == 'active') ||
+                  (available_quantity.positive? && meli_status == 'closed' &&
+                  re_publish)
+
+    if available_quantity.zero?
+      self.meli_status = 'closed'
+      save
+
+      set_ml_products.push_change_status(self.reload)
+    else
+      self.meli_status = 'active'
+      save
+
+      set_ml_product_publish.re_publish_product(self)
+    end
+  end
+
+  def update_variations_quantities
+    return unless product_variations.present?
+
+    total_available = 0
+    total_sold = 0
+    product_variations.each do |pv|
+      total_available += pv.data['available_quantity'].to_i
+      total_sold += pv.data['sold_quantity'].to_i
+    end
+
+    update(available_quantity: total_available, sold_quantity: total_sold)
+  end
+
   private
 
     def images_count
@@ -181,5 +212,13 @@ class Product < ApplicationRecord
 
       errors.add(:base, 'Del status closed sólo puede pasar a active') if
         meli_status == 'paused' && meli_status_was == 'closed'
+    end
+
+    def set_ml_products
+      @p_ml ||= MercadoLibre::Products.new(retailer)
+    end
+
+    def set_ml_product_publish
+      @publish_ml ||= MercadoLibre::ProductPublish.new(retailer)
     end
 end
