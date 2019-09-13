@@ -21,13 +21,16 @@ class Customer < ApplicationRecord
   private
 
     def update_valid_customer
-      return if is_a_valid_customer?
+      return if a_valid_customer? || a_not_valid_customer?
 
       update(valid_customer: first_name.present? || last_name.present? || email.present?)
     end
 
-    def is_a_valid_customer?
-      (valid_customer && (first_name.present? || last_name.present? || email.present?)) ||
-      (!valid_customer && first_name.blank? && last_name.blank? && email.blank?)
+    def a_valid_customer?
+      valid_customer && (first_name.present? || last_name.present? || email.present?)
+    end
+
+    def a_not_valid_customer?
+      !valid_customer && first_name.blank? && last_name.blank? && email.blank?
     end
 end

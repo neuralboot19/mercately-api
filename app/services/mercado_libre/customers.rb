@@ -116,7 +116,7 @@ module MercadoLibre
             &.[]('transactions')&.[]('not_yet_rated')&.[]('paid'),
           @buyer_not_yet_rated_total_transactions = @order_params['buyer_reputation']
             &.[]('transactions')&.[]('not_yet_rated')&.[]('total'),
-          @meli_registration_date: @order_params['registration_date'],
+          @meli_registration_date = @order_params['registration_date'],
           @phone_area = @order_params['phone']&.[]('area_code'),
           @phone_verified = @order_params['phone']&.[]('verified')
           @id_number = @order_params['identification']&.[]('number'),
@@ -153,7 +153,7 @@ module MercadoLibre
             &.[]('transactions')&.[]('not_yet_rated')&.[]('paid'),
           @buyer_not_yet_rated_total_transactions = customer_info['buyer_reputation']
             &.[]('transactions')&.[]('not_yet_rated')&.[]('total'),
-          @meli_registration_date: customer_info['registration_date'],
+          @meli_registration_date = customer_info['registration_date'],
           @phone_area = customer_info['phone']&.[]('area_code'),
           @phone_verified = customer_info['phone']&.[]('verified')
           @id_number = customer_info['identification']&.[]('number'),
