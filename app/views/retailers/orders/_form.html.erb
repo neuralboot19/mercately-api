@@ -14,6 +14,16 @@
           <%= f.label :customer_id %>
           <%= f.select :customer_id, current_retailer.customers.map { |c| [c.full_name, c.id] }, { include_blank: false }, class: 'input' %>
         </div>
+        <div class="links mt-16 mb-24 t-right">
+          <a class="btn btn--cta">
+            <i class="fas fa-edit mr-5"></i>
+            Editar cliente
+          </a>
+          <a class="btn btn--cta">
+            <i class="fas fa-plus mr-5"></i>
+            Agregar cliente
+          </a>
+        </div>
         <div class="my-16">
           <%= f.label :merc_status, 'Status' %>
            <%= f.select :merc_status, Order.merc_statuses.keys.collect { |s| [ Order.enum_translation(:merc_statuses, s), s ]}, { include_blank: false, disabled: @order.disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
