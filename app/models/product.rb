@@ -58,7 +58,6 @@ class Product < ApplicationRecord
   def update_ml_info(past_meli_status)
     return unless meli_product_id.present?
 
-    reload
     set_active = (meli_status == 'active' || status == 'active') && available_quantity.positive?
     set_ml_products.push_update(self, past_meli_status, set_active)
   end
