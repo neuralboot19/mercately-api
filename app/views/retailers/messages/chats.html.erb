@@ -17,9 +17,9 @@
           <div class="table box">
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Usuario</div>
-              <div class="col-sm-4">Producto</div>
+              <div class="col-sm-3">Producto</div>
               <div class="col-sm-4"></div>
-              <div class="col-sm-1 hide-on-sm-and-down"></div>
+              <div class="col-sm-2"></div>
               <div class="col-sm-1">Fecha</div>
               <div class="col-sm-1"></div>
             </div>
@@ -28,7 +28,7 @@
                 <h1>No tienes :(</h1>
               </div>
             <% end %>
-            <% @chats.each do |order| %>
+            <% @chats.sort_by { |o| [o.unread_last_message? ? 0 : 1, Time.now - o.last_message_received_date] }.each do |order| %>
               <div class="divider"></div>
               <div class="table__item row">
                 <div class="col-xs-10 col-sm-1 t-center">
@@ -36,7 +36,7 @@
                     <%= order.customer.email %>
                   </div>
                 </div>
-                <div class="col-xs-10 col-sm-4 t-center">
+                <div class="col-xs-10 col-sm-3 t-center">
                   <%= order.products.first&.title %>
                 </div>
                 <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
@@ -69,11 +69,15 @@
                     <br/>
                   <% end %>
                 </div>
-                <div class="col-xs-12 col-sm-1 t-center hide-on-sm-and-down">
-                  <b class="cookie__box"><%= order.unread_messages_quantity %></b>
+                <div class="col-xs-12 col-sm-2 t-center">
+                  <% if order.unread_last_message? %>
+                    <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
+                  <% else %>
+                    <b class="cookie__box cookie__box__green px-5">Visto</b>
+                  <% end %>
                 </div>
                 <div class="col-xs-12 col-sm-1 t-center">
-                  <%= show_date(order.created_at) %>
+                  <%= show_date(order.last_message_received_date) %>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
                   <%= link_to retailers_order_messages_path(current_retailer, order, return_to: 'chat'), class: 'c-black no-style' do %>
