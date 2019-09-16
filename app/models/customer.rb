@@ -21,7 +21,7 @@ class Customer < ApplicationRecord
   private
 
     def update_valid_customer
-      return if self.valid_customer?
+      return if valid_customer?
 
       self.valid_customer = first_name.present? || last_name.present? || email.present?
     end
