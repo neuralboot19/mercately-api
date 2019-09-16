@@ -28,7 +28,7 @@
                 <h1>No tienes :(</h1>
               </div>
             <% end %>
-            <% @questions.sort_by { |q| [q.date_read.blank? ? 0 : 1, Time.now - q.created_at] }.each do |question| %>
+            <% @questions.each do |question| %>
               <div class="divider"></div>
               <div class="table__item row">
                 <div class="col-xs-10 col-sm-1 t-center hide-on-sm-and-down">

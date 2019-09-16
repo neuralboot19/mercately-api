@@ -28,7 +28,7 @@
                 <h1>No tienes :(</h1>
               </div>
             <% end %>
-            <% @chats.sort_by { |o| [o.unread_last_message? ? 0 : 1, Time.now - o.last_message_received_date] }.each do |order| %>
+            <% @chats.each do |order| %>
               <div class="divider"></div>
               <div class="table__item row">
                 <div class="col-xs-10 col-sm-1 t-center">
