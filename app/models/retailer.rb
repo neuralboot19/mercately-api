@@ -22,6 +22,10 @@ class Retailer < ApplicationRecord
     retailer.products.where(status: 0)
   }
 
+  scope :active_customers, lambda { |retailer|
+    retailer.customers.where(valid_customer: true)
+  }
+
   def to_param
     slug
   end
