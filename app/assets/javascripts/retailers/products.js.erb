@@ -68,7 +68,6 @@ function appendSelect(currentElement) {
         appendAttributes();
         showVariationTitle();
         showVariationContainer();
-        disableAvailableQuantity();
 
         if (originalCategoryId && originalCategoryId === categoryId) {
           for (pv in productVariations) {
@@ -447,6 +446,7 @@ function showVariationTitle() {
     return;
   }
 
+  disableAvailableQuantity();
   var container = document.getElementById("variations-title");
   container.className = "variations-container-title col-xs-12";
 }

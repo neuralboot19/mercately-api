@@ -109,9 +109,9 @@ module MercadoLibre
         product.save!
 
         after_save_data(product, product_info, new_product)
-
-        product
       end
+
+      product
     rescue ActiveRecord::RecordNotUnique
       product
     end
@@ -129,6 +129,8 @@ module MercadoLibre
 
       product = update(response)
       @product_publish.automatic_re_publish(product)
+
+      product
     end
 
     def push_update(product, past_meli_status = nil, set_active = nil)

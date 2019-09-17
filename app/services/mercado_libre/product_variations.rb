@@ -30,6 +30,9 @@ module MercadoLibre
       variations.each do |var|
         product_variation = check_existing_variation(product, var, new_product)
 
+        var['sold_quantity'] = product_variation.data['sold_quantity'] unless
+          product_variation.new_record?
+
         product_variation.data = var if product.meli_status != 'closed'
         product_variation.save!
       end

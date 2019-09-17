@@ -180,10 +180,16 @@ module MercadoLibre
       product.meli_status = product_info['status']
       product.retailer = retailer
 
-      if product_info['status'] != 'closed'
+      if product_info['status'] == 'closed'
+        if product.status != 'archived' && product.available_quantity.positive? &&
+          product_info['available_quantity'].to_i.zero?
+          product.available_quantity = product_info['available_quantity']
+        end
+      else
         product.available_quantity = product_info['available_quantity']
-        product.sold_quantity = product_info['sold_quantity']
       end
+
+      product.sold_quantity = product_info['sold_quantity'] if product.new_record?
 
       product
     end
