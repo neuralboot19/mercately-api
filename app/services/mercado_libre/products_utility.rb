@@ -181,10 +181,8 @@ module MercadoLibre
       product.retailer = retailer
 
       if product_info['status'] == 'closed'
-        if product.status != 'archived' && product.available_quantity.positive? &&
-          product_info['available_quantity'].to_i.zero?
-          product.available_quantity = product_info['available_quantity']
-        end
+        product.available_quantity = product_info['available_quantity'] if
+          update_available_quantity(product, product_info)
       else
         product.available_quantity = product_info['available_quantity']
       end
@@ -192,6 +190,11 @@ module MercadoLibre
       product.sold_quantity = product_info['sold_quantity'] if product.new_record?
 
       product
+    end
+
+    def update_available_quantity(product, product_info)
+      product.status != 'archived' && product.available_quantity.positive? &&
+        product_info['available_quantity'].to_i.zero?
     end
   end
 end
