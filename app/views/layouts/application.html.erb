@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
   <head>
     <title>Mercately | Sincronice el Inventario de Mercadolibre</title>
     <%= csrf_meta_tags %>
@@ -11,6 +11,8 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
     <% if ENV['ENVIRONMENT'] == 'production' && current_page?(root_path) %>
+      
+
       <meta name="description" content="Venda con éxito en Mercadolibre. Sincronice su inventario de productos, gestione pedidos, responda preguntas y mucho más. Todo en un solo lugar." />
 
       <link rel="canonical" href="https://www.mercately.com/" />
