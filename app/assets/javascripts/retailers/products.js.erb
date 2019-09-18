@@ -655,12 +655,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
   if (!productId) {
     var roots  = JSON.parse('<%= Category.active.roots.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
+    console.log(roots);
     for(var root_position in roots) {
-      opt = roots[root_position]
+      console.log(root_position);
+      console.log(roots[root_position]);
+      opt = roots[root_position];
+      console.log(opt);
       var el = document.createElement("option");
       el.textContent = opt.name;
       el.value = opt.id;
-      childs_select.appendChild(el)
+      console.log(el);
+      childs_select.appendChild(el);
     };
   }
 
