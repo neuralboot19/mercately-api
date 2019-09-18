@@ -13,13 +13,13 @@ class Retailers::MessagesController < RetailersController
   end
 
   def chats
-    @chats = Order.includes(:customer, :messages)
-      .where(customers:
-      {
-        retailer_id: current_retailer.id
-      }).order('questions.date_read DESC')
+    @chats = Order.joins(:messages)
+      .where("questions.id IS NOT NULL")
+      .order(Message.arel_table['date_read'].desc)
+      .includes(:customer)
+      .where(customers: {retailer_id: current_retailer.id})
 
-    @chats = @chats.where('questions.order_id = orders.id').page(params[:page])
+    @chats = @chats.page(params[:page])
   end
 
   def question

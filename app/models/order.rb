@@ -64,7 +64,7 @@ class Order < ApplicationRecord
   end
 
   def last_message_received_date
-    messages.where(answer: nil).last&.created_at
+    messages.where(answer: nil).last.created_at
   end
 
   private
