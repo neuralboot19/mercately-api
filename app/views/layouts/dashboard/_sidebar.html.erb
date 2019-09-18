@@ -23,15 +23,12 @@
         <i class="item__icon fas fa-mail-bulk"></i>
         <label for="item--inbox" class="item__name">Inbox</label>
         <i class="item__arrow right"></i>
-        <!--<b class="item__cookie">3</b>-->
         <ul class="submenu no-style">
           <li class="submenu__item">
-            <%= link_to 'Mensajes', retailers_chats_path(current_retailer), class: 'item__name no-style' %>
-            <!--<b class="item__cookie">1</b>-->
+            <%= link_to 'Preguntas', retailers_questions_path(current_retailer), class: 'item__name no-style' %>
           </li>
           <li class="submenu__item">
-            <%= link_to 'Preguntas', retailers_questions_path(current_retailer), class: 'item__name no-style' %>
-            <!--<b class="item__cookie">2</b>-->
+            <%= link_to 'Mensajes', retailers_chats_path(current_retailer), class: 'item__name no-style' %>
           </li>
           <li class="submenu__item">
             <%= link_to 'Plantillas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
