@@ -8,7 +8,7 @@ class Retailer < ApplicationRecord
   validates :name, presence: true
   validates :slug, uniqueness: true
   enum id_type: [:cedula, :pasaporte, :ruc]
-  after_create :generate_slug
+  after_save :generate_slug, if: :saved_change_to_name?
 
   scope :filter_templates, lambda { |retailer, type|
     if type == 'questions'
@@ -22,17 +22,21 @@ class Retailer < ApplicationRecord
     retailer.products.where(status: 0)
   }
 
+  scope :active_customers, lambda { |retailer|
+    retailer.customers.where(valid_customer: true)
+  }
+
   def to_param
     slug
   end
 
   def generate_slug
-    if Retailer.where(['LOWER(name) LIKE ?', "%#{name.downcase}%"]).where.not(id: id).count.positive?
-      update slug: name.parameterize << "-#{id}"
-      update name: name << "-#{id}"
-    else
-      update slug: name.parameterize
-    end
+    update slug: if Retailer.where(['LOWER(name) LIKE ?', "%#{name.downcase}%"]).where.not(id: id)
+        .count.positive?
+                   name.parameterize << "-#{id}"
+                 else
+                   name.parameterize
+                 end
   end
 
   def update_meli_access_token

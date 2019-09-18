@@ -56,7 +56,7 @@
                 <div class="col-xs-7 col-sm-3 t-center"><%= product.title %></div>
                 <div class="col-xs-1 table__action-dots p-0 hide-on-md-and-up">
                   <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle" href="#!">
+                    <a class="dropdown__button middle" tabindex="-1" href="#!">
                       <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
                     </a>
 
@@ -83,7 +83,7 @@
                   <div class="box">
                     <div class="row">
                       <div class="col-xs-4 col-sm-6 item__descriptor">Estado:</div>
-                      <div class="col-xs-2 col-sm-6"><b class="cookie <%= cookie(product.meli_status) %>"><%= product.meli_status %></b></div>
+                      <div class="col-xs-2 col-sm-6"><b class="cookie <%= cookie(product.meli_status) %>"><%= Product.enum_translation(:meli_status, product.meli_status) %></b></div>
                       <div class="col-xs-4 col-sm-6 item__descriptor">Preguntas:</div>
                       <div class="col-xs-2 col-sm-6"><%= product.questions.size %></div>
                       <!--<div class="col-xs-4 col-sm-6 item__descriptor">Visitas:</div>
@@ -118,7 +118,7 @@
                 </div>
                 <div class="hide-on-sm-and-down hide-on-2k m-auto">
                   <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle" href="#!">
+                    <a class="dropdown__button middle" tabindex="-1" href="#!">
                       <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
                     </a>
 

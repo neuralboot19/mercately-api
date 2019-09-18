@@ -3,6 +3,10 @@ Rails.application.routes.draw do
 
   devise_for :retailer_users, controllers: { registrations: 'retailer_users/registrations',
     sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords' }
+  as :retailer_user do
+    get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info
+  end
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   get '/blog' => redirect("https://www.mercately.com/blog/")
@@ -12,7 +16,6 @@ Rails.application.routes.draw do
 
   namespace :retailers do
     scope '/:slug' do
-      # get 'dashboard', to: 'pages#dashboard', as: :dashboard
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
       resources :products
       resources :orders do
@@ -28,6 +31,7 @@ Rails.application.routes.draw do
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question'
+      put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
@@ -37,4 +41,8 @@ Rails.application.routes.draw do
 
   get 'categories', to: 'categories#roots'
   get 'categories/:id', to: 'categories#childs', as: :categories_childs
+
+  # Dynamic error pages
+  get "/404", to: "errors#not_found"
+  get "/500", to: "errors#internal_error"
 end

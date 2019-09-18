@@ -55,6 +55,21 @@ ActiveAdmin.register Customer do
       end
     end
 
+    panel 'Orders' do
+      orders = customer.orders
+      table_for orders do
+        column :id
+        column :status
+        column :created_at
+        column :meli_order_id
+        column :total_amount
+        column :merc_status
+        column :feedback_reason
+        column :feedback_message
+        column :feedback_rating
+      end
+    end
+
     panel 'Preguntas' do
       questions = customer.questions.where(meli_question_type: :from_product)
       table_for questions do

@@ -69,6 +69,7 @@ es:
             password: "Contraseña"
             password_confirmation: "Confirme contraseña"
             agree_terms: "Términos y condiciones"
+            current_password: "Contraseña actual"
     errors:
       messages:
         blank: "no puede estar vacío"

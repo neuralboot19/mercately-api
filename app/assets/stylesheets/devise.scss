@@ -1,5 +1,6 @@
 $bg-color: #424242;
 $primary-color: #6E2A79;
+$secondary-color: #00B4FF;
 $muted-color: #cac8c8;
 $trans-time: 300ms;
 $width: 100%;
@@ -157,10 +158,10 @@ input:required, input:invalid {
     }
   }
   &.btn-submit {
-    background-color: #242667;
+    background-color: $secondary-color;
     color: #f6f6f6;
     &:hover {
-      background: darken(#242667, 5%);
+      background: darken($secondary-color, 5%);
       color: #f6f6f6;
     }
   }

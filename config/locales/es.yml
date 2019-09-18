@@ -1,6 +1,27 @@
 ---
 es:
   activerecord:
+    attributes:
+      order:
+        merc_statuses: 
+          success: Exitoso
+          pending: Pendiente
+          cancelled: Cancelado
+      product:
+        conditions: 
+          new_product: Nuevo
+          used: Usado
+          not_specified: Sin especificar
+        statuses:
+          active: Activo
+          archived: Archivado
+        meli_statuses:  
+          active: Activo
+          payment_required: Pago Requerido
+          paused: Pausado
+          closed: Cerrado
+          under_review: Pendiente revisión
+          inactive: Inactivo
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'

@@ -6,7 +6,6 @@ module MercadoLibre
         'category_id': product.category.meli_id,
         'price': product.price.to_f,
         'available_quantity': product.available_quantity || 0,
-        'buying_mode': product.buying_mode,
         'currency_id': 'USD',
         'listing_type_id': 'free', # TODO: PENDIENTE ACTIVAR LOS LISTINGS TYPES PARA CADA PRODUCTO
         'condition': final_condition(product),
@@ -65,7 +64,6 @@ module MercadoLibre
 
       if product.sold_quantity.blank? || product.sold_quantity.zero?
         info['category_id'] = product.category.meli_id
-        info['buying_mode'] = product.buying_mode
         info['condition'] = final_condition(product)
       end
 

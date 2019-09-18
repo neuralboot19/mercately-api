@@ -4,7 +4,7 @@
       <h1 class="my-0"><%= @product.title %></h1>
       <div class="product__categories mt-0"><%= @product.category.name %></div>
     </div>
-    <div class="col-xs-12 col-md-6 mt-16 t-right">
+    <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
       <%= link_to retailers_products_path(current_retailer, status: @product.status), class: 'btn btn--cta' do %>
         <i class="fas fa-arrow-left mr-5"></i>
         Volver
@@ -13,9 +13,11 @@
         <i class="far fa-edit mr-5"></i>
         Editar
       <% end %>
-      <%= link_to edit_retailers_product_path(current_retailer, @product), class: 'btn btn--destroy' do %>
-        <i class="far fa-trash-alt mr-5"></i>
-        Archivar
+      <% if @product.status != 'archived' %>
+        <%= link_to retailers_archive_product_path(current_retailer, @product), method: :put, data: { confirm: 'Está seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
+          <i class="far fa-trash-alt mr-5"></i>
+          Archivar
+        <% end %>
       <% end %>
     </div>
     <div class="col-xs-12 col-md-7 product__info">
@@ -24,14 +26,14 @@
           <div class="col-xs-9">
             <section class="lazy slider">
               <% @product.images.each do |img| %>
-                <div>
-                  <%= cl_image_tag("#{img&.key}") %>
+                <div class="image-slider-container">
+                  <%= cl_image_tag("#{img&.key}", class: 'my-35') %>
                 </div>
               <% end %>
             </section>
           </div>
           <div class="col-xs-3">
-            <section class="vertical slider">
+            <section class="vertical slider draggable-container my-35">
               <% @product.images.each do |img| %>
                 <div>
                   <%= cl_image_tag("#{img&.key}") %>
@@ -43,16 +45,25 @@
         <div class="row">
           <div class="col-xs-12 c-grey my-8">Descripción:</div>
           <div class="col-xs-12">
-            <div class="p-16 c-grey t-justify">
+            <div class="p-16 c-grey t-justify text-overflow">
               <%= @product.description %>
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-xs-12 c-grey my-8">Precio:</div>
+          <div class="col-xs-12">
+            <div class="p-16 c-secondary t-justify">
+              $<%= @product.price %>
+            </div>
+          </div>
+        </div>
         <div class="row info__details">
-          <div class="col-xs-12 col-sm-6">
-            <% if @product.ml_attributes.present? %>
-              <table class="table_details mt-40">
-                <% @product.ml_attributes.each do |attribute| %>
+          <div class="col-xs-12 c-grey my-8">Características:</div>
+          <div class="col-xs-12 col-sm-12">
+            <% if @product.editable_attributes.present? %>
+              <table class="table_details w-100">
+                <% @product.editable_attributes.each do |attribute| %>
                   <tr>
                     <td class="table_details__descriptor">
                       <%= attribute["name"] || attribute["id"] %>
@@ -65,28 +76,51 @@
               </table>
             <% end %>
           </div>
-          <div class="col-xs-12 col-sm-6">
-            <table class="table_details mt-40">
-              <tr>
-                <td class="table_details__descriptor">Precio</td>
-                <td class="table_details__value">$<%= @product.price %></td>
-              </tr>
-              <% if @product.product_variations.present? %>
-                <% @product.product_variations.each do |variation| %>
-                  <% variation.data['attribute_combinations'].each do |var| %>
+          <% if @product.product_variations.present? %>
+            <div class="col-xs-12 c-grey my-8">Variaciones:</div>
+            <div class="col-xs-12 col-sm-12">
+              <table class="table_details w-100">
+                <% @product.product_variations[0..-2].each do |variation| %>
+                  <% variation.data['attribute_combinations'][0..-2].each do |var| %>
                     <tr>
-                      <td class="table_details__descriptor">Origen</td>
-                      <%= var["name"] || var["id"] %>
+                      <td class="table_details__descriptor">
+                        <%= var["name"] || var["id"] %>
                       </td>
                       <td class="table_details__value truncate">
                         <%= var["value_name"] || var["value_id"] %>
                       </td>
                     </tr>
                   <% end %>
+                  <tr class="divider">
+                    <td class="table_details__descriptor">
+                      <%= variation.data['attribute_combinations'].last["name"] || variation.data['attribute_combinations'].last["id"] %>
+                    </td>
+                    <td class="table_details__value truncate">
+                      <%= variation.data['attribute_combinations'].last["value_name"] || variation.data['attribute_combinations'].last["value_id"] %>
+                    </td>
+                    <td class="table_details__value truncate">
+                      <%= variation.data["available_quantity"].to_s + ' disponibles' %>
+                    </td>
+                  </tr>
                 <% end %>
-              <% end %>
-            </table>
-          </div>
+                <% @product.product_variations.last.data['attribute_combinations'].each_with_index do |var, index| %>
+                  <tr>
+                    <td class="table_details__descriptor">
+                      <%= var["name"] || var["id"] %>
+                    </td>
+                    <td class="table_details__value truncate">
+                      <%= var["value_name"] || var["value_id"] %>
+                    </td>
+                    <% if index == @product.product_variations.last.data['attribute_combinations'].size - 1 %>
+                      <td class="table_details__value truncate">
+                        <%= @product.product_variations.last.data["available_quantity"].to_s  + ' disponibles' %>
+                      </td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
@@ -99,7 +133,7 @@
               <div class="row card__submodule center-xs">
                 <div class="col-xs-12 submodule col-sm-4">
                   <h2><%= @product.order_items.count %></h2>
-                  <h6>Ordenes</h6>
+                  <h6>Órdenes</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">
                   <h2><%= @product.order_items.includes(:order).where(orders: { merc_status: 'success' }).count %></h2>
@@ -154,8 +188,8 @@
                       <td class="table_details__descriptor">Enlace:</td>
                       <td class="table_details__value">
                         <div class="truncate">
-                          <a href="<%= @product.meli_permalink %>">
-                            <%= @product.meli_permalink %>
+                          <a href="<%= @product.meli_permalink %>" target="_blank">
+                            Ver
                           </a>
                         </div>
                       </td>

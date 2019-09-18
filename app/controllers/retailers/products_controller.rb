@@ -1,5 +1,5 @@
 class Retailers::ProductsController < RetailersController
-  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity]
+  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product]
   before_action :compile_variation_images, only: [:create, :update]
   before_action :set_products, only: [:index]
   before_action :update_meli_status, only: [:update]
@@ -42,7 +42,7 @@ class Retailers::ProductsController < RetailersController
       @product.reload
       @product.upload_ml
       @product.upload_variations(action_name, @variations)
-      redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully created.'
+      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto creado con éxito.'
     else
       render :new
     end
@@ -70,7 +70,7 @@ class Retailers::ProductsController < RetailersController
       @product.reload
       @product.update_ml_info(past_meli_status)
       @product.upload_variations(action_name, @variations)
-      redirect_to retailers_product_path(@retailer, @product), notice: 'Product was successfully updated.'
+      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto actualizado con éxito.'
     else
       render :edit
     end
@@ -91,6 +91,19 @@ class Retailers::ProductsController < RetailersController
       quantity: @product.available_quantity,
       variations: @product.product_variations
     }
+  end
+
+  def archive_product
+    past_meli_status = @product.meli_status
+    @product.status = 'archived'
+    @product.meli_status = 'closed'
+
+    if @product.save
+      @product.update_ml_info(past_meli_status)
+      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto archivado con éxito.'
+    else
+      render :edit
+    end
   end
 
   private
