@@ -11,13 +11,6 @@ class Question < ApplicationRecord
 
   delegate :retailer, to: :product
 
-  # Se especifica la cantidad porque al tratarse de Array, no toma el default
-  PER_PAGE = 25
-
-  scope :order_questions, lambda { |questions|
-    questions.sort_by { |q| [q.date_read.blank? ? 0 : 1, Time.now - q.created_at] }
-  }
-
   def self.check_unique_question_id(question_meli_id)
     Question.any? { |q| q.meli_id == question_meli_id.to_s }
   end

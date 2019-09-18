@@ -9,10 +9,7 @@ class Retailers::MessagesController < RetailersController
     @questions = Question.includes(:product).where(meli_question_type: :from_product, products:
       {
         retailer_id: current_retailer.id
-      }).order(date_read: 'DESC', created_at: 'DESC')
-
-    @questions = Question.order_questions(@questions)
-    @questions = Kaminari.paginate_array(@questions).page(params[:page]).per(Question::PER_PAGE)
+      }).order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
   end
 
   def chats
@@ -20,11 +17,9 @@ class Retailers::MessagesController < RetailersController
       .where(customers:
       {
         retailer_id: current_retailer.id
-      }).order(created_at: 'DESC')
+      }).order('questions.date_read DESC')
 
-    @chats = @chats.where('questions.order_id = orders.id')
-    @chats = Message.order_messages(@chats)
-    @chats = Kaminari.paginate_array(@chats).page(params[:page]).per(Message::PER_PAGE)
+    @chats = @chats.where('questions.order_id = orders.id').page(params[:page])
   end
 
   def question
