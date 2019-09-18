@@ -23,17 +23,12 @@
               <div class="col-sm-1">Fecha</div>
               <div class="col-sm-1"></div>
             </div>
-            <% if @chats.count == 0 %>
-              <div class="center-xs middle-xs">
-                <h1>No tienes :(</h1>
-              </div>
-            <% end %>
             <% @chats.each do |order| %>
               <div class="divider"></div>
               <div class="table__item row">
                 <div class="col-xs-10 col-sm-1 t-center">
                   <div class="truncate">
-                    <%= order.customer.email %>
+                    <%= order.customer.email.presence || order.customer.meli_nickname %>
                   </div>
                 </div>
                 <div class="col-xs-10 col-sm-3 t-center">

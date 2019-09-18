@@ -1,6 +1,6 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-
+  config.exceptions_app = self.routes
   # Code is not reloaded between requests.
   config.cache_classes = true
 
@@ -21,6 +21,10 @@ Rails.application.configure do
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.public_file_server.headers = {
+    'Cache-Control' => "public, s-maxage=#{365.days.to_i}, maxage=#{180.days.to_i}",
+    'Expires' => "#{1.year.from_now.to_formatted_s(:rfc822)}"
+  }
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = Uglifier.new(harmony: true)
@@ -94,5 +98,5 @@ Rails.application.configure do
 
   config.action_mailer.asset_host = ENV["ACTION_MAILER_ASSET_HOST"]
   config.action_mailer.default_url_options = { host: ENV["HOST_URL"] }
-  config.default_url_options = { host: ENV["HOST_URL"] }
+  config.default_url_options = { host: ENV["HOST_URL"] }  
 end

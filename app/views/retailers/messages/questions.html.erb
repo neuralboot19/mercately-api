@@ -23,17 +23,12 @@
               <div class="col-sm-1">Fecha</div>
               <div class="col-sm-1"></div>
             </div>
-            <% if @questions.count == 0 %>
-              <div class="center-xs middle-xs">
-                <h1>No tienes :(</h1>
-              </div>
-            <% end %>
             <% @questions.each do |question| %>
               <div class="divider"></div>
               <div class="table__item row">
                 <div class="col-xs-10 col-sm-1 t-center hide-on-sm-and-down">
                   <div class="truncate">
-                    <%= question.customer.email %>
+                    <%= question.customer.email.presence || question.customer.meli_nickname %>
                   </div>
                 </div>
                 <div class="col-xs-10 col-sm-3 t-center">

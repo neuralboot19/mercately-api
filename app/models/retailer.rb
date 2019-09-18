@@ -22,6 +22,10 @@ class Retailer < ApplicationRecord
     retailer.products.where(status: 0)
   }
 
+  scope :active_customers, lambda { |retailer|
+    retailer.customers.where(valid_customer: true)
+  }
+
   scope :unread_messages, lambda { |current_retailer_id|
     Message.includes(:customer).where(date_read: nil, answer: nil, customers: { retailer_id: current_retailer_id })
   }
