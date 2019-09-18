@@ -12,11 +12,6 @@
     </div>
   </div>
   <div class="row">
-    <% if @questions.count == 0 %>
-      <div class="center-xs middle-xs">
-        <h1>No tienes :(</h1>
-      </div>
-    <% end %>
     <% @questions.each do |question| %>
       <div class="col-xs-12">
         <div class="card">

@@ -29,11 +29,6 @@
               <div class="col-sm-1">Fecha</div>
               <div class="col-sm-1"></div>
             </div>
-            <% if @templates.count == 0 %>
-              <div class="center-xs middle-xs">
-                <h1>No tienes :(</h1>
-              </div>
-            <% end %>
             <% @templates.each do |template| %>
               <div class="divider"></div>
               <div class="table__item row">
