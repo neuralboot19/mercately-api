@@ -32,7 +32,7 @@
               <div class="table__item row">
                 <div class="col-xs-10 col-sm-1 t-center hide-on-sm-and-down">
                   <div class="truncate">
-                    <%= question.customer.email %>
+                    <%= question.customer.email.presence || question.customer.meli_nickname %>
                   </div>
                 </div>
                 <div class="col-xs-10 col-sm-4 t-center">
