@@ -53,8 +53,8 @@ class Retailers::CustomersController < RetailersController
   def create_or_update_customer
     @customer = params[:id].present? ? Customer.find(params[:id]) : Customer.new
 
-    @customer.update_attributes(first_name: params[:first_name], last_name: params[:last_name],
-      email: params[:email], phone: params[:phone], retailer: @retailer)
+    @customer.update_attributes(first_name: params[:first_name], last_name: params[:last_name], email:
+      params[:email], phone: params[:phone], retailer: @retailer)
 
     render json: { customer: @customer, errors: @customer.errors }
   end
