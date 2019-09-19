@@ -70,7 +70,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
       params[:retailer_user].delete(:current_password)
     end
 
-    def after_sign_up_path_for(resource)
+    def after_sign_up_path_for(_resource)
       retailers_integrations_path(current_retailer_user.retailer)
     end
 end
