@@ -1,5 +1,5 @@
 class Retailers::CustomersController < RetailersController
-  before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :set_customer, only: [:show, :edit, :update, :destroy, :customer_data]
   before_action :active_customers, only: :index
 
   # GET /products
@@ -44,6 +44,19 @@ class Retailers::CustomersController < RetailersController
   def destroy
     @customer.destroy
     redirect_to retailers_customers_path, notice: 'Customer was successfully destroyed.'
+  end
+
+  def customer_data
+    render json: { customer: @customer }
+  end
+
+  def create_or_update_customer
+    @customer = params[:id].present? ? Customer.find(params[:id]) : Customer.new
+
+    @customer.update_attributes(first_name: params[:first_name], last_name: params[:last_name],
+      email: params[:email], phone: params[:phone], retailer: @retailer)
+
+    render json: { customer: @customer, errors: @customer.errors }
   end
 
   private

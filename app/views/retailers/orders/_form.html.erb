@@ -15,15 +15,48 @@
           <%= f.select :customer_id, current_retailer.customers.map { |c| [c.full_name, c.id] }, { include_blank: false }, class: 'input' %>
         </div>
         <div class="links mt-16 mb-24 t-right">
-          <a class="btn btn--cta">
+          <a class="btn btn--cta fs-12 fs-sm-and-down-8" onclick="editClient()">
             <i class="fas fa-edit mr-5"></i>
             Editar cliente
           </a>
-          <a class="btn btn--cta">
+          <a class="btn btn--cta fs-12 fs-sm-and-down-8" onclick="addClient()">
             <i class="fas fa-plus mr-5"></i>
             Agregar cliente
           </a>
         </div>
+        <fieldset id="client-order-form" class="d-none mt-16">
+          <legend>Información básica de cliente</legend>
+          <div class="row col-xs-12">
+            <div class="col-xs-12 index__ctas">
+              <label class="btn btn--no-border f-right" onclick="hideClientForm()">
+                <i class="fas fa-times mr-5"></i>
+                Cerrar
+              </label>
+            </div>
+            <input type="hidden" id="customer_id" />
+            <div class="col-xs-12 col-md-6 my-16">
+              <label for="customer_first_name">Nombre</label>
+              <input id="customer_first_name" class="input" />
+            </div>
+            <div class="col-xs-12 col-md-6 my-16">
+              <label for="customer_last_name">Apellido</label>
+              <input id="customer_last_name" class="input" />
+            </div>
+          </div>
+          <div class="row col-xs-12">
+            <div class="col-xs-12 col-md-6 my-16">
+              <label for="customer_email">Email</label>
+              <input id="customer_email" class="input" />
+            </div>
+            <div class="col-xs-12 col-md-6 my-16">
+              <label for="customer_phone">Teléfono</label>
+              <input id="customer_phone" class="input" />
+            </div>
+          </div>
+          <div class="btn-box col-xs-12">
+            <input type="button" class="btn-btn btn-submit" value="Guardar Cliente" onclick="saveClient()">
+          </div>
+        </fieldset>
         <div class="my-16">
           <%= f.label :merc_status, 'Status' %>
            <%= f.select :merc_status, Order.merc_statuses.keys.collect { |s| [ Order.enum_translation(:merc_statuses, s), s ]}, { include_blank: false, disabled: @order.disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
