@@ -652,14 +652,19 @@ document.addEventListener("DOMContentLoaded", function() {
   productId = document.getElementById('product_id').value;
 
   if (!productId) {
-    var roots  = JSON.parse('<%= Category.active.roots.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
-    for(var root_position in roots) {
-      opt = roots[root_position]
-      var el = document.createElement("option");
-      el.textContent = opt.name;
-      el.value = opt.id;
-      childs_select.appendChild(el)
-    };
+    getAjax(`${window.location.origin}/categories`, function(data) {
+      var json = JSON.parse(data);
+
+      var roots  = json['roots'];
+
+      for(var root_position in roots) {
+        opt = roots[root_position];
+        var el = document.createElement("option");
+        el.textContent = opt.name;
+        el.value = opt.id;
+        childs_select.appendChild(el);
+      };
+    });
   }
 
   hideVariationContainer();
