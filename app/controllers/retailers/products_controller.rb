@@ -70,6 +70,7 @@ class Retailers::ProductsController < RetailersController
       @product.reload
       @product.update_ml_info(past_meli_status)
       @product.upload_variations(action_name, @variations)
+      @product.update_status_publishment
       redirect_to retailers_product_path(@retailer, @product), notice: 'Producto actualizado con éxito.'
     else
       render :edit
@@ -141,7 +142,6 @@ class Retailers::ProductsController < RetailersController
 
       @variations = []
       @total_available = 0
-      @total_sold = 0
 
       category = Category.active.find(params[:product][:category_id])
       params[:product][:variations].each do |var|
@@ -151,7 +151,6 @@ class Retailers::ProductsController < RetailersController
       end
 
       params[:product][:available_quantity] = @total_available
-      params[:product][:sold_quantity] = @total_sold
     end
 
     def build_variation(variation, category)
@@ -165,7 +164,6 @@ class Retailers::ProductsController < RetailersController
         temp_var = fill_temp(temp_aux, temp_var, t)
 
         @total_available += t[1].to_i if t[0] == 'available_quantity'
-        @total_sold += t[1].to_i if t[0] == 'sold_quantity'
       end
 
       temp_var

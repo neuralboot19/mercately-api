@@ -19,7 +19,11 @@ class ProductVariation < ApplicationRecord
       info = ml_data['variations'].select { |var| var['id'] == variation_meli_id }
     end
 
-    self.data = info[0].except('catalog_product_id') if info.present?
+    if info.present?
+      info[0]['sold_quantity'] = data['sold_quantity']
+      self.data = info[0].except('catalog_product_id')
+    end
+
     save
   end
 end
