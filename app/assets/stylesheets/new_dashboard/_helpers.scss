@@ -203,6 +203,12 @@ label:hover, a:hover {
   }
 }
 
+@for $size from 0 through 100 {
+  .h-#{$size} {
+    height: #{$size}px;
+  }
+}
+
 @for $space from 0 through 100 {
   .my-perc-#{$space} {
     margin-top: #{$space}% !important;

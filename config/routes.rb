@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       get 'mercadolibre_import', to: 'integrations#mercadolibre_import'
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
-      get 'questions/:question_id', to: 'messages#question'
+      get 'questions/:question_id', to: 'messages#question', as: :question
       put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
