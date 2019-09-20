@@ -59,6 +59,14 @@ class Order < ApplicationRecord
      ['Comprador se retracta', 'BUYER_REGRETS']]
   end
 
+  def unread_last_message?
+    messages.where(answer: nil).last&.date_read.blank?
+  end
+
+  def last_message_received_date
+    messages.where(answer: nil).last.created_at
+  end
+
   private
 
     def adjust_ml_stock
