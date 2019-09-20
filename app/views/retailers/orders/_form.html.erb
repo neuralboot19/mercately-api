@@ -26,13 +26,37 @@
         </div>
         <fieldset id="client-order-form" class="d-none mt-16">
           <legend>Información básica de cliente</legend>
-          <div class="row col-xs-12">
-            <div class="col-xs-12 index__ctas">
-              <label class="btn btn--no-border f-right" onclick="hideClientForm()">
-                <i class="fas fa-times mr-5"></i>
-                Cerrar
-              </label>
-            </div>
+          <div class="col-xs-12 index__ctas">
+            <label class="btn btn--no-border f-right" onclick="hideClientForm()">
+              <i class="fas fa-times mr-5"></i>
+              Cerrar
+            </label>
+          </div>
+          <div id="customer_attributes" class="w-100">
+            <%= f.fields_for :customer do |c| %>
+              <div class="row col-xs-12">
+                <div class="col-xs-12 col-md-6 my-16">
+                  <%= c.label :first_name, 'Nombre' %>
+                  <%= c.text_field :first_name, class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-md-6 my-16">
+                  <%= c.label :last_name, 'Apellido' %>
+                  <%= c.text_field :last_name, class: 'input' %>
+                </div>
+              </div>
+              <div class="row col-xs-12">
+                <div class="col-xs-12 col-md-6 my-16">
+                  <%= c.label :email %>
+                  <%= c.text_field :email, class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-md-6 my-16">
+                  <%= c.label :phone, 'Teléfono' %>
+                  <%= c.text_field :phone, class: 'input' %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <!--<div class="row col-xs-12">
             <input type="hidden" id="customer_id" />
             <div class="col-xs-12 col-md-6 my-16">
               <label for="customer_first_name">Nombre</label>
@@ -55,7 +79,7 @@
           </div>
           <div class="btn-box col-xs-12">
             <input type="button" class="btn-btn btn-submit" value="Guardar Cliente" onclick="saveClient()">
-          </div>
+          </div>-->
         </fieldset>
         <div class="my-16">
           <%= f.label :merc_status, 'Status' %>

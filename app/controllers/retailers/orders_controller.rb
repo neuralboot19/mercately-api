@@ -83,6 +83,13 @@ class Retailers::OrdersController < RetailersController
           :updated_at,
           :product_variation_id,
           :_destroy
+        ],
+        customer_attributes: [
+          :id,
+          :first_name,
+          :last_name,
+          :email,
+          :phone
         ]
       )
     end

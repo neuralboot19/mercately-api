@@ -37,7 +37,6 @@ function getProductInfo(input) {
       priceInput.removeAttribute("readonly");
       priceInput.removeAttribute("title");
 
-      quantityInput.setAttribute("min", "1");
       quantityInput.removeAttribute("readonly");
       quantityInput.removeAttribute("title");
     } else {
@@ -84,7 +83,7 @@ function insertVariation(variation, parentContainer, index) {
   insertionString += '</div>';
   insertionString += '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Cantidad</label>' +
-                     '<input class="input" type="number" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity" min="1">' +
+                     '<input class="input" type="number" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity">' +
                      '</div>' +
                      '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_unit_price">Precio unitario</label>' +
