@@ -101,13 +101,19 @@ module MercadoLibre
           @last_name = @order_params['last_name']
           @link = @order_params['permalink']
           @points = @order_params['points']
-          @ratings_total = @order_params['seller_reputation']['total']
-          @transactions_canceled = @order_params['seller_reputation']['transactions']['canceled']
-          @transactions_completed = @order_params['seller_reputation']['transactions']['completed']
-          @ratings_neutral = @order_params['seller_reputation']['transactions']['ratings']['neutral']
-          @ratings_positive = @order_params['seller_reputation']['transactions']['ratings']['positive']
-          @ratings_negative = @order_params['seller_reputation']['transactions']['ratings']['negative']
-          @seller_reputation_level_id = @order_params['seller_reputation']['level_id']
+          @ratings_total = @order_params['seller_reputation']&.[]('total')
+          @transactions_canceled = @order_params['seller_reputation']
+            &.[]('transactions')&.[]('canceled')
+          @transactions_completed = @order_params['seller_reputation']
+            &.[]('transactions')&.[]('completed')
+          @ratings_neutral = @order_params['seller_reputation']
+            &.[]('transactions')&.[]('ratings')&.[]('neutral')
+          @ratings_positive = @order_params['seller_reputation']
+            &.[]('transactions')&.[]('ratings')&.[]('positive')
+          @ratings_negative = @order_params['seller_reputation']
+            &.[]('transactions')&.[]('ratings')&.[]('negative')
+          @seller_reputation_level_id = @order_params['seller_reputation']
+            &.[]('level_id')
           @buyer_canceled_transactions = @order_params['buyer_reputation']&.[]('canceled_transactions')
           @buyer_completed_transactions = @order_params['buyer_reputation']
             &.[]('transactions')&.[]('completed')
@@ -138,13 +144,19 @@ module MercadoLibre
           @last_name = customer_info['last_name']
           @link = customer_info['permalink']
           @points = customer_info['points']
-          @ratings_total = customer_info['seller_reputation']['total']
-          @transactions_canceled = customer_info['seller_reputation']['transactions']['canceled']
-          @transactions_completed = customer_info['seller_reputation']['transactions']['completed']
-          @ratings_neutral = customer_info['seller_reputation']['transactions']['ratings']['neutral']
-          @ratings_positive = customer_info['seller_reputation']['transactions']['ratings']['positive']
-          @ratings_negative = customer_info['seller_reputation']['transactions']['ratings']['negative']
-          @seller_reputation_level_id = customer_info['seller_reputation']['level_id']
+          @ratings_total = customer_info['seller_reputation']&.[]('total')
+          @transactions_canceled = customer_info['seller_reputation']
+            &.[]('transactions')&.[]('canceled')
+          @transactions_completed = customer_info['seller_reputation']
+            &.[]('transactions')&.[]('completed')
+          @ratings_neutral = customer_info['seller_reputation']
+            &.[]('transactions')&.[]('ratings')&.[]('neutral')
+          @ratings_positive = customer_info['seller_reputation']
+            &.[]('transactions')&.[]('ratings')&.[]('positive')
+          @ratings_negative = customer_info['seller_reputation']
+            &.[]('transactions')&.[]('ratings')&.[]('negative')
+          @seller_reputation_level_id = customer_info['seller_reputation']
+            &.[]('level_id')
           @buyer_canceled_transactions = customer_info['buyer_reputation']&.[]('canceled_transactions')
           @buyer_completed_transactions = customer_info['buyer_reputation']
             &.[]('transactions')&.[]('completed')
