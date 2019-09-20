@@ -1,11 +1,6 @@
 class Retailers::MessagesController < RetailersController
   before_action :set_question, only: %i[show answer_question]
 
-  # GET /messages
-  def index
-    @questions = Question.all
-  end
-
   # GET /messages/1
   def show
   end
@@ -14,21 +9,22 @@ class Retailers::MessagesController < RetailersController
     @questions = Question.includes(:product).where(meli_question_type: :from_product, products:
       {
         retailer_id: current_retailer.id
-      }).order(created_at: 'DESC').page(params[:page])
+      }).order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
   end
 
   def chats
-    @chats = Order.includes(:customer, :messages)
-      .where(customers:
-      {
-        retailer_id: current_retailer.id
-      }).order(created_at: 'DESC')
+    @chats = Order.joins(:messages)
+      .where('questions.id IS NOT NULL')
+      .order(Message.arel_table['date_read'].desc)
+      .includes(:customer)
+      .where(customers: { retailer_id: current_retailer.id })
 
-    @chats = @chats.where('questions.order_id = orders.id').page(params[:page])
+    @chats = @chats.page(params[:page])
   end
 
   def question
     @question = Question.find(params[:question_id])
+    @question.update(date_read: Time.now) if @question.date_read.nil?
   end
 
   def answer_question
@@ -57,6 +53,7 @@ class Retailers::MessagesController < RetailersController
   def chat
     @return_to = params[:return_to]
     @order = Order.find(params[:order_id])
+    @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
   end
 
   private

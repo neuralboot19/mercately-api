@@ -17,8 +17,9 @@
           <div class="table box">
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Usuario</div>
-              <div class="col-sm-4">Producto</div>
-              <div class="col-sm-5"></div>
+              <div class="col-sm-3">Producto</div>
+              <div class="col-sm-4"></div>
+              <div class="col-sm-2"></div>
               <div class="col-sm-1">Fecha</div>
               <div class="col-sm-1"></div>
             </div>
@@ -30,7 +31,7 @@
                     <%= question.customer.email.presence || question.customer.meli_nickname %>
                   </div>
                 </div>
-                <div class="col-xs-10 col-sm-4 t-center">
+                <div class="col-xs-10 col-sm-3 t-center">
                   <%= question.product.title %>
                 </div>
                 <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
@@ -41,7 +42,7 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_message_path(current_retailer, question), class: 'c-black no-style' do %>
+                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
                           <i class="fas fa-eye mr-8"></i>
                           Ver
                         <% end %>
@@ -49,7 +50,7 @@
                     </ul>
                   </label>
                 </div>
-                <div class="col-xs-12 col-sm-5 c-grey">
+                <div class="col-xs-12 col-sm-4 c-grey">
                   <br class="hide-on-md-and-up"/>
                     <span class="c-secondary">
                       Pregunta:
@@ -59,6 +60,13 @@
                     <span class="c-secondary">
                       Respuesta:
                     </span> <%= question.answer %>
+                </div>
+                <div class="col-xs-12 col-sm-2 t-center">
+                  <% if question.date_read.blank? %>
+                    <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
+                  <% else %>
+                    <b class="cookie__box cookie__box__green px-5">Visto</b>
+                  <% end %>
                 </div>
                 <div class="col-xs-12 col-sm-1 t-center">
                   <%= show_date(question.created_at) %>
@@ -86,14 +94,14 @@
                 </div>
               </div>
             <% end %>
+            <div class="row middle-xs center-xs">
+              <div class="col-xs-12">
+                <%= paginate @questions %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row middle-xs center-xs">
-    <div class="col-xs-12">
-      <%= paginate @questions %>
     </div>
   </div>
 </div>
