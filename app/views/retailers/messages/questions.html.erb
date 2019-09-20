@@ -64,7 +64,7 @@
                   <%= show_date(question.created_at) %>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
-                  <%= link_to retailers_message_path(current_retailer, question), class: 'c-black no-style' do %>
+                  <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
                     <i class="fas fa-eye"></i>
                   <% end %>
                 </div>
@@ -76,7 +76,7 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_message_path(current_retailer, question), class: 'c-black no-style' do %>
+                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
                           <i class="fas fa-eye mr-8"></i>
                           Ver
                         <% end %>
