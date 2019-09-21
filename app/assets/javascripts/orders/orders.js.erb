@@ -130,6 +130,24 @@ $(document).ready(function() {
     }
   });
 
+  $('#add_customer_container a.add_fields')
+    .data("association-insertion-method", 'append')
+    .data("association-insertion-node", '#add_customer_container');
+
+  $('#add_customer_container').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
+    $('#add_customer').hide();
+    $('#edit_customer').hide();
+    $('#customer_id_container').hide();
+  });
+
+  $('#add_customer_container').on('cocoon:after-remove', function(e, removedItem) {
+    $('#add_customer').show();
+    $('#edit_customer').show();
+    $('#customer_id_container').show();
+  });
+
+  disableEditForm();
+
   $('#feedback-container').hide();
   $('#order_feedback_reason').prop('disabled', true);
   $('#order_feedback_rating').prop('disabled', true);
@@ -148,63 +166,50 @@ $(document).ready(function() {
   }
 });
 
-function saveClient() {
-  Rails.ajax({
-    url: `${window.location.origin}/retailers/customers/create_or_update`,
-    type: 'POST',
-    data: `id=${$('#customer_id').val()}&first_name=${$('#customer_first_name').val()}&last_name=${$('#customer_last_name').val()}` +
-      `&email=${$('#customer_email').val()}&phone=${$('#customer_phone').val()}`,
-    success: function(data) {
-      var customer = data['customer'];
-      $('#order_customer_id').select2();
+function editClient() {
+  enableEditForm();
+  if (!$('#order_customer_attributes_id').val()) {
+    updateEditForm();
+  }
+  $('#edit-client-order-form').show();
+  $('#add_customer').hide();
+  $('#edit_customer').hide();
+}
 
-      if ($('#customer_id').val() === $('#order_customer_id').val()) {
-        $('#order_customer_id option:selected').text(customer.first_name + ' ' + customer.last_name);
-        $('#order_customer_id').select2().trigger('change');
-      } else {
-        $('#order_customer_id').append($('<option>', {
-            value: customer.id,
-            text: customer.first_name + ' ' + customer.last_name,
-            selected: 'selected'
-        }));
-      }
+function updateEditForm() {
+  custId = $('#order_customer_id').val();
 
-      $('#order_customer_id').select2().trigger('change');
-      $('#client-order-form').hide();
-      showtoast('Cliente guardado con éxito.');
-    },
-    error: function(data) {
-      showtoast('No se pudo guardar el cliente.');
-    }
+  getAjax(`${window.location.origin}/retailers/customers/${custId}`, function(data) {
+    var json = JSON.parse(data);
+    var customer = json['customer'];
+
+    $('#order_customer_attributes_id').val(customer.id);
+    $('#order_customer_attributes_first_name').val(customer.first_name);
+    $('#order_customer_attributes_last_name').val(customer.last_name);
+    $('#order_customer_attributes_email').val(customer.email);
+    $('#order_customer_attributes_phone').val(customer.phone);
   });
 }
 
-function editClient() {
-  if ($('#client-order-form').is(":hidden") || !$('#customer_id').val()) {
-    custId = $('#order_customer_id').val();
-
-    getAjax(`${window.location.origin}/retailers/customers/${custId}`, function(data) {
-      var json = JSON.parse(data);
-
-      var customer = json['customer'];
-      $('#customer_id').val(customer.id);
-      $('#customer_first_name').val(customer.first_name);
-      $('#customer_last_name').val(customer.last_name);
-      $('#customer_email').val(customer.email);
-      $('#customer_phone').val(customer.phone);
-
-      $('#client-order-form').show();
-    });
-  }
-}
-
-function addClient() {
-  $('#customer_id').removeAttr('value');
-  $('#customer_first_name, #customer_last_name, #customer_email, #customer_phone').val('');
-
-  $('#client-order-form').show();
-}
-
 function hideClientForm() {
-  $('#client-order-form').hide();
+  disableEditForm();
+  $('#edit-client-order-form').hide();
+  $('#add_customer').show();
+  $('#edit_customer').show();
+}
+
+function disableEditForm() {
+  $('#order_customer_attributes_id').prop('disabled', true);
+  $('#order_customer_attributes_first_name').prop('disabled', true);
+  $('#order_customer_attributes_last_name').prop('disabled', true);
+  $('#order_customer_attributes_email').prop('disabled', true);
+  $('#order_customer_attributes_phone').prop('disabled', true);
+}
+
+function enableEditForm() {
+  $('#order_customer_attributes_id').prop('disabled', false);
+  $('#order_customer_attributes_first_name').prop('disabled', false);
+  $('#order_customer_attributes_last_name').prop('disabled', false);
+  $('#order_customer_attributes_email').prop('disabled', false);
+  $('#order_customer_attributes_phone').prop('disabled', false);
 }

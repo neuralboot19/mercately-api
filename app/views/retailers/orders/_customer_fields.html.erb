@@ -1,0 +1,38 @@
+<div class="nested-fields box">
+  <div class="row my-16 bottom-xs">
+    <fieldset class="mt-16 w-100">
+      <legend>Información básica de cliente</legend>
+      <div class="w-100">
+        <div class="row col-xs-12">
+          <div class="col-xs-12 index__ctas">
+            <a class="btn btn--no-border f-right" onclick="hideClientForm()">
+              <i class="fas fa-times mr-5"></i>
+              Cerrar
+            </a>
+          </div>
+          <div class="col-xs-12 col-md-6 my-16">
+            <%= f.label :first_name, 'Nombre' %>
+            <%= f.text_field :first_name, class: 'input' %>
+          </div>
+          <div class="col-xs-12 col-md-6 my-16">
+            <%= f.label :last_name, 'Apellido' %>
+            <%= f.text_field :last_name, class: 'input' %>
+          </div>
+        </div>
+        <div class="row col-xs-12">
+          <div class="col-xs-12 col-md-6 my-16">
+            <%= f.label :email %>
+            <%= f.text_field :email, class: 'input' %>
+          </div>
+          <div class="col-xs-12 col-md-6 my-16">
+            <%= f.label :phone, 'Teléfono' %>
+            <%= f.text_field :phone, class: 'input' %>
+          </div>
+          <% if @order.id.blank? %>
+            <input type="hidden" name="order[customer_attributes][id]" id="order_customer_attributes_id">
+          <% end %>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+</div>

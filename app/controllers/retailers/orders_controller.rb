@@ -17,6 +17,7 @@ class Retailers::OrdersController < RetailersController
 
   # GET /orders/1/edit
   def edit
+    @customer = @order.customer
   end
 
   # POST /orders
@@ -26,7 +27,7 @@ class Retailers::OrdersController < RetailersController
     @order = Order.new(order_params)
 
     if @order.save
-      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Order was successfully created.'
+      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden creada con éxito.'
     else
       render :new
     end
@@ -37,7 +38,7 @@ class Retailers::OrdersController < RetailersController
     params[:order][:order_items_attributes] = process_items(params[:order][:order_items_attributes])
 
     if @order.update(order_params)
-      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Order was successfully updated.'
+      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden actualizada con éxito.'
     else
       render :edit
     end
@@ -89,7 +90,8 @@ class Retailers::OrdersController < RetailersController
           :first_name,
           :last_name,
           :email,
-          :phone
+          :phone,
+          :retailer_id
         ]
       )
     end
