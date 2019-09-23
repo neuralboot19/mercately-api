@@ -19,10 +19,14 @@ class Customer < ApplicationRecord
   end
 
   def generate_phone
-    return if phone.present? || meli_customer.blank?
-    return if meli_customer.phone_area.blank? || meli_customer.phone.blank?
+    return unless do_generate_phone?
 
-    phone_area = '0' + meli_customer.phone_area if country_id == 'EC' && meli_customer.phone_area[0] != '0'
+    phone_area = if country_id == 'EC' && meli_customer.phone_area[0] != '0'
+                   '0' + meli_customer.phone_area
+                 else
+                   meli_customer.phone_area
+                 end
+
     update(phone: phone_area + meli_customer.phone)
   end
 
@@ -32,5 +36,9 @@ class Customer < ApplicationRecord
       return if valid_customer?
 
       self.valid_customer = first_name.present? || last_name.present? || email.present?
+    end
+
+    def do_generate_phone?
+      phone.blank? && meli_customer&.phone_area.present? && meli_customer&.phone.present?
     end
 end
