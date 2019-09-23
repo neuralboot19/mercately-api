@@ -37,6 +37,7 @@ Rails.application.routes.draw do
     post 'callbacks', to: 'integrations#callbacks'
     get 'products/:id/product_with_variations', to: 'products#product_with_variations'
     get 'products/:id/price_quantity', to: 'products#price_quantity'
+    get 'customers/:id', to: 'customers#customer_data'
   end
 
   get 'categories', to: 'categories#roots'

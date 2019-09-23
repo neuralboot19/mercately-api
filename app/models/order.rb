@@ -15,6 +15,8 @@ class Order < ApplicationRecord
   enum feedback_rating: %i[positive negative neutral]
 
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :customer, reject_if: :all_blank, allow_destroy: false
+
   delegate :retailer_id, :retailer, to: :customer
 
   scope :retailer_orders, lambda { |retailer_id, status|

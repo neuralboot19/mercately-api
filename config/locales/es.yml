@@ -7,6 +7,14 @@ es:
           success: Exitoso
           pending: Pendiente
           cancelled: Cancelado
+        statuses:
+          confirmed: Confirmado
+          payment_required: Pago Requerido
+          payment_in_process: Pago en Proceso
+          partially_paid: Pagado Parcialmente
+          paid: Pagado
+          cancelled: Cancelado
+          invalid_order: Orden Inválida
       product:
         conditions: 
           new_product: Nuevo
