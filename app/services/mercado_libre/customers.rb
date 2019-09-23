@@ -46,11 +46,7 @@ module MercadoLibre
           country_id: @country_id
         )
 
-        customer.update!(first_name: @first_name) if customer.first_name.blank? && @first_name.present?
-        customer.update!(last_name: @last_name) if customer.last_name.blank? && @last_name.present?
-        customer.generate_phone
-
-        customer
+        save_customer_data(customer)
       end
 
       def update_or_create_meli_customer(customer_info)
@@ -140,6 +136,14 @@ module MercadoLibre
           &.[]('transactions')&.[]('not_yet_rated')&.[]('paid')
         @buyer_not_yet_rated_total_transactions = customer_info['buyer_reputation']
           &.[]('transactions')&.[]('not_yet_rated')&.[]('total')
+      end
+
+      def save_customer_data(customer)
+        customer.update!(first_name: @first_name) if customer.first_name.blank? && @first_name.present?
+        customer.update!(last_name: @last_name) if customer.last_name.blank? && @last_name.present?
+        customer.generate_phone
+
+        customer
       end
   end
 end
