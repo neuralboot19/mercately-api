@@ -15,6 +15,8 @@ class Order < ApplicationRecord
   enum feedback_rating: %i[positive negative neutral]
 
   accepts_nested_attributes_for :order_items, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :customer, reject_if: :all_blank, allow_destroy: false
+
   delegate :retailer_id, :retailer, to: :customer
 
   scope :retailer_orders, lambda { |retailer_id, status|
@@ -59,6 +61,14 @@ class Order < ApplicationRecord
      ['Comprador se retracta', 'BUYER_REGRETS']]
   end
 
+  def unread_last_message?
+    messages.where(answer: nil).last&.date_read.blank?
+  end
+
+  def last_message_received_date
+    messages.where(answer: nil).last.created_at
+  end
+
   private
 
     def adjust_ml_stock
@@ -67,7 +77,7 @@ class Order < ApplicationRecord
          merc_status == 'cancelled'
 
         update_items
-        push_feedback
+        push_feedback if feedback_reason.present?
       elsif merc_status == 'success'
         push_feedback
       end
@@ -90,13 +100,19 @@ class Order < ApplicationRecord
 
         if product_variation.present?
           data = product_variation.data
-          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity
+          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity unless
+            order_item.from_ml? && order_item.product.meli_status != 'closed'
           data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
           product_variation.update(data: data)
+
+          product.update_variations_quantities
         else
-          product.update(available_quantity: product.available_quantity +
-            order_item.quantity, sold_quantity: product.sold_quantity - order_item.quantity)
+          product.update(available_quantity: product.available_quantity + order_item.quantity) unless
+            order_item.from_ml? && order_item.product.meli_status != 'closed'
+          product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
         end
+
+        product.update_status_publishment(true)
       end
     end
 end

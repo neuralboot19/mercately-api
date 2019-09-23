@@ -23,20 +23,21 @@ Rails.application.routes.draw do
         post 'send_message', to: 'messages#send_message', as: :send_message
       end
       resources :customers, except: [:destroy, :show]
-      resources :messages, only: [:index, :show]
+      resources :messages, only: [:show]
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
       get 'mercadolibre_import', to: 'integrations#mercadolibre_import'
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
-      get 'questions/:question_id', to: 'messages#question'
+      get 'questions/:question_id', to: 'messages#question', as: :question
       put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
     get 'products/:id/product_with_variations', to: 'products#product_with_variations'
     get 'products/:id/price_quantity', to: 'products#price_quantity'
+    get 'customers/:id', to: 'customers#customer_data'
   end
 
   get 'categories', to: 'categories#roots'

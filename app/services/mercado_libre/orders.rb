@@ -28,7 +28,7 @@ module MercadoLibre
       )
 
       order_info['order_items'].each do |order_item|
-        product = MercadoLibre::Products.new(@retailer).import_product([order_item['item']['id']]).first
+        product = MercadoLibre::Products.new(@retailer).pull_update(order_item['item']['id'])
 
         item = OrderItem.find_or_initialize_by(order_id: order.id, product_id: product.id)
 
@@ -38,10 +38,15 @@ module MercadoLibre
         item.update_attributes!(
           quantity: order_item['quantity'],
           unit_price: order_item['unit_price'],
-          product_variation_id: product_variation&.id
+          product_variation_id: product_variation&.id,
+          from_ml: true
         )
       end
 
+      return order unless order_info['feedback']&.[]('sale').present?
+
+      status = order_info['feedback']['sale']['fulfilled'] == false ? 'cancelled' : 'success'
+      order.update(feedback_rating: order_info['feedback']['sale']['rating'], merc_status: status)
       order
     end
 

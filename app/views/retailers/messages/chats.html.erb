@@ -17,8 +17,9 @@
           <div class="table box">
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Usuario</div>
-              <div class="col-sm-4">Producto</div>
-              <div class="col-sm-5"></div>
+              <div class="col-sm-3">Producto</div>
+              <div class="col-sm-4"></div>
+              <div class="col-sm-2"></div>
               <div class="col-sm-1">Fecha</div>
               <div class="col-sm-1"></div>
             </div>
@@ -30,7 +31,7 @@
                     <%= order.customer.email.presence || order.customer.meli_nickname %>
                   </div>
                 </div>
-                <div class="col-xs-10 col-sm-4 t-center">
+                <div class="col-xs-10 col-sm-3 t-center">
                   <%= order.products.first&.title %>
                 </div>
                 <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
@@ -49,7 +50,7 @@
                     </ul>
                   </label>
                 </div>
-                <div class="col-xs-12 col-sm-5 c-grey">
+                <div class="col-xs-12 col-sm-4 c-grey">
                   <br class="hide-on-md-and-up"/>
                   <% order.messages.last(2).each do |m| %>
                     <div class="c-secondary truncate">
@@ -63,8 +64,15 @@
                     <br/>
                   <% end %>
                 </div>
+                <div class="col-xs-12 col-sm-2 t-center">
+                  <% if order.unread_last_message? %>
+                    <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
+                  <% else %>
+                    <b class="cookie__box cookie__box__green px-5">Visto</b>
+                  <% end %>
+                </div>
                 <div class="col-xs-12 col-sm-1 t-center">
-                  <%= show_date(order.created_at) %>
+                  <%= show_date(order.last_message_received_date) %>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
                   <%= link_to retailers_order_messages_path(current_retailer, order, return_to: 'chat'), class: 'c-black no-style' do %>
@@ -89,14 +97,14 @@
                 </div>
               </div>
             <% end %>
+            <div class="row middle-xs center-xs">
+              <div class="col-xs-12">
+                <%= paginate @chats %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  <div class="row middle-xs center-xs">
-    <div class="col-xs-12">
-      <%= paginate @chats %>
     </div>
   </div>
 </div>

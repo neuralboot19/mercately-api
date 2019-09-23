@@ -1,104 +1,100 @@
-<div class="aligner-row head">
-  <h3>Chat</h3>
-  <div class="w-100 middle-right">
-    <%= link_to 'Atrás', @return_to == 'order' ? retailers_order_path(current_retailer, @order) : retailers_chats_path(current_retailer), class: 'ml-8' %>
-    <a class="btn ml-8" href="http://www.url.com" target="_blank">Ayuda</a>
-  </div>
-</div>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-xs-12 col-sm-9">
-      <div class="card mt-9">
-        <div class="box">
-          <div class="row">
-            <div class="col-xs-12 col-md-3">
-              <div class="box">
-                <div class="row center-xs">
-                  <div class="col-xs-12">
-                    <p class="product-text my-0">
-                      <b class="normal black-text">Orden:</b> <%= @order.id %><br/>
-                      <b class="normal black-text">Usuario:</b> <%= @order.customer.first_name.present? ? @order.customer.full_name() : (@order.customer.meli_nickname ||
-                      @order.customer.meli_customer.nickname) %><br/>
-                      <% if @order.products.present? %>
-                        <b class="normal black-text">Producto:</b> <%= @order.products.first.title %><br/>
-                      <% else %>
-                        <b class="normal black-text">Producto:</b> No existen productos<br/>
-                      <% end %>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <% @order.messages.order(:created_at).each do |m| %>
-              <div class="col-xs-12 col-md-9">
-                <div class="box">
-                  <div class="row">
-                    <div class="col-xs-12">
-                      <div class="messages-box">
-                        <div class="box">
-                          <div class="row">
-                            <div class="col-xs-12">
-                              <div class="box">
-                                <% if m.sender_id != current_retailer_user.id %>
-                                  <div class="row">
-                                    <div class="col-xs-10">
-                                      <p class="message-buyer">
-                                        <b class="normal black-text">Fecha</b> <%= m.created_at.strftime("%d %B") %><br/>
-                                        <%= m.question %>
-                                      </p>
-                                    </div>
-                                  </div>
-                                <% else %>
-                                  <div class="row">
-                                    <div class="col-xs-2"></div>
-                                    <div class="col-xs-10">
-                                      <p class="message-seller t-right">
-                                        <% if m.answer %>
-                                          <b class="normal black-text">Fecha</b> <%= m.updated_at.strftime("%d %B") %><br/>
-                                          <%= m.answer %>
-                                        <% end %>
-                                      </p>
-                                    </div>
-                                  </div>
-                                <% end %>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row middle-xs">
+        <div class="col-xs-12 col-sm-4">
+          <h1 class="d-inline name">Chat</h1>
+        </div>
+        <div class="col-xs-12 col-sm-8 hide-on-tablet-and-down">
+          <div class="index__ctas f-right">
+            <%= link_to @return_to == 'order' ? retailers_order_path(current_retailer, @order) : retailers_chats_path(current_retailer), class: 'btn btn--cta' do %>
+              <i class="fas fa-arrow-left mr-5"></i>
+              Atrás
             <% end %>
-            <div class="col-xs-12">
-              <%= form_tag retailers_order_send_message_path do %>
-                <%= hidden_field_tag :order_id, @order.id %>
-                <div class="row">
-                  <div class="group col-xs-12 col-md-11 pr-4 mt-0">
-                    <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'w-100', style: 'height: 77px;' %>
-                    <span class="bar"></span>
-                  </div>
-                  <div class="col-md-1 col-xs-12 pl-0">
-                    <%= submit_tag 'Enviar', class: 'w-100 message-send', style: 'height: 100px;' %>
-                  </div>
-                </div>
-              <% end %>
-            </div>
           </div>
         </div>
       </div>
     </div>
-    <div id="templates" class="col-xs-12 col-sm-3">
-      <% Retailer.filter_templates(current_retailer, 'chats').each do |template| %>
-        <%= form_tag retailers_order_send_message_path(current_retailer, @order), method: :post do %>
-          <%= hidden_field_tag :answer, template.answer %>
-          <h3 class="template__title"><%= template.title %></h3>
-          <p class="template__body"><%= template.answer.truncate(140) %></p>
-          <%= submit_tag 'Enviar', class: 'w-100 message-send' %>
-          <hr/>
-        <% end %>
-      <% end %>
+    <div class="container-fluid products">
+      <div class="row">
+        <div class="col-xs-12">
+          <fieldset class="fieldset mt-16">
+          <legend>Información de los mensajes</legend>
+            <div class="box pt-25">
+              <div class="row">
+                <div class="col-xs-12 col-sm-3">
+                  <fieldset class="fieldset mt-16">
+                  <legend>Enviado por:</legend>
+                    <p>
+                      <label class="c-grey fs-14">Usuario:</label> <span class="c-secondary fs-14"><%= @order.customer.first_name.present? ? @order.customer.full_name() : (@order.customer.meli_nickname ||
+                      @order.customer.meli_customer.nickname) %></span>
+                    </p>
+                    <p>
+                      <label class="c-grey fs-14">Orden:</label> <span class="c-secondary fs-14"><%= @order.id %></span>
+                    </p>
+                    <p>
+                      <% if @order.products.present? %>
+                        <label class="c-grey fs-14">Producto:</label> <span class="c-secondary fs-14"><%= @order.products.first.title %></span>
+                      <% else %>
+                        <label class="c-grey fs-14">Producto:</label> <span class="c-secondary fs-14"><%= No existen productos %></span>
+                      <% end %>
+                    </p>
+                  </fieldset>
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  <fieldset class="fieldset mt-16">
+                    <legend>Detalles:</legend>
+                    <% @order.messages.order(:created_at).each do |m| %>
+                      <% if m.sender_id != current_retailer_user.id %>
+                        <p>
+                          <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.created_at) %></span>
+                        </p>
+                        <p>
+                          <label><%= m.question %></label>
+                        </p>
+                      <% else %>
+                        <p class="t-right">
+                          <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.updated_at) %></span>
+                        </p>
+                        <p class="t-right">
+                          <label><%= m.answer %></label>
+                        </p>
+                      <% end %>
+                    <% end %>
+                    <%= form_tag retailers_order_send_message_path do %>
+                      <%= hidden_field_tag :order_id, @order.id %>
+                      <div class="row mb-10">
+                        <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'input h-77' %>
+                      </div>
+                      <div class="t-center">
+                        <%= submit_tag 'Enviar', class: 'btn-btn btn-submit w-100' %>
+                      </div>
+                    <% end %>
+                  </fieldset>
+                </div>
+                <div id="templates" class="col-xs-12 col-sm-3">
+                  <fieldset class="fieldset mt-16">
+                  <legend>Plantillas:</legend>
+                    <% Retailer.filter_templates(current_retailer, 'chats').each do |template| %>
+                      <%= form_tag retailers_order_send_message_path(current_retailer, @order), method: :post do %>
+                        <%= hidden_field_tag :answer, template.answer %>
+                        <p>
+                          <span class="c-secondary fs-16"><%= template.title %></span>
+                        </p>
+                        <p>
+                          <label class="c-grey fs-14"><%= template.answer.truncate(140) %></label>
+                        </p>
+                        <%= submit_tag 'Enviar', class: 'btn-btn btn-submit w-100' %>
+                        <hr/>
+                      <% end %>
+                    <% end %>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </div>
+      </div>
     </div>
   </div>
 </div>

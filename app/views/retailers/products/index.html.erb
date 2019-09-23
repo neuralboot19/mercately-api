@@ -106,7 +106,7 @@
                   </div>
                 </div>
                 <div class="col-xs-12 col-sm-1 t-center hide-on-sm-and-down">
-                  Disponible: <b class="c-green"><%= product.available_quantity %></b>
+                  Disponible: <b class="<%= product.available_quantity >= 0 ? 'c-green' : 'c-red' %>"><%= product.available_quantity %></b>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
                   <%= link_to retailers_product_path(current_retailer, product) do %>

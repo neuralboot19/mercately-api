@@ -68,7 +68,6 @@ function appendSelect(currentElement) {
         appendAttributes();
         showVariationTitle();
         showVariationContainer();
-        disableAvailableQuantity();
 
         if (originalCategoryId && originalCategoryId === categoryId) {
           for (pv in productVariations) {
@@ -159,13 +158,7 @@ function appendTemplate() {
 }
 
 function addCommonVariationElements(container) {
-  commonElements = [/*{
-    "name": "price",
-    "element": "input",
-    "element_type": "number",
-    "label": "Precio"
-  },*/
-  {
+  commonElements = [{
     "name": "available_quantity",
     "element": "input",
     "element_type": "number",
@@ -201,6 +194,10 @@ function addCommonVariationElements(container) {
     newElement.setAttribute("id", attrId);
     newElement.setAttribute("type", commonElements[comElem]["element_type"]);
     newElement.setAttribute("class", "input");
+
+    if (commonElements[comElem]["name"] === "sold_quantity") {
+      newElement.setAttribute("readonly", "true");
+    }
 
     if (currentTemplate && currentTemplate["data"][commonElements[comElem]["name"]] !== undefined) {
       newElement.setAttribute("value", `${currentTemplate["data"][commonElements[comElem]["name"]]}`);
@@ -449,6 +446,7 @@ function showVariationTitle() {
     return;
   }
 
+  disableAvailableQuantity();
   var container = document.getElementById("variations-title");
   container.className = "variations-container-title col-xs-12";
 }
@@ -654,14 +652,19 @@ document.addEventListener("DOMContentLoaded", function() {
   productId = document.getElementById('product_id').value;
 
   if (!productId) {
-    var roots  = JSON.parse('<%= Category.active.roots.map { |cat| cat.attributes.except("template") }.to_json.html_safe %>');
-    for(var root_position in roots) {
-      opt = roots[root_position]
-      var el = document.createElement("option");
-      el.textContent = opt.name;
-      el.value = opt.id;
-      childs_select.appendChild(el)
-    };
+    getAjax(`${window.location.origin}/categories`, function(data) {
+      var json = JSON.parse(data);
+
+      var roots  = json['roots'];
+
+      for(var root_position in roots) {
+        opt = roots[root_position];
+        var el = document.createElement("option");
+        el.textContent = opt.name;
+        el.value = opt.id;
+        childs_select.appendChild(el);
+      };
+    });
   }
 
   hideVariationContainer();

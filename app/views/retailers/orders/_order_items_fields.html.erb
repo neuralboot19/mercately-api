@@ -9,7 +9,7 @@
     </div>
     <div class="col-xs-12 col-sm-3">
       <%= f.label :quantity, 'Cantidad' %>
-      <%= f.number_field :quantity, readonly: f.object.order.merc_status != 'pending', value: 1, class: 'input' %>
+      <%= f.number_field :quantity, readonly: f.object.order.merc_status != 'pending', class: 'input' %>
     </div>
     <div class="col-xs-12 col-sm-3">
       <%= f.label :unit_price, 'Precio unitario' %>

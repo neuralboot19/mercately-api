@@ -69,8 +69,8 @@
       float: right;
       width: 22px;
       height: 22px;
-      background-color: adjust-color($secondary-color, $alpha: -0.7);
-      color: adjust-color($secondary-color, $red: -7, $green: -97);
+      background-color: $secondary-color;
+      color: #FFF;
       border-radius: 7px;
       text-align: center;
       font-size: 14px;
@@ -429,6 +429,23 @@
 .logo-integration-platform {
   width: 350px;
   height: 98px;
+}
+
+.cookie__box {
+  height: 22px;
+  color: #FFF;
+  border-radius: 7px;
+  text-align: center;
+  font-size: 12px;
+  margin-left: 8px;
+
+  &__blue {
+    background-color: $secondary-color;
+  }
+
+  &__green {
+    background-color: #1DBF73;
+  }
 }
 
 @media screen and (max-width: 1366px) {

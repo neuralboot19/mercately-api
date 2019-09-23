@@ -3,8 +3,6 @@ class OrderItem < ApplicationRecord
   belongs_to :product
   belongs_to :product_variation, required: false
 
-  validate :check_stock
-
   before_update :adjust_stock, if: :will_save_change_to_quantity?
   before_destroy :replace_stock, prepend: true
   after_update :update_ml_stock, if: :saved_change_to_quantity?
@@ -20,17 +18,8 @@ class OrderItem < ApplicationRecord
 
   private
 
-    def check_stock
-      if product_variation.present?
-        errors.add(:base, "No hay suficientes #{product.title}") if
-          product_variation.data['available_quantity'].to_i + quantity_was.to_i < quantity.to_i
-      elsif product.available_quantity + quantity_was.to_i < quantity.to_i
-        errors.add(:base, "No hay suficientes #{product.title}")
-      end
-    end
-
     def update_ml_stock(action = 'update')
-      return if action == 'create' && order.meli_order_id.present?
+      return if action == 'create' && from_ml?
       return unless product.meli_product_id
 
       p_ml = MercadoLibre::Products.new(product.retailer)
@@ -40,17 +29,19 @@ class OrderItem < ApplicationRecord
     end
 
     def subtract_stock
-      return if order.meli_order_id.present?
-
       if product_variation.present?
         data = product_variation.data
-        data['available_quantity'] = data['available_quantity'].to_i - quantity
+        data['available_quantity'] = data['available_quantity'].to_i - quantity unless from_ml?
         data['sold_quantity'] = data['sold_quantity'].to_i + quantity
         product_variation.update(data: data)
+
+        product.update_variations_quantities
       else
-        product.update(available_quantity: product.available_quantity - quantity, sold_quantity:
-          product.sold_quantity + quantity)
+        product.update(available_quantity: product.available_quantity - quantity) unless from_ml?
+        product.update(sold_quantity: product.sold_quantity.to_i + quantity)
       end
+
+      product.update_status_publishment(true)
     end
 
     def adjust_stock
@@ -59,11 +50,15 @@ class OrderItem < ApplicationRecord
         data['available_quantity'] = data['available_quantity'].to_i + quantity_was - quantity
         data['sold_quantity'] = data['sold_quantity'].to_i - quantity_was + quantity
         product_variation.update(data: data)
+
+        product.update_variations_quantities
       else
         product.update(available_quantity: product.available_quantity +
-          quantity_was - quantity, sold_quantity: product.sold_quantity -
+          quantity_was - quantity, sold_quantity: product.sold_quantity.to_i -
           quantity_was + quantity)
       end
+
+      product.update_status_publishment(true)
     end
 
     def update_order_total
@@ -76,11 +71,14 @@ class OrderItem < ApplicationRecord
         data['available_quantity'] = data['available_quantity'].to_i + quantity
         data['sold_quantity'] = data['sold_quantity'].to_i - quantity
         product_variation.update(data: data)
+
+        product.update_variations_quantities
       else
         product.update(available_quantity: product.available_quantity +
-          quantity, sold_quantity: product.sold_quantity - quantity)
+          quantity, sold_quantity: product.sold_quantity.to_i - quantity)
       end
 
       update_ml_stock
+      product.update_status_publishment(true)
     end
 end

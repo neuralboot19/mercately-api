@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
   <head>
-    <title>Mercately | Sincronice el Inventario de Mercadolibre</title>
+    <title>Optimiza tu negocio y vende más en Mercado Libre | Mercately</title>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -11,9 +11,10 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 
     <% if ENV['ENVIRONMENT'] == 'production' && current_page?(root_path) %>
-      
 
-      <meta name="description" content="Venda con éxito en Mercadolibre. Sincronice su inventario de productos, gestione pedidos, responda preguntas y mucho más. Todo en un solo lugar." />
+      <meta name="description" content="Con mercately sincroniza tu tienda con Mercado Libre, responde a tus clientes de forma rápida, gestiona tu inventario y vende más ¡Ingresa y conócenos!" />
+
+      <meta name="keywords" content="mercado libre, vende más, gestión de inventario, respuesta de mensaje, tendencias mercado libre, app mercado libre, aplicación mercado libre, ecommerce.">
 
       <link rel="canonical" href="https://www.mercately.com/" />
       <link rel="alternate" hreflang="es-EC" href="https://www.mercately.com/"/>
@@ -32,6 +33,21 @@
       <meta property="og:image" content="https://www.mercately.com/facebook_preview.jpg" />
       <meta property="og:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar." />
       <meta property="og:site_name" content="Mercately" />
+
+      <script type="application/ld+json">
+        {
+          "@context": "http://schema.org",
+          "@type": "Organization",
+          "name": "Mercately",
+          "url": "https://www.mercately.com",
+          "address": "",
+          "sameAs": [
+            "https://www.facebook.com/mercately/",
+            "https://twitter.com/mercately",
+            "https://www.linkedin.com/company/40729433"
+          ]
+        }
+      </script>
 
       <!-- Global site tag (gtag.js) - Google Analytics -->
       <script async src="https://www.googletagmanager.com/gtag/js?id=<%=ENV['GOOGLE_TRACKING_ID']%>"></script>

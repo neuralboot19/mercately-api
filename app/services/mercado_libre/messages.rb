@@ -27,6 +27,8 @@ module MercadoLibre
         meli_question_type: Question.meli_question_types[:from_order]
       )
 
+      message.update(date_read: message_info['date_read']) if message_info['date_read'].present?
+
       if message_info['from']['user_id'] == @meli_retailer.meli_user_id
         message.update(answer: message_info['text']['plain'], sender_id: @retailer.retailer_user.id)
       else
