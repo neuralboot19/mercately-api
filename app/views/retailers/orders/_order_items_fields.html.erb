@@ -9,14 +9,14 @@
     </div>
     <div class="col-xs-12 col-sm-3">
       <%= f.label :quantity, 'Cantidad' %>
-      <%= f.number_field :quantity, readonly: f.object.order.merc_status != 'pending', class: 'input' %>
+      <%= f.number_field :quantity, readonly: f.object.order.status != 'pending', class: 'input' %>
     </div>
     <div class="col-xs-12 col-sm-3">
       <%= f.label :unit_price, 'Precio unitario' %>
-      <%= f.number_field :unit_price, readonly: f.object.order.merc_status != 'pending', class: 'input', onkeyup: 'editPrice(this);' %>
+      <%= f.number_field :unit_price, readonly: f.object.order.status != 'pending', class: 'input', onkeyup: 'editPrice(this);' %>
     </div>
     <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mt-16">
-      <% if f.object.order.merc_status == 'pending' %>
+      <% if f.object.order.status == 'pending' %>
         <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
           <i class="fas fa-times mr-5"></i>
           Remover item
