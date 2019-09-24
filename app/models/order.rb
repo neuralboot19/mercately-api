@@ -10,8 +10,15 @@ class Order < ApplicationRecord
   before_update :adjust_ml_stock, if: :will_save_change_to_status?
 
   enum status: %i[pending success cancelled]
-  enum merc_status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order],
-    _prefix: true
+  enum merc_status: %i[
+    confirmed
+    payment_required
+    payment_in_process
+    partially_paid
+    paid
+    cancelled
+    invalid_order
+  ], _prefix: true
   enum feedback_reason: %i[SELLER_OUT_OF_STOCK SELLER_DIDNT_TRY_TO_CONTACT_BUYER BUYER_NOT_ENOUGH_MONEY BUYER_REGRETS]
   enum feedback_rating: %i[positive negative neutral]
 
