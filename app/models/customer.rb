@@ -18,11 +18,27 @@ class Customer < ApplicationRecord
     order_earnings.sum
   end
 
+  def generate_phone
+    return unless do_generate_phone?
+
+    phone_area = if country_id == 'EC' && meli_customer.phone_area[0] != '0'
+                   '0' + meli_customer.phone_area
+                 else
+                   meli_customer.phone_area
+                 end
+
+    update(phone: phone_area + meli_customer.phone)
+  end
+
   private
 
     def update_valid_customer
       return if valid_customer?
 
       self.valid_customer = first_name.present? || last_name.present? || email.present?
+    end
+
+    def do_generate_phone?
+      phone.blank? && meli_customer&.phone_area.present? && meli_customer&.phone.present?
     end
 end
