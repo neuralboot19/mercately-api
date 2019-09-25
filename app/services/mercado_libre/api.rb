@@ -6,6 +6,7 @@ module MercadoLibre
 
     def prepare_search_items_url
       params = {
+        status: 'active',
         access_token: @meli_retailer.access_token
       }
       "https://api.mercadolibre.com/users/#{@meli_retailer.meli_user_id}/items/search?#{params.to_query}"
