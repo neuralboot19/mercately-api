@@ -80,13 +80,12 @@ class Order < ApplicationRecord
   private
 
     def adjust_ml_stock
-      case status_combination
-      when 'update_and_push'
+      if from_pending_to_cancelled?
         update_items
         push_feedback if feedback_reason.present?
-      when 'just_push'
+      elsif from_pending_to_success?
         push_feedback
-      when 'just_update'
+      elsif from_success_to_cancelled?
         update_items
       end
     end
@@ -115,7 +114,7 @@ class Order < ApplicationRecord
           product_variation.update(data: data)
           product.update_variations_quantities
 
-          if status_combination == 'just_update'
+          if from_success_to_cancelled?
             p_ml(product).push_update(product)
             product.upload_variations_to_ml
           end
@@ -124,7 +123,7 @@ class Order < ApplicationRecord
             change_available_quantity(order_item)
 
           product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
-          p_ml(product).push_update(product) if status_combination == 'just_update'
+          p_ml(product).push_update(product) if from_success_to_cancelled?
         end
 
         product.update_status_publishment(true)
@@ -137,12 +136,18 @@ class Order < ApplicationRecord
 
     def change_available_quantity(order_item)
       !order_item.from_ml? || order_item.product.meli_status == 'closed' ||
-        status_combination == 'just_update'
+        from_success_to_cancelled?
     end
 
-    def status_combination
-      return 'update_and_push' if status_was == 'pending' && status == 'cancelled'
-      return 'just_push' if status_was == 'pending' && status == 'success'
-      return 'just_update' if status_was == 'success' && status == 'cancelled'
+    def from_pending_to_cancelled?
+      status_was == 'pending' && status == 'cancelled'
+    end
+
+    def from_pending_to_success?
+      status_was == 'pending' && status == 'success'
+    end
+
+    def from_success_to_cancelled?
+      status_was == 'success' && status == 'cancelled'
     end
 end
