@@ -62,7 +62,7 @@ module MercadoLibre
         info['available_quantity'] = product.available_quantity || 0
       end
 
-      if (product.sold_quantity.blank? || product.sold_quantity.zero?) && product.include_before_bids_info?
+      if include_change_before_bids
         info['category_id'] = product.category.meli_id
         info['condition'] = final_condition(product)
       end
@@ -195,6 +195,10 @@ module MercadoLibre
     def update_available_quantity(product, product_info)
       product.status != 'archived' && product.available_quantity.positive? &&
         product_info['available_quantity'].to_i.zero?
+    end
+
+    def include_change_before_bids(product)
+      (product.sold_quantity.blank? || product.sold_quantity.zero?) && product.include_before_bids_info?
     end
   end
 end

@@ -80,12 +80,13 @@ class Order < ApplicationRecord
   private
 
     def adjust_ml_stock
-      if status_was == 'pending' && status == 'cancelled'
+      case status_combination
+      when 'update_and_push'
         update_items
         push_feedback if feedback_reason.present?
-      elsif status_was == 'pending' && status == 'success'
+      when 'just_push'
         push_feedback
-      elsif status_was == 'success' && status == 'cancelled'
+      when 'just_update'
         update_items
       end
     end
@@ -114,7 +115,7 @@ class Order < ApplicationRecord
           product_variation.update(data: data)
           product.update_variations_quantities
 
-          if status_was == 'success' && status == 'cancelled'
+          if status_combination == 'just_update'
             p_ml(product).push_update(product)
             product.upload_variations_to_ml
           end
@@ -123,7 +124,7 @@ class Order < ApplicationRecord
             change_available_quantity(order_item)
 
           product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
-          p_ml(product).push_update(product) if status_was == 'success' && status == 'cancelled'
+          p_ml(product).push_update(product) if status_combination == 'just_update'
         end
 
         product.update_status_publishment(true)
@@ -136,6 +137,12 @@ class Order < ApplicationRecord
 
     def change_available_quantity(order_item)
       !order_item.from_ml? || order_item.product.meli_status == 'closed' ||
-        (status_was == 'success' && status == 'cancelled')
+        status_combination == 'just_update'
+    end
+
+    def status_combination
+      return 'update_and_push' if status_was == 'pending' && status == 'cancelled'
+      return 'just_push' if status_was == 'pending' && status == 'success'
+      return 'just_update' if status_was == 'success' && status == 'cancelled'
     end
 end
