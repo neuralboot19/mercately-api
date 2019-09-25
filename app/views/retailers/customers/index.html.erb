@@ -26,9 +26,10 @@
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Nombres</div>
               <div class="col-sm-2">Email</div>
+              <div class="col-sm-2">Teléfono</div>
               <div class="col-sm-3">Órdenes</div>
               <div class="col-sm-2">Total Vendido $</div>
-              <div class="col-sm-4"></div>
+              <div class="col-sm-2"></div>
             </div>
             <% @customers.each do |customer| %>
               <div class="divider"></div>
@@ -77,6 +78,9 @@
                       </li>
                     </ul>
                   </label>
+                </div>
+                <div class="col-xs-4 col-sm-2 c-grey">
+                  <div class="t-center truncate"><%= customer.phone %></div>
                 </div>
                 <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
                   <div class="box">
