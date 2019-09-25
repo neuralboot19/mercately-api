@@ -80,14 +80,13 @@ class Order < ApplicationRecord
   private
 
     def adjust_ml_stock
-      if (status_was == 'pending' ||
-         status_was == 'success') &&
-         status == 'cancelled'
-
+      if status_was == 'pending' && status == 'cancelled'
         update_items
         push_feedback if feedback_reason.present?
-      elsif status == 'success'
+      elsif status_was == 'pending' && status == 'success'
         push_feedback
+      elsif status_was == 'success' && status == 'cancelled'
+        update_items
       end
     end
 
@@ -108,19 +107,35 @@ class Order < ApplicationRecord
 
         if product_variation.present?
           data = product_variation.data
-          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity unless
-            order_item.from_ml? && order_item.product.meli_status != 'closed'
           data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
-          product_variation.update(data: data)
+          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity if
+            change_available_quantity(order_item)
 
+          product_variation.update(data: data)
           product.update_variations_quantities
+
+          if status_was == 'success' && status == 'cancelled'
+            p_ml(product).push_update(product)
+            product.upload_variations_to_ml
+          end
         else
-          product.update(available_quantity: product.available_quantity + order_item.quantity) unless
-            order_item.from_ml? && order_item.product.meli_status != 'closed'
+          product.update(available_quantity: product.available_quantity + order_item.quantity) if
+            change_available_quantity(order_item)
+
           product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
+          p_ml(product).push_update(product) if status_was == 'success' && status == 'cancelled'
         end
 
         product.update_status_publishment(true)
       end
+    end
+
+    def p_ml(product)
+      @p_ml ||= MercadoLibre::Products.new(product.retailer)
+    end
+
+    def change_available_quantity(order_item)
+      !order_item.from_ml? || order_item.product.meli_status == 'closed' ||
+        (status_was == 'success' && status == 'cancelled')
     end
 end

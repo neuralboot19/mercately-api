@@ -62,7 +62,7 @@ module MercadoLibre
         info['available_quantity'] = product.available_quantity || 0
       end
 
-      if product.sold_quantity.blank? || product.sold_quantity.zero?
+      if (product.sold_quantity.blank? || product.sold_quantity.zero?) && product.include_before_bids_info?
         info['category_id'] = product.category.meli_id
         info['condition'] = final_condition(product)
       end
