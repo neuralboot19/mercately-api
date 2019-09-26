@@ -4,11 +4,16 @@ module MercadoLibre
       @meli_retailer = meli_retailer
     end
 
-    def prepare_search_items_url
+    def prepare_search_items_url(scroll_id = nil)
       params = {
         status: 'active',
+        search_type: 'scan',
+        limit: 50,
         access_token: @meli_retailer.access_token
       }
+
+      params['scroll_id'] = scroll_id if scroll_id.present?
+
       "https://api.mercadolibre.com/users/#{@meli_retailer.meli_user_id}/items/search?#{params.to_query}"
     end
 

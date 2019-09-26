@@ -11,12 +11,16 @@ module MercadoLibre
       @ml_categories = MercadoLibre::Categories.new(@retailer)
     end
 
-    def search_items
-      url = @api.prepare_search_items_url
+    def search_items(scroll_id = nil)
+      url = @api.prepare_search_items_url(scroll_id)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       products_to_import = response['results']
-      import_product(products_to_import) if products_to_import
+      scroll_id = response['scroll_id']
+      return if products_to_import.blank? || products_to_import.size.zero?
+
+      import_product(products_to_import)
+      search_items(scroll_id)
     end
 
     def import_product(products)
