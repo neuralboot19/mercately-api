@@ -22,7 +22,7 @@
             </tr>
               <tr>
                 <td class="table_order_details__descriptor">Estado</td>
-                <td class="table_order_details__value"><b class="cookie <%= cookie(@order.merc_status) %>"><%= Order.enum_translation(:merc_status, @order.merc_status) %></b></td>
+                <td class="table_order_details__value"><b class="cookie <%= cookie(@order.status) %>"><%= Order.enum_translation(:status, @order.status) %></b></td>
               </tr>
           </table>
         </div>
@@ -34,7 +34,7 @@
               <i class="fas fa-comment-alt mr-5"></i>
               Chat de la orden
             <% end %>
-            <%= link_to retailers_orders_path(current_retailer, status: @order.merc_status), class: 'btn btn--cta' do %>
+            <%= link_to retailers_orders_path(current_retailer, status: @order.status), class: 'btn btn--cta' do %>
               <i class="fas fa-arrow-left mr-5"></i>
               Volver
             <% end %>

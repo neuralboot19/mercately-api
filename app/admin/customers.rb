@@ -59,11 +59,11 @@ ActiveAdmin.register Customer do
       orders = customer.orders
       table_for orders do
         column :id
-        column :status
+        column :merc_status
         column :created_at
         column :meli_order_id
         column :total_amount
-        column :merc_status
+        column :status
         column :feedback_reason
         column :feedback_message
         column :feedback_rating
