@@ -115,20 +115,24 @@ class Order < ApplicationRecord
           product_variation.update(data: data)
           product.update_variations_quantities
 
-          if from_success_to_cancelled?
-            p_ml(product).push_update(product)
-            product.upload_variations_to_ml
-          end
+          update_ml(product) if from_success_to_cancelled?
         else
           product.update(available_quantity: product.available_quantity + order_item.quantity) if
             change_available_quantity(order_item)
 
           product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
-          p_ml(product).push_update(product) if from_success_to_cancelled?
+          update_ml(product) if from_success_to_cancelled?
         end
 
         product.update_status_publishment(true)
       end
+    end
+
+    def update_ml(product)
+      return unless product.meli_product_id.present?
+
+      p_ml(product).push_update(product)
+      product.upload_variations_to_ml if product.product_variations.present?
     end
 
     def p_ml(product)
