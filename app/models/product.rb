@@ -45,10 +45,10 @@ class Product < ApplicationRecord
 
     if img.present?
       begin
-        file = URI.parse("http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}")
-        open(file)
+        file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
+        MiniMagick::Image.open(file)
         return
-      rescue OpenURI::HTTPError => e
+      rescue OpenURI::HTTPError
         images.where(blob_id: img.id).purge
       end
     end
