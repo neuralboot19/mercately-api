@@ -62,7 +62,7 @@ module MercadoLibre
         info['available_quantity'] = product.available_quantity || 0
       end
 
-      if include_change_before_bids
+      if include_change_before_bids(product)
         info['category_id'] = product.category.meli_id
         info['condition'] = final_condition(product)
       end

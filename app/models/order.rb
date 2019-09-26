@@ -7,7 +7,8 @@ class Order < ApplicationRecord
   validates :feedback_message, length: { maximum: 160 }, if: :feedback_message?
 
   before_save :set_positive_rating, if: :will_save_change_to_status?
-  before_update :adjust_ml_stock, if: :will_save_change_to_status?
+  before_update :set_old_status, if: :will_save_change_to_status?
+  after_update :adjust_ml_stock, if: :saved_change_to_status?
 
   enum status: %i[pending success cancelled]
   enum merc_status: %i[
@@ -140,14 +141,18 @@ class Order < ApplicationRecord
     end
 
     def from_pending_to_cancelled?
-      status_was == 'pending' && status == 'cancelled'
+      @status_was == 'pending' && status == 'cancelled'
     end
 
     def from_pending_to_success?
-      status_was == 'pending' && status == 'success'
+      @status_was == 'pending' && status == 'success'
     end
 
     def from_success_to_cancelled?
-      status_was == 'success' && status == 'cancelled'
+      @status_was == 'success' && status == 'cancelled'
+    end
+
+    def set_old_status
+      @status_was = status_was
     end
 end
