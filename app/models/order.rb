@@ -114,16 +114,14 @@ class Order < ApplicationRecord
 
           product_variation.update(data: data)
           product.update_variations_quantities
-
-          update_ml(product) if from_success_to_cancelled?
         else
           product.update(available_quantity: product.available_quantity + order_item.quantity) if
             change_available_quantity(order_item)
 
           product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
-          update_ml(product) if from_success_to_cancelled?
         end
 
+        update_ml(product) if from_success_to_cancelled?
         product.update_status_publishment(true)
       end
     end
