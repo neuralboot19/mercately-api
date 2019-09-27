@@ -181,6 +181,12 @@ class Product < ApplicationRecord
     update(available_quantity: total_available, sold_quantity: total_sold)
   end
 
+  def include_before_bids_info?
+    Order.joins(:products)
+      .where('meli_order_id IS NOT NULL AND feedback_message IS NOT NULL')
+      .where(feedback_reason: nil, status: 2, products: { id: id }).first.blank?
+  end
+
   private
 
     def images_count
