@@ -24,7 +24,7 @@ class Customer < ApplicationRecord
     phone_area = ''
     if meli_customer.phone_area.present?
       phone_area = if country_id == 'EC' && meli_customer.phone_area[0] != '0'
-                     '0' + meli_customer.phone_area
+                     "0#{meli_customer.phone_area}"
                    else
                      meli_customer.phone_area
                    end
