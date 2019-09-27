@@ -6,7 +6,6 @@ module MercadoLibre
       @meli_retailer = @retailer.meli_retailer
       @exist_order = @order_params.present?
       @api = MercadoLibre::Api.new(@meli_retailer)
-      puts "ORDEN #{@exist_order} #{@order_params}"
     end
 
     def import(customer_id)
@@ -17,7 +16,6 @@ module MercadoLibre
     end
 
     def create(customer_info)
-      puts "ORDEN2 #{@exist_order} #{@order_params}"
       prepare_order_data if @exist_order
       prepare_data(customer_info)
 
@@ -75,11 +73,11 @@ module MercadoLibre
           meli_registration_date: @meli_registration_date,
           email: @email
         )
-        puts "ORDEN4 #{@phone_area} #{@phone}"
+
         meli_customer.update!(phone_area: @phone_area) if @phone_area.present?
         meli_customer.update!(phone: @phone) if @phone.present?
         meli_customer.update!(phone_verified: @phone_verified) unless @phone_verified.nil?
-        puts "ORDEN6 #{meli_customer.to_json}"
+
         meli_customer
       end
 
@@ -88,7 +86,6 @@ module MercadoLibre
       end
 
       def prepare_order_data
-        puts "ORDEN3 #{@exist_order} #{@order_params}"
         @first_name = @order_params['first_name']
         @last_name = @order_params['last_name']
         @email = @order_params['email']
@@ -97,7 +94,6 @@ module MercadoLibre
       end
 
       def prepare_data(customer_info)
-        puts "ORDEN5 #{customer_info}"
         @first_name = customer_info['first_name'] if @first_name.blank?
         @last_name = customer_info['last_name'] if @last_name.blank?
         @nickname = customer_info['nickname']

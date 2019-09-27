@@ -19,9 +19,8 @@ class Customer < ApplicationRecord
   end
 
   def generate_phone
-    puts "TELEFONO"
     return unless do_generate_phone?
-    puts "TELEFONO2 #{meli_customer.to_json}"
+
     phone_area = ''
     if meli_customer.phone_area.present?
       phone_area = if country_id == 'EC' && meli_customer.phone_area[0] != '0'
@@ -30,7 +29,7 @@ class Customer < ApplicationRecord
                      meli_customer.phone_area
                    end
     end
-    puts "TELEFONO3 #{phone_area}"
+
     update(phone: phone_area + meli_customer.phone)
   end
 
