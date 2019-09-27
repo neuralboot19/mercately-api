@@ -71,11 +71,12 @@ module MercadoLibre
           buyer_not_yet_rated_paid_transactions: @buyer_not_yet_rated_paid_transactions,
           buyer_not_yet_rated_total_transactions: @buyer_not_yet_rated_total_transactions,
           meli_registration_date: @meli_registration_date,
-          phone_area: @phone_area,
-          phone_verified: @phone_verified,
-          email: @email,
-          phone: @phone
+          email: @email
         )
+
+        meli_customer.update!(phone_area: @phone_area) if @phone_area.present?
+        meli_customer.update!(phone: @phone) if @phone.present?
+        meli_customer.update!(phone_verified: @phone_verified) unless @phone_verified.nil?
 
         meli_customer
       end
