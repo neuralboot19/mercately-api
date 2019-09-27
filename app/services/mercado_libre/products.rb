@@ -11,12 +11,16 @@ module MercadoLibre
       @ml_categories = MercadoLibre::Categories.new(@retailer)
     end
 
-    def search_items
-      url = @api.prepare_search_items_url
+    def search_items(scroll_id = nil)
+      url = @api.prepare_search_items_url(scroll_id)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       products_to_import = response['results']
-      import_product(products_to_import) if products_to_import
+      scroll_id = response['scroll_id']
+      return if products_to_import.blank? || products_to_import.size.zero?
+
+      import_product(products_to_import)
+      search_items(scroll_id)
     end
 
     def import_product(products)
@@ -51,7 +55,6 @@ module MercadoLibre
     end
 
     def save_product(product_info, description)
-      product_exist = Product.find_by(meli_product_id: product_info['id']).present?
       category = @ml_categories.import_category(product_info['category_id'])
 
       product = Product.create_with(
@@ -78,8 +81,6 @@ module MercadoLibre
         meli_status: product_info['status'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
-
-      return product if product_exist
 
       @product_variations.save_variations(product, product_info['variations']) if
         product_info['variations'].present?
@@ -165,7 +166,6 @@ module MercadoLibre
               update_main_picture_product(product, pic['id']) if index.zero?
 
               current_images -= [pic['id']]
-              next
             end
 
             product.attach_image(pic['url'], pic['id'], index)

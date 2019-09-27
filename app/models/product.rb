@@ -35,13 +35,23 @@ class Product < ApplicationRecord
   end
 
   def attach_image(url, filename, index = -1)
-    return if ActiveStorage::Blob.joins(:attachments)
+    img = ActiveStorage::Blob.joins(:attachments)
       .where(filename: filename, active_storage_attachments:
       {
         name: 'images',
         record_type: 'Product',
         record_id: id
-      }).exists?
+      }).first
+
+    if img.present?
+      begin
+        file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
+        MiniMagick::Image.open(file)
+        return
+      rescue OpenURI::HTTPError
+        images.where(blob_id: img.id).purge
+      end
+    end
 
     tempfile = MiniMagick::Image.open(url)
     tempfile.resize '500x500'
