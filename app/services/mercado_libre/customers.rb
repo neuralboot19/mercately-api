@@ -48,7 +48,7 @@ module MercadoLibre
       end
 
       def update_or_create_meli_customer(customer_info)
-        meli_customer = MeliCustomer.find_or_create_by(meli_user_id: customer_info['id'])
+        meli_customer = MeliCustomer.find_or_create_by!(meli_user_id: customer_info['id'])
 
         meli_customer.update_attributes!(
           nickname: @nickname,
@@ -79,7 +79,7 @@ module MercadoLibre
       end
 
       def find_customer
-        Customer.find_or_create_by(retailer_id: @retailer.id, meli_nickname: @nickname)
+        Customer.find_or_create_by!(retailer_id: @retailer.id, meli_nickname: @nickname)
       end
 
       def prepare_order_data
