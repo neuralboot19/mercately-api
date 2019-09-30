@@ -34,9 +34,7 @@ module MercadoLibre
         id_type.downcase! if id_type.present?
 
         customer.update_attributes!(
-          retailer: @retailer,
-          meli_nickname: @nickname,
-          meli_customer: meli_customer,
+          meli_customer_id: meli_customer.id,
           id_type: id_type,
           id_number: @id_number,
           address: @address,
@@ -50,7 +48,7 @@ module MercadoLibre
       end
 
       def update_or_create_meli_customer(customer_info)
-        meli_customer = MeliCustomer.find_or_initialize_by(meli_user_id: customer_info['id'])
+        meli_customer = MeliCustomer.find_or_create_by(meli_user_id: customer_info['id'])
 
         meli_customer.update_attributes!(
           nickname: @nickname,
@@ -71,18 +69,17 @@ module MercadoLibre
           buyer_not_yet_rated_paid_transactions: @buyer_not_yet_rated_paid_transactions,
           buyer_not_yet_rated_total_transactions: @buyer_not_yet_rated_total_transactions,
           meli_registration_date: @meli_registration_date,
-          email: @email
+          email: @email,
+          phone_area: @phone_area.presence || meli_customer.phone_area,
+          phone: @phone.presence || meli_customer.phone,
+          phone_verified: @phone_verified.nil? ? meli_customer.phone_verified : @phone_verified
         )
-
-        meli_customer.update!(phone_area: @phone_area) if @phone_area.present?
-        meli_customer.update!(phone: @phone) if @phone.present?
-        meli_customer.update!(phone_verified: @phone_verified) unless @phone_verified.nil?
 
         meli_customer
       end
 
       def find_customer
-        Customer.find_or_initialize_by(retailer_id: @retailer.id, meli_nickname: @nickname)
+        Customer.find_or_create_by(retailer_id: @retailer.id, meli_nickname: @nickname)
       end
 
       def prepare_order_data
