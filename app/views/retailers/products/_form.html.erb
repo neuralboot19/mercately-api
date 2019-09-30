@@ -12,6 +12,15 @@
               <%= f.label :title, 'Título' %><br/>
               <%= f.text_field :title, class: 'input' %>
             </div>
+
+            <% if action_name == 'new' || action_name == 'create' %>
+              <div id="root" class="my-16">
+                <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9">
+                  <option value="" selected>Seleccione una categoría</option>
+                </select>
+              </div>
+            <% end %>
+
             <div class="box">
               <div class="row">
                 <div class="col-xs-12 pl-0 col-sm-4 my-16">
@@ -29,14 +38,6 @@
               </div>
             </div>
           </fieldset>
-
-          <% if action_name == 'new' || action_name == 'create' %>
-            <div id="root" class="col-xs-12 my-16">
-              <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9">
-                <option value="" selected>Seleccione una categoría</option>
-              </select>
-            </div>
-          <% end %>
 
           <% if action_name == 'edit' || action_name == 'update' %>
             <fieldset class="col-xs-12 fieldset">
@@ -70,7 +71,7 @@
             <div class="box">
               <div class="col-xs-12 pl-0 my-16">
                 <%= f.label :description, 'Descripción' %>
-                <%= f.text_area :description, placeholder: '', class: 'input' %>
+                <%= f.text_area :description, placeholder: '', class: 'input h-77' %>
               </div>
             </div>
           </fieldset>

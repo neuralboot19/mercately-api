@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_25_213316) do
+ActiveRecord::Schema.define(version: 2019_09_30_160734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -214,7 +214,6 @@ ActiveRecord::Schema.define(version: 2019_09_25_213316) do
     t.string "meli_listing_type_id"
     t.datetime "meli_stop_time"
     t.datetime "meli_end_time"
-    t.datetime "meli_expiration_time"
     t.string "meli_permalink"
     t.integer "category_id"
     t.integer "buying_mode"
