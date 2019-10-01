@@ -62,7 +62,7 @@ module MercadoLibre
         info['available_quantity'] = product.available_quantity || 0
       end
 
-      if product.sold_quantity.blank? || product.sold_quantity.zero?
+      if include_change_before_bids(product)
         info['category_id'] = product.category.meli_id
         info['condition'] = final_condition(product)
       end
@@ -173,7 +173,6 @@ module MercadoLibre
       product.meli_end_time = product_info['end_time']
       product.buying_mode = product_info['buying_mode']
       product.meli_listing_type_id = product_info['listing_type_id']
-      product.meli_expiration_time = product_info['expiration_time']
       product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
       product.meli_permalink = product_info['permalink']
       product.ml_attributes = product_info['attributes']
@@ -195,6 +194,10 @@ module MercadoLibre
     def update_available_quantity(product, product_info)
       product.status != 'archived' && product.available_quantity.positive? &&
         product_info['available_quantity'].to_i.zero?
+    end
+
+    def include_change_before_bids(product)
+      (product.sold_quantity.blank? || product.sold_quantity.zero?) && product.include_before_bids_info?
     end
   end
 end

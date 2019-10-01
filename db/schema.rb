@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_16_203222) do
+ActiveRecord::Schema.define(version: 2019_09_30_160734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2019_09_16_203222) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.integer "meli_customer_id"
     t.string "meli_nickname"
+    t.integer "meli_customer_id"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -170,7 +170,7 @@ ActiveRecord::Schema.define(version: 2019_09_16_203222) do
 
   create_table "orders", force: :cascade do |t|
     t.bigint "customer_id"
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "meli_order_id"
@@ -214,7 +214,6 @@ ActiveRecord::Schema.define(version: 2019_09_16_203222) do
     t.string "meli_listing_type_id"
     t.datetime "meli_stop_time"
     t.datetime "meli_end_time"
-    t.datetime "meli_expiration_time"
     t.string "meli_permalink"
     t.integer "category_id"
     t.integer "buying_mode"

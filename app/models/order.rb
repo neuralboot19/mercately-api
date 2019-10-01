@@ -6,11 +6,20 @@ class Order < ApplicationRecord
 
   validates :feedback_message, length: { maximum: 160 }, if: :feedback_message?
 
-  before_save :set_positive_rating, if: :will_save_change_to_merc_status?
-  before_update :adjust_ml_stock, if: :will_save_change_to_merc_status?
+  before_save :set_positive_rating, if: :will_save_change_to_status?
+  before_update :set_old_status, if: :will_save_change_to_status?
+  after_update :adjust_ml_stock, if: :saved_change_to_status?
 
-  enum status: %i[confirmed payment_required payment_in_process partially_paid paid cancelled invalid_order]
-  enum merc_status: %i[pending success cancelled], _prefix: true
+  enum status: %i[pending success cancelled]
+  enum merc_status: %i[
+    confirmed
+    payment_required
+    payment_in_process
+    partially_paid
+    paid
+    cancelled
+    invalid_order
+  ], _prefix: true
   enum feedback_reason: %i[SELLER_OUT_OF_STOCK SELLER_DIDNT_TRY_TO_CONTACT_BUYER BUYER_NOT_ENOUGH_MONEY BUYER_REGRETS]
   enum feedback_rating: %i[positive negative neutral]
 
@@ -21,7 +30,7 @@ class Order < ApplicationRecord
 
   scope :retailer_orders, lambda { |retailer_id, status|
     orders = Order.joins(:customer).where('customers.retailer_id = ?', retailer_id)
-    orders = orders.where(merc_status: Order.merc_statuses[status]) if status.present? && status != 'all'
+    orders = orders.where(status: Order.statuses[status]) if status.present? && status != 'all'
     orders
   }
 
@@ -49,9 +58,9 @@ class Order < ApplicationRecord
 
   def disabled_statuses
     return %w[cancelled] if new_record?
-    return [] if merc_status == 'pending'
-    return %w[pending success cancelled] if merc_status == 'cancelled'
-    return %w[pending] if merc_status == 'success'
+    return [] if status == 'pending'
+    return %w[pending success cancelled] if status == 'cancelled'
+    return %w[pending] if status == 'success'
   end
 
   def self.build_feedback_reasons
@@ -72,14 +81,13 @@ class Order < ApplicationRecord
   private
 
     def adjust_ml_stock
-      if (merc_status_was == 'pending' ||
-         merc_status_was == 'success') &&
-         merc_status == 'cancelled'
-
+      if from_pending_to_cancelled?
         update_items
         push_feedback if feedback_reason.present?
-      elsif merc_status == 'success'
+      elsif from_pending_to_success?
         push_feedback
+      elsif from_success_to_cancelled?
+        update_items
       end
     end
 
@@ -90,7 +98,7 @@ class Order < ApplicationRecord
     end
 
     def set_positive_rating
-      self.feedback_rating = 'positive' if merc_status == 'success'
+      self.feedback_rating = 'positive' if status == 'success'
     end
 
     def update_items
@@ -100,19 +108,53 @@ class Order < ApplicationRecord
 
         if product_variation.present?
           data = product_variation.data
-          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity unless
-            order_item.from_ml? && order_item.product.meli_status != 'closed'
           data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
-          product_variation.update(data: data)
+          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity if
+            change_available_quantity(order_item)
 
+          product_variation.update(data: data)
           product.update_variations_quantities
         else
-          product.update(available_quantity: product.available_quantity + order_item.quantity) unless
-            order_item.from_ml? && order_item.product.meli_status != 'closed'
+          product.update(available_quantity: product.available_quantity + order_item.quantity) if
+            change_available_quantity(order_item)
+
           product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
         end
 
+        update_ml(product) if from_success_to_cancelled?
         product.update_status_publishment(true)
       end
+    end
+
+    def update_ml(product)
+      return unless product.meli_product_id.present?
+
+      p_ml(product).push_update(product)
+      product.upload_variations_to_ml if product.product_variations.present?
+    end
+
+    def p_ml(product)
+      @p_ml ||= MercadoLibre::Products.new(product.retailer)
+    end
+
+    def change_available_quantity(order_item)
+      !order_item.from_ml? || order_item.product.meli_status == 'closed' ||
+        from_success_to_cancelled?
+    end
+
+    def from_pending_to_cancelled?
+      @status_was == 'pending' && status == 'cancelled'
+    end
+
+    def from_pending_to_success?
+      @status_was == 'pending' && status == 'success'
+    end
+
+    def from_success_to_cancelled?
+      @status_was == 'success' && status == 'cancelled'
+    end
+
+    def set_old_status
+      @status_was = status_was
     end
 end

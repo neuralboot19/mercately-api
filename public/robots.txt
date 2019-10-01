@@ -1,4 +1,4 @@
 User-agent: Googlebot-Image
 Disallow: /
 
-Sitemap: https://www.mercately.com/sitemap.xml
+Sitemap: http://www.mercately.com/sitemap.xml

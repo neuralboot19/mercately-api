@@ -95,14 +95,14 @@ function insertVariation(variation, parentContainer, index) {
 }
 
 function showHideFeedback(input) {
-  if (input.value === "cancelled") {
+  if (input.value === "cancelled" && $('#hidden-merc-status').val() === "pending") {
     $('#feedback-container').show();
     $('#feedback-reason-container').show();
     $('#feedback-rating-container').show();
     $('#order_feedback_reason').prop('disabled', false);
     $('#order_feedback_rating').prop('disabled', false);
     $('#order_feedback_message').prop('disabled', false);
-  } else if (input.value === "success") {
+  } else if (input.value === "success" && $('#hidden-merc-status').val() === "pending") {
     $('#feedback-container').show();
     $('#feedback-reason-container').hide();
     $('#feedback-rating-container').hide();
@@ -152,18 +152,6 @@ $(document).ready(function() {
   $('#order_feedback_reason').prop('disabled', true);
   $('#order_feedback_rating').prop('disabled', true);
   $('#order_feedback_message').prop('disabled', true);
-
-  if ($('#hidden-merc-status').val() === "cancelled") {
-    $('#feedback-container').show();
-    $('#order_feedback_reason').prop('disabled', false);
-    $('#order_feedback_rating').prop('disabled', false);
-    $('#order_feedback_message').prop('disabled', false);
-  } else if ($('#hidden-merc-status').val() === "success") {
-    $('#feedback-container').show();
-    $('#feedback-reason-container').hide();
-    $('#feedback-rating-container').hide();
-    $('#order_feedback_message').prop('disabled', false);
-  }
 });
 
 function editClient() {
@@ -174,6 +162,7 @@ function editClient() {
   $('#edit-client-order-form').show();
   $('#add_customer').hide();
   $('#edit_customer').hide();
+  $('#customer_id_container').hide();
 }
 
 function updateEditForm() {
@@ -196,6 +185,7 @@ function hideClientForm() {
   $('#edit-client-order-form').hide();
   $('#add_customer').show();
   $('#edit_customer').show();
+  $('#customer_id_container').show();
 }
 
 function disableEditForm() {

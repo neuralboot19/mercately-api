@@ -136,7 +136,7 @@
                   <h6>Órdenes</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">
-                  <h2><%= @product.order_items.includes(:order).where(orders: { merc_status: 'success' }).count %></h2>
+                  <h2><%= @product.order_items.includes(:order).where(orders: { status: 'success' }).count %></h2>
                   <h6>Ventas</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">
@@ -164,13 +164,13 @@
                       <td class="table_details__descriptor">Preguntas:</td>
                       <td class="table_details__value"><%= @product.questions.count %></td>
                     </tr>
-                    <tr>
+                    <!--<tr>
                       <td class="table_details__descriptor">Visitas:</td>
                       <td class="table_details__value">500</td>
-                    </tr>
+                    </tr>-->
                     <tr>
-                      <td class="table_details__descriptor">Expiracion:</td>
-                      <td class="table_details__value"><%= @product.meli_expiration_time %></td>
+                      <td class="table_details__descriptor">Expiración:</td>
+                      <td class="table_details__value"><%= @product.meli_end_time.strftime("%d/%m/%Y") %></td>
                     </tr>
                   </table>
                 </div>

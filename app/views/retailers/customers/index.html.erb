@@ -26,9 +26,10 @@
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Nombres</div>
               <div class="col-sm-2">Email</div>
+              <div class="col-sm-2">Teléfono</div>
               <div class="col-sm-3">Órdenes</div>
               <div class="col-sm-2">Total Vendido $</div>
-              <div class="col-sm-4"></div>
+              <div class="col-sm-2"></div>
             </div>
             <% @customers.each do |customer| %>
               <div class="divider"></div>
@@ -55,8 +56,8 @@
                                                             data-customer_state="<%= customer.state %>"
                                                             data-customer_country_id="<%= customer.country_id %>"
                                                             data-customer_orders="<%= customer.orders.count %>"
-                                                            data-customer_sales="<%= customer.orders.merc_status_success.count %>"
-                                                            data-customer_total_income="<%= customer.orders.merc_status_success.count %>"
+                                                            data-customer_sales="<%= customer.orders.success.count %>"
+                                                            data-customer_total_income="<%= customer.orders.success.count %>"
                                                             data-customer_has_meli="<%= customer.meli_customer_id.present? %>"
                                                             data-meli_nickname="<%= customer.meli_customer&.nickname %>"
                                                             data-meli_ratings_total="<%= customer.meli_customer&.ratings_total %>"
@@ -78,15 +79,18 @@
                     </ul>
                   </label>
                 </div>
+                <div class="col-xs-4 col-sm-2 c-grey">
+                  <div class="t-center truncate"><%= customer.phone %></div>
+                </div>
                 <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
                   <div class="box">
                     <div class="row">
                       <div class="col-xs-4 col-sm-6 item__descriptor">Completadas:</div>
-                      <div class="col-xs-2 col-sm-6"><%= customer.orders.merc_status_success.count %></div>
+                      <div class="col-xs-2 col-sm-6"><%= customer.orders.success.count %></div>
                       <div class="col-xs-4 col-sm-6 item__descriptor">Pendientes:</div>
-                      <div class="col-xs-2 col-sm-6"><%= customer.orders.merc_status_pending.count %></div>
+                      <div class="col-xs-2 col-sm-6"><%= customer.orders.pending.count %></div>
                       <div class="col-xs-4 col-sm-6 item__descriptor">Canceladas:</div>
-                      <div class="col-xs-2 col-sm-6"><%= customer.orders.merc_status_cancelled.count %></div>
+                      <div class="col-xs-2 col-sm-6"><%= customer.orders.cancelled.count %></div>
                     </div>
                   </div>
                 </div>
@@ -104,8 +108,8 @@
                                                         data-customer_state="<%= customer.state %>"
                                                         data-customer_country_id="<%= customer.country_id %>"
                                                         data-customer_orders="<%= customer.orders.count %>"
-                                                        data-customer_sales="<%= customer.orders.merc_status_success.count %>"
-                                                        data-customer_total_income="<%= customer.orders.merc_status_success.count %>"
+                                                        data-customer_sales="<%= customer.orders.success.count %>"
+                                                        data-customer_total_income="<%= customer.orders.success.count %>"
                                                         data-customer_has_meli="<%= customer.meli_customer_id.present? %>"
                                                         data-meli_nickname="<%= customer.meli_customer&.nickname %>"
                                                         data-meli_ratings_total="<%= customer.meli_customer&.ratings_total %>"
@@ -135,8 +139,8 @@
                                                             data-customer_state="<%= customer.state %>"
                                                             data-customer_country_id="<%= customer.country_id %>"
                                                             data-customer_orders="<%= customer.orders.count %>"
-                                                            data-customer_sales="<%= customer.orders.merc_status_success.count %>"
-                                                            data-customer_total_income="<%= customer.orders.merc_status_success.count %>"
+                                                            data-customer_sales="<%= customer.orders.success.count %>"
+                                                            data-customer_total_income="<%= customer.orders.success.count %>"
                                                             data-customer_has_meli="<%= customer.meli_customer_id.present? %>"
                                                             data-meli_nickname="<%= customer.meli_customer&.nickname %>"
                                                             data-meli_ratings_total="<%= customer.meli_customer&.ratings_total %>"

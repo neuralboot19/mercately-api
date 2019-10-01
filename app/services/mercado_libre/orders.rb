@@ -24,7 +24,7 @@ module MercadoLibre
         customer: customer,
         total_amount: order_info['total_amount'],
         currency_id: order_info['currency_id'],
-        status: order_info['status']
+        merc_status: order_info['status']
       )
 
       order_info['order_items'].each do |order_item|
@@ -46,7 +46,7 @@ module MercadoLibre
       return order unless order_info['feedback']&.[]('sale').present?
 
       status = order_info['feedback']['sale']['fulfilled'] == false ? 'cancelled' : 'success'
-      order.update(feedback_rating: order_info['feedback']['sale']['rating'], merc_status: status)
+      order.update(feedback_rating: order_info['feedback']['sale']['rating'], status: status)
       order
     end
 

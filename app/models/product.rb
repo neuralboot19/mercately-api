@@ -26,7 +26,6 @@ class Product < ApplicationRecord
     self.meli_stop_time = p_ml['stop_time']
     self.meli_end_time = p_ml['end_time']
     self.meli_listing_type_id = p_ml['listing_type_id']
-    self.meli_expiration_time = p_ml['expiration_time']
     self.meli_permalink = p_ml['permalink']
     self.meli_product_id = p_ml['id']
     self.ml_attributes = p_ml['attributes']
@@ -35,13 +34,23 @@ class Product < ApplicationRecord
   end
 
   def attach_image(url, filename, index = -1)
-    return if ActiveStorage::Blob.joins(:attachments)
+    img = ActiveStorage::Blob.joins(:attachments)
       .where(filename: filename, active_storage_attachments:
       {
         name: 'images',
         record_type: 'Product',
         record_id: id
-      }).exists?
+      }).first
+
+    if img.present?
+      begin
+        file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
+        MiniMagick::Image.open(file)
+        return
+      rescue OpenURI::HTTPError
+        images.where(blob_id: img.id).purge
+      end
+    end
 
     tempfile = MiniMagick::Image.open(url)
     tempfile.resize '500x500'
@@ -169,6 +178,12 @@ class Product < ApplicationRecord
     end
 
     update(available_quantity: total_available, sold_quantity: total_sold)
+  end
+
+  def include_before_bids_info?
+    Order.joins(:products)
+      .where('meli_order_id IS NOT NULL AND feedback_message IS NOT NULL')
+      .where(feedback_reason: nil, status: 2, products: { id: id }).first.blank?
   end
 
   private
