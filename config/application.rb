@@ -19,11 +19,6 @@ module Mercately
       g.javascripts false
     end
 
-    Raven.configure do |config|
-      config.dsn = 'https://d83a4c9f783e44a0871416e565f38e4a:e73cd5c4fde44f909bbef10fd9d050aa@sentry.io/1767402'
-      config.environments = %w(staging production)
-    end
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

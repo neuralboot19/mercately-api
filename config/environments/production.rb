@@ -98,5 +98,9 @@ Rails.application.configure do
 
   config.action_mailer.asset_host = ENV["ACTION_MAILER_ASSET_HOST"]
   config.action_mailer.default_url_options = { host: ENV["HOST_URL"] }
-  config.default_url_options = { host: ENV["HOST_URL"] }  
+  config.default_url_options = { host: ENV["HOST_URL"] }
+
+  Raven.configure do |config|
+    config.dsn = ENV['SENTRY_DSN']
+  end
 end
