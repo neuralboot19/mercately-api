@@ -46,7 +46,6 @@ ActiveAdmin.register Product do
       row :meli_listing_type_id
       row :meli_stop_time
       row :meli_end_time
-      row :meli_expiration_time
       row :meli_permalink
       row :category_id
       row :buying_mode

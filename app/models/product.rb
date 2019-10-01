@@ -26,7 +26,6 @@ class Product < ApplicationRecord
     self.meli_stop_time = p_ml['stop_time']
     self.meli_end_time = p_ml['end_time']
     self.meli_listing_type_id = p_ml['listing_type_id']
-    self.meli_expiration_time = p_ml['expiration_time']
     self.meli_permalink = p_ml['permalink']
     self.meli_product_id = p_ml['id']
     self.ml_attributes = p_ml['attributes']
