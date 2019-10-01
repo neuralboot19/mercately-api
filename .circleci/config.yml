@@ -15,6 +15,8 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_DB: mercately_test
           POSTGRES_PASSWORD: ""
+      - image: redis
+
     steps:
       - checkout
 
