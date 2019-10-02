@@ -41,11 +41,11 @@ class Retailers::IntegrationsController < RetailersController
         MercadoLibre::Messages.new(@retailer).import(message_id)
         render status: '200', json: { message: 'Success' }.to_json
       else
-        render status: '404', json: { message: "#{params[:topic]} tópico no encontrado" }.to_json
-        Raven.capture_message "#{params[:topic]} tópico no encontrado"
+        render status: '404', json: { message: "#{params[:topic]} topic not found" }.to_json
+        Raven.capture_message "#{params[:topic]} topic not found"
       end
     else
-      render status: '404', json: { message: 'Retailer no encontrado' }.to_json
+      render status: '404', json: { message: 'Retailer not found' }.to_json
     end
   end
 
