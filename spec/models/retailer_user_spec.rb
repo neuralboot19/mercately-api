@@ -13,11 +13,11 @@ RSpec.describe RetailerUser, type: :model do
   describe 'protected/private methods' do
     let(:retailer_user) { create(:retailer_user) }
 
-    it 'should return true for agree terms converter' do
+    it 'returns true for agree terms converter' do
       expect(retailer_user.send(:agree_terms_to_bool)).to be_truthy
     end
 
-    it 'should send a welcome email' do
+    it 'sends a welcome email' do
       expect(retailer_user.send(:send_welcome_email)).to be_a Mail::Message
     end
   end
