@@ -1,5 +1,36 @@
 require 'rails_helper'
 
 RSpec.describe Template, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe 'associations' do
+    it { should belong_to(:retailer) }
+  end
+
+  describe 'validations' do
+    it { should validate_presence_of(:title) }
+    it { should validate_presence_of(:answer) }
+  end
+
+  describe 'persistence' do
+    let(:template) { create(:template) }
+
+    it 'has a non-nil title' do
+      expect(template.title).not_to eq(nil)
+    end
+
+    it 'has a non-empty title' do
+      expect(template.title).not_to eq('')
+    end
+
+    it 'has a non-nil answer' do
+      expect(template.answer).not_to eq(nil)
+    end
+
+    it 'has a non-empty answer' do
+      expect(template.answer).not_to eq('')
+    end
+
+    it 'has a Retailer' do
+      expect(template.retailer).not_to eq(nil)
+    end
+  end
 end
