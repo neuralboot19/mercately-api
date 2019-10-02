@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :template do
-    title { 'Hay disponibilidad?' }
-    answer { 'Sí, aún tenemos disponibilidad.' }
+    title { Faker::Lorem.sentence }
+    answer { Faker::Lorem.sentence }
     retailer
   end
 end
