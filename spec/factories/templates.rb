@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :template do
-    title { 'MyString' }
-    answer { 'MyText' }
-    retailer { nil }
+    title { Faker::Lorem.sentence }
+    answer { Faker::Lorem.sentence }
+    retailer
   end
 end
