@@ -10,7 +10,7 @@ class Retailer < ApplicationRecord
   validates :slug, uniqueness: true
   after_save :generate_slug, if: :saved_change_to_name?
 
-  enum id_type: %i(cedula pasaporte ruc)
+  enum id_type: %i[cedula pasaporte ruc]
 
   def to_param
     slug
