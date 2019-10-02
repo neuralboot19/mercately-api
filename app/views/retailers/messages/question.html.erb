@@ -69,7 +69,7 @@
                   <div id="templates" class="col-xs-12 col-sm-3">
                     <fieldset class="fieldset mt-16">
                     <legend>Plantillas:</legend>
-                      <% Retailer.filter_templates(current_retailer, 'questions').each do |template| %>
+                      <% current_retailer.templates.for_questions.each do |template| %>
                         <%= form_tag retailers_answer_question_path(current_retailer, @question), method: :put do %>
                           <%= hidden_field_tag :answer, template.answer %>
                           <p>

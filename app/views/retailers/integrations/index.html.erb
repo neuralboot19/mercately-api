@@ -18,7 +18,7 @@
             <%= image_tag 'mercado-libre-logo-5.png', class: 'logo-integration-platform' %>
           </div>
           <div class="col-xs-12 col-md-12 btn-box">
-            <% if current_retailer.connected_to_ml? %>
+            <% if current_retailer.meli_retailer %>
               <p class="c-green fs-14 fs-sm-and-down-12">Conectado con Mercado Libre</p>
               <%= link_to 'Importar productos de Mercado Libre', retailers_mercadolibre_import_path(current_retailer), class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
             <% else %>
