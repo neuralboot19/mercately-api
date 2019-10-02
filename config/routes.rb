@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   root 'pages#index'
 
-  devise_for :retailer_users, controllers: { registrations: 'retailer_users/registrations',
+  devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
+    sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
     sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords' }
   as :retailer_user do
     get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info

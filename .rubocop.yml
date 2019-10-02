@@ -16,7 +16,7 @@ Metrics/ClassLength:
   Max: 200
 
 Metrics/MethodLength:
-  Enabled: false
+  Enabled: 25
 
 # We do not need to support Ruby 1.9, so this is good to use.
 Style/SymbolArray:
@@ -91,6 +91,9 @@ Style/FrozenStringLiteralComment:
 Style/Documentation:
   Enabled: false
 
+Style/DocumentationMethod:
+  Enabled: true
+
 Metrics/BlockLength:
   Enabled: false
 
@@ -111,3 +114,9 @@ Metrics/AbcSize:
 
 RSpec/MultipleExpectations:
   Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 10

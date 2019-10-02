@@ -74,7 +74,6 @@ module MercadoLibre
         meli_end_time: product_info['end_time'],
         buying_mode: product_info['buying_mode'],
         meli_listing_type_id: product_info['listing_type_id'],
-        meli_expiration_time: product_info['expiration_time'],
         condition: product_info['condition'] == 'new' ? 'new_product' : product_info['condition'],
         meli_permalink: product_info['permalink'],
         ml_attributes: product_info['attributes'],

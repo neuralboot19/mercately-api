@@ -173,7 +173,6 @@ module MercadoLibre
       product.meli_end_time = product_info['end_time']
       product.buying_mode = product_info['buying_mode']
       product.meli_listing_type_id = product_info['listing_type_id']
-      product.meli_expiration_time = product_info['expiration_time']
       product.condition = product_info['condition'] == 'new' ? 'new_product' : product_info['condition']
       product.meli_permalink = product_info['permalink']
       product.ml_attributes = product_info['attributes']
