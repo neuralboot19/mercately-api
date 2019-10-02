@@ -24,7 +24,7 @@ class Retailers::TemplatesController < RetailersController
     @template = current_retailer.templates.new(template_params)
 
     if @template.save
-      redirect_to retailers_template_path(current_retailer, @template), notice: 'Plantilla creada'
+      redirect_to retailers_template_path(current_retailer, @template), notice: 'Plantilla creada con éxito.'
     else
       render :new
     end
@@ -33,7 +33,7 @@ class Retailers::TemplatesController < RetailersController
   # PATCH/PUT /templates/1
   def update
     if @template.update(template_params)
-      redirect_to retailers_template_path(current_retailer, @template), notice: 'Plantilla actualizada'
+      redirect_to retailers_template_path(current_retailer, @template), notice: 'Plantilla actualizada con éxito.'
     else
       render :edit
     end
@@ -42,7 +42,7 @@ class Retailers::TemplatesController < RetailersController
   # DELETE /templates/1
   def destroy
     @template.destroy
-    redirect_to retailers_templates_url, notice: 'Pantilla eliminada'
+    redirect_to retailers_templates_url, notice: 'Pantilla eliminada con éxito.'
   end
 
   private

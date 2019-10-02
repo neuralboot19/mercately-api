@@ -13,7 +13,7 @@ class Customer < ApplicationRecord
   end
 
   def earnings
-    order_earnings = orders.map(&:total)
+    order_earnings = orders.success.map(&:total)
 
     order_earnings.sum
   end

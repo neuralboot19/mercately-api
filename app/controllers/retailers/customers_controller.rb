@@ -40,12 +40,6 @@ class Retailers::CustomersController < RetailersController
     end
   end
 
-  # DELETE /products/1
-  def destroy
-    @customer.destroy
-    redirect_to retailers_customers_path, notice: 'Customer was successfully destroyed.'
-  end
-
   def customer_data
     render json: { customer: @customer }
   end

@@ -45,7 +45,7 @@
                 <div class="row">
                   <div class="col-xs-12 pl-0 col-sm-6 my-16">
                     <%= f.label :status, 'Estado del producto' %><br/>
-                    <%= f.select :status, Product.statuses.keys.to_a, class: 'input', onchange: 'updateMeliStatus(this);' %>
+                    <%= f.select :status, Product.statuses.keys.collect { |s| [ Product.enum_translation(:status, s), s ]}, class: 'input', onchange: 'updateMeliStatus(this);' %>
                     <% if @product.meli_product_id && @product.status != 'archived' %>
                       <p class="note-archived"><i>Nota: Si se archiva el producto, la publicación en MercadoLibre se cerrará</i></p>
                     <% end %>
@@ -53,7 +53,7 @@
 
                   <div class="col-xs-12 col-sm-6 my-16">
                     <%= f.label :meli_status, 'Estado de la publicación' %><br/>
-                    <%= f.select :meli_status, Product.meli_statuses.keys.to_a, disabled: @product.disabled_meli_statuses, class: 'input' %>
+                    <%= f.select :meli_status, Product.meli_statuses.keys.collect { |m| [ Product.enum_translation(:meli_status, m), m ]}, disabled: @product.disabled_meli_statuses, class: 'input' %>
                   </div>
                 </div>
               </div>
