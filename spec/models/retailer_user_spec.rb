@@ -13,7 +13,7 @@ RSpec.describe RetailerUser, type: :model do
   end
 
   describe '#send_welcome_email' do
-    it 'after save sends a welcome email' do
+    it 'sends a welcome email after creating a retailer user' do
       expect { retailer_user.save }.to change { ActionMailer::Base.deliveries.size }.by(1)
     end
   end
