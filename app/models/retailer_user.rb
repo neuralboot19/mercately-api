@@ -6,7 +6,6 @@ class RetailerUser < ApplicationRecord
   belongs_to :retailer
 
   validates :agree_terms, presence: true
-  before_create :agree_terms_to_bool
   after_create :send_welcome_email
 
   accepts_nested_attributes_for :retailer
@@ -16,9 +15,5 @@ class RetailerUser < ApplicationRecord
     # Send email after create
     def send_welcome_email
       RetailerMailer.welcome(self).deliver_now if persisted?
-    end
-
-    def agree_terms_to_bool
-      ActiveModel::Type::Boolean.new.cast(agree_terms)
     end
 end

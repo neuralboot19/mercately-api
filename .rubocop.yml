@@ -15,8 +15,9 @@ Metrics/LineLength:
 Metrics/ClassLength:
   Max: 200
 
+# TODO: enable when all models are covered
 Metrics/MethodLength:
-  Enabled: 25
+  Enabled: false
 
 # We do not need to support Ruby 1.9, so this is good to use.
 Style/SymbolArray:
@@ -91,8 +92,9 @@ Style/FrozenStringLiteralComment:
 Style/Documentation:
   Enabled: false
 
-Style/DocumentationMethod:
-  Enabled: true
+# TODO: enable when all models are covered
+# Style/DocumentationMethod:
+  # Enabled: true
 
 Metrics/BlockLength:
   Enabled: false
