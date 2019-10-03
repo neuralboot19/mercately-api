@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe RetailerUser, type: :model do
+  subject(:retailer_user) { build(:retailer_user) }
+
   describe 'associations' do
     it { is_expected.to belong_to(:retailer) }
     it { is_expected.to accept_nested_attributes_for(:retailer) }
@@ -10,15 +12,9 @@ RSpec.describe RetailerUser, type: :model do
     it { is_expected.to validate_presence_of(:agree_terms) }
   end
 
-  describe 'protected/private methods' do
-    let(:retailer_user) { create(:retailer_user) }
-
-    it 'returns true for agree terms converter' do
-      expect(retailer_user.send(:agree_terms_to_bool)).to be_truthy
-    end
-
-    it 'sends a welcome email' do
-      expect(retailer_user.send(:send_welcome_email)).to be_a Mail::Message
+  describe '#send_welcome_email' do
+    it 'after save sends a welcome email' do
+      expect { retailer_user.save }.to change { ActionMailer::Base.deliveries.size }.by(1)
     end
   end
 end

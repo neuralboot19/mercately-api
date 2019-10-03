@@ -1,11 +1,9 @@
 FactoryBot.define do
-  password = Faker::Internet.password
-
   factory :retailer_user do
     retailer
     email { Faker::Internet.email }
-    password { password }
-    password_confirmation { password }
+    password { 'Password1234' }
+    password_confirmation { 'Password1234' }
     agree_terms { true }
   end
 end
