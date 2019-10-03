@@ -15,6 +15,7 @@ Metrics/LineLength:
 Metrics/ClassLength:
   Max: 200
 
+# TODO: enable when all models are covered
 Metrics/MethodLength:
   Enabled: false
 
@@ -91,6 +92,10 @@ Style/FrozenStringLiteralComment:
 Style/Documentation:
   Enabled: false
 
+# TODO: enable when all models are covered
+# Style/DocumentationMethod:
+  # Enabled: true
+
 Metrics/BlockLength:
   Enabled: false
 
@@ -111,3 +116,9 @@ Metrics/AbcSize:
 
 RSpec/MultipleExpectations:
   Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 10

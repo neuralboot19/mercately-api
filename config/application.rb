@@ -19,11 +19,6 @@ module Mercately
       g.javascripts false
     end
 
-    Raven.configure do |config|
-      config.dsn = 'https://6be9b8318da648a6acdb5504bcf04bbf:1277be5f12c64794ac4bf3f6e88997fd@sentry.io/1386758'
-      config.environments = ['staging', 'production']
-    end
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
@@ -36,7 +31,7 @@ module Mercately
     # Reverse Proxy for Blog
     config.middleware.insert(0, Rack::ReverseProxy) do
       reverse_proxy_options preserve_host: true
-      reverse_proxy /^\/blog(\/.*)$/, 'https://blog.mercately.com$1'
+      reverse_proxy(/^\/blog(\/.*)$/, 'https://blog.mercately.com$1')
     end
   end
 end

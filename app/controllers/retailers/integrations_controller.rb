@@ -42,7 +42,7 @@ class Retailers::IntegrationsController < RetailersController
         render status: '200', json: { message: 'Success' }.to_json
       else
         render status: '404', json: { message: "#{params[:topic]} topic not found" }.to_json
-        Raven.capture_message "#{params[:topic]} topic not found"
+        Raven.capture_exception "#{params[:topic]} topic not found"
       end
     else
       render status: '404', json: { message: 'Retailer not found' }.to_json

@@ -38,6 +38,7 @@ gem "rack-reverse-proxy", require: "rack/reverse_proxy"
 gem 'font_awesome5_rails', '~> 0.8.0'
 
 gem 'select2-rails'
+gem 'scout_apm'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -58,6 +59,7 @@ end
 
 group :test do
   gem 'simplecov', require: false
+  gem 'shoulda-matchers', '~> 4.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
