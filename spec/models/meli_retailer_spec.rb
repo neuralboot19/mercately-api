@@ -7,17 +7,17 @@ RSpec.describe MeliRetailer, type: :model do
     it { is_expected.to belong_to(:retailer) }
   end
 
-  describe '.check_unique_retailer_id' do
-    context 'when it does not exist yet' do
+  describe '.check_unique_meli_user_id' do
+    context 'when meli_user_id does not exist yet' do
       it 'let the meli_retailer creation' do
-        expect(MeliRetailer.check_unique_retailer_id(meli_retailer.meli_user_id)).to be false
+        expect(MeliRetailer.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be false
       end
     end
 
-    context 'when it already exists' do
+    context 'when meli_user_id already exists' do
       it 'rejects the meli_retailer creation' do
         meli_retailer.save
-        expect(MeliRetailer.check_unique_retailer_id(meli_retailer.meli_user_id)).to be true
+        expect(MeliRetailer.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be true
       end
     end
   end
