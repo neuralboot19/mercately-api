@@ -28,7 +28,6 @@ jobs:
           name: Copy database.yml.example to database.yml
           command: cp config/database.yml.example config/database.yml
 
-      # Which version of bundler?
       - run:
           name: Which bundler?
           command: bundle -v
@@ -61,7 +60,35 @@ jobs:
           name: Run Rubocop
           command: bundle exec rubocop
 
-      # Run rspec
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
       - run:
           name: Run rspec
-          command: bundle exec rspec
+          command: |
+            mkdir -p test-results/rspec test-artifacts
+              ./cc-test-reporter before-build
+              TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+              bundle exec rspec --profile 10 \
+                                --color \
+                                --order random \
+                                --out test-results/rspec/rspec.xml \
+                                --format progress \
+                                -- ${TESTFILES}
+
+      - run:
+          name: Code Climate Test Coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
+            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input
+      - persist_to_workspace:
+          root: coverage
+          paths:
+            - codeclimate.*.json
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: test-artifacts
