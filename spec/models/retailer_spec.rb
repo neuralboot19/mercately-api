@@ -40,6 +40,7 @@ RSpec.describe Retailer, type: :model do
 
   describe '#update_meli_access_token' do
     subject(:retailer) { create(:retailer) }
+
     let!(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
     let!(:access_token) { meli_retailer.access_token }
 

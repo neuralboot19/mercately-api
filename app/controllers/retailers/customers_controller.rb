@@ -1,25 +1,20 @@
 class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy, :customer_data]
 
-  # GET /customers
   def index
     @customers = current_retailer.customers.active.page(params[:page])
   end
 
-  # GET /customers/1
   def show
   end
 
-  # GET /customers/new
   def new
     @customer = Customer.new
   end
 
-  # GET /customers/1/edit
   def edit
   end
 
-  # POST /customers
   def create
     @customer = Customer.new(customer_params)
     @customer.retailer_id = @retailer.id
@@ -31,7 +26,6 @@ class Retailers::CustomersController < RetailersController
     end
   end
 
-  # PATCH/PUT /customers/1
   def update
     if @customer.update(customer_params)
       redirect_to retailers_customers_path(@retailer), notice: 'Cliente actualizado con éxito.'
