@@ -2,8 +2,8 @@ class MeliRetailer < ApplicationRecord
   belongs_to :retailer
   after_save :update_information
 
-  def self.check_unique_user_id(user_id)
-    MeliRetailer.any? { |mr| mr.meli_user_id == user_id.to_s }
+  def self.check_unique_retailer_id(retailer_id)
+    MeliRetailer.any? { |mr| mr.meli_user_id == retailer_id.to_s }
   end
 
   private
