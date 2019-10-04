@@ -70,25 +70,12 @@ jobs:
           name: Run rspec
           command: |
             mkdir -p test-results/rspec test-artifacts
-              ./cc-test-reporter before-build
-              TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
-              bundle exec rspec --profile 10 \
-                                --color \
-                                --order random \
-                                --out test-results/rspec/rspec.xml \
-                                --format progress \
-                                -- ${TESTFILES}
-
-      - run:
-          name: Code Climate Test Coverage
-          command: |
-            ./cc-test-reporter format-coverage -t simplecov -o "coverage/codeclimate.$CIRCLE_NODE_INDEX.json"
-            ./cc-test-reporter sum-coverage --output - codeclimate.*.json | ./cc-test-reporter upload-coverage --debug --input
-      - persist_to_workspace:
-          root: coverage
-          paths:
-            - codeclimate.*.json
-      - store_test_results:
-          path: test-results
-      - store_artifacts:
-          path: test-artifacts
+            ./cc-test-reporter before-build
+            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec --profile 10 \
+                              --color \
+                              --order random \
+                              --out test-results/rspec/rspec.xml \
+                              --format progress \
+                              -- ${TESTFILES}
+            ./cc-test-reporter after-build -t simplecov --exit-code $? || true
