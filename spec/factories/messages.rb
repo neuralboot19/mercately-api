@@ -1,22 +1,17 @@
 FactoryBot.define do
-  factory :question do
-    product
+  factory :message do
     customer
+    order
     question { Faker::Lorem.question }
     answer { nil }
     date_read { nil }
-    status { 'UNANSWERED' }
-    answer_status { 'ACTIVE' }
     meli_question_type { 'from_product' }
     meli_id { Faker::Number.number(9) }
 
-    trait :answered do
+    trait :from_retailer do
+      question { nil }
       answer { Faker::Lorem.paragraph }
-      status { 'ANSWERED' }
-    end
-
-    trait :from_order do
-      meli_question_type { 'from_order' }
+      date_read { Time.now }
     end
 
     trait :readed do

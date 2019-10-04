@@ -28,7 +28,7 @@ RSpec.describe Retailer, type: :model do
     expect(retailer.slug).not_to be_nil
   end
 
-  context 'when there are appraisers with the same name' do
+  context 'when there are retailers with the same name' do
     let(:retailer_2) { create(:retailer, name: retailer.name) }
 
     it 'generates a slug with the retailer id' do
@@ -38,18 +38,46 @@ RSpec.describe Retailer, type: :model do
     end
   end
 
-  # TODO: describe update_meli_access_token
   describe '#update_meli_access_token' do
-    skip 'Pending'
+    subject(:retailer) { create(:retailer) }
+    let!(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
+    let!(:access_token) { meli_retailer.access_token }
+
+    context 'when meli_retailer.meli_token_updated_at is more than current hour - 4' do
+      it 'does not update the access_token' do
+        meli_retailer.meli_token_updated_at = Time.now - 6.hours
+        retailer.update_meli_access_token
+        expect(meli_retailer.access_token).to eq nil
+      end
+    end
+
+    context 'when meli_retailer.meli_token_updated_at is minor than current hour - 4' do
+      it 'updates the access_token' do
+        retailer.update_meli_access_token
+        expect(meli_retailer.access_token).to eq access_token
+      end
+    end
   end
 
-  # TODO: describe unread_messages
   describe '#unread_messages' do
-    skip 'Pending'
+    let(:customer) { create(:customer, retailer: retailer) }
+    let(:order) { create(:order, customer: customer) }
+    let!(:unread_messages) { create_list(:message, 5, order: order, customer: customer) }
+    let!(:readed_messages) { create_list(:message, 3, :readed, order: order, customer: customer) }
+
+    it 'returns only the unreaded messages' do
+      expect(retailer.unread_messages.count).to eq 5
+    end
   end
 
-  # TODO: describe unread_questions
   describe '#unread_questions' do
-    skip 'Pending'
+    let(:product) { create(:product, retailer: retailer) }
+    let(:customer) { create(:customer, retailer: retailer) }
+    let!(:unread_questions) { create_list(:question, 5, product: product, customer: customer) }
+    let!(:readed_questions) { create_list(:question, 3, :readed, product: product, customer: customer) }
+
+    it 'returns only the unreaded questions' do
+      expect(retailer.unread_questions.count).to eq 5
+    end
   end
 end
