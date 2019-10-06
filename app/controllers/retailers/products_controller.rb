@@ -1,27 +1,22 @@
 class Retailers::ProductsController < RetailersController
   before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product]
   before_action :compile_variation_images, only: [:create, :update]
-  before_action :set_products, only: [:index]
-  before_action :update_meli_status, only: [:update]
 
-  # GET /products
   def index
+    @products = current_retailer.products.preload(:category, :questions).where(status: params['status'])
+      .with_attached_images.page(params[:page])
   end
 
-  # GET /products/1
   def show
   end
 
-  # GET /products/new
   def new
     @product = Product.new
   end
 
-  # GET /products/1/edit
   def edit
   end
 
-  # POST /products
   def create
     params[:product][:images] = process_images(params[:product][:images])
     @product = Product.new(product_params)
@@ -48,8 +43,8 @@ class Retailers::ProductsController < RetailersController
     end
   end
 
-  # PATCH/PUT /products/1
   def update
+    params['product']['meli_status'] = 'closed' if params['product']['status'] == 'archived'
     check_for_errors(params)
 
     if @product.errors.present?
@@ -108,15 +103,6 @@ class Retailers::ProductsController < RetailersController
   end
 
   private
-
-    def update_meli_status
-      params['product']['meli_status'] = 'closed' if params['product']['status'] == 'archived'
-    end
-
-    def set_products
-      @products = Product.retailer_products(@retailer.id, params['status'])
-        .with_attached_images.page(params[:page])
-    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_product
