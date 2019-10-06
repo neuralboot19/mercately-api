@@ -56,16 +56,8 @@ class Retailers::ProductsController < RetailersController
     @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
       params[:product][:ml_attributes].present?
 
-    past_meli_status = @product.meli_status
-
     if @product.update(product_params)
-      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
-      @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
-        params[:product][:delete_images].present?
-      @product.reload
-      @product.update_ml_info(past_meli_status)
-      @product.upload_variations(action_name, @variations)
-      @product.update_status_publishment
+      update_meli_info
       redirect_to retailers_product_path(@retailer, @product), notice: 'Producto actualizado con éxito.'
     else
       render :edit
@@ -215,5 +207,16 @@ class Retailers::ProductsController < RetailersController
                                       :meli_status,
                                       images: [],
                                       ml_attributes: [])
+    end
+
+    def update_meli_info
+      past_meli_status = @product.meli_status
+      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
+      @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
+      params[:product][:delete_images].present?
+      @product.reload
+      @product.update_ml_info(past_meli_status)
+      @product.upload_variations(action_name, @variations)
+      @product.update_status_publishment
     end
 end
