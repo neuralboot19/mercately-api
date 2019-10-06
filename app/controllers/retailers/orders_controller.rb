@@ -3,8 +3,8 @@ class Retailers::OrdersController < RetailersController
 
   # GET /orders
   def index
-      @orders = Order.retailer_orders(current_retailer.id, params['status'])
-        .order('created_at desc').page(params[:page])
+    @orders = Order.retailer_orders(current_retailer.id, params['status'])
+      .order('created_at desc').page(params[:page])
   end
 
   # GET /orders/1
