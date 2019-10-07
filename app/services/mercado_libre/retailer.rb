@@ -7,7 +7,7 @@ module MercadoLibre
 
     def save_retailer(identification, address, phone)
       @retailer.update(
-        id_number: identification['number'], id_type: identification['type'].downcase,
+        id_number: identification['number'], id_type: identification['type']&.downcase,
         address: address['address'], city: address['city'], state: address['state'], zip_code: address['zip_code'],
         phone_number: phone['number'], phone_verified: phone['verified']
       )
