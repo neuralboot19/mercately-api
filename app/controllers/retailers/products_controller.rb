@@ -19,15 +19,10 @@ class Retailers::ProductsController < RetailersController
 
   def create
     params[:product][:images] = process_images(params[:product][:images])
-    @product = Product.new(product_params)
+    @product = current_retailer.products.new(product_params)
     check_for_errors(params)
 
-    if @product.errors.present?
-      render :new
-      return
-    end
-
-    @product.retailer_id = @retailer.id
+    render(:new) && return if @product.errors.present?
 
     @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
       params[:product][:ml_attributes].present?

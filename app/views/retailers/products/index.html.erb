@@ -50,7 +50,7 @@
               <div class="table__item row middle-xs">
                 <div class="col-xs-4 col-sm-1">
                   <div class="products__img">
-                    <%= cl_image_tag("#{product.images&.first&.key}") %>
+                    <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}") %>
                   </div>
                 </div>
                 <div class="col-xs-7 col-sm-3 t-center"><%= product.title %></div>
