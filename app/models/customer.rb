@@ -4,9 +4,12 @@ class Customer < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_many :questions, dependent: :destroy
   has_many :messages, dependent: :destroy
+
   enum id_type: [:cedula, :pasaporte, :ruc]
 
   before_save :update_valid_customer
+
+  scope :active, -> { where(valid_customer: true) }
 
   def full_name
     "#{first_name} #{last_name}"

@@ -36,7 +36,7 @@
                       <% if @order.products.present? %>
                         <label class="c-grey fs-14">Producto:</label> <span class="c-secondary fs-14"><%= @order.products.first.title %></span>
                       <% else %>
-                        <label class="c-grey fs-14">Producto:</label> <span class="c-secondary fs-14"><%= No existen productos %></span>
+                        <label class="c-grey fs-14">Producto:</label> <span class="c-secondary fs-14">No existen productos</span>
                       <% end %>
                     </p>
                   </fieldset>
@@ -75,7 +75,7 @@
                 <div id="templates" class="col-xs-12 col-sm-3">
                   <fieldset class="fieldset mt-16">
                   <legend>Plantillas:</legend>
-                    <% Retailer.filter_templates(current_retailer, 'chats').each do |template| %>
+                    <% current_retailer.templates.for_chats.each do |template| %>
                       <%= form_tag retailers_order_send_message_path(current_retailer, @order), method: :post do %>
                         <%= hidden_field_tag :answer, template.answer %>
                         <p>
