@@ -10,14 +10,14 @@ RSpec.describe MeliRetailer, type: :model do
   describe '.check_unique_meli_user_id' do
     context 'when meli_user_id does not exist yet' do
       it 'let the meli_retailer creation' do
-        expect(MeliRetailer.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be false
+        expect(described_class.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be false
       end
     end
 
     context 'when meli_user_id already exists' do
       it 'rejects the meli_retailer creation' do
         meli_retailer.save
-        expect(MeliRetailer.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be true
+        expect(described_class.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be true
       end
     end
   end
