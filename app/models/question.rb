@@ -11,8 +11,8 @@ class Question < ApplicationRecord
 
   delegate :retailer, to: :product
 
-  def self.check_unique_question_id(question_meli_id)
-    Question.any? { |q| q.meli_id == question_meli_id.to_s }
+  def self.check_unique_question_meli_id(question_meli_id)
+    Question.exists?(meli_id: question_meli_id.to_s)
   end
 
   private
