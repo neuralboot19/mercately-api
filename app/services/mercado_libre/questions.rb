@@ -47,7 +47,7 @@ module MercadoLibre
       return unless questions.present?
 
       questions.each do |q|
-        next if Question.check_unique_question_id(q['id'])
+        next if Question.check_unique_question_meli_id(q['id'])
 
         save_question(q)
       end
