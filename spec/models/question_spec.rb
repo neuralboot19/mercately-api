@@ -4,8 +4,7 @@ RSpec.describe Question, type: :model do
   let(:retailer) { create(:retailer) }
   let(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
   let(:product) { create(:product, retailer: retailer) }
-
-  subject(:question) { build(:question, product: product) }
+  let(:question) { build(:question, product: product) }
 
   describe 'enums' do
     it { is_expected.to define_enum_for(:status).with_values(%i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]) }
