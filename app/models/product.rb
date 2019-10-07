@@ -20,6 +20,7 @@ class Product < ApplicationRecord
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
 
+  # TODO: move to service
   def update_ml(p_ml)
     self.meli_site_id = p_ml['site_id']
     self.meli_start_time = p_ml['start_time']
@@ -121,17 +122,17 @@ class Product < ApplicationRecord
     update_ml_info(past_meli_status)
   end
 
+  # TODO: Move to helper
   def disabled_meli_statuses
     disabled = %w[payment_required under_review inactive]
 
-    return disabled + %w[active paused closed] if status == 'archived'
-    return disabled + %w[active paused closed] if
-      disabled.include? meli_status
+    return disabled + %w[active paused closed] if status == 'archived' || disabled.include?(meli_status)
     return disabled if meli_status == 'active'
     return disabled + %w[paused] if meli_status == 'closed'
     return disabled + %w[closed] if meli_status == 'paused'
   end
 
+  # TODO: Make private
   def upload_variations_to_ml
     p_ml = MercadoLibre::ProductVariations.new(retailer)
     p_ml.create_product_variations(self)
@@ -145,6 +146,7 @@ class Product < ApplicationRecord
     earned.sum
   end
 
+  # TODO: move to service (or controller (?))
   def editable_attributes
     attributes = []
     editables = category.required_product_attributes
@@ -153,6 +155,7 @@ class Product < ApplicationRecord
     attributes
   end
 
+  # TODO: move to service
   def update_status_publishment(re_publish = false)
     return if meli_product_id.blank? || status == 'archived'
 
