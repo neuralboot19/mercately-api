@@ -21,14 +21,14 @@ RSpec.describe Question, type: :model do
   describe '.check_unique_question_meli_id' do
     context 'when meli_id does not exist yet' do
       it 'finds that meli_id is not duplicated' do
-        expect(Question.check_unique_question_meli_id(question.meli_id)).to be false
+        expect(described_class.check_unique_question_meli_id(question.meli_id)).to be false
       end
     end
 
     context 'when meli_id already exists' do
       it 'finds that meli_id is duplicated' do
         question.save
-        expect(Question.check_unique_question_meli_id(question.meli_id)).to be true
+        expect(described_class.check_unique_question_meli_id(question.meli_id)).to be true
       end
     end
   end

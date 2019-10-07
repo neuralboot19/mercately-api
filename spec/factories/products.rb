@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :product do
     retailer
-    title { Faker::Superhero.name }
     category
+    title { Faker::Superhero.name }
     price { Faker::Number.number(2) }
     available_quantity { Faker::Number.number(2) }
     buying_mode { Product.buying_modes.first[0] }
