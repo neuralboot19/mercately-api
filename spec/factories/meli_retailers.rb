@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :meli_retailer do
+    retailer
     access_token { Faker::Internet.uuid }
     meli_user_id { '123456789' }
     refresh_token { Faker::Internet.uuid }
-    retailer
     nickname { Faker::Internet.username }
     email { Faker::Internet.email }
     points { Faker::Number.digit }
