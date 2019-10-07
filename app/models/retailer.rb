@@ -5,10 +5,12 @@ class Retailer < ApplicationRecord
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
   has_many :templates, dependent: :destroy
+
   validates :name, presence: true
   validates :slug, uniqueness: true
-  enum id_type: [:cedula, :pasaporte, :ruc]
   after_save :generate_slug, if: :saved_change_to_name?
+
+  enum id_type: [:cedula, :pasaporte, :ruc]
 
   scope :filter_templates, lambda { |retailer, type|
     if type == 'questions'

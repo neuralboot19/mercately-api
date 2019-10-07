@@ -10,6 +10,7 @@ jobs:
           PGHOST: 127.0.0.1
           PGUSER: postgres
           RAILS_ENV: test
+          CC_TEST_REPORTER_ID: f4dddb9a79406166efb2d61ccb817f9de5cc19f5fa71219fd4909263ca21dc02
       - image: circleci/postgres:11.1-alpine
         environment:
           POSTGRES_USER: postgres
@@ -28,7 +29,6 @@ jobs:
           name: Copy database.yml.example to database.yml
           command: cp config/database.yml.example config/database.yml
 
-      # Which version of bundler?
       - run:
           name: Which bundler?
           command: bundle -v
@@ -61,7 +61,22 @@ jobs:
           name: Run Rubocop
           command: bundle exec rubocop
 
-      # Run rspec
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+
       - run:
           name: Run rspec
-          command: bundle exec rspec
+          command: |
+            mkdir -p test-results/rspec test-artifacts
+            ./cc-test-reporter before-build
+            TESTFILES=$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)
+            bundle exec rspec --profile 10 \
+                              --color \
+                              --order random \
+                              --out test-results/rspec/rspec.xml \
+                              --format progress \
+                              -- ${TESTFILES}
+            ./cc-test-reporter after-build -t simplecov --exit-code $?
