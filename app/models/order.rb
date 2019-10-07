@@ -28,11 +28,11 @@ class Order < ApplicationRecord
 
   delegate :retailer_id, :retailer, to: :customer
 
-  scope :retailer_orders, lambda { |retailer_id, status|
-    orders = Order.joins(:customer).where('customers.retailer_id = ?', retailer_id)
-    orders = orders.where(status: Order.statuses[status]) if status.present? && status != 'all'
+  def self.retailer_orders(retailer_id, status)
+    orders = preload(:customer, :order_items).joins(:customer).where('customers.retailer_id = ?', retailer_id)
+    orders = orders.where(status: status) if status != 'all'
     orders
-  }
+  end
 
   def total
     total = order_items.map do |order_item|

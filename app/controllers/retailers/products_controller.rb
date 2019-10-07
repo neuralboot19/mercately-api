@@ -1,27 +1,22 @@
 class Retailers::ProductsController < RetailersController
   before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product]
   before_action :compile_variation_images, only: [:create, :update]
-  before_action :set_products, only: [:index]
-  before_action :update_meli_status, only: [:update]
 
-  # GET /products
   def index
+    @products = current_retailer.products.preload(:category, :questions).where(status: params['status'])
+      .with_attached_images.page(params[:page])
   end
 
-  # GET /products/1
   def show
   end
 
-  # GET /products/new
   def new
     @product = Product.new
   end
 
-  # GET /products/1/edit
   def edit
   end
 
-  # POST /products
   def create
     params[:product][:images] = process_images(params[:product][:images])
     @product = Product.new(product_params)
@@ -48,8 +43,8 @@ class Retailers::ProductsController < RetailersController
     end
   end
 
-  # PATCH/PUT /products/1
   def update
+    params['product']['meli_status'] = 'closed' if params['product']['status'] == 'archived'
     check_for_errors(params)
 
     if @product.errors.present?
@@ -61,16 +56,8 @@ class Retailers::ProductsController < RetailersController
     @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
       params[:product][:ml_attributes].present?
 
-    past_meli_status = @product.meli_status
-
     if @product.update(product_params)
-      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
-      @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
-        params[:product][:delete_images].present?
-      @product.reload
-      @product.update_ml_info(past_meli_status)
-      @product.upload_variations(action_name, @variations)
-      @product.update_status_publishment
+      update_meli_info
       redirect_to retailers_product_path(@retailer, @product), notice: 'Producto actualizado con éxito.'
     else
       render :edit
@@ -108,15 +95,6 @@ class Retailers::ProductsController < RetailersController
   end
 
   private
-
-    def update_meli_status
-      params['product']['meli_status'] = 'closed' if params['product']['status'] == 'archived'
-    end
-
-    def set_products
-      @products = Product.retailer_products(@retailer.id, params['status'])
-        .with_attached_images.page(params[:page])
-    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_product
@@ -229,5 +207,16 @@ class Retailers::ProductsController < RetailersController
                                       :meli_status,
                                       images: [],
                                       ml_attributes: [])
+    end
+
+    def update_meli_info
+      past_meli_status = @product.meli_status
+      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
+      @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
+      params[:product][:delete_images].present?
+      @product.reload
+      @product.update_ml_info(past_meli_status)
+      @product.upload_variations(action_name, @variations)
+      @product.update_status_publishment
     end
 end
