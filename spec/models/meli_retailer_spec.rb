@@ -10,14 +10,14 @@ RSpec.describe MeliRetailer, type: :model do
   describe '.check_unique_meli_user_id' do
     context 'when meli_user_id does not exist yet' do
       it 'let the meli_retailer creation' do
-        expect(MeliRetailer.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be false
+        expect(described_class.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be false
       end
     end
 
     context 'when meli_user_id already exists' do
       it 'rejects the meli_retailer creation' do
         meli_retailer.save
-        expect(MeliRetailer.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be true
+        expect(described_class.check_unique_meli_user_id(meli_retailer.meli_user_id)).to be true
       end
     end
   end
@@ -26,14 +26,14 @@ RSpec.describe MeliRetailer, type: :model do
     context 'when is a new record' do
       it 'calls the ML updating service' do
         meli_retailer.meli_info_updated_at = nil
-        expect(meli_retailer.send(:update_information)).to be_a MeliRetailer
+        expect(meli_retailer.send(:update_information)).to be_a described_class
       end
     end
 
     context 'when it has not been updated in more than 7 days' do
       it 'calls the ML updating service' do
         meli_retailer.meli_info_updated_at = Time.now - 8.days
-        expect(meli_retailer.send(:update_information)).to be_a MeliRetailer
+        expect(meli_retailer.send(:update_information)).to be_a described_class
       end
     end
 
