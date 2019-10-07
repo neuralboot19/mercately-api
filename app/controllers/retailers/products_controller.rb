@@ -22,7 +22,7 @@ class Retailers::ProductsController < RetailersController
     @product = current_retailer.products.new(product_params)
     check_for_errors(params)
 
-    render :new and return if @product.errors.present?
+    render(:new) && return if @product.errors.present?
 
     @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
       params[:product][:ml_attributes].present?
@@ -30,7 +30,7 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
       @product.reload
-      @product.upload_ml if @product.retailer.meli_retailer
+      @product.upload_ml
       @product.upload_variations(action_name, @variations)
       redirect_to retailers_product_path(@retailer, @product), notice: 'Producto creado con éxito.'
     else
