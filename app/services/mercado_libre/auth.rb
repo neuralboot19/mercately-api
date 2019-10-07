@@ -25,6 +25,7 @@ module MercadoLibre
       @meli_retailer
     end
 
+    # TODO: update the record in model, NOT HERE!
     def refresh_access_token
       url = prepare_refresh_token_params(@meli_retailer.refresh_token)
       conn = Connection.prepare_connection(url)

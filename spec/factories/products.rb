@@ -3,10 +3,10 @@ FactoryBot.define do
     retailer
     category
     title { Faker::Superhero.name }
-    price { Faker::Number.number(2) }
+    price { Faker::Number.decimal(2) }
     available_quantity { Faker::Number.number(2) }
-    buying_mode { Product.buying_modes.first[0] }
-    condition { Product.conditions.first[0] }
-    description { Faker::Lorem.paragraphs }
+    buying_mode { 'buy_it_now' }
+    condition { Product.conditions.keys.sample }
+    description { Faker::Lorem.paragraph }
   end
 end

@@ -6,7 +6,7 @@
         <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
         <div class="my-16" id="customer_id_container">
           <%= f.label :customer_id, 'Cliente' %>
-          <%= f.select :customer_id, Retailer.active_customers(current_retailer).map { |c| [c.full_name, c.id] }, { include_blank: false }, class: 'input', onchange: 'updateEditForm()' %>
+          <%= f.select :customer_id, current_retailer.customers.active.map { |c| [c.full_name, c.id] }, { include_blank: false }, class: 'input', onchange: 'updateEditForm()' %>
         </div>
         <div id="add_customer_container" class="links mt-16 mb-24 pb-10">
           <a class="btn btn--cta fs-12 fs-sm-and-down-8 f-right" onclick="editClient()" id="edit_customer">
