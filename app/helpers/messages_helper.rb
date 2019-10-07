@@ -4,10 +4,10 @@ module MessagesHelper
   end
 
   def quantity_unread_messages
-    Retailer.unread_messages(current_retailer_user.retailer.id).size
+    current_retailer.unread_messages.size
   end
 
   def quantity_unread_questions
-    Retailer.unread_questions(current_retailer_user.retailer.id).size
+    current_retailer.unread_questions.size
   end
 end
