@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :product do
-    retailer
+    retailer { build(:retailer, :with_meli_retailer) }
     category
     title { Faker::Superhero.name }
     price { Faker::Number.decimal(2) }

@@ -32,4 +32,10 @@ RSpec.describe Question, type: :model do
       end
     end
   end
+
+  describe '#ml_answer_question' do
+    it 'calls ML answer question service' do
+      expect(question.send(:ml_answer_question)).not_to be_nil
+    end
+  end
 end
