@@ -5,8 +5,8 @@ class Product < ApplicationRecord
   belongs_to :category
   has_many :order_items
   has_many :questions
-  has_many_attached :images
   has_many :product_variations
+  has_many_attached :images
 
   validate :images_count
   validate :ml_status

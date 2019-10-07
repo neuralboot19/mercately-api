@@ -6,7 +6,7 @@ class Retailers::MessagesController < RetailersController
   end
 
   def questions
-    @questions = Question.includes(:product).where(meli_question_type: :from_product, products:
+    @questions = Question.includes(:customer, :product).where(meli_question_type: :from_product, products:
       {
         retailer_id: current_retailer.id
       }).order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
