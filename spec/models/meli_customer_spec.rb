@@ -1,7 +1,5 @@
 require 'rails_helper'
 
 RSpec.describe MeliCustomer, type: :model do
-  describe 'associations' do
-    it { is_expected.to have_many(:customers) }
-  end
+  pending "add some examples to (or delete) #{__FILE__}"
 end
