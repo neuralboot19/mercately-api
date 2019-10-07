@@ -83,7 +83,7 @@ class Product < ApplicationRecord
     attach_id = images.find_by(blob_id: blob_id)&.id if blob_id.present?
     update(main_picture_id: attach_id) if attach_id.present?
 
-    set_ml_products.load_main_picture(reload, true)
+    set_ml_products.load_main_picture(reload, true) if retailer.meli_retailer
   end
 
   def upload_ml
@@ -102,7 +102,7 @@ class Product < ApplicationRecord
     end
 
     reload
-    upload_variations_to_ml
+    upload_variations_to_ml if retailer.meli_retailer
   end
 
   def delete_images(delete_images, variations, past_meli_status)

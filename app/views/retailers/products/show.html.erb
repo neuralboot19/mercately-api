@@ -154,51 +154,53 @@
               </div>
             </div>
           </div>
-          <div class="col-xs-12 card__module">
-            <div class="card__title"><i class="fas fa-shopping-cart c-primary"></i> Mercado Libre Info</div>
-            <div class="box">
-              <div class="row">
-                <div class="col-xs-12 col-sm-6">
-                  <table class="table_details table_details--underlined w-100">
-                    <tr>
-                      <td class="table_details__descriptor">Preguntas:</td>
-                      <td class="table_details__value"><%= @product.questions.count %></td>
-                    </tr>
-                    <!--<tr>
-                      <td class="table_details__descriptor">Visitas:</td>
-                      <td class="table_details__value">500</td>
-                    </tr>-->
-                    <tr>
-                      <td class="table_details__descriptor">Expiración:</td>
-                      <td class="table_details__value"><%= @product.meli_end_time.strftime("%d/%m/%Y") %></td>
-                    </tr>
-                  </table>
-                </div>
-                <div class="col-xs-12 col-sm-6">
-                  <table class="table_details table_details--underlined w-100">
-                    <tr>
-                      <td class="table_details__descriptor">Condición:</td>
-                      <td class="table_details__value"><%= humanize_ml_condition(@product.condition) %></td>
-                    </tr>
-                    <tr>
-                      <td class="table_details__descriptor">Tipo:</td>
-                      <td class="table_details__value"><%= @product.meli_listing_type_id %></td>
-                    </tr>
-                    <tr>
-                      <td class="table_details__descriptor">Enlace:</td>
-                      <td class="table_details__value">
-                        <div class="truncate">
-                          <a href="<%= @product.meli_permalink %>" target="_blank">
-                            Ver
-                          </a>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
+          <% if @product.retailer.meli_retailer %>
+            <div class="col-xs-12 card__module">
+              <div class="card__title"><i class="fas fa-shopping-cart c-primary"></i> Mercado Libre Info</div>
+              <div class="box">
+                <div class="row">
+                  <div class="col-xs-12 col-sm-6">
+                    <table class="table_details table_details--underlined w-100">
+                      <tr>
+                        <td class="table_details__descriptor">Preguntas:</td>
+                        <td class="table_details__value"><%= @product.questions.count %></td>
+                      </tr>
+                      <!--<tr>
+                        <td class="table_details__descriptor">Visitas:</td>
+                        <td class="table_details__value">500</td>
+                        </tr>-->
+                        <tr>
+                          <td class="table_details__descriptor">Expiración:</td>
+                          <td class="table_details__value"><%= @product.meli_end_time&.strftime("%d/%m/%Y") %></td>
+                        </tr>
+                    </table>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <table class="table_details table_details--underlined w-100">
+                      <tr>
+                        <td class="table_details__descriptor">Condición:</td>
+                        <td class="table_details__value"><%= humanize_ml_condition(@product.condition) %></td>
+                      </tr>
+                      <tr>
+                        <td class="table_details__descriptor">Tipo:</td>
+                        <td class="table_details__value"><%= @product.meli_listing_type_id %></td>
+                      </tr>
+                      <tr>
+                        <td class="table_details__descriptor">Enlace:</td>
+                        <td class="table_details__value">
+                          <div class="truncate">
+                            <a href="<%= @product.meli_permalink %>" target="_blank">
+                              Ver
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          <% end %>
         </div>
       </div>
     </div>
