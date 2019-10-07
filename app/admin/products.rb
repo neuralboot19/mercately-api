@@ -1,4 +1,7 @@
 ActiveAdmin.register Product do
+  preserve_default_filters!
+  remove_filter :category, :order_items, :questions, :images_blobs, :images_attachments, :product_variations
+
   permit_params :title,
                 :subtitle,
                 :category_id,

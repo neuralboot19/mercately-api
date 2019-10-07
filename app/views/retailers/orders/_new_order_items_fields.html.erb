@@ -2,7 +2,7 @@
   <div class="row my-16 bottom-xs divider pb-16">
     <div class="col-xs-12 col-sm-4">
       <%= f.label :product_id, 'Producto' %>
-      <%= f.select :product_id, Retailer.active_products(current_retailer).pluck(:title, :id), { include_blank: false }, class: 'input', onchange: 'getProductInfo(this);' %>
+      <%= f.select :product_id, current_retailer.products.status_active.pluck(:title, :id), { include_blank: false }, class: 'input', onchange: 'getProductInfo(this);' %>
     </div>
     <div class="col-xs-12 col-sm-3">
       <%= f.label :quantity, 'Cantidad' %>

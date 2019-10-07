@@ -14,7 +14,6 @@ class RetailerUser < ApplicationRecord
 
     # Send email after create
     def send_welcome_email
-      # TODO: change this to a proper email
-      PageMailer.welcome(self).deliver_now if persisted?
+      RetailerMailer.welcome(self).deliver_now if persisted?
     end
 end

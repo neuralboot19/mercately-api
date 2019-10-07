@@ -7,7 +7,7 @@ module MercadoLibre
 
     def save_retailer(identification, address, phone)
       @retailer.update(
-        id_number: identification['number'], id_type: identification['type'].downcase,
+        id_number: identification['number'], id_type: identification['type']&.downcase,
         address: address['address'], city: address['city'], state: address['state'], zip_code: address['zip_code'],
         phone_number: phone['number'], phone_verified: phone['verified']
       )
@@ -17,7 +17,7 @@ module MercadoLibre
       url = prepare_retailer_update_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      return if response['error'].present?
+      return @meli_retailer if response['error'].present? || response['message']&.[]('error').present?
 
       save_retailer(response['identification'], response['address'], response['phone'])
       update_meli_retailer(
