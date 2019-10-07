@@ -26,14 +26,14 @@ RSpec.describe MeliRetailer, type: :model do
     context 'when is a new record' do
       it 'calls the ML updating service' do
         meli_retailer.meli_info_updated_at = nil
-        expect(meli_retailer.send(:update_information)).to be_a MeliRetailer
+        expect(meli_retailer.send(:update_information)).to be_a described_class
       end
     end
 
     context 'when it has not been updated in more than 7 days' do
       it 'calls the ML updating service' do
         meli_retailer.meli_info_updated_at = Time.now - 8.days
-        expect(meli_retailer.send(:update_information)).to be_a MeliRetailer
+        expect(meli_retailer.send(:update_information)).to be_a described_class
       end
     end
 
