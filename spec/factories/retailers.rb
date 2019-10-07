@@ -9,9 +9,5 @@ FactoryBot.define do
     zip_code { Faker::Address.zip_code.first(5) }
     phone_number { Faker::PhoneNumber.cell_phone_with_country_code }
     phone_verified { true }
-
-    trait :with_meli_retailer do
-      meli_retailer { MeliRetailer.new(access_token: Faker::Internet.uuid) }
-    end
   end
 end

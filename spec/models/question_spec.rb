@@ -1,7 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Question, type: :model do
-  subject(:question) { build(:question) }
+  let(:retailer) { create(:retailer) }
+  let(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
+  let(:product) { create(:product, retailer: retailer) }
+
+  subject(:question) { build(:question, product: product) }
 
   describe 'enums' do
     it { is_expected.to define_enum_for(:status).with_values(%i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]) }
@@ -35,6 +39,7 @@ RSpec.describe Question, type: :model do
 
   describe '#ml_answer_question' do
     it 'calls ML answer question service' do
+      question.product.retailer.meli_retailer = meli_retailer
       expect(question.send(:ml_answer_question)).not_to be_nil
     end
   end
