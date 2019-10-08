@@ -3,7 +3,6 @@ class ProductVariation < ApplicationRecord
 
   belongs_to :product
   has_many :order_items
-  validates :variation_meli_id, uniqueness: true, allow_nil: true
 
   enum status: %w[active inactive]
 
