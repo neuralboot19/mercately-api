@@ -1,30 +1,33 @@
 require 'rails_helper'
 
 RSpec.describe ProductVariation, type: :model do
-  let(:variations) { {
-    'variations': [ {
-      'id': 12345678910,
-      'attribute_combinations': [
-        {
-          'id': 'COLOR',
-          'name': 'Color',
-          'value_id': '52049',
-          'value_name': 'Negro'
-        }
-      ],
-      'price': 50.5,
-      'available_quantity': 5,
-      'sold_quantity': 0,
-      'picture_ids': [
-        '553111-MLA20482692355_112015'
-      ],
-      'seller_custom_field': nil,
-      'catalog_product_id': nil
-      }]
-    }.with_indifferent_access
-  }
-
   subject(:product_variation) { build(:product_variation) }
+
+  let(:variations) do
+    {
+      'variations': [
+        {
+          'id': 1_234_567_891_0,
+          'attribute_combinations': [
+            {
+              'id': 'COLOR',
+              'name': 'Color',
+              'value_id': '52049',
+              'value_name': 'Negro'
+            }
+          ],
+          'price': 50.5,
+          'available_quantity': 5,
+          'sold_quantity': 0,
+          'picture_ids': [
+            '553111-MLA20482692355_112015'
+          ],
+          'seller_custom_field': nil,
+          'catalog_product_id': nil
+        }
+      ]
+    }.with_indifferent_access
+  end
 
   describe 'enums' do
     it { is_expected.to define_enum_for(:status).with_values(%w[active inactive]) }
@@ -51,7 +54,7 @@ RSpec.describe ProductVariation, type: :model do
         expect(product_variation.data['picture_ids']).not_to be_empty
       end
 
-      it 'overwrite sold_quantity returned in ML response' do
+      it 'overwrites the sold_quantity returned in ML response' do
         product_variation.save
         expect(product_variation.data['sold_quantity']).to eq(1)
         product_variation.update_data(variations)
