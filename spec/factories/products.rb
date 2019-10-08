@@ -8,5 +8,7 @@ FactoryBot.define do
     buying_mode { 'buy_it_now' }
     condition { Product.conditions.keys.sample }
     description { Faker::Lorem.paragraph }
+    sold_quantity { nil }
+    meli_product_id { nil }
   end
 end
