@@ -12,7 +12,7 @@ FactoryBot.define do
     end
 
     trait :with_product_variation do
-      product_variation { create(:product_variation) }
+      product_variation { create(:product_variation, product: product) }
     end
   end
 end
