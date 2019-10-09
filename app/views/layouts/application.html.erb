@@ -59,6 +59,11 @@
         gtag('config', "<%= ENV['GOOGLE_TRACKING_ID'] %>");
       </script>
 
+      <!-- Event snippet for Registro conversion page -->
+      <script>
+        gtag('event', 'conversion', {'send_to': "<%= ENV['GOOGLE_TRACKING_ID'] %>/anasCMPEiK4BEIeJ5tMC"});
+      </script>
+
       <!-- Start of HubSpot Embed Code -->
         <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/6467598.js"></script>
       <!-- End of HubSpot Embed Code -->
