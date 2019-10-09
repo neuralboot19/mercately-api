@@ -12,7 +12,7 @@ FactoryBot.define do
     meli_product_id { nil }
 
     trait :with_meli_product_id do
-      meli_product_id { "MEC#{Faker::Number.number(9).to_s}" }
+      meli_product_id { "MEC#{Faker::Number.number(9)}" }
     end
   end
 end
