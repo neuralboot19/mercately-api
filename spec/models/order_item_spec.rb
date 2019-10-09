@@ -46,8 +46,7 @@ RSpec.describe OrderItem, type: :model do
       end
 
       context 'when the item comes from ML' do
-        it 'after create does not update the available quantity and updates
-          the sold quantity' do
+        it 'after create does not update the available quantity and updates the sold quantity' do
           order_item.quantity = 2
           order_item.from_ml = true
           expect(order_item.product.available_quantity).to eq(9)
@@ -75,8 +74,7 @@ RSpec.describe OrderItem, type: :model do
       end
 
       context 'when the item comes from ML' do
-        it 'after create does not update the available quantity and updates
-          the sold quantity' do
+        it 'after create does not update the available quantity and updates the sold quantity' do
           product_variation.data['available_quantity'] = 9
           product_variation.data['sold_quantity'] = 0
           product_variation.save
