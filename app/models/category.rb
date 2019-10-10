@@ -8,25 +8,19 @@ class Category < ApplicationRecord
   enum status: %w[active inactive]
 
   def required_product_attributes
-    attributes = []
-    template.each do |temp|
-      attributes << temp['id'] if temp['tags']['allow_variations'].blank? &&
+    template.map do |temp|
+      temp['id'] if temp['tags']['allow_variations'].blank? &&
                                   (temp['tags']['catalog_required'] ||
                                   temp['tags']['required']) && check_not_used_attr(temp)
-    end
-
-    attributes
+    end.compact
   end
 
   def clean_template_variations
-    attributes = []
-    template.each do |temp|
-      attributes << temp if (temp['tags']['allow_variations'] ||
+    template.map do |temp|
+      temp if (temp['tags']['allow_variations'] ||
                             temp['tags']['catalog_required'] ||
                             temp['tags']['required']) && check_not_used_attr(temp)
-    end
-
-    attributes
+    end.compact
   end
 
   private
