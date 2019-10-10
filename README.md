@@ -1,4 +1,4 @@
-# Mercately
+# Mercately  https://codeclimate.com/github/{{ThoughtCode}}/{{mercately}}.png
 
 ## Setting up the environment
 
