@@ -7,7 +7,7 @@ FactoryBot.define do
     unit_price { Faker::Number.decimal(2) }
     from_ml { false }
 
-    trait :from_ml? do
+    trait :from_ml do
       from_ml { true }
     end
 
