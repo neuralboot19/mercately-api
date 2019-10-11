@@ -9,7 +9,7 @@ class MeliRetailer < ApplicationRecord
   private
 
     def update_information
-      return if meli_info_updated_at.present? && meli_info_updated_at > DateTime.current - 7.days
+      return if meli_info_updated_at.to_i > (DateTime.current - 7.days).to_i
 
       MercadoLibre::Retailer.new(retailer).update_retailer_info
     end
