@@ -5,9 +5,9 @@ class Customer < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_many :messages, dependent: :destroy
 
-  enum id_type: [:cedula, :pasaporte, :ruc]
-
   before_save :update_valid_customer
+
+  enum id_type: %i[cedula pasaporte ruc]
 
   scope :active, -> { where(valid_customer: true) }
 
@@ -16,13 +16,11 @@ class Customer < ApplicationRecord
   end
 
   def earnings
-    order_earnings = orders.success.map(&:total)
-
-    order_earnings.sum
+    orders.success.map(&:total).sum.to_f.round(2)
   end
 
   def generate_phone
-    return unless do_generate_phone?
+    return unless phone.blank? && meli_customer&.phone.present?
 
     phone_area = ''
     if meli_customer.phone_area.present?
@@ -42,9 +40,5 @@ class Customer < ApplicationRecord
       return if valid_customer?
 
       self.valid_customer = first_name.present? || last_name.present? || email.present?
-    end
-
-    def do_generate_phone?
-      phone.blank? && meli_customer&.phone.present?
     end
 end
