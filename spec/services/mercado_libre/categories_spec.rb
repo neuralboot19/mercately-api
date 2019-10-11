@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'vcr'
 
 RSpec.describe MercadoLibre::Categories, vcr: true do
-  subject(:categories_service) { MercadoLibre::Categories.new(retailer) }
+  subject(:categories_service) { described_class.new(retailer) }
 
   let(:retailer) { create(:retailer) }
 
