@@ -10,8 +10,8 @@ class Category < ApplicationRecord
   def required_product_attributes
     template.map do |temp|
       temp['id'] if temp['tags']['allow_variations'].blank? &&
-                                  (temp['tags']['catalog_required'] ||
-                                  temp['tags']['required']) && check_not_used_attr(temp)
+                    (temp['tags']['catalog_required'] ||
+                    temp['tags']['required']) && check_not_used_attr(temp)
     end.compact
   end
 

@@ -2,20 +2,21 @@ require 'rails_helper'
 require 'vcr'
 
 RSpec.describe MercadoLibre::Categories, vcr: true do
-  let(:retailer) { create(:retailer) }
   subject(:categories_service) { MercadoLibre::Categories.new(retailer) }
+
+  let(:retailer) { create(:retailer) }
 
   describe '#import_category' do
     it 'imports the category' do
       VCR.use_cassette('categories/category') do
-        expect{ categories_service.import_category('MEC5725') }.to change(Category, :count).by(1)
+        expect { categories_service.import_category('MEC5725') }.to change(Category, :count).by(1)
       end
     end
 
     context 'when category is a category child' do
       it 'imports the category and category root' do
         VCR.use_cassette('categories/category_with_roots') do
-          expect{ categories_service.import_category('MEC1747') }.to change(Category, :count).by(2)
+          expect { categories_service.import_category('MEC1747') }.to change(Category, :count).by(2)
         end
       end
     end
