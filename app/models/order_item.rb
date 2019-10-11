@@ -18,6 +18,7 @@ class OrderItem < ApplicationRecord
 
   private
 
+    # TODO: Move to service
     def update_ml_stock(action = 'update')
       return if action == 'create' && from_ml?
       return unless product.meli_product_id
