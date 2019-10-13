@@ -52,7 +52,7 @@ FactoryBot.define do
           },
           {
             "id": '283162',
-            "name": 'Índigo'
+            "name": "\xC3\x8Dndigo"
           },
           {
             "id": '52036',
@@ -64,7 +64,7 @@ FactoryBot.define do
           },
           {
             "id": '51998',
-            "name": 'Bordó'
+            "name": "Bord\xC3\xB3"
           },
           {
             "id": '52003',
@@ -84,7 +84,7 @@ FactoryBot.define do
           },
           {
             "id": '52045',
-            "name": 'Rosa pálido'
+            "name": "Rosa p\xC3\xA1lido"
           },
           {
             "id": '283153',
@@ -144,7 +144,7 @@ FactoryBot.define do
           },
           {
             "id": '283154',
-            "name": 'Marrón claro'
+            "name": "Marr\xC3\xB3n claro"
           },
           {
             "id": '52049',
@@ -152,7 +152,7 @@ FactoryBot.define do
           },
           {
             "id": '283155',
-            "name": 'Marrón oscuro'
+            "name": "Marr\xC3\xB3n oscuro"
           },
           {
             "id": '52053',
@@ -188,7 +188,7 @@ FactoryBot.define do
           },
           {
             "id": '52024',
-            "name": 'Azul petróleo'
+            "name": "Azul petr\xC3\xB3leo"
           },
           {
             "id": '52051',
@@ -224,7 +224,7 @@ FactoryBot.define do
           },
           {
             "id": '52005',
-            "name": 'Marrón'
+            "name": "Marr\xC3\xB3n"
           },
           {
             "id": '52038',
@@ -314,7 +314,7 @@ FactoryBot.define do
         "value_type": 'string',
         "id": 'CHARACTER'
       }, {
-        "name": 'Tipo de alimentación',
+        "name": "Tipo de alimentaci\xC3\xB3n",
         "tags": {},
         "hierarchy": 'FAMILY',
         "attribute_group_name": 'Otros',
@@ -323,7 +323,7 @@ FactoryBot.define do
         "values": [
           {
             "id": '4491927',
-            "name": 'Batería'
+            "name": "Bater\xC3\xADa"
           },
           {
             "id": '4636341',
@@ -348,17 +348,17 @@ FactoryBot.define do
         "relevance": 1,
         "id": 'MUSICAL_KEYS_NUMBER'
       }, {
-        "name": 'Edad mínima recomendada',
+        "name": "Edad m\xC3\xADnima recomendada",
         "tags": {},
         "hierarchy": 'FAMILY',
         "attribute_group_name": 'Otros',
         "value_max_length": 255,
-        "default_unit": 'años',
+        "default_unit": "a\xC3\xB1os",
         "attribute_group_id": 'OTHERS',
         "allowed_units": [
           {
-            "id": 'años',
-            "name": 'años'
+            "id": "a\xC3\xB1os",
+            "name": "a\xC3\xB1os"
           },
           {
             "id": 'meses',
@@ -369,17 +369,17 @@ FactoryBot.define do
         "relevance": 1,
         "id": 'MIN_RECOMMENDED_AGE'
       }, {
-        "name": 'Edad máxima recomendada',
+        "name": "Edad m\xC3\xA1xima recomendada",
         "tags": {},
         "hierarchy": 'FAMILY',
         "attribute_group_name": 'Otros',
         "value_max_length": 255,
-        "default_unit": 'años',
+        "default_unit": "a\xC3\xB1os",
         "attribute_group_id": 'OTHERS',
         "allowed_units": [
           {
-            "id": 'años',
-            "name": 'años'
+            "id": "a\xC3\xB1os",
+            "name": "a\xC3\xB1os"
           },
           {
             "id": 'meses',
@@ -391,7 +391,7 @@ FactoryBot.define do
         "id": 'MAX_RECOMMENDED_AGE'
       }, {
         "value_max_length": 255,
-        "name": 'Código universal de producto',
+        "name": "C\xC3\xB3digo universal de producto",
         "tags": {
           "used_hidden": true,
           "validate": true,
@@ -401,10 +401,9 @@ FactoryBot.define do
         "hierarchy": 'PRODUCT_IDENTIFIER',
         "attribute_group_name": 'Otros',
         "hint": 'Suele ser un EAN, UPC u otro GTIN.',
-        "tooltip": "¿Cómo lo reconozco?\n\nEs un número de 8 a 14 dígitos que se
-        encuentra junto al código de barras, en la caja del producto, o
-      en su etiqueta.\n\n![Código universal de producto]
-      (https://http2.mlstatic.com/static/org-img/sd-landings/assets/pi-tooltip.png)",
+        "tooltip": "¿Cómo lo reconozco?\n\nEs un número de 8 a 14 dígitos que se encuentra junto al código de barras,
+        en la caja del producto, o en su etiqueta.\n\n
+        ![Código universal de producto](https://http2.mlstatic.com/static/org-img/sd-landings/assets/pi-tooltip.png)",
         "value_type": 'string',
         "attribute_group_id": 'OTHERS',
         "relevance": 1,
@@ -495,7 +494,7 @@ FactoryBot.define do
           },
           {
             "id": '2748302',
-            "name": 'Plástico'
+            "name": "Pl\xC3\xA1stico"
           }
         ],
         "relevance": 2,
@@ -522,14 +521,14 @@ FactoryBot.define do
               "value": true
             },
             "id": '242085',
-            "name": 'Sí'
+            "name": "S\xC3\xAD"
           }
         ],
         "relevance": 2,
         "value_type": 'boolean',
         "id": 'INCLUDES_SEAT'
       }, {
-        "name": 'Condición del ítem',
+        "name": "Condici\xC3\xB3n del \xC3\xADtem",
         "tags": {
           "hidden": true
         },
@@ -560,7 +559,8 @@ FactoryBot.define do
         "hierarchy": 'PRODUCT_IDENTIFIER',
         "attribute_group_name": 'Otros',
         "value_max_length": 255,
-        "tooltip": 'Este es el número de 12 dígitos que está en el código de barras de tu producto.',
+        "tooltip": "Este es el n\xC3\xBAmero de 12 d\xC3\xADgitos que est\xC3\xA1 en el c\xC3\xB3digo de barras de
+        tu producto.",
         "value_type": 'string',
         "attribute_group_id": 'OTHERS',
         "relevance": 2,
@@ -592,7 +592,8 @@ FactoryBot.define do
         "hierarchy": 'PRODUCT_IDENTIFIER',
         "attribute_group_name": 'Otros',
         "value_max_length": 255,
-        "tooltip": 'Este es el número de 8, 13 o 14 dígitos que está en el código de barras de tu producto.',
+        "tooltip": "Este es el n\xC3\xBAmero de 8, 13 o 14 d\xC3\xADgitos que est\xC3\xA1 en el c\xC3\xB3digo de
+        barras de tu producto.",
         "value_type": 'string',
         "attribute_group_id": 'OTHERS',
         "relevance": 2,
@@ -633,7 +634,7 @@ FactoryBot.define do
               "value": true
             },
             "id": '242085',
-            "name": 'Sí'
+            "name": "S\xC3\xAD"
           }
         ],
         "relevance": 2,
@@ -660,7 +661,7 @@ FactoryBot.define do
               "value": true
             },
             "id": '242085',
-            "name": 'Sí'
+            "name": "S\xC3\xAD"
           }
         ],
         "relevance": 2,
@@ -933,7 +934,7 @@ FactoryBot.define do
         "relevance": 2,
         "id": 'PACKAGE_HEIGHT'
       }, {
-        "name": 'Características del producto',
+        "name": "Caracter\xC3\xADsticas del producto",
         "tags": {
           "read_only": true,
           "hidden": true,
@@ -949,11 +950,11 @@ FactoryBot.define do
           },
           {
             "id": '7435883',
-            "name": 'Frágil'
+            "name": "Fr\xC3\xA1gil"
           },
           {
             "id": '7435885',
-            "name": 'Contiene líquido'
+            "name": "Contiene l\xC3\xADquido"
           },
           {
             "id": '7435888',
@@ -981,7 +982,7 @@ FactoryBot.define do
           },
           {
             "id": '7575922',
-            "name": 'Tóxico o infeccioso'
+            "name": "T\xC3\xB3xico o infeccioso"
           }
         ],
         "relevance": 2,
@@ -1023,26 +1024,26 @@ FactoryBot.define do
         "values": [
           {
             "id": '7575930',
-            "name": 'Para humanos con receta médica'
+            "name": "Para humanos con receta m\xC3\xA9dica"
           },
           {
             "id": '7575931',
-            "name": 'Para humanos sin receta médica'
+            "name": "Para humanos sin receta m\xC3\xA9dica"
           },
           {
             "id": '7575932',
-            "name": 'Para animales con receta médica'
+            "name": "Para animales con receta m\xC3\xA9dica"
           },
           {
             "id": '7575933',
-            "name": 'Para animales sin receta médica'
+            "name": "Para animales sin receta m\xC3\xA9dica"
           }
         ],
         "relevance": 2,
         "value_type": 'list',
         "id": 'MEDICINES'
       }, {
-        "name": 'Baterías',
+        "name": "Bater\xC3\xADas",
         "tags": {
           "read_only": true,
           "hidden": true,
@@ -1062,14 +1063,14 @@ FactoryBot.define do
           },
           {
             "id": '7575936',
-            "name": 'Para autos (ácido-plomo)'
+            "name": "Para autos (\xC3\xA1cido-plomo)"
           }
         ],
         "relevance": 2,
         "value_type": 'list',
         "id": 'SHIPMENT_BATTERIES'
       }, {
-        "name": 'Métodos de transporte del envío',
+        "name": "M\xC3\xA9todos de transporte del env\xC3\xADo",
         "tags": {
           "read_only": true,
           "hidden": true,
@@ -1081,14 +1082,14 @@ FactoryBot.define do
         "values": [
           {
             "id": '7435890',
-            "name": 'Por avión'
+            "name": "Por avi\xC3\xB3n"
           }
         ],
         "relevance": 2,
         "value_type": 'list',
         "id": 'SHIPMENT_TRANSPORT_METHOD'
       }, {
-        "name": 'Embalaje del envío',
+        "name": "Embalaje del env\xC3\xADo",
         "tags": {
           "read_only": true,
           "hidden": true,
@@ -1123,7 +1124,7 @@ FactoryBot.define do
         "value_type": 'list',
         "id": 'SHIPMENT_PACKING'
       }, {
-        "name": 'Información adicional requerida',
+        "name": "Informaci\xC3\xB3n adicional requerida",
         "tags": {
           "read_only": true,
           "hidden": true,
@@ -1139,7 +1140,7 @@ FactoryBot.define do
           },
           {
             "id": '7435894',
-            "name": 'Tiene número de serie'
+            "name": "Tiene n\xC3\xBAmero de serie"
           }
         ],
         "relevance": 2,

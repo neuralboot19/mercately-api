@@ -16,5 +16,9 @@ FactoryBot.define do
       feedback_rating { 'neutral' }
       feedback_message { Faker::Lorem.paragraph }
     end
+
+    trait :from_ml do
+      meli_order_id { Faker::Number.number(9) }
+    end
   end
 end

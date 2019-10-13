@@ -15,7 +15,7 @@ RSpec.describe MercadoLibre::Categories, vcr: true do
 
     context 'when category is a category child' do
       it 'imports the category and category root' do
-        VCR.use_cassette('categories/category_with_roots') do
+        VCR.use_cassette('categories/category_with_roots', record: :new_episodes) do
           expect { categories_service.import_category('MEC1747') }.to change(Category, :count).by(2)
         end
       end
