@@ -22,5 +22,9 @@ FactoryBot.define do
         order.order_items << build(:order_item, order: order)
       end
     end
+
+    trait :from_ml do
+      meli_order_id { Faker::Number.number(9) }
+    end
   end
 end

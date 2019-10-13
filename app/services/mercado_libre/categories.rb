@@ -1,5 +1,7 @@
 module MercadoLibre
   class Categories
+    attr_reader :api
+
     def initialize(retailer)
       @retailer = retailer
       @meli_retailer = @retailer.meli_retailer
@@ -15,14 +17,10 @@ module MercadoLibre
       return response if response['error'].present?
 
       category = Category.find_or_create_by(meli_id: response['id'], name: response['name'])
-
       url = @api.get_category_attributes_url(category_meli_id)
       attributes = prepare_request(url)
-
       category.update(template: attributes) if attributes.present?
-
       save_ancestry(response)
-
       category
     end
 

@@ -46,24 +46,26 @@ RSpec.describe Retailer, type: :model do
     let!(:access_token) { meli_retailer.access_token }
 
     context 'when meli_retailer.meli_token_updated_at is more than current hour - 4' do
-      # TODO: this should be the propper test
-      xit 'updates the access_token' do
+      it 'does not update the access_token' do
         retailer.update_meli_access_token
-        expect(meli_retailer.access_token).not_to eq access_token
-      end
-
-      xit 'returns the meli_retailer' do
-        allow(MercadoLibre::Auth).to receive(:refresh_access_token)
-          .and_return(meli_retailer)
-        expect(retailer.update_meli_access_token).to be_a MeliRetailer
+        expect(meli_retailer.access_token).to eq access_token
       end
     end
 
     context 'when meli_retailer.meli_token_updated_at is minor than current hour - 4' do
-      it 'does not update the access_token' do
+      let(:ml_auth) { instance_double(MercadoLibre::Auth) }
+
+      before do
+        allow(ml_auth).to receive(:refresh_access_token)
+          .and_return(meli_retailer.update(access_token: Faker::Blockchain::Bitcoin.address))
+        allow(MercadoLibre::Auth).to receive(:new).with(retailer)
+          .and_return(ml_auth)
+      end
+
+      it 'updates the access_token' do
         meli_retailer.update meli_token_updated_at: Time.now - 6.hours
         retailer.update_meli_access_token
-        expect(meli_retailer.access_token).to eq access_token
+        expect(meli_retailer.access_token).not_to eq access_token
       end
     end
   end

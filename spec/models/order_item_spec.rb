@@ -105,12 +105,25 @@ RSpec.describe OrderItem, type: :model do
       end
     end
 
-    context 'when the product linked to the item exists in ML and
-      the item is created or updated locally' do
+    context 'when the product linked to the item exists in ML and the item is created or updated locally' do
+      let(:set_ml_products) { instance_double(MercadoLibre::Products) }
+      let(:p_ml) { instance_double(MercadoLibre::ProductVariations) }
+
+      before do
+        allow(set_ml_products).to receive(:push_update)
+          .with(anything).and_return('Successfully updated')
+        allow(MercadoLibre::Products).to receive(:new).with(order_item.product.retailer)
+          .and_return(set_ml_products)
+        allow(p_ml).to receive(:create_product_variations)
+          .with(anything).and_return('Successfully uploaded')
+        allow(MercadoLibre::ProductVariations).to receive(:new).with(product.retailer)
+          .and_return(p_ml)
+      end
+
       it 'after create or after update calls the updating method to ML' do
         order_item.product.meli_product_id = '-MEC657381404-'
         order_item.product.retailer.meli_retailer = meli_retailer
-        expect(order_item.send(:update_ml_stock)).not_to be_nil
+        expect(order_item.send(:update_ml_stock)).to eq 'Successfully uploaded'
       end
     end
   end

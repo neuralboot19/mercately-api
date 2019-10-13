@@ -58,6 +58,8 @@ group :development do
 end
 
 group :test do
+  gem 'vcr', '~> 5.0'
+  gem 'webmock', '~> 3.7'
   gem 'simplecov', require: false
   gem 'shoulda-matchers', '~> 4.1'
 end

@@ -3,8 +3,9 @@ require 'simplecov'
 SimpleCov.start 'rails' do
   add_filter '/bin/'
   add_filter '/db/'
-  add_filter '/spec/' # for rspec
-  add_filter '/app/admin' #
+  add_filter '/spec/'
+  add_filter '/app/admin'
+  add_filter '/app/channels'
 end
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
@@ -82,4 +83,12 @@ Shoulda::Matchers.configure do |config|
     with.test_framework :rspec
     with.library :rails
   end
+end
+
+VCR.configure do |c|
+  c.cassette_library_dir = 'spec/support/vcr/cassettes'
+  c.hook_into :webmock
+  c.configure_rspec_metadata!
+  # TODO: Disable
+  c.allow_http_connections_when_no_cassette = true
 end
