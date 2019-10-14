@@ -1,6 +1,6 @@
 <div class="box">
   <div class="row">
-    <%= form_for [:retailers, @customer], html: { class: 'col-xs-12 p-0' } do |f| %>
+    <%= form_for [:retailers, @customer], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
       <fieldset class="fieldset mt-16">
         <legend>Información básica de cliente</legend>
         <div class="my-16">
@@ -13,7 +13,8 @@
         </div>
         <div class="my-16">
           <%= f.label :email %>
-          <%= f.text_field :email, class: 'input' %>
+          <%= f.text_field :email, class: 'input validate-email' %>
+          <i class="validation-msg"></i>
         </div>
         <div class="my-16">
           <%= f.label :phone, 'Teléfono' %>
@@ -21,7 +22,7 @@
         </div>
       </fieldset>
       <div class="btn-box col-xs-12">
-        <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+        <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
       </div>
     <% end %>
   </div>

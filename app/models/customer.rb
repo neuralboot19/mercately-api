@@ -5,6 +5,7 @@ class Customer < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_many :messages, dependent: :destroy
 
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   before_save :update_valid_customer
 
   enum id_type: %i[cedula pasaporte ruc]
