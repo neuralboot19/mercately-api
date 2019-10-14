@@ -15,6 +15,11 @@ RSpec.describe Customer, type: :model do
     it { is_expected.to define_enum_for(:id_type).with_values(%i[cedula pasaporte ruc]) }
   end
 
+  describe 'validations' do
+    it { is_expected.to allow_value('email@addresse.foo').for(:email) }
+    it { is_expected.to allow_value('', nil).for(:email) }
+  end
+
   describe '#full_name' do
     it { expect(customer.full_name).to eq "#{customer.first_name} #{customer.last_name}" }
   end

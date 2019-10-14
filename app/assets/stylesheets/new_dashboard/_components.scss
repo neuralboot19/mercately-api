@@ -21,6 +21,18 @@
   border-radius: 5px;
   padding: 8px;
   width: calc(100% - 16px);
+
+  &--invalid {
+    border: 1px solid #ddd;
+    -webkit-box-shadow: 0px 0px 5px .1px #f00;
+    -moz-box-shadow: 0px 0px 5px .1px #f00;
+    box-shadow: 0px 0px 5px .1px #f00;
+  }
+}
+
+.validation-msg {
+  color: red;
+  font-size: 12px;
 }
 
 .btn {
