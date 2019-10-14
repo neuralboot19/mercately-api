@@ -35,10 +35,7 @@ class Order < ApplicationRecord
   end
 
   def total
-    total = order_items.map do |order_item|
-      order_item.unit_price * order_item.quantity
-    end
-    total.sum
+    order_items.map { |order_item| order_item.unit_price * order_item.quantity }.sum
   end
 
   def last_message
@@ -47,15 +44,7 @@ class Order < ApplicationRecord
     @last_message = messages.order(created_at: 'DESC').first
   end
 
-  def grouped_order_items
-    grouped_orders = {}
-    order_items.map { |ord| (grouped_orders[ord.product_id] ||= []) << ord }
-
-    output = grouped_orders.map { |item| item[1] }
-
-    output.flatten
-  end
-
+  # TODO: Mover a helper
   def disabled_statuses
     return %w[cancelled] if new_record?
     return [] if status == 'pending'
@@ -63,14 +52,7 @@ class Order < ApplicationRecord
     return %w[pending] if status == 'success'
   end
 
-  def self.build_feedback_reasons
-    [['No hay disponibilidad', 'SELLER_OUT_OF_STOCK'],
-     ['No se contactó al comprador', 'SELLER_DIDNT_TRY_TO_CONTACT_BUYER'],
-     ['Comprador sin fondos', 'BUYER_NOT_ENOUGH_MONEY'],
-     ['Comprador se retracta', 'BUYER_REGRETS']]
-  end
-
-  def unread_last_message?
+  def unread_message?
     messages.where(answer: nil).last&.date_read.blank?
   end
 
@@ -101,6 +83,7 @@ class Order < ApplicationRecord
       self.feedback_rating = 'positive' if status == 'success'
     end
 
+    # TODO: Necesita refactorizacion
     def update_items
       order_items.each do |order_item|
         product = order_item.product

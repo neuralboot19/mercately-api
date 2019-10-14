@@ -13,7 +13,7 @@
     </div>
     <div class="col-xs-12 col-sm-3">
       <%= f.label :unit_price, 'Precio unitario' %>
-      <%= f.number_field :unit_price, readonly: f.object.order.status != 'pending', class: 'input', onkeyup: 'editPrice(this);' %>
+      <%= f.text_field :unit_price, readonly: f.object.order.status != 'pending', class: 'input', onkeyup: 'editPrice(this);' %>
     </div>
     <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mt-16">
       <% if f.object.order.status == 'pending' %>

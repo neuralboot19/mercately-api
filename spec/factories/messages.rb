@@ -5,7 +5,7 @@ FactoryBot.define do
     question { Faker::Lorem.question }
     answer { nil }
     date_read { nil }
-    meli_question_type { 'from_product' }
+    meli_question_type { 'from_order' }
     meli_id { Faker::Number.number(9) }
 
     trait :from_retailer do

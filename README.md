@@ -1,4 +1,6 @@
-# Mercately
+# Mercately  
+[![Maintainability](https://api.codeclimate.com/v1/badges/439ed5a23d7af6e1d4da/maintainability)](https://codeclimate.com/repos/5d94b45a3bf77409dc002e04/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/439ed5a23d7af6e1d4da/test_coverage)](https://codeclimate.com/repos/5d94b45a3bf77409dc002e04/test_coverage)
 
 ## Setting up the environment
 

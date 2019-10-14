@@ -41,7 +41,7 @@
           </div>
           <div id="feedback-reason-container" class="my-16 w-100">
             <%= f.label :feedback_reason, 'Motivo' %>
-            <%= f.select :feedback_reason, Order.build_feedback_reasons, class: 'input' %>
+            <%= f.select :feedback_reason, Order.feedback_reasons.keys.collect { |r| [ Order.enum_translation(:feedback_reasons, r), r ]}, class: 'input' %>
           </div>
           <div id="feedback-rating-container" class="my-16 w-100">
             <%= f.label :feedback_rating, 'Calificación' %>
