@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :category do
     name { Faker::Lorem.word }
-    meli_id { '-MEC189402-' }
+    meli_id { "MEC#{Faker::Number.number(6)}" }
     template do
       [{
         "name": 'Marca',

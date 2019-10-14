@@ -10,7 +10,7 @@
     </div>
     <div class="col-xs-12 col-sm-3">
       <%= f.label :unit_price, 'Precio unitario' %>
-      <%= f.number_field :unit_price, class: 'input', onkeyup: 'editPrice(this);' %>
+      <%= f.text_field :unit_price, class: 'input', onkeyup: 'editPrice(this);' %>
     </div>
     <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mt-16">
       <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>

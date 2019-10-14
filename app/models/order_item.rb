@@ -5,8 +5,10 @@ class OrderItem < ApplicationRecord
 
   before_update :adjust_stock, if: :will_save_change_to_quantity?
   before_destroy :replace_stock, prepend: true
+  before_destroy -> { catch_total('destroy') }
+  before_save -> { catch_total('save') }
   after_update :update_ml_stock, if: :saved_change_to_quantity?
-  after_save :update_order_total
+  after_commit :update_order_total
   after_create :subtract_stock
   after_create -> { update_ml_stock('create') }
 
@@ -63,7 +65,7 @@ class OrderItem < ApplicationRecord
     end
 
     def update_order_total
-      order.update(total_amount: order.total)
+      order.update(total_amount: @total)
     end
 
     def replace_stock
@@ -81,5 +83,20 @@ class OrderItem < ApplicationRecord
 
       update_ml_stock
       product.update_status_publishment(true)
+    end
+
+    # TODO: Refactorizar para obtener el total desde la orden
+    def catch_total(action)
+      @total = order.total_amount || 0
+
+      @total -= if new_record?
+                  0
+                elsif action == 'save'
+                  quantity_was * unit_price_was
+                else
+                  quantity * unit_price
+                end
+
+      @total += quantity * unit_price if action == 'save'
     end
 end

@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe OrderItem, type: :model do
-  subject(:order_item) { build(:order_item, product: product) }
+  subject(:order_item) { build(:order_item, product: product, order: order) }
 
   let(:retailer) { create(:retailer) }
+  let(:order) { create(:order) }
   let(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
   let(:product) { create(:product, retailer: retailer, available_quantity: 9, sold_quantity: 0) }
   let(:product_variation) { create(:product_variation, product: product) }
@@ -25,10 +26,22 @@ RSpec.describe OrderItem, type: :model do
   end
 
   describe '#update_order_total' do
+    let!(:order_item2) do
+      create(:order_item, product: product, order: order, quantity: 1, unit_price: 10)
+    end
+
     it 'after save updates the total amount of the order' do
       order_item.quantity = 2
       order_item.unit_price = 15
       order_item.save
+      expect(order_item.order.total_amount).to eq(40)
+    end
+
+    it 'after destroy updates the total amount of the order' do
+      order_item.quantity = 2
+      order_item.unit_price = 15
+      order_item.save
+      order_item2.destroy
       expect(order_item.order.total_amount).to eq(30)
     end
   end
