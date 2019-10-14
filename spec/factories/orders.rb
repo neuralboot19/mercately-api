@@ -17,6 +17,12 @@ FactoryBot.define do
       feedback_message { Faker::Lorem.paragraph }
     end
 
+    trait :with_items do
+      after(:build) do |order|
+        order.order_items << build(:order_item, order: order)
+      end
+    end
+
     trait :from_ml do
       meli_order_id { Faker::Number.number(9) }
     end
