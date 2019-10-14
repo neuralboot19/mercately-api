@@ -36,6 +36,7 @@ RSpec.describe Customer, type: :model do
 
     context 'without phone' do
       subject(:customer) { create(:customer, phone: nil) }
+
       let!(:meli_customer) { create(:meli_customer, phone: '7378340', customers: [customer]) }
 
       it 'generates the phone number from ML' do
