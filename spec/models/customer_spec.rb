@@ -16,8 +16,8 @@ RSpec.describe Customer, type: :model do
   end
 
   describe 'validations' do
-    it { is_expected.to allow_value("email@addresse.foo").for(:email) }
-    it { is_expected.to allow_value("", nil).for(:email) }
+    it { is_expected.to allow_value('email@addresse.foo').for(:email) }
+    it { is_expected.to allow_value('', nil).for(:email) }
   end
 
   describe '#full_name' do
