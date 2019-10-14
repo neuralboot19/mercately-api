@@ -192,8 +192,9 @@ RSpec.describe Order, type: :model do
           end
         end
 
-        context 'when the order pass to success to cancelled status' do
+        context 'when the order pass from success to cancelled status' do
           it 'updates the available and sold quantity' do
+            order.update(status: 'success')
             order.update(status: 'cancelled')
             expect(order.order_items.last.product.available_quantity).to eq(10)
             expect(order.order_items.last.product.sold_quantity).to eq(0)
@@ -245,8 +246,9 @@ RSpec.describe Order, type: :model do
           end
         end
 
-        context 'when the order pass to success to cancelled status' do
+        context 'when the order pass from success to cancelled status' do
           it 'updates the available and sold quantity' do
+            order.update(status: 'success')
             order.update(status: 'cancelled')
             expect(order.order_items.last.product_variation.data['available_quantity']).to eq(10)
             expect(order.order_items.last.product_variation.data['sold_quantity']).to eq(0)
