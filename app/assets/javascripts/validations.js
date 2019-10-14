@@ -7,7 +7,7 @@ function validateEmail(el) {
   var $result = $(el).next('.validation-msg');
   var email = el.value;
 
-  if (validateEmailValue(email)) {
+  if (validateEmailValue(email) || email == '') {
     el.classList.remove('input--invalid');
     $result.text('');
     return true;

@@ -25,3 +25,12 @@
     </div>
   </div>
 </div>
+<script charset="utf-8">
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('add_order_items').click();
+    <% unless current_retailer.customers.exists? %>
+      document.getElementById('add_customer').click();
+      document.getElementById('customer_cancel').style.display = 'none';
+    <% end %>
+  });
+</script>

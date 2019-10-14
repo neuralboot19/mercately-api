@@ -1,6 +1,6 @@
 <div class="box">
   <div class="row">
-    <%= form_for [:retailers, @order], html: { class: 'col-xs-12 p-0' } do |f| %>
+    <%= form_for [:retailers, @order], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
       <fieldset class="fieldset mt-16">
         <legend>Información de la orden</legend>
         <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
@@ -60,7 +60,7 @@
             <% end %>
             <% if @order.id.blank? || @order.status == 'pending' %>
               <div class="links mt-16 mb-24 t-right">
-                <%= link_to_add_association f, :order_items, partial: 'new_order_items_fields', class: 'btn btn--cta' do %>
+                <%= link_to_add_association f, :order_items, partial: 'new_order_items_fields', id: 'add_order_items',class: 'btn btn--cta' do %>
                   <i class="fas fa-plus mr-5"></i>
                   Añadir Item
                 <% end %>
@@ -69,7 +69,7 @@
           </div>
         </fieldset>
         <div class="btn-box col-xs-12">
-          <%= f.submit 'Guardar', class: 'btn-btn btn-submit m-0' %>
+          <%= f.submit 'Guardar', class: 'btn-btn btn-submit m-0', data: { disable_with: false } %>
         </div>
       </fieldset>
     <% end %>
