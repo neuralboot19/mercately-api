@@ -4,29 +4,29 @@ es:
     models:
       customer:
         one: Cliente
-        others: Clientes
+        other: Clientes
       product:
         one: Producto
-        others: Productos
+        other: Productos
       product_variation:
         one: Variación
-        others: Variaciones
+        other: Variaciones
       order:
         one: Orden
-        others: Ordenes
+        other: Ordenes
       category:
         one: Categoría
-        others: Categorias
+        other: Categorias
       order_item:
         one: Item
-        others: Items
+        other: Items
     attributes:
       order:
         product:
           blank: Por favor selecciona al menos un producto
           required: Por favor selecciona al menos un producto
           one: Producto
-          others: Productos
+          other: Productos
         statuses:
           success: Exitoso
           pending: Pendiente
