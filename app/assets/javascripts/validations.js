@@ -1,3 +1,10 @@
+function setInputValid(el) {
+  var $result = $(el).siblings('.validation-msg')
+
+  el.classList.remove('input--invalid');
+  $result.html('&nbsp;');
+}
+
 function onlyNumber(e) {
   var keyCode = (e.which) ? e.which : e.keyCode
   if (keyCode != 46 && keyCode > 31 && (keyCode < 48 || keyCode > 57)) {
@@ -11,8 +18,6 @@ function inputRequired(el) {
   var $result = $(el).siblings('.validation-msg')
 
   if (!!el.value) {
-    el.classList.remove('input--invalid');
-    $result.html('&nbsp;');
     return true;
   } else {
     el.classList.add('input--invalid');
@@ -31,8 +36,6 @@ function validateEmail(el) {
   var email = el.value;
 
   if (validateEmailValue(email) || email == '') {
-    el.classList.remove('input--invalid');
-    $result.html('&nbsp;');
     return true;
   } else {
     el.classList.add('input--invalid');
@@ -45,9 +48,18 @@ function validateForm(e, form) {
   e.preventDefault();
   checks = [];
   document.querySelectorAll(`#${form.id} input`).forEach(function(input) {
-    if (input.disabled) continue;
-    if (input.classList.contains('validate-required')) checks.push(inputRequired(input));
-    if (input.classList.contains('validate-email')) checks.push(validateEmail(input));
+    inputChecks = [];
+    if (!input.disabled) {
+      if (input.classList.contains('validate-required')){
+        checks.push(inputRequired(input));
+        inputChecks.push(inputRequired(input));
+      }
+      if (input.classList.contains('validate-email')) {
+        checks.push(validateEmail(input));
+        inputChecks.push(validateEmail(input));
+      }
+      if (!inputChecks.includes(false)) setInputValid(input);
+    }
   });
 
   if (!checks.includes(false)) form.submit();

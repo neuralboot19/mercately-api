@@ -34,18 +34,18 @@ function getProductInfo(input) {
 
     if (json['variations'].length === 0) {
       priceInput.value = json['price'];
-      priceInput.removeAttribute("readonly");
+      priceInput.removeAttribute("disabled");
       priceInput.removeAttribute("title");
 
-      quantityInput.removeAttribute("readonly");
+      quantityInput.removeAttribute("disabled");
       quantityInput.removeAttribute("title");
     } else {
       variations = json['variations'];
-      priceInput.setAttribute("readonly", true);
+      priceInput.setAttribute("disabled", true);
       priceInput.value = "";
       priceInput.setAttribute("title", "Debe llenar este campo en variaciones");
 
-      quantityInput.setAttribute("readonly", true);
+      quantityInput.setAttribute("disabled", true);
       quantityInput.setAttribute("title", "Debe llenar este campo en variaciones");
 
       parentContainer = input.parentNode.parentNode;
@@ -83,7 +83,7 @@ function insertVariation(variation, parentContainer, index) {
   insertionString += '</div>';
   insertionString += '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Cantidad</label>' +
-                     '<input class="input" type="number" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity">' +
+                     '<input class="input" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity" onkeypress="onlyNumber(event)">' +
                      '</div>' +
                      '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_unit_price">Precio unitario</label>' +
