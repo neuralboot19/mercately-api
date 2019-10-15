@@ -19,13 +19,20 @@
                   <option value="" selected>Seleccione una categoría</option>
                 </select>
               </div>
+
+              <% if @product.retailer.meli_retailer %>
+                <div class="my-16">
+                  <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
+                  <%= f.check_box :upload_product %>
+                </div>
+              <% end %>
             <% end %>
 
             <div class="box">
               <div class="row">
                 <div class="col-xs-12 pl-0 col-sm-4 my-16">
                   <%= f.label :condition, 'Condición' %><br/>
-                   <%= f.select :condition, Product.conditions.keys.collect { |c| [ Product.enum_translation(:condition, c), c ]}, class: 'input' %>
+                  <%= f.select :condition, Product.conditions.keys.collect { |c| [ Product.enum_translation(:condition, c), c ]}, class: 'input' %>
                 </div>
                 <div class="col-xs-12 col-sm-4 my-16">
                   <%= f.label :price, 'Precio' %><br/>
