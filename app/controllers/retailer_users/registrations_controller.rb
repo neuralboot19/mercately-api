@@ -22,6 +22,9 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     is_valid = if changed_password
                  current_retailer_user.update_with_password(account_update_params)
                else
+                 params[:retailer_user].delete(:password)
+                 params[:retailer_user].delete(:password_confirmation)
+                 params[:retailer_user].delete(:current_password)
                  current_retailer_user.update_without_password(account_update_params)
                end
 
