@@ -87,7 +87,7 @@ function insertVariation(variation, parentContainer, index) {
                      '</div>' +
                      '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_unit_price">Precio unitario</label>' +
-                     '<input class="input" onkeyup="editPrice(this);" type="number" name="order[order_items_attributes][' + inputTimeStamp + '][unit_price]" id="order_order_items_attributes_' + inputTimeStamp + '_unit_price" value=' + variation['data']['price'] + '>' +
+                     '<input class="input" onkeyup="editPrice(this);" type="text" name="order[order_items_attributes][' + inputTimeStamp + '][unit_price]" id="order_order_items_attributes_' + inputTimeStamp + '_unit_price" value=' + variation['data']['price'] + '>' +
                      '</div>';
 
   insertionString += '</div></div>';

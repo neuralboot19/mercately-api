@@ -19,6 +19,11 @@ es:
           positive: Positivo
           negative: Negativo
           neutral: Neutro
+        feedback_reasons:
+          SELLER_OUT_OF_STOCK: No hay disponibilidad
+          SELLER_DIDNT_TRY_TO_CONTACT_BUYER: No se contactó al comprador
+          BUYER_NOT_ENOUGH_MONEY: Comprador sin fondos
+          BUYER_REGRETS: Comprador se retracta
       product:
         conditions: 
           new_product: Nuevo

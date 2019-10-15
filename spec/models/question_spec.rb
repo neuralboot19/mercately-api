@@ -37,6 +37,15 @@ RSpec.describe Question, type: :model do
   end
 
   describe '#ml_answer_question' do
+    let(:ml_question) { instance_double(MercadoLibre::Questions) }
+
+    before do
+      allow(ml_question).to receive(:answer_question)
+        .with(anything).and_return('Question answered')
+      allow(MercadoLibre::Questions).to receive(:new).with(question.product.retailer)
+        .and_return(ml_question)
+    end
+
     it 'calls ML answer question service' do
       question.product.retailer.meli_retailer = meli_retailer
       expect(question.send(:ml_answer_question)).not_to be_nil

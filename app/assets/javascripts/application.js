@@ -16,6 +16,7 @@
 //= require cocoon
 //= require select2
 //= require select2_locale_es
+//= require validations
 
 $(document).ready(function () {
   $( "select" ).select2({
