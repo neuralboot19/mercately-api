@@ -1,0 +1,184 @@
+<style type="text/css" media="screen">
+  .slick-dots {
+    background-color: #2EABE2;
+  }
+  .slick-dotted.slick-slider {
+    margin-bottom: 25px;
+  }
+</style>
+<input type="hidden" id="current_step" value="1">
+<input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" checked />
+<div class="modal">
+  <div id="onboarding" class="container">
+    <div class="row center-xs">
+      <div class="middle">
+        <label class="modal__background"></label>
+        <div class="modal__window box mx-12">
+          <label class="skip modal__close" for="modal--toggle">
+            <i class="far fa-times-circle"></i>
+          </label>
+          <div class="onboarding__arrow onboarding__arrow--previous" style="display: none;">
+            <i class="c-white fas fa-arrow-circle-left"></i>
+          </div>
+          <div class="onboarding__arrow onboarding__arrow--next">
+            <i class="c-white fas fa-arrow-circle-right"></i>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 p-0">
+              <section class="slider">
+                <div class="onboarding__step onboarding__step--first">
+                  <div class="step__head">
+                    <%= image_tag 'logo-white.png', class: 'onboarding__img mt-100 mb-50' %>
+                  </div>
+                  <div class="step__body">
+                    <h2 class="t-center c-white m-0">¡Vende más y mejor!</h2>
+                    <p class="t-center c-white mx-32 my-0">
+                      Tenemos las herramientas precisas<br/>
+                      para que incrementes tus ventas y<br/>
+                      logres tus objetivos. Conócelas a<br/>
+                      continuación...
+                    </p>
+                  </div>
+                </div>
+                <div class="onboarding__step">
+                  <div class="step__head">
+                    <%= image_tag 'mercado-libre-logo-5.png', class: 'onboarding__img h-auto my-75' %>
+                    <%= image_tag 'dashboard/onboarding/3.png' %>
+                  </div>
+                  <div class="step__body bg-blue">
+                    <h2 class="t-center c-white m-0">INTEGRACIONES</h2>
+                    <p class="t-center c-white mx-32 my-0">
+                      Puedes integrar tu cuenta de Mercately con
+                      Mercado Libre, con esto todos tus
+                      productos y preguntas  serán vinculadas.
+                      Cuando subas un producto se publicará
+                      automáticamente en Mercado Libre.
+                      Si no tienes  un perfil de vendedor en esta
+                      plataforma no te preocupes, aún así puedes
+                      seguir utilizando Mercately.
+                    </p>
+                  </div>
+                </div>
+                <div class="onboarding__step">
+                  <div class="step__head">
+                    <%= image_tag 'dashboard/onboarding/2.png', class: 'onboarding__img my-42' %>
+                    <%= image_tag 'dashboard/onboarding/3.png' %>
+                  </div>
+                  <div class="step__body bg-blue">
+                    <h2 class="t-center c-white m-0">PRODUCTOS</h2>
+                    <p class="t-center c-white mx-32 my-0">
+                      ¡Gestiona todo tu inventario desde un solo lugar! Organiza todos tus productos agregando<br/>
+                      fotografías de cada uno, agrúpalos por categorías, genera reportes de ventas y mantente al tanto de el número de unidades disponibles con tan
+                      solo un clic.
+                    </p>
+                  </div>
+                </div>
+                <div class="onboarding__step">
+                  <div class="step__head">
+                    <%= image_tag 'dashboard/onboarding/4.png', class: 'onboarding__img my-50' %>
+                    <%= image_tag 'dashboard/onboarding/3.png' %>
+                  </div>
+                  <div class="step__body bg-blue">
+                    <h2 class="t-center c-white m-0">VENTAS</h2>
+                    <p class="t-center c-white mx-32 my-0">
+                      Crea órdenes de compra para cada uno de tus clientes, dales seguimiento y categorízalas por pendientes,
+                      exitosas y canceladas. Agrega uno o más productoa las órdenes y no dejes que se te pierda ni una sola venta.
+                    </p>
+                  </div>
+                </div>
+                <div class="onboarding__step">
+                  <div class="step__head">
+                    <%= image_tag 'dashboard/onboarding/5.png', class: 'onboarding__img my-50' %>
+                    <%= image_tag 'dashboard/onboarding/3.png' %>
+                  </div>
+                  <div class="step__body bg-blue">
+                    <h2 class="t-center c-white m-0">INBOX</h2>
+                    <p class="t-center c-white mx-32 my-0">
+                      No pierdas más tiempo contestando chats y preguntas repetitivas, crea plantillas personalizadas y
+                      responde 90% más rápido a todos tus clientes.
+                      <br/>
+                      <label class="complete onboarding__btn--start" for="modal--toggle">¡Empezar!</label>
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script charset="utf-8">
+  $(document).ready(function() {
+    $('.slider').slick({
+      dots: true,
+      arrows: false,
+      infinite: false
+    });
+
+    $('.onboarding__arrow--previous').click(function() {
+      $('.slider').slick('slickPrev');
+    });
+    $('.onboarding__arrow--next').click(function() {
+      $('.slider').slick('slickNext');
+    });
+
+    $('.slider').on('beforeChange', function(event, slick, currentSlide, nextSlide){
+      if (nextSlide === 0) {
+        $('.onboarding__arrow--previous').hide();
+        $('.onboarding__arrow--next').show();
+      } else if (nextSlide === 4) {
+        $('.onboarding__arrow--next').hide();
+        $('.onboarding__arrow--previous').show();
+      } else {
+        $('.onboarding__arrow--previous').show();
+        $('.onboarding__arrow--next').show();
+      }
+    });
+  })
+</script>
+
+<script charset="utf-8">
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.complete').forEach(function(el) {
+      el.onclick = function(e) {
+        let data = {
+          onboarding_status: {
+            step: 4,
+            skipped: false,
+            completed: true
+          }
+        };
+
+        $.ajax({
+          url: '/retailer_user/onboarding_status',
+          type: 'PUT',
+          beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+          data: data
+        });
+      }
+    });
+
+    document.querySelectorAll('.skip').forEach(function(el) {
+      el.onclick = function(e) {
+        let current_step = $('.slider').slick('slickCurrentSlide');
+        let data = {
+          onboarding_status: {
+            step: current_step,
+            skipped: true,
+            completed: false
+          }
+        };
+
+        $.ajax({
+          url: '/retailer_user/onboarding_status',
+          type: 'PUT',
+          beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+          data: data
+        });
+      }
+    });
+  });
+</script>
