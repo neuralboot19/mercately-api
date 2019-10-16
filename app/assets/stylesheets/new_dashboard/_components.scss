@@ -97,6 +97,11 @@
     background-color: #F00;
     color: #FFF;
   }
+
+  &--blue {
+    background-color: $secondary-color;
+    color: #FFF;
+  }
 }
 
 .table {

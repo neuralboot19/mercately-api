@@ -7,6 +7,8 @@ module ColorsHelper
       'cookie--yellow'
     when 'active', 'success'
       'cookie--green'
+    when 'not_published'
+      'cookie--blue'
     end
   end
 end

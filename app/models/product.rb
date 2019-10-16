@@ -1,4 +1,5 @@
 class Product < ApplicationRecord
+  include ProductModelConcern
   paginates_per 50
 
   belongs_to :retailer
@@ -15,6 +16,8 @@ class Product < ApplicationRecord
   enum condition: %w[new_product used not_specified]
   enum status: %w[active archived], _prefix: true
   enum meli_status: %w[active payment_required paused closed under_review inactive]
+
+  attr_accessor :upload_product
 
   scope :retailer_products, lambda { |retailer_id, status|
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
@@ -84,11 +87,11 @@ class Product < ApplicationRecord
     attach_id = images.find_by(blob_id: blob_id)&.id if blob_id.present?
     update(main_picture_id: attach_id) if attach_id.present?
 
-    set_ml_products.load_main_picture(reload, true) if retailer.meli_retailer
+    set_ml_products.load_main_picture(reload, true) if able_to_send_to_ml?
   end
 
   def upload_ml
-    return if retailer.meli_retailer.nil?
+    return unless upload_product == true
 
     set_ml_products.create(self)
   end
@@ -103,7 +106,7 @@ class Product < ApplicationRecord
     end
 
     reload
-    upload_variations_to_ml if retailer.meli_retailer
+    upload_variations_to_ml if able_to_send_to_ml?
   end
 
   def delete_images(delete_images, variations, past_meli_status)
