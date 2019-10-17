@@ -30,6 +30,7 @@ class Retailers::OrdersController < RetailersController
     if @order.save
       redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden creada con éxito.'
     else
+      @order.order_items -= @order.order_items.select { |oi| oi.product.blank? }
       render :new
     end
   end

@@ -1,8 +1,32 @@
 ---
 es:
   activerecord:
+    models:
+      customer:
+        one: Cliente
+        other: Clientes
+      product:
+        one: Producto
+        other: Productos
+      product_variation:
+        one: Variación
+        other: Variaciones
+      order:
+        one: Orden
+        other: Ordenes
+      category:
+        one: Categoría
+        other: Categorias
+      order_item:
+        one: Item
+        other: Items
     attributes:
       order:
+        product:
+          blank: Por favor selecciona al menos un producto
+          required: Por favor selecciona al menos un producto
+          one: Producto
+          other: Productos
         statuses:
           success: Exitoso
           pending: Pendiente
@@ -25,14 +49,14 @@ es:
           BUYER_NOT_ENOUGH_MONEY: Comprador sin fondos
           BUYER_REGRETS: Comprador se retracta
       product:
-        conditions: 
+        conditions:
           new_product: Nuevo
           used: Usado
           not_specified: Sin especificar
         statuses:
           active: Activo
           archived: Archivado
-        meli_statuses:  
+        meli_statuses:
           active: Activo
           payment_required: Pago Requerido
           paused: Pausado
@@ -147,36 +171,36 @@ es:
   errors:
     format: "%{attribute} %{message}"
     messages:
-      accepted: debe ser aceptado
-      blank: no puede estar en blanco
-      confirmation: no coincide
-      empty: no puede estar vacío
-      equal_to: debe ser igual a %{count}
-      even: debe ser par
-      exclusion: está reservado
-      greater_than: debe ser mayor que %{count}
-      greater_than_or_equal_to: debe ser mayor que o igual a %{count}
-      inclusion: no está incluido en la lista
-      invalid: no es válido
-      less_than: debe ser menor que %{count}
-      less_than_or_equal_to: debe ser menor que o igual a %{count}
-      model_invalid: 'La validación falló: %{errors}'
-      not_a_number: no es un número
-      not_an_integer: debe ser un entero
-      odd: debe ser impar
-      other_than: debe ser distinto de %{count}
-      present: debe estar en blanco
-      required: debe existir
-      taken: ya está en uso
+      accepted: '%{attribute} debe ser aceptado'
+      blank: '%{attribute} no puede estar en blanco'
+      confirmation: '%{attribute} no coincide'
+      empty: '%{attribute} no puede estar vacío'
+      equal_to: '%{attribute} debe ser igual a %{count}'
+      even: '%{attribute} debe ser par'
+      exclusion: '%{attribute} está reservado'
+      greater_than: '%{attribute} debe ser mayor que %{count}'
+      greater_than_or_equal_to: '%{attribute} debe ser mayor que o igual a %{count}'
+      inclusion: '%{attribute} no está incluido en la lista'
+      invalid: '%{attribute} no es válido'
+      less_than: '%{attribute} debe ser menor que %{count}'
+      less_than_or_equal_to: '%{attribute} debe ser menor que o igual a %{count}'
+      model_invalid: '%{attribute} La validación falló: %{errors}'
+      not_a_number: '%{attribute} no es un número'
+      not_an_integer: '%{attribute} debe ser un entero'
+      odd: '%{attribute} debe ser impar'
+      other_than: '%{attribute} debe ser distinto de %{count}'
+      present: '%{attribute} debe estar en blanco'
+      required: '%{attribute} debe existir'
+      taken: '%{attribute} ya está en uso'
       too_long:
-        one: es demasiado largo (1 carácter máximo)
-        other: es demasiado largo (%{count} caracteres máximo)
+        one: '%{attribute} es demasiado largo (1 carácter máximo)'
+        other: '%{attribute} es demasiado largo (%{count} caracteres máximo)'
       too_short:
-        one: es demasiado corto (1 carácter mínimo)
-        other: es demasiado corto (%{count} caracteres mínimo)
+        one: '%{attribute} es demasiado corto (1 carácter mínimo)'
+        other: '%{attribute} es demasiado corto (%{count} caracteres mínimo)'
       wrong_length:
-        one: no tiene la longitud correcta (1 carácter exactos)
-        other: no tiene la longitud correcta (%{count} caracteres exactos)
+        one: '%{attribute} no tiene la longitud correcta (1 carácter exactos)'
+        other: '%{attribute} no tiene la longitud correcta (%{count} caracteres exactos)'
     template:
       body: 'Se encontraron problemas con los siguientes campos:'
       header:
