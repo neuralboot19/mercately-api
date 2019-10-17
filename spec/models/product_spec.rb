@@ -85,8 +85,18 @@ RSpec.describe Product, type: :model do
           .and_return(set_ml_products)
       end
 
-      it 'uploads the product to ML' do
-        expect(product.upload_ml).to eq 'Successfully uploaded'
+      context 'when the attribute to upload the product to ML is not checked' do
+        it 'does not upload the product to ML' do
+          product.upload_product = false
+          expect(product.upload_ml).to be_nil
+        end
+      end
+
+      context 'when the attribute to upload the product to ML is checked' do
+        it 'uploads the product to ML' do
+          product.upload_product = true
+          expect(product.upload_ml).to eq 'Successfully uploaded'
+        end
       end
     end
   end
@@ -143,8 +153,20 @@ RSpec.describe Product, type: :model do
           .and_return(p_ml)
       end
 
-      it 'uploads the product variations to ML' do
-        expect(product.upload_variations(anything, variations)).to eq 'Successfully uploaded'
+      context 'when the attribute to upload the product to ML is not checked or the
+        product is not linked to ML' do
+        it 'does not upload the product variations to ML' do
+          product.upload_product = false
+          expect(product.upload_variations(anything, variations)).to be_nil
+        end
+      end
+
+      context 'when the attribute to upload the product to ML is checked or the
+        product is linked to ML' do
+        it 'uploads the product variations to ML' do
+          product.upload_product = true
+          expect(product.upload_variations(anything, variations)).to eq 'Successfully uploaded'
+        end
       end
 
       context 'when action_name is new or create' do

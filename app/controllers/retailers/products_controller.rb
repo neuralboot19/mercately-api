@@ -1,4 +1,5 @@
 class Retailers::ProductsController < RetailersController
+  include ProductControllerConcern
   before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product]
   before_action :compile_variation_images, only: [:create, :update]
 
@@ -20,6 +21,7 @@ class Retailers::ProductsController < RetailersController
   def create
     params[:product][:images] = process_images(params[:product][:images])
     @product = current_retailer.products.new(product_params)
+    @product.upload_product = convert_to_boolean(params[:product][:upload_product])
     check_for_errors(params)
 
     render(:new) && return if @product.errors.present?
@@ -39,7 +41,7 @@ class Retailers::ProductsController < RetailersController
   end
 
   def update
-    params['product']['meli_status'] = 'closed' if params['product']['status'] == 'archived'
+    params['product']['meli_status'] = 'closed' if set_meli_status_closed?
     check_for_errors(params)
 
     if @product.errors.present?
@@ -79,10 +81,10 @@ class Retailers::ProductsController < RetailersController
   def archive_product
     past_meli_status = @product.meli_status
     @product.status = 'archived'
-    @product.meli_status = 'closed'
+    @product.meli_status = 'closed' if @product.meli_product_id.present?
 
     if @product.save
-      @product.update_ml_info(past_meli_status)
+      @product.update_ml_info(past_meli_status) if @product.meli_product_id.present?
       redirect_to retailers_product_path(@retailer, @product), notice: 'Producto archivado con éxito.'
     else
       render :edit
@@ -181,9 +183,7 @@ class Retailers::ProductsController < RetailersController
         @product.errors.add(:base, 'Debe agregar al menos una variación.')
       end
 
-      return if params[:product][:images].present? || (action_name == 'edit' || action_name == 'update')
-
-      @product.errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.')
+      @product.errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.') if mandatory_images?
     end
 
     # Only allow a trusted parameter "white list" through.
