@@ -2,9 +2,7 @@ module ProductControllerConcern
   extend ActiveSupport::Concern
 
   # Convierte el attr enviado a su representacion en boolean
-  def convert_to_boolean(attribute)
-    return nil if attribute.nil?
-
+  def convert_to_boolean(attribute = nil)
     ActiveModel::Type::Boolean.new.cast(attribute)
   end
 
