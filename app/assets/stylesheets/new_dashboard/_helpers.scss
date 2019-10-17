@@ -176,7 +176,7 @@ label:hover, a:hover {
 }
 
 .c-black {
-  color: #000;
+  color: #000 !important;
 }
 
 .d-block {
@@ -214,6 +214,14 @@ label:hover, a:hover {
     margin-top: #{$space}% !important;
     margin-bottom: #{$space}% !important;
   }
+}
+
+.h-unset {
+  height: unset !important;
+}
+
+.o-hidden {
+  overflow-y: hidden;
 }
 
 @media screen and (min-width: 1680px) {
