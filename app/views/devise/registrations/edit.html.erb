@@ -11,7 +11,7 @@
     <div class="container-fluid products">
       <div class="row">
         <div class="col-xs-12">
-          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), method: :put) do |f| %>
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), method: :put, html: { onsubmit: 'checkPasswords(event)' }) do |f| %>
             <%= render "devise/shared/error_messages", resource: resource %>
 
             <fieldset class="fieldset mt-16">
@@ -45,11 +45,12 @@
               <div class="my-16">
                 <%= f.label :password_confirmation, 'Confirme contraseña' %>
                 <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'input' %>
+                <i id="password_error_msg" class="validation-msg">&nbsp;</i>
               </div>
             </fieldset>
 
             <div class="btn-box t-center">
-              <%= f.submit 'Actualizar', class: 'btn-btn btn-submit' %>
+              <%= f.submit 'Actualizar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
             </div>
           <% end %>
         </div>
@@ -57,3 +58,18 @@
     </div>
   </div>
 </div>
+
+<script charset="utf-8">
+  function checkPasswords(e) {
+    e.preventDefault();
+    password = document.getElementById('retailer_user_password');
+    password_confirmation = document.getElementById('retailer_user_password_confirmation');
+
+    if (password.value === password_confirmation.value) {
+      document.getElementById('password_error_msg').innerHTML = '&nbsp;';
+      e.target.submit();
+    } else {
+      document.getElementById('password_error_msg').innerHTML = 'Las contraseñas no coinciden';
+    }
+  }
+</script>

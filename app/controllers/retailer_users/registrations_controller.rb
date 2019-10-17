@@ -62,8 +62,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     end
 
     def check_passwords
-      return unless params[:retailer_user][:password].blank? &&
-                    params[:retailer_user][:password_confirmation].blank?
+      return unless params[:retailer_user][:password].blank?
 
       params[:retailer_user].delete(:password)
       params[:retailer_user].delete(:password_confirmation)
