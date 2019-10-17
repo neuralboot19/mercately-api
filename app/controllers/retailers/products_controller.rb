@@ -1,6 +1,7 @@
 class Retailers::ProductsController < RetailersController
   include ProductControllerConcern
-  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product]
+  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product,
+    :upload_product_to_ml]
   before_action :compile_variation_images, only: [:create, :update]
 
   def index
@@ -42,6 +43,7 @@ class Retailers::ProductsController < RetailersController
 
   def update
     params['product']['meli_status'] = 'closed' if set_meli_status_closed?
+    @product.upload_product = convert_to_boolean(params[:product][:upload_product])
     check_for_errors(params)
 
     if @product.errors.present?
@@ -86,6 +88,28 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.update_ml_info(past_meli_status) if @product.meli_product_id.present?
       redirect_to retailers_product_path(@retailer, @product), notice: 'Producto archivado con éxito.'
+    else
+      render :edit
+    end
+  end
+
+  def upload_product_to_ml
+    @product.upload_product = true
+
+    if @product.images.blank?
+      @product.errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.')
+
+      render :edit
+      return
+    end
+
+    if @product.save
+      main_picture = select_main_picture
+      @product.update_main_picture(main_picture.filename.to_s) if main_picture.present?
+      @product.upload_ml
+      @product.upload_variations(action_name, @product.product_variations)
+      redirect_to retailers_products_path(@retailer, status: @product.status),
+        notice: 'Producto publicado con éxito.'
     else
       render :edit
     end
@@ -200,6 +224,7 @@ class Retailers::ProductsController < RetailersController
                                       :sold_quantity,
                                       :status,
                                       :meli_status,
+                                      :upload_product,
                                       images: [],
                                       ml_attributes: [])
     end
@@ -211,6 +236,7 @@ class Retailers::ProductsController < RetailersController
       params[:product][:delete_images].present?
       @product.reload
       @product.update_ml_info(past_meli_status)
+      @product.upload_ml if @product.meli_product_id.blank? && @product.upload_product == true
       @product.upload_variations(action_name, @variations)
       @product.update_status_publishment
     end

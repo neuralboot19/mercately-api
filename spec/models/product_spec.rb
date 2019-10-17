@@ -157,6 +157,7 @@ RSpec.describe Product, type: :model do
         product is not linked to ML' do
         it 'does not upload the product variations to ML' do
           product.upload_product = false
+          product.save
           expect(product.upload_variations(anything, variations)).to be_nil
         end
       end
@@ -165,6 +166,7 @@ RSpec.describe Product, type: :model do
         product is linked to ML' do
         it 'uploads the product variations to ML' do
           product.upload_product = true
+          product.save
           expect(product.upload_variations(anything, variations)).to eq 'Successfully uploaded'
         end
       end

@@ -19,13 +19,17 @@
                   <option value="" selected>Seleccione una categoría</option>
                 </select>
               </div>
+            <% end %>
 
-              <% if @retailer.meli_retailer %>
-                <div class="my-16">
-                  <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
+            <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' %>
+              <div class="my-16">
+                <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
+                <% if @product.new_record? %>
                   <%= f.check_box :upload_product, { 'checked': true } %>
-                </div>
-              <% end %>
+                <% elsif @product.meli_product_id.blank? %>
+                  <%= f.check_box :upload_product %>
+                <% end %>
+              </div>
             <% end %>
 
             <div class="box">

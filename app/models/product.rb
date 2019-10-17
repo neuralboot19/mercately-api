@@ -21,8 +21,6 @@ class Product < ApplicationRecord
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
 
-  attr_accessor :upload_product
-
   # TODO: move to service
   def update_ml(p_ml)
     self.meli_site_id = p_ml['site_id']
