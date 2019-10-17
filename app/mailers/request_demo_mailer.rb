@@ -1,5 +1,4 @@
 class RequestDemoMailer < ApplicationMailer
-
   # Subject can be set in your I18n file at config/locales/en.yml
   # with the following lookup:
   #
@@ -13,6 +12,6 @@ class RequestDemoMailer < ApplicationMailer
     @messaje = client_data[:messaje]
 
     mail to: 'hola@mercately.com, henry2992@hotmail.com, pvelasquez9294@gmail.com, jalagut8@gmail.com',
-      subject: "Mercately demo requested by #{@name}"
+         subject: "Mercately demo requested by #{@name}"
   end
 end
