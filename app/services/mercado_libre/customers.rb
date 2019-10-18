@@ -28,7 +28,7 @@ module MercadoLibre
 
       def update_or_create_customer(customer_info, meli_customer)
         customer = find_customer
-        return unless customer.present?
+        return if customer.blank?
 
         id_type = customer_info['identification']&.[]('type')
         id_type.downcase! if id_type.present?
