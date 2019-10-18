@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe RequestDemoMailer, type: :mailer do
   describe '#demo_requested' do
-    subject(:mail) { RequestDemoMailer.demo_requested(client_data) }
+    subject(:mail) { described_class.demo_requested(client_data) }
 
     let(:client_data) do
       {
@@ -10,7 +10,7 @@ RSpec.describe RequestDemoMailer, type: :mailer do
         email: 'john@doe.com',
         company: 'Acme Inc',
         phone: '098-333-4444',
-        messaje: 'Hi, I\'d like a demo',
+        messaje: 'Hi, I\'d like a demo'
       }
     end
 
