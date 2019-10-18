@@ -497,8 +497,9 @@
     }
 
     &__step {
-      height: 80vh;
+      height: calc(80vh - 0px);
       max-height: 670px;
+      overflow-y: auto;
       &--first {
         background-image: url(image_path('dashboard/onboarding/7.png'));
       }
@@ -522,11 +523,21 @@
 
 .step {
   &__body {
-    height: 100%;
+    height: calc(100% - 265px);
   }
 
   h2 {
     transform: translateY(-16px);
+  }
+}
+
+@media screen and (min-height: 750px) {
+  #onboarding {
+    .onboarding {
+      &__step {
+        overflow-y: hidden;
+      }
+    }
   }
 }
 
