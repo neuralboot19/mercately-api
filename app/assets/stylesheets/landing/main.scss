@@ -445,8 +445,14 @@ p{
     position: relative;
     width: 100% !important;
     height: 400px;
+    max-width: 600px;
     max-height: 700px;
     border-radius: 6px;
+    margin: auto;
+
+    label {
+      color: #000;
+    }
   }
 
   .container {
@@ -490,4 +496,3 @@ p{
     color: #aaa !important;
   }
 }
-
