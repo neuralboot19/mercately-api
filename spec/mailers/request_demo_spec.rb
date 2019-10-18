@@ -16,7 +16,12 @@ RSpec.describe RequestDemoMailer, type: :mailer do
 
     it 'renders the headers' do
       expect(mail.subject).to eq("Mercately demo requested by #{client_data[:name]}")
-      expect(mail.to).to eq(['hola@mercately.com', 'henry2992@hotmail.com', 'pvelasquez9294@gmail.com', 'jalagut8@gmail.com'])
+      expect(mail.to).to eq([
+        'hola@mercately.com',
+        'henry2992@hotmail.com',
+        'pvelasquez9294@gmail.com',
+        'jalagut8@gmail.com'
+      ])
       expect(mail.from).to eq(['hola@mercately.com'])
     end
 
