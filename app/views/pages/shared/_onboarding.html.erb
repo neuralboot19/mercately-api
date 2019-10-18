@@ -129,12 +129,15 @@
       if (nextSlide === 0) {
         $('.onboarding__arrow--previous').hide();
         $('.onboarding__arrow--next').show();
+        $('.modal__close').show();
       } else if (nextSlide === 4) {
         $('.onboarding__arrow--next').hide();
         $('.onboarding__arrow--previous').show();
+        $('.modal__close').hide();
       } else {
         $('.onboarding__arrow--previous').show();
         $('.onboarding__arrow--next').show();
+        $('.modal__close').show();
       }
     });
   })
@@ -181,4 +184,11 @@
       }
     });
   });
+</script>
+<script charset="utf-8">
+  $(document).ready(function() {
+    $('#modal--toggle').on('change', function(e) {
+      $('body').toggleClass('o-hidden');
+    })
+  })
 </script>
