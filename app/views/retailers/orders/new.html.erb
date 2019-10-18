@@ -1,3 +1,8 @@
+<style type="text/css" media="screen">
+  #order_items > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) > a.remove_order_item:nth-child(2) {
+    display: none;
+  }
+</style>
 <div class="container-fluid reduced-container-padding mb-16">
   <div class="card">
     <div class="container-fluid index">
@@ -27,8 +32,10 @@
 </div>
 <script charset="utf-8">
   document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById('add_order_items').click();
-    <% unless current_retailer.customers.exists? %>
+    <% if action_name == 'new' %>
+      document.getElementById('add_order_items').click();
+    <% end %>
+    <% if current_retailer.customers.active.blank? %>
       document.getElementById('add_customer').click();
       document.getElementById('customer_cancel').style.display = 'none';
     <% end %>

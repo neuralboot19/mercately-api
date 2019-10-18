@@ -22,6 +22,11 @@ es:
         other: Items
     attributes:
       order:
+        customer:
+          blank: Por favor selecciona un cliente
+          required: Por favor selecciona un cliente
+          one: Cliente
+          other: Clientes
         product:
           blank: Por favor selecciona al menos un producto
           required: Por favor selecciona al menos un producto
