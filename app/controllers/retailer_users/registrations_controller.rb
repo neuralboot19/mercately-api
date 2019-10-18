@@ -70,6 +70,6 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     end
 
     def after_sign_up_path_for(_resource)
-      retailers_integrations_path(current_retailer_user.retailer)
+      retailers_integrations_path(current_retailer_user.retailer, onboarding: true)
     end
 end

@@ -175,8 +175,16 @@ label:hover, a:hover {
   color: #F00;
 }
 
+.c-white {
+  color: #fff;
+}
+
 .c-black {
   color: #000 !important;
+}
+
+.bg-blue {
+  background-color: #2EABE2;
 }
 
 .d-block {
@@ -218,6 +226,10 @@ label:hover, a:hover {
 
 .h-unset {
   height: unset !important;
+}
+
+.h-auto {
+  height: auto !important;
 }
 
 .o-hidden {
