@@ -78,10 +78,10 @@
           t.src=v;s=b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t,s)}(window,document,'script',
           'https://connect.facebook.net/en_US/fbevents.js');
-          fbq('init', '962637664086792'); 
+          fbq('init', '962637664086792');
           fbq('track', 'PageView');
         </script>
-        
+
         <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=962637664086792&ev=PageView&noscript=1"
         /></noscript>
         <!-- End Facebook Pixel Code -->
@@ -93,4 +93,12 @@
     <%= yield %>
     <%= render 'layouts/footer' %>
   </body>
+
+  <% if notice %>
+    <script charset="utf-8">
+      document.addEventListener("DOMContentLoaded", function() {
+        showtoast("<%= notice %>")
+      });
+    </script>
+  <% end %>
 </html>

@@ -180,7 +180,7 @@ label:hover, a:hover {
 }
 
 .c-black {
-  color: #000;
+  color: #000 !important;
 }
 
 .bg-blue {
@@ -224,8 +224,16 @@ label:hover, a:hover {
   }
 }
 
+.h-unset {
+  height: unset !important;
+}
+
 .h-auto {
   height: auto !important;
+}
+
+.o-hidden {
+  overflow-y: hidden;
 }
 
 @media screen and (min-width: 1680px) {

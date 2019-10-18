@@ -223,7 +223,7 @@ p{
   z-index: 11;
 }
 
-.menu a { 
+.menu a, .menu label { 
   cursor: pointer;
   font-style: initial;
   text-decoration: none;
@@ -232,7 +232,7 @@ p{
   font-size: 20px;
   font-weight: 600;
   padding: 0 10px;
-} 
+}
 .menu .content .close,.menu .content img{
   display: none;
 }
@@ -419,3 +419,75 @@ p{
     margin-right: 7px;
   }
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: none;
+  width: 100vw;
+  height: calc(100vh - 40px);
+  margin-top: 20px;
+  overflow-y: auto;
+
+  &__background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100vw;
+    height: 100vh;
+  }
+
+  &__window {
+    background-color: #FFF;
+    position: relative;
+    width: 100% !important;
+    height: 400px;
+    max-height: 700px;
+    border-radius: 6px;
+  }
+
+  .container {
+    width: 95%;
+  }
+}
+
+#modal--toggle:checked ~ .modal {
+  display: block;
+}
+
+@media screen and (max-height: 680px) {
+  .modal__window {
+    height: 542px;
+  }
+}
+
+.input {
+  &:placeholder {
+    text-align: left !important;
+    color: #aaa !important;
+  }
+
+  &::-webkit-input-placeholder {
+    text-align: left;
+    color: #aaa !important;
+  }
+
+  &:-moz-placeholder {
+    text-align: left;
+    color: #aaa !important;
+  }
+
+  &::-moz-placeholder {
+    text-align: left;
+    color: #aaa !important;
+  }
+
+  &:-ms-input-placeholder {
+    text-align: left;
+    color: #aaa !important;
+  }
+}
+

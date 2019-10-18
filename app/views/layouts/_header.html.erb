@@ -18,8 +18,68 @@
       <a href="/blog">Blog</a>
       <%= link_to 'Ingresar', new_retailer_user_session_path %>
       <%= link_to 'Prueba Gratis', new_retailer_user_registration_path %>
+      <label for="modal--toggle">Solicitar una demo</label>
     </div>
   </div>
 </header>
 
 <script src="<%= asset_path 'landing/index.js' %>" charset="utf-8"></script>
+
+<input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" />
+<div class="modal">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal__background" for="modal--toggle"></label>
+        <div class="modal__window box p-4 h-unset mt-0" style="z-index: 1000;">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="card__title">Solicitar una demostración</div>
+              <div class="divider"></div>
+              <%= form_tag request_demo_path, method: :post, id: 'form_demo', class: 'validate-form col-xs-12 p-0' do %>
+                <fieldset class="fieldset mt-16 t-left">
+                  <legend>Dejanos tu información de contacto y nuestro equipo se estará comunicando para concretar una reunión personal o por skype</legend>
+                  <div class="my-8">
+                    <%= label_tag :name, 'Nombre*' %>
+                    <%= text_field_tag :name, nil, class: 'input validate-required', placeholder: 'Nombre y apellido' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="my-8">
+                    <%= label_tag :email, 'Email*' %>
+                    <%= text_field_tag :email, nil, class: 'input validate-email validate-required', placeholder: 'email@example.com' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="my-8">
+                    <%= label_tag :company, 'Nombre de la empresa' %>
+                    <%= text_field_tag :company, nil, class: 'input' %>
+                  </div>
+                  <div class="my-8">
+                    <%= label_tag :phone, 'Teléfono*' %>
+                    <%= text_field_tag :phone, nil, class: 'input validate-required', placeholder: '098-333-4444' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="my-8">
+                    <%= label_tag :message, 'Mensaje' %>
+                    <%= text_area_tag :message, nil, class: 'input h-unset' %>
+                  </div>
+                </fieldset>
+                <div class="btn-box col-xs-12">
+                  <%= submit_tag 'Solicitar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script charset="utf-8">
+  $(document).ready(function() {
+    $('#modal--toggle').on('change', function(e) {
+      $('body').toggleClass('o-hidden');
+    })
+  })
+</script>

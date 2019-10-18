@@ -46,6 +46,8 @@ Rails.application.routes.draw do
   get 'categories', to: 'categories#roots'
   get 'categories/:id', to: 'categories#childs', as: :categories_childs
 
+  post 'request_demo', to: 'pages#request_demo', as: :request_demo
+
   # Dynamic error pages
   get "/404", to: "errors#not_found"
   get "/500", to: "errors#internal_error"
