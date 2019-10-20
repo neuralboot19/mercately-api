@@ -10,7 +10,7 @@ RSpec.describe RequestDemoMailer, type: :mailer do
         email: 'john@doe.com',
         company: 'Acme Inc',
         phone: '098-333-4444',
-        message: 'Hi, I\'d like a demo'
+        message: 'Hi, I would like a demo'
       }
     end
 
