@@ -12,7 +12,7 @@ RSpec.describe 'Pages', type: :request do
 
       follow_redirect!
       expect(response).to render_template(:index)
-      expect(response.body).to include('Gracias por la solicitud, pronto nos comunicaremos contigo')
+      expect(response.body).to include('Gracias! Nuestro equipo se contactará pronto.')
     end
   end
 end
