@@ -1,3 +1,4 @@
+// Setea el input como valido y pone un espacio como mensaje
 function setInputValid(el) {
   var $result = $(el).siblings('.validation-msg')
 
@@ -44,12 +45,22 @@ function validateEmail(el) {
   }
 }
 
+// Subscripcion del formulario a validaciones
 function validateForm(e, form) {
   e.preventDefault();
+
+  // checks es un arreglo de booleans que vigila si todas las validaciones pasaron
   checks = [];
+
   document.querySelectorAll(`#${form.id} input`).forEach(function(input) {
+    // inputChecks es un arreglo de booleans que vigila si todas las validaciones del input pasaron
     inputChecks = [];
+
     if (!input.disabled) {
+      // Para agregar una validacion nueva debes chequear si el input tiene la clase 'validate-${nombre de la validacion}'
+      // La funcion de validacion debe retornar true o false segun sea el caso (false si falla, true si tuvo exito)
+      // El valor de la funcion de validacion debe empujarse a los arreglos checks e inputChecks
+
       if (input.classList.contains('validate-required')){
         checks.push(inputRequired(input));
         inputChecks.push(inputRequired(input));
@@ -58,7 +69,18 @@ function validateForm(e, form) {
         checks.push(validateEmail(input));
         inputChecks.push(validateEmail(input));
       }
+
       if (!inputChecks.includes(false)) setInputValid(input);
+    }
+  });
+
+  document.querySelectorAll(`#${form.id} .validate-association-presence`).forEach(function(association) {
+    var $result = $(association).siblings('.validation-msg');
+    $result.html('&nbsp;');
+
+    if ($(association).find('.association-item').length < 1) {
+      $result.html('Debe agregar al menos uno');
+      checks.push(false);
     }
   });
 

@@ -54,7 +54,8 @@
         </div>
         <fieldset class="fieldset mt-61">
           <legend>Items en la orden</legend>
-          <div id="order_items" class="w-100">
+          <i class="validation-msg">&nbsp;</i>
+          <div id="order_items" class="w-100 validate-association-presence">
             <%= f.fields_for :order_items do |oi| %>
               <%= render "order_items_fields", f: oi %>
             <% end %>

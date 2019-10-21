@@ -1,8 +1,3 @@
-<style type="text/css" media="screen">
-  #order_items > div:nth-child(1) > div:nth-child(1) > div:nth-child(4) > a.remove_order_item:nth-child(2) {
-    display: none;
-  }
-</style>
 <div class="container-fluid reduced-container-padding mb-16">
   <div class="card">
     <div class="container-fluid index">
@@ -40,4 +35,21 @@
       document.getElementById('customer_cancel').style.display = 'none';
     <% end %>
   });
+</script>
+<script charset="utf-8">
+  $(document).ready(function() {
+    function togglefirstItemButton() {
+      if ($('.remove_order_item').length > 1) {
+        $('.remove_order_item').removeClass('d-none');
+      } else {
+        $('.remove_order_item').addClass('d-none');
+      }
+    }
+
+    togglefirstItemButton();
+
+    $('#order_items').on('cocoon:after-insert cocoon:after-remove', function() {
+      togglefirstItemButton();
+    });
+  })
 </script>
