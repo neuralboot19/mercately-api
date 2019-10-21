@@ -52,8 +52,10 @@
                   <div class="products__img">
                     <% if product.main_picture_id %>
                       <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}") %>
-                    <% else %>
+                    <% elsif product.images&.first&.key.present? %>
                       <%= cl_image_tag("#{product.images&.first&.key}") %>
+                    <% else %>
+                      <i class="fas fa-camera-retro fs-40 c-grey"></i>
                     <% end %>
                   </div>
                 </div>

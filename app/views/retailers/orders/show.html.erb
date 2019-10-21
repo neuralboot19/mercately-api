@@ -32,7 +32,7 @@
             <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
             <%= link_to retailers_order_messages_path(current_retailer, @order, return_to: 'order'), class: 'btn btn--cta' do %>
               <i class="fas fa-comment-alt mr-5"></i>
-              Chat de la orden
+              Chat de la venta
             <% end %>
             <%= link_to retailers_orders_path(current_retailer, status: @order.status), class: 'btn btn--cta' do %>
               <i class="fas fa-arrow-left mr-5"></i>
