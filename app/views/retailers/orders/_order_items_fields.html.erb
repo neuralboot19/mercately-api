@@ -20,7 +20,7 @@
     </div>
     <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mt-16">
       <% if f.object.order.status == 'pending' %>
-        <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
+        <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0 association-item' do %>
           <i class="fas fa-times mr-5"></i>
           Remover item
         <% end %>

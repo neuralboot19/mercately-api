@@ -57,6 +57,7 @@ function getProductInfo(input) {
         insertVariation(variations[v], varContainer, v);
       }
     }
+    $('input:disabled').removeClass('input--invalid').siblings('.validation-msg').html('&nbsp;');
   });
 }
 
