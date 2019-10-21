@@ -8,4 +8,9 @@ class PagesController < ApplicationController
 
   def terms
   end
+
+  def request_demo
+    RequestDemoMailer.demo_requested(params.to_unsafe_h).deliver_now
+    redirect_to root_path, notice: 'Gracias! Nuestro equipo se contactará pronto.'
+  end
 end

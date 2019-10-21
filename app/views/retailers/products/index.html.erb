@@ -87,7 +87,13 @@
                   <div class="box">
                     <div class="row">
                       <div class="col-xs-4 col-sm-6 item__descriptor">Estado:</div>
-                      <div class="col-xs-2 col-sm-6"><b class="cookie <%= cookie(product.meli_status) %>"><%= Product.enum_translation(:meli_status, product.meli_status) %></b></div>
+                      <div class="col-xs-2 col-sm-6">
+                        <% if product.meli_product_id.present? %>
+                          <b class="cookie <%= cookie(product.meli_status) %>"><%= Product.enum_translation(:meli_status, product.meli_status) %></b>
+                        <% else %>
+                          <b class="cookie <%= cookie('not_published') %>">No publicado</b>
+                        <% end %>
+                      </div>
                       <div class="col-xs-4 col-sm-6 item__descriptor">Preguntas:</div>
                       <div class="col-xs-2 col-sm-6"><%= product.questions.size %></div>
                       <!--<div class="col-xs-4 col-sm-6 item__descriptor">Visitas:</div>

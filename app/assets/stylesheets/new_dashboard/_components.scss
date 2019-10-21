@@ -97,6 +97,11 @@
     background-color: #F00;
     color: #FFF;
   }
+
+  &--blue {
+    background-color: $secondary-color;
+    color: #FFF;
+  }
 }
 
 .table {
@@ -419,6 +424,14 @@
   width: 100vw;
   height: 100vh;
   margin-top: 80px;
+
+  &__close {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    z-index: 10;
+    font-size: 25px;
+  }
 
   &__background {
     position: fixed;

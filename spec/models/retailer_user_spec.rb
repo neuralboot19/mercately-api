@@ -12,6 +12,21 @@ RSpec.describe RetailerUser, type: :model do
     it { is_expected.to validate_presence_of(:agree_terms) }
   end
 
+  describe '#onboarding_status_format' do
+    it 'validates the onboarding_status format' do
+      # A valid hash is set as default in migration
+      retailer_user.save
+      expect(retailer_user.persisted?).to eq true
+    end
+
+    context 'with invalid options' do
+      it 'returns a validation error' do
+        retailer_user.onboarding_status = { step: 5, skipped: 'invalid value', invalid_key: true }
+        expect(retailer_user.save).to eq false
+      end
+    end
+  end
+
   describe '#send_welcome_email' do
     it 'sends a welcome email after creating a retailer user' do
       expect { retailer_user.save }.to change { ActionMailer::Base.deliveries.size }.by(1)
