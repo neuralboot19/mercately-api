@@ -76,12 +76,11 @@ function validateForm(e, form) {
 
   document.querySelectorAll(`#${form.id} .validate-association-presence`).forEach(function(association) {
     var $result = $(association).siblings('.validation-msg');
+    $result.html('&nbsp;');
 
     if ($(association).find('.association-item').length < 1) {
       $result.html('Debe agregar al menos uno');
       checks.push(false);
-    } else {
-      $result.html('&nbsp;');
     }
   });
 
