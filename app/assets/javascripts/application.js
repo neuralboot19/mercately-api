@@ -39,7 +39,7 @@ function ToastBuilder(options) {
   // setup some defaults
   opts.defaultText = opts.defaultText || 'default text';
   opts.displayTime = opts.displayTime || 7000;
-  opts.target = opts.target || '#content';
+  opts.target = opts.target || 'body';
 
   return function (text) {
     $('<div/>')

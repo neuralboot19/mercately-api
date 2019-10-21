@@ -33,33 +33,36 @@
       <div class="col-xs-12 col-md-8 middle">
         <label class="modal__background" for="modal--toggle"></label>
         <div class="modal__window box p-4 h-unset mt-0" style="z-index: 1000;">
+          <label class="modal__close" for="modal--toggle">
+            <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
+          </label>
           <div class="row">
             <div class="col-xs-12">
-              <div class="card__title">Solicitar una demostración</div>
+              <div class="card__title c-black">Solicitar una demostración</div>
               <div class="divider"></div>
               <%= form_tag request_demo_path, method: :post, id: 'form_demo', class: 'validate-form col-xs-12 p-0' do %>
                 <fieldset class="fieldset mt-16 t-left">
                   <legend>Dejanos tu información de contacto y nuestro equipo se estará comunicando para concretar una reunión personal o por skype</legend>
-                  <div class="my-8">
+                  <div class="mt-8 mb-12">
                     <%= label_tag :name, 'Nombre*' %>
                     <%= text_field_tag :name, nil, class: 'input validate-required', placeholder: 'Nombre y apellido' %>
                     <i class="validation-msg"></i>
                   </div>
-                  <div class="my-8">
+                  <div class="mt-8 mb-12">
                     <%= label_tag :email, 'Email*' %>
                     <%= text_field_tag :email, nil, class: 'input validate-email validate-required', placeholder: 'email@example.com' %>
                     <i class="validation-msg"></i>
                   </div>
-                  <div class="my-8">
+                  <div class="mt-8 mb-12">
                     <%= label_tag :company, 'Nombre de la empresa' %>
                     <%= text_field_tag :company, nil, class: 'input' %>
                   </div>
-                  <div class="my-8">
+                  <div class="mt-8 mb-12">
                     <%= label_tag :phone, 'Teléfono*' %>
                     <%= text_field_tag :phone, nil, class: 'input validate-required', placeholder: '098-333-4444' %>
                     <i class="validation-msg"></i>
                   </div>
-                  <div class="my-8">
+                  <div class="mt-8 mb-12">
                     <%= label_tag :message, 'Mensaje' %>
                     <%= text_area_tag :message, nil, class: 'input h-unset' %>
                   </div>

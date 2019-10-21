@@ -10,7 +10,7 @@ RSpec.describe RequestDemoMailer, type: :mailer do
         email: 'john@doe.com',
         company: 'Acme Inc',
         phone: '098-333-4444',
-        messaje: 'Hi, I\'d like a demo'
+        message: 'Hi, I would like a demo'
       }
     end
 
@@ -30,7 +30,7 @@ RSpec.describe RequestDemoMailer, type: :mailer do
       expect(mail.body.encoded).to match(client_data[:email])
       expect(mail.body.encoded).to match(client_data[:company])
       expect(mail.body.encoded).to match(client_data[:phone])
-      expect(mail.body.encoded).to match(client_data[:messaje])
+      expect(mail.body.encoded).to match(client_data[:message])
     end
   end
 end
