@@ -8,7 +8,9 @@ class Connection
   end
 
   def self.get_request(connection)
-    JSON.parse(connection.get.body)
+    json_body = connection.get.body
+    Raven.capture_message(json_body, level: 'debug')
+    JSON.parse(json_body)
   end
 
   def self.post_request(connection, body)
