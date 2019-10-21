@@ -88,7 +88,10 @@ end
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/support/vcr/cassettes'
   c.hook_into :webmock
-  c.configure_rspec_metadata!
-  # TODO: Disable
-  c.allow_http_connections_when_no_cassette = true
+  c.allow_http_connections_when_no_cassette = false
+
+  c.ignore_hosts 'res.cloudinary.com', 'miro.medium.com'
+  c.default_cassette_options = {
+    match_requests_on: [:method, VCR.request_matchers.uri_without_param(:access_token)]
+  }
 end

@@ -155,19 +155,19 @@ RSpec.describe Product, type: :model do
 
       context 'when the attribute to upload the product to ML is not checked or the
         product is not linked to ML' do
-        it 'does not upload the product variations to ML' do
-          product.upload_product = false
-          expect(product.upload_variations(anything, variations)).to be_nil
+          it 'does not upload the product variations to ML' do
+            product.upload_product = false
+            expect(product.upload_variations(anything, variations)).to be_nil
+          end
         end
-      end
 
       context 'when the attribute to upload the product to ML is checked or the
         product is linked to ML' do
-        it 'uploads the product variations to ML' do
-          product.upload_product = true
-          expect(product.upload_variations(anything, variations)).to eq 'Successfully uploaded'
+          it 'uploads the product variations to ML' do
+            product.upload_product = true
+            expect(product.upload_variations(anything, variations)).to eq 'Successfully uploaded'
+          end
         end
-      end
 
       context 'when action_name is new or create' do
         it 'creates the product variations' do
