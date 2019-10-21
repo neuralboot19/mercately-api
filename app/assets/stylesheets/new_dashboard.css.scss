@@ -531,6 +531,17 @@
   }
 }
 
+.order_items {
+  display: none;
+  background-color: #F5F5FA;
+  padding-bottom: 20px;
+  border-radius: 5px;
+}
+
+.toggle_order_items:checked + .order_items {
+  display: block;
+}
+
 @media screen and (min-height: 750px) {
   #onboarding {
     .onboarding {
