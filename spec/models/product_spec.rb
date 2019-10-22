@@ -304,7 +304,7 @@ RSpec.describe Product, type: :model do
     end
   end
 
-  describe '#check_for_errors' do
+  describe '#check_variations' do
     subject(:product) { build(:product, category: create(:category, :with_variations)) }
 
     context 'when the category of the product needs variations' do
@@ -320,6 +320,10 @@ RSpec.describe Product, type: :model do
         expect(product.errors['base'].include?('Debe agregar al menos una variación.')).to be false
       end
     end
+  end
+
+  describe '#check_images' do
+    subject(:product) { build(:product) }
 
     context 'when the product is being created' do
       let(:retailer) { create(:retailer) }
@@ -353,6 +357,7 @@ RSpec.describe Product, type: :model do
 
       before do
         product.retailer = meli_retailer.retailer
+        product.save
       end
 
       context 'when uploading the product to ML or the product is linked to ML' do
