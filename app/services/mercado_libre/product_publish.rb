@@ -52,14 +52,13 @@ module MercadoLibre
       conn = Connection.prepare_connection(@url)
       response = Connection.post_request(conn, tempfile)
 
-      if product.meli_product_id.blank?
-        body = JSON.parse(response.body)
-        ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id'])
-        return
-      end
-
       if response.status == 201
         body = JSON.parse(response.body)
+
+        if product.meli_product_id.blank?
+          ActiveStorage::Blob.find_by(key: img.key).update(filename: body['id'])
+          return
+        end
 
         params = { id: body['id'] }.to_json
         conn = Connection.prepare_connection(@url_pic_product)

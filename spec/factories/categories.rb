@@ -30,7 +30,7 @@ FactoryBot.define do
       }, {
         "name": 'Color',
         "tags": {
-          "allow_variations": true,
+          "catalog_required": true,
           "defines_picture": true
         },
         "hierarchy": 'CHILD_PK',
@@ -1181,6 +1181,24 @@ FactoryBot.define do
         "type": 'product_identifier',
         "id": 'GTIN14'
       }]
+    end
+
+    trait :with_variations do
+      template do
+        [{
+          "name": 'Diseño de la tela',
+          "tags": {
+            "allow_variations": true
+          },
+          "hierarchy": 'DESIGN_PK',
+          "attribute_group_name": 'Otros',
+          "value_max_length": 160,
+          "attribute_group_id": 'OTHERS',
+          "value_type": 'string',
+          "relevance": 1,
+          "id": 'DESIGN'
+        }]
+      end
     end
   end
 end

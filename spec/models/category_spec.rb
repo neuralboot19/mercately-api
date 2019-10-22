@@ -18,7 +18,7 @@ RSpec.describe Category, type: :model do
 
   describe '#required_product_attributes' do
     it 'returns the required product attributes' do
-      expect(category.required_product_attributes).to eq %w[BRAND MODEL]
+      expect(category.required_product_attributes).to eq %w[BRAND MODEL COLOR]
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.describe Category, type: :model do
          'id' => 'COLOR',
          'name' => 'Color',
          'relevance' => 1,
-         'tags' => { 'allow_variations' => true, 'defines_picture' => true },
+         'tags' => { 'catalog_required' => true, 'defines_picture' => true },
          'value_max_length' => 255,
          'value_type' => 'string',
          'values' =>

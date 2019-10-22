@@ -67,12 +67,12 @@ function appendSelect(currentElement) {
       if (template.length > 0) {
         appendAttributes();
         showVariationTitle();
-        showVariationContainer();
+        showVariationContainer(true);
 
         if (originalCategoryId && originalCategoryId === categoryId) {
           for (pv in productVariations) {
             currentTemplate = productVariations[pv];
-            appendTemplate();
+            appendTemplate(false);
             currentTemplate = undefined;
           }
         }
@@ -118,7 +118,7 @@ function appendAttributes() {
   }
 }
 
-function appendTemplate() {
+function appendTemplate(able_to_delete) {
   countVariations += 1;
   var container = document.getElementById("variations-container");
   var variationElement = document.createElement("div");
@@ -127,7 +127,7 @@ function appendTemplate() {
   variationDiv = document.createElement("div");
   variationDiv.setAttribute("class", "col-xs-12 remove-variation-container");
 
-  if (currentTemplate == undefined) {
+  if (currentTemplate == undefined && able_to_delete) {
     pElement = document.createElement('p');
     pElement.setAttribute("id", `remove-variation-${countVariations - 1}`);
     pElement.setAttribute("onclick", "removeVariation(this);");
@@ -162,13 +162,15 @@ function addCommonVariationElements(container) {
     "name": "available_quantity",
     "element": "input",
     "element_type": "number",
-    "label": "Cantidad disponible"
+    "label": "Cantidad disponible",
+    "class": "input validate-required"
   },
   {
     "name": "sold_quantity",
     "element": "input",
     "element_type": "hidden",
-    "label": "Cantidad vendida"
+    "label": "Cantidad vendida",
+    "class": "input"
   }];
 
   for (comElem in commonElements) {
@@ -196,13 +198,16 @@ function addCommonVariationElements(container) {
     newElement.setAttribute("name", attrName);
     newElement.setAttribute("id", attrId);
     newElement.setAttribute("type", commonElements[comElem]["element_type"]);
-    newElement.setAttribute("class", "input");
+    newElement.setAttribute("class", commonElements[comElem]["class"]);
 
     if (currentTemplate && currentTemplate["data"][commonElements[comElem]["name"]] !== undefined) {
       newElement.setAttribute("value", `${currentTemplate["data"][commonElements[comElem]["name"]]}`);
     }
 
     variationDiv.appendChild(newElement);
+    if (commonElements[comElem]["name"] !== "sold_quantity") {
+      variationDiv.appendChild(buildMessageError());
+    }
 
     container.appendChild(variationDiv);
   }
@@ -342,7 +347,7 @@ function setElement(container, element, template, index, isNumberUnit) {
   element.setAttribute("name", attrName);
   element.setAttribute("id", attrId);
   element.setAttribute("type", elementInfo["element_type"]);
-  element.setAttribute("class", "input");
+  element.setAttribute("class", "input validate-required");
 
   if (productInfo && currentTemplate === undefined) {
     for (pi in productInfo['ml_attributes']) {
@@ -365,6 +370,7 @@ function setElement(container, element, template, index, isNumberUnit) {
   }
 
   container.appendChild(element);
+  container.appendChild(buildMessageError());
 }
 
 function readVariationURL(input) {
@@ -400,11 +406,11 @@ function getProduct() {
 
     if (productVariations.length > 0) {
       showVariationTitle();
-      showVariationContainer();
+      showVariationContainer(false);
       disableAvailableQuantity();
       for (pv in productVariations) {
         currentTemplate = productVariations[pv];
-        appendTemplate();
+        appendTemplate(false);
         currentTemplate = undefined;
       }
     }
@@ -421,9 +427,13 @@ function hideUploader() {
   uploader.className = "d-none";
 }
 
-function showVariationContainer() {
+function showVariationContainer(addTemplate) {
   var container = document.getElementById("variations-container");
   container.className = "row col-xs-12";
+
+  if (addTemplate) {
+    appendTemplate(false);
+  }
 }
 
 function hideVariationContainer() {
@@ -457,6 +467,8 @@ function hideVariationTitle() {
 
 function disableAvailableQuantity() {
   inputAvailableQuantity = document.getElementById("product_available_quantity");
+  var iMessage = $(inputAvailableQuantity).siblings('.validation-msg');
+  iMessage.text("");
   inputAvailableQuantity.setAttribute("disabled", "disabled");
   inputAvailableQuantity.setAttribute("class", "opacity-5 input");
   inputAvailableQuantity.setAttribute("title", "Debe llenar este campo en variaciones");
@@ -466,7 +478,7 @@ function enableAvailableQuantity() {
   inputAvailableQuantity = document.getElementById("product_available_quantity");
   inputAvailableQuantity.removeAttribute("disabled");
   inputAvailableQuantity.removeAttribute("class");
-  inputAvailableQuantity.setAttribute("class", "input");
+  inputAvailableQuantity.setAttribute("class", "input validate-required");
   inputAvailableQuantity.removeAttribute("title");
 }
 
@@ -617,6 +629,13 @@ function updateMeliStatus(input) {
     meliStatus = document.getElementById('product_meli_status');
     meliStatus.value = "closed";
   }
+}
+
+function buildMessageError() {
+  message = document.createElement("i");
+  message.setAttribute("class", "validation-msg");
+
+  return message;
 }
 
 document.addEventListener("DOMContentLoaded", function() {
