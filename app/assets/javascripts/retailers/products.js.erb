@@ -67,7 +67,7 @@ function appendSelect(currentElement) {
       if (template.length > 0) {
         appendAttributes();
         showVariationTitle();
-        showVariationContainer();
+        showVariationContainer(true);
 
         if (originalCategoryId && originalCategoryId === categoryId) {
           for (pv in productVariations) {
@@ -406,7 +406,7 @@ function getProduct() {
 
     if (productVariations.length > 0) {
       showVariationTitle();
-      showVariationContainer();
+      showVariationContainer(false);
       disableAvailableQuantity();
       for (pv in productVariations) {
         currentTemplate = productVariations[pv];
@@ -427,11 +427,11 @@ function hideUploader() {
   uploader.className = "d-none";
 }
 
-function showVariationContainer() {
+function showVariationContainer(addTemplate) {
   var container = document.getElementById("variations-container");
   container.className = "row col-xs-12";
 
-  if (!productId || !productId.value) {
+  if (addTemplate) {
     appendTemplate(false);
   }
 }

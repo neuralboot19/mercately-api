@@ -20,6 +20,8 @@
                 <%= f.hidden_field :category_id, class: 'validate-required' %>
                 <i class="validation-msg"></i>
               </div>
+            <% else %>
+              <%= f.hidden_field :category_id %>
             <% end %>
 
             <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' %>
@@ -54,7 +56,6 @@
           </fieldset>
 
           <% if action_name == 'edit' || action_name == 'update' %>
-            <%= f.hidden_field :category_id, class: 'validate-required' %>
             <fieldset class="col-xs-12 fieldset">
               <div class="box">
                 <div class="row">
