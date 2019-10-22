@@ -1,7 +1,25 @@
 require 'rails_helper'
 
 RSpec.describe Product, type: :model do
-  subject(:product) { create(:product) }
+  subject(:product) { create(:product, incoming_variations: variation) }
+
+  let(:variation) do
+    [
+      {
+        'id' => 'variation_id',
+        attribute_combinations: [
+          {
+            id: 'BRAND',
+            value_name: 'Gucci'
+          }
+        ],
+        picture_ids: [],
+        'available_quantity' => '7',
+        'sold_quantity' => '0',
+        'price' => '10.5'
+      }
+    ]
+  end
 
   describe 'associations' do
     it { is_expected.to belong_to(:retailer) }
@@ -21,6 +39,11 @@ RSpec.describe Product, type: :model do
       expect(product).to define_enum_for(:meli_status)
         .with_values(%i[active payment_required paused closed under_review inactive])
     }
+  end
+
+  describe 'validations' do
+    it { is_expected.to validate_presence_of(:title) }
+    it { is_expected.to validate_presence_of(:price) }
   end
 
   describe '#attach_image(url, filename, index = -1)' do
@@ -155,21 +178,19 @@ RSpec.describe Product, type: :model do
 
       context 'when the attribute to upload the product to ML is not checked or the
         product is not linked to ML' do
-        it 'does not upload the product variations to ML' do
-          product.upload_product = false
-          product.save
-          expect(product.upload_variations(anything, variations)).to be_nil
+          it 'does not upload the product variations to ML' do
+            product.upload_product = false
+            expect(product.upload_variations(anything, variations)).to be_nil
+          end
         end
-      end
 
       context 'when the attribute to upload the product to ML is checked or the
         product is linked to ML' do
-        it 'uploads the product variations to ML' do
-          product.upload_product = true
-          product.save
-          expect(product.upload_variations(anything, variations)).to eq 'Successfully uploaded'
+          it 'uploads the product variations to ML' do
+            product.upload_product = true
+            expect(product.upload_variations(anything, variations)).to eq 'Successfully uploaded'
+          end
         end
-      end
 
       context 'when action_name is new or create' do
         it 'creates the product variations' do
@@ -207,7 +228,7 @@ RSpec.describe Product, type: :model do
     end
 
     context 'with product imgs' do
-      subject(:product) { create(:product, :from_ml) }
+      subject(:product) { create(:product, :from_ml, incoming_variations: variation) }
 
       let(:url) { 'https://miro.medium.com/max/500/1*pgsK9936_OIKWYJpcMicVg.gif' }
       let(:set_ml_products) { instance_double(MercadoLibre::Products) }
@@ -280,6 +301,99 @@ RSpec.describe Product, type: :model do
       order = create(:order, :from_ml, :cancelled, feedback_reason: nil)
       create(:order_item, product: product, order: order)
       expect(product.include_before_bids_info?).to eq false
+    end
+  end
+
+  describe '#check_for_errors' do
+    subject(:product) { build(:product, category: create(:category, :with_variations)) }
+
+    context 'when the category of the product needs variations' do
+      it 'asks for at least one variation' do
+        product.save
+        expect(product.errors['base'].include?('Debe agregar al menos una variación.')).to be true
+      end
+    end
+
+    context 'when the category of the product does not need variations' do
+      it 'does not ask for variations' do
+        product.category.save
+        expect(product.errors['base'].include?('Debe agregar al menos una variación.')).to be false
+      end
+    end
+
+    context 'when the product is being created' do
+      let(:retailer) { create(:retailer) }
+      let(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
+
+      before do
+        product.retailer = meli_retailer.retailer
+      end
+
+      context 'when uploading the product to ML' do
+        it 'asks for at least one image' do
+          product.upload_product = true
+          product.save
+          expect(product.errors['base'].include?('Debe agregar entre 1 y 10 imágenes.')).to be true
+        end
+      end
+
+      context 'when not uploading the product to ML' do
+        it 'does not ask for images' do
+          product.upload_product = false
+          product.save
+          expect(product.errors['base'].include?('Debe agregar entre 1 y 10 imágenes.')).to be false
+        end
+      end
+    end
+
+    context 'when the product is being updated' do
+      let(:url) { 'https://miro.medium.com/max/500/1*pgsK9936_OIKWYJpcMicVg.gif' }
+      let(:retailer) { create(:retailer) }
+      let(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
+
+      before do
+        product.retailer = meli_retailer.retailer
+      end
+
+      context 'when uploading the product to ML or the product is linked to ML' do
+        it 'asks for at least one image' do
+          product.meli_product_id = '1234567890'
+          product.upload_product = true
+          product.save
+          expect(product.errors['base'].include?('Debe agregar entre 1 y 10 imágenes.')).to be true
+
+          product.errors.clear
+          product.attach_image(url, 'example.jpg')
+          product.deleted_images = { '0': product.images.first.id.to_s }
+          product.save
+          expect(product.errors['base'].include?('Debe agregar entre 1 y 10 imágenes.')).to be true
+        end
+      end
+
+      context 'when not uploading the product to ML' do
+        it 'does not ask for images' do
+          product.upload_product = false
+          product.save
+          expect(product.errors['base'].include?('Debe agregar entre 1 y 10 imágenes.')).to be false
+        end
+      end
+    end
+  end
+
+  describe '#product_without_images?' do
+    context 'when the product does not have images' do
+      it 'returns true' do
+        expect(product.product_without_images?).to be true
+      end
+    end
+
+    context 'when the product has images' do
+      let(:url) { 'https://miro.medium.com/max/500/1*pgsK9936_OIKWYJpcMicVg.gif' }
+
+      it 'returns false' do
+        product.attach_image(url, 'example.jpg')
+        expect(product.product_without_images?).to be false
+      end
     end
   end
 end

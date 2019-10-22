@@ -1,27 +1,22 @@
 class Retailers::OrdersController < RetailersController
   before_action :set_order, only: [:show, :edit, :update, :destroy]
 
-  # GET /orders
   def index
     @orders = Order.retailer_orders(current_retailer.id, params['status'])
       .order('created_at desc').page(params[:page])
   end
 
-  # GET /orders/1
   def show
   end
 
-  # GET /orders/new
   def new
     @order = Order.new
   end
 
-  # GET /orders/1/edit
   def edit
     @customer = @order.customer
   end
 
-  # POST /orders
   def create
     params[:order][:order_items_attributes] = process_items(params[:order][:order_items_attributes])
 
@@ -30,11 +25,11 @@ class Retailers::OrdersController < RetailersController
     if @order.save
       redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden creada con éxito.'
     else
+      @order.order_items -= @order.order_items.select { |oi| oi.product.blank? }
       render :new
     end
   end
 
-  # PATCH/PUT /orders/1
   def update
     params[:order][:order_items_attributes] = process_items(params[:order][:order_items_attributes])
 

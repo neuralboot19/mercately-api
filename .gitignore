@@ -44,6 +44,3 @@ node_modules/
 
 # Ignore Storage
 storage/
-
-# Ignore VCR
-spec/support/vcr/cassettes

@@ -62,8 +62,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     end
 
     def check_passwords
-      return unless params[:retailer_user][:password].blank? &&
-                    params[:retailer_user][:password_confirmation].blank?
+      return unless params[:retailer_user][:password].blank?
 
       params[:retailer_user].delete(:password)
       params[:retailer_user].delete(:password_confirmation)
@@ -71,6 +70,6 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     end
 
     def after_sign_up_path_for(_resource)
-      retailers_integrations_path(current_retailer_user.retailer)
+      retailers_integrations_path(current_retailer_user.retailer, onboarding: true)
     end
 end

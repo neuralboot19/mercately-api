@@ -20,11 +20,13 @@
 
 $(document).ready(function () {
   $( "select" ).select2({
+    placeholder: "Selecciona una opción",
     language: "es-ES"
   });
 
   $('.fieldset').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
     $( "select" ).select2({
+      placeholder: "Selecciona una opción",
       language: "es-ES"
     });
   });
@@ -37,7 +39,7 @@ function ToastBuilder(options) {
   // setup some defaults
   opts.defaultText = opts.defaultText || 'default text';
   opts.displayTime = opts.displayTime || 7000;
-  opts.target = opts.target || '#content';
+  opts.target = opts.target || 'body';
 
   return function (text) {
     $('<div/>')

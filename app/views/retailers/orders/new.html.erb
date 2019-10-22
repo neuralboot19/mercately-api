@@ -25,3 +25,31 @@
     </div>
   </div>
 </div>
+<script charset="utf-8">
+  document.addEventListener("DOMContentLoaded", function() {
+    <% if action_name == 'new' %>
+      document.getElementById('add_order_items').click();
+    <% end %>
+    <% if current_retailer.customers.active.blank? %>
+      document.getElementById('add_customer').click();
+      document.getElementById('customer_cancel').style.display = 'none';
+    <% end %>
+  });
+</script>
+<script charset="utf-8">
+  $(document).ready(function() {
+    function togglefirstItemButton() {
+      if ($('.remove_order_item').length > 1) {
+        $('.remove_order_item').removeClass('d-none');
+      } else {
+        $('.remove_order_item').addClass('d-none');
+      }
+    }
+
+    togglefirstItemButton();
+
+    $('#order_items').on('cocoon:after-insert cocoon:after-remove', function() {
+      togglefirstItemButton();
+    });
+  })
+</script>

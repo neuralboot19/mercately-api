@@ -42,8 +42,12 @@ Rails.application.routes.draw do
     get 'customers/:id', to: 'customers#customer_data'
   end
 
+  put 'retailer_user/onboarding_status', to: 'retailer_users#update_onboarding_info', as: :update_onboarding_info
+
   get 'categories', to: 'categories#roots'
   get 'categories/:id', to: 'categories#childs', as: :categories_childs
+
+  post 'request_demo', to: 'pages#request_demo', as: :request_demo
 
   # Dynamic error pages
   get "/404", to: "errors#not_found"

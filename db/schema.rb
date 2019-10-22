@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_17_141442) do
+ActiveRecord::Schema.define(version: 2019_10_16_145850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2019_10_17_141442) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.string "meli_nickname"
     t.integer "meli_customer_id"
+    t.string "meli_nickname"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -222,7 +222,6 @@ ActiveRecord::Schema.define(version: 2019_10_17_141442) do
     t.bigint "main_picture_id"
     t.integer "status", default: 0
     t.integer "meli_status", default: 0
-    t.boolean "upload_product"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
@@ -262,6 +261,7 @@ ActiveRecord::Schema.define(version: 2019_10_17_141442) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
+    t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_retailer_users_on_reset_password_token", unique: true
     t.index ["retailer_id"], name: "index_retailer_users_on_retailer_id"

@@ -1,7 +1,7 @@
 class Retailers::ProductsController < RetailersController
   include ProductControllerConcern
   before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product,
-    :upload_product_to_ml]
+                                     :upload_product_to_ml]
   before_action :compile_variation_images, only: [:create, :update]
 
   def index
@@ -21,14 +21,18 @@ class Retailers::ProductsController < RetailersController
 
   def create
     params[:product][:images] = process_images(params[:product][:images])
-    @product = current_retailer.products.new(product_params)
+    @product = current_retailer.products.new(product_params.except(:images))
     @product.upload_product = convert_to_boolean(params[:product][:upload_product])
-    check_for_errors(params)
+    @product.incoming_images = params[:product][:images]
+    @product.incoming_variations = @variations
 
-    render(:new) && return if @product.errors.present?
+    unless @product.valid?
+      render :new
+      return
+    end
 
-    @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
-      params[:product][:ml_attributes].present?
+    @product.images = params[:product][:images]
+    @product.ml_attributes = process_attributes(params[:product][:ml_attributes])
 
     if @product.save
       @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
@@ -42,18 +46,19 @@ class Retailers::ProductsController < RetailersController
   end
 
   def update
+    params[:product][:images] = process_images(params[:product][:images])
     params['product']['meli_status'] = 'closed' if set_meli_status_closed?
     @product.upload_product = convert_to_boolean(params[:product][:upload_product])
-    check_for_errors(params)
+    @product.incoming_images = params[:product][:images]
+    @product.deleted_images = params[:product][:delete_images]
+    @product.incoming_variations = @variations
 
-    if @product.errors.present?
+    unless @product.valid?
       render :edit
       return
     end
 
-    params[:product][:images] = process_images(params[:product][:images])
-    @product.ml_attributes = process_attributes(params[:product][:ml_attributes]) if
-      params[:product][:ml_attributes].present?
+    @product.ml_attributes = process_attributes(params[:product][:ml_attributes])
 
     if @product.update(product_params)
       update_meli_info
@@ -96,9 +101,7 @@ class Retailers::ProductsController < RetailersController
   def upload_product_to_ml
     @product.upload_product = true
 
-    if @product.images.blank?
-      @product.errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.')
-
+    if @product.product_without_images?
       render :edit
       return
     end
@@ -108,8 +111,7 @@ class Retailers::ProductsController < RetailersController
       @product.update_main_picture(main_picture.filename.to_s) if main_picture.present?
       @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
-      redirect_to retailers_products_path(@retailer, status: @product.status),
-        notice: 'Producto publicado con éxito.'
+      redirect_to retailers_products_path(@retailer, status: @product.status), notice: 'Producto publicado con éxito.'
     else
       render :edit
     end
@@ -183,6 +185,8 @@ class Retailers::ProductsController < RetailersController
     end
 
     def process_attributes(attributes)
+      return @product.ml_attributes if attributes.blank?
+
       output_attributes = []
 
       attributes.each do |atr|
@@ -190,24 +194,6 @@ class Retailers::ProductsController < RetailersController
       end
 
       output_attributes
-    end
-
-    def check_for_variations(category_id)
-      return false if category_id.blank?
-
-      category = Category.active.find(category_id)
-      return false if category.blank?
-
-      template = category.clean_template_variations
-      template.any? { |temp| temp['tags']['allow_variations'] }
-    end
-
-    def check_for_errors(params)
-      if check_for_variations(params[:product][:category_id]) && params[:product][:variations].blank?
-        @product.errors.add(:base, 'Debe agregar al menos una variación.')
-      end
-
-      @product.errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.') if mandatory_images?
     end
 
     # Only allow a trusted parameter "white list" through.
@@ -224,7 +210,6 @@ class Retailers::ProductsController < RetailersController
                                       :sold_quantity,
                                       :status,
                                       :meli_status,
-                                      :upload_product,
                                       images: [],
                                       ml_attributes: [])
     end

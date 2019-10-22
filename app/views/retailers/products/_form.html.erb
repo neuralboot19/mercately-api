@@ -1,23 +1,24 @@
 <div class="box">
   <div class="row">
-    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'p-0 col-xs-12' }) do |f| %>
+    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'validate-form p-0 col-xs-12' }) do |f| %>
       <div class="box">
         <div class="row">
-          <%= f.hidden_field :category_id %>
           <%= f.hidden_field :id %>
 
           <fieldset class="col-xs-12 fieldset mt-16">
             <legend>Información básica</legend>
             <div class="mb-8 my-16">
               <%= f.label :title, 'Título' %><br/>
-              <%= f.text_field :title, class: 'input' %>
+              <%= f.text_field :title, class: 'input validate-required' %>
+              <i class="validation-msg"></i>
             </div>
 
             <% if action_name == 'new' || action_name == 'create' %>
               <div id="root" class="my-16">
                 <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9">
-                  <option value="" selected>Seleccione una categoría</option>
                 </select>
+                <%= f.hidden_field :category_id, class: 'validate-required' %>
+                <i class="validation-msg"></i>
               </div>
             <% end %>
 
@@ -40,17 +41,20 @@
                 </div>
                 <div class="col-xs-12 col-sm-4 my-16">
                   <%= f.label :price, 'Precio' %><br/>
-                  <%= f.text_field :price, class: 'input' %>
+                  <%= f.text_field :price, class: 'input validate-required' %>
+                  <i class="validation-msg"></i>
                 </div>
                 <div class="col-xs-12 col-sm-4 pr-0 my-16">
                   <%= f.label :available_quantity, 'Cantidad disponible' %><br/>
-                  <%= f.number_field :available_quantity, class: 'input' %>
+                  <%= f.number_field :available_quantity, class: 'input validate-required' %>
+                  <i class="validation-msg"></i>
                 </div>
               </div>
             </div>
           </fieldset>
 
           <% if action_name == 'edit' || action_name == 'update' %>
+            <%= f.hidden_field :category_id, class: 'validate-required' %>
             <fieldset class="col-xs-12 fieldset">
               <div class="box">
                 <div class="row">
@@ -95,7 +99,7 @@
               <div id="variations-container" class="row col-xs-12 my-16"></div>
             </div>
             <div class="my-16">
-              <a class="btn btn--cta" onclick="appendTemplate();">Agregar variación</a>
+              <a class="btn btn--cta" onclick="appendTemplate(true);">Agregar variación</a>
             </div>
           </fieldset>
 
@@ -103,6 +107,7 @@
             <%= f.label :images, 'Arrastra las imágenes o haz click aquí para seleccionarlas', class: 'py-20 uploader-text' %>
             <%= f.file_field :images, multiple: true, onchange: 'readURL(this);', id: 'uploadedImages' %>
           </div>
+          <i class="c-red fs-12" id="product_images_error"></i>
           <div id="up_images" class="row col-xs-12 col-md-12 edit-gallery"></div>
 
           <div id="image-gallery" class="row col-xs-12 col-md-12 edit-gallery">
@@ -126,7 +131,7 @@
           </div>
 
           <div class="btn-box col-xs-12">
-            <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+            <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
           </div>
         </div>
       </div>

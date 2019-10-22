@@ -9,8 +9,11 @@ class Product < ApplicationRecord
   has_many :product_variations
   has_many_attached :images
 
+  validates :title, presence: true
+  validates :price, presence: true
   validate :images_count
-  validate :ml_status
+  validate :check_variations
+  validate :check_images
 
   enum buying_mode: %w[buy_it_now classified]
   enum condition: %w[new_product used not_specified]
@@ -20,6 +23,8 @@ class Product < ApplicationRecord
   scope :retailer_products, lambda { |retailer_id, status|
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
+
+  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images
 
   # TODO: move to service
   def update_ml(p_ml)
@@ -190,6 +195,16 @@ class Product < ApplicationRecord
       .where(feedback_reason: nil, status: 2, products: { id: id }).first.blank?
   end
 
+  # Chequea si el producto tiene imagenes o no
+  def product_without_images?
+    if images.blank?
+      errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.')
+      return true
+    end
+
+    false
+  end
+
   private
 
     def images_count
@@ -214,17 +229,6 @@ class Product < ApplicationRecord
       end
     end
 
-    def ml_status
-      errors.add(:base, 'Sólo puede seleccionar los status active, paused y closed') if
-        %w[payment_required under_review inactive].include? meli_status
-
-      errors.add(:base, 'Del status paused sólo puede pasar a active') if
-        meli_status == 'closed' && meli_status_was == 'paused'
-
-      errors.add(:base, 'Del status closed sólo puede pasar a active') if
-        meli_status == 'paused' && meli_status_was == 'closed'
-    end
-
     def update_meli_status_and_save(status)
       self.meli_status = status
       save
@@ -236,6 +240,17 @@ class Product < ApplicationRecord
 
     def go_re_publish?
       available_quantity.positive? && meli_status == 'closed'
+    end
+
+    # Chequea las variaciones previo al guardado del producto
+    def check_variations
+      errors.add(:base, 'Debe agregar al menos una variación.') if
+        check_for_variations? && incoming_variations.blank? && product_variations.blank?
+    end
+
+    # Chequea las imagenes previo al guardado del producto
+    def check_images
+      errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.') if mandatory_images?
     end
 
     def set_ml_products

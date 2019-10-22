@@ -1,0 +1,60 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/445351893?access_token=APP_USR-8515522317464897-101814-93de00ef046cabfea29056426f9ff63f-425935489
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '550'
+      Connection:
+      - keep-alive
+      Date:
+      - Fri, 18 Oct 2019 18:28:26 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - edee978f-33ba-41a5-a6bf-2e6b1b47e9aa
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 adacb4b398aafbe56fceb25bfb9ee22a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - JAX1-C1
+      X-Amz-Cf-Id:
+      - YeKkA0Y0leGpw98mgfXdmv2KyfrvzwinfctrnCFbx0tiJp1DTyvJZQ==
+    body:
+      encoding: UTF-8
+      string: '{"id":445351893,"nickname":"CSARAUGUSTOPOZO","registration_date":"2019-06-19T09:47:14.000-04:00","country_id":"EC","address":{"city":null,"state":null},"user_type":"normal","tags":["normal"],"logo":null,"points":1,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/CSARAUGUSTOPOZO","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"deactive"}}'
+    http_version: 
+  recorded_at: Fri, 18 Oct 2019 18:28:26 GMT
+recorded_with: VCR 5.0.0
