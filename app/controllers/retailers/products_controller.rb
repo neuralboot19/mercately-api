@@ -1,7 +1,7 @@
 class Retailers::ProductsController < RetailersController
   include ProductControllerConcern
-  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity, :archive_product,
-                                     :upload_product_to_ml]
+  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity,
+                                     :archive_product, :reactive_product, :upload_product_to_ml]
   before_action :compile_variation_images, only: [:create, :update]
 
   def index
@@ -88,11 +88,24 @@ class Retailers::ProductsController < RetailersController
   def archive_product
     past_meli_status = @product.meli_status
     @product.status = 'archived'
-    @product.meli_status = 'closed' if @product.meli_product_id.present?
+    @product.meli_status = 'closed' if @product.meli_product_id
 
     if @product.save
-      @product.update_ml_info(past_meli_status) if @product.meli_product_id.present?
-      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto archivado con éxito.'
+      @product.update_ml_info(past_meli_status) if @product.meli_product_id
+      redirect_back fallback_location: retailers_product_path(@retailer, @product), notice: 'Producto archivado con éxito.'
+    else
+      render :edit
+    end
+  end
+
+  def reactive_product
+    @product.upload_product = true
+    @product.status = 'active'
+    @product.meli_status = 'active' if @product.meli_product_id
+
+    if @product.save
+      @product.upload_ml if @product.meli_product_id
+      redirect_back fallback_location: retailers_product_path(@retailer, @product), notice: 'Producto archivado con éxito.'
     else
       render :edit
     end
