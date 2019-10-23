@@ -21,7 +21,7 @@ RSpec.describe MercadoLibre::Orders, vcr: true do
 
     before do
       Response = Struct.new(:status, :body)
-      response = Response.new(201, { status: 'success' })
+      response = Response.new(201, status: 'success')
       allow(Connection).to receive(:post_request)
         .with(anything, anything).and_return(response)
     end
