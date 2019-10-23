@@ -11,6 +11,19 @@
       </div>
     </div>
 
+    <div class="worm container-fluid">
+      <div class="row center-xs start-sm">
+        <div class="col-xs-12">
+          <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: false)) %>">
+            <%= link_to 'Sin responder', retailers_questions_path(current_retailer, answered: false) %>
+          </div
+          ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: true)) %>">
+            <%= link_to 'Respondidas', retailers_questions_path(current_retailer, answered: true) %>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container-fluid products">
       <div class="row">
         <div class="col-xs-12">
