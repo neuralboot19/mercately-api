@@ -20,7 +20,7 @@ RSpec.describe MercadoLibre::Orders, vcr: true do
     let(:order) { create(:order, customer: customer) }
 
     before do
-      Response = Struct.new(:status, :body)
+      stub_const('Response', Struct.new(:status, :body))
       response = Response.new(201, status: 'success')
       allow(Connection).to receive(:post_request)
         .with(anything, anything).and_return(response)
