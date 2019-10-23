@@ -164,8 +164,8 @@ RSpec.describe Order, type: :model do
   describe '#set_positive_rating' do
     context 'when the order does not come from ML' do
       it 'before save assigns positive value to feedback rating when the order pass to success status' do
+        order.status = 'success'
         order.save
-        order.update(status: 'success')
         expect(order.feedback_rating).to be_nil
       end
     end
@@ -185,8 +185,8 @@ RSpec.describe Order, type: :model do
 
       it 'before save assigns positive value to feedback rating when the order pass to success status' do
         order.meli_order_id = '123456789'
+        order.status = 'success'
         order.save
-        order.update(status: 'success')
         expect(order.feedback_rating).to eq('positive')
       end
     end
