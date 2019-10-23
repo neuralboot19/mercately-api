@@ -102,13 +102,10 @@ class Retailers::ProductsController < RetailersController
   def reactive_product
     @product.upload_product = true
     @product.status = 'active'
-    if @product.meli_product_id
-      past_meli_status = @product.meli_status
-      @product.meli_status = 'active'
-    end
+    @product.meli_status = 'active' if @product.meli_product_id
 
     if @product.save
-      @product.update_ml_info(past_meli_status) if @product.meli_product_id
+      @product.upload_ml if @product.meli_product_id
       redirect_back fallback_location: retailers_product_path(@retailer, @product),
                     notice: 'Producto reactivado con éxito.'
     else
