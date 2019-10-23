@@ -100,14 +100,15 @@ class Retailers::ProductsController < RetailersController
   end
 
   def reactive_product
+    past_meli_status = @product.meli_status
     @product.upload_product = true
     @product.status = 'active'
     @product.meli_status = 'active' if @product.meli_product_id
 
     if @product.save
-      @product.upload_ml if @product.meli_product_id
+      @product.update_ml_info(past_meli_status) if @product.meli_product_id
       redirect_back fallback_location: retailers_product_path(@retailer, @product),
-        notice: 'Producto archivado con éxito.'
+        notice: 'Producto reactivado con éxito.'
     else
       render :edit
     end
