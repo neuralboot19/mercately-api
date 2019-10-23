@@ -71,6 +71,7 @@ module MercadoLibre
     end
 
     def automatic_re_publish(product)
+      return if product.blank?
       return unless product.meli_status == 'closed' &&
                     product.meli_stop_time == product.meli_end_time &&
                     product.status == 'active'
