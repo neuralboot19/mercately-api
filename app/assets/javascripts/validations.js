@@ -73,7 +73,7 @@ function validateForm(e, form) {
   // checks es un arreglo de booleans que vigila si todas las validaciones pasaron
   checks = [];
 
-  document.querySelectorAll(`#${form.id} input`).forEach(function(input) {
+  document.querySelectorAll(`#${form.id} input, #${form.id} textarea`).forEach(function(input) {
     // inputChecks es un arreglo de booleans que vigila si todas las validaciones del input pasaron
     inputChecks = [];
 
