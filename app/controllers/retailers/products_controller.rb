@@ -93,7 +93,7 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.update_ml_info(past_meli_status) if @product.meli_product_id
       redirect_back fallback_location: retailers_product_path(@retailer, @product),
-        notice: 'Producto archivado con éxito.'
+                    notice: 'Producto archivado con éxito.'
     else
       render :edit
     end
