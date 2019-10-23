@@ -100,10 +100,12 @@ class Retailers::ProductsController < RetailersController
   end
 
   def reactive_product
-    past_meli_status = @product.meli_status
     @product.upload_product = true
     @product.status = 'active'
-    @product.meli_status = 'active' if @product.meli_product_id
+    if @product.meli_product_id
+      past_meli_status = @product.meli_status
+      @product.meli_status = 'active'
+    end
 
     if @product.save
       @product.update_ml_info(past_meli_status) if @product.meli_product_id

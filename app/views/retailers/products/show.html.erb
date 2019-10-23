@@ -81,6 +81,7 @@
             <div class="col-xs-12 col-sm-12">
               <table class="table_details w-100">
                 <% @product.product_variations[0..-2].each do |variation| %>
+                  <% next if variation.data['attribute_combinations'].nil? %>
                   <% variation.data['attribute_combinations'][0..-2].each do |var| %>
                     <tr>
                       <td class="table_details__descriptor">
@@ -103,7 +104,8 @@
                     </td>
                   </tr>
                 <% end %>
-                <% @product.product_variations.last.data['attribute_combinations'].each_with_index do |var, index| %>
+                <% @product.product_variations.last.data['attribute_combinations']&.each_with_index do |var, index| %>
+                  <% next if var.nil? %>
                   <tr>
                     <td class="table_details__descriptor">
                       <%= var["name"] || var["id"] %>
