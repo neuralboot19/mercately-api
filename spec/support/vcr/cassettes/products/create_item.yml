@@ -1,0 +1,144 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/pictures?access_token=APP_USR-8747693575261051-102415-e556ce0bc1ca600d241f9ad3c2d8d637-471889087
+    body:
+      encoding: UTF-8
+      string: '{"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/YzY6oUy1C18q3tEmnze2ry2x"}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 24 Oct 2019 17:33:13 GMT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - 93869a2581ee23cf668ab6a71f2a5d02
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - e9432950-45c6-48de-b7c9-698918dec000
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 bc5ca942c588917a31bb32f85c8bfee5.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - EieBK5YQ9rblq_MyqR5_bP14c6-voGQV4qLQ8FRwVua-1YpOyNBPcA==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"756737-MEC32647573252_102019","max_size":"500x500","dominant_color":null,"crop":{"y_size":null,"x_size":null,"y_offset":null,"x_offset":null},"variations":[{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg"},{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg"},{"size":"400x400","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg"},{"size":"320x320","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg"},{"size":"280x280","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg"},{"size":"250x250","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg"},{"size":"228x228","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg"},{"size":"210x210","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg"},{"size":"200x200","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg"},{"size":"120x120","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg"},{"size":"70x70","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg"},{"size":"40x40","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg"},{"size":"800x800","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg"}],"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/YzY6oUy1C18q3tEmnze2ry2x"}'
+    http_version: 
+  recorded_at: Thu, 24 Oct 2019 17:33:13 GMT
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/items?access_token=APP_USR-8747693575261051-102415-e556ce0bc1ca600d241f9ad3c2d8d637-471889087
+    body:
+      encoding: UTF-8
+      string: '{"title":"Faora IX","category_id":"MEC1368","price":33.09,"available_quantity":77,"currency_id":"USD","listing_type_id":"free","condition":"not_specified","description":{"plain_text":"Blanditiis
+        omnis et. Et voluptatem nam. Quaerat magnam distinctio."},"pictures":[{"id":"756737-MEC32647573252_102019"}],"attributes":[]}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 24 Oct 2019 17:33:14 GMT
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - 5b67fe3899b0727be1cba14b8481a040
+      Location:
+      - https://api.mercadolibre.com/items/MEC422857056
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Api-Name:
+      - syi-api
+      X-Api-Version:
+      - '1.00'
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - c167b196-d142-4ab8-b606-4ca1903407b6
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 022bce4b6ed717be65317e9e6e08b755.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - cu8o4nXPzZ8iljizpP6q1jVnb9uk7WMpLDkDqijWMRaUmjnQDLDrHQ==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"MEC422857056","site_id":"MEC","title":"Faora Ix","subtitle":null,"seller_id":471889087,"category_id":"MEC1368","official_store_id":null,"price":33.09,"base_price":33.09,"original_price":null,"inventory_id":null,"currency_id":"USD","initial_quantity":77,"available_quantity":77,"sold_quantity":0,"sale_terms":[],"buying_mode":"buy_it_now","listing_type_id":"free","start_time":"2019-10-24T17:33:14.313Z","stop_time":"2019-12-23T04:00:00.000Z","end_time":"2019-12-23T04:00:00.000Z","expiration_time":null,"condition":"not_specified","permalink":"http://articulo.mercadolibre.com.ec/MEC-422857056-faora-ix-_JM","pictures":[{"id":"756737-MEC32647573252_102019","url":"http://mec-s1-p.mlstatic.com/756737-MEC32647573252_102019-O.jpg","secure_url":"https://mec-s1-p.mlstatic.com/756737-MEC32647573252_102019-O.jpg","size":"500x500","max_size":"500x500","quality":""}],"video_id":null,"descriptions":[{"id":"MEC422857056-2356347063"}],"accepts_mercadopago":false,"non_mercado_pago_payment_methods":[],"shipping":{"mode":"not_specified","local_pick_up":false,"free_shipping":false,"methods":[],"dimensions":null,"tags":[],"logistic_type":"not_specified","store_pick_up":false},"international_delivery_mode":"none","seller_address":{"id":1065793801,"comment":"","address_line":"Test
+        Address 123","zip_code":"","city":{"id":"","name":"Quito"},"state":{"id":"EC-P","name":"Pichincha
+        ( Quito )"},"country":{"id":"EC","name":"Ecuador"},"latitude":"","longitude":"","search_location":{"neighborhood":{"id":"","name":""},"city":{"id":"","name":""},"state":{"id":"","name":""}}},"seller_contact":null,"location":{},"geolocation":{"latitude":"","longitude":""},"coverage_areas":[],"attributes":[],"warnings":[{"department":"shipping","cause_id":4021,"code":"no_me_available","message":"User/Catalog
+        shipping preferences do not offer ME, enabling ''not_specified'' mode","references":["user_shipping_preferences","catalog_shipping_preferences"]},{"department":"shipping","cause_id":4017,"code":"no_me_available","message":"User/Catalog
+        shipping preferences do not offer ME, enabling ''custom'' mode","references":["user_shipping_preferences","catalog_shipping_preferences"]},{"department":"shipping","cause_id":4000,"code":"free_shipping","message":"Free
+        shipping allowed (''all_country'') for ''not_specified'' mode when ''me2''
+        is not available","references":["catalog_shipping_preferences"]}],"listing_source":"","variations":[],"thumbnail":"http://mec-s1-p.mlstatic.com/756737-MEC32647573252_102019-I.jpg","secure_thumbnail":"https://mec-s1-p.mlstatic.com/756737-MEC32647573252_102019-I.jpg","status":"active","sub_status":[],"tags":["test_item"],"warranty":null,"catalog_product_id":null,"domain_id":null,"seller_custom_field":null,"parent_item_id":null,"differential_pricing":null,"deal_ids":[],"automatic_relist":false,"date_created":"2019-10-24T17:33:14.412Z","last_updated":"2019-10-24T17:33:14.412Z","health":null,"catalog_listing":false,"item_relations":[]}'
+    http_version: 
+  recorded_at: Thu, 24 Oct 2019 17:33:14 GMT
+recorded_with: VCR 5.0.0
