@@ -7,7 +7,7 @@
         </div>
         <div class="col-xs-12 col-sm-8 hide-on-tablet-and-down">
           <div class="index__ctas f-right">
-            <%= link_to retailers_questions_path(current_retailer), class: 'btn btn--cta' do %>
+            <%= link_to retailers_questions_path(current_retailer, answered: @question.answered), class: 'btn btn--cta' do %>
               <i class="fas fa-arrow-left mr-5"></i>
               Atrás
             <% end %>
@@ -43,7 +43,7 @@
                     <p>
                       <label><%= @question.question %></label>
                     </p>
-                    <% if @question.answer %>
+                    <% if @question.answered %>
                       <p class="t-right">
                         <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(@question.updated_at) %></span>
                       </p>
@@ -51,7 +51,7 @@
                         <label><%= @question.answer %></label>
                       </p>
                     <% end %>
-                    <% unless @question.answer %>
+                    <% unless @question.answered %>
                       <%= form_tag retailers_answer_question_path(current_retailer, @question), method: :put do %>
                         <div class="row">
                           <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'input h-77' %>
@@ -65,7 +65,7 @@
                     <% end %>
                   </fieldset>
                 </div>
-                <% unless @question.answer %>
+                <% unless @question.answered %>
                   <div id="templates" class="col-xs-12 col-sm-3">
                     <fieldset class="fieldset mt-16">
                     <legend>Plantillas:</legend>

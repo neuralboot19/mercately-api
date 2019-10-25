@@ -18,7 +18,11 @@ Rails.application.routes.draw do
   namespace :retailers do
     scope '/:slug' do
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
-      resources :products
+      resources :products do
+        member do
+          put 'reactive', to: 'products#reactive_product', as: :reactivate_product
+        end
+      end
       resources :orders do
         get 'messages', to: 'messages#chat'
         post 'send_message', to: 'messages#send_message', as: :send_message
@@ -28,7 +32,6 @@ Rails.application.routes.draw do
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
-      get 'mercadolibre_import', to: 'integrations#mercadolibre_import'
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question', as: :question

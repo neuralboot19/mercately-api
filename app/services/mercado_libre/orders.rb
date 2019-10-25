@@ -57,6 +57,7 @@ module MercadoLibre
       response = Connection.post_request(conn, @order_utility.prepare_order_feedback(order))
 
       puts response.body if response.status != 201
+      response
     end
   end
 end

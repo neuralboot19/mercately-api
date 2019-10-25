@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2019_10_25_191326) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.integer "meli_customer_id"
     t.string "meli_nickname"
+    t.integer "meli_customer_id"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(version: 2019_10_25_191326) do
     t.boolean "has_meli_info", default: false
     t.datetime "meli_token_updated_at"
     t.datetime "meli_info_updated_at"
+    t.boolean "meli_user_active", default: true
     t.index ["customer_id"], name: "index_meli_retailers_on_customer_id"
     t.index ["retailer_id"], name: "index_meli_retailers_on_retailer_id"
   end
@@ -247,6 +248,7 @@ ActiveRecord::Schema.define(version: 2019_10_25_191326) do
     t.datetime "date_created_question"
     t.datetime "date_created_answer"
     t.integer "meli_question_type"
+    t.boolean "answered", default: false
     t.index ["customer_id"], name: "index_questions_on_customer_id"
     t.index ["order_id"], name: "index_questions_on_order_id"
     t.index ["product_id"], name: "index_questions_on_product_id"
