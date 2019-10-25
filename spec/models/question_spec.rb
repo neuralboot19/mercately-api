@@ -1,10 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Question, type: :model do
+  subject(:question) { build(:question, product: product) }
+
   let(:retailer) { create(:retailer) }
   let(:meli_retailer) { create(:meli_retailer, retailer: retailer) }
   let(:product) { create(:product, retailer: retailer) }
-  let(:question) { build(:question, product: product) }
 
   describe 'enums' do
     it { is_expected.to define_enum_for(:status).with_values(%i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]) }
@@ -49,6 +50,23 @@ RSpec.describe Question, type: :model do
     it 'calls ML answer question service' do
       question.product.retailer.meli_retailer = meli_retailer
       expect(question.send(:ml_answer_question)).not_to be_nil
+    end
+  end
+
+  describe '#set_answered' do
+    context 'when the answer is empty' do
+      it 'before save does not update the answered attribute' do
+        question.save
+        expect(question.answered).to be false
+      end
+    end
+
+    context 'when the answer is not empty' do
+      it 'before save updates the answered attribute' do
+        question.answer = 'Example answer'
+        question.save
+        expect(question.answered).to be true
+      end
     end
   end
 end

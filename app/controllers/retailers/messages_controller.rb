@@ -6,7 +6,8 @@ class Retailers::MessagesController < RetailersController
   end
 
   def questions
-    @questions = Question.includes(:customer, :product).where(meli_question_type: :from_product, products:
+    @questions = Question.includes(:customer, :product).where(meli_question_type: :from_product, answered:
+      params[:answered], products:
       {
         retailer_id: current_retailer.id
       }).order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
@@ -29,7 +30,7 @@ class Retailers::MessagesController < RetailersController
 
   def answer_question
     @question.update!(answer: params[:answer])
-    redirect_to retailers_questions_path(@retailer), notice: 'Respuesta enviada'
+    redirect_to retailers_questions_path(@retailer, answered: @question.answered), notice: 'Respuesta enviada'
   end
 
   def send_message
