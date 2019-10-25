@@ -59,6 +59,7 @@ class Retailers::IntegrationsController < RetailersController
           'Esta cuenta de MercadoLibre ya ha sido conectada'
       else
         @ml.save_access_token(response)
+        Products::ImportProductsJob.perform_later(@retailer.id) if @retailer.meli_retailer
         redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
       end
     end
