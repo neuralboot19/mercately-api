@@ -15,10 +15,11 @@ class Product < ApplicationRecord
   validate :check_variations
   validate :check_images
 
-  enum buying_mode: %w[buy_it_now classified]
-  enum condition: %w[new_product used not_specified]
-  enum status: %w[active archived], _prefix: true
-  enum meli_status: %w[active payment_required paused closed under_review inactive]
+  enum buying_mode: %i[buy_it_now classified]
+  enum condition: %i[new_product used not_specified]
+  enum status: %i[active archived], _prefix: true
+  enum meli_status: %i[active payment_required paused closed under_review inactive]
+  enum from: %i[mercately mercadolibre], _prefix: true
 
   scope :retailer_products, lambda { |retailer_id, status|
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
@@ -244,6 +245,8 @@ class Product < ApplicationRecord
 
     # Chequea las variaciones previo al guardado del producto
     def check_variations
+      return unless from_mercately?
+
       errors.add(:base, 'Debe agregar al menos una variación.') if
         check_for_variations? && incoming_variations.blank? && product_variations.blank?
     end

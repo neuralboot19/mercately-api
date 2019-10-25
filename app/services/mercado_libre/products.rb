@@ -80,6 +80,7 @@ module MercadoLibre
         meli_status: product_info['status'],
         incoming_variations: product_info['variations'],
         incoming_images: product_info['pictures'],
+        from: 'mercadolibre',
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -128,8 +129,7 @@ module MercadoLibre
       conn = Connection.prepare_connection(url)
       response = response.merge(Connection.get_request(conn))
 
-      return if response.blank? ||
-                response['error'].present?
+      return if response.blank? || response['error'].present?
 
       product = update(response)
       @product_publish.automatic_re_publish(product)

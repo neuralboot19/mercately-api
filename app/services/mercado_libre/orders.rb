@@ -28,6 +28,7 @@ module MercadoLibre
       )
 
       order_info['order_items'].each do |order_item|
+        Product.create_with().find_or_create_by(meli_product_id: order_item['item']['id'])
         product = MercadoLibre::Products.new(@retailer).pull_update(order_item['item']['id'])
 
         item = OrderItem.find_or_initialize_by(order_id: order.id, product_id: product.id)
