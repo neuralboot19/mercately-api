@@ -1,31 +1,38 @@
 <div class="box">
   <div class="row">
-    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'p-0 col-xs-12' }) do |f| %>
+    <%= form_for([:retailers, @product], url: @product.new_record? ? retailers_products_path(current_retailer, @product) : retailers_product_path(current_retailer, @product), local: true, html: { class: 'validate-form p-0 col-xs-12' }) do |f| %>
       <div class="box">
         <div class="row">
-          <%= f.hidden_field :category_id %>
           <%= f.hidden_field :id %>
 
           <fieldset class="col-xs-12 fieldset mt-16">
             <legend>Información básica</legend>
             <div class="mb-8 my-16">
               <%= f.label :title, 'Título' %><br/>
-              <%= f.text_field :title, class: 'input' %>
+              <%= f.text_field :title, class: 'input validate-required' %>
+              <i class="validation-msg"></i>
             </div>
 
             <% if action_name == 'new' || action_name == 'create' %>
               <div id="root" class="my-16">
                 <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9">
-                  <option value="" selected>Seleccione una categoría</option>
                 </select>
+                <%= f.hidden_field :category_id, class: 'validate-required' %>
+                <i class="validation-msg"></i>
               </div>
+            <% else %>
+              <%= f.hidden_field :category_id %>
+            <% end %>
 
-              <% if @retailer.meli_retailer %>
-                <div class="my-16">
-                  <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
+            <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' %>
+              <div class="my-16">
+                <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
+                <% if @product.new_record? %>
                   <%= f.check_box :upload_product, { 'checked': true } %>
-                </div>
-              <% end %>
+                <% elsif @product.meli_product_id.blank? %>
+                  <%= f.check_box :upload_product %>
+                <% end %>
+              </div>
             <% end %>
 
             <div class="box">
@@ -36,11 +43,13 @@
                 </div>
                 <div class="col-xs-12 col-sm-4 my-16">
                   <%= f.label :price, 'Precio' %><br/>
-                  <%= f.text_field :price, class: 'input' %>
+                  <%= f.text_field :price, class: 'input validate-required' %>
+                  <i class="validation-msg"></i>
                 </div>
                 <div class="col-xs-12 col-sm-4 pr-0 my-16">
                   <%= f.label :available_quantity, 'Cantidad disponible' %><br/>
-                  <%= f.number_field :available_quantity, class: 'input' %>
+                  <%= f.number_field :available_quantity, class: 'input validate-required' %>
+                  <i class="validation-msg"></i>
                 </div>
               </div>
             </div>
@@ -50,17 +59,9 @@
             <fieldset class="col-xs-12 fieldset">
               <div class="box">
                 <div class="row">
-                  <div class="col-xs-12 pl-0 col-sm-6 my-16">
-                    <%= f.label :status, 'Estado del producto' %><br/>
-                    <%= f.select :status, Product.statuses.keys.collect { |s| [ Product.enum_translation(:status, s), s ]}, class: 'input', onchange: 'updateMeliStatus(this);' %>
-                    <% if @product.meli_product_id && @product.status != 'archived' %>
-                      <p class="note-archived"><i>Nota: Si se archiva el producto, la publicación en MercadoLibre se cerrará</i></p>
-                    <% end %>
-                  </div>
-
                   <% if @product.meli_product_id %>
                     <div class="col-xs-12 col-sm-6 my-16">
-                      <%= f.label :meli_status, 'Estado de la publicación' %><br/>
+                      <%= f.label :meli_status, 'Estado de la publicación en MercadoLibre' %><br/>
                       <%= f.select :meli_status, Product.meli_statuses.keys.collect { |m| [ Product.enum_translation(:meli_status, m), m ]}, disabled: @product.disabled_meli_statuses, class: 'input' %>
                     </div>
                   <% end %>
@@ -91,7 +92,7 @@
               <div id="variations-container" class="row col-xs-12 my-16"></div>
             </div>
             <div class="my-16">
-              <a class="btn btn--cta" onclick="appendTemplate();">Agregar variación</a>
+              <a class="btn btn--cta" onclick="appendTemplate(true);">Agregar variación</a>
             </div>
           </fieldset>
 
@@ -99,6 +100,7 @@
             <%= f.label :images, 'Arrastra las imágenes o haz click aquí para seleccionarlas', class: 'py-20 uploader-text' %>
             <%= f.file_field :images, multiple: true, onchange: 'readURL(this);', id: 'uploadedImages' %>
           </div>
+          <i class="c-red fs-12" id="product_images_error"></i>
           <div id="up_images" class="row col-xs-12 col-md-12 edit-gallery"></div>
 
           <div id="image-gallery" class="row col-xs-12 col-md-12 edit-gallery">
@@ -122,7 +124,7 @@
           </div>
 
           <div class="btn-box col-xs-12">
-            <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+            <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
           </div>
         </div>
       </div>

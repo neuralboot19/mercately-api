@@ -78,6 +78,8 @@ module MercadoLibre
         meli_permalink: product_info['permalink'],
         ml_attributes: product_info['attributes'],
         meli_status: product_info['status'],
+        incoming_variations: product_info['variations'],
+        incoming_images: product_info['pictures'],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -106,6 +108,8 @@ module MercadoLibre
         category = @ml_categories.import_category(product_info['category_id'])
 
         product = @utility.assign_product(product, product_info, @retailer, category, new_product)
+        product.incoming_images = product_info['pictures']
+        product.incoming_variations = product_info['variations']
         product.save!
 
         after_save_data(product, product_info, new_product)

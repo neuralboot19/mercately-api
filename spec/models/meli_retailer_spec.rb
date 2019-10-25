@@ -45,5 +45,13 @@ RSpec.describe MeliRetailer, type: :model do
         expect(meli_retailer.send(:update_information)).to be_nil
       end
     end
+
+    context 'when the user is deactive in ML' do
+      it 'does not call the ML updating service' do
+        meli_retailer.meli_info_updated_at = Time.now - 8.days
+        meli_retailer.meli_user_active = false
+        expect(meli_retailer.send(:update_information)).to be_nil
+      end
+    end
   end
 end

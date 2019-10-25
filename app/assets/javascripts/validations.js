@@ -45,6 +45,27 @@ function validateEmail(el) {
   }
 }
 
+// Valida si son necesarias las imagenes en el form de producto
+function validateImages(form) {
+  if (form.id !== 'new_product' && form.id.indexOf('edit_product') === -1) {
+    return true;
+  }
+
+  productId = document.getElementById('product_id');
+  meliStatus = document.getElementById('product_meli_status');
+  uploadProduct = document.getElementById('product_upload_product');
+  uploadImages = document.getElementById('uploadedImages');
+  message = document.getElementById('product_images_error');
+
+  if (!productId.value && (meliStatus || (uploadProduct && uploadProduct.checked)) && !uploadImages.value) {
+    $(message).text('Imágenes requeridas');
+    return false;
+  }
+
+  $(message).html('&nbsp;');
+  return true;
+}
+
 // Subscripcion del formulario a validaciones
 function validateForm(e, form) {
   e.preventDefault();
@@ -52,7 +73,7 @@ function validateForm(e, form) {
   // checks es un arreglo de booleans que vigila si todas las validaciones pasaron
   checks = [];
 
-  document.querySelectorAll(`#${form.id} input`).forEach(function(input) {
+  document.querySelectorAll(`#${form.id} input, #${form.id} textarea`).forEach(function(input) {
     // inputChecks es un arreglo de booleans que vigila si todas las validaciones del input pasaron
     inputChecks = [];
 
@@ -83,6 +104,8 @@ function validateForm(e, form) {
       checks.push(false);
     }
   });
+
+  checks.push(validateImages(form));
 
   if (!checks.includes(false)) form.submit();
 }

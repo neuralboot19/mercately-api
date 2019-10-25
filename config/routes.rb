@@ -18,7 +18,11 @@ Rails.application.routes.draw do
   namespace :retailers do
     scope '/:slug' do
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
-      resources :products
+      resources :products do
+        member do
+          put 'reactive', to: 'products#reactive_product', as: :reactivate_product
+        end
+      end
       resources :orders do
         get 'messages', to: 'messages#chat'
         post 'send_message', to: 'messages#send_message', as: :send_message
@@ -33,6 +37,7 @@ Rails.application.routes.draw do
       get 'chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question', as: :question
       put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
+      put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
