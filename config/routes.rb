@@ -18,7 +18,11 @@ Rails.application.routes.draw do
   namespace :retailers do
     scope '/:slug' do
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
-      resources :products
+      resources :products do
+        member do
+          put 'reactive', to: 'products#reactive_product', as: :reactivate_product
+        end
+      end
       resources :orders do
         get 'messages', to: 'messages#chat'
         post 'send_message', to: 'messages#send_message', as: :send_message
