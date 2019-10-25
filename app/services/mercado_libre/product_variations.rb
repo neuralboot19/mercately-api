@@ -57,10 +57,9 @@ module MercadoLibre
               return pv
             end
           end
-        else
-          product.product_variations
-            .find_or_initialize_by(variation_meli_id: variation['id'])
         end
+
+        product.product_variations.find_or_initialize_by(variation_meli_id: variation['id'])
       end
   end
 end
