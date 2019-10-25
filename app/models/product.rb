@@ -146,11 +146,7 @@ class Product < ApplicationRecord
   end
 
   def earned
-    earned = []
-    order_items.each do |oi|
-      earned << (oi.quantity * oi.unit_price)
-    end
-    earned.sum
+    order_items.map { |oi| oi.quantity * oi.unit_price }.sum
   end
 
   # TODO: move to service (or controller (?))
