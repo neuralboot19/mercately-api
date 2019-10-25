@@ -4,6 +4,7 @@
       <fieldset class="fieldset mt-16">
         <legend>Información de la venta</legend>
         <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
+        <input type="hidden" id="hidden-meli-id" value="<%= @order.meli_order_id %>" />
         <div class="my-16" id="customer_id_container">
           <%= f.label :customer_id, 'Cliente' %>
           <%= f.select :customer_id, current_retailer.customers.active.map { |c| [c.full_name, c.id] }, { include_blank: false }, class: 'input', onchange: 'updateEditForm()' %>
@@ -27,7 +28,7 @@
           <%= f.label :status, 'Estado' %>
           <%= f.select :status, Order.statuses.keys.collect { |s| [ Order.enum_translation(:statuses, s), s ]}, { include_blank: false, disabled: @order.disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
         </div>
-        <% if @order.status != 'pending' && @order.feedback_rating.present? %>
+        <% if @order.status != 'pending' && @order.meli_order_id && @order.feedback_rating.present? %>
           <div class="w-100">
             <h4>Calificar Venta</h4>
           </div>
@@ -49,7 +50,8 @@
           </div>
           <div class="my-16 w-100">
             <%= f.label :feedback_message, 'Mensaje' %>
-            <%= f.text_area :feedback_message, class: 'input h-40' %>
+            <%= f.text_area :feedback_message, class: 'input h-40 validate-required' %>
+            <i class="validation-msg"></i>
           </div>
         </div>
         <fieldset class="fieldset mt-61">

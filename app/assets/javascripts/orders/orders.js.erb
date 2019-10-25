@@ -96,6 +96,10 @@ function insertVariation(variation, parentContainer, index) {
 }
 
 function showHideFeedback(input) {
+  if (!$('#hidden-meli-id').val()) {
+    return;
+  }
+
   if (input.value === "cancelled" && $('#hidden-merc-status').val() === "pending") {
     $('#feedback-container').show();
     $('#feedback-reason-container').show();
