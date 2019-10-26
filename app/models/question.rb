@@ -3,7 +3,8 @@ class Question < ApplicationRecord
   belongs_to :product
   belongs_to :customer
 
-  after_update :ml_answer_question, if: :saved_change_to_answer?
+  after_update :ml_answer_question, if: :answered?
+  before_save :set_answered, if: :will_save_change_to_answer?
 
   enum status: %i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]
   enum answer_status: %i[ACTIVE DISABLED]
@@ -19,5 +20,9 @@ class Question < ApplicationRecord
 
     def ml_answer_question
       MercadoLibre::Questions.new(product.retailer).answer_question(self)
+    end
+
+    def set_answered
+      self.answered = true if answer.present?
     end
 end

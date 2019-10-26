@@ -15,11 +15,6 @@ class Retailers::IntegrationsController < RetailersController
     end
   end
 
-  def mercadolibre_import
-    Products::ImportProductsJob.perform_later(@retailer.id)
-    redirect_to retailers_integrations_path(@retailer.slug), notice: 'Productos han comenzado a importarse'
-  end
-
   def callbacks
     @retailer = MeliRetailer.find_by(meli_user_id: params[:user_id])&.retailer
     if @retailer
@@ -59,6 +54,7 @@ class Retailers::IntegrationsController < RetailersController
           'Esta cuenta de MercadoLibre ya ha sido conectada'
       else
         @ml.save_access_token(response)
+        Products::ImportProductsJob.perform_later(@retailer.id) if @retailer.meli_retailer
         redirect_to retailers_integrations_path(@retailer.slug), notice: 'Conectado existosamente'
       end
     end

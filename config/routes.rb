@@ -32,7 +32,6 @@ Rails.application.routes.draw do
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
-      get 'mercadolibre_import', to: 'integrations#mercadolibre_import'
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question', as: :question

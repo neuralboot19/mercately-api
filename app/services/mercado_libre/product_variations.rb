@@ -30,8 +30,7 @@ module MercadoLibre
       variations.each do |var|
         product_variation = check_existing_variation(product, var, new_product)
 
-        var['sold_quantity'] = product_variation.data['sold_quantity'] unless
-          product_variation.new_record?
+        var['sold_quantity'] = product_variation.data['sold_quantity'] unless product_variation.new_record?
 
         product_variation.data = var if product.meli_status != 'closed'
         product_variation.save!
@@ -46,7 +45,6 @@ module MercadoLibre
 
       def check_existing_variation(product, variation, new_product)
         if new_product
-
           combinations = variation['attribute_combinations'].map { |a| { a['id'] => a['value_name'] } }
 
           product.product_variations.each do |pv|
@@ -58,8 +56,8 @@ module MercadoLibre
             end
           end
         end
-
-        product.product_variations.find_or_initialize_by(variation_meli_id: variation['id'])
+        product.product_variations
+          .find_or_initialize_by(variation_meli_id: variation['id'])
       end
   end
 end

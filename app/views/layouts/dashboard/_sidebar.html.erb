@@ -26,7 +26,7 @@
         <b class="item__cookie"><%= total_unread %></b>
         <ul class="submenu no-style">
           <li class="submenu__item">
-            <%= link_to 'Preguntas', retailers_questions_path(current_retailer), class: 'item__name no-style' %>
+            <%= link_to 'Preguntas', retailers_questions_path(current_retailer, answered: false), class: 'item__name no-style' %>
             <b class="item__cookie"><%= quantity_unread_questions %></b>
           </li>
           <li class="submenu__item">

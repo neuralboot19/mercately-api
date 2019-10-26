@@ -60,7 +60,7 @@ module MercadoLibre
       product = Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
-        description: description['plain_text'],
+        description: description&.[]('plain_text'),
         category_id: category.id,
         price: product_info['price'],
         base_price: product_info['base_price'],
@@ -80,6 +80,7 @@ module MercadoLibre
         meli_status: product_info['status'],
         incoming_variations: product_info['variations'],
         incoming_images: product_info['pictures'],
+        from: 'mercadolibre',
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -124,12 +125,10 @@ module MercadoLibre
       url = @api.get_product_url product_id
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      url = @api.get_product_description_url(product_id)
-      conn = Connection.prepare_connection(url)
-      response = response.merge(Connection.get_request(conn))
+      description = import_product_description(response)
+      response = response.merge(description) if [nil, 201].include? description['status']
 
-      return if response.blank? ||
-                response['error'].present?
+      return if response.blank? || response['error'].present?
 
       product = update(response)
       @product_publish.automatic_re_publish(product)

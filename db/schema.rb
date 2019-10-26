@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_24_142257) do
+ActiveRecord::Schema.define(version: 2019_10_25_191326) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -223,6 +223,7 @@ ActiveRecord::Schema.define(version: 2019_10_24_142257) do
     t.bigint "main_picture_id"
     t.integer "status", default: 0
     t.integer "meli_status", default: 0
+    t.integer "from", default: 0
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
