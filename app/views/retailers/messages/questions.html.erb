@@ -75,7 +75,9 @@
                   </span> <%= question.answer %>
                 </div>
                 <div class="col-xs-12 col-sm-2 t-center">
-                  <% if question.date_read.blank? %>
+                  <% if question.answered %>
+                    <b class="cookie__box cookie__box__green px-5">Respondido</b>
+                  <% elsif question.date_read.blank? %>
                     <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
                   <% else %>
                     <b class="cookie__box cookie__box__green px-5">Visto</b>
