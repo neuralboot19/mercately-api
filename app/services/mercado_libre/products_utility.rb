@@ -154,8 +154,8 @@ module MercadoLibre
       }.to_json
     end
 
-    def assign_product(product, product_info, retailer, category, new_product)
-      if new_product
+    def assign_product(product, product_info, retailer, category, new_product_with_parent)
+      if new_product_with_parent
         product.meli_product_id = product_info['id']
         product.status = 'active'
       end
