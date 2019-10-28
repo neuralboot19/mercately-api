@@ -200,5 +200,10 @@ module MercadoLibre
     def include_change_before_bids(product)
       (product.sold_quantity.blank? || product.sold_quantity.zero?) && product.include_before_bids_info?
     end
+
+    def new_product_has_parent?(product, product_info)
+      product.new_record? && product_info['parent_item_id'].present? &&
+        Product.exists?(meli_product_id: product_info['parent_item_id'])
+    end
   end
 end

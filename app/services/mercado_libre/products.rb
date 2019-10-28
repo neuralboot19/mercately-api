@@ -97,8 +97,7 @@ module MercadoLibre
 
     def update(product_info)
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
-      new_product_with_parent = product.new_record? && product_info['parent_item_id'].present? &&
-        Product.exists?(meli_product_id: product_info['parent_item_id'])
+      new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
       product = Product.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
         new_product_with_parent
