@@ -1,19 +1,25 @@
 ActiveAdmin.register Retailer do
+  filter :name
+  filter :slug
+  filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
+  filter :retailer_user_email_cont, label: 'Retailer user email'
+  filter :created_at
+
   index do
     selectable_column
     id_column
     column :name
     column :slug
+    column 'Meli User Id' do |retailer|
+      retailer.meli_retailer&.meli_user_id
+    end
+    column :retailer_user
     column :created_at
     actions
     column 'Login' do |resource|
       link_to 'Login as', login_as_admin_retailer_path(resource), class: 'member_link edit_link'
     end
   end
-
-  filter :name
-  filter :slug
-  filter :created_at
 
   show do
     attributes_table title: 'Detalles del Retailer' do
