@@ -15,6 +15,7 @@
 
             <% if action_name == 'new' || action_name == 'create' %>
               <div id="root" class="my-16">
+                <label for="childs_1">Categoría</label>
                 <select name="childs_1" id="childs_1" onchange="appendSelect(this.id);" size="9">
                 </select>
                 <%= f.hidden_field :category_id, class: 'validate-required' %>
