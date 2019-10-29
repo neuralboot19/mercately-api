@@ -10,19 +10,38 @@
         </div>
         <div class="col-xs-12 col-sm-8">
           <div class="index__ctas f-right">
+            <% if params[:status] == 'active' %>
+              <%= link_to 'Productos archivados', retailers_products_path(current_retailer, status: 'archived'), class: 'c-red no-style fs-14' %>
+            <% else %>
+              <%= link_to 'Productos activos', retailers_products_path(current_retailer, status: 'active'), class: 'c-red no-style fs-14' %>
+            <% end %>
             <%= link_to new_retailers_product_path, class: 'btn btn--cta hide-on-tablet-and-down' do %>
               <i class="fas fa-plus mr-5"></i>
               Crear producto
-            <% end %>
-            <% if params[:status] == 'active' %>
-              <%= link_to 'Productos archivados', retailers_products_path(current_retailer, status: 'archived'), class: 'c-red no-style' %>
-            <% else %>
-              <%= link_to 'Productos activos', retailers_products_path(current_retailer, status: 'active'), class: 'c-red no-style' %>
             <% end %>
           </div>
         </div>
       </div>
     </div>
+
+    <% if current_retailer.meli_retailer && current_retailer.incomplete_meli_profile? %>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="warning-box fs-12">
+            Para empezar a vender en Mercado Libre primero necesitas confirmar la siguiente información:
+
+            <ul>
+              <% if current_retailer.id_number.blank? %><li>Identificación</li><% end %>
+              <% if current_retailer.address.blank? || current_retailer.city.blank? || current_retailer.state.blank? %><li>Dirección</li><% end %>
+            </ul>
+
+            Puedes confirmar esta información directamente en Mercado Libre haciendo click <a href="https://www.mercadolibre.com" target="_blank">aquí</a>.</br></br>
+
+            Nota: Si ya actualizaste tus datos por favor cierra sesión y vuelve a ingresar a Mercately.
+          </div>
+        </div>
+      </div>
+    <% end %>
 
     <div class="container-fluid products">
       <div class="row">

@@ -91,4 +91,25 @@ RSpec.describe Retailer, type: :model do
       expect(retailer.unread_questions.count).to eq 5
     end
   end
+
+  describe '#incomplete_meli_profile?' do
+    context 'when id_number, address, city or state are filled' do
+      it 'returns false' do
+        expect(retailer.incomplete_meli_profile?).to be false
+      end
+    end
+
+    context 'when any of id_number, address, city or state is empty' do
+      it 'returns true' do
+        retailer.id_number = nil
+        expect(retailer.incomplete_meli_profile?).to be true
+      end
+    end
+  end
+
+  describe '#to_param' do
+    it 'returns the retailer slug' do
+      expect(retailer.to_param).to eq(retailer.slug)
+    end
+  end
 end

@@ -100,7 +100,6 @@ module MercadoLibre
         @meli_registration_date = customer_info['registration_date']
         @phone_area = customer_info['phone']&.[]('area_code') if @phone_area.blank?
         @phone_verified = customer_info['phone']&.[]('verified')
-        @id_number = customer_info['identification']&.[]('number')
         @address = customer_info['address']&.[]('address')
         @city = customer_info['address']&.[]('city')
         @state = customer_info['address']&.[]('state')
