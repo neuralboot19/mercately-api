@@ -22,13 +22,13 @@ module MercadoLibre
       end
     end
 
-    def save_variations(product, variations, new_product = false)
+    def save_variations(product, variations, new_product_with_parent = false)
       current_variations = product.product_variations.pluck(:variation_meli_id).compact
       variation_ids = variations.map { |var| var['id'] }.compact
       current_variations -= variation_ids if current_variations.present?
 
       variations.each do |var|
-        product_variation = check_existing_variation(product, var, new_product)
+        product_variation = check_existing_variation(product, var, new_product_with_parent)
 
         var['sold_quantity'] = product_variation.data['sold_quantity'] unless product_variation.new_record?
 
@@ -43,8 +43,8 @@ module MercadoLibre
 
     private
 
-      def check_existing_variation(product, variation, new_product)
-        if new_product
+      def check_existing_variation(product, variation, new_product_with_parent)
+        if new_product_with_parent
           combinations = variation['attribute_combinations'].map { |a| { a['id'] => a['value_name'] } }
 
           product.product_variations.each do |pv|
