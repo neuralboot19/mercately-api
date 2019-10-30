@@ -28,6 +28,7 @@ RSpec.describe MercadoLibre::Messages, vcr: true do
 
   describe '#answer_message' do
     let(:message) { create(:message, order: order, customer: customer) }
+
     before do
       stub_const('Response', Struct.new(:status, :body))
       response = Response.new(201, '{"status": "success", "message": "My answer message"}')
