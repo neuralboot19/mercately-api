@@ -8,6 +8,7 @@ RSpec.describe MercadoLibre::Messages, vcr: true do
   let(:meli_retailer) { create(:meli_retailer) }
   let(:meli_customer) { create(:meli_customer) }
   let(:customer) { create(:customer, retailer: retailer, meli_customer: meli_customer) }
+  let!(:retailer_user) { create(:retailer_user, retailer: meli_retailer.retailer) }
   let!(:order) { create(:order, meli_order_id: '2194381783', customer: customer) }
 
   describe '#import' do
