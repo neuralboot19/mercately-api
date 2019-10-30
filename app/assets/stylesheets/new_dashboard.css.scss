@@ -531,7 +531,7 @@
   }
 }
 
-.order_items {
+.order_items, .variations {
   display: none;
   background-color: #F5F5FA;
   padding-bottom: 20px;
@@ -540,6 +540,10 @@
 
 .toggle_order_items:checked + .order_items {
   display: block;
+}
+
+.toggle_variations:checked + .variations {
+  display: table;
 }
 
 @media screen and (min-height: 780px) {
@@ -660,6 +664,11 @@
 
   .product {
     padding: 0 8px;
+  }
+
+  .variation_details {
+    transform: translateY(12px);
+    display: inline-block;
   }
 }
 
