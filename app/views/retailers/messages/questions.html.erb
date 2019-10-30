@@ -55,9 +55,13 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
-                          <i class="fas fa-eye mr-8"></i>
-                          Ver
+                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-secondary no-style' do %>
+                          <% if question.answered? %>
+                            <i class="fas fa-eye mr-8"></i>
+                            Ver
+                          <% else %>
+                            Responder
+                          <% end %>
                         <% end %>
                       </li>
                     </ul>
@@ -87,8 +91,12 @@
                   <%= show_date(question.created_at) %>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
-                  <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
-                    <i class="fas fa-eye"></i>
+                  <%= link_to retailers_question_path(current_retailer, question), class: 'c-secondary no-style' do %>
+                    <% if question.answered? %>
+                      Ver
+                    <% else %>
+                      Responder
+                    <% end %>
                   <% end %>
                 </div>
                 <div class="hide-on-sm-and-down hide-on-2k m-auto">
@@ -99,9 +107,13 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-black no-style' do %>
-                          <i class="fas fa-eye mr-8"></i>
-                          Ver
+                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-secondary no-style' do %>
+                          <% if question.answered? %>
+                            <i class="fas fa-eye mr-8"></i>
+                            Ver
+                          <% else %>
+                            Responder
+                          <% end %>
                         <% end %>
                       </li>
                     </ul>
