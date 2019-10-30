@@ -17,7 +17,7 @@ FactoryBot.define do
     ratings_total { [1..5].sample }
     phone { Faker::PhoneNumber.phone_number }
     has_meli_info { true }
-    meli_user_id { Faker::Number.number(9) }
+    meli_user_id { 425_933_549 }
     meli_token_updated_at { Time.now }
     meli_info_updated_at { Time.now }
   end
