@@ -145,7 +145,9 @@
                         <% end %>
                       </div>
                     </div>
-                    <div class="col-xs-9 col-sm-3 t-center"><%= oi.product.title %></div>
+                    <div class="col-xs-9 col-sm-3 t-center">
+                      <%= oi.product.title %>
+                    </div>
                     <div class="col-xs-4 col-sm-2 t-center">
                       <span class="hide-on-md-and-up mr-5">Cantidad:</span>
                       <%= oi.quantity %>
@@ -158,7 +160,31 @@
                       <span class="hide-on-md-and-up mr-5">Sub-total:</span>
                       $<%= oi.subtotal %>
                     </div>
-                    <div class="col-sm-1"></div>
+                    <div class="col-sm-1 col-xs-12 t-center p-0">
+                      <% if oi.product_variation %>
+                        <label for="variation_<%= oi.id %>" class="variation_details">
+                          Detalles
+                          <i class="fas fa-caret-down"></i>
+                        </label>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="col-xs-12 px-26">
+                    <div class="table__item row middle-xs">
+                      <% if oi.product_variation %>
+                        <input type="checkbox" id="variation_<%= oi.id %>" class="toggle_variations d-none"/>
+                        <table class="table_details table_details--underlined w-100 variations">
+                          <tbody>
+                            <% oi.product_variation.data['attribute_combinations'].each do |attr_comb| %>
+                              <tr>
+                                <td class="table_details__descriptor"><%= attr_comb['name'] %>:</td>
+                                <td class="table_details__value"><%= attr_comb['value_name'] %></td>
+                              </tr>
+                            <% end %>
+                          </tbody>
+                        </table>
+                      <% end %>
+                    </div>
                   </div>
                 <% end %>
               </div>

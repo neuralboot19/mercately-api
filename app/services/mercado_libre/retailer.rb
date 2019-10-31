@@ -17,7 +17,10 @@ module MercadoLibre
       url = prepare_retailer_update_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      return @meli_retailer if response['error'].present? || response['message']&.[]('error').present?
+      if response['error'].present? || response['message']&.[]('error').present?
+        @meli_retailer.update(meli_user_active: false) if response['message']&.downcase == 'user not active'
+        return @meli_retailer
+      end
 
       save_retailer(response['identification'], response['address'], response['phone'])
       update_meli_retailer(

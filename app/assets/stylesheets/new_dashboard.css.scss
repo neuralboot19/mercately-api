@@ -210,7 +210,7 @@
   }
 
   &__actions {
-    a, label {
+    label {
       text-decoration: none;
       margin-left: 12px;
       color: #000;
@@ -531,7 +531,7 @@
   }
 }
 
-.order_items {
+.order_items, .variations {
   display: none;
   background-color: #F5F5FA;
   padding-bottom: 20px;
@@ -542,7 +542,11 @@
   display: block;
 }
 
-@media screen and (min-height: 750px) {
+.toggle_variations:checked + .variations {
+  display: table;
+}
+
+@media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {
       &__step {
@@ -660,6 +664,11 @@
 
   .product {
     padding: 0 8px;
+  }
+
+  .variation_details {
+    transform: translateY(12px);
+    display: inline-block;
   }
 }
 

@@ -154,8 +154,8 @@ module MercadoLibre
       }.to_json
     end
 
-    def assign_product(product, product_info, retailer, category, new_product)
-      if new_product
+    def assign_product(product, product_info, retailer, category, new_product_with_parent)
+      if new_product_with_parent
         product.meli_product_id = product_info['id']
         product.status = 'active'
       end
@@ -177,6 +177,7 @@ module MercadoLibre
       product.meli_permalink = product_info['permalink']
       product.ml_attributes = product_info['attributes']
       product.meli_status = product_info['status']
+      product.from = 'mercadolibre'
       product.retailer = retailer
 
       if product_info['status'] == 'closed'
@@ -198,6 +199,11 @@ module MercadoLibre
 
     def include_change_before_bids(product)
       (product.sold_quantity.blank? || product.sold_quantity.zero?) && product.include_before_bids_info?
+    end
+
+    def new_product_has_parent?(product, product_info)
+      product.new_record? && product_info['parent_item_id'].present? &&
+        Product.exists?(meli_product_id: product_info['parent_item_id'])
     end
   end
 end

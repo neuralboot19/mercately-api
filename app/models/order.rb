@@ -80,7 +80,7 @@ class Order < ApplicationRecord
     end
 
     def set_positive_rating
-      self.feedback_rating = 'positive' if status == 'success'
+      self.feedback_rating = 'positive' if status == 'success' && meli_order_id
     end
 
     # TODO: Necesita refactorizacion

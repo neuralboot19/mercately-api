@@ -2,10 +2,10 @@
 http_interactions:
 - request:
     method: put
-    uri: https://api.mercadolibre.com/items/MEC422857056/?access_token=APP_USR-8747693575261051-102415-e556ce0bc1ca600d241f9ad3c2d8d637-471889087
+    uri: https://api.mercadolibre.com/items/MEC422969340/?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
     body:
       encoding: UTF-8
-      string: '{"title":"Goliath","variations":[],"attributes":[],"pictures":[{"id":"756737-MEC32647573252_102019"}],"price":88.01,"available_quantity":50,"category_id":"MEC1368","condition":"new"}'
+      string: '{"title":"Energy Spirit","variations":[],"attributes":[],"pictures":[{"id":"972578-MEC32719764111_102019"}],"price":82.09,"available_quantity":50,"category_id":"MEC1368","condition":"used"}'
     headers:
       User-Agent:
       - Faraday v0.15.4
@@ -27,23 +27,27 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 24 Oct 2019 19:42:26 GMT
+      - Thu, 31 Oct 2019 13:58:45 GMT
       Cache-Control:
       - max-age=0
       Etag:
-      - 80a125e5976c491daf684ef7142e590d
+      - ea36a305efd7e9454bbb08e252dc9d23
       Location:
-      - https://api.mercadolibre.com/items/MEC422857056
+      - https://api.mercadolibre.com/items/MEC422969340
       Vary:
       - Accept,Accept-Encoding,Accept-Encoding
       X-Api-Name:
       - syi-api
       X-Api-Version:
       - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - write
       X-Content-Type-Options:
       - nosniff
       X-Request-Id:
-      - 470b3f7c-2126-4bc9-907f-44541db53cef
+      - f0c23dfd-570a-4fc7-a5dd-d39d710e76c0
       X-Frame-Options:
       - DENY
       X-Xss-Protection:
@@ -59,24 +63,24 @@ http_interactions:
       X-Cache:
       - Miss from cloudfront
       Via:
-      - 1.1 a849aab265796f3b1c80dee87a056b44.cloudfront.net (CloudFront)
+      - 1.1 bcec2af1292d9c0b4f260b053b14730c.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
-      - MIA3-C1
+      - MIA3-C2
       X-Amz-Cf-Id:
-      - fJKk43A4bSA-V1nYJ2T4ot4CtdVJRDuQ_3eLvSZddwCFGEuWtswAlw==
+      - AR_vPyUFCjG8YXh32c24w1axSzCC3BOto3lffJjCWYLJGrUjXOX-HQ==
     body:
       encoding: ASCII-8BIT
       string: !binary |-
-        eyJpZCI6Ik1FQzQyMjg1NzA1NiIsInNpdGVfaWQiOiJNRUMiLCJ0aXRsZSI6IkdvbGlhdGgiLCJzdWJ0aXRsZSI6bnVsbCwic2VsbGVyX2lkIjo0NzE4ODkwODcsImNhdGVnb3J5X2lkIjoiTUVDMTM2OCIsIm9mZmljaWFsX3N0b3JlX2lkIjpudWxsLCJwcmljZSI6ODguMDEsImJhc2VfcHJpY2UiOjg4LjAxLCJvcmlnaW5hbF9wcmljZSI6bnVsbCwiaW52ZW50b3J5X2lkIjpudWxsLCJjdXJyZW5jeV9pZCI6IlVTRCIsImluaXRpYWxfcXVhbnRpdHkiOjUwLCJhdmFpbGFibGVfcXVhbnRpdHkiOjUwLCJzb2xkX3F1YW50aXR5IjowLCJzYWxlX3Rlcm1zIjpbXSwiYnV5aW5nX21vZGUiOiJidXlfaXRfbm93IiwibGlzdGluZ190eXBlX2lkIjoiZnJlZSIsInN0YXJ0X3RpbWUiOiIyMDE5LTEwLTI0VDE3OjMzOjE0LjAwMFoiLCJzdG9wX3RpbWUiOiIyMDE5LTEyLTIzVDA0OjAwOjAwLjAwMFoiLCJlbmRfdGltZSI6IjIwMTktMTItMjNUMDQ6MDA6MDAuMDAwWiIsImV4cGlyYXRpb25fdGltZSI6bnVsbCwiY29uZGl0aW9uIjoibmV3IiwicGVybWFsaW5rIjoiaHR0cDovL2FydGljdWxvLm1lcmNhZG9saWJyZS5jb20uZWMvTUVDLTQyMjg1NzA1Ni1nb2xpYXRoLV9KTSIsInBpY3R1cmVzIjpbeyJpZCI6Ijc1NjczNy1NRUMzMjY0NzU3MzI1Ml8xMDIwMTkiLCJ1cmwiOiJodHRwOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzc1NjczNy1NRUMzMjY0NzU3MzI1Ml8xMDIwMTktTy5qcGciLCJzZWN1cmVfdXJsIjoiaHR0cHM6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vNzU2NzM3LU1FQzMyNjQ3NTczMjUyXzEwMjAxOS1PLmpwZyIsInNpemUiOiI1MDB4NTAwIiwibWF4X3NpemUiOiI1MDB4NTAwIiwicXVhbGl0eSI6IiJ9XSwidmlkZW9faWQiOm51bGwsImRlc2NyaXB0aW9ucyI6W3siaWQiOiJNRUM0MjI4NTcwNTYtMjM1NjM0NzA2MyJ9XSwiYWNjZXB0c19tZXJjYWRvcGFnbyI6ZmFsc2UsIm5vbl9tZXJjYWRvX3BhZ29fcGF5bWVudF9tZXRob2RzIjpbXSwic2hpcHBpbmciOnsibW9kZSI6Im5vdF9zcGVjaWZpZWQiLCJsb2NhbF9waWNrX3VwIjpmYWxzZSwiZnJlZV9zaGlwcGluZyI6ZmFsc2UsIm1ldGhvZHMiOltdLCJkaW1lbnNpb25zIjpudWxsLCJ0YWdzIjpbXSwibG9naXN0aWNfdHlwZSI6Im5vdF9zcGVjaWZpZWQiLCJzdG9yZV9waWNrX3VwIjpmYWxzZX0sImludGVybmF0aW9uYWxfZGVsaXZlcnlfbW9kZSI6Im5vbmUiLCJzZWxsZXJfYWRkcmVzcyI6eyJpZCI6MTA2NTc5MzgwMSwiY29tbWVudCI6IiIsImFkZHJlc3NfbGluZSI6IlRlc3QgQWRkcmVzcyAxMjMiLCJ6aXBfY29kZSI6IiIsImNpdHkiOnsiaWQiOiIiLCJuYW1lIjoiUXVpdG8ifSwic3RhdGUiOnsiaWQiOiJFQy1QIiwibmFtZSI6IlBpY2hpbmNoYSAoIFF1aXRvICkifSwiY291bnRyeSI6eyJpZCI6IkVDIiwibmFtZSI6IkVjdWFkb3IifSwibGF0aXR1ZGUiOiIiLCJsb25naXR1ZGUiOiIiLCJzZWFyY2hfbG9jYXRpb24iOnsibmVpZ2hib3Job29kIjp7ImlkIjoiIiwibmFtZSI6IiJ9LCJjaXR5Ijp7ImlkIjoiIiwibmFtZSI6IiJ9LCJzdGF0ZSI6eyJpZCI6IiIsIm5hbWUiOiIifX19LCJzZWxsZXJfY29udGFjdCI6bnVsbCwibG9jYXRpb24iOnt9LCJnZW9sb2NhdGlvbiI6eyJsYXRpdHVkZSI6IiIsImxvbmdpdHVkZSI6IiJ9LCJjb3ZlcmFnZV9hcmVhcyI6W10sImF0dHJpYnV0ZXMiOlt7ImlkIjoiSVRFTV9DT05ESVRJT04iLCJuYW1lIjoiQ29uZGljacOzbiBkZWwgw610ZW0iLCJ2YWx1ZV9pZCI6IjIyMzAyODQiLCJ2YWx1ZV9uYW1lIjoiTnVldm8iLCJ2YWx1ZV9zdHJ1Y3QiOm51bGwsInZhbHVlcyI6W3siaWQiOiIyMjMwMjg0IiwibmFtZSI6Ik51ZXZvIiwic3RydWN0IjpudWxsfV0sImF0dHJpYnV0ZV9ncm91cF9pZCI6IiIsImF0dHJpYnV0ZV9ncm91cF9uYW1lIjoiIn1dLCJ3YXJuaW5ncyI6W3siZGVwYXJ0bWVudCI6InNoaXBwaW5nIiwiY2F1c2VfaWQiOjQwMDAsImNvZGUiOiJmcmVlX3NoaXBwaW5nIiwibWVzc2FnZSI6IkZyZWUgc2hpcHBpbmcgYWxsb3dlZCAoJ2FsbF9jb3VudHJ5JykgZm9yICdub3Rfc3BlY2lmaWVkJyBtb2RlIHdoZW4gJ21lMicgaXMgbm90IGF2YWlsYWJsZSIsInJlZmVyZW5jZXMiOlsiY2F0YWxvZ19zaGlwcGluZ19wcmVmZXJlbmNlcyJdfSx7ImRlcGFydG1lbnQiOiJzaGlwcGluZyIsImNhdXNlX2lkIjo0MDIxLCJjb2RlIjoibm9fbWVfYXZhaWxhYmxlIiwibWVzc2FnZSI6IlVzZXIvQ2F0YWxvZyBzaGlwcGluZyBwcmVmZXJlbmNlcyBkbyBub3Qgb2ZmZXIgTUUsIGVuYWJsaW5nICdub3Rfc3BlY2lmaWVkJyBtb2RlIiwicmVmZXJlbmNlcyI6WyJ1c2VyX3NoaXBwaW5nX3ByZWZlcmVuY2VzIiwiY2F0YWxvZ19zaGlwcGluZ19wcmVmZXJlbmNlcyJdfSx7ImRlcGFydG1lbnQiOiJzaGlwcGluZyIsImNhdXNlX2lkIjo0MDE3LCJjb2RlIjoibm9fbWVfYXZhaWxhYmxlIiwibWVzc2FnZSI6IlVzZXIvQ2F0YWxvZyBzaGlwcGluZyBwcmVmZXJlbmNlcyBkbyBub3Qgb2ZmZXIgTUUsIGVuYWJsaW5nICdjdXN0b20nIG1vZGUiLCJyZWZlcmVuY2VzIjpbInVzZXJfc2hpcHBpbmdfcHJlZmVyZW5jZXMiLCJjYXRhbG9nX3NoaXBwaW5nX3ByZWZlcmVuY2VzIl19XSwibGlzdGluZ19zb3VyY2UiOiIiLCJ2YXJpYXRpb25zIjpbXSwidGh1bWJuYWlsIjoiaHR0cDovL21lYy1zMS1wLm1sc3RhdGljLmNvbS83NTY3MzctTUVDMzI2NDc1NzMyNTJfMTAyMDE5LUkuanBnIiwic2VjdXJlX3RodW1ibmFpbCI6Imh0dHBzOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzc1NjczNy1NRUMzMjY0NzU3MzI1Ml8xMDIwMTktSS5qcGciLCJzdGF0dXMiOiJhY3RpdmUiLCJzdWJfc3RhdHVzIjpbXSwidGFncyI6WyJ0ZXN0X2l0ZW0iXSwid2FycmFudHkiOm51bGwsImNhdGFsb2dfcHJvZHVjdF9pZCI6bnVsbCwiZG9tYWluX2lkIjpudWxsLCJzZWxsZXJfY3VzdG9tX2ZpZWxkIjpudWxsLCJwYXJlbnRfaXRlbV9pZCI6bnVsbCwiZGlmZmVyZW50aWFsX3ByaWNpbmciOm51bGwsImRlYWxfaWRzIjpbXSwiYXV0b21hdGljX3JlbGlzdCI6ZmFsc2UsImRhdGVfY3JlYXRlZCI6IjIwMTktMTAtMjRUMTc6MzM6MTQuMDAwWiIsImxhc3RfdXBkYXRlZCI6IjIwMTktMTAtMjRUMTk6NDI6MjYuNTA4WiIsImhlYWx0aCI6bnVsbCwiY2F0YWxvZ19saXN0aW5nIjpmYWxzZSwiaXRlbV9yZWxhdGlvbnMiOltdfQ==
+        eyJpZCI6Ik1FQzQyMjk2OTM0MCIsInNpdGVfaWQiOiJNRUMiLCJ0aXRsZSI6IkVuZXJneSBTcGlyaXQiLCJzdWJ0aXRsZSI6bnVsbCwic2VsbGVyX2lkIjo0MjU5MzM1NDksImNhdGVnb3J5X2lkIjoiTUVDMTM2OCIsIm9mZmljaWFsX3N0b3JlX2lkIjpudWxsLCJwcmljZSI6ODIuMDksImJhc2VfcHJpY2UiOjgyLjA5LCJvcmlnaW5hbF9wcmljZSI6bnVsbCwiaW52ZW50b3J5X2lkIjpudWxsLCJjdXJyZW5jeV9pZCI6IlVTRCIsImluaXRpYWxfcXVhbnRpdHkiOjUwLCJhdmFpbGFibGVfcXVhbnRpdHkiOjUwLCJzb2xkX3F1YW50aXR5IjowLCJzYWxlX3Rlcm1zIjpbXSwiYnV5aW5nX21vZGUiOiJidXlfaXRfbm93IiwibGlzdGluZ190eXBlX2lkIjoiZnJlZSIsInN0YXJ0X3RpbWUiOiIyMDE5LTEwLTMxVDEzOjM5OjE1LjAwMFoiLCJzdG9wX3RpbWUiOiIyMDE5LTEyLTMwVDA0OjAwOjAwLjAwMFoiLCJlbmRfdGltZSI6IjIwMTktMTItMzBUMDQ6MDA6MDAuMDAwWiIsImV4cGlyYXRpb25fdGltZSI6bnVsbCwiY29uZGl0aW9uIjoidXNlZCIsInBlcm1hbGluayI6Imh0dHA6Ly9hcnRpY3Vsby5tZXJjYWRvbGlicmUuY29tLmVjL01FQy00MjI5NjkzNDAtZW5lcmd5LXNwaXJpdC1fSk0iLCJwaWN0dXJlcyI6W3siaWQiOiI5NzI1NzgtTUVDMzI3MTk3NjQxMTFfMTAyMDE5IiwidXJsIjoiaHR0cDovL21lYy1zMS1wLm1sc3RhdGljLmNvbS85NzI1NzgtTUVDMzI3MTk3NjQxMTFfMTAyMDE5LU8uanBnIiwic2VjdXJlX3VybCI6Imh0dHBzOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTktTy5qcGciLCJzaXplIjoiNTAweDUwMCIsIm1heF9zaXplIjoiNTAweDUwMCIsInF1YWxpdHkiOiIifV0sInZpZGVvX2lkIjpudWxsLCJkZXNjcmlwdGlvbnMiOlt7ImlkIjoiTUVDNDIyOTY5MzQwLTIzNjczMDY0MTgifV0sImFjY2VwdHNfbWVyY2Fkb3BhZ28iOmZhbHNlLCJub25fbWVyY2Fkb19wYWdvX3BheW1lbnRfbWV0aG9kcyI6W10sInNoaXBwaW5nIjp7Im1vZGUiOiJub3Rfc3BlY2lmaWVkIiwibG9jYWxfcGlja191cCI6ZmFsc2UsImZyZWVfc2hpcHBpbmciOmZhbHNlLCJtZXRob2RzIjpbXSwiZGltZW5zaW9ucyI6bnVsbCwidGFncyI6W10sImxvZ2lzdGljX3R5cGUiOiJub3Rfc3BlY2lmaWVkIiwic3RvcmVfcGlja191cCI6ZmFsc2V9LCJpbnRlcm5hdGlvbmFsX2RlbGl2ZXJ5X21vZGUiOiJub25lIiwic2VsbGVyX2FkZHJlc3MiOnsiaWQiOjEwMzI4MTY4MTIsImNvbW1lbnQiOiIiLCJhZGRyZXNzX2xpbmUiOiJUZXN0IEFkZHJlc3MgMTIzIiwiemlwX2NvZGUiOiIiLCJjaXR5Ijp7ImlkIjoiIiwibmFtZSI6IlF1aXRvIn0sInN0YXRlIjp7ImlkIjoiRUMtUCIsIm5hbWUiOiJQaWNoaW5jaGEgKCBRdWl0byApIn0sImNvdW50cnkiOnsiaWQiOiJFQyIsIm5hbWUiOiJFY3VhZG9yIn0sImxhdGl0dWRlIjoiIiwibG9uZ2l0dWRlIjoiIiwic2VhcmNoX2xvY2F0aW9uIjp7Im5laWdoYm9yaG9vZCI6eyJpZCI6IiIsIm5hbWUiOiIifSwiY2l0eSI6eyJpZCI6IiIsIm5hbWUiOiIifSwic3RhdGUiOnsiaWQiOiIiLCJuYW1lIjoiIn19fSwic2VsbGVyX2NvbnRhY3QiOm51bGwsImxvY2F0aW9uIjp7fSwiZ2VvbG9jYXRpb24iOnsibGF0aXR1ZGUiOiIiLCJsb25naXR1ZGUiOiIifSwiY292ZXJhZ2VfYXJlYXMiOltdLCJhdHRyaWJ1dGVzIjpbeyJpZCI6IklURU1fQ09ORElUSU9OIiwibmFtZSI6IkNvbmRpY2nDs24gZGVsIMOtdGVtIiwidmFsdWVfaWQiOiIyMjMwNTgxIiwidmFsdWVfbmFtZSI6IlVzYWRvIiwidmFsdWVfc3RydWN0IjpudWxsLCJ2YWx1ZXMiOlt7ImlkIjoiMjIzMDU4MSIsIm5hbWUiOiJVc2FkbyIsInN0cnVjdCI6bnVsbH1dLCJhdHRyaWJ1dGVfZ3JvdXBfaWQiOiIiLCJhdHRyaWJ1dGVfZ3JvdXBfbmFtZSI6IiJ9XSwid2FybmluZ3MiOltdLCJsaXN0aW5nX3NvdXJjZSI6IiIsInZhcmlhdGlvbnMiOltdLCJ0aHVtYm5haWwiOiJodHRwOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTktSS5qcGciLCJzZWN1cmVfdGh1bWJuYWlsIjoiaHR0cHM6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTcyNTc4LU1FQzMyNzE5NzY0MTExXzEwMjAxOS1JLmpwZyIsInN0YXR1cyI6ImFjdGl2ZSIsInN1Yl9zdGF0dXMiOltdLCJ0YWdzIjpbInRlc3RfaXRlbSJdLCJ3YXJyYW50eSI6bnVsbCwiY2F0YWxvZ19wcm9kdWN0X2lkIjpudWxsLCJkb21haW5faWQiOm51bGwsInNlbGxlcl9jdXN0b21fZmllbGQiOm51bGwsInBhcmVudF9pdGVtX2lkIjpudWxsLCJkaWZmZXJlbnRpYWxfcHJpY2luZyI6bnVsbCwiZGVhbF9pZHMiOltdLCJhdXRvbWF0aWNfcmVsaXN0IjpmYWxzZSwiZGF0ZV9jcmVhdGVkIjoiMjAxOS0xMC0zMVQxMzozOToxNS4wMDBaIiwibGFzdF91cGRhdGVkIjoiMjAxOS0xMC0zMVQxMzo1ODo0NS44NDZaIiwiaGVhbHRoIjpudWxsLCJjYXRhbG9nX2xpc3RpbmciOmZhbHNlLCJpdGVtX3JlbGF0aW9ucyI6W119
     http_version: 
-  recorded_at: Thu, 24 Oct 2019 19:42:26 GMT
+  recorded_at: Thu, 31 Oct 2019 13:58:45 GMT
 - request:
     method: put
-    uri: https://api.mercadolibre.com/items/MEC422857056/description?access_token=APP_USR-8747693575261051-102415-e556ce0bc1ca600d241f9ad3c2d8d637-471889087
+    uri: https://api.mercadolibre.com/items/MEC422969340/description?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
     body:
       encoding: UTF-8
-      string: '{"plain_text":"Aut explicabo voluptatem. Natus et autem. Cum deleniti
-        itaque."}'
+      string: '{"plain_text":"Voluptatem explicabo vero. Velit officia voluptas. Aut
+        accusamus sit."}'
     headers:
       User-Agent:
       - Faraday v0.15.4
@@ -98,21 +102,25 @@ http_interactions:
       Connection:
       - keep-alive
       Date:
-      - Thu, 24 Oct 2019 19:42:27 GMT
+      - Thu, 31 Oct 2019 13:58:46 GMT
       Cache-Control:
       - max-age=0
       Etag:
-      - 0e271ae5dd9f85dc1d84a1202f9fea65
+      - 40c2708b56568c4fec0bbd8d57413fe7
       Vary:
       - Accept,Accept-Encoding,Accept-Encoding
       X-Api-Name:
       - syi-api
       X-Api-Version:
       - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - write
       X-Content-Type-Options:
       - nosniff
       X-Request-Id:
-      - 0c4e3400-fbd1-4f17-94b1-8d73c9f8236a
+      - fdad0b9b-b5d4-4e6d-b5f0-165842124741
       X-Frame-Options:
       - DENY
       X-Xss-Protection:
@@ -128,15 +136,15 @@ http_interactions:
       X-Cache:
       - Miss from cloudfront
       Via:
-      - 1.1 bc5ca942c588917a31bb32f85c8bfee5.cloudfront.net (CloudFront)
+      - 1.1 6492b42e2fc3684cc00b54d685c2328c.cloudfront.net (CloudFront)
       X-Amz-Cf-Pop:
-      - MIA3-C1
+      - MIA3-C2
       X-Amz-Cf-Id:
-      - ZHuIaaO6doFwJSWUQFftlZLxoLVlXpcWY22cTsmcaE59jv4oqXRgqA==
+      - CW--BapoaXRQecYwSVp6TYiP3UtFTJoBed11O4zBgWQjAGiI5peXnQ==
     body:
       encoding: ASCII-8BIT
-      string: '{"text":null,"plain_text":"Aut explicabo voluptatem. Natus et autem.
-        Cum deleniti itaque.","last_updated":"2019-10-24T19:42:27.087Z","date_created":"2019-10-24T17:33:14.000Z"}'
+      string: '{"text":null,"plain_text":"Voluptatem explicabo vero. Velit officia
+        voluptas. Aut accusamus sit.","last_updated":"2019-10-31T13:58:46.292Z","date_created":"2019-10-31T13:39:15.000Z"}'
     http_version: 
-  recorded_at: Thu, 24 Oct 2019 19:42:27 GMT
+  recorded_at: Thu, 31 Oct 2019 13:58:46 GMT
 recorded_with: VCR 5.0.0

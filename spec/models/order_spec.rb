@@ -162,10 +162,33 @@ RSpec.describe Order, type: :model do
   end
 
   describe '#set_positive_rating' do
-    it 'before save assigns positive value to feedback rating when the order pass to success status' do
-      order.save
-      order.update(status: 'success')
-      expect(order.feedback_rating).to eq('positive')
+    context 'when the order does not come from ML' do
+      it 'before save assigns positive value to feedback rating when the order pass to success status' do
+        order.status = 'success'
+        order.save
+        expect(order.feedback_rating).to be_nil
+      end
+    end
+
+    context 'when the order comes from ML' do
+      let(:product) { create(:product, retailer: retailer) }
+      let(:set_orders_service) { instance_double(MercadoLibre::Orders) }
+
+      before do
+        create(:order_item, :from_ml, order: order, product: product)
+
+        allow(set_orders_service).to receive(:push_feedback)
+          .and_return('Successfully pushed')
+        allow(MercadoLibre::Orders).to receive(:new).with(retailer)
+          .and_return(set_orders_service)
+      end
+
+      it 'before save assigns positive value to feedback rating when the order pass to success status' do
+        order.meli_order_id = '123456789'
+        order.status = 'success'
+        order.save
+        expect(order.feedback_rating).to eq('positive')
+      end
     end
   end
 

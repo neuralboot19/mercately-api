@@ -60,7 +60,7 @@ module MercadoLibre
       product = Product.create_with(
         title: product_info['title'],
         subtitle: product_info['subtitle'],
-        description: description['plain_text'],
+        description: description&.[]('plain_text'),
         category_id: category.id,
         price: product_info['price'],
         base_price: product_info['base_price'],
@@ -80,6 +80,7 @@ module MercadoLibre
         meli_status: product_info['status'],
         incoming_variations: product_info['variations'],
         incoming_images: product_info['pictures'],
+        from: 'mercadolibre',
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -96,10 +97,10 @@ module MercadoLibre
 
     def update(product_info)
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
-      new_product = product.new_record? && product_info['parent_item_id'].present?
+      new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
       product = Product.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
-        new_product
+        new_product_with_parent
 
       product.with_lock do
         return if product_info['status'] == 'closed' &&
@@ -107,12 +108,12 @@ module MercadoLibre
 
         category = @ml_categories.import_category(product_info['category_id'])
 
-        product = @utility.assign_product(product, product_info, @retailer, category, new_product)
+        product = @utility.assign_product(product, product_info, @retailer, category, new_product_with_parent)
         product.incoming_images = product_info['pictures']
         product.incoming_variations = product_info['variations']
         product.save!
 
-        after_save_data(product, product_info, new_product)
+        after_save_data(product, product_info, new_product_with_parent)
       end
 
       product
@@ -124,12 +125,10 @@ module MercadoLibre
       url = @api.get_product_url product_id
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      url = @api.get_product_description_url(product_id)
-      conn = Connection.prepare_connection(url)
-      response = response.merge(Connection.get_request(conn))
+      description = import_product_description(response)
+      response = response.merge(description) if [nil, 201].include? description['status']
 
-      return if response.blank? ||
-                response['error'].present?
+      return if response.blank? || response['error'].present?
 
       product = update(response)
       @product_publish.automatic_re_publish(product)
@@ -187,13 +186,13 @@ module MercadoLibre
         product.update(main_picture_id: attach_id) if attach_id.present?
       end
 
-      def after_save_data(product, product_info, new_product)
-        @product_variations.save_variations(product, product_info['variations'], new_product) if
+      def after_save_data(product, product_info, new_product_with_parent)
+        @product_variations.save_variations(product, product_info['variations'], new_product_with_parent) if
           product_info['variations'].present?
 
         pull_images(product, product_info['pictures'])
 
-        @ml_questions.import_inherited_questions(product) if new_product
+        @ml_questions.import_inherited_questions(product) if new_product_with_parent
       end
   end
 end
