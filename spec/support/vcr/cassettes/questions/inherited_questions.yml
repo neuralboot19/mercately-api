@@ -1,0 +1,525 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/questions/search?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549&item_id=MEC422883419&status=UNANSWERED
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: ''
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:16 GMT
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - 6b8a73ee2a7fab6a66bc140881c813b0
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - c0e502f8-9c36-42f5-a4ed-b0434eae177e
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 25b95623f59f480df4da817436ff780e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ATL52-C1
+      X-Amz-Cf-Id:
+      - JU8_8FZ2pQxo-iXdJNV6sixwrE-EG_IyucsPE9O4ISlyTvKJ4ZLgpQ==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"total":8,"limit":50,"questions":[{"date_created":"2019-06-23T17:36:34.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"11","id":6364389535,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}},{"date_created":"2019-06-23T17:35:54.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"10","id":6364388956,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}},{"date_created":"2019-06-23T17:33:47.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"staging
+        callbacks","id":6364387255,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}},{"date_created":"2019-06-23T17:31:12.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"9","id":6364385052,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}},{"date_created":"2019-06-23T17:29:56.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"staging
+        funciona?","id":6364184096,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}},{"date_created":"2019-06-23T17:03:35.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"3","id":6364162199,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}},{"date_created":"2019-06-23T17:02:25.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"6","id":6364161160,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}},{"date_created":"2019-06-23T16:49:13.000-04:00","item_id":"MEC422883419","seller_id":425933549,"status":"UNANSWERED","text":"pregunta
+        5","id":6364208848,"deleted_from_listing":false,"hold":false,"answer":null,"from":{"id":425935489,"answered_questions":0}}],"filters":{"limit":50,"offset":0,"is_admin":false,"sorts":[],"caller":425933549,"item":"MEC422883419","status":"UNANSWERED"},"available_filters":[{"id":"from","name":"From
+        user id","type":"number"},{"id":"seller","name":"Seller id","type":"number"},{"id":"totalDivisions","name":"total
+        divisions","type":"number"},{"id":"division","name":"Division","type":"number"},{"id":"status","name":"Status","type":"text","values":["ANSWERED","BANNED","CLOSED_UNANSWERED","DELETED","DISABLED","UNDER_REVIEW"]}],"available_sorts":["item_id","from_id","date_created","seller_id"]}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:16 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:17 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 7966a99c-fc08-431a-9ea1-e61db588920e
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 2e64bfcf816a8e21d7a195ce14013214.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ATL52-C1
+      X-Amz-Cf-Id:
+      - xuFZTSgVyIKeh77uaM3rmvtM1BUhdyca7oKAfYzYc-29rKtge3lXZA==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:17 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:18 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 561adb3f-3780-4dcb-b0d9-87141820b7fa
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 3a4361e2c1007be46e48ba14c0942f55.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ATL50-C1
+      X-Amz-Cf-Id:
+      - 9YR6UOqvQf-NNEHEv8XdxKSFmhTZQxxpzf4V9m3OkmbUthDSpMKORQ==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:18 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:18 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - a7ac657e-961b-4a0a-a89c-da11ae281cac
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 ef571e66c5038660a5b767dcaa4205a4.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - KxzKDBks8JV7wBgq57QWnS0LE_GrwQO1XZbL5K-siBvP4hOs2EDszw==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:18 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:19 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 3d0abf98-d8d0-4818-b5ab-c4ca2f00d752
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 429fb4e05d6db25afd75d7eb9f5fa85d.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - rwhWRD8eFX-_1FQoGcQ5pg0ECMK0TQKYeRSQB7FYipXqcii9iEgk1g==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:19 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:19 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 7354f6bd-83f8-4d16-b0dc-b118b8cc3d19
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 09a3a87bb230705aa4b10e3b815c5d9e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - ZHVkbLLVHwXuW-tMLXPs6agU1TwiNcE3yVGmsCeuIp34EviEahk_AA==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:19 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:20 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - f69cbce5-b560-430d-8420-659023a045c7
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 80677c288b4024a45c671874b4fa625a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - KUk4VQTbKp4gPTIl-27uVnNN-OVJw2jTPSC6Ir2JogKr6hhlEE73-Q==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:20 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:20 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - b460c67a-1ac6-41f8-8eec-f83bbd0e0701
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 4b55539e55239f4c2ab64bc16c112d4f.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - SyhliwN3t58w7EZfssC9hKbG7p_PJpIzVbPm55GDw08KNRCIsvBFSQ==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:20 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 18:45:21 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 8d244969-b31c-4c8f-a7f3-9effbf74352b
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 b3ca1a7752327aa687a6611c7f28951e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C1
+      X-Amz-Cf-Id:
+      - j8Ur7VGxSWH70QdlPswVmr9PZIZ1h14ill7ZbbD8oGzNWa_DbNoE0g==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 18:45:21 GMT
+recorded_with: VCR 5.0.0

@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :meli_retailer do
     retailer
-    access_token { 'APP_USR-8515522317464897-102919-8c427f047480b1d0c80321ce26dd60f5-425933549' }
+    access_token { 'APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549' }
     refresh_token { Faker::Internet.uuid }
     nickname { Faker::Internet.username }
     email { Faker::Internet.email }
