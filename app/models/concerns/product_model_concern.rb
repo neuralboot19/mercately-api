@@ -43,10 +43,28 @@ module ProductModelConcern
   # el producto
   def all_images_deleted?
     total = 0
-    deleted_images&.each do
-      total += 1
+    deleted_images&.each do |img|
+      total += 1 if img[1].present?
     end
 
     total == images.size
+  end
+
+  # Chequea si la foto principal es requerida
+  def main_image_present?
+    if new_record?
+      return main_image.blank? && incoming_images.present?
+    else
+      return main_image.blank? && old_main_image_deleted?
+    end
+  end
+
+  # Chequea si la actual foto principal sera eliminada
+  def old_main_image_deleted?
+    deleted_images&.each do |img|
+      return true if img[1].to_i == main_picture_id
+    end
+
+    false
   end
 end

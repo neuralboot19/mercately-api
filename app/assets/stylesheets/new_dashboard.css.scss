@@ -255,7 +255,7 @@
   }
 }
 
-#uploadedImages {
+.uploadedImages {
   position: absolute;
   width: 100%;
   height: 200px;
@@ -269,12 +269,17 @@
 .uploader {
     position: relative; 
     overflow: hidden; 
-    width: 100%; 
-    height: 50px;
-    background: #B4D0E7;
-    border: 2px dashed #057AF5;
+    width: 105px;
+    height: 105px !important;
+    border: 2px dashed #AAA;
     margin-bottom: 8px;
     margin-top: 8px;
+    padding-top: 12px;
+
+    &.one-more {
+      border: 2px dashed $secondary-color;
+      cursor: pointer;
+    }
 }
 
 .img_preview {
@@ -298,6 +303,7 @@
 
 .variations-container-title {
   margin-top: 0px !important;
+  margin-bottom: 20px;
   
   h2 {
     font-size: 18px;
@@ -326,38 +332,20 @@
   }
 }
 
-.edit-card {
-  height: 200px;
-  border: 1px solid gray;
-  position: relative;
-  margin-bottom: 30px;
+.preview_holder {
+  width: 109px;
+  height: 121px;
+  border: 1px solid #AAA;
+}
 
-  .image-tag {
-    width: 100%;
-    height: 100%;
-  }
+.delete-icon {
+  position: absolute;
+  width: 20px;
+  right: 5px;
+  top: 12px;
 
-  .delete-icon {
-    position: absolute;
-    width: 25px;
-    height: 25px;
-    margin-top: 10px;
-    right: 10px;
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  .main-image-text {
-    display: none;
-    margin: 0px;
-    text-align: center;
-    font-weight: bold;
-  
-    &:hover {
-      cursor: pointer;
-    }
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -366,9 +354,14 @@
 }
 
 .uploader-text {
-  color: #057AF5;
+  color: #AAA;
   z-index: 1;
   font-size: 12px;
+
+  &.one-more {
+    color: $secondary-color;
+    text-align: center;
+  }
 }
 
 .variations-label {

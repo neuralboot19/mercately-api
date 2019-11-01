@@ -80,7 +80,6 @@ function appendSelect(currentElement) {
         hideVariationTitle();
         hideVariationContainer();
         enableAvailableQuantity();
-        showUploader();
       }
 
       root.removeChild(select);
@@ -88,7 +87,6 @@ function appendSelect(currentElement) {
       hideVariationTitle();
       hideVariationContainer();
       enableAvailableQuantity();
-      showUploader();
 
       for(var child_position in child_categories) {
         opt = child_categories[child_position]
@@ -417,16 +415,6 @@ function getProduct() {
   });
 }
 
-function showUploader() {
-  var uploader = document.getElementById("uploaderImages");
-  uploader.className = "uploader center w-100 col-xs-12";
-}
-
-function hideUploader() {
-  var uploader = document.getElementById("uploaderImages");
-  uploader.className = "d-none";
-}
-
 function showVariationContainer(addTemplate) {
   var container = document.getElementById("variations-container");
   container.className = "row col-xs-12";
@@ -482,37 +470,35 @@ function enableAvailableQuantity() {
   inputAvailableQuantity.removeAttribute("title");
 }
 
-function removeImage(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  container = document.getElementById("image-gallery");
-  containerImage = document.getElementById(`image-container-${imageId}`);
-
-  newElement = document.createElement("input");
-  newElement.setAttribute("type", "hidden");
-  newElement.setAttribute("name", `product[delete_images][${posImage}]`);
-  newElement.setAttribute("id", `product_delete_images_${posImage}`);
-  newElement.setAttribute("value", `${imageId}`);
-  container.appendChild(newElement);
-
-  hiddenMainImage = document.getElementById("product_main_picture_id");
-  if (imageId === hiddenMainImage.value) {
-    hiddenMainImage.removeAttribute("value");
-  }
-
-  container.removeChild(containerImage);
-
-  posImage++;
+function removeImage(image, pos) {
+  console.log(pos);
+  $(`#preview_container_${pos}`).addClass('d-none-important');
+  $(`#container_image_${pos}`).removeClass('d-none-important');
+  $(`#product_images_${pos}`).val('');
 }
 
-function removeNewImage(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  container = document.getElementById("up_images");
-  containerImage = document.getElementById(`new-image-container-${imageId}`);
-  container.removeChild(containerImage);
+function removeLoadedImage(image, pos, id) {
+  if ($(`#product_delete_images_${pos}`).val()) {
+    $(`#preview_image_${pos}`).addClass('d-none-important');
+  } else {
+    $(`#image_${pos}`).addClass('d-none-important');
+  }
+  $(`#preview_container_${pos}`).addClass('d-none-important');
+  $(`#product_delete_images_${pos}`).val(id);
+  $(`#container_image_${pos}`).removeClass('d-none-important');
+  $(`#product_images_${pos}`).val('');
+}
 
-  hiddenMainImage = document.getElementById("new-main-image");
-  if (imageId === hiddenMainImage.value) {
-    hiddenMainImage.removeAttribute("value");
+function showImageLoader(input) {
+  id = input.id.replace('add_new_image_', '');
+  $(`#container_image_${id}`).removeClass('d-none-important');
+
+  var int = parseInt(id);
+  if (int === 9) {
+    $(input).addClass('d-none-important');
+  } else {
+    int++;
+    $(input).attr('id', `add_new_image_${int}`);
   }
 }
 
@@ -596,32 +582,19 @@ function hideNewMain(image) {
   }
 }
 
-var readURL = function(input) {
-  $('#up_images').empty();
-  hiddenMainImage = document.getElementById("new-main-image");
-  hiddenMainImage.removeAttribute("value");
-  $.each(input.files, function(value) {
+var readURL = function(input, pos) {
+  console.log(pos);
+  $(`#container_image_${pos}`).addClass('d-none-important');
+  $(`#preview_container_${pos}`).removeClass('d-none-important');
+  $(`#preview_image_${pos}`).removeClass('d-none-important');
+
+  if (input.files && input.files[0]) {
     var reader = new FileReader();
-    reader.onload = function (e) {
-      posNewImage++;
-      $('#up_images').prepend(
-        '<div id=' + 'new-image-container-' + posNewImage + ' class="col-xs-12 col-md-3 edit-card" onmouseover="showNewMain(this);" onmouseleave="hideNewMain(this);">' +
-        '<img id='+ 'delete-new-' + posNewImage + ' class="delete-icon" onclick="removeNewImage(this);" />' +
-        '<img id=new-image-' + posNewImage + ' src='+e.target.result+' data-index='+posNewImage+' class="image-tag" />' +
-        '<p class="main-image-text" id=' + 'main-new-image-' + posNewImage + ' onclick="setMainNewImage(this);">Foto principal</p>' +
-        '<input type="hidden" id=new-main-image-name-' + posNewImage + ' />' +
-        '</div>'
-      )
-
-      deleteImage = document.getElementById("delete-image");
-      deleteIcon = document.getElementById(`delete-new-${posNewImage}`);
-      deleteIcon.src = deleteImage.src;
-
-      element = document.getElementById(`new-main-image-name-${posNewImage}`);
-      element.setAttribute("value", `${input.files[value].name}`);
-    };
-    reader.readAsDataURL(input.files[value]);
-  });
+    reader.onload = function(e) {
+      $(`#preview_image_${pos}`).attr('src', e.target.result);
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
 }
 
 function updateMeliStatus(input) {
@@ -691,11 +664,5 @@ document.addEventListener("DOMContentLoaded", function() {
   if (productId) {
     originalCategoryId = document.getElementById("product_category_id").value;
     getProduct();
-
-    mainPictureId = document.getElementById('product_main_picture_id').value;
-    if (mainPictureId) {
-      mainImage = document.getElementById(`main-image-${mainPictureId}`);
-      mainImage.setAttribute("class", "main-image-text d-block");
-    }
   }
 });

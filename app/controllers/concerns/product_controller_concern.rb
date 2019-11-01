@@ -19,4 +19,8 @@ module ProductControllerConcern
       @product.images&.first
     end
   end
+
+  # Retorna la imagen seleccionada como principal
+  def get_main_image_from_params
+  end
 end

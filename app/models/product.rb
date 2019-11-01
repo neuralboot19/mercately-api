@@ -14,6 +14,7 @@ class Product < ApplicationRecord
   validate :images_count
   validate :check_variations
   validate :check_images
+  validate :check_main_image
 
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]
@@ -25,7 +26,7 @@ class Product < ApplicationRecord
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
 
-  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images
+  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image
 
   # TODO: move to service
   def update_ml(p_ml)
@@ -250,6 +251,11 @@ class Product < ApplicationRecord
     # Chequea las imagenes previo al guardado del producto
     def check_images
       errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.') if mandatory_images?
+    end
+
+    # Chequea si la imagen principal del producto esta presente
+    def check_main_image
+      errors.add(:base, 'Debe agregar una foto principal') if main_image_present?
     end
 
     def set_ml_products

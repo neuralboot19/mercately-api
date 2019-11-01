@@ -25,6 +25,7 @@ class Retailers::ProductsController < RetailersController
     @product.upload_product = convert_to_boolean(params[:product][:upload_product])
     @product.incoming_images = params[:product][:images]
     @product.incoming_variations = @variations
+    @product.main_image = @main_image_present
 
     unless @product.valid?
       render :new
@@ -52,6 +53,7 @@ class Retailers::ProductsController < RetailersController
     @product.incoming_images = params[:product][:images]
     @product.deleted_images = params[:product][:delete_images]
     @product.incoming_variations = @variations
+    @product.main_image = @main_image_present
 
     unless @product.valid?
       render :edit
@@ -144,10 +146,11 @@ class Retailers::ProductsController < RetailersController
 
       output_images = []
       images.each do |img|
-        tempfile = MiniMagick::Image.open(File.open(img.tempfile))
+        @main_image_present = true if img[0] == '0'
+        tempfile = MiniMagick::Image.open(File.open(img[1].tempfile))
         tempfile.resize '500x500'
-        img.tempfile = tempfile.tempfile
-        output_images << img
+        img[1].tempfile = tempfile.tempfile
+        output_images << img[1]
       end
 
       output_images
@@ -231,7 +234,7 @@ class Retailers::ProductsController < RetailersController
 
     def update_meli_info
       past_meli_status = @product.meli_status
-      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
+      @product.update_main_picture(get_main_image_from_params) if @main_image_present
       @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
       params[:product][:delete_images].present?
       @product.reload

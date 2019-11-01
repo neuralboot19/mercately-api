@@ -126,6 +126,10 @@ label:hover, a:hover {
   display: none;
 }
 
+.d-none-important {
+  display: none !important;
+}
+
 .t-right {
   text-align: right;
 }
@@ -193,6 +197,10 @@ label:hover, a:hover {
 
 .opacity-5 {
   opacity: 0.5;
+}
+
+.p-relative {
+  position: relative;
 }
 
 .text-overflow {

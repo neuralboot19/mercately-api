@@ -105,7 +105,7 @@ function validateForm(e, form) {
     }
   });
 
-  checks.push(validateImages(form));
+  //checks.push(validateImages(form));
 
   if (!checks.includes(false)) form.submit();
 }
