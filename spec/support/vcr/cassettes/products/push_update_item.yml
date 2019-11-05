@@ -1,0 +1,150 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://api.mercadolibre.com/items/MEC422969340/?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
+    body:
+      encoding: UTF-8
+      string: '{"title":"Energy Spirit","variations":[],"attributes":[],"pictures":[{"id":"972578-MEC32719764111_102019"}],"price":82.09,"available_quantity":50,"category_id":"MEC1368","condition":"used"}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 31 Oct 2019 13:58:45 GMT
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - ea36a305efd7e9454bbb08e252dc9d23
+      Location:
+      - https://api.mercadolibre.com/items/MEC422969340
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Api-Name:
+      - syi-api
+      X-Api-Version:
+      - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - write
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - f0c23dfd-570a-4fc7-a5dd-d39d710e76c0
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 bcec2af1292d9c0b4f260b053b14730c.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C2
+      X-Amz-Cf-Id:
+      - AR_vPyUFCjG8YXh32c24w1axSzCC3BOto3lffJjCWYLJGrUjXOX-HQ==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6Ik1FQzQyMjk2OTM0MCIsInNpdGVfaWQiOiJNRUMiLCJ0aXRsZSI6IkVuZXJneSBTcGlyaXQiLCJzdWJ0aXRsZSI6bnVsbCwic2VsbGVyX2lkIjo0MjU5MzM1NDksImNhdGVnb3J5X2lkIjoiTUVDMTM2OCIsIm9mZmljaWFsX3N0b3JlX2lkIjpudWxsLCJwcmljZSI6ODIuMDksImJhc2VfcHJpY2UiOjgyLjA5LCJvcmlnaW5hbF9wcmljZSI6bnVsbCwiaW52ZW50b3J5X2lkIjpudWxsLCJjdXJyZW5jeV9pZCI6IlVTRCIsImluaXRpYWxfcXVhbnRpdHkiOjUwLCJhdmFpbGFibGVfcXVhbnRpdHkiOjUwLCJzb2xkX3F1YW50aXR5IjowLCJzYWxlX3Rlcm1zIjpbXSwiYnV5aW5nX21vZGUiOiJidXlfaXRfbm93IiwibGlzdGluZ190eXBlX2lkIjoiZnJlZSIsInN0YXJ0X3RpbWUiOiIyMDE5LTEwLTMxVDEzOjM5OjE1LjAwMFoiLCJzdG9wX3RpbWUiOiIyMDE5LTEyLTMwVDA0OjAwOjAwLjAwMFoiLCJlbmRfdGltZSI6IjIwMTktMTItMzBUMDQ6MDA6MDAuMDAwWiIsImV4cGlyYXRpb25fdGltZSI6bnVsbCwiY29uZGl0aW9uIjoidXNlZCIsInBlcm1hbGluayI6Imh0dHA6Ly9hcnRpY3Vsby5tZXJjYWRvbGlicmUuY29tLmVjL01FQy00MjI5NjkzNDAtZW5lcmd5LXNwaXJpdC1fSk0iLCJwaWN0dXJlcyI6W3siaWQiOiI5NzI1NzgtTUVDMzI3MTk3NjQxMTFfMTAyMDE5IiwidXJsIjoiaHR0cDovL21lYy1zMS1wLm1sc3RhdGljLmNvbS85NzI1NzgtTUVDMzI3MTk3NjQxMTFfMTAyMDE5LU8uanBnIiwic2VjdXJlX3VybCI6Imh0dHBzOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTktTy5qcGciLCJzaXplIjoiNTAweDUwMCIsIm1heF9zaXplIjoiNTAweDUwMCIsInF1YWxpdHkiOiIifV0sInZpZGVvX2lkIjpudWxsLCJkZXNjcmlwdGlvbnMiOlt7ImlkIjoiTUVDNDIyOTY5MzQwLTIzNjczMDY0MTgifV0sImFjY2VwdHNfbWVyY2Fkb3BhZ28iOmZhbHNlLCJub25fbWVyY2Fkb19wYWdvX3BheW1lbnRfbWV0aG9kcyI6W10sInNoaXBwaW5nIjp7Im1vZGUiOiJub3Rfc3BlY2lmaWVkIiwibG9jYWxfcGlja191cCI6ZmFsc2UsImZyZWVfc2hpcHBpbmciOmZhbHNlLCJtZXRob2RzIjpbXSwiZGltZW5zaW9ucyI6bnVsbCwidGFncyI6W10sImxvZ2lzdGljX3R5cGUiOiJub3Rfc3BlY2lmaWVkIiwic3RvcmVfcGlja191cCI6ZmFsc2V9LCJpbnRlcm5hdGlvbmFsX2RlbGl2ZXJ5X21vZGUiOiJub25lIiwic2VsbGVyX2FkZHJlc3MiOnsiaWQiOjEwMzI4MTY4MTIsImNvbW1lbnQiOiIiLCJhZGRyZXNzX2xpbmUiOiJUZXN0IEFkZHJlc3MgMTIzIiwiemlwX2NvZGUiOiIiLCJjaXR5Ijp7ImlkIjoiIiwibmFtZSI6IlF1aXRvIn0sInN0YXRlIjp7ImlkIjoiRUMtUCIsIm5hbWUiOiJQaWNoaW5jaGEgKCBRdWl0byApIn0sImNvdW50cnkiOnsiaWQiOiJFQyIsIm5hbWUiOiJFY3VhZG9yIn0sImxhdGl0dWRlIjoiIiwibG9uZ2l0dWRlIjoiIiwic2VhcmNoX2xvY2F0aW9uIjp7Im5laWdoYm9yaG9vZCI6eyJpZCI6IiIsIm5hbWUiOiIifSwiY2l0eSI6eyJpZCI6IiIsIm5hbWUiOiIifSwic3RhdGUiOnsiaWQiOiIiLCJuYW1lIjoiIn19fSwic2VsbGVyX2NvbnRhY3QiOm51bGwsImxvY2F0aW9uIjp7fSwiZ2VvbG9jYXRpb24iOnsibGF0aXR1ZGUiOiIiLCJsb25naXR1ZGUiOiIifSwiY292ZXJhZ2VfYXJlYXMiOltdLCJhdHRyaWJ1dGVzIjpbeyJpZCI6IklURU1fQ09ORElUSU9OIiwibmFtZSI6IkNvbmRpY2nDs24gZGVsIMOtdGVtIiwidmFsdWVfaWQiOiIyMjMwNTgxIiwidmFsdWVfbmFtZSI6IlVzYWRvIiwidmFsdWVfc3RydWN0IjpudWxsLCJ2YWx1ZXMiOlt7ImlkIjoiMjIzMDU4MSIsIm5hbWUiOiJVc2FkbyIsInN0cnVjdCI6bnVsbH1dLCJhdHRyaWJ1dGVfZ3JvdXBfaWQiOiIiLCJhdHRyaWJ1dGVfZ3JvdXBfbmFtZSI6IiJ9XSwid2FybmluZ3MiOltdLCJsaXN0aW5nX3NvdXJjZSI6IiIsInZhcmlhdGlvbnMiOltdLCJ0aHVtYm5haWwiOiJodHRwOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTktSS5qcGciLCJzZWN1cmVfdGh1bWJuYWlsIjoiaHR0cHM6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTcyNTc4LU1FQzMyNzE5NzY0MTExXzEwMjAxOS1JLmpwZyIsInN0YXR1cyI6ImFjdGl2ZSIsInN1Yl9zdGF0dXMiOltdLCJ0YWdzIjpbInRlc3RfaXRlbSJdLCJ3YXJyYW50eSI6bnVsbCwiY2F0YWxvZ19wcm9kdWN0X2lkIjpudWxsLCJkb21haW5faWQiOm51bGwsInNlbGxlcl9jdXN0b21fZmllbGQiOm51bGwsInBhcmVudF9pdGVtX2lkIjpudWxsLCJkaWZmZXJlbnRpYWxfcHJpY2luZyI6bnVsbCwiZGVhbF9pZHMiOltdLCJhdXRvbWF0aWNfcmVsaXN0IjpmYWxzZSwiZGF0ZV9jcmVhdGVkIjoiMjAxOS0xMC0zMVQxMzozOToxNS4wMDBaIiwibGFzdF91cGRhdGVkIjoiMjAxOS0xMC0zMVQxMzo1ODo0NS44NDZaIiwiaGVhbHRoIjpudWxsLCJjYXRhbG9nX2xpc3RpbmciOmZhbHNlLCJpdGVtX3JlbGF0aW9ucyI6W119
+    http_version: 
+  recorded_at: Thu, 31 Oct 2019 13:58:45 GMT
+- request:
+    method: put
+    uri: https://api.mercadolibre.com/items/MEC422969340/description?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
+    body:
+      encoding: UTF-8
+      string: '{"plain_text":"Voluptatem explicabo vero. Velit officia voluptas. Aut
+        accusamus sit."}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 31 Oct 2019 13:58:46 GMT
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - 40c2708b56568c4fec0bbd8d57413fe7
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Api-Name:
+      - syi-api
+      X-Api-Version:
+      - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - write
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - fdad0b9b-b5d4-4e6d-b5f0-165842124741
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 6492b42e2fc3684cc00b54d685c2328c.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C2
+      X-Amz-Cf-Id:
+      - CW--BapoaXRQecYwSVp6TYiP3UtFTJoBed11O4zBgWQjAGiI5peXnQ==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"text":null,"plain_text":"Voluptatem explicabo vero. Velit officia
+        voluptas. Aut accusamus sit.","last_updated":"2019-10-31T13:58:46.292Z","date_created":"2019-10-31T13:39:15.000Z"}'
+    http_version: 
+  recorded_at: Thu, 31 Oct 2019 13:58:46 GMT
+recorded_with: VCR 5.0.0
