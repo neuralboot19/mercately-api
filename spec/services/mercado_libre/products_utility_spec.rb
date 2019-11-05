@@ -50,7 +50,6 @@ RSpec.describe MercadoLibre::ProductsUtility do
     let(:url) { 'https://miro.medium.com/max/500/1*pgsK9936_OIKWYJpcMicVg.gif' }
 
     context 'when images have the ML ID as filename' do
-
       before do
         product.attach_image(url, '873411-MLA20547233702_012016', 0)
         product.attach_image(url, '873411-MLA20547233702_238945')
@@ -64,7 +63,6 @@ RSpec.describe MercadoLibre::ProductsUtility do
     end
 
     context 'when not all the images have the ML ID as filename' do
-
       before do
         product.attach_image(url, '873411-MLA20547233702_012016', 0)
         product.attach_image(url, 'example.jpg')
