@@ -13,6 +13,7 @@ FactoryBot.define do
     trait :from_ml do
       meli_product_id { "MEC#{Faker::Number.number(9)}" }
       meli_status { 'active' }
+      meli_listing_type_id { 'free' }
       ml_attributes do
         '[{
           "value_name": "Marfil",
