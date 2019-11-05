@@ -74,7 +74,6 @@ RSpec.describe Product, type: :model do
 
   describe '#update_main_picture' do
     let(:url) { 'https://miro.medium.com/max/500/1*pgsK9936_OIKWYJpcMicVg.gif' }
-    let(:url2) { 'https://image.shutterstock.com/image-vector/example-red-square-grunge-stamp-260nw-327662909.jpg' }
     let(:set_ml_products) { instance_double(MercadoLibre::Products) }
 
     before do
@@ -84,11 +83,24 @@ RSpec.describe Product, type: :model do
         .and_return(set_ml_products)
     end
 
-    it 'updates the main picture' do
-      product.attach_image(url, 'tio_ben.gif', 0)
-      product.attach_image(url, 'example.jpg')
-      product.update_main_picture('example.jpg')
-      expect(product.main_picture_id).to eq product.images.last.id
+    context 'when there are not images attached' do
+      it 'returns nil' do
+        expect(product.update_main_picture).to be_nil
+      end
+    end
+
+    context 'when there are images attached' do
+      it 'updates the main picture' do
+        tempfile = MiniMagick::Image.open(url)
+        tempfile.write('./public/upload-testing.jpg')
+        file = ActionDispatch::Http::UploadedFile.new(filename: 'main_image.jpg', content_type:
+          'image/jpg', tempfile: tempfile.path)
+
+        product.main_image = file
+        product.update_main_picture
+        File.delete('./public/upload-testing.jpg')
+        expect(product.main_picture_id).to eq(product.images.last.id)
+      end
     end
   end
 

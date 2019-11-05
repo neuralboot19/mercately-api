@@ -171,7 +171,7 @@
                   </div>
                   <div class="col-xs-12 px-26">
                     <div class="table__item row middle-xs">
-                      <% if oi.product_variation %>
+                      <% if oi.product_variation&.data['attribute_combinations'] %>
                         <input type="checkbox" id="variation_<%= oi.id %>" class="toggle_variations d-none"/>
                         <table class="table_details table_details--underlined w-100 variations">
                           <tbody>

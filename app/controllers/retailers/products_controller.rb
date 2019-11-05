@@ -22,10 +22,7 @@ class Retailers::ProductsController < RetailersController
   def create
     params[:product][:images] = process_images(params[:product][:images])
     @product = current_retailer.products.new(product_params.except(:images))
-    @product.upload_product = convert_to_boolean(params[:product][:upload_product])
-    @product.incoming_images = params[:product][:images]
-    @product.incoming_variations = @variations
-    @product.main_image = @main_image_present
+    assign_attributes
 
     unless @product.valid?
       render :new
@@ -33,10 +30,8 @@ class Retailers::ProductsController < RetailersController
     end
 
     @product.images = params[:product][:images]
-    @product.ml_attributes = process_attributes(params[:product][:ml_attributes])
-
     if @product.save
-      @product.update_main_picture(params[:new_main_image_name]) if params[:new_main_image].present?
+      @product.update_main_picture if @main_image
       @product.reload
       @product.upload_ml
       @product.upload_variations(action_name, @variations)
@@ -49,18 +44,13 @@ class Retailers::ProductsController < RetailersController
   def update
     params[:product][:images] = process_images(params[:product][:images])
     params['product']['meli_status'] = 'closed' if set_meli_status_closed?
-    @product.upload_product = convert_to_boolean(params[:product][:upload_product])
-    @product.incoming_images = params[:product][:images]
     @product.deleted_images = params[:product][:delete_images]
-    @product.incoming_variations = @variations
-    @product.main_image = @main_image_present
+    assign_attributes
 
     unless @product.valid?
       render :edit
       return
     end
-
-    @product.ml_attributes = process_attributes(params[:product][:ml_attributes])
 
     if @product.update(product_params)
       update_meli_info
@@ -124,8 +114,6 @@ class Retailers::ProductsController < RetailersController
     end
 
     if @product.save
-      main_picture = select_main_picture
-      @product.update_main_picture(main_picture.filename.to_s) if main_picture.present?
       @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
       redirect_to retailers_products_path(@retailer, status: @product.status), notice: 'Producto publicado con éxito.'
@@ -146,10 +134,15 @@ class Retailers::ProductsController < RetailersController
 
       output_images = []
       images.each do |img|
-        @main_image_present = true if img[0] == '0'
         tempfile = MiniMagick::Image.open(File.open(img[1].tempfile))
         tempfile.resize '500x500'
         img[1].tempfile = tempfile.tempfile
+
+        if img[0] == '0'
+          @main_image = img[1]
+          next
+        end
+
         output_images << img[1]
       end
 
@@ -214,6 +207,12 @@ class Retailers::ProductsController < RetailersController
       output_attributes
     end
 
+    def assign_attributes
+      @product.attributes = { upload_product: convert_to_boolean(params[:product][:upload_product]), incoming_images:
+        params[:product][:images], incoming_variations: @variations, main_image: @main_image, ml_attributes:
+        process_attributes(params[:product][:ml_attributes]) }
+    end
+
     # Only allow a trusted parameter "white list" through.
     def product_params
       params.require(:product).permit(:title,
@@ -234,7 +233,7 @@ class Retailers::ProductsController < RetailersController
 
     def update_meli_info
       past_meli_status = @product.meli_status
-      @product.update_main_picture(get_main_image_from_params) if @main_image_present
+      @product.update_main_picture if @main_image
       @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
       params[:product][:delete_images].present?
       @product.reload

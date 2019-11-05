@@ -19,12 +19,12 @@ module ProductModelConcern
 
   # Chequea si las imagenes son requeridas o no en la creacion del producto
   def required_images_on_create?
-    incoming_images.blank? && upload_product == true
+    (incoming_images.blank? && main_image.blank?) && upload_product == true
   end
 
   # Chequea si las imagenes son requeridas o no en la edicion del producto
   def required_images_on_update?
-    incoming_images.blank? && all_images_deleted? &&
+    (incoming_images.blank? && main_image.blank?) && all_images_deleted? &&
       (meli_product_id.present? || upload_product == true)
   end
 
@@ -52,11 +52,9 @@ module ProductModelConcern
 
   # Chequea si la foto principal es requerida
   def main_image_present?
-    if new_record?
-      return main_image.blank? && incoming_images.present?
-    else
-      return main_image.blank? && old_main_image_deleted?
-    end
+    return main_image.blank? && incoming_images.present? if new_record?
+
+    main_image.blank? && old_main_image_deleted?
   end
 
   # Chequea si la actual foto principal sera eliminada

@@ -97,28 +97,42 @@
             </div>
           </fieldset>
 
-          <% @product.images.each_with_index do |img, i| %>
-            <div class="p-relative mr-10 pt-8" id="preview_container_<%= i %>">
-              <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', id: "remove_image_#{i.to_s}", onclick: "removeLoadedImage(this, #{i}, #{img.id});" %>
-              <img class="preview_holder d-none-important" src="#" id="preview_image_<%= i %>"></img>
-              <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}") %>
-            </div>
-            <div id="container_image_<%= i %>" class="uploader center mr-10 d-none-important">
-              <i class="fas fa-camera-retro fs-40"></i>
-              <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
-              <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages', onchange: "readURL(this, #{i});" %>
+          <% ordered_images.each_with_index do |img, i| %>
+            <div>
+              <div class="p-relative mr-10 pt-8" id="preview_container_<%= i %>">
+                <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', id: "remove_image_#{i.to_s}", onclick: "removeLoadedImage(this, #{i}, #{img.id});" %>
+                <img class="preview_holder d-none-important" src="#" id="preview_image_<%= i %>"></img>
+                <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}") %>
+              </div>
+              <div id="container_image_<%= i %>" class="uploader center mr-10 d-none-important">
+                <i class="fas fa-camera-retro fs-40"></i>
+                <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
+                <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});" %>
+              </div>
+              <% if i == 0 %>
+                <div class="fs-12 fw-bold t-center pr-10">
+                  Foto principal
+                </div>
+              <% end %>
             </div>
             <input type="hidden" id="product_delete_images_<%= i %>" name="product[delete_images][<%= i %>]" />
           <% end %>
           <% ((@product.images.size)..9).each do |i| %>
-            <div class="p-relative d-none-important mr-10 pt-8" id="preview_container_<%= i %>">
-              <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', id: "remove_image_#{i.to_s}", onclick: "removeImage(this, #{i});" %>
-              <img class="preview_holder" src="#" id="preview_image_<%= i %>"></img>
-            </div>
-            <div id="container_image_<%= i %>" class="uploader center mr-10 <%= 'd-none-important' if i > 3 %>">
-              <i class="fas fa-camera-retro fs-40"></i>
-              <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
-              <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages', onchange: "readURL(this, #{i});" %>
+            <div>
+              <div class="p-relative d-none-important mr-10 pt-8" id="preview_container_<%= i %>">
+                <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', id: "remove_image_#{i.to_s}", onclick: "removeImage(this, #{i});" %>
+                <img class="preview_holder" src="#" id="preview_image_<%= i %>"></img>
+              </div>
+              <div id="container_image_<%= i %>" class="uploader center mr-10 <%= 'd-none-important' if i > 3 %>">
+                <i class="fas fa-camera-retro fs-40"></i>
+                <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
+                <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});" %>
+              </div>
+              <% if i == 0 %>
+                <div class="fs-12 fw-bold t-center pr-10">
+                  Foto principal
+                </div>
+              <% end %>
             </div>
           <% end %>
           <div id="add_new_image_<%= @product.images.size > 4 ? @product.images.size.to_s : 4 %>" class="uploader one-more center mr-10" onclick="showImageLoader(this);">

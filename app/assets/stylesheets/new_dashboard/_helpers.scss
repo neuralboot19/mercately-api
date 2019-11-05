@@ -120,6 +120,10 @@ label:hover, a:hover {
   &-block {
     display: inline-block;
   }
+
+  &-flex {
+    display: inline-flex;
+  }
 }
 
 .d-none {
@@ -207,6 +211,22 @@ label:hover, a:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.alert-box {
+  color: #004085;
+  background-color: #cce5ff;
+  border-color: #b8daff;
+
+  position: relative;
+  padding: .75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: .25rem;
 }
 
 @mixin fs-mixin ($size) {

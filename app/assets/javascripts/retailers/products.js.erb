@@ -471,7 +471,6 @@ function enableAvailableQuantity() {
 }
 
 function removeImage(image, pos) {
-  console.log(pos);
   $(`#preview_container_${pos}`).addClass('d-none-important');
   $(`#container_image_${pos}`).removeClass('d-none-important');
   $(`#product_images_${pos}`).val('');
@@ -502,88 +501,7 @@ function showImageLoader(input) {
   }
 }
 
-function setMainImage(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  hiddenMainImage = document.getElementById("product_main_picture_id");
-
-  if (hiddenMainImage.value !== imageId) {
-    if (hiddenMainImage.value) {
-      pastMainImage = document.getElementById(`main-image-${hiddenMainImage.value}`);
-      pastMainImage.setAttribute("class", "main-image-text");
-    }
-
-    hiddenMainImage.setAttribute("value", `${imageId}`);
-    image.setAttribute("class", "main-image-text d-block");
-
-    hiddenMainImage = document.getElementById("new-main-image");
-    if (hiddenMainImage.value) {
-      pastMainImage = document.getElementById(`main-new-image-${hiddenMainImage.value}`);
-      pastMainImage.setAttribute("class", "main-image-text");
-      hiddenMainImage.removeAttribute("value");
-    }
-  }
-}
-
-function showMain(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  mainImage = document.getElementById(`main-image-${imageId}`);
-  mainImage.setAttribute("class", "main-image-text d-block");
-}
-
-function hideMain(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  hiddenMainImage = document.getElementById("product_main_picture_id");
-
-  if (imageId !== hiddenMainImage.value) {
-    mainImage = document.getElementById(`main-image-${imageId}`);
-    mainImage.setAttribute("class", "d-none");
-  }
-}
-
-function setMainNewImage(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  hiddenMainImage = document.getElementById("new-main-image");
-
-  if (hiddenMainImage.value !== imageId) {
-    if (hiddenMainImage.value) {
-      pastMainImage = document.getElementById(`main-new-image-${hiddenMainImage.value}`);
-      pastMainImage.setAttribute("class", "main-image-text");
-    }
-
-    hiddenMainImage.setAttribute("value", `${imageId}`);
-    image.setAttribute("class", "main-image-text d-block");
-
-    hiddenMainImage = document.getElementById("product_main_picture_id");
-    if (hiddenMainImage.value) {
-      pastMainImage = document.getElementById(`main-image-${hiddenMainImage.value}`);
-      pastMainImage.setAttribute("class", "main-image-text");
-      hiddenMainImage.removeAttribute("value");
-    }
-
-    hiddenImageName = document.getElementById("new-main-image-name");
-    selectedImage = document.getElementById(`new-main-image-name-${imageId}`);
-    hiddenImageName.setAttribute("value", selectedImage.value);
-  }
-}
-
-function showNewMain(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  mainImage = document.getElementById(`main-new-image-${imageId}`);
-  mainImage.setAttribute("class", "main-image-text d-block");
-}
-
-function hideNewMain(image) {
-  imageId = image.id.substring(image.id.lastIndexOf('-') + 1);
-  hiddenMainImage = document.getElementById("new-main-image");
-
-  if (imageId !== hiddenMainImage.value) {
-    mainImage = document.getElementById(`main-new-image-${imageId}`);
-    mainImage.setAttribute("class", "d-none");
-  }
-}
-
 var readURL = function(input, pos) {
-  console.log(pos);
   $(`#container_image_${pos}`).addClass('d-none-important');
   $(`#preview_container_${pos}`).removeClass('d-none-important');
   $(`#preview_image_${pos}`).removeClass('d-none-important');
