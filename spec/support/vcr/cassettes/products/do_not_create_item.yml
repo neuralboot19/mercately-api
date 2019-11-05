@@ -1,0 +1,139 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/pictures?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
+    body:
+      encoding: UTF-8
+      string: '{"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/v7xgbgxJjuwnaTzg1JUsmohu"}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 31 Oct 2019 13:39:17 GMT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - dd0ec73bf5a15d751bb6e76f090552b5
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - aa5ebd6b-3ecb-406a-8f20-df8806fb44a4
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 b3fa6483b226ef7cc87d8bab653f621c.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - xXy6TZrw7DpwYmDegDByDWIJlzHLGzaIGQ6VKo-Ci3g-Kw2AqxsZQA==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"832941-MEC32719762973_102019","max_size":"500x500","dominant_color":null,"crop":{"y_size":null,"x_size":null,"y_offset":null,"x_offset":null},"variations":[{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg"},{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg"},{"size":"400x400","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg"},{"size":"320x320","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg"},{"size":"280x280","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg"},{"size":"250x250","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg"},{"size":"228x228","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg"},{"size":"210x210","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg"},{"size":"200x200","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg"},{"size":"120x120","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg"},{"size":"70x70","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg"},{"size":"40x40","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg"},{"size":"800x800","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg"}],"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/v7xgbgxJjuwnaTzg1JUsmohu"}'
+    http_version: 
+  recorded_at: Thu, 31 Oct 2019 13:39:17 GMT
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/items?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
+    body:
+      encoding: UTF-8
+      string: '{"title":"Giant Nina Theroux Man","category_id":"MEC1368","price":29.04,"available_quantity":0,"currency_id":"USD","listing_type_id":"free","condition":"used","description":{"plain_text":"Reprehenderit
+        blanditiis qui. Ducimus error reprehenderit. Hic quis nihil."},"pictures":[{"id":"832941-MEC32719762973_102019"}],"attributes":[]}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 31 Oct 2019 13:39:17 GMT
+      Cache-Control:
+      - max-age=0
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Api-Name:
+      - syi-api
+      X-Api-Version:
+      - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - new-listing
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 07b47bec-aff8-479d-9bab-60e243713e33
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Error from cloudfront
+      Via:
+      - 1.1 0fb585f1ff1ff3e2a173c04ff76bf8ef.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - J6-xgyyWYYkf68QI20ktyHgniF1YB6BkwrZE3pFBfCa29qTCxxzaDA==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"message":"Validation error","error":"validation_error","status":400,"cause":[{"department":"items","cause_id":103,"type":"error","code":"item.available_quantity.invalid","references":["item.available_quantity"],"message":"Stock
+        of item should be more than 0."}]}'
+    http_version: 
+  recorded_at: Thu, 31 Oct 2019 13:39:18 GMT
+recorded_with: VCR 5.0.0
