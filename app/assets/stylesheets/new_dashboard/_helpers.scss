@@ -120,6 +120,10 @@ label:hover, a:hover {
   &-block {
     display: inline-block;
   }
+
+  &-flex {
+    display: inline-flex;
+  }
 }
 
 .d-none {
