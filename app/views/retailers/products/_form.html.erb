@@ -5,6 +5,8 @@
         <div class="row">
           <%= f.hidden_field :id %>
 
+          <%= render 'partials/incomplete_retailer' %>
+
           <fieldset class="col-xs-12 fieldset mt-16">
             <legend>Información básica</legend>
             <div class="mb-8 my-16">
@@ -25,7 +27,8 @@
               <%= f.hidden_field :category_id %>
             <% end %>
 
-            <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' %>
+            <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' &&
+              @retailer.incomplete_meli_profile? == false %>
               <div class="my-16">
                 <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
                 <% if @product.new_record? %>
