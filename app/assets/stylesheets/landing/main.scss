@@ -464,6 +464,11 @@ p{
   display: block;
 }
 
+.not-found-image {
+  max-height: 700px;
+  width: 100%;
+}
+
 @media screen and (max-height: 680px) {
   .modal__window {
     height: 542px;
