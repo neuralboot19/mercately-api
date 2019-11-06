@@ -336,13 +336,14 @@
   width: 109px;
   height: 121px;
   border: 1px solid #AAA;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
-.delete-icon {
-  position: absolute;
-  width: 20px;
-  right: 5px;
-  top: 12px;
+.delete-image {
+  display: none;
 
   &:hover {
     cursor: pointer;

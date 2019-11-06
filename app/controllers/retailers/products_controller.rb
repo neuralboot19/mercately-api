@@ -45,6 +45,7 @@ class Retailers::ProductsController < RetailersController
     params[:product][:images] = process_images(params[:product][:images])
     params['product']['meli_status'] = 'closed' if set_meli_status_closed?
     @product.deleted_images = params[:product][:delete_images]
+    @product.changed_main_image = params[:main_picture]
     assign_attributes
 
     unless @product.valid?
@@ -138,7 +139,7 @@ class Retailers::ProductsController < RetailersController
         tempfile.resize '500x500'
         img[1].tempfile = tempfile.tempfile
 
-        if img[0] == '0'
+        if img[0] == params[:new_main_picture]
           @main_image = img[1]
           next
         end

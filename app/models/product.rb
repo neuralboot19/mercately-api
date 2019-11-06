@@ -16,6 +16,8 @@ class Product < ApplicationRecord
   validate :check_images
   validate :check_main_image
 
+  before_update :assign_main_picture
+
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]
   enum status: %i[active archived], _prefix: true
@@ -26,7 +28,8 @@ class Product < ApplicationRecord
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
 
-  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image
+  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
+                :changed_main_image
 
   # TODO: move to service
   def update_ml(p_ml)

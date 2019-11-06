@@ -98,43 +98,45 @@
           </fieldset>
 
           <% ordered_images.each_with_index do |img, i| %>
-            <div>
+            <div onmouseover="showDeleteText(<%= i %>)" onmouseleave="hideDeleteText(<%= i %>)">
               <div class="p-relative mr-10 pt-8" id="preview_container_<%= i %>">
-                <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', id: "remove_image_#{i.to_s}", onclick: "removeLoadedImage(this, #{i}, #{img.id});" %>
-                <img class="preview_holder d-none-important" src="#" id="preview_image_<%= i %>"></img>
-                <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}") %>
+                <img class="preview_holder d-none-important" src="#" id="preview_image_<%= i %>" onclick="setMainImage(<%= i %>);"></img>
+                <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}", onclick: "setLoadedMainImage(#{i}, #{img.id});") %>
+              </div>
+              <div class="delete-image fs-10 t-center pr-10 c-red" id="remove_image_<%= i.to_s %>" onclick="removeLoadedImage(this, <%= i %>, <%= img.id %>);">
+                Eliminar
               </div>
               <div id="container_image_<%= i %>" class="uploader center mr-10 d-none-important">
                 <i class="fas fa-camera-retro fs-40"></i>
                 <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
                 <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});" %>
               </div>
-              <% if i == 0 %>
-                <div class="fs-12 fw-bold t-center pr-10">
-                  Foto principal
-                </div>
-              <% end %>
+              <div id="main_picture_text_<%= i %>" class="fs-12 fw-bold t-center pr-10 d-none delete-image-text">
+                Foto principal
+              </div>
             </div>
             <input type="hidden" id="product_delete_images_<%= i %>" name="product[delete_images][<%= i %>]" />
           <% end %>
           <% ((@product.images.size)..9).each do |i| %>
-            <div>
+            <div onmouseover="showDeleteText(<%= i %>)" onmouseleave="hideDeleteText(<%= i %>)">
               <div class="p-relative d-none-important mr-10 pt-8" id="preview_container_<%= i %>">
-                <%= image_tag 'dashboard/delete-icon.png', class: 'delete-icon', id: "remove_image_#{i.to_s}", onclick: "removeImage(this, #{i});" %>
-                <img class="preview_holder" src="#" id="preview_image_<%= i %>"></img>
+                <img class="preview_holder" src="#" id="preview_image_<%= i %>" onclick="setMainImage(<%= i %>);"></img>
+              </div>
+              <div class="delete-image fs-10 t-center pr-10 c-red" id="remove_image_<%= i.to_s %>" onclick="removeImage(this, <%= i %>);">
+                Eliminar
               </div>
               <div id="container_image_<%= i %>" class="uploader center mr-10 <%= 'd-none-important' if i > 3 %>">
                 <i class="fas fa-camera-retro fs-40"></i>
                 <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
                 <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});" %>
               </div>
-              <% if i == 0 %>
-                <div class="fs-12 fw-bold t-center pr-10">
-                  Foto principal
-                </div>
-              <% end %>
+              <div id="main_picture_text_<%= i %>" class="fs-12 fw-bold t-center pr-10 d-none delete-image-text">
+                Foto principal
+              </div>
             </div>
           <% end %>
+          <input type="hidden" id="main_picture" name="main_picture" />
+          <input type="hidden" id="new_main_picture" name="new_main_picture" value="<%= '0' if @product.new_record? %>" />
           <div id="add_new_image_<%= @product.images.size > 4 ? @product.images.size.to_s : 4 %>" class="uploader one-more center mr-10" onclick="showImageLoader(this);">
             <label class="py-10 uploader-text one-more">Agregar otra imagen</label>
           </div>

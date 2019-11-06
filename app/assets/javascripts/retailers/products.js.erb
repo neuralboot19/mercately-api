@@ -19,8 +19,6 @@ let productInfo;
 let productVariations;
 let currentTemplate;
 let originalCategoryId;
-let posImage = 0;
-let posNewImage = 0;
 
 function appendSelect(currentElement) {
   var root = document.getElementById("root");
@@ -412,6 +410,10 @@ function getProduct() {
         currentTemplate = undefined;
       }
     }
+
+    if (productInfo['main_picture_id']) {
+      $('#main_picture_text_0').show();
+    }
   });
 }
 
@@ -472,8 +474,14 @@ function enableAvailableQuantity() {
 
 function removeImage(image, pos) {
   $(`#preview_container_${pos}`).addClass('d-none-important');
+  hideDeleteText(pos);
   $(`#container_image_${pos}`).removeClass('d-none-important');
   $(`#product_images_${pos}`).val('');
+
+  if ($(`#main_picture_text_${pos}`).is(":visible")) {
+    $('#new_main_picture').val('');
+    $(`#main_picture_text_${pos}`).hide();
+  }
 }
 
 function removeLoadedImage(image, pos, id) {
@@ -483,9 +491,15 @@ function removeLoadedImage(image, pos, id) {
     $(`#image_${pos}`).addClass('d-none-important');
   }
   $(`#preview_container_${pos}`).addClass('d-none-important');
+  hideDeleteText(pos);
   $(`#product_delete_images_${pos}`).val(id);
   $(`#container_image_${pos}`).removeClass('d-none-important');
   $(`#product_images_${pos}`).val('');
+
+  if ($(`#main_picture_text_${pos}`).is(":visible")) {
+    $('#main_picture').val('');
+    $(`#main_picture_text_${pos}`).hide();
+  }
 }
 
 function showImageLoader(input) {
@@ -515,11 +529,28 @@ var readURL = function(input, pos) {
   }
 }
 
-function updateMeliStatus(input) {
-  if (input.value === "archived") {
-    meliStatus = document.getElementById('product_meli_status');
-    meliStatus.value = "closed";
+function showDeleteText(pos) {
+  if ($(`#preview_container_${pos}`).is(":visible")) {
+    $(`#remove_image_${pos}`).show();
   }
+}
+
+function hideDeleteText(pos) {
+  $(`#remove_image_${pos}`).hide();
+}
+
+function setLoadedMainImage(pos, img_id) {
+  $('.delete-image-text').hide();
+  $(`#main_picture_text_${pos}`).show();
+  $('#new_main_picture').val('');
+  $('#main_picture').val(img_id);
+}
+
+function setMainImage(pos) {
+  $('.delete-image-text').hide();
+  $(`#main_picture_text_${pos}`).show();
+  $('#main_picture').val('');
+  $('#new_main_picture').val(pos);
 }
 
 function buildMessageError() {
@@ -574,6 +605,8 @@ document.addEventListener("DOMContentLoaded", function() {
         childs_select.appendChild(el);
       };
     });
+
+    $('#main_picture_text_0').show();
   }
 
   hideVariationContainer();

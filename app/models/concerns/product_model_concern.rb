@@ -54,7 +54,7 @@ module ProductModelConcern
   def main_image_present?
     return main_image.blank? && incoming_images.present? if new_record?
 
-    main_image.blank? && old_main_image_deleted?
+    main_image.blank? && changed_main_image.blank? && old_main_image_deleted?
   end
 
   # Chequea si la actual foto principal sera eliminada
@@ -64,5 +64,10 @@ module ProductModelConcern
     end
 
     false
+  end
+
+  # Asigna la nueva imagen principal en la edicion del producto
+  def assign_main_picture
+    self.main_picture_id = changed_main_image if changed_main_image.present?
   end
 end
