@@ -38,4 +38,8 @@ class Retailer < ApplicationRecord
   def unread_questions
     Question.includes(:customer).where(date_read: nil, customers: { retailer_id: id })
   end
+
+  def incomplete_meli_profile?
+    id_number.blank? || address.blank? || city.blank? || state.blank?
+  end
 end
