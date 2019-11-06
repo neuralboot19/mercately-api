@@ -130,6 +130,10 @@ label:hover, a:hover {
   display: none;
 }
 
+.d-none-important {
+  display: none !important;
+}
+
 .t-right {
   text-align: right;
 }
@@ -212,10 +216,18 @@ label:hover, a:hover {
   opacity: 0.5;
 }
 
+.p-relative {
+  position: relative;
+}
+
 .text-overflow {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
+}
+
+.fw-bold {
+  font-weight: bold;
 }
 
 .alert-box {

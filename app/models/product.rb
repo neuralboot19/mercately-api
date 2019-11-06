@@ -14,6 +14,9 @@ class Product < ApplicationRecord
   validate :images_count
   validate :check_variations
   validate :check_images
+  validate :check_main_image
+
+  before_update :assign_main_picture
 
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]
@@ -25,7 +28,8 @@ class Product < ApplicationRecord
     Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
   }
 
-  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images
+  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
+                :changed_main_image
 
   # TODO: move to service
   def update_ml(p_ml)
@@ -79,18 +83,12 @@ class Product < ApplicationRecord
     set_ml_products.push_update(self, past_meli_status, set_active)
   end
 
-  def update_main_picture(filename)
-    blob_id = ActiveStorage::Blob.joins(:attachments)
-      .where(filename: filename, active_storage_attachments:
-      {
-        name: 'images',
-        record_type: 'Product',
-        record_id: id
-      }).first&.id
+  def update_main_picture
+    return unless main_image
 
-    attach_id = images.find_by(blob_id: blob_id)&.id if blob_id.present?
-    update(main_picture_id: attach_id) if attach_id.present?
+    images.attach(io: File.open(main_image.tempfile), filename: main_image.original_filename || 'main_image.png')
 
+    update(main_picture_id: images.last.id)
     set_ml_products.load_main_picture(reload, true) if able_to_send_to_ml?
   end
 
@@ -250,6 +248,11 @@ class Product < ApplicationRecord
     # Chequea las imagenes previo al guardado del producto
     def check_images
       errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.') if mandatory_images?
+    end
+
+    # Chequea si la imagen principal del producto esta presente
+    def check_main_image
+      errors.add(:base, 'Debe agregar una foto principal') if main_image_present?
     end
 
     def set_ml_products

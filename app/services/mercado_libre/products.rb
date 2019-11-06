@@ -81,6 +81,7 @@ module MercadoLibre
         incoming_variations: product_info['variations'],
         incoming_images: product_info['pictures'],
         from: 'mercadolibre',
+        main_image: product_info['pictures'].present?,
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -111,6 +112,7 @@ module MercadoLibre
         product = @utility.assign_product(product, product_info, @retailer, category, new_product_with_parent)
         product.incoming_images = product_info['pictures']
         product.incoming_variations = product_info['variations']
+        product.main_image = product_info['pictures'].present?
         product.save!
 
         after_save_data(product, product_info, new_product_with_parent)

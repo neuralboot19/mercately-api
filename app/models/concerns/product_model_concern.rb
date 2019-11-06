@@ -19,12 +19,12 @@ module ProductModelConcern
 
   # Chequea si las imagenes son requeridas o no en la creacion del producto
   def required_images_on_create?
-    incoming_images.blank? && upload_product == true
+    (incoming_images.blank? && main_image.blank?) && upload_product == true
   end
 
   # Chequea si las imagenes son requeridas o no en la edicion del producto
   def required_images_on_update?
-    incoming_images.blank? && all_images_deleted? &&
+    (incoming_images.blank? && main_image.blank?) && all_images_deleted? &&
       (meli_product_id.present? || upload_product == true)
   end
 
@@ -43,10 +43,31 @@ module ProductModelConcern
   # el producto
   def all_images_deleted?
     total = 0
-    deleted_images&.each do
-      total += 1
+    deleted_images&.each do |img|
+      total += 1 if img[1].present?
     end
 
     total == images.size
+  end
+
+  # Chequea si la foto principal es requerida
+  def main_image_present?
+    return main_image.blank? && incoming_images.present? if new_record?
+
+    main_image.blank? && changed_main_image.blank? && old_main_image_deleted?
+  end
+
+  # Chequea si la actual foto principal sera eliminada
+  def old_main_image_deleted?
+    deleted_images&.each do |img|
+      return true if img[1].to_i == main_picture_id
+    end
+
+    false
+  end
+
+  # Asigna la nueva imagen principal en la edicion del producto
+  def assign_main_picture
+    self.main_picture_id = changed_main_image if changed_main_image.present?
   end
 end
