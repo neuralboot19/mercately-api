@@ -546,6 +546,11 @@
   display: table;
 }
 
+.not-found-image {
+  max-height: 700px;
+  width: 100%;
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {
