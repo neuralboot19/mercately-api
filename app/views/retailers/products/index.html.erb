@@ -24,24 +24,7 @@
       </div>
     </div>
 
-    <% if current_retailer.meli_retailer && current_retailer.incomplete_meli_profile? %>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="warning-box fs-12">
-            Para empezar a vender en Mercado Libre primero necesitas confirmar la siguiente información:
-
-            <ul>
-              <% if current_retailer.id_number.blank? %><li>Identificación</li><% end %>
-              <% if current_retailer.address.blank? || current_retailer.city.blank? || current_retailer.state.blank? %><li>Dirección</li><% end %>
-            </ul>
-
-            Puedes confirmar esta información directamente en Mercado Libre haciendo click <a href="https://www.mercadolibre.com" target="_blank">aquí</a>.</br></br>
-
-            Nota: Si ya actualizaste tus datos por favor cierra sesión y vuelve a ingresar a Mercately.
-          </div>
-        </div>
-      </div>
-    <% end %>
+    <%= render 'partials/incomplete_retailer' %>
 
     <div class="container-fluid products">
       <div class="row">
@@ -110,7 +93,7 @@
                       <% if product.meli_product_id.present? %>
                         <div class="col-xs-4 col-sm-6 item__descriptor">Preguntas:</div>
                         <div class="col-xs-2 col-sm-6"><%= product.questions.size %></div>
-                      <% elsif current_retailer.meli_retailer && product.status != 'archived' %>
+                      <% elsif current_retailer.meli_retailer && product.status != 'archived' && current_retailer.incomplete_meli_profile? == false %>
                         <div class="col-xs-6 col-sm-12 t-right mt-10">
                           <%= link_to retailers_upload_product_to_ml_path(current_retailer, product), method: :put, data: { confirm: 'Está seguro de publicar el producto?' }, class: 'btn btn--cta fs-10 p-5' do %>
                             Publicar en MercadoLibre

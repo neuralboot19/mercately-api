@@ -97,10 +97,10 @@ module MercadoLibre
 
     def update(product_info)
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
-      new_product = product.new_record? && product_info['parent_item_id'].present?
+      new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
       product = Product.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
-        new_product
+        new_product_with_parent
 
       product.with_lock do
         return if product_info['status'] == 'closed' &&
@@ -108,12 +108,12 @@ module MercadoLibre
 
         category = @ml_categories.import_category(product_info['category_id'])
 
-        product = @utility.assign_product(product, product_info, @retailer, category, new_product)
+        product = @utility.assign_product(product, product_info, @retailer, category, new_product_with_parent)
         product.incoming_images = product_info['pictures']
         product.incoming_variations = product_info['variations']
         product.save!
 
-        after_save_data(product, product_info, new_product)
+        after_save_data(product, product_info, new_product_with_parent)
       end
 
       product
@@ -186,13 +186,13 @@ module MercadoLibre
         product.update(main_picture_id: attach_id) if attach_id.present?
       end
 
-      def after_save_data(product, product_info, new_product)
-        @product_variations.save_variations(product, product_info['variations'], new_product) if
+      def after_save_data(product, product_info, new_product_with_parent)
+        @product_variations.save_variations(product, product_info['variations'], new_product_with_parent) if
           product_info['variations'].present?
 
         pull_images(product, product_info['pictures'])
 
-        @ml_questions.import_inherited_questions(product) if new_product
+        @ml_questions.import_inherited_questions(product) if new_product_with_parent
       end
   end
 end

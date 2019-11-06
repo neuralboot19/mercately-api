@@ -1,0 +1,115 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/questions/6364208848?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '256'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 17:40:19 GMT
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 97f66a44-4fb6-4ba9-9e56-9958e3a09e78
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 8f99d698624c0704470547731241e283.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - bLFXrN4nxtVlqKAXMh646_mb2d6IFAkJ-u-O-pEMlz3BRZtkK36i5Q==
+    body:
+      encoding: UTF-8
+      string: '{"id":6364208848,"seller_id":425933549,"text":"pregunta 5","status":"UNANSWERED","item_id":"MEC422883419","date_created":"2019-06-23T16:49:13.000-04:00","hold":false,"deleted_from_listing":false,"answer":null,"from":{"id":425935489,"answered_questions":0}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 17:40:19 GMT
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425935489?access_token=APP_USR-8515522317464897-103015-49b51ded0aa56a191a45cb6b69b63551-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '559'
+      Connection:
+      - keep-alive
+      Date:
+      - Wed, 30 Oct 2019 17:40:20 GMT
+      Cache-Control:
+      - max-age=60,stale-while-revalidate=30, stale-if-error=120
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 761e80fa-e60c-46b4-a570-4239dcef182b
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 b03cdde00266d1a718dac82499df6b8f.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - wooC4TqNRsjqhpwe7D6K-HIMBHOYW5cKaeyIFUEvvN9OfGKYcxlmug==
+    body:
+      encoding: UTF-8
+      string: '{"id":425935489,"nickname":"TESTHSWDBJHG","registration_date":"2019-04-11T11:29:31.000-04:00","country_id":"EC","address":{"city":"Quito","state":"EC-P"},"user_type":"normal","tags":["normal","test_user"],"logo":null,"points":5,"site_id":"MEC","permalink":"http://perfil.mercadolibre.com.ec/TESTHSWDBJHG","seller_reputation":{"level_id":null,"power_seller_status":null,"transactions":{"canceled":0,"completed":0,"period":"historic","ratings":{"negative":0,"neutral":0,"positive":0},"total":0}},"buyer_reputation":{"tags":[]},"status":{"site_status":"active"}}'
+    http_version: 
+  recorded_at: Wed, 30 Oct 2019 17:40:20 GMT
+recorded_with: VCR 5.0.0
