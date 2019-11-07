@@ -108,13 +108,13 @@
                     <div class="delete-image fs-12 t-center" id="remove_image_<%= i.to_s %>" onclick="removeLoadedImage(this, <%= i %>, <%= img.id %>);">
                       Eliminar
                     </div>
-                    <div class="select_main_img mt-4" onclick="setMainImage(<%= i %>);">
+                    <div class="select_main_img mt-4" onclick="setMainImage(<%= i %>, <%= img.id %>);">
                       Principal
                     </div>
                   </div>
                 </div>
                 <img class="preview_holder d-none-important" src="#" id="preview_image_<%= i %>"></img>
-                <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}", onclick: "setLoadedMainImage(#{i}, #{img.id});") %>
+                <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}") %>
               </div>
               <div id="container_image_<%= i %>" class="uploader center mr-10 d-none-important">
                 <i class="fas fa-camera-retro fs-40"></i>
@@ -132,10 +132,10 @@
               <div class="p-relative d-none-important preview__container mr-10 pt-8" id="preview_container_<%= i %>">
                 <div class="preview__options">
                   <div class="center w-100">
-                    <div class="delete-image fs-12 t-center" id="remove_image_<%= i.to_s %>" onclick="removeLoadedImage(this, <%= i %>);">
+                    <div class="delete-image fs-12 t-center" id="remove_image_<%= i.to_s %>" onclick="removeLoadedImage(this, <%= i %>, -1);">
                       Eliminar
                     </div>
-                    <div class="select_main_img mt-4" onclick="setMainImage(<%= i %>);">
+                    <div class="select_main_img mt-4" onclick="setMainImage(<%= i %>, -1);">
                       Principal
                     </div>
                   </div>
