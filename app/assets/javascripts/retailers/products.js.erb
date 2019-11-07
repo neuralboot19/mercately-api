@@ -472,33 +472,29 @@ function enableAvailableQuantity() {
   inputAvailableQuantity.removeAttribute("title");
 }
 
-function removeImage(image, pos) {
-  $(`#preview_container_${pos}`).addClass('d-none-important');
-  hideDeleteText(pos);
-  $(`#container_image_${pos}`).removeClass('d-none-important');
-  $(`#product_images_${pos}`).val('');
-
-  if ($(`#main_picture_text_${pos}`).is(":visible")) {
-    $('#new_main_picture').val('');
-    $(`#main_picture_text_${pos}`).hide();
-  }
-}
-
-function removeLoadedImage(image, pos, id) {
+function removeLoadedImage(image, pos, img_id) {
   if ($(`#product_delete_images_${pos}`).val()) {
     $(`#preview_image_${pos}`).addClass('d-none-important');
   } else {
     $(`#image_${pos}`).addClass('d-none-important');
   }
   $(`#preview_container_${pos}`).addClass('d-none-important');
-  hideDeleteText(pos);
-  $(`#product_delete_images_${pos}`).val(id);
+
   $(`#container_image_${pos}`).removeClass('d-none-important');
   $(`#product_images_${pos}`).val('');
 
   if ($(`#main_picture_text_${pos}`).is(":visible")) {
-    $('#main_picture').val('');
+    if (img_id !== -1 && !$(`#product_delete_images_${pos}`).val()) {
+      $('#main_picture').val('');
+    } else {
+      $('#new_main_picture').val('');
+    }
+
     $(`#main_picture_text_${pos}`).hide();
+  }
+
+  if (img_id !== -1) {
+    $(`#product_delete_images_${pos}`).val(img_id);
   }
 }
 
@@ -529,28 +525,17 @@ var readURL = function(input, pos) {
   }
 }
 
-function showDeleteText(pos) {
-  if ($(`#preview_container_${pos}`).is(":visible")) {
-    $(`#remove_image_${pos}`).show();
+function setMainImage(pos, img_id) {
+  $('.delete-image-text').hide();
+  $(`#main_picture_text_${pos}`).show();
+
+  if (img_id === -1 || $(`#product_delete_images_${pos}`).val() == img_id) {
+    $('#main_picture').val('');
+    $('#new_main_picture').val(pos);
+  } else {
+    $('#new_main_picture').val('');
+    $('#main_picture').val(img_id);
   }
-}
-
-function hideDeleteText(pos) {
-  $(`#remove_image_${pos}`).hide();
-}
-
-function setLoadedMainImage(pos, img_id) {
-  $('.delete-image-text').hide();
-  $(`#main_picture_text_${pos}`).show();
-  $('#new_main_picture').val('');
-  $('#main_picture').val(img_id);
-}
-
-function setMainImage(pos) {
-  $('.delete-image-text').hide();
-  $(`#main_picture_text_${pos}`).show();
-  $('#main_picture').val('');
-  $('#new_main_picture').val(pos);
 }
 
 function buildMessageError() {
