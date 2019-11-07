@@ -1,6 +1,6 @@
 <div class="box">
   <div class="row">
-    <%= form_for [:retailers, @order], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
+    <%= form_for [:retailers, @order], html: { class: 'validate-form col-xs-12 p-0 order-form' } do |f| %>
       <fieldset class="fieldset mt-16">
         <legend>Información de la venta</legend>
         <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
@@ -61,14 +61,20 @@
             <%= f.fields_for :order_items do |oi| %>
               <%= render "order_items_fields", f: oi %>
             <% end %>
-            <% if @order.id.blank? || @order.status == 'pending' %>
-              <div class="links mt-16 mb-24 t-right">
+            <div class="links mt-16 mb-24 t-right">
+              <% if @order.id.blank? || @order.status == 'pending' %>
+                <div>
+                  <h3 class="total">
+                    Total:
+                    <span class="money fs-19">$<%= @order.total %></span>
+                  </h3>
+                </div>
                 <%= link_to_add_association f, :order_items, partial: 'new_order_items_fields', id: 'add_order_items',class: 'btn btn--cta' do %>
                   <i class="fas fa-plus mr-5"></i>
                   Añadir Item
                 <% end %>
-              </div>
-            <% end %>
+              <% end %>
+            </div>
           </div>
         </fieldset>
         <div class="btn-box col-xs-12">
