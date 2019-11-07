@@ -83,35 +83,6 @@ RSpec.describe Order, type: :model do
     end
   end
 
-  describe '#disabled_statuses' do
-    context 'when the order is a new record' do
-      it 'returns an array with cancelled status' do
-        expect(order.disabled_statuses).to eq(%w[cancelled])
-      end
-    end
-
-    context 'when the order status is pending' do
-      it 'returns an empty array' do
-        order.save
-        expect(order.disabled_statuses).to eq([])
-      end
-    end
-
-    context 'when the order status is cancelled' do
-      it 'returns an array with all the statuses' do
-        order.update(status: 'cancelled')
-        expect(order.disabled_statuses).to eq(%w[pending success cancelled])
-      end
-    end
-
-    context 'when the order status is success' do
-      it 'returns an array with pending status' do
-        order.update(status: 'success')
-        expect(order.disabled_statuses).to eq(%w[pending])
-      end
-    end
-  end
-
   describe '#unread_message?' do
     before do
       create_list(:message, 5, order: order)
