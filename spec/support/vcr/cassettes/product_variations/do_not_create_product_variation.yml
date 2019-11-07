@@ -1,0 +1,74 @@
+---
+http_interactions:
+- request:
+    method: put
+    uri: https://api.mercadolibre.com/items/MEC423080156/?access_token=APP_USR-6199841158643194-110711-35c74e99e32e3c0dae3f3c290fd9aacc-425933549
+    body:
+      encoding: UTF-8
+      string: '{"variations":[{"price":50.5,"picture_ids":["919819-MEC32799460975_112019","919819-MEC32799460975_112019"],"sold_quantity":1,"available_quantity":-1,"attribute_combinations":[{"id":"COLOR","value_name":"Azul"}]}]}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 07 Nov 2019 14:22:38 GMT
+      Cache-Control:
+      - max-age=0
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Api-Name:
+      - syi-api
+      X-Api-Version:
+      - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - write
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - c9b8d915-6b00-484b-b6a8-02d82f6dca3b
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Error from cloudfront
+      Via:
+      - 1.1 9abd3232e1a3776dc26ad56d2477147d.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - _Q21yFC9d65pb8HvYEdnMDVM_wvztkk5DsuEii1oMXYtGWg2xSLxnQ==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"message":"Validation error","error":"validation_error","status":400,"cause":[{"department":"structured-data","cause_id":1210,"type":"warning","code":"normalize.item.attribute.value_id","references":["item.variations[0].attribute_combinations[0].value_id"],"message":"Attribute
+        [COLOR] to be modified - value_id [null] will be [52028]"},{"department":"items","cause_id":288,"type":"error","code":"item.variations.total_stock.invalid","references":["item.variations","item.available_quantity"],"message":"Total
+        stock of item with variations should be more than 0"}]}'
+    http_version: 
+  recorded_at: Thu, 07 Nov 2019 14:22:38 GMT
+recorded_with: VCR 5.0.0
