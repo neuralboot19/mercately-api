@@ -13,24 +13,24 @@ RSpec.describe OrderHelper, type: :helper do
 
     context 'when the order status is pending' do
       it 'returns an empty array' do
+        order.save
         @order = order
-        @order.save
         expect(helper.disabled_statuses).to eq([])
       end
     end
 
     context 'when the order status is cancelled' do
       it 'returns an array with all the statuses' do
+        order.update(status: 'cancelled')
         @order = order
-        @order.update(status: 'cancelled')
         expect(helper.disabled_statuses).to eq(%w[pending success cancelled])
       end
     end
 
     context 'when the order status is success' do
       it 'returns an array with pending status' do
+        order.update(status: 'success')
         @order = order
-        @order.update(status: 'success')
         expect(helper.disabled_statuses).to eq(%w[pending])
       end
     end
