@@ -56,7 +56,6 @@ RSpec.describe MercadoLibre::ProductVariations, vcr: true do
     end
 
     context 'when the available_quantity is not correct' do
-
       before do
         product.attach_image(url, main_image_id)
         product.update(meli_product_id: meli_product_id)
@@ -75,29 +74,52 @@ RSpec.describe MercadoLibre::ProductVariations, vcr: true do
   end
 
   describe '.save_variations' do
+    let(:variation_1) do
+      [
+        {
+          id: 1_497_933_258_9,
+          attribute_combinations: [
+            {
+              id: 'COLOR',
+              name: 'Color',
+              value_id: '52049',
+              value_name: 'Negro'
+            }
+          ],
+          price: 50.5,
+          available_quantity: 5,
+          sold_quantity: 0,
+          picture_ids: [
+            '553111-MLA20482692355_112015'
+          ]
+        }.with_indifferent_access
+      ]
+    end
+    let(:variation_2) do
+      [
+        {
+          id: 1_497_933_259_2,
+          attribute_combinations: [
+            {
+              id: 'COLOR',
+              name: 'Color',
+              value_id: '52005',
+              value_name: 'Marrón'
+            }
+          ],
+          price: 100,
+          available_quantity: 4,
+          sold_quantity: 0,
+          picture_ids: [
+            '553111-MLA20482692355_112015'
+          ]
+        }.with_indifferent_access
+      ]
+    end
+
     context 'when the product variation comes from a parent' do
       let(:product_variation) { create(:product_variation, product: product, variation_meli_id: 1_234_567_891_0) }
-      let(:variations) do
-        [
-          {
-            id: 1_497_933_258_9,
-            attribute_combinations: [
-              {
-                id: 'COLOR',
-                name: 'Color',
-                value_id: '52049',
-                value_name: 'Negro'
-              }
-            ],
-            price: 50.5,
-            available_quantity: 5,
-            sold_quantity: 0,
-            picture_ids: [
-              '553111-MLA20482692355_112015'
-            ]
-          }.with_indifferent_access
-        ]
-      end
+      let(:variations) { variation_1 }
 
       it 'updates the matching variation with the new data' do
         expect(product_variation.variation_meli_id).to eq(1_234_567_891_0)
@@ -107,44 +129,7 @@ RSpec.describe MercadoLibre::ProductVariations, vcr: true do
     end
 
     context 'when the product variation does not come from a parent' do
-      let(:variations) do
-        [
-          {
-            id: 1_497_933_258_9,
-            attribute_combinations: [
-              {
-                id: 'COLOR',
-                name: 'Color',
-                value_id: '52049',
-                value_name: 'Negro'
-              }
-            ],
-            price: 50.5,
-            available_quantity: 5,
-            sold_quantity: 0,
-            picture_ids: [
-              '553111-MLA20482692355_112015'
-            ]
-          }.with_indifferent_access,
-          {
-            id: 1_497_933_259_2,
-            attribute_combinations: [
-              {
-                id: 'COLOR',
-                name: 'Color',
-                value_id: '52005',
-                value_name: 'Marrón'
-              }
-            ],
-            price: 100,
-            available_quantity: 4,
-            sold_quantity: 0,
-            picture_ids: [
-              '553111-MLA20482692355_112015'
-            ]
-          }.with_indifferent_access
-        ]
-      end
+      let(:variations) { variation_1 + variation_2 }
 
       it 'creates or updates the product variations in Mercately' do
         product_variations_service.save_variations(product, variations)
