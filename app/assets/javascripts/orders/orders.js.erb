@@ -39,14 +39,18 @@ function getProductInfo(input) {
 
       quantityInput.removeAttribute("disabled");
       quantityInput.removeAttribute("title");
+
+      $(`label[for="${quantityInputId}"]`).text(`Cantidad (disponible: ${json.quantity})`)
     } else {
       variations = json['variations'];
       priceInput.setAttribute("disabled", true);
       priceInput.value = "";
       priceInput.setAttribute("title", "Debe llenar este campo en variaciones");
 
+      quantityInput.value = "";
       quantityInput.setAttribute("disabled", true);
       quantityInput.setAttribute("title", "Debe llenar este campo en variaciones");
+      $(`label[for="${quantityInputId}"]`).text('Cantidad')
 
       parentContainer = input.parentNode.parentNode;
 
@@ -83,12 +87,12 @@ function insertVariation(variation, parentContainer, index) {
 
   insertionString += '</div>';
   insertionString += '<div class="col-xs-12 col-md-3">' +
-                     '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Cantidad</label>' +
-                     '<input class="input" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity" onkeypress="onlyNumber(event)">' +
+                     '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Cantidad (disponible: ' + variation['data']['available_quantity'] + ')</label>' +
+                     '<input class="input product_quantity" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity" onkeypress="onlyNumber(event)">' +
                      '</div>' +
                      '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_unit_price">Precio unitario</label>' +
-                     '<input class="input" onkeyup="editPrice(this);" type="text" name="order[order_items_attributes][' + inputTimeStamp + '][unit_price]" id="order_order_items_attributes_' + inputTimeStamp + '_unit_price" value=' + variation['data']['price'] + '>' +
+                     '<input class="input product_price" onkeyup="editPrice(this);" type="text" name="order[order_items_attributes][' + inputTimeStamp + '][unit_price]" id="order_order_items_attributes_' + inputTimeStamp + '_unit_price" value=' + variation['data']['price'] + '>' +
                      '</div>';
 
   insertionString += '</div></div>';
