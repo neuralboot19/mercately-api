@@ -39,14 +39,18 @@ function getProductInfo(input) {
 
       quantityInput.removeAttribute("disabled");
       quantityInput.removeAttribute("title");
+
+      $(`label[for="${quantityInputId}"]`).text(`Cantidad (disponible: ${json.quantity})`)
     } else {
       variations = json['variations'];
       priceInput.setAttribute("disabled", true);
       priceInput.value = "";
       priceInput.setAttribute("title", "Debe llenar este campo en variaciones");
 
+      quantityInput.value = "";
       quantityInput.setAttribute("disabled", true);
       quantityInput.setAttribute("title", "Debe llenar este campo en variaciones");
+      $(`label[for="${quantityInputId}"]`).text('Cantidad')
 
       parentContainer = input.parentNode.parentNode;
 
@@ -84,16 +88,17 @@ function insertVariation(variation, parentContainer, index) {
   insertionString += '<br />';
   insertionString += '</div>';
   insertionString += '<div class="col-xs-12 col-md-3">' +
-                     '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Cantidad</label>' +
-                     '<input class="input" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity" onkeypress="onlyNumber(event)">' +
+                     '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Cantidad (disponible: ' + variation['data']['available_quantity'] + ')</label>' +
+                     '<input class="input product_quantity" oninput="calculateTotal();" name="order[order_items_attributes][' + inputTimeStamp + '][quantity]" id="order_order_items_attributes_' + inputTimeStamp + '_quantity" onkeypress="onlyNumber(event)">' +
                      '</div>' +
                      '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_unit_price">Precio unitario</label>' +
-                     '<input class="input" onkeyup="editPrice(this);" type="text" name="order[order_items_attributes][' + inputTimeStamp + '][unit_price]" id="order_order_items_attributes_' + inputTimeStamp + '_unit_price" value=' + variation['data']['price'] + '>' +
+                     '<input class="input product_price" oninput="calculateTotal();" onkeyup="editPrice(this);" type="text" name="order[order_items_attributes][' + inputTimeStamp + '][unit_price]" id="order_order_items_attributes_' + inputTimeStamp + '_unit_price" value=' + variation['data']['price'] + '>' +
                      '</div>';
 
   insertionString += '</div></div>';
   $(parentContainer).append(insertionString);
+  calculateTotal();
 }
 
 function showHideFeedback(input) {
@@ -208,4 +213,28 @@ function enableEditForm() {
   $('#order_customer_attributes_last_name').prop('disabled', false);
   $('#order_customer_attributes_email').prop('disabled', false);
   $('#order_customer_attributes_phone').prop('disabled', false);
+}
+
+$(document).on('ready page:load cocoon:after-remove cocoon:after-insert', function() {
+  $('.product_quantity, .product_price').on('input', function() {
+    calculateTotal();
+  });
+
+  $('.remove_fields').on('click', function() {
+    setTimeout(function() {
+      calculateTotal();
+    }, 100);
+  });
+});
+
+function calculateTotal() {
+  total = 0;
+  $('.order-form #order_items .nested-fields').each(function() {
+    if ($(this).is(":visible")) {
+      quantity = $(this).find('.product_quantity').val();
+      price = $(this).find('.product_price').val();
+      total += quantity * price;
+    }
+  });
+  $('.total .money').text('$' + total.toFixed(2));
 }
