@@ -26,7 +26,7 @@
         </div>
         <div class="my-16">
           <%= f.label :status, 'Estado' %>
-          <%= f.select :status, Order.statuses.keys.collect { |s| [ Order.enum_translation(:statuses, s), s ]}, { include_blank: false, disabled: @order.disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
+          <%= f.select :status, Order.statuses.keys.collect { |s| [ Order.enum_translation(:statuses, s), s ]}, { include_blank: false, disabled: disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
         </div>
         <% if @order.status != 'pending' && @order.meli_order_id && @order.feedback_rating.present? %>
           <div class="w-100">

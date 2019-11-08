@@ -73,7 +73,7 @@ function insertVariation(variation, parentContainer, index) {
                     '<input type="hidden" value=' + variation['id'] + ' name="order[order_items_attributes][' + inputTimeStamp + '][product_variation_id]" id="order_order_items_attributes_' + inputTimeStamp + '_product_variation_id" />' +
                     '<input type="hidden" value=' + variation['product_id'] + ' name="order[order_items_attributes][' + inputTimeStamp + '][product_id]" id="order_order_items_attributes_' + inputTimeStamp + '_product_id" />' +
                     '<div class="variation-details-group col-xs-12 col-md-4">' +
-                    '<p class="variation-details-label">Detalles</p>';
+                    '<p class="variation-details-label mt-0 mb-0">Detalles</p>';
 
   combinations = variation['data']['attribute_combinations'];
 
@@ -85,6 +85,7 @@ function insertVariation(variation, parentContainer, index) {
     insertionString += '<label class="variation-detail-content">' + content + '</label><br />';
   }
 
+  insertionString += '<br />';
   insertionString += '</div>';
   insertionString += '<div class="col-xs-12 col-md-3">' +
                      '<label for="order_order_items_attributes_' + inputTimeStamp + '_quantity">Cantidad (disponible: ' + variation['data']['available_quantity'] + ')</label>' +

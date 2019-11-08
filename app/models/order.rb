@@ -44,14 +44,6 @@ class Order < ApplicationRecord
     @last_message = messages.order(created_at: 'DESC').first
   end
 
-  # TODO: Mover a helper
-  def disabled_statuses
-    return %w[cancelled] if new_record?
-    return [] if status == 'pending'
-    return %w[pending success cancelled] if status == 'cancelled'
-    return %w[pending] if status == 'success'
-  end
-
   def unread_message?
     messages.where(answer: nil).last&.date_read.blank?
   end
@@ -76,14 +68,15 @@ class Order < ApplicationRecord
     def push_feedback
       return unless meli_order_id.present?
 
-      MercadoLibre::Orders.new(products&.first&.retailer).push_feedback(self)
+      MercadoLibre::Orders.new(retailer).push_feedback(self)
     end
 
     def set_positive_rating
       self.feedback_rating = 'positive' if status == 'success' && meli_order_id
     end
 
-    # TODO: Necesita refactorizacion
+    # Al cancelarse una orden se repone o se devuelve el stock apartado cuando se creo la misma
+    # Si la orden estaba exitosa, se actualiza el stock tambien en ML
     def update_items
       order_items.each do |order_item|
         product = order_item.product
@@ -91,17 +84,20 @@ class Order < ApplicationRecord
 
         if product_variation.present?
           data = product_variation.data
-          data['sold_quantity'] = data['sold_quantity'].to_i - order_item.quantity
-          data['available_quantity'] = data['available_quantity'].to_i + order_item.quantity if
-            change_available_quantity(order_item)
+          new_sold_quantity = data['sold_quantity'].to_i - order_item.quantity
+          new_available_quantity = data['available_quantity'].to_i + order_item.quantity
+
+          data['sold_quantity'] = new_sold_quantity
+          data['available_quantity'] = new_available_quantity if change_available_quantity(order_item)
 
           product_variation.update(data: data)
           product.update_variations_quantities
         else
-          product.update(available_quantity: product.available_quantity + order_item.quantity) if
-            change_available_quantity(order_item)
+          new_sold_quantity = product.sold_quantity.to_i - order_item.quantity
+          new_available_quantity = product.available_quantity + order_item.quantity
 
-          product.update(sold_quantity: product.sold_quantity.to_i - order_item.quantity)
+          product.update(available_quantity: new_available_quantity) if change_available_quantity(order_item)
+          product.update(sold_quantity: new_sold_quantity)
         end
 
         update_ml(product) if from_success_to_cancelled?
