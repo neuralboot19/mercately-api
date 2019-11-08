@@ -24,26 +24,8 @@ class Product < ApplicationRecord
   enum meli_status: %i[active payment_required paused closed under_review inactive]
   enum from: %i[mercately mercadolibre], _prefix: true
 
-  scope :retailer_products, lambda { |retailer_id, status|
-    Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
-  }
-
   attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
                 :changed_main_image
-
-  # TODO: move to service
-  def update_ml(p_ml)
-    self.meli_site_id = p_ml['site_id']
-    self.meli_start_time = p_ml['start_time']
-    self.meli_stop_time = p_ml['stop_time']
-    self.meli_end_time = p_ml['end_time']
-    self.meli_listing_type_id = p_ml['listing_type_id']
-    self.meli_permalink = p_ml['permalink']
-    self.meli_product_id = p_ml['id']
-    self.ml_attributes = p_ml['attributes']
-    self.meli_status = p_ml['status']
-    save
-  end
 
   def attach_image(url, filename, index = -1)
     img = ActiveStorage::Blob.joins(:attachments)
@@ -54,15 +36,7 @@ class Product < ApplicationRecord
         record_id: id
       }).first
 
-    if img.present?
-      begin
-        file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
-        MiniMagick::Image.open(file)
-        return
-      rescue OpenURI::HTTPError
-        images.where(blob_id: img.id).purge
-      end
-    end
+    return if check_cloudinary_image(img)
 
     tempfile = MiniMagick::Image.open(url)
     tempfile.resize '500x500'
@@ -125,16 +99,6 @@ class Product < ApplicationRecord
 
     reload
     update_ml_info(past_meli_status)
-  end
-
-  # TODO: Move to helper
-  def disabled_meli_statuses
-    disabled = %w[payment_required under_review inactive]
-
-    return disabled + %w[active paused closed] if status == 'archived' || disabled.include?(meli_status)
-    return disabled if meli_status == 'active'
-    return disabled + %w[paused] if meli_status == 'closed'
-    return disabled + %w[closed] if meli_status == 'paused'
   end
 
   # TODO: Make private

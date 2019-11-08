@@ -260,38 +260,6 @@ RSpec.describe Product, type: :model do
     end
   end
 
-  describe '#disabled_meli_statuses' do
-    let(:disabled) { %w[payment_required under_review inactive] }
-
-    context 'when meli_status is archived' do
-      it 'returns an array with posible statuses' do
-        product.update(status: 'archived')
-        expect(product.disabled_meli_statuses).to eq disabled + %w[active paused closed]
-      end
-    end
-
-    context 'when meli_status is active' do
-      it 'returns an array with posible statuses' do
-        product.update(meli_status: 'active')
-        expect(product.disabled_meli_statuses).to eq disabled
-      end
-    end
-
-    context 'when meli_status is closed' do
-      it 'returns an array with posible statuses' do
-        product.update(meli_status: 'closed')
-        expect(product.disabled_meli_statuses).to eq disabled + %w[paused]
-      end
-    end
-
-    context 'when meli_status is paused' do
-      it 'returns an array with posible statuses' do
-        product.update(meli_status: 'paused')
-        expect(product.disabled_meli_statuses).to eq disabled + %w[closed]
-      end
-    end
-  end
-
   describe '#update_variations_quantities' do
     it 'returns nil if has no variations' do
       expect(product.update_variations_quantities).to be_nil

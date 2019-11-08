@@ -8,4 +8,14 @@ module ProductHelper
 
     images
   end
+
+  def disabled_meli_statuses
+    disabled = %w[payment_required under_review inactive]
+
+    return disabled + %w[active paused closed] if
+      @product.status == 'archived' || disabled.include?(@product.meli_status)
+    return disabled if @product.meli_status == 'active'
+    return disabled + %w[paused] if @product.meli_status == 'closed'
+    return disabled + %w[closed] if @product.meli_status == 'paused'
+  end
 end
