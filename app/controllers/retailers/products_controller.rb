@@ -1,7 +1,8 @@
 class Retailers::ProductsController < RetailersController
   include ProductControllerConcern
   before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity,
-                                     :archive_product, :reactive_product, :upload_product_to_ml]
+                                     :archive_product, :reactive_product, :upload_product_to_ml,
+                                     :update_meli_status]
   before_action :compile_variation_images, only: [:create, :update]
 
   def index
@@ -118,6 +119,19 @@ class Retailers::ProductsController < RetailersController
       @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
       redirect_to retailers_products_path(@retailer, status: @product.status), notice: 'Producto publicado con éxito.'
+    else
+      render :edit
+    end
+  end
+
+  def update_meli_status
+    past_meli_status = @product.meli_status
+    @product.meli_status = params[:status]
+
+    if @product.save
+      @product.update_ml_info(past_meli_status)
+      redirect_back fallback_location: retailers_product_path(@retailer, @product),
+                    notice: 'Estado actualizado con éxito.'
     else
       render :edit
     end

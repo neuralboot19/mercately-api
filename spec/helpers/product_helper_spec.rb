@@ -69,4 +69,44 @@ RSpec.describe ProductHelper, type: :helper do
       end
     end
   end
+
+  describe '#manual_statuses' do
+    let(:statuses) do
+      [
+        {
+          status: 'active',
+          label: 'Activo'
+        },
+        {
+          status: 'paused',
+          label: 'Pausado'
+        },
+        {
+          status: 'closed',
+          label: 'Cerrado'
+        }
+      ]
+    end
+
+    context 'when meli_status is active' do
+      it 'returns an array with posible statuses' do
+        product.update(meli_status: 'active')
+        expect(helper.manual_statuses(product)).to eq(statuses - [statuses[0]])
+      end
+    end
+
+    context 'when meli_status is closed or paused' do
+      it 'returns an array with posible statuses' do
+        product.update(meli_status: 'closed')
+        expect(helper.manual_statuses(product)).to eq(statuses - ([statuses[1], statuses[2]]))
+      end
+    end
+
+    context 'when meli_status is not one of manual statuses' do
+      it 'returns an empty array' do
+        product.update(meli_status: 'under_review')
+        expect(helper.manual_statuses(product)).to eq([])
+      end
+    end
+  end
 end

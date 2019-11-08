@@ -18,4 +18,27 @@ module ProductHelper
     return disabled + %w[paused] if @product.meli_status == 'closed'
     return disabled + %w[closed] if @product.meli_status == 'paused'
   end
+
+  def manual_statuses(product)
+    disabled = %w[payment_required under_review inactive]
+    return [] if disabled.include?(product.meli_status)
+
+    statuses = [
+      {
+        status: 'active',
+        label: 'Activo'
+      },
+      {
+        status: 'paused',
+        label: 'Pausado'
+      },
+      {
+        status: 'closed',
+        label: 'Cerrado'
+      }
+    ]
+
+    return statuses - ([statuses[1], statuses[2]]) if %w[paused closed].include?(product.meli_status)
+    return statuses - [statuses[0]]
+  end
 end
