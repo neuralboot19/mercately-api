@@ -46,7 +46,7 @@ module MercadoLibre
       response = Connection.post_request(conn, @utility.prepare_product(product.reload))
       if response.status == 201
         body = JSON.parse(response.body)
-        product.update_ml(body)
+        update_product(product, body)
       else
         puts '\n\n\n\n------- EXCEPTION IN ML -------\n'
         puts response.body
@@ -195,6 +195,19 @@ module MercadoLibre
         pull_images(product, product_info['pictures'])
 
         @ml_questions.import_inherited_questions(product) if new_product_with_parent
+      end
+
+      def update_product(product, p_ml)
+        product.meli_site_id = p_ml['site_id']
+        product.meli_start_time = p_ml['start_time']
+        product.meli_stop_time = p_ml['stop_time']
+        product.meli_end_time = p_ml['end_time']
+        product.meli_listing_type_id = p_ml['listing_type_id']
+        product.meli_permalink = p_ml['permalink']
+        product.meli_product_id = p_ml['id']
+        product.ml_attributes = p_ml['attributes']
+        product.meli_status = p_ml['status']
+        product.save
       end
   end
 end

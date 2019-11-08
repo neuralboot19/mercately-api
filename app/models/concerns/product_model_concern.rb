@@ -70,4 +70,18 @@ module ProductModelConcern
   def assign_main_picture
     self.main_picture_id = changed_main_image if changed_main_image.present?
   end
+
+  # Chequea si la imagen esta realmente almacenada en Cloudinary
+  def check_cloudinary_image(img)
+    return unless img.present?
+
+    begin
+      file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
+      MiniMagick::Image.open(file)
+      return true
+    rescue OpenURI::HTTPError
+      images.where(blob_id: img.id).purge
+      return false
+    end
+  end
 end
