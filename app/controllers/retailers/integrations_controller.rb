@@ -1,6 +1,6 @@
 class Retailers::IntegrationsController < RetailersController
-  skip_before_action :authenticate_retailer_user!, only: :callbacks
-  skip_before_action :verify_authenticity_token, only: :callbacks
+  skip_before_action :authenticate_retailer_user!, except: [:index, :connect_to_ml]
+  skip_before_action :verify_authenticity_token, except: [:index, :connect_to_ml]
   before_action :set_ml, only: [:connect_to_ml]
 
   def index
@@ -42,6 +42,10 @@ class Retailers::IntegrationsController < RetailersController
     else
       render status: '404', json: { message: 'Retailer not found' }.to_json
     end
+  end
+
+  def messenger_callbacks
+    render status: 200, json: params['hub.challenge']
   end
 
   private
