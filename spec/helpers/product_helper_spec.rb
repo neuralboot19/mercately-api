@@ -98,7 +98,7 @@ RSpec.describe ProductHelper, type: :helper do
     context 'when meli_status is closed or paused' do
       it 'returns an array with posible statuses' do
         product.update(meli_status: 'closed')
-        expect(helper.manual_statuses(product)).to eq(statuses - ([statuses[1], statuses[2]]))
+        expect(helper.manual_statuses(product)).to eq(statuses - [statuses[1], statuses[2]])
       end
     end
 

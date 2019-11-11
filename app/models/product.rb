@@ -90,12 +90,12 @@ class Product < ApplicationRecord
 
     ids = []
     delete_images.each do |img|
-      ids << img[1]
+      ids << img[1] if img[1].present?
     end
 
     images.where(id: ids).purge if ids.present?
 
-    return if variations.present?
+    return if variations.present? || ids.blank?
 
     reload
     update_ml_info(past_meli_status)

@@ -38,7 +38,8 @@ module ProductHelper
       }
     ]
 
-    return statuses - ([statuses[1], statuses[2]]) if %w[paused closed].include?(product.meli_status)
-    return statuses - [statuses[0]]
+    return statuses - [statuses[1], statuses[2]] if %w[paused closed].include?(product.meli_status)
+
+    statuses - [statuses[0]]
   end
 end
