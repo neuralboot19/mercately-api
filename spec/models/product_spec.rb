@@ -255,7 +255,7 @@ RSpec.describe Product, type: :model do
       end
 
       it 'removes selected imgs and push to ML' do
-        expect(product.delete_images(product.images, nil, 'active')).to eq 'Successfully uploaded'
+        expect(product.delete_images({ '0': product.images.first.id }, nil, 'active')).to eq 'Successfully uploaded'
       end
     end
   end
