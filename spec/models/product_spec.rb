@@ -229,10 +229,6 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#delete_images' do
-    it 'returns nil if product has no imgs' do
-      expect(product.delete_images(nil, nil, nil)).to be_nil
-    end
-
     context 'with product imgs' do
       it 'removes selected imgs' do
         expect(product.delete_images(product.images, 'variations', nil)).to be_nil
@@ -255,7 +251,7 @@ RSpec.describe Product, type: :model do
       end
 
       it 'removes selected imgs and push to ML' do
-        expect(product.delete_images(product.images, nil, 'active')).to eq 'Successfully uploaded'
+        expect(product.delete_images({ '0': product.images.first.id }, nil, 'active')).to eq 'Successfully uploaded'
       end
     end
   end
