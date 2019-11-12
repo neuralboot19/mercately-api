@@ -229,10 +229,6 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#delete_images' do
-    it 'returns nil if product has no imgs' do
-      expect(product.delete_images(nil, nil, nil)).to be_nil
-    end
-
     context 'with product imgs' do
       it 'removes selected imgs' do
         expect(product.delete_images(product.images, 'variations', nil)).to be_nil
