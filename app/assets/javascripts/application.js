@@ -17,6 +17,8 @@
 //= require select2
 //= require select2_locale_es
 //= require validations
+//= require chartkick
+//= require Chart.bundle
 
 $(document).ready(function () {
   $( "select" ).select2({

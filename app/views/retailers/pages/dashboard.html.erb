@@ -1,1 +1,32 @@
-<%= current_retailer.name %>
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <h1 class="d-inline index__title">Dashboard</h1>
+          <div class="index__desc">
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
+        </div>
+        <div class="col-xs-12 col-sm-4">
+          <div class="t-center">Índice de ventas</div>
+          <%= pie_chart [['Exitosas', @success_orders_count], ['Canceladas', @cancelled_orders_count], ['Pendientes', @pending_orders_count]] %>
+          <div class="t-center">Total de ventas: <%= @orders_count %></div>
+        </div>
+        <div class="col-xs-12 col-sm-8">
+          <div class="t-center">Mejores clientes</div>
+          <%= bar_chart @better_customers, xtitle: 'Ordenes completadas', ytitle: 'Cliente' %>
+        </div>
+        <div class="col-xs-12 mt-40">
+          <div class="t-center">Productos mas vendidos</div>
+          <%= line_chart @better_products, xtitle: 'Fecha de la orden', ytitle: 'Cantidad vendida' %>
+        </div>
+        <div class="col-xs-12 mt-40">
+          <div class="t-center">Total de ganancias</div>
+          <%= area_chart @incoming_total %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
