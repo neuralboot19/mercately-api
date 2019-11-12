@@ -52,7 +52,8 @@
         <div class="col-xs-12">
           <div class="table box m-0">
             <div class="table__header row hide-on-tablet-and-down center-sm">
-              <div class="col-sm-5">Producto</div>
+              <div class="col-sm-3">Producto</div>
+              <div class="col-sm-2">Variación</div>
               <div class="col-sm-2">Cantidad</div>
               <div class="col-sm-2">Precio</div>
               <div class="col-sm-3">Sub-total</div>
@@ -60,7 +61,21 @@
             <% @order.order_items.each do |oi| %>
               <div class="divider"></div>
               <div class="table__item row middle-xs">
-                <div class="col-xs-9 col-sm-5 t-center"><%= oi.product.title %></div>
+                <div class="col-xs-12 col-sm-3 t-center"><%= oi.product.title %></div>
+                <div class="col-xs-12 col-sm-2">
+                  <% if oi.product_variation %>
+                    <table class="table_details table_details--underlined w-100">
+                      <tbody>
+                        <% oi.product_variation.data['attribute_combinations'].each do |attr_comb| %>
+                          <tr>
+                            <td class="table_details__descriptor"><%= attr_comb['name'] %>:</td>
+                            <td class="table_details__value"><%= attr_comb['value_name'] %></td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  <% end %>
+                </div>
                 <div class="col-xs-4 col-sm-2 t-center">
                   <span class="hide-on-md-and-up mr-5">Cantidad:</span>
                   <%= oi.quantity %>

@@ -1,0 +1,16 @@
+<% if current_retailer.meli_retailer && current_retailer.incomplete_meli_profile? %>
+  <div class="col-xs-12">
+    <div class="warning-box fs-12">
+      Para empezar a vender en Mercado Libre primero necesitas confirmar la siguiente información:
+
+      <ul>
+        <% if current_retailer.id_number.blank? %><li>Documento de identificación</li><% end %>
+        <% if current_retailer.address.blank? || current_retailer.city.blank? || current_retailer.state.blank? %><li>Dirección de domicilio</li><% end %>
+      </ul>
+
+      Puedes confirmar esta información directamente en Mercado Libre haciendo click <a href="https://myaccount.mercadolibre.com.ec/profile#menu-user" target="_blank">aquí</a>.</br></br>
+
+      Nota: Si ya actualizaste tus datos por favor cierra sesión y vuelve a ingresar a Mercately.
+    </div>
+  </div>
+<% end %>

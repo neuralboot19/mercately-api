@@ -58,10 +58,6 @@ jobs:
       - run: bin/rails db:migrate RAILS_ENV=test
 
       - run:
-          name: Run Rubocop
-          command: bundle exec rubocop
-
-      - run:
           name: Setup Code Climate test-reporter
           command: |
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter

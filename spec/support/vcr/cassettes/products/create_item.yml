@@ -1,0 +1,143 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/pictures?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
+    body:
+      encoding: UTF-8
+      string: '{"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/vF6LeDAgWd8yi9M9gaBPjk4i"}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 31 Oct 2019 13:39:15 GMT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - d268c1cfaeea95e6676255cf70e47194
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - d8f62591-e6fe-4cc8-ad63-59da37f8ac11
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 2c041f362a8f7666a0abb7b647a9db92.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - saM5coEtHXqtNVGnuE3p6eKHntZU3g34bz2kKJI-3rOfWjuauZbGuA==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"972578-MEC32719764111_102019","max_size":"500x500","dominant_color":null,"crop":{"y_size":null,"x_size":null,"y_offset":null,"x_offset":null},"variations":[{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg"},{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg"},{"size":"400x400","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg"},{"size":"320x320","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg"},{"size":"280x280","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg"},{"size":"250x250","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg"},{"size":"228x228","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg"},{"size":"210x210","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg"},{"size":"200x200","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg"},{"size":"120x120","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg"},{"size":"70x70","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg"},{"size":"40x40","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg"},{"size":"800x800","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg"}],"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/vF6LeDAgWd8yi9M9gaBPjk4i"}'
+    http_version: 
+  recorded_at: Thu, 31 Oct 2019 13:39:15 GMT
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/items?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
+    body:
+      encoding: UTF-8
+      string: '{"title":"Red Giganta","category_id":"MEC1368","price":58.04,"available_quantity":77,"currency_id":"USD","listing_type_id":"free","condition":"used","description":{"plain_text":"Sit
+        vitae ex. Provident minus et. Reiciendis saepe sit."},"pictures":[{"id":"972578-MEC32719764111_102019"}],"attributes":[]}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 31 Oct 2019 13:39:15 GMT
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - b027cc6648261b3ce717d44118696302
+      Location:
+      - https://api.mercadolibre.com/items/MEC422969340
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Api-Name:
+      - syi-api
+      X-Api-Version:
+      - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - new-listing
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 4248edaa-8ea6-40a8-816a-f3d32234f26c
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 bedc7f726c5c61bbe5343fc78dc92c32.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - jHUMKbeFVPOvyi2Hf_FC5k1thwQw2DuuEiA3Jqj_7-G640PWqajoMQ==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6Ik1FQzQyMjk2OTM0MCIsInNpdGVfaWQiOiJNRUMiLCJ0aXRsZSI6IlJlZCBHaWdhbnRhIiwic3VidGl0bGUiOm51bGwsInNlbGxlcl9pZCI6NDI1OTMzNTQ5LCJjYXRlZ29yeV9pZCI6Ik1FQzEzNjgiLCJvZmZpY2lhbF9zdG9yZV9pZCI6bnVsbCwicHJpY2UiOjU4LjA0LCJiYXNlX3ByaWNlIjo1OC4wNCwib3JpZ2luYWxfcHJpY2UiOm51bGwsImludmVudG9yeV9pZCI6bnVsbCwiY3VycmVuY3lfaWQiOiJVU0QiLCJpbml0aWFsX3F1YW50aXR5Ijo3NywiYXZhaWxhYmxlX3F1YW50aXR5Ijo3Nywic29sZF9xdWFudGl0eSI6MCwic2FsZV90ZXJtcyI6W10sImJ1eWluZ19tb2RlIjoiYnV5X2l0X25vdyIsImxpc3RpbmdfdHlwZV9pZCI6ImZyZWUiLCJzdGFydF90aW1lIjoiMjAxOS0xMC0zMVQxMzozOToxNS43NjRaIiwic3RvcF90aW1lIjoiMjAxOS0xMi0zMFQwNDowMDowMC4wMDBaIiwiZW5kX3RpbWUiOiIyMDE5LTEyLTMwVDA0OjAwOjAwLjAwMFoiLCJleHBpcmF0aW9uX3RpbWUiOm51bGwsImNvbmRpdGlvbiI6InVzZWQiLCJwZXJtYWxpbmsiOiJodHRwOi8vYXJ0aWN1bG8ubWVyY2Fkb2xpYnJlLmNvbS5lYy9NRUMtNDIyOTY5MzQwLXJlZC1naWdhbnRhLV9KTSIsInBpY3R1cmVzIjpbeyJpZCI6Ijk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTkiLCJ1cmwiOiJodHRwOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTktTy5qcGciLCJzZWN1cmVfdXJsIjoiaHR0cHM6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTcyNTc4LU1FQzMyNzE5NzY0MTExXzEwMjAxOS1PLmpwZyIsInNpemUiOiI1MDB4NTAwIiwibWF4X3NpemUiOiI1MDB4NTAwIiwicXVhbGl0eSI6IiJ9XSwidmlkZW9faWQiOm51bGwsImRlc2NyaXB0aW9ucyI6W3siaWQiOiJNRUM0MjI5NjkzNDAtMjM2NzMwNjQxOCJ9XSwiYWNjZXB0c19tZXJjYWRvcGFnbyI6ZmFsc2UsIm5vbl9tZXJjYWRvX3BhZ29fcGF5bWVudF9tZXRob2RzIjpbXSwic2hpcHBpbmciOnsibW9kZSI6Im5vdF9zcGVjaWZpZWQiLCJsb2NhbF9waWNrX3VwIjpmYWxzZSwiZnJlZV9zaGlwcGluZyI6ZmFsc2UsIm1ldGhvZHMiOltdLCJkaW1lbnNpb25zIjpudWxsLCJ0YWdzIjpbXSwibG9naXN0aWNfdHlwZSI6Im5vdF9zcGVjaWZpZWQiLCJzdG9yZV9waWNrX3VwIjpmYWxzZX0sImludGVybmF0aW9uYWxfZGVsaXZlcnlfbW9kZSI6Im5vbmUiLCJzZWxsZXJfYWRkcmVzcyI6eyJpZCI6MTAzMjgxNjgxMiwiY29tbWVudCI6IiIsImFkZHJlc3NfbGluZSI6IlRlc3QgQWRkcmVzcyAxMjMiLCJ6aXBfY29kZSI6IiIsImNpdHkiOnsiaWQiOiIiLCJuYW1lIjoiUXVpdG8ifSwic3RhdGUiOnsiaWQiOiJFQy1QIiwibmFtZSI6IlBpY2hpbmNoYSAoIFF1aXRvICkifSwiY291bnRyeSI6eyJpZCI6IkVDIiwibmFtZSI6IkVjdWFkb3IifSwibGF0aXR1ZGUiOiIiLCJsb25naXR1ZGUiOiIiLCJzZWFyY2hfbG9jYXRpb24iOnsibmVpZ2hib3Job29kIjp7ImlkIjoiIiwibmFtZSI6IiJ9LCJjaXR5Ijp7ImlkIjoiIiwibmFtZSI6IiJ9LCJzdGF0ZSI6eyJpZCI6IiIsIm5hbWUiOiIifX19LCJzZWxsZXJfY29udGFjdCI6bnVsbCwibG9jYXRpb24iOnt9LCJnZW9sb2NhdGlvbiI6eyJsYXRpdHVkZSI6IiIsImxvbmdpdHVkZSI6IiJ9LCJjb3ZlcmFnZV9hcmVhcyI6W10sImF0dHJpYnV0ZXMiOlt7ImlkIjoiSVRFTV9DT05ESVRJT04iLCJuYW1lIjoiQ29uZGljacOzbiBkZWwgw610ZW0iLCJ2YWx1ZV9pZCI6IjIyMzA1ODEiLCJ2YWx1ZV9uYW1lIjoiVXNhZG8iLCJ2YWx1ZV9zdHJ1Y3QiOm51bGwsInZhbHVlcyI6W3siaWQiOiIyMjMwNTgxIiwibmFtZSI6IlVzYWRvIiwic3RydWN0IjpudWxsfV0sImF0dHJpYnV0ZV9ncm91cF9pZCI6IiIsImF0dHJpYnV0ZV9ncm91cF9uYW1lIjoiIn1dLCJ3YXJuaW5ncyI6W10sImxpc3Rpbmdfc291cmNlIjoiIiwidmFyaWF0aW9ucyI6W10sInRodW1ibmFpbCI6Imh0dHA6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTcyNTc4LU1FQzMyNzE5NzY0MTExXzEwMjAxOS1JLmpwZyIsInNlY3VyZV90aHVtYm5haWwiOiJodHRwczovL21lYy1zMS1wLm1sc3RhdGljLmNvbS85NzI1NzgtTUVDMzI3MTk3NjQxMTFfMTAyMDE5LUkuanBnIiwic3RhdHVzIjoiYWN0aXZlIiwic3ViX3N0YXR1cyI6W10sInRhZ3MiOlsidGVzdF9pdGVtIl0sIndhcnJhbnR5IjpudWxsLCJjYXRhbG9nX3Byb2R1Y3RfaWQiOm51bGwsImRvbWFpbl9pZCI6bnVsbCwic2VsbGVyX2N1c3RvbV9maWVsZCI6bnVsbCwicGFyZW50X2l0ZW1faWQiOm51bGwsImRpZmZlcmVudGlhbF9wcmljaW5nIjpudWxsLCJkZWFsX2lkcyI6W10sImF1dG9tYXRpY19yZWxpc3QiOmZhbHNlLCJkYXRlX2NyZWF0ZWQiOiIyMDE5LTEwLTMxVDEzOjM5OjE1Ljg2NVoiLCJsYXN0X3VwZGF0ZWQiOiIyMDE5LTEwLTMxVDEzOjM5OjE1Ljg2NVoiLCJoZWFsdGgiOm51bGwsImNhdGFsb2dfbGlzdGluZyI6ZmFsc2UsIml0ZW1fcmVsYXRpb25zIjpbXX0=
+    http_version: 
+  recorded_at: Thu, 31 Oct 2019 13:39:16 GMT
+recorded_with: VCR 5.0.0
