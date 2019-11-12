@@ -86,14 +86,13 @@ class Product < ApplicationRecord
   end
 
   def delete_images(delete_images, variations, past_meli_status)
-    return unless delete_images.present?
-
     ids = []
     delete_images.each do |img|
-      ids << img[1] if img[1].present?
+      ids << img[1]
     end
 
-    images.where(id: ids).purge if ids.present?
+    ids.delete('')
+    images.where(id: ids).purge
 
     return if variations.present? || ids.blank?
 
