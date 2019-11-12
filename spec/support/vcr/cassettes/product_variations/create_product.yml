@@ -1,0 +1,143 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/pictures?access_token=APP_USR-6199841158643194-110711-35c74e99e32e3c0dae3f3c290fd9aacc-425933549
+    body:
+      encoding: UTF-8
+      string: '{"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/TMrPL9pDVQ8nMT2s83ehnSeY"}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 07 Nov 2019 11:38:18 GMT
+      Access-Control-Allow-Credentials:
+      - 'true'
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - 190fbc22dffbc0e678c0a9ceafd99370
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - a8660301-de34-4724-b154-f1ee4f282fce
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 5276c6b2b7fbc350d96165ee30408d8a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ATL52-C1
+      X-Amz-Cf-Id:
+      - qEBXzEaMb20-Ou0wk_MVPGrax9cFPn4XRgCnewOUN1LCarSH3dTuWw==
+    body:
+      encoding: ASCII-8BIT
+      string: '{"id":"919819-MEC32799460975_112019","max_size":"500x500","dominant_color":null,"crop":{"y_size":null,"x_size":null,"y_offset":null,"x_offset":null},"variations":[{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/F-ES.jpg"},{"size":"500x500","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/O-ES.jpg"},{"size":"400x400","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/C-ES.jpg"},{"size":"320x320","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/V-ES.jpg"},{"size":"280x280","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/E-ES.jpg"},{"size":"250x250","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/P-ES.jpg"},{"size":"228x228","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/A-ES.jpg"},{"size":"210x210","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Y-ES.jpg"},{"size":"200x200","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/N-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/T-ES.jpg"},{"size":"160x160","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/Z-ES.jpg"},{"size":"120x120","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/G-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/I-ES.jpg"},{"size":"90x90","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/S-ES.jpg"},{"size":"70x70","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/R-ES.jpg"},{"size":"40x40","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/M-ES.jpg"},{"size":"800x800","url":"http://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg","secure_url":"https://http2.mlstatic.com/resources/frontend/statics/processing-image/1.0.0/B-ES.jpg"}],"source":"http://res.cloudinary.com/dhhrdm74a/image/upload/TMrPL9pDVQ8nMT2s83ehnSeY"}'
+    http_version: 
+  recorded_at: Thu, 07 Nov 2019 11:38:18 GMT
+- request:
+    method: post
+    uri: https://api.mercadolibre.com/items?access_token=APP_USR-6199841158643194-110711-35c74e99e32e3c0dae3f3c290fd9aacc-425933549
+    body:
+      encoding: UTF-8
+      string: '{"title":"Brother Voodoo","category_id":"MEC1055","price":79.07,"available_quantity":78,"currency_id":"USD","listing_type_id":"free","condition":"new","description":{"plain_text":"Amet
+        accusamus necessitatibus. Et odio labore. Ut amet harum."},"pictures":[{"id":"919819-MEC32799460975_112019"}],"attributes":[]}'
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Content-Type:
+      - application/json
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Content-Type:
+      - application/json;charset=UTF-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 07 Nov 2019 11:38:18 GMT
+      Cache-Control:
+      - max-age=0
+      Etag:
+      - 5024eff4fcad55666ef01bd99b33430c
+      Location:
+      - https://api.mercadolibre.com/items/MEC423080156
+      Vary:
+      - Accept,Accept-Encoding,Accept-Encoding
+      X-Api-Name:
+      - syi-api
+      X-Api-Version:
+      - '1.00'
+      X-Trafficlayer-App-Name:
+      - items-api-legacy
+      X-Trafficlayer-App-Scope:
+      - new-listing
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 34207958-51b7-43ca-9497-74911a0a1d82
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 8b047a56cedc9f5e8593136caff4a83e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - ATL52-C1
+      X-Amz-Cf-Id:
+      - M0F6rR8g-Uh6XNSSHDTAtZTs25tUjayp5RoywpoGpvxCfNj7ucsSvg==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6Ik1FQzQyMzA4MDE1NiIsInNpdGVfaWQiOiJNRUMiLCJ0aXRsZSI6IkJyb3RoZXIgVm9vZG9vIiwic3VidGl0bGUiOm51bGwsInNlbGxlcl9pZCI6NDI1OTMzNTQ5LCJjYXRlZ29yeV9pZCI6Ik1FQzEwNTUiLCJvZmZpY2lhbF9zdG9yZV9pZCI6bnVsbCwicHJpY2UiOjc5LjA3LCJiYXNlX3ByaWNlIjo3OS4wNywib3JpZ2luYWxfcHJpY2UiOm51bGwsImludmVudG9yeV9pZCI6bnVsbCwiY3VycmVuY3lfaWQiOiJVU0QiLCJpbml0aWFsX3F1YW50aXR5Ijo3OCwiYXZhaWxhYmxlX3F1YW50aXR5Ijo3OCwic29sZF9xdWFudGl0eSI6MCwic2FsZV90ZXJtcyI6W10sImJ1eWluZ19tb2RlIjoiYnV5X2l0X25vdyIsImxpc3RpbmdfdHlwZV9pZCI6ImZyZWUiLCJzdGFydF90aW1lIjoiMjAxOS0xMS0wN1QxMTozODoxOC41OThaIiwic3RvcF90aW1lIjoiMjAyMC0wMS0wNlQwNDowMDowMC4wMDBaIiwiZW5kX3RpbWUiOiIyMDIwLTAxLTA2VDA0OjAwOjAwLjAwMFoiLCJleHBpcmF0aW9uX3RpbWUiOm51bGwsImNvbmRpdGlvbiI6Im5ldyIsInBlcm1hbGluayI6Imh0dHA6Ly9hcnRpY3Vsby5tZXJjYWRvbGlicmUuY29tLmVjL01FQy00MjMwODAxNTYtYnJvdGhlci12b29kb28tX0pNIiwicGljdHVyZXMiOlt7ImlkIjoiOTE5ODE5LU1FQzMyNzk5NDYwOTc1XzExMjAxOSIsInVybCI6Imh0dHA6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTE5ODE5LU1FQzMyNzk5NDYwOTc1XzExMjAxOS1PLmpwZyIsInNlY3VyZV91cmwiOiJodHRwczovL21lYy1zMS1wLm1sc3RhdGljLmNvbS85MTk4MTktTUVDMzI3OTk0NjA5NzVfMTEyMDE5LU8uanBnIiwic2l6ZSI6IjUwMHg1MDAiLCJtYXhfc2l6ZSI6IjUwMHg1MDAiLCJxdWFsaXR5IjoiIn1dLCJ2aWRlb19pZCI6bnVsbCwiZGVzY3JpcHRpb25zIjpbeyJpZCI6Ik1FQzQyMzA4MDE1Ni0yMzc5MTg2MDkyIn1dLCJhY2NlcHRzX21lcmNhZG9wYWdvIjpmYWxzZSwibm9uX21lcmNhZG9fcGFnb19wYXltZW50X21ldGhvZHMiOltdLCJzaGlwcGluZyI6eyJtb2RlIjoibm90X3NwZWNpZmllZCIsImxvY2FsX3BpY2tfdXAiOmZhbHNlLCJmcmVlX3NoaXBwaW5nIjpmYWxzZSwibWV0aG9kcyI6W10sImRpbWVuc2lvbnMiOm51bGwsInRhZ3MiOltdLCJsb2dpc3RpY190eXBlIjoibm90X3NwZWNpZmllZCIsInN0b3JlX3BpY2tfdXAiOmZhbHNlfSwiaW50ZXJuYXRpb25hbF9kZWxpdmVyeV9tb2RlIjoibm9uZSIsInNlbGxlcl9hZGRyZXNzIjp7ImlkIjoxMDMyODE2ODEyLCJjb21tZW50IjoiIiwiYWRkcmVzc19saW5lIjoiVGVzdCBBZGRyZXNzIDEyMyIsInppcF9jb2RlIjoiIiwiY2l0eSI6eyJpZCI6IiIsIm5hbWUiOiJRdWl0byJ9LCJzdGF0ZSI6eyJpZCI6IkVDLVAiLCJuYW1lIjoiUGljaGluY2hhICggUXVpdG8gKSJ9LCJjb3VudHJ5Ijp7ImlkIjoiRUMiLCJuYW1lIjoiRWN1YWRvciJ9LCJsYXRpdHVkZSI6IiIsImxvbmdpdHVkZSI6IiIsInNlYXJjaF9sb2NhdGlvbiI6eyJuZWlnaGJvcmhvb2QiOnsiaWQiOiIiLCJuYW1lIjoiIn0sImNpdHkiOnsiaWQiOiIiLCJuYW1lIjoiIn0sInN0YXRlIjp7ImlkIjoiIiwibmFtZSI6IiJ9fX0sInNlbGxlcl9jb250YWN0IjpudWxsLCJsb2NhdGlvbiI6e30sImdlb2xvY2F0aW9uIjp7ImxhdGl0dWRlIjoiIiwibG9uZ2l0dWRlIjoiIn0sImNvdmVyYWdlX2FyZWFzIjpbXSwiYXR0cmlidXRlcyI6W3siaWQiOiJJVEVNX0NPTkRJVElPTiIsIm5hbWUiOiJDb25kaWNpw7NuIGRlbCDDrXRlbSIsInZhbHVlX2lkIjoiMjIzMDI4NCIsInZhbHVlX25hbWUiOiJOdWV2byIsInZhbHVlX3N0cnVjdCI6bnVsbCwidmFsdWVzIjpbeyJpZCI6IjIyMzAyODQiLCJuYW1lIjoiTnVldm8iLCJzdHJ1Y3QiOm51bGx9XSwiYXR0cmlidXRlX2dyb3VwX2lkIjoiIiwiYXR0cmlidXRlX2dyb3VwX25hbWUiOiIifSx7ImlkIjoiV0lUSF9JTUVJIiwibmFtZSI6IkNvbiBJTUVJIiwidmFsdWVfaWQiOiIyNDIwODUiLCJ2YWx1ZV9uYW1lIjoiU8OtIiwidmFsdWVfc3RydWN0IjpudWxsLCJ2YWx1ZXMiOlt7ImlkIjoiMjQyMDg1IiwibmFtZSI6IlPDrSIsInN0cnVjdCI6bnVsbH1dLCJhdHRyaWJ1dGVfZ3JvdXBfaWQiOiJPVEhFUlMiLCJhdHRyaWJ1dGVfZ3JvdXBfbmFtZSI6Ik90cm9zIn1dLCJ3YXJuaW5ncyI6W10sImxpc3Rpbmdfc291cmNlIjoiIiwidmFyaWF0aW9ucyI6W10sInRodW1ibmFpbCI6Imh0dHA6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTE5ODE5LU1FQzMyNzk5NDYwOTc1XzExMjAxOS1JLmpwZyIsInNlY3VyZV90aHVtYm5haWwiOiJodHRwczovL21lYy1zMS1wLm1sc3RhdGljLmNvbS85MTk4MTktTUVDMzI3OTk0NjA5NzVfMTEyMDE5LUkuanBnIiwic3RhdHVzIjoiYWN0aXZlIiwic3ViX3N0YXR1cyI6W10sInRhZ3MiOlsidGVzdF9pdGVtIl0sIndhcnJhbnR5IjpudWxsLCJjYXRhbG9nX3Byb2R1Y3RfaWQiOm51bGwsImRvbWFpbl9pZCI6bnVsbCwic2VsbGVyX2N1c3RvbV9maWVsZCI6bnVsbCwicGFyZW50X2l0ZW1faWQiOm51bGwsImRpZmZlcmVudGlhbF9wcmljaW5nIjpudWxsLCJkZWFsX2lkcyI6W10sImF1dG9tYXRpY19yZWxpc3QiOmZhbHNlLCJkYXRlX2NyZWF0ZWQiOiIyMDE5LTExLTA3VDExOjM4OjE4LjcwNFoiLCJsYXN0X3VwZGF0ZWQiOiIyMDE5LTExLTA3VDExOjM4OjE4LjcwNFoiLCJoZWFsdGgiOm51bGwsImNhdGFsb2dfbGlzdGluZyI6ZmFsc2UsIml0ZW1fcmVsYXRpb25zIjpbXX0=
+    http_version: 
+  recorded_at: Thu, 07 Nov 2019 11:38:18 GMT
+recorded_with: VCR 5.0.0

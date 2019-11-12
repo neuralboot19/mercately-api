@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/items/MEC422969340/?access_token=APP_USR-6199841158643194-103112-180b8eaf5fc2635676cb97203d12fa67-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Host:
+      - api.mercadolibre.com
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '2274'
+      Connection:
+      - keep-alive
+      Date:
+      - Thu, 31 Oct 2019 13:39:21 GMT
+      X-Trafficlayer-App-Name:
+      - items-api
+      X-Trafficlayer-App-Scope:
+      - read
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 195500b6-7f3e-4e92-99b5-35ce73946fbe
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Miss from cloudfront
+      Via:
+      - 1.1 dcaec0b05596b42ef5dab9e145ac961e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - KIXnMVhP-VvdL5IzT_NsiMVGqhGxpbKXCeQsuJoHLDw8KR_MGcnfcA==
+    body:
+      encoding: ASCII-8BIT
+      string: !binary |-
+        eyJpZCI6Ik1FQzQyMjk2OTM0MCIsInNpdGVfaWQiOiJNRUMiLCJ0aXRsZSI6IlJlZCBHaWdhbnRhIiwic3VidGl0bGUiOm51bGwsInNlbGxlcl9pZCI6NDI1OTMzNTQ5LCJjYXRlZ29yeV9pZCI6Ik1FQzEzNjgiLCJvZmZpY2lhbF9zdG9yZV9pZCI6bnVsbCwicHJpY2UiOjU4LjA0LCJiYXNlX3ByaWNlIjo1OC4wNCwib3JpZ2luYWxfcHJpY2UiOm51bGwsImludmVudG9yeV9pZCI6bnVsbCwiY3VycmVuY3lfaWQiOiJVU0QiLCJpbml0aWFsX3F1YW50aXR5Ijo3NywiYXZhaWxhYmxlX3F1YW50aXR5Ijo3Nywic29sZF9xdWFudGl0eSI6MCwic2FsZV90ZXJtcyI6W10sImJ1eWluZ19tb2RlIjoiYnV5X2l0X25vdyIsImxpc3RpbmdfdHlwZV9pZCI6ImZyZWUiLCJzdGFydF90aW1lIjoiMjAxOS0xMC0zMVQxMzozOToxNS43NjRaIiwic3RvcF90aW1lIjoiMjAxOS0xMi0zMFQwNDowMDowMC4wMDBaIiwiZW5kX3RpbWUiOiIyMDE5LTEyLTMwVDA0OjAwOjAwLjAwMFoiLCJleHBpcmF0aW9uX3RpbWUiOm51bGwsImNvbmRpdGlvbiI6InVzZWQiLCJwZXJtYWxpbmsiOiJodHRwczovL2FydGljdWxvLm1lcmNhZG9saWJyZS5jb20uZWMvTUVDLTQyMjk2OTM0MC1yZWQtZ2lnYW50YS1fSk0iLCJ0aHVtYm5haWwiOiJodHRwOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTktSS5qcGciLCJzZWN1cmVfdGh1bWJuYWlsIjoiaHR0cHM6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTcyNTc4LU1FQzMyNzE5NzY0MTExXzEwMjAxOS1JLmpwZyIsInBpY3R1cmVzIjpbeyJpZCI6Ijk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTkiLCJ1cmwiOiJodHRwOi8vbWVjLXMxLXAubWxzdGF0aWMuY29tLzk3MjU3OC1NRUMzMjcxOTc2NDExMV8xMDIwMTktTy5qcGciLCJzZWN1cmVfdXJsIjoiaHR0cHM6Ly9tZWMtczEtcC5tbHN0YXRpYy5jb20vOTcyNTc4LU1FQzMyNzE5NzY0MTExXzEwMjAxOS1PLmpwZyIsInNpemUiOiI1MDB4NTAwIiwibWF4X3NpemUiOiI1MDB4NTAwIiwicXVhbGl0eSI6IiJ9XSwidmlkZW9faWQiOm51bGwsImRlc2NyaXB0aW9ucyI6W3siaWQiOiJNRUM0MjI5NjkzNDAtMjM2NzMwNjQxOCJ9XSwiYWNjZXB0c19tZXJjYWRvcGFnbyI6ZmFsc2UsIm5vbl9tZXJjYWRvX3BhZ29fcGF5bWVudF9tZXRob2RzIjpbXSwic2hpcHBpbmciOnsibW9kZSI6Im5vdF9zcGVjaWZpZWQiLCJtZXRob2RzIjpbXSwidGFncyI6W10sImRpbWVuc2lvbnMiOm51bGwsImxvY2FsX3BpY2tfdXAiOmZhbHNlLCJmcmVlX3NoaXBwaW5nIjpmYWxzZSwibG9naXN0aWNfdHlwZSI6Im5vdF9zcGVjaWZpZWQiLCJzdG9yZV9waWNrX3VwIjpmYWxzZX0sImludGVybmF0aW9uYWxfZGVsaXZlcnlfbW9kZSI6Im5vbmUiLCJzZWxsZXJfYWRkcmVzcyI6eyJhZGRyZXNzX2xpbmUiOiJUZXN0IEFkZHJlc3MgMTIzIiwiY2l0eSI6eyJuYW1lIjoiUXVpdG8ifSwic3RhdGUiOnsiaWQiOiJFQy1QIiwibmFtZSI6IlBpY2hpbmNoYSAoIFF1aXRvICkifSwiY291bnRyeSI6eyJpZCI6IkVDIiwibmFtZSI6IkVjdWFkb3IifSwiaWQiOjEwMzI4MTY4MTJ9LCJzZWxsZXJfY29udGFjdCI6bnVsbCwibG9jYXRpb24iOnt9LCJjb3ZlcmFnZV9hcmVhcyI6W10sImF0dHJpYnV0ZXMiOlt7ImlkIjoiSVRFTV9DT05ESVRJT04iLCJuYW1lIjoiQ29uZGljacOzbiBkZWwgw610ZW0iLCJ2YWx1ZV9pZCI6IjIyMzA1ODEiLCJ2YWx1ZV9uYW1lIjoiVXNhZG8iLCJ2YWx1ZV9zdHJ1Y3QiOm51bGwsInZhbHVlcyI6W3siaWQiOiIyMjMwNTgxIiwibmFtZSI6IlVzYWRvIiwic3RydWN0IjpudWxsfV0sImF0dHJpYnV0ZV9ncm91cF9pZCI6IiIsImF0dHJpYnV0ZV9ncm91cF9uYW1lIjoiIn1dLCJ3YXJuaW5ncyI6W10sImxpc3Rpbmdfc291cmNlIjoiIiwidmFyaWF0aW9ucyI6W10sInN0YXR1cyI6ImFjdGl2ZSIsInN1Yl9zdGF0dXMiOltdLCJ0YWdzIjpbInRlc3RfaXRlbSJdLCJ3YXJyYW50eSI6bnVsbCwiY2F0YWxvZ19wcm9kdWN0X2lkIjpudWxsLCJkb21haW5faWQiOm51bGwsInNlbGxlcl9jdXN0b21fZmllbGQiOm51bGwsInBhcmVudF9pdGVtX2lkIjpudWxsLCJkaWZmZXJlbnRpYWxfcHJpY2luZyI6bnVsbCwiZGVhbF9pZHMiOltdLCJhdXRvbWF0aWNfcmVsaXN0IjpmYWxzZSwiZGF0ZV9jcmVhdGVkIjoiMjAxOS0xMC0zMVQxMzozOToxNS44NjVaIiwibGFzdF91cGRhdGVkIjoiMjAxOS0xMC0zMVQxMzozOToxNS44NjVaIiwiaGVhbHRoIjpudWxsLCJjYXRhbG9nX2xpc3RpbmciOmZhbHNlLCJpdGVtX3JlbGF0aW9ucyI6W119
+    http_version: 
+  recorded_at: Thu, 31 Oct 2019 13:39:21 GMT
+recorded_with: VCR 5.0.0

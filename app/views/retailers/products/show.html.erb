@@ -25,7 +25,7 @@
         <div class="row center-xs middle-xs">
           <div class="col-xs-9">
             <section class="lazy slider">
-              <% @product.images.each do |img| %>
+              <% ordered_images.each do |img| %>
                 <div class="image-slider-container">
                   <%= cl_image_tag("#{img&.key}", class: 'my-35') %>
                 </div>
@@ -39,7 +39,7 @@
           </div>
           <div class="col-xs-3">
             <section class="vertical slider draggable-container my-35">
-              <% @product.images.each do |img| %>
+              <% ordered_images.each do |img| %>
                 <div>
                   <%= cl_image_tag("#{img&.key}") %>
                 </div>

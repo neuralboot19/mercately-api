@@ -12,15 +12,27 @@
 
             <div class="row">
               <div class="mb-8 my-16 col-xs-12 col-sm-6">
-                <%= f.label :enable_for_questions, 'Para preguntas' %>
-                <%= f.check_box :enable_for_questions, class: 'input' %>
+                <div class="d-inline-flex">
+                  <div>
+                    <%= f.check_box :enable_for_questions, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_questions } %>
+                  </div>
+                  <div>
+                    <%= f.label :enable_for_questions, 'Para preguntas' %>
+                  </div>
+                </div>
                 <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
                 direcciones exactas o nombres personales</i></p>
               </div>
 
               <div class="mb-8 my-16 col-xs-12 col-sm-6">
-                <%= f.label :enable_for_chats, 'Para chats', class: 'p-static' %>
-                <%= f.check_box :enable_for_chats, class: 'input' %>
+                <div class="d-inline-flex">
+                  <div>
+                    <%= f.check_box :enable_for_chats, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_chats } %>
+                  </div>
+                  <div>
+                    <%= f.label :enable_for_chats, 'Para chats', class: 'p-static' %>
+                  </div>
+                </div>
               </div>
             </div>
 

@@ -65,6 +65,8 @@ class OrderItem < ApplicationRecord
     end
 
     def update_order_total
+      return if @is_new && from_ml
+
       order.update(total_amount: @total)
     end
 
@@ -88,6 +90,7 @@ class OrderItem < ApplicationRecord
     # TODO: Refactorizar para obtener el total desde la orden
     def catch_total(action)
       @total = order.total_amount || 0
+      @is_new = new_record?
 
       @total -= if new_record?
                   0

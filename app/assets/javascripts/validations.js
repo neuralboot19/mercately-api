@@ -54,10 +54,16 @@ function validateImages(form) {
   productId = document.getElementById('product_id');
   meliStatus = document.getElementById('product_meli_status');
   uploadProduct = document.getElementById('product_upload_product');
-  uploadImages = document.getElementById('uploadedImages');
+  uploadedImages = false;
   message = document.getElementById('product_images_error');
 
-  if (!productId.value && (meliStatus || (uploadProduct && uploadProduct.checked)) && !uploadImages.value) {
+  document.querySelectorAll(`#${form.id} .validate-image-presence`).forEach(function(image) {
+    if ($(image).val()) {
+      uploadedImages = true;
+    }
+  });
+
+  if (!productId.value && (meliStatus || (uploadProduct && uploadProduct.checked)) && !uploadedImages) {
     $(message).text('Imágenes requeridas');
     return false;
   }

@@ -1,0 +1,58 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://api.mercadolibre.com/users/425933549?access_token=APP_USR-629853670505335-102912-31df0dea591b62881b3edd3725558f4d-425933549
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.15.4
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 401
+      message: Unauthorized
+    headers:
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '71'
+      Connection:
+      - keep-alive
+      Date:
+      - Tue, 29 Oct 2019 20:27:29 GMT
+      X-Content-Type-Options:
+      - nosniff
+      X-Request-Id:
+      - 4ff81233-c0ce-4f2a-b6d4-a0609a7b22ea
+      X-Frame-Options:
+      - DENY
+      X-Xss-Protection:
+      - 1; mode=block
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Allow-Headers:
+      - Content-Type
+      Access-Control-Allow-Methods:
+      - PUT, GET, POST, DELETE, OPTIONS
+      Access-Control-Max-Age:
+      - '86400'
+      X-Cache:
+      - Error from cloudfront
+      Via:
+      - 1.1 dcaec0b05596b42ef5dab9e145ac961e.cloudfront.net (CloudFront)
+      X-Amz-Cf-Pop:
+      - MIA3-C3
+      X-Amz-Cf-Id:
+      - imEWxJDWnk_ZpVKt24whyPuYRe7E30gjCDTt3DcVwCHx4Ar_ikDlMQ==
+    body:
+      encoding: UTF-8
+      string: '{"message":"user not active","error":"not_found","status":401,"cause":[]}'
+    http_version: 
+  recorded_at: Tue, 29 Oct 2019 20:27:29 GMT
+recorded_with: VCR 5.0.0
