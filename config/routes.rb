@@ -21,6 +21,7 @@ Rails.application.routes.draw do
       resources :products do
         member do
           put 'reactive', to: 'products#reactive_product', as: :reactivate_product
+          put 'update_meli_status', to: 'products#update_meli_status'
         end
       end
       resources :orders do
