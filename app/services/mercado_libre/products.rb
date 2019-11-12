@@ -46,7 +46,7 @@ module MercadoLibre
       response = Connection.post_request(conn, @utility.prepare_product(product.reload))
       if response.status == 201
         body = JSON.parse(response.body)
-        product.update_ml(body)
+        update_product(product, body)
       else
         puts '\n\n\n\n------- EXCEPTION IN ML -------\n'
         puts response.body
@@ -81,6 +81,7 @@ module MercadoLibre
         incoming_variations: product_info['variations'],
         incoming_images: product_info['pictures'],
         from: 'mercadolibre',
+        main_image: product_info['pictures'].present?,
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -97,10 +98,10 @@ module MercadoLibre
 
     def update(product_info)
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
-      new_product = product.new_record? && product_info['parent_item_id'].present?
+      new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
       product = Product.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
-        new_product
+        new_product_with_parent
 
       product.with_lock do
         return if product_info['status'] == 'closed' &&
@@ -108,12 +109,13 @@ module MercadoLibre
 
         category = @ml_categories.import_category(product_info['category_id'])
 
-        product = @utility.assign_product(product, product_info, @retailer, category, new_product)
+        product = @utility.assign_product(product, product_info, @retailer, category, new_product_with_parent)
         product.incoming_images = product_info['pictures']
         product.incoming_variations = product_info['variations']
+        product.main_image = product_info['pictures'].present?
         product.save!
 
-        after_save_data(product, product_info, new_product)
+        after_save_data(product, product_info, new_product_with_parent)
       end
 
       product
@@ -186,13 +188,26 @@ module MercadoLibre
         product.update(main_picture_id: attach_id) if attach_id.present?
       end
 
-      def after_save_data(product, product_info, new_product)
-        @product_variations.save_variations(product, product_info['variations'], new_product) if
+      def after_save_data(product, product_info, new_product_with_parent)
+        @product_variations.save_variations(product, product_info['variations'], new_product_with_parent) if
           product_info['variations'].present?
 
         pull_images(product, product_info['pictures'])
 
-        @ml_questions.import_inherited_questions(product) if new_product
+        @ml_questions.import_inherited_questions(product) if new_product_with_parent
+      end
+
+      def update_product(product, p_ml)
+        product.meli_site_id = p_ml['site_id']
+        product.meli_start_time = p_ml['start_time']
+        product.meli_stop_time = p_ml['stop_time']
+        product.meli_end_time = p_ml['end_time']
+        product.meli_listing_type_id = p_ml['listing_type_id']
+        product.meli_permalink = p_ml['permalink']
+        product.meli_product_id = p_ml['id']
+        product.ml_attributes = p_ml['attributes']
+        product.meli_status = p_ml['status']
+        product.save
       end
   end
 end

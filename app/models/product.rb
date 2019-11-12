@@ -14,6 +14,9 @@ class Product < ApplicationRecord
   validate :images_count
   validate :check_variations
   validate :check_images
+  validate :check_main_image
+
+  before_update :assign_main_picture
 
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]
@@ -21,25 +24,8 @@ class Product < ApplicationRecord
   enum meli_status: %i[active payment_required paused closed under_review inactive]
   enum from: %i[mercately mercadolibre], _prefix: true
 
-  scope :retailer_products, lambda { |retailer_id, status|
-    Product.where('retailer_id = ? and status = ?', retailer_id, Product.statuses[status])
-  }
-
-  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images
-
-  # TODO: move to service
-  def update_ml(p_ml)
-    self.meli_site_id = p_ml['site_id']
-    self.meli_start_time = p_ml['start_time']
-    self.meli_stop_time = p_ml['stop_time']
-    self.meli_end_time = p_ml['end_time']
-    self.meli_listing_type_id = p_ml['listing_type_id']
-    self.meli_permalink = p_ml['permalink']
-    self.meli_product_id = p_ml['id']
-    self.ml_attributes = p_ml['attributes']
-    self.meli_status = p_ml['status']
-    save
-  end
+  attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
+                :changed_main_image
 
   def attach_image(url, filename, index = -1)
     img = ActiveStorage::Blob.joins(:attachments)
@@ -50,15 +36,7 @@ class Product < ApplicationRecord
         record_id: id
       }).first
 
-    if img.present?
-      begin
-        file = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{img.key}"
-        MiniMagick::Image.open(file)
-        return
-      rescue OpenURI::HTTPError
-        images.where(blob_id: img.id).purge
-      end
-    end
+    return if check_cloudinary_image(img)
 
     tempfile = MiniMagick::Image.open(url)
     tempfile.resize '500x500'
@@ -79,18 +57,12 @@ class Product < ApplicationRecord
     set_ml_products.push_update(self, past_meli_status, set_active)
   end
 
-  def update_main_picture(filename)
-    blob_id = ActiveStorage::Blob.joins(:attachments)
-      .where(filename: filename, active_storage_attachments:
-      {
-        name: 'images',
-        record_type: 'Product',
-        record_id: id
-      }).first&.id
+  def update_main_picture
+    return unless main_image
 
-    attach_id = images.find_by(blob_id: blob_id)&.id if blob_id.present?
-    update(main_picture_id: attach_id) if attach_id.present?
+    images.attach(io: File.open(main_image.tempfile), filename: main_image.original_filename || 'main_image.png')
 
+    update(main_picture_id: images.last.id)
     set_ml_products.load_main_picture(reload, true) if able_to_send_to_ml?
   end
 
@@ -127,16 +99,6 @@ class Product < ApplicationRecord
 
     reload
     update_ml_info(past_meli_status)
-  end
-
-  # TODO: Move to helper
-  def disabled_meli_statuses
-    disabled = %w[payment_required under_review inactive]
-
-    return disabled + %w[active paused closed] if status == 'archived' || disabled.include?(meli_status)
-    return disabled if meli_status == 'active'
-    return disabled + %w[paused] if meli_status == 'closed'
-    return disabled + %w[closed] if meli_status == 'paused'
   end
 
   # TODO: Make private
@@ -250,6 +212,11 @@ class Product < ApplicationRecord
     # Chequea las imagenes previo al guardado del producto
     def check_images
       errors.add(:base, 'Debe agregar entre 1 y 10 imágenes.') if mandatory_images?
+    end
+
+    # Chequea si la imagen principal del producto esta presente
+    def check_main_image
+      errors.add(:base, 'Debe agregar una foto principal') if main_image_present?
     end
 
     def set_ml_products

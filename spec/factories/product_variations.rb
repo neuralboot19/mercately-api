@@ -17,5 +17,9 @@ FactoryBot.define do
         'picture_ids': []
       }
     end
+
+    trait :from_ml do
+      variation_meli_id { Faker::Number.number(11) }
+    end
   end
 end
