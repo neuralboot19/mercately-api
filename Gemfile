@@ -43,10 +43,9 @@ gem 'chartkick', '~> 3.2.2'
 gem 'groupdate', '~> 4.2'
 
 # Datepicker
-gem 'bootstrap'
 gem 'jquery-rails'
 gem 'momentjs-rails'
-gem 'bootstrap-daterangepicker-rails'
+gem 'bootstrap-daterangepicker-rails', '~> 3.0.4'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
