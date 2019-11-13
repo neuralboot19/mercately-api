@@ -578,6 +578,15 @@
   width: 100%;
 }
 
+.no-style-filter {
+  align-self: center;
+
+  a {
+    text-decoration: none;
+    color: $secondary-color;
+  }
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {

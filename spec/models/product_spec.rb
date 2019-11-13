@@ -44,6 +44,7 @@ RSpec.describe Product, type: :model do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_presence_of(:price) }
+    it { is_expected.to validate_uniqueness_of(:code).scoped_to(:retailer_id).with_message('Código ya está en uso.') }
   end
 
   describe '#attach_image(url, filename, index = -1)' do

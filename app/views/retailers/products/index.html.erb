@@ -10,10 +10,10 @@
         </div>
         <div class="col-xs-12 col-sm-8">
           <div class="index__ctas f-right">
-            <% if params[:status] == 'active' %>
-              <%= link_to 'Productos archivados', retailers_products_path(current_retailer, status: 'archived'), class: 'c-red no-style fs-14' %>
+            <% if params[:q][:status_eq] == '0' %>
+              <%= link_to 'Productos archivados', retailers_products_path(current_retailer, q: { 'status_eq': '1', 's': 'created_at desc' }), class: 'c-red no-style fs-14' %>
             <% else %>
-              <%= link_to 'Productos activos', retailers_products_path(current_retailer, status: 'active'), class: 'c-red no-style fs-14' %>
+              <%= link_to 'Productos activos', retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'c-red no-style fs-14' %>
             <% end %>
             <%= link_to new_retailers_product_path, class: 'btn btn--cta hide-on-tablet-and-down' do %>
               <i class="fas fa-plus mr-5"></i>
@@ -26,14 +26,41 @@
 
     <%= render 'partials/incomplete_retailer' %>
 
+    <div class="box">
+      <div class="row mt-10">
+        <div class="col-xs-12">
+          <%= search_form_for @q, url: retailers_products_path do |f| %>
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 col-sm-5 px-0">
+                  <%= f.search_field :title_or_meli_product_id_or_code_cont, class: 'input', placeholder: 'Busca por nombre, código del producto o código de MercadoLibre' %>
+                  <%= f.hidden_field :status_eq, value: params[:q][:status_eq] %>
+                  <%= f.hidden_field :s, value: params[:q][:s] %>
+                </div>
+                <div class="col-xs-12 col-sm-2 px-0 mt-5">
+                  <%= f.submit 'Buscar', class: 'btn-btn btn-submit h-34' %>
+                </div>
+                <div class="col-xs-12 col-sm-1 px-0 mr-10 mt-5 fs-14 no-style-filter">
+                  Ordena por:
+                </div>
+                <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter">
+                  <%= sort_link(@q, :created_at, 'Fecha de creación') %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
     <div class="container-fluid products">
       <div class="row">
         <div class="col-xs-12">
           <div class="table box">
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Imagen</div>
-              <div class="col-sm-3">Producto</div>
-              <div class="col-sm-1 hide-on-tablet-and-down">Categoria</div>
+              <div class="col-sm-2"><%= sort_link(@q, :title, 'Producto') %></div>
+              <div class="col-sm-2 hide-on-tablet-and-down"><%= sort_link(@q, :category_name, 'Categoria') %></div>
               <div class="col-sm-3">Mercado Libre</div>
               <div class="col-sm-2">Finanzas</div>
               <div class="col-sm-1">Inventario</div>
@@ -53,7 +80,7 @@
                     <% end %>
                   </div>
                 </div>
-                <div class="col-xs-7 col-sm-3 t-center"><%= product.title %></div>
+                <div class="col-xs-7 col-sm-2 t-center"><%= product.title %></div>
                 <div class="col-xs-1 table__action-dots p-0 hide-on-md-and-up">
                   <label class="item__dropdown d-inline">
                     <a class="dropdown__button middle" tabindex="-1" href="#!">
@@ -76,7 +103,7 @@
                     </ul>
                   </label>
                 </div>
-                <div class="col-xs-12 col-sm-1 t-center hide-on-tablet-and-down c-grey">
+                <div class="col-xs-12 col-sm-2 t-center hide-on-tablet-and-down c-grey">
                   <%= product.category&.name %>
                 </div>
                 <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
@@ -107,6 +134,8 @@
                         <% end %>
                       </div>
                       <% if product.meli_product_id.present? %>
+                        <div class="col-xs-4 col-sm-6 item__descriptor">Código:</div>
+                        <div class="col-xs-2 col-sm-6"><%= product.meli_product_id %></div>
                         <div class="col-xs-4 col-sm-6 item__descriptor">Preguntas:</div>
                         <div class="col-xs-2 col-sm-6"><%= product.questions.size %></div>
                       <% elsif current_retailer.meli_retailer && product.status != 'archived' && current_retailer.incomplete_meli_profile? == false %>
@@ -136,6 +165,9 @@
                   </div>
                 </div>
                 <div class="col-xs-12 col-sm-1 t-center hide-on-sm-and-down">
+                  <% if product.code.present? %>
+                    Cód.: <b class="fs-12"><%= product.code %></b>
+                  <% end %>
                   Disponible: <b class="<%= product.available_quantity >= 0 ? 'c-green' : 'c-red' %>"><%= product.available_quantity %></b>
                 </div>
                 <div class="hide-on-sm-and-down m-auto">

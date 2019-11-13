@@ -11,6 +11,7 @@ class Product < ApplicationRecord
 
   validates :title, presence: true
   validates :price, presence: true
+  validates :code, uniqueness: { scope: :retailer_id, message: 'Código ya está en uso.' }, allow_blank: true
   validate :images_count
   validate :check_variations
   validate :check_images
