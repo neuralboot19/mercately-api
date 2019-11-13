@@ -19,6 +19,8 @@
 //= require validations
 //= require chartkick
 //= require Chart.bundle
+//= require moment
+//= require daterangepicker
 
 $(document).ready(function () {
   $( "select" ).select2({

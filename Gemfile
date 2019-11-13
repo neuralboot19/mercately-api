@@ -42,6 +42,12 @@ gem 'scout_apm'
 gem 'chartkick', '~> 3.2.2'
 gem 'groupdate', '~> 4.2'
 
+# Datepicker
+gem 'bootstrap'
+gem 'jquery-rails'
+gem 'momentjs-rails'
+gem 'bootstrap-daterangepicker-rails'
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.8', '>= 3.8.2'
