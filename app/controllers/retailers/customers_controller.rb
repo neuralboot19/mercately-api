@@ -2,7 +2,8 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy, :customer_data]
 
   def index
-    @customers = current_retailer.customers.active.page(params[:page])
+    @q = current_retailer.customers.active.search(params[:q])
+    @customers = @q.result.page(params[:page])
   end
 
   def show

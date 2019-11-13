@@ -11,7 +11,7 @@
       </li>
       <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_customers_path(current_retailer)) %>">
         <i class="item__icon fas fa-users"></i>
-        <%= link_to 'Clientes', retailers_customers_path(current_retailer), class: 'item__name no-style' %>
+        <%= link_to 'Clientes', retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
       </li>
       <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_products_path(current_retailer)) %>">
         <i class="item__icon fas fa-poll"></i>
