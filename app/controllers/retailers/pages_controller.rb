@@ -3,8 +3,8 @@ class Retailers::PagesController < RetailersController
     if params[:search] && params[:search][:range].present?
       @start_date, @end_date = params[:search][:range].split(' - ')
     else
-      @start_date = Date.today.beginning_of_month.strftime("%d/%m/%Y")
-      @end_date = Date.today.strftime("%d/%m/%Y")
+      @start_date = Date.today.beginning_of_month.strftime('%d/%m/%Y')
+      @end_date = Date.today.strftime('%d/%m/%Y')
     end
     @orders = Order.where(customer_id: current_retailer.customers.ids).range_between(@start_date, @end_date)
     @customers = current_retailer.customers.range_between(@start_date, @end_date)
