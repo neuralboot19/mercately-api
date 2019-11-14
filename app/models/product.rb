@@ -5,6 +5,7 @@ class Product < ApplicationRecord
   belongs_to :retailer
   belongs_to :category
   has_many :order_items
+  has_many :orders, through: :order_items
   has_many :questions
   has_many :product_variations
   has_many_attached :images
@@ -86,16 +87,15 @@ class Product < ApplicationRecord
   end
 
   def delete_images(delete_images, variations, past_meli_status)
-    return unless delete_images.present?
-
     ids = []
     delete_images.each do |img|
       ids << img[1]
     end
 
-    images.where(id: ids).purge if ids.present?
+    ids.delete('')
+    images.where(id: ids).purge
 
-    return if variations.present?
+    return if variations.present? || ids.blank?
 
     reload
     update_ml_info(past_meli_status)
@@ -108,7 +108,8 @@ class Product < ApplicationRecord
   end
 
   def earned
-    order_items.map { |oi| oi.quantity * oi.unit_price }.sum
+    order_items.includes(:order).where(orders: { status: 'success' })
+      .map { |oi| oi.quantity * oi.unit_price }.sum
   end
 
   # TODO: move to service (or controller (?))
