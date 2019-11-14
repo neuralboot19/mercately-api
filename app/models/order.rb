@@ -10,6 +10,8 @@ class Order < ApplicationRecord
   before_update :set_old_status, if: :will_save_change_to_status?
   after_update :adjust_ml_stock, if: :saved_change_to_status?
 
+  scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
+
   enum status: %i[pending success cancelled]
   enum merc_status: %i[
     confirmed

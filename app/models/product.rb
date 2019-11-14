@@ -5,6 +5,7 @@ class Product < ApplicationRecord
   belongs_to :retailer
   belongs_to :category
   has_many :order_items
+  has_many :orders, through: :order_items
   has_many :questions
   has_many :product_variations
   has_many_attached :images
@@ -107,7 +108,8 @@ class Product < ApplicationRecord
   end
 
   def earned
-    order_items.map { |oi| oi.quantity * oi.unit_price }.sum
+    order_items.includes(:order).where(orders: { status: 'success' })
+      .map { |oi| oi.quantity * oi.unit_price }.sum
   end
 
   # TODO: move to service (or controller (?))
