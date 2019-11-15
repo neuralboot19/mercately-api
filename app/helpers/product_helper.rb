@@ -84,6 +84,14 @@ module ProductHelper
         label: 'Menor precio'
       },
       {
+        value: 'sort_by_earned desc',
+        label: 'Mayor ganancia'
+      },
+      {
+        value: 'sort_by_earned asc',
+        label: 'Menor ganancia'
+      },
+      {
         value: 'available_quantity desc',
         label: 'Mayor cantidad disponible'
       },

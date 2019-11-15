@@ -29,6 +29,12 @@ class Product < ApplicationRecord
   attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
                 :changed_main_image
 
+  ransacker :sort_by_earned do
+    Arel.sql('coalesce((select sum(quantity * unit_price) as total from order_items, orders where ' \
+      'orders.id = order_items.order_id and orders.status = 1 and ' \
+      'order_items.product_id = products.id), 0)')
+  end
+
   def attach_image(url, filename, index = -1)
     img = ActiveStorage::Blob.joins(:attachments)
       .where(filename: filename, active_storage_attachments:
