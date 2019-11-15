@@ -109,4 +109,23 @@ RSpec.describe ProductHelper, type: :helper do
       end
     end
   end
+
+  describe '#categories_filter' do
+    let(:retailer) { create(:retailer) }
+    let!(:product) { create(:product, retailer: retailer) }
+    let(:other_product) { build(:product, retailer: retailer) }
+
+    it 'returns the list of products categories' do
+      expect(helper.categories_filter(retailer).size).to eq(1)
+
+      other_product.save
+      expect(helper.categories_filter(retailer).size).to eq(2)
+    end
+  end
+
+  describe '#ordering_options' do
+    it 'returns a list of options to filter' do
+      expect(helper.ordering_options.size).to eq(10)
+    end
+  end
 end
