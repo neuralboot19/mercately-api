@@ -65,7 +65,8 @@ RSpec.describe Product, type: :model do
 
   describe '#earned' do
     before do
-      create_list(:order_item, 5, product: product, quantity: 2, unit_price: 5)
+      order = create(:order, :completed)
+      create_list(:order_item, 5, order: order, product: product, quantity: 2, unit_price: 5)
     end
 
     it 'returns the earned amount' do

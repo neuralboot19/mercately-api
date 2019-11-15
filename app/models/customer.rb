@@ -11,6 +11,7 @@ class Customer < ApplicationRecord
   enum id_type: %i[cedula pasaporte ruc]
 
   scope :active, -> { where(valid_customer: true) }
+  scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
   def full_name
     "#{first_name} #{last_name}"
