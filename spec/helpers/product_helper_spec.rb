@@ -109,4 +109,36 @@ RSpec.describe ProductHelper, type: :helper do
       end
     end
   end
+
+  describe '#categories_filter' do
+    let(:retailer) { create(:retailer) }
+    let!(:product) { create(:product, retailer: retailer) }
+    let(:other_product) { build(:product, retailer: retailer) }
+
+    it 'returns the list of products categories' do
+      expect(helper.categories_filter(retailer).size).to eq(1)
+
+      other_product.save
+      expect(helper.categories_filter(retailer).size).to eq(2)
+    end
+  end
+
+  describe '#ordering_options' do
+    it 'returns a list of options to filter' do
+      expect(helper.ordering_options.size).to eq(12)
+    end
+  end
+
+  describe '#successfull_order_items_count' do
+    let(:product) { create(:product) }
+    let(:order) { create(:order, status: 'success') }
+
+    before do
+      create_list(:order_item, 2, product: product, order: order)
+    end
+
+    it 'returns the count of success order items of the product' do
+      expect(helper.successfull_order_items_count(product)).to eq(2)
+    end
+  end
 end

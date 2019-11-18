@@ -12,6 +12,7 @@ class Product < ApplicationRecord
 
   validates :title, presence: true
   validates :price, presence: true
+  validates :code, uniqueness: { scope: :retailer_id, message: 'Código ya está en uso.' }, allow_blank: true
   validate :images_count
   validate :check_variations
   validate :check_images
@@ -27,6 +28,18 @@ class Product < ApplicationRecord
 
   attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
                 :changed_main_image
+
+  ransacker :sort_by_earned do
+    Arel.sql('coalesce((select sum(quantity * unit_price) as total from order_items, orders where ' \
+      'orders.id = order_items.order_id and orders.status = 1 and ' \
+      'order_items.product_id = products.id), 0)')
+  end
+
+  ransacker :sort_by_order_items_count do
+    Arel.sql('coalesce((select count(distinct(order_items.id)) as total from order_items, orders where ' \
+      'orders.id = order_items.order_id and orders.status = 1 and ' \
+      'order_items.product_id = products.id), 0)')
+  end
 
   def attach_image(url, filename, index = -1)
     img = ActiveStorage::Blob.joins(:attachments)

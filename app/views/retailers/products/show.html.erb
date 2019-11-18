@@ -5,7 +5,7 @@
       <div class="product__categories mt-0"><%= @product.category.name %></div>
     </div>
     <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
-      <%= link_to retailers_products_path(current_retailer, status: @product.status), class: 'btn btn--cta' do %>
+      <%= link_to retailers_products_path(current_retailer, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
         <i class="fas fa-arrow-left mr-5"></i>
         Volver
       <% end %>
@@ -71,20 +71,28 @@
         <div class="row info__details">
           <div class="col-xs-12 c-grey my-8">Características:</div>
           <div class="col-xs-12 col-sm-12">
-            <% if @product.editable_attributes.present? %>
-              <table class="table_details w-100">
-                <% @product.editable_attributes.each do |attribute| %>
-                  <tr>
-                    <td class="table_details__descriptor">
-                      <%= attribute["name"] || attribute["id"] %>
-                    </td>
-                    <td class="table_details__value">
-                      <%= attribute["value_name"] %>
-                    </td>
-                  </tr>
-                <% end %>
-              </table>
-            <% end %>
+            <table class="table_details w-100">
+              <% if @product.code.present? %>
+                <tr>
+                  <td class="table_details__descriptor">
+                    Código
+                  </td>
+                  <td class="table_details__value">
+                    <%= @product.code %>
+                  </td>
+                </tr>
+              <% end %>
+              <% @product.editable_attributes.each do |attribute| %>
+                <tr>
+                  <td class="table_details__descriptor">
+                    <%= attribute["name"] || attribute["id"] %>
+                  </td>
+                  <td class="table_details__value">
+                    <%= attribute["value_name"] %>
+                  </td>
+                </tr>
+              <% end %>
+            </table>
           </div>
           <% if @product.product_variations.present? %>
             <div class="col-xs-12 c-grey my-8">Variaciones:</div>
@@ -148,7 +156,7 @@
                   <h6>Ordenes</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">
-                  <h2><%= @product.order_items.includes(:order).where(orders: { status: 'success' }).count %></h2>
+                  <h2><%= successfull_order_items_count(@product) %></h2>
                   <h6>Ventas exitosas</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">
@@ -184,6 +192,10 @@
                         <tr>
                           <td class="table_details__descriptor">Expiración:</td>
                           <td class="table_details__value"><%= @product.meli_end_time&.strftime("%d/%m/%Y") %></td>
+                        </tr>
+                        <tr>
+                          <td class="table_details__descriptor">Código:</td>
+                          <td class="table_details__value fs-14"><%= @product.meli_product_id %></td>
                         </tr>
                     </table>
                   </div>
