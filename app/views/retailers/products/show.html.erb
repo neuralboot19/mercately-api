@@ -156,7 +156,7 @@
                   <h6>Ordenes</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">
-                  <h2><%= @product.order_items.includes(:order).where(orders: { status: 'success' }).count %></h2>
+                  <h2><%= successfull_order_items_count(@product) %></h2>
                   <h6>Ventas exitosas</h6>
                 </div>
                 <div class="col-xs-12 submodule col-sm-4">

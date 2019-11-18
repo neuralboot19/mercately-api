@@ -598,6 +598,10 @@
   top: 20px;
 }
 
+#meli-status-cont {
+  margin-left: -10px !important;
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {
@@ -721,6 +725,12 @@
   .variation_details {
     transform: translateY(12px);
     display: inline-block;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #meli-status-cont {
+    margin-left: 0px !important;
   }
 }
 

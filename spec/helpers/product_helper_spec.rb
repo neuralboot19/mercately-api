@@ -128,4 +128,17 @@ RSpec.describe ProductHelper, type: :helper do
       expect(helper.ordering_options.size).to eq(12)
     end
   end
+
+  describe '#successfull_order_items_count' do
+    let(:product) { create(:product) }
+    let(:order) { create(:order, status: 'success') }
+
+    before do
+      create_list(:order_item, 2, product: product, order: order)
+    end
+
+    it 'returns the count of success order items of the product' do
+      expect(helper.successfull_order_items_count(product)).to eq(2)
+    end
+  end
 end

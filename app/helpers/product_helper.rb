@@ -68,11 +68,11 @@ module ProductHelper
         label: 'Nombre del producto Desc'
       },
       {
-        value: 'sold_quantity desc',
+        value: 'sort_by_order_items_count desc',
         label: 'Más vendidos'
       },
       {
-        value: 'sold_quantity asc',
+        value: 'sort_by_order_items_count asc',
         label: 'Menos vendidos'
       },
       {
@@ -100,5 +100,9 @@ module ProductHelper
         label: 'Menor cantidad disponible'
       }
     ]
+  end
+
+  def successfull_order_items_count(product)
+    product.order_items.includes(:order).where(orders: { status: 'success' }).count
   end
 end

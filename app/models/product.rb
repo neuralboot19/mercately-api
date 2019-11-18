@@ -35,6 +35,12 @@ class Product < ApplicationRecord
       'order_items.product_id = products.id), 0)')
   end
 
+  ransacker :sort_by_order_items_count do
+    Arel.sql('coalesce((select count(distinct(order_items.id)) as total from order_items, orders where ' \
+      'orders.id = order_items.order_id and orders.status = 1 and ' \
+      'order_items.product_id = products.id), 0)')
+  end
+
   def attach_image(url, filename, index = -1)
     img = ActiveStorage::Blob.joins(:attachments)
       .where(filename: filename, active_storage_attachments:
