@@ -592,6 +592,12 @@
   cursor: pointer;
 }
 
+.filter-button {
+  position: absolute;
+  right: 0px;
+  top: 20px;
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {
