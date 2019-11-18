@@ -44,6 +44,7 @@ RSpec.describe Product, type: :model do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_presence_of(:price) }
+    it { is_expected.to validate_uniqueness_of(:code).scoped_to(:retailer_id).with_message('Código ya está en uso.') }
   end
 
   describe '#attach_image(url, filename, index = -1)' do
@@ -64,7 +65,8 @@ RSpec.describe Product, type: :model do
 
   describe '#earned' do
     before do
-      create_list(:order_item, 5, product: product, quantity: 2, unit_price: 5)
+      order = create(:order, :completed)
+      create_list(:order_item, 5, order: order, product: product, quantity: 2, unit_price: 5)
     end
 
     it 'returns the earned amount' do

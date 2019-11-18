@@ -333,6 +333,10 @@ label:hover, a:hover {
   .hide-on-sm-and-down {
     display: none;
   }
+
+  .show-on-sm-and-down {
+    display: block;
+  }
 }
 
 @media screen and (max-width: 480px) {

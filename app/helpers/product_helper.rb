@@ -42,4 +42,67 @@ module ProductHelper
 
     statuses - [statuses[0]]
   end
+
+  def categories_filter(retailer)
+    category_ids = retailer.products.distinct(:category_id).pluck(:category_id)
+    categories = Category.where(id: category_ids)
+    categories.map { |cat| [cat.name, cat.id] }
+  end
+
+  def ordering_options
+    [
+      {
+        value: 'created_at asc',
+        label: 'Fecha de creación Asc'
+      },
+      {
+        value: 'created_at desc',
+        label: 'Fecha de creación Desc'
+      },
+      {
+        value: 'title asc',
+        label: 'Nombre del producto Asc'
+      },
+      {
+        value: 'title desc',
+        label: 'Nombre del producto Desc'
+      },
+      {
+        value: 'sort_by_order_items_count desc',
+        label: 'Más vendidos'
+      },
+      {
+        value: 'sort_by_order_items_count asc',
+        label: 'Menos vendidos'
+      },
+      {
+        value: 'price desc',
+        label: 'Mayor precio'
+      },
+      {
+        value: 'price asc',
+        label: 'Menor precio'
+      },
+      {
+        value: 'sort_by_earned desc',
+        label: 'Mayor ganancia'
+      },
+      {
+        value: 'sort_by_earned asc',
+        label: 'Menor ganancia'
+      },
+      {
+        value: 'available_quantity desc',
+        label: 'Mayor cantidad disponible'
+      },
+      {
+        value: 'available_quantity asc',
+        label: 'Menor cantidad disponible'
+      }
+    ]
+  end
+
+  def successfull_order_items_count(product)
+    product.order_items.includes(:order).where(orders: { status: 'success' }).count
+  end
 end

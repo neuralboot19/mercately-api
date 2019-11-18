@@ -1,1 +1,93 @@
-<%= current_retailer.name %>
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <h1 class="d-inline index__title">Dashboard</h1>
+          <div class="index__desc">
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
+          <%= form_for(:search, url: retailers_dashboard_path(current_retailer), method: :get, html: { id: 'select_range' }) do |form| %>
+            <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
+          <% end %>
+        </div>
+        <div class="col-xs-12 col-sm-4 product__info pb-12">
+          <div class="t-center">Índice de ventas</div>
+          <%= pie_chart [['Exitosas', @success_orders_count], ['Canceladas', @cancelled_orders_count], ['Pendientes', @pending_orders_count]] %>
+          <div class="t-center">Total de ventas: <%= @orders_count %></div>
+        </div>
+        <div class="col-xs-12 col-sm-8">
+          <div class="t-center">Mejores clientes</div>
+          <%= bar_chart @better_customers, xtitle: 'Ordenes completadas', ytitle: 'Cliente' %>
+        </div>
+        <div class="col-xs-12 divider mt-0"></div>
+        <div class="col-xs-12 mt-40">
+          <div class="t-center">Productos mas vendidos</div>
+          <%= line_chart @better_products, xtitle: 'Fecha de la orden', ytitle: 'Cantidad vendida' %>
+        </div>
+        <div class="col-xs-12 divider mt-30"></div>
+        <div class="col-xs-12 mt-40">
+          <div class="t-center">Total de ganancias</div>
+          <%= area_chart @incoming_total %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+    var today = new Date;
+    $('[data-behavior="daterangepicker"]').daterangepicker({
+      opens: 'left',
+      startDate: '<%= @start_date %>',
+      endDate: '<%= @end_date %>',
+      maxDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+      ranges: {
+        'Hoy': [moment(), moment()],
+        'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+        'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+        'Este mes': [moment().startOf('month'), moment().endOf('month')],
+        'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
+      locale: {
+        format: 'DD/MM/YYYY',
+        cancelLabel: 'Cancelar',
+        applyLabel: 'Aplicar',
+        fromLabel: 'Desde',
+        toLabel: 'Hasta',
+        customRangeLabel: 'Editar fecha',
+        weekLabel: 'Semana',
+        daysOfWeek: [
+          'Do',
+          'Lu',
+          'Ma',
+          'Mi',
+          'Ju',
+          'Vi',
+          'Sa'
+        ],
+        monthNames: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Deciembre'
+        ],
+        firstDay: 1
+      }
+    }, function() {
+      setTimeout(function() {
+        $('#select_range').submit();
+      }, 100)
+    });
+  });
+</script>
