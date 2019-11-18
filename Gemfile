@@ -21,6 +21,7 @@ gem 'sentry-raven', '~> 2.9'
 # Login and administration
 gem 'activeadmin', '~> 1.4', '>= 1.4.3'
 gem 'devise', '~> 4.6', '>= 4.6.1'
+gem 'omniauth-facebook', '~> 5.0'
 gem 'faraday', '~> 0.15.4'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
 gem 'ancestry', '~> 3.0', '>= 3.0.5'

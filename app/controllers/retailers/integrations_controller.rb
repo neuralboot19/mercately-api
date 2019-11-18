@@ -45,7 +45,7 @@ class Retailers::IntegrationsController < RetailersController
   end
 
   def messenger_callbacks
-    render status: 200, json: params['hub.challenge']
+    render status: 200, json: params['hub.challenge'] if params['hub.challenge']
   end
 
   private

@@ -3,7 +3,8 @@ Rails.application.routes.draw do
 
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
-    sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords' }
+    sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords',
+    omniauth_callbacks: 'retailer_users/omniauth_callbacks' }
   as :retailer_user do
     get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info
   end
@@ -42,6 +43,7 @@ Rails.application.routes.draw do
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
     get 'messenger_callbacks', to: 'integrations#messenger_callbacks'
+    post 'messenger_callbacks', to: 'integrations#messenger_callbacks'
     get 'products/:id/product_with_variations', to: 'products#product_with_variations'
     get 'products/:id/price_quantity', to: 'products#price_quantity'
     get 'customers/:id', to: 'customers#customer_data'
