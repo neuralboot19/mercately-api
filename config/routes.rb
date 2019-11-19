@@ -44,6 +44,8 @@ Rails.application.routes.draw do
     get 'products/:id/product_with_variations', to: 'products#product_with_variations'
     get 'products/:id/price_quantity', to: 'products#price_quantity'
     get 'customers/:id', to: 'customers#customer_data'
+    get 'templates/templates_for_questions', to: 'templates#templates_for_questions'
+    get 'templates/templates_for_chats', to: 'templates#templates_for_chats'
   end
 
   put 'retailer_user/onboarding_status', to: 'retailer_users#update_onboarding_info', as: :update_onboarding_info
