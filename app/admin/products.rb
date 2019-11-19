@@ -14,6 +14,7 @@ ActiveAdmin.register Product do
                 :sold_quantity,
                 :status,
                 :meli_status,
+                :code,
                 ml_attributes: [],
                 images: []
 
@@ -55,6 +56,7 @@ ActiveAdmin.register Product do
       row :condition
       row :status
       row :meli_status
+      row :code
       row :main_picture_id
       row :ml_attributes
     end
