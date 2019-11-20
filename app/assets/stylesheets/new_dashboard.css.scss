@@ -579,6 +579,29 @@
   width: 100%;
 }
 
+.no-style-filter {
+  align-self: center;
+
+  a {
+    text-decoration: none;
+    color: $secondary-color;
+  }
+}
+
+.meli-status-filter {
+  cursor: pointer;
+}
+
+.filter-button {
+  position: absolute;
+  right: 0px;
+  top: 20px;
+}
+
+#meli-status-cont {
+  margin-left: -10px !important;
+}
+
 #chat_details {
   max-height: 50vh;
   overflow-y: auto;
@@ -708,6 +731,12 @@
   .variation_details {
     transform: translateY(12px);
     display: inline-block;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  #meli-status-cont {
+    margin-left: 0px !important;
   }
 }
 

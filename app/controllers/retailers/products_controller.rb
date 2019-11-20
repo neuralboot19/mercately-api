@@ -6,8 +6,8 @@ class Retailers::ProductsController < RetailersController
   before_action :compile_variations, only: [:create, :update]
 
   def index
-    @products = current_retailer.products.preload(:category, :questions).where(status: params['status'])
-      .with_attached_images.page(params[:page])
+    @q = current_retailer.products.preload(:category, :questions).ransack(params[:q])
+    @products = @q.result.with_attached_images.page(params[:page])
   end
 
   def show
@@ -158,6 +158,7 @@ class Retailers::ProductsController < RetailersController
                                       :sold_quantity,
                                       :status,
                                       :meli_status,
+                                      :code,
                                       images: [],
                                       ml_attributes: [])
     end

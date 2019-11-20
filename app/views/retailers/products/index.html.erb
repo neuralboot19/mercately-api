@@ -10,10 +10,10 @@
         </div>
         <div class="col-xs-12 col-sm-8">
           <div class="index__ctas f-right">
-            <% if params[:status] == 'active' %>
-              <%= link_to 'Productos archivados', retailers_products_path(current_retailer, status: 'archived'), class: 'c-red no-style fs-14' %>
+            <% if params[:q][:status_eq] == '0' %>
+              <%= link_to 'Productos archivados', retailers_products_path(current_retailer, q: { 'status_eq': '1', 's': 'created_at desc' }), class: 'c-red no-style fs-14' %>
             <% else %>
-              <%= link_to 'Productos activos', retailers_products_path(current_retailer, status: 'active'), class: 'c-red no-style fs-14' %>
+              <%= link_to 'Productos activos', retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'c-red no-style fs-14' %>
             <% end %>
             <%= link_to new_retailers_product_path, class: 'btn btn--cta hide-on-tablet-and-down' do %>
               <i class="fas fa-plus mr-5"></i>
@@ -26,6 +26,86 @@
 
     <%= render 'partials/incomplete_retailer' %>
 
+    <%= search_form_for @q, url: retailers_products_path do |f| %>
+      <%= f.hidden_field :status_eq, value: params[:q][:status_eq] %>
+      <div class="box">
+        <div class="row mt-10">
+          <div class="col-xs-12">
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 col-sm-1 px-0 fs-14 no-style-filter">
+                  Busca por:
+                </div>
+                <div class="col-xs-12 col-sm-4 px-0">
+                  <%= f.search_field :title_or_meli_product_id_or_code_cont, class: 'input w-100', placeholder: 'Nombre, código del producto o código de MercadoLibre' %>
+                </div>
+                <div class="col-xs-12 col-sm-1">
+                </div>
+                <div class="col-xs-12 col-sm-1 px-0 mt-5 fs-14 no-style-filter">
+                  Filtra por:
+                </div>
+                <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter">
+                  <%= f.select :category_id_eq, categories_filter(current_retailer), { include_blank: true }, class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-sm-2 px-0 mt-5 p-relative hide-on-sm-and-down">
+                  <%= f.submit 'Buscar', class: 'btn-btn btn-submit filter-button' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-10">
+          <div class="col-xs-12">
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 col-sm-1 px-0 mr-10 mt-5 fs-14 no-style-filter">
+                  Ordena por:
+                </div>
+                <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter p-relative">
+                  <%= f.hidden_field :s, value: params[:q][:s] %>
+                  <label class="item__dropdown d-inline">
+                    <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
+                      <span id="selected-order"></span>&nbsp;<i class="fas fa-sort"></i>
+                    </a>
+
+                    <ul class="dropdown__menu w-100" id="order-list">
+                      <% ordering_options.each do |ord| %>
+                        <li value="<%= ord[:value] %>">
+                          <%= ord[:label] %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </label>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                </div>
+                <div class="row" id="meli-status-cont">
+                  <%= f.hidden_field :meli_status_eq, value: params[:q][:meli_status_eq] %>
+                  <%= f.hidden_field :meli_product_id_null, value: params[:q][:meli_product_id_null] %>
+                  <div class="mt-5 mr-10 px-0 no-style-filter meli-status-filter">
+                    <b class="cookie cookie--green fs-12" value="0">Activo <i class="fas fa-check <%= 'd-none' if params[:q][:meli_status_eq] != '0' %>"></i></b>
+                  </div>
+                  <div class="mt-5 mr-10 px-0 no-style-filter meli-status-filter">
+                    <b class="cookie cookie--yellow fs-12" value="2">Pausado <i class="fas fa-check <%= 'd-none' if params[:q][:meli_status_eq] != '2' %>"></i></b>
+                  </div>
+                  <div class="mt-5 mr-10 px-0 no-style-filter meli-status-filter">
+                    <b class="cookie cookie--red fs-12" value="3">Cerrado <i class="fas fa-check <%= 'd-none' if params[:q][:meli_status_eq] != '3' %>"></i></b>
+                  </div>
+                  <div class="mt-5 px-0 no-style-filter meli-status-filter">
+                    <b class="cookie cookie--blue fs-12" value="1">No publicado <i class="fas fa-check <%= 'd-none' if params[:q][:meli_product_id_null] != '1' %>"></i></b>
+                  </div>
+                </div>
+                <div class="col-xs-12 px-0 mt-10 d-none show-on-sm-and-down">
+                  <%= f.submit 'Buscar', class: 'btn-btn btn-submit' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
     <div class="container-fluid products">
       <div class="row">
         <div class="col-xs-12">
@@ -33,7 +113,7 @@
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-1">Imagen</div>
               <div class="col-sm-3">Producto</div>
-              <div class="col-sm-1 hide-on-tablet-and-down">Categoria</div>
+              <div class="col-sm-1 hide-on-tablet-and-down">Categoría</div>
               <div class="col-sm-3">Mercado Libre</div>
               <div class="col-sm-2">Finanzas</div>
               <div class="col-sm-1">Inventario</div>
@@ -107,6 +187,8 @@
                         <% end %>
                       </div>
                       <% if product.meli_product_id.present? %>
+                        <div class="col-xs-4 col-sm-6 item__descriptor">Código:</div>
+                        <div class="col-xs-2 col-sm-6"><%= product.meli_product_id %></div>
                         <div class="col-xs-4 col-sm-6 item__descriptor">Preguntas:</div>
                         <div class="col-xs-2 col-sm-6"><%= product.questions.size %></div>
                       <% elsif current_retailer.meli_retailer && product.status != 'archived' && current_retailer.incomplete_meli_profile? == false %>
@@ -124,18 +206,21 @@
                 <div class="col-xs-12 col-sm-2">
                   <div class="box">
                     <div class="row">
-                      <div class="col-xs-4 col-sm-6 item__descriptor">Vendidos:</div>
-                      <div class="col-xs-2 col-sm-6"><%= product.sold_quantity %></div>
+                      <div class="col-xs-4 col-sm-6 item__descriptor">Ventas:</div>
+                      <div class="col-xs-2 col-sm-6"><%= successfull_order_items_count(product) %></div>
                       <div class="col-xs-4 col-sm-6 item__descriptor">Precio:</div>
                       <div class="col-xs-2 col-sm-6">$<%= product.price %></div>
                       <div class="col-xs-4 col-sm-6 item__descriptor">Ganancia:</div>
-                      <div class="col-xs-2 col-sm-6">$<%= product.sold_quantity.to_i * product.price %></div>
+                      <div class="col-xs-2 col-sm-6">$<%= product.earned %></div>
                       <div class="col-xs-4 col-sm-6 hide-on-pc item__descriptor">Disponible:</div>
                       <div class="col-xs-2 col-sm-6 hide-on-pc"><%= product.available_quantity %></div>
                     </div>
                   </div>
                 </div>
                 <div class="col-xs-12 col-sm-1 t-center hide-on-sm-and-down">
+                  <% if product.code.present? %>
+                    Cód.: <b class="fs-12"><%= product.code %></b>
+                  <% end %>
                   Disponible: <b class="<%= product.available_quantity >= 0 ? 'c-green' : 'c-red' %>"><%= product.available_quantity %></b>
                 </div>
                 <div class="hide-on-sm-and-down m-auto">
@@ -194,3 +279,52 @@
     <i class="fas fa-plus"></i>
   <% end %>
 </div>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('#q_category_id_eq').select2({
+      placeholder: 'Categoría',
+      allowClear: true
+    }).on("select2:unselecting", function (e) {
+      $(this).one('select2:opening', function(ev) { ev.preventDefault(); });
+    });
+
+    $('#order-list li').each(function(index, li) {
+      if ($(li).attr('value') === $('#q_s').val()) {
+        $('#selected-order').html($(li).html());
+      }
+    });
+  });
+
+  $('#order-list li').on('click', function() {
+    $('#selected-order').html($(this).html());
+    $('#q_s').val($(this).attr('value'));
+    $('#order-list').hide();
+  });
+
+  $('#order-link').on('click', function() {
+    $('#order-list').show();
+  });
+
+  $('.meli-status-filter').on('click', function() {
+    $('#meli-status-cont').find('i').hide();
+    cookie = $(this).find('i');
+    value = $(this).find('b').attr('value');
+
+    if ($('#q_meli_status_eq').val() === value || $('#q_meli_product_id_null').val() === value) {
+      cookie.hide();
+      $('#q_meli_status_eq').val('');
+      $('#q_meli_product_id_null').val('');
+    } else {
+      cookie.show();
+
+      if (value === '1') {
+        $('#q_meli_product_id_null').val(value);
+        $('#q_meli_status_eq').val('');
+      } else {
+        $('#q_meli_status_eq').val(value);
+        $('#q_meli_product_id_null').val('');
+      }
+    }
+  });
+</script>

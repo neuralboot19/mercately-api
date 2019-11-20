@@ -236,7 +236,7 @@ ActiveRecord::Schema.define(version: 2019_11_18_212756) do
     t.decimal "base_price"
     t.decimal "original_price"
     t.integer "initial_quantity"
-    t.integer "sold_quantity"
+    t.integer "sold_quantity", default: 0
     t.datetime "meli_start_time"
     t.string "meli_listing_type_id"
     t.datetime "meli_stop_time"
@@ -248,10 +248,12 @@ ActiveRecord::Schema.define(version: 2019_11_18_212756) do
     t.jsonb "ml_attributes", default: []
     t.bigint "main_picture_id"
     t.integer "status", default: 0
-    t.integer "meli_status", default: 0
+    t.integer "meli_status"
     t.integer "from", default: 0
+    t.string "code"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
+    t.index ["retailer_id", "code"], name: "index_products_on_retailer_id_and_code", unique: true
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
   end
 

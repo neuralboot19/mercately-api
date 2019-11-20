@@ -2,7 +2,7 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy, :customer_data]
 
   def index
-    @q = current_retailer.customers.active.search(params[:q])
+    @q = current_retailer.customers.active.ransack(params[:q])
     @customers = @q.result.page(params[:page])
   end
 

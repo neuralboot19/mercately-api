@@ -15,7 +15,7 @@
       </li>
       <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_products_path(current_retailer)) %>">
         <i class="item__icon fas fa-poll"></i>
-        <%= link_to 'Productos', retailers_products_path(current_retailer, status: 'active'), class: 'item__name no-style' %>
+        <%= link_to 'Productos', retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
       </li>
       <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_orders_path(current_retailer)) %>">
         <i class="item__icon fas fa-clipboard-check"></i>
