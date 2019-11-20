@@ -95,3 +95,4 @@ function getAjax(url, success) {
   xhr.send();
   return xhr;
 }
+var getAjax = getAjax;
