@@ -34,6 +34,9 @@ Rails.application.routes.draw do
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
+      get 'facebook_chats', to: 'messages#facebook_chats', as: :facebook_chats
+      get 'facebook_chat/:id', to: 'messages#facebook_chat', as: :facebook_chat
+      post 'facebook_chats/:id', to: 'messages#send_facebook_message', as: :send_facebook_message
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question', as: :question

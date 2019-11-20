@@ -4,7 +4,9 @@ class Customer < ApplicationRecord
   has_many :orders, dependent: :destroy
   has_many :questions, dependent: :destroy
   has_many :messages, dependent: :destroy
+  has_many :facebook_messages, dependent: :destroy
 
+  validates_uniqueness_of :psid
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   before_save :update_valid_customer
 
@@ -34,6 +36,14 @@ class Customer < ApplicationRecord
     end
 
     update(phone: phone_area + meli_customer.phone)
+  end
+
+  def unread_message?
+    facebook_messages.where(sent_from_mercately: false).last&.date_read.blank?
+  end
+
+  def last_message_received_date
+    facebook_messages.where(sent_from_mercately: false).last.created_at
   end
 
   private

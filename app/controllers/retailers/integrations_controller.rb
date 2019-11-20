@@ -45,7 +45,22 @@ class Retailers::IntegrationsController < RetailersController
   end
 
   def messenger_callbacks
-    render status: 200, json: params['hub.challenge'] if params['hub.challenge']
+    if params['hub.challenge']
+      render status: 200, json: params['hub.challenge']
+      return
+    end
+    # TODO: manejar los diferentes tipos de webhooks
+    message_data = params['entry'][0]['messaging'][0]
+    facebook_retailer = FacebookRetailer.find_by(uid: message_data['recipient']['id'])
+    render status: 200, json: {} and return if facebook_retailer.nil?
+    facebook_service = Facebook::Messages.new(facebook_retailer)
+    if message_data['message']&.[]('text')
+      facebook_service.save(message_data)
+    elsif message_data['delivery']&.[]('mids')
+      psid = message_data['sender']['id']
+      facebook_service.import_delivered(message_data['delivery']['mids'][0], psid)
+    end
+    render status: 200, json: {}
   end
 
   private

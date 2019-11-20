@@ -38,6 +38,10 @@
             <b class="item__cookie"><%= quantity_unread_messages %></b>
           </li>
           <li class="submenu__item">
+            <%= link_to 'Facebook Mensenger', retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
+            <b class="item__cookie"><%= quantity_unread_messages %></b>
+          </li>
+          <li class="submenu__item">
             <%= link_to 'Plantillas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
           </li>
         </ul>

@@ -7,7 +7,7 @@ module Facebook
 
     # Make sure call this method with a long live token on DB
     def update_retailer_access_token
-      url = prepare_pages_url
+      url = pages_url
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       save_page_access_token(response) if response
@@ -24,21 +24,30 @@ module Facebook
     end
 
     def get_long_live_user_access_token
-      url = prepare_long_live_user_access_token_url
+      url = long_live_user_access_token_url
       conn = Connection.prepare_connection(url)
       Connection.get_request(conn)
     end
 
+    def subscribe_page_to_webhooks
+      url = webhooks_susbcription_url
+      conn = Connection.prepare_connection(url)
+      response = Connection.post_request(conn, prepare_webhook_subscription)
+      JSON.parse(response.body)
+      # TODO: handle failure https://developers.facebook.com/docs/pages/realtime/
+      # It can fail if user does not give permissions to the app
+    end
+
     private
 
-      def prepare_pages_url
+      def pages_url
         params = {
-          access_token: @facebook_retailer.access_token
+          access_token: @retailer_user.facebook_access_token
         }
-        "https://graph.facebook.com/#{@facebook_retailer.uid}/accounts?#{params.to_query}"
+        "https://graph.facebook.com/#{@retailer_user.uid}/accounts?#{params.to_query}"
       end
 
-      def prepare_long_live_user_access_token_url
+      def long_live_user_access_token_url
         params = {
           grant_type: 'fb_exchange_token',
           client_id: ENV['FACEBOOK_APP_ID'],
@@ -46,6 +55,19 @@ module Facebook
           fb_exchange_token: @retailer_user.facebook_access_token
         }
         "https://graph.facebook.com/v5.0/oauth/access_token?#{params.to_query}"
+      end
+
+      def prepare_webhook_subscription
+        {
+          subscribed_fields: 'messages, message_deliveries, message_reads'
+        }.to_json
+      end
+
+      def webhooks_susbcription_url
+        params = {
+          access_token: @facebook_retailer.access_token
+        }
+        "https://graph.facebook.com/v5.0/#{@facebook_retailer.uid}/subscribed_apps?#{params.to_query}"
       end
   end
 end

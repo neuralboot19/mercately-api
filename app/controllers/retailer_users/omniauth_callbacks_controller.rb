@@ -1,11 +1,14 @@
 class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include CurrentRetailer
+  before_action :authenticate_retailer_user!
+
   def facebook
     # TODO validar que el usuario no selecciono mas de una pagina
     if request.env["omniauth.auth"].info.email.blank?
       redirect_to "/users/auth/facebook?auth_type=rerequest&scope=email" and return
     end
 
-    @retailer_user = RetailerUser.from_omniauth(request.env["omniauth.auth"])
+    @retailer_user = RetailerUser.from_omniauth(request.env["omniauth.auth"], current_retailer_user)
 
     if @retailer_user.persisted?
       sign_in_and_redirect @retailer_user, event: :authentication

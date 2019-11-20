@@ -1,9 +1,4 @@
 class FacebookRetailer < ApplicationRecord
   belongs_to :retailer
-
-  private
-
-    def get_page_access_token
-      
-    end
+  has_many :facebook_messages, dependent: :destroy
 end
