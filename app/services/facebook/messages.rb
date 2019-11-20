@@ -8,7 +8,7 @@ module Facebook
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
       FacebookMessage.create_with(
         customer: customer,
-        facebook_retailer: facebook_retailer,
+        facebook_retailer: @facebook_retailer,
         uid: message_data['sender']['id'],
         id_client: message_data['sender']['id'],
         text: message_data['message']['text'],

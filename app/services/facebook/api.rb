@@ -34,8 +34,6 @@ module Facebook
       conn = Connection.prepare_connection(url)
       response = Connection.post_request(conn, prepare_webhook_subscription)
       JSON.parse(response.body)
-      # TODO: handle failure https://developers.facebook.com/docs/pages/realtime/
-      # It can fail if user does not give permissions to the app
     end
 
     private

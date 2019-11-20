@@ -579,6 +579,12 @@
   width: 100%;
 }
 
+#chat_details {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {

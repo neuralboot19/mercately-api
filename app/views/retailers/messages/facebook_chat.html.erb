@@ -33,23 +33,30 @@
                 <div class="col-xs-12 col-sm-6">
                   <fieldset class="fieldset mt-16">
                     <legend>Detalles:</legend>
-                    <% @messages.each do |m| %>
-                      <% if m.uid != current_retailer_user.id %>
-                        <p>
-                          <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.created_at) %></span>
-                        </p>
-                        <p>
-                          <label><%= m.text %></label>
-                        </p>
-                      <% else %>
-                        <p class="t-right">
-                          <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.updated_at) %></span>
-                        </p>
-                        <p class="t-right">
-                          <label><%= m.text %></label>
-                        </p>
+                    <div id="chat_details">
+                      <% @messages.each do |m| %>
+                        <% if m.uid == current_retailer_user.uid || m.uid == current_retailer.facebook_retailer.uid %>
+                          <% if @previous_message_date != show_date(m.updated_at) %>
+                            <p class="t-right mb-0">
+                              <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.updated_at) %></span>
+                            </p>
+                          <% end %>
+                          <p class="t-right my-0">
+                            <label><%= m.text %></label>
+                          </p>
+                        <% else %>
+                          <% if @previous_message_date != show_date(m.updated_at) %>
+                            <p class="mb-0">
+                              <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.updated_at) %></span>
+                            </p>
+                          <% end %>
+                          <p class="my-0">
+                            <label><%= m.text %></label>
+                          </p>
+                        <% end %>
+                        <% @previous_message_date = show_date(m.updated_at) %>
                       <% end %>
-                    <% end %>
+                    </div>
                     <%= form_tag retailers_send_facebook_message_path(current_retailer, @customer), method: :post do %>
                       <div class="row mb-10">
                         <%= text_area_tag :message, nil, placeholder: 'Texto de respuesta', class: 'input h-77' %>
@@ -65,7 +72,7 @@
                   <legend>Plantillas:</legend>
                     <% current_retailer.templates.for_chats.each do |template| %>
                       <%= form_tag retailers_send_facebook_message_path(current_retailer, @customer), method: :post do %>
-                        <%= hidden_field_tag :answer, template.answer %>
+                        <%= hidden_field_tag :message, template.answer %>
                         <p>
                           <span class="c-secondary fs-16"><%= template.title %></span>
                         </p>
@@ -86,3 +93,9 @@
     </div>
   </div>
 </div>
+
+<script charset="utf-8">
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelector('#chat_details p:last-child').scrollIntoView();
+  });
+</script>

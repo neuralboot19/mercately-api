@@ -54,8 +54,8 @@
                   <br class="hide-on-md-and-up"/>
                   <% customer.facebook_messages.last(2).each do |m| %>
                     <div class="c-secondary truncate">
-                      <% if m.sent_from_mercately? %>
-                        Yo:
+                      <% if m.uid == current_retailer_user.uid || m.uid == current_retailer.facebook_retailer.uid %>
+                        <%= current_retailer.name %>:
                       <% else %>
                         <%= m.customer.full_name %>
                       <% end %>

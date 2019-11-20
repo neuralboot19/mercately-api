@@ -45,11 +45,7 @@ class Retailers::IntegrationsController < RetailersController
   end
 
   def messenger_callbacks
-    if params['hub.challenge']
-      render status: 200, json: params['hub.challenge']
-      return
-    end
-    # TODO: manejar los diferentes tipos de webhooks
+    render status: 200, json: params['hub.challenge'] and return if params['hub.challenge']
     message_data = params['entry'][0]['messaging'][0]
     facebook_retailer = FacebookRetailer.find_by(uid: message_data['recipient']['id'])
     render status: 200, json: {} and return if facebook_retailer.nil?
