@@ -21,6 +21,7 @@
 //= require Chart.bundle
 //= require moment
 //= require daterangepicker
+//= require cable
 
 $(document).ready(function () {
   $( "select" ).select2({
