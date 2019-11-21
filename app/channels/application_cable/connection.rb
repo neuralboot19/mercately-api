@@ -9,7 +9,7 @@ module ApplicationCable
     private
 
       def find_verified_retailer_user
-        RetailerUser.find_by(id: cookies[:user_id]) || reject_unauthorized_connection
+        env['warden'].user || reject_unauthorized_connection
       end
   end
 end
