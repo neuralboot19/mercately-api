@@ -30,7 +30,9 @@ module MercadoLibre
         meli_question_type: Question.meli_question_types[:from_order]
       )
 
+      action = 'add'
       if message_info['date_read'].present?
+        action = 'subtract'
         total_unread = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
           .update_all(date_read: message_info['date_read'])
       end
@@ -40,8 +42,6 @@ module MercadoLibre
       else
         message.update(question: message_info['text']['plain'])
       end
-
-      action = message_info['date_read'].present? ? 'subtract' : 'add'
 
       CounterMessagingChannel.broadcast_to(@retailer.retailer_user, identifier:
         '#item__cookie_message', action: action, q: total_unread, total:
