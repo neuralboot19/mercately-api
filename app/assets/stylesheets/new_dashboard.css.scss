@@ -602,6 +602,10 @@
   margin-left: -10px !important;
 }
 
+.search-field {
+  -webkit-appearance: textfield;
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {
