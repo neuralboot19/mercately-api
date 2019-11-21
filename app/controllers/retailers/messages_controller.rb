@@ -25,14 +25,13 @@ class Retailers::MessagesController < RetailersController
 
   def question
     @question = Question.find(params[:question_id])
+    return @question unless @question.date_read.nil?
 
-    if @question.date_read.nil?
-      @question.update(date_read: Time.now)
+    @question.update(date_read: Time.now)
 
-      CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
-        '#item__cookie_question', action: 'subtract', q: 1, total:
-        @retailer.unread_questions.size)
-    end
+    CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
+      '#item__cookie_question', action: 'subtract', q: 1, total:
+      @retailer.unread_questions.size)
   end
 
   def answer_question

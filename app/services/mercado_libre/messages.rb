@@ -43,9 +43,11 @@ module MercadoLibre
         message.update(question: message_info['text']['plain'])
       end
 
+      return if is_an_answer
+
       CounterMessagingChannel.broadcast_to(@retailer.retailer_user, identifier:
         '#item__cookie_message', action: action, q: total_unread, total:
-        @retailer.unread_messages.size) unless is_an_answer
+        @retailer.unread_messages.size)
     end
 
     def answer_message(message)
