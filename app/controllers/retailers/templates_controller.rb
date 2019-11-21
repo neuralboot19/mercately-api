@@ -45,6 +45,22 @@ class Retailers::TemplatesController < RetailersController
     redirect_to retailers_templates_url, notice: 'Pantilla eliminada con éxito.'
   end
 
+  # Filtra las plantillas para preguntas por titulo o respuesta
+  def templates_for_questions
+    templates = current_retailer.templates.for_questions.where('title ILIKE ?' \
+      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%")
+
+    render json: templates
+  end
+
+  # Filtra las plantillas para chats por titulo o respuesta
+  def templates_for_chats
+    templates = current_retailer.templates.for_chats.where('title ILIKE ?' \
+      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%")
+
+    render json: templates
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
