@@ -25,7 +25,14 @@ class Retailers::MessagesController < RetailersController
 
   def question
     @question = Question.find(params[:question_id])
-    @question.update(date_read: Time.now) if @question.date_read.nil?
+
+    if @question.date_read.nil?
+      @question.update(date_read: Time.now)
+
+      CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
+        '#item__cookie_question', action: 'subtract', q: 1, total:
+        @retailer.unread_questions.size)
+    end
   end
 
   def answer_question
@@ -54,7 +61,11 @@ class Retailers::MessagesController < RetailersController
   def chat
     @return_to = params[:return_to]
     @order = Order.find(params[:order_id])
-    @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
+    total_unread = @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
+
+    CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
+      '#item__cookie_message', action: 'subtract', q: total_unread, total:
+      @retailer.unread_messages.size)
   end
 
   private

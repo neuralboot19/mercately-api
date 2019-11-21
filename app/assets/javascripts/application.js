@@ -22,6 +22,7 @@
 //= require moment
 //= require daterangepicker
 //= require cable
+//= require channels/counter_messaging_channel
 
 $(document).ready(function () {
   $( "select" ).select2({
