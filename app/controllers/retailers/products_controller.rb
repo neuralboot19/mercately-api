@@ -118,7 +118,8 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
-      redirect_to retailers_products_path(@retailer, status: @product.status), notice: 'Producto publicado con éxito.'
+      redirect_to retailers_products_path(@retailer, q: { 'status_eq': 0, 's': 'created_at desc' }), notice:
+        'Producto publicado con éxito.'
     else
       render :edit
     end
