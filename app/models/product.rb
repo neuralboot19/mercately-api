@@ -19,6 +19,7 @@ class Product < ApplicationRecord
   validate :check_main_image
 
   before_update :assign_main_picture
+  before_save :nullify_code
 
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]

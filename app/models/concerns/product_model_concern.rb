@@ -84,4 +84,9 @@ module ProductModelConcern
       return false
     end
   end
+
+  # Setea en nil el code del producto si viene vacio
+  def nullify_code
+    self.code = nil if code.blank?
+  end
 end
