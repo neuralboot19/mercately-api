@@ -22,13 +22,8 @@ module MercadoLibre
       order_info['status'] = 'invalid_order' if order_info['status'] == 'invalid'
       order = Order.find_or_initialize_by(meli_order_id: order_info['id'])
 
-      order.update_attributes!(
-        customer: customer,
-        total_amount: order_info['total_amount'],
-        currency_id: order_info['currency_id'],
-        merc_status: order_info['status'],
-        created_at: order_info['date_created']
-      )
+      order.update_attributes!(customer: customer, total_amount: order_info['total_amount'], currency_id:
+        order_info['currency_id'], merc_status: order_info['status'], created_at: order_info['date_created'])
 
       order_info['order_items'].each do |order_item|
         product_exist = @retailer.products.exists?(meli_product_id: order_item['item']['id'])
@@ -39,13 +34,8 @@ module MercadoLibre
         product_variation = ProductVariation.find_by(variation_meli_id: order_item['item']['variation_id']) if
           order_item['item']['variation_id'].present?
 
-        item.update_attributes!(
-          quantity: order_item['quantity'],
-          unit_price: order_item['unit_price'],
-          product_variation_id: product_variation&.id,
-          from_ml: true,
-          change_sold_quantity: product_exist
-        )
+        item.update_attributes!(quantity: order_item['quantity'], from_ml: true, change_sold_quantity:
+          product_exist, unit_price: order_item['unit_price'], product_variation_id: product_variation&.id)
       end
 
       return order unless order_info['feedback']&.[]('sale').present?
