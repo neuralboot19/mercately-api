@@ -15,6 +15,8 @@ module MercadoLibre
     end
 
     def save_order(order_info)
+      return if order_info['date_created'].to_datetime < @meli_retailer.created_at
+
       customer = MercadoLibre::Customers.new(@retailer, order_info['buyer']).import(order_info['buyer']['id'])
 
       order_info['status'] = 'invalid_order' if order_info['status'] == 'invalid'
@@ -24,11 +26,13 @@ module MercadoLibre
         customer: customer,
         total_amount: order_info['total_amount'],
         currency_id: order_info['currency_id'],
-        merc_status: order_info['status']
+        merc_status: order_info['status'],
+        created_at: order_info['date_created']
       )
 
       order_info['order_items'].each do |order_item|
-        product = MercadoLibre::Products.new(@retailer).pull_update(order_item['item']['id'])
+        product_exist = @retailer.products.exists?(meli_product_id: order_item['item']['id'])
+        product = MercadoLibre::Products.new(@retailer).pull_update(order_item['item']['id'], true)
 
         item = OrderItem.find_or_initialize_by(order_id: order.id, product_id: product.id)
 
@@ -39,7 +43,8 @@ module MercadoLibre
           quantity: order_item['quantity'],
           unit_price: order_item['unit_price'],
           product_variation_id: product_variation&.id,
-          from_ml: true
+          from_ml: true,
+          change_sold_quantity: product_exist
         )
       end
 
