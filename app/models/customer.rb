@@ -6,7 +6,7 @@ class Customer < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
 
-  validates_uniqueness_of :psid
+  validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
   before_save :update_valid_customer
 
