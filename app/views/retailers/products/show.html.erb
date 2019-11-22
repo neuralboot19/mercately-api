@@ -53,7 +53,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-xs-12 c-grey my-8">Descripción:</div>
+          <div class="col-xs-12 c-gray-label my-8">Descripción:</div>
           <div class="col-xs-12">
             <div class="p-16 c-grey t-justify text-overflow">
               <%= @product.description %>
@@ -61,7 +61,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-xs-12 c-grey my-8">Precio:</div>
+          <div class="col-xs-12 c-gray-label my-8">Precio:</div>
           <div class="col-xs-12">
             <div class="p-16 c-secondary t-justify">
               $<%= @product.price %>
@@ -69,7 +69,7 @@
           </div>
         </div>
         <div class="row info__details">
-          <div class="col-xs-12 c-grey my-8">Características:</div>
+          <div class="col-xs-12 c-gray-label my-8">Características:</div>
           <div class="col-xs-12 col-sm-12">
             <table class="table_details w-100">
               <% if @product.code.present? %>
@@ -95,7 +95,7 @@
             </table>
           </div>
           <% if @product.product_variations.present? %>
-            <div class="col-xs-12 c-grey my-8">Variaciones:</div>
+            <div class="col-xs-12 c-gray-label my-8">Variaciones:</div>
             <div class="col-xs-12 col-sm-12">
               <table class="table_details w-100">
                 <% @product.product_variations[0..-2].each do |variation| %>
