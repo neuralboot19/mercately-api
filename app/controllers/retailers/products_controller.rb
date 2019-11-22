@@ -6,7 +6,12 @@ class Retailers::ProductsController < RetailersController
   before_action :compile_variations, only: [:create, :update]
 
   def index
-    @q = current_retailer.products.preload(:category, :questions).ransack(params[:q])
+    @q = if params[:q]&.[](:s).blank?
+           current_retailer.products.order(created_at: :desc).preload(:category, :questions).ransack(params[:q])
+         else
+           current_retailer.products.preload(:category, :questions).ransack(params[:q])
+         end
+
     @products = @q.result.with_attached_images.page(params[:page])
   end
 
