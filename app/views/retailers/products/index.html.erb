@@ -27,7 +27,7 @@
     <%= render 'partials/incomplete_retailer' %>
 
     <%= search_form_for @q, url: retailers_products_path do |f| %>
-      <%= f.hidden_field :status_eq, value: params[:q].blank? ? '0' : params[:q][:status_eq] %>
+      <%= f.hidden_field :status_eq, value: params[:q]&.[]('status_eq').blank? ? '0' : params[:q][:status_eq] %>
       <div class="box">
         <div class="row mt-10">
           <div class="col-xs-12">
@@ -63,7 +63,7 @@
                   Ordena por:
                 </div>
                 <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.hidden_field :s, value: params[:q].blank? ? 'created_at desc' : params[:q][:s] %>
+                  <%= f.hidden_field :s, value: params[:q]&.[]('s').blank? ? 'created_at desc' : params[:q][:s] %>
                   <label class="item__dropdown d-inline">
                     <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
                       <span id="selected-order"></span>&nbsp;<i class="fas fa-sort"></i>
