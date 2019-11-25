@@ -14,11 +14,7 @@ module MercadoLibre
 
     def save_message(message_info)
       is_an_answer = message_info['from']['user_id'] == @meli_retailer.meli_user_id
-      customer = if is_an_answer
-                   MercadoLibre::Customers.new(@retailer).import(message_info['to'][0]['user_id'])
-                 else
-                   MercadoLibre::Customers.new(@retailer).import(message_info['from']['user_id'])
-                 end
+      customer = find_customer(is_an_answer, message_info)
 
       message = Message.find_or_initialize_by(meli_id: message_info['message_id'])
       order = Order.find_by(meli_order_id: message_info['resource_id'])
@@ -48,6 +44,14 @@ module MercadoLibre
     end
 
     private
+
+      def find_customer(is_an_answer, message_info)
+        if is_an_answer
+          MercadoLibre::Customers.new(@retailer).import(message_info['to'][0]['user_id'])
+        else
+          MercadoLibre::Customers.new(@retailer).import(message_info['from']['user_id'])
+        end
+      end
 
       def not_corresponding_message(order, customer, is_an_answer)
         (is_an_answer && order.retailer_id != @retailer.id) ||
