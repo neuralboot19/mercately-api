@@ -13,27 +13,36 @@ module MercadoLibre
     end
 
     def save_message(message_info)
-      customer = if message_info['from']['user_id'] == @meli_retailer.meli_user_id
+      is_an_answer = message_info['from']['user_id'] == @meli_retailer.meli_user_id
+      customer = if is_an_answer
                    MercadoLibre::Customers.new(@retailer).import(message_info['to'][0]['user_id'])
                  else
                    MercadoLibre::Customers.new(@retailer).import(message_info['from']['user_id'])
                  end
 
       message = Message.find_or_initialize_by(meli_id: message_info['message_id'])
+      order = Order.find_by(meli_order_id: message_info['resource_id'])
 
       message.update_attributes!(
-        order: Order.find_by(meli_order_id: message_info['resource_id']),
+        order: order,
         customer: customer,
         meli_question_type: Question.meli_question_types[:from_order]
       )
 
-      message.update(date_read: message_info['date_read']) if message_info['date_read'].present?
+      action = 'add'
+      if message_info['date_read'].present?
+        action = 'subtract'
+        total_unread = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
+          .update_all(date_read: message_info['date_read'])
+      end
 
-      if message_info['from']['user_id'] == @meli_retailer.meli_user_id
+      if is_an_answer
         message.update(answer: message_info['text']['plain'], sender_id: @retailer.retailer_user.id)
       else
         message.update(question: message_info['text']['plain'])
       end
+
+      insert_notification(is_an_answer, action, total_unread)
     end
 
     def answer_message(message)
@@ -44,6 +53,14 @@ module MercadoLibre
     end
 
     private
+
+      def insert_notification(is_an_answer, action, total_unread)
+        return if is_an_answer
+
+        CounterMessagingChannel.broadcast_to(@retailer.retailer_user, identifier:
+          '#item__cookie_message', action: action, q: total_unread, total:
+          @retailer.unread_messages.size)
+      end
 
       def prepare_message_answer(message)
         {
