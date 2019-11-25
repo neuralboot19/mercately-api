@@ -48,6 +48,9 @@ gem 'jquery-rails'
 gem 'momentjs-rails'
 gem 'bootstrap-daterangepicker-rails', '~> 3.0.4'
 
+# WebPack
+gem 'webpacker', '~> 4.2'
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails', '~> 3.8', '>= 3.8.2'

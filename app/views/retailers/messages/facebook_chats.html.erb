@@ -14,94 +14,9 @@
     <div class="container-fluid products">
       <div class="row">
         <div class="col-xs-12">
-          <div class="table box">
-            <div class="table__header row hide-on-tablet-and-down center-sm">
-              <div class="col-sm-1">Usuario</div>
-              <div class="col-sm-3"></div>
-              <div class="col-sm-4"></div>
-              <div class="col-sm-2"></div>
-              <div class="col-sm-1">Fecha</div>
-              <div class="col-sm-1"></div>
-            </div>
-            <% @chats.each do |customer| %>
-              <div class="divider"></div>
-              <div class="table__item row">
-                <div class="col-xs-10 col-sm-1 t-center">
-                  <div class="truncate">
-                    <%= customer.full_name %>
-                  </div>
-                </div>
-                <div class="col-xs-10 col-sm-3 t-center">
-                  <%# order.products.first&.title %>
-                </div>
-                <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
-                  <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_facebook_chat_path(current_retailer, customer), class: 'c-secondary no-style' do %>
-                          <i class="fas fa-eye mr-8"></i>
-                          Ver mensajes
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
-                </div>
-                <div class="col-xs-12 col-sm-4 c-grey">
-                  <br class="hide-on-md-and-up"/>
-                  <% customer.facebook_messages.last(2).each do |m| %>
-                    <div class="c-secondary truncate">
-                      <% if m.uid == current_retailer_user.uid || m.uid == current_retailer.facebook_retailer.uid %>
-                        <%= current_retailer.name %>:
-                      <% else %>
-                        <%= m.customer.full_name %>
-                      <% end %>
-                    </div> <%= m.text %>
-                    <br/>
-                    <br/>
-                  <% end %>
-                </div>
-                <div class="col-xs-12 col-sm-2 t-center">
-                  <% if customer.unread_message? %>
-                    <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
-                  <% else %>
-                    <b class="cookie__box cookie__box__green px-5">Visto</b>
-                  <% end %>
-                </div>
-                <div class="col-xs-12 col-sm-1 t-center">
-                  <%= show_date(customer.last_message_received_date) %>
-                </div>
-                <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
-                  <%= link_to retailers_facebook_chat_path(current_retailer, customer), class: 'c-secondary no-style' do %>
-                    Ver mensajes
-                  <% end %>
-                </div>
-                <div class="hide-on-sm-and-down hide-on-2k m-auto">
-                  <label class="item__dropdown dropdown d-inline">
-                    <a class="dropdown__button midd" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_facebook_chat_path(current_retailer, customer), class: 'c-secondary no-style' do %>
-                          <i class="fas fa-eye mr-8"></i>
-                          Ver mensajes
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
-                </div>
-              </div>
-            <% end %>
-            <div class="row middle-xs center-xs">
-              <div class="col-xs-12">
-                <%= paginate @chats %>
-              </div>
-            </div>
-          </div>
+          <%# stylesheet_pack_tag 'application' %>
+          <%= javascript_packs_with_chunks_tag 'application' %>
+          <div id="react_content"></div>
         </div>
       </div>
     </div>
