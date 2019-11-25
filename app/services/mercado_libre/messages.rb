@@ -23,7 +23,7 @@ module MercadoLibre
       message = Message.find_or_initialize_by(meli_id: message_info['message_id'])
       order = Order.find_by(meli_order_id: message_info['resource_id'])
 
-      return if is_an_answer && order.retailer_id != @retailer.id
+      return if not_corresponding_message(order, customer, is_an_answer)
 
       message.update_attributes!(
         order: order,
@@ -48,6 +48,11 @@ module MercadoLibre
     end
 
     private
+
+      def not_corresponding_message(order, customer, is_an_answer)
+        (is_an_answer && order.retailer_id != @retailer.id) ||
+          (is_an_answer == false && order.customer.id != customer.id)
+      end
 
       def prepare_message_answer(message)
         {
