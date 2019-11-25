@@ -28,13 +28,20 @@ module MercadoLibre
         created_at: message_info['date']
       )
 
-      message.update(date_read: message_info['date_read']) if message_info['date_read'].present?
+      action = 'add'
+      if message_info['date_read'].present?
+        action = 'subtract'
+        total_unread = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
+          .update_all(date_read: message_info['date_read'])
+      end
 
       if is_an_answer
         message.update(answer: message_info['text']['plain'], sender_id: @retailer.retailer_user.id)
       else
         message.update(question: message_info['text']['plain'])
       end
+
+      insert_notification(is_an_answer, action, total_unread)
     end
 
     def answer_message(message)
@@ -58,6 +65,14 @@ module MercadoLibre
         order.blank? || order.created_at < @meli_retailer.created_at ||
           (is_an_answer && order.retailer_id != @retailer.id) ||
           (is_an_answer == false && order.customer.id != customer.id)
+      end
+
+      def insert_notification(is_an_answer, action, total_unread)
+        return if is_an_answer
+
+        CounterMessagingChannel.broadcast_to(@retailer.retailer_user, identifier:
+          '#item__cookie_message', action: action, q: total_unread, total:
+          @retailer.unread_messages.size)
       end
 
       def prepare_message_answer(message)
