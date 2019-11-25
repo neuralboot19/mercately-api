@@ -24,7 +24,8 @@ module MercadoLibre
       message.update_attributes!(
         order: order,
         customer: customer,
-        meli_question_type: Question.meli_question_types[:from_order]
+        meli_question_type: Question.meli_question_types[:from_order],
+        created_at: message_info['date']
       )
 
       message.update(date_read: message_info['date_read']) if message_info['date_read'].present?
@@ -54,7 +55,8 @@ module MercadoLibre
       end
 
       def not_corresponding_message(order, customer, is_an_answer)
-        (is_an_answer && order.retailer_id != @retailer.id) ||
+        order.blank? || order.created_at < @meli_retailer.created_at ||
+          (is_an_answer && order.retailer_id != @retailer.id) ||
           (is_an_answer == false && order.customer.id != customer.id)
       end
 
