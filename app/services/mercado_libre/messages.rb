@@ -14,19 +14,18 @@ module MercadoLibre
 
     def save_message(message_info)
       is_an_answer = message_info['from']['user_id'] == @meli_retailer.meli_user_id
-      customer = if is_an_answer
-                   MercadoLibre::Customers.new(@retailer).import(message_info['to'][0]['user_id'])
-                 else
-                   MercadoLibre::Customers.new(@retailer).import(message_info['from']['user_id'])
-                 end
+      customer = find_customer(is_an_answer, message_info)
 
       message = Message.find_or_initialize_by(meli_id: message_info['message_id'])
       order = Order.find_by(meli_order_id: message_info['resource_id'])
 
+      return if not_corresponding_message(order, customer, is_an_answer)
+
       message.update_attributes!(
         order: order,
         customer: customer,
-        meli_question_type: Question.meli_question_types[:from_order]
+        meli_question_type: Question.meli_question_types[:from_order],
+        created_at: message_info['date']
       )
 
       action = 'add'
@@ -53,6 +52,20 @@ module MercadoLibre
     end
 
     private
+
+      def find_customer(is_an_answer, message_info)
+        if is_an_answer
+          MercadoLibre::Customers.new(@retailer).import(message_info['to'][0]['user_id'])
+        else
+          MercadoLibre::Customers.new(@retailer).import(message_info['from']['user_id'])
+        end
+      end
+
+      def not_corresponding_message(order, customer, is_an_answer)
+        order.blank? || order.created_at < @meli_retailer.created_at ||
+          (is_an_answer && order.retailer_id != @retailer.id) ||
+          (is_an_answer == false && order.customer.id != customer.id)
+      end
 
       def insert_notification(is_an_answer, action, total_unread)
         return if is_an_answer
