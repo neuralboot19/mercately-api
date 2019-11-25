@@ -24,6 +24,7 @@ class Retailers::IntegrationsController < RetailersController
         MercadoLibre::Orders.new(@retailer).import(order_id)
         render status: '200', json: { message: 'Success' }.to_json
       when 'items'
+        return if @retailer.id == 4
         product_id = params[:resource].split('/').last
         MercadoLibre::Products.new(@retailer).pull_update(product_id)
         render status: '200', json: { message: 'Success' }.to_json
