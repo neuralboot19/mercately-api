@@ -45,10 +45,10 @@ module Facebook
 
       def prepare_message(to, message)
         {
-          "recipient":{
+          "recipient": {
             "id": to
           },
-          "message":{
+          "message": {
             "text": message
           }
         }.to_json

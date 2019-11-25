@@ -5,6 +5,16 @@ module Facebook
       @retailer_user = retailer_user
     end
 
+    def self.validate_granted_permissions(access_token)
+      url = permissions_url
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      return false if response['error']
+
+      permissions = response['data'].map { |d| d['status'] == 'granted' }
+      !permissions.include?(false)
+    end
+
     # Make sure call this method with a long live token on DB
     def update_retailer_access_token
       url = pages_url
@@ -14,16 +24,12 @@ module Facebook
     end
 
     def save_page_access_token(response)
-      response_data = response['data'].select { |r| r.has_key?('access_token') }
+      response_data = response['data'].select { |r| r.key?('access_token') }
       page_data = response_data[0]
-      if page_data
-        @facebook_retailer.update(access_token: page_data['access_token'], uid: page_data['id'])
-      else
-        # TODO validar que el usuario dio permisos a Mercately
-      end
+      @facebook_retailer.update(access_token: page_data['access_token'], uid: page_data['id'])
     end
 
-    def get_long_live_user_access_token
+    def long_live_user_access_token
       url = long_live_user_access_token_url
       conn = Connection.prepare_connection(url)
       Connection.get_request(conn)
@@ -66,6 +72,13 @@ module Facebook
           access_token: @facebook_retailer.access_token
         }
         "https://graph.facebook.com/v5.0/#{@facebook_retailer.uid}/subscribed_apps?#{params.to_query}"
+      end
+
+      def permissions_url(access_token)
+        params = {
+          access_token: access_token
+        }
+        "https://graph.facebook.com/me/permissions?#{params.to_query}"
       end
   end
 end

@@ -3,18 +3,18 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
   before_action :authenticate_retailer_user!
 
   def facebook
-    # TODO validar que el usuario no selecciono mas de una pagina
-    if request.env["omniauth.auth"].info.email.blank?
-      redirect_to "/users/auth/facebook?auth_type=rerequest&scope=email" and return
-    end
+    # TODO: validar que el usuario no selecciono mas de una pagina
+    auth = request.env['omniauth.auth']
+    granted_permissions = Facebook::Api.validate_granted_permissions(auth.credentials.token)
+    redirect_to retailer_user_facebook_omniauth_authorize_path && return unless granted_permissions
 
-    @retailer_user = RetailerUser.from_omniauth(request.env["omniauth.auth"], current_retailer_user)
+    @retailer_user = RetailerUser.from_omniauth(auth, current_retailer_user)
 
     if @retailer_user.persisted?
       sign_in_and_redirect @retailer_user, event: :authentication
-      set_flash_message(:notice, :success, kind: "Facebook") if is_navigational_format?
+      set_flash_message(:notice, :success, kind: 'Facebook') if is_navigational_format?
     else
-      session["devise.facebook_data"] = request.env["omniauth.auth"]
+      session['devise.facebook_data'] = request.env['omniauth.auth']
       redirect_to new_retailer_user_registration_url
     end
   end

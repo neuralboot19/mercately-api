@@ -18,19 +18,17 @@ class RetailerUser < ApplicationRecord
     retailer_user
   end
 
-  # TODO mover a FacebookRetailer
+  # TODO: mover a FacebookRetailer
   def handle_page_connection
     facebook_retailer = FacebookRetailer.create_with(
       uid: uid,
       access_token: facebook_access_token
     ).find_or_create_by(retailer_id: retailer.id)
-    # TODO manejar errores del response de facebook
+    # TODO: manejar errores del response de facebook
     facebook_service = Facebook::Api.new(facebook_retailer, self)
-    response = facebook_service.get_long_live_user_access_token
+    response = facebook_service.long_live_user_access_token
     self.facebook_access_token = response['access_token']
-    if response['expires_in']
-      self.facebook_access_token_expiration = Time.now + response['expires_in'].seconds
-    end
+    self.facebook_access_token_expiration = Time.now + response['expires_in'].seconds if response['expires_in']
     save!
     facebook_service = Facebook::Api.new(facebook_retailer, self)
     facebook_service.update_retailer_access_token

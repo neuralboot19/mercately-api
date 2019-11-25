@@ -6,6 +6,7 @@ module Facebook
 
     def import(psid)
       return Customer.find_by(psid: psid) if Customer.exists?(psid: psid)
+
       url = prepare_person_url(psid)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
