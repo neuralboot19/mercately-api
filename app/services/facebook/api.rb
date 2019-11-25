@@ -6,7 +6,7 @@ module Facebook
     end
 
     def self.validate_granted_permissions(access_token)
-      url = permissions_url
+      url = permissions_url(access_token)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       return false if response['error']
