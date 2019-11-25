@@ -1,4 +1,5 @@
 class OrderItem < ApplicationRecord
+  include OrderItemModelConcern
   belongs_to :order, inverse_of: :order_items
   belongs_to :product
   belongs_to :product_variation, required: false
@@ -13,6 +14,8 @@ class OrderItem < ApplicationRecord
   after_create -> { update_ml_stock('create') }
 
   delegate :meli_product_id, to: :product
+
+  attr_accessor :change_sold_quantity
 
   def subtotal
     quantity * unit_price
@@ -34,14 +37,20 @@ class OrderItem < ApplicationRecord
     def subtract_stock
       if product_variation.present?
         data = product_variation.data
-        data['available_quantity'] = data['available_quantity'].to_i - quantity unless from_ml?
-        data['sold_quantity'] = data['sold_quantity'].to_i + quantity
+        new_available_quantity = data['available_quantity'].to_i - quantity
+        new_sold_quantity = data['sold_quantity'].to_i + quantity
+
+        data['available_quantity'] = new_available_quantity unless from_ml?
+        data['sold_quantity'] = new_sold_quantity unless subtract_sold_quantity?
         product_variation.update(data: data)
 
         product.update_variations_quantities
       else
-        product.update(available_quantity: product.available_quantity - quantity) unless from_ml?
-        product.update(sold_quantity: product.sold_quantity.to_i + quantity)
+        new_available_quantity = product.available_quantity - quantity
+        new_sold_quantity = product.sold_quantity.to_i + quantity
+
+        product.update(available_quantity: new_available_quantity) unless from_ml?
+        product.update(sold_quantity: new_sold_quantity) unless subtract_sold_quantity?
       end
 
       product.update_status_publishment(true)
