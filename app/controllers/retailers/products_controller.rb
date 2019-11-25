@@ -6,7 +6,12 @@ class Retailers::ProductsController < RetailersController
   before_action :compile_variations, only: [:create, :update]
 
   def index
-    @q = current_retailer.products.preload(:category, :questions).ransack(params[:q])
+    @q = if params[:q]&.[](:s).blank?
+           current_retailer.products.order(created_at: :desc).preload(:category, :questions).ransack(params[:q])
+         else
+           current_retailer.products.preload(:category, :questions).ransack(params[:q])
+         end
+
     @products = @q.result.with_attached_images.page(params[:page])
   end
 
@@ -118,7 +123,8 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
-      redirect_to retailers_products_path(@retailer, status: @product.status), notice: 'Producto publicado con éxito.'
+      redirect_to retailers_products_path(@retailer, q: { 'status_eq': 0, 's': 'created_at desc' }), notice:
+        'Producto publicado con éxito.'
     else
       render :edit
     end
