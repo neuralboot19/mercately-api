@@ -3,7 +3,7 @@ import React from "react";
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import ChatSelector from './components/ChatSelector';
+import ChatMessages from './containers/ChatMessages';
 import Whatsapp from './components/Whatsapp';
 
 const AppRoutes = ({ store }) => (
@@ -17,7 +17,7 @@ const AppRoutes = ({ store }) => (
       <Route
         exact
         path="/retailers/:slug/facebook_chats"
-        component={ChatSelector}
+        component={ChatMessages}
       />
     </Router>
   </Provider>

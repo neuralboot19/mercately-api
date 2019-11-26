@@ -551,6 +551,13 @@
   }
 }
 
+.chat__selector {
+  border-right: 1px solid #e7e7e7;
+  height: 100%;
+  max-width: 250px;
+  min-height: 80vh;
+}
+
 @-moz-document url-prefix() {
   .custom-checkbox {
     &:checked:after {

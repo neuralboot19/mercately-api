@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
+import { BrowserRouter, Link  } from 'react-router-dom';
 
 class Chat extends Component {
   constructor(props) {
@@ -8,8 +8,10 @@ class Chat extends Component {
   render() {
     return (
       <div>
-        <Link to="/retailers/pruebasasd/facebook_chats">facebook_chats</Link>
-        <h1>Hola whatsapp</h1>
+        <BrowserRouter>
+          <Link to="/retailers/pruebasasd/facebook_chats">facebook_chats</Link>
+          <h1>Hola whatsapp</h1>
+        </BrowserRouter>
       </div>
     );
   }
