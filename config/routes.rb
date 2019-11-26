@@ -36,6 +36,7 @@ Rails.application.routes.draw do
       get 'integrations', to: 'integrations#index'
       get 'facebook_chats', to: 'messages#facebook_chats', as: :facebook_chats
       get 'facebook_chat/:id', to: 'messages#facebook_chat', as: :facebook_chat
+      get 'whatsapp', to: 'messages#facebook_chats', as: :whatsapp
       post 'facebook_chats/:id', to: 'messages#send_facebook_message', as: :send_facebook_message
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'

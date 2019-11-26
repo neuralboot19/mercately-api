@@ -1,23 +1,26 @@
-import {
-  Router,
-  Route,
-  Switch
-} from 'react-router-dom';
-import React, { Component } from "react";
-import Chat from './components/Chat.js';
-class AppRoutes extends Component {
-  render() {
-    return (
-      <div>
-        <Switch>
-          <Route
-            exact
-            path="/retailers/:slug/facebook_chats"
-            component={Chat}
-          />
-      </Switch>
-      </div>
-    )
-  }
-}
+import React from "react";
+// import PropTypes from 'prop-types';
+import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
+import ChatSelector from './components/ChatSelector';
+import Whatsapp from './components/Whatsapp';
+
+const AppRoutes = ({ store }) => (
+  <Provider store={store}>
+    <Router>
+      <Route
+        exact
+        path="/retailers/:slug/whatsapp"
+        component={Whatsapp}
+      />
+      <Route
+        exact
+        path="/retailers/:slug/facebook_chats"
+        component={ChatSelector}
+      />
+    </Router>
+  </Provider>
+)
+
 export default AppRoutes;
