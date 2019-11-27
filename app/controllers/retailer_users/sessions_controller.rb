@@ -4,6 +4,7 @@ class RetailerUsers::SessionsController < Devise::SessionsController
   before_action :set_locale
   after_action :after_login, only: :create
 
+
   protected
 
     def set_locale
