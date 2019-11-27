@@ -573,3 +573,17 @@
     height: 542px;
   }
 }
+
+// React
+.profile {
+  padding: 4px;
+  border-bottom: 1px solid #e7e7e7;
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  &:last-child {
+    border-bottom: unset;
+  }
+}

@@ -1,23 +1,18 @@
 import React from "react";
-// import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import configureStore from "./store/configureStore";
 
-import ChatMessages from './containers/ChatMessages';
-import Whatsapp from './components/Whatsapp';
+import Chats from './containers/Chats';
 
+const store = configureStore();
 const AppRoutes = ({ store }) => (
   <Provider store={store}>
     <Router>
       <Route
         exact
-        path="/retailers/:slug/whatsapp"
-        component={Whatsapp}
-      />
-      <Route
-        exact
         path="/retailers/:slug/facebook_chats"
-        component={ChatMessages}
+        component={Chats}
       />
     </Router>
   </Provider>

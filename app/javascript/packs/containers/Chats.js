@@ -1,17 +1,11 @@
-import React, { Component } from 'react';
+import React from "react";
 
-import ChatSelector from '../components/ChatSelector';
+import ChatList from '../components/chats/ChatList';
 
-class Chats extends Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
-    return (
-      <div className="chat__selector">
-        <ChatSelector/>
-      </div>
-    );
-  }
-}
+const Chats = () => (
+  <div>
+    <ChatList/>
+  </div>
+)
+
 export default Chats;
