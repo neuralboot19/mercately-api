@@ -6,7 +6,10 @@ module Facebook
     end
 
     def self.validate_granted_permissions(access_token)
-      url = permissions_url(access_token)
+      params = {
+        access_token: access_token
+      }
+      url = "https://graph.facebook.com/me/permissions?#{params.to_query}"
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       return false if response['error']
