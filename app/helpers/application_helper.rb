@@ -1,6 +1,6 @@
 module ApplicationHelper
   def show_date(date)
-    date.strftime('%k:%M %d-%b-%Y')
+    date&.strftime('%k:%M %d-%b-%Y')
   end
 
   def date_from_parameters
@@ -8,6 +8,6 @@ module ApplicationHelper
   end
 
   def show_date_without_hour(date)
-    date.strftime('%d-%b-%Y')
+    date&.strftime('%d-%b-%Y')
   end
 end
