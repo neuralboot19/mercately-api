@@ -20,7 +20,7 @@ class ChatList extends Component {
   render() {
     return (
       <div className="chat__selector">
-        {this.props.customers.map((customer) => <ChatListUser key={customer.psid} customer={customer}/>)}
+        {this.props.customers.map((customer) => <ChatListUser key={customer.id} customer={customer} handleOpenChat={this.props.handleOpenChat}/>)}
       </div>
     );
   }

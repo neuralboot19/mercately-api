@@ -1,40 +1,15 @@
 class Api::V1::CustomersController < ApplicationController
+  include CurrentRetailer
+  before_action :authenticate_retailer_user!
+  before_action :set_customer, except: :index
+
   def index
-    # @q = current_retailer.customers.facebook_customers.active.ransack(params[:q])
-    # @customers = @q.result.page(params[:page])
-    byebug
-    users = {
-      customers: [
-        {
-          psid: '298374',
-          first_name: 'Daniel',
-          last_name: 'Ortin',
-          message_data: {
-            text: 'Hello World',
-            created_at: 1574883680977
-          }
-        },
-        {
-          psid: '92834729847',
-          first_name: 'Johnmer',
-          last_name: 'Bencomo',
-          message_data: {
-            text: 'Message not readed',
-            created_at: 1574883680977
-          }
-        },
-        {
-          psid: '28911928',
-          first_name: 'Henry',
-          last_name: 'Remache',
-          message_data: {
-            text: 'Hello World',
-            created_at: 1574883680977
-          }
-        }
-      ]
-    }
-    render status: 200, json: users
+    @customers = current_retailer.customers.facebook_customers.active
+    render status: 200, json: {customers: @customers}
+  end
+
+  def messages
+    render status: 200, json: {messages: @customer.facebook_messages}
   end
 
   private

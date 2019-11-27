@@ -12,7 +12,12 @@ const reducer = (state = initialState, action) => {
     case 'SET_CUSTOMERS':
       return {
         ...state,
-        customers: action.response.data.customers
+        customers: action.data.customers
+      }
+    case 'SET_MESSAGES':
+      return {
+        ...state,
+        messages: action.data.messages
       }
     default:
       return state;

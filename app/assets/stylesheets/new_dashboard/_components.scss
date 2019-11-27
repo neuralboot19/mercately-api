@@ -551,13 +551,6 @@
   }
 }
 
-.chat__selector {
-  border-right: 1px solid #e7e7e7;
-  height: 100%;
-  max-width: 250px;
-  min-height: 80vh;
-}
-
 @-moz-document url-prefix() {
   .custom-checkbox {
     &:checked:after {
@@ -586,4 +579,18 @@
   &:last-child {
     border-bottom: unset;
   }
+}
+
+.chat__selector {
+  border-right: 1px solid #e7e7e7;
+  max-width: 250px;
+  height: 80vh;
+  overflow-y: auto;
+}
+
+.customer_sidebar {
+  border-left: 1px solid #e7e7e7;
+  max-width: 250px;
+  height: 80vh;
+  overflow-y: auto;
 }

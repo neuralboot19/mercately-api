@@ -1,11 +1,9 @@
 import React from "react";
 
-import ChatList from '../components/chats/ChatList';
+import Chat from '../components/chats/Chat';
 
 const Chats = () => (
-  <div>
-    <ChatList/>
-  </div>
+  <Chat/>
 )
 
 export default Chats;

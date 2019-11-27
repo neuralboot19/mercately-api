@@ -3,12 +3,11 @@ import "regenerator-runtime/runtime";
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore } from "redux";
-import Reducers from './reducers/index';
+import configureStore from "./store/configureStore";
 
 import AppRoutes from "./AppRoutes";
 
-const store = createStore(Reducers);
+const store = configureStore();
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
