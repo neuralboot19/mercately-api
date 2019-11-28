@@ -602,6 +602,26 @@
   margin-left: -10px !important;
 }
 
+.select-range {
+  border: 2px solid $secondary-color;
+  color: $secondary-color;
+  padding: 8px 16px;
+  border-radius: 5px;
+
+  input {
+    border: none;
+    font-size: 15px;
+    color: $secondary-color;
+    outline: 0;
+  }
+}
+
+.splitted-stats {
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.24);
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {
