@@ -1,5 +1,6 @@
 let initialState = {
-  customers: []
+  customers: [],
+  messages: []
 };
 
 const reducer = (state = initialState, action) => {

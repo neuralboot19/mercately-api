@@ -594,3 +594,12 @@
   height: 80vh;
   overflow-y: auto;
 }
+
+.message {
+  background-color: #E9EAEE;
+  border-radius: 7px;
+
+  &-by-retailer {
+    background-color: #2EABE2;
+  }
+}

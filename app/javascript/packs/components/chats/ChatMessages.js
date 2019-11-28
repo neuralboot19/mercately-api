@@ -3,6 +3,9 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { fetchMessages } from "../../actions/actions";
 
+import ChatMessage from './ChatMessage';
+
+var currentCustomer = 0;
 class ChatMessages extends Component {
   constructor(props) {
     super(props)
@@ -12,21 +15,27 @@ class ChatMessages extends Component {
 
   componentDidUpdate() {
     let id = this.props.currentCustomer;
-    console.log(id);
-    this.props.fetchMessages(id);
+    if (currentCustomer !== id) {
+      currentCustomer = id
+      this.props.fetchMessages(id);
+    }
   }
 
   render() {
     return (
-      <div>{this.props.currentCustomer}</div>
+      <div>
+        {this.props.messages.map((message) => (
+          <ChatMessage key={message.id} message={message}/>
+        ))}
+      </div>
     )
   }
 }
 
 
-function mapState(state) {
+function mapStateToProps(state) {
   return {
-    customers: state.customers || [],
+    messages: state.messages || [],
   };
 }
 
@@ -39,6 +48,6 @@ function mapDispatch(dispatch) {
 }
 
 export default connect(
-  mapState,
+  mapStateToProps,
   mapDispatch
 )(withRouter(ChatMessages));
