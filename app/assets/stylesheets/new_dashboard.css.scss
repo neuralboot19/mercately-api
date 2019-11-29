@@ -605,7 +605,6 @@
 .select-range {
   border: 2px solid $secondary-color;
   color: $secondary-color;
-  padding: 8px 16px;
   border-radius: 5px;
 
   input {
@@ -613,6 +612,9 @@
     font-size: 15px;
     color: $secondary-color;
     outline: 0;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 170px;
   }
 }
 
