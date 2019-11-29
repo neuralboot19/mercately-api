@@ -11,7 +11,7 @@ class Retailers::PagesController < RetailersController
     @orders_count = @orders_range.count
     @customers = current_retailer.customers.range_between(@start_date, @end_date)
     @orders_total = @orders.count
-    @profit_total = @orders.sum{ |ord| ord.total_amount || 0 }
+    @profit_total = @orders.sum { |ord| ord.total_amount || 0 }
     @success_orders_count = Order.success.where(customer_id: current_retailer.customers.ids).count
     @pending_orders_count = Order.pending.where(customer_id: current_retailer.customers.ids).count
     @cancelled_orders_count = Order.cancelled.where(customer_id: current_retailer.customers.ids).count
