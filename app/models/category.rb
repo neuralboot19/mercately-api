@@ -23,6 +23,20 @@ class Category < ApplicationRecord
     end.compact
   end
 
+  def total_products(retailer)
+    products.where(retailer_id: retailer.id).count
+  end
+
+  def total_products_sold(retailer)
+    products.where(retailer_id: retailer.id).sum(&:sold_quantity)
+  end
+
+  def earnings(retailer)
+    ids = products.where(retailer_id: retailer.id).ids
+    OrderItem.joins(:order).where(product_id: ids, orders: { status: 1 })
+      .sum { |oi| oi.quantity * oi.unit_price }.to_f.round(2)
+  end
+
   private
 
     def check_not_used_attr(temp)

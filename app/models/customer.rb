@@ -13,6 +13,11 @@ class Customer < ApplicationRecord
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
+  ransacker :sort_by_total do
+    Arel.sql('coalesce((select sum(orders.total_amount) as total from orders where ' \
+      'orders.customer_id = customers.id and orders.status = 1), 0)')
+  end
+
   def full_name
     "#{first_name} #{last_name}"
   end
@@ -34,6 +39,10 @@ class Customer < ApplicationRecord
     end
 
     update(phone: phone_area + meli_customer.phone)
+  end
+
+  def items_bought
+    OrderItem.where(order_id: orders.success.ids).sum(&:quantity)
   end
 
   private
