@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import { fetchMessages } from "../../actions/actions";
 
 import ChatMessage from './ChatMessage';
+import Cable from '../../Cable.js';
 
 var currentCustomer = 0;
 class ChatMessages extends Component {
@@ -13,18 +14,29 @@ class ChatMessages extends Component {
     };
   }
 
+  handleReceivedMessage = () => {
+    console.log('received msg');
+  }
+
   componentDidUpdate() {
+    console.log('did update');
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
+      console.log('did update fetch messages');
       currentCustomer = id
       this.props.fetchMessages(id);
     }
   }
 
   render() {
+    var messages = this.props.messages;
     return (
       <div>
-        {this.props.messages.map((message) => (
+        <Cable
+          currentCustomer={this.props.currentCustomer}
+          handleReceivedMessage={this.handleReceivedMessage}
+        />
+        {messages.map((message) => (
           <ChatMessage key={message.id} message={message}/>
         ))}
       </div>

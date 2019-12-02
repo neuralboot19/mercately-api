@@ -69,7 +69,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get 'customers', to: 'customers#index'
-      get ':id/messages', to: 'customers#messages'
+      get 'customers/:id/messages', to: 'customers#messages', as: :customer_messages
+      post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
     end
   end
 end

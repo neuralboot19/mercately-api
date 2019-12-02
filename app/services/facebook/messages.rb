@@ -6,7 +6,7 @@ module Facebook
 
     def save(message_data)
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
-      FacebookMessage.create_with(
+      message = FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         uid: message_data['sender']['id'],
@@ -14,6 +14,12 @@ module Facebook
         text: message_data['message']['text'],
         reply_to: message_data['message']&.[]('reply_to')&.[]('mid')
       ).find_or_create_by(mid: message_data['message']['mid'])
+      if message.persisted?
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          FacebookMessageSerializer.new(message)
+        ).serializable_hash
+        FacebookMessagesChannel.broadcast_to @customer, serialized_data
+      end
     end
 
     def import_delivered(message_id, psid)

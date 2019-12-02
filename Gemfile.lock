@@ -24,6 +24,11 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    active_model_serializers (0.10.10)
+      actionpack (>= 4.1, < 6.1)
+      activemodel (>= 4.1, < 6.1)
+      case_transform (>= 0.2)
+      jsonapi-renderer (>= 0.1.1.beta1, < 0.3)
     activeadmin (1.4.3)
       arbre (>= 1.1.1)
       coffee-rails
@@ -76,6 +81,8 @@ GEM
       railties (>= 4.0)
     builder (3.2.3)
     byebug (11.0.1)
+    case_transform (0.2)
+      activesupport
     chartkick (3.2.2)
     cloudinary (1.11.1)
       aws_cf_signer
@@ -152,6 +159,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (2.2.0)
+    jsonapi-renderer (0.2.2)
     jwt (2.2.1)
     kaminari (1.1.1)
       activesupport (>= 4.1.0)
@@ -383,6 +391,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_model_serializers (~> 0.10.0)
   activeadmin (~> 1.4, >= 1.4.3)
   activestorage-cloudinary-service
   ancestry (~> 3.0, >= 3.0.5)

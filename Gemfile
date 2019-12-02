@@ -42,6 +42,7 @@ gem 'select2-rails'
 gem 'scout_apm'
 gem 'chartkick', '~> 3.2.2'
 gem 'groupdate', '~> 4.2'
+gem 'active_model_serializers', '~> 0.10.0'
 
 # Datepicker
 gem 'jquery-rails'
