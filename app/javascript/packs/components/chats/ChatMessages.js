@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { fetchMessages } from "../../actions/actions";
+import { ActionCableProvider } from 'react-actioncable-provider';
 
 import ChatMessage from './ChatMessage';
 import Cable from '../../Cable.js';
@@ -25,6 +26,16 @@ class ChatMessages extends Component {
       console.log('did update fetch messages');
       currentCustomer = id
       this.props.fetchMessages(id);
+      App.cable.subscriptions.create(
+        { channel: 'FacebookMessagesChannel', id: currentCustomer },
+        {
+          received: data => {
+            console.log('FacebookMessagesChannel');
+            console.log(data);
+            this.props.fetchMessages(id);
+          }
+        }
+      );
     }
   }
 
@@ -32,10 +43,6 @@ class ChatMessages extends Component {
     var messages = this.props.messages;
     return (
       <div>
-        <Cable
-          currentCustomer={this.props.currentCustomer}
-          handleReceivedMessage={this.handleReceivedMessage}
-        />
         {messages.map((message) => (
           <ChatMessage key={message.id} message={message}/>
         ))}

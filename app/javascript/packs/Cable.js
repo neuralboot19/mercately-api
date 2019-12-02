@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { ActionCableConsumer } from 'react-actioncable-provider';
 
-const Cable = ({ currentCustomer, handleReceivedMessage }) => {
+const Cables = ({ currentCustomer, handleReceivedMessage }) => {
   return (
     <Fragment>
       <ActionCableConsumer
@@ -15,4 +15,4 @@ const Cable = ({ currentCustomer, handleReceivedMessage }) => {
   );
 };
 
-export default Cable;
+export default Cables;
