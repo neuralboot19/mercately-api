@@ -581,11 +581,18 @@
   }
 }
 
-.chat__selector {
-  border-right: 1px solid #e7e7e7;
-  max-width: 250px;
-  height: 80vh;
-  overflow-y: auto;
+.chat {
+  &__box {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  &__selector {
+    border-right: 1px solid #e7e7e7;
+    max-width: 250px;
+    height: 80vh;
+    overflow-y: auto;
+  }
 }
 
 .customer_sidebar {

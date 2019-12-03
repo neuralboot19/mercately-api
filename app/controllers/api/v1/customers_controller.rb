@@ -9,7 +9,8 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def messages
-    render status: 200, json: { messages: @customer.facebook_messages }
+    @messages = @customer.facebook_messages.order(created_at: :desc).page(params[:page]).to_a.reverse
+    render status: 200, json: { messages: @messages }
   end
 
   def create_message

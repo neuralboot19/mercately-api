@@ -22,10 +22,8 @@ export const fetchCustomers = () => {
       });
 };
 
-export const fetchMessages = (id) => {
-  console.log('action');
-  console.log(id);
-  const endpoint = `/api/v1/customers/${id}/messages`;
+export const fetchMessages = (id, page = 1) => {
+  const endpoint = `/api/v1/customers/${id}/messages?page=${page}`;
   return dispatch =>
     fetch(endpoint, {
       method: "GET",

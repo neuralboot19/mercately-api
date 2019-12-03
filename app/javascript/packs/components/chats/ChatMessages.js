@@ -2,50 +2,71 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { fetchMessages } from "../../actions/actions";
-import { ActionCableProvider } from 'react-actioncable-provider';
 
 import ChatMessage from './ChatMessage';
-import Cable from '../../Cable.js';
 
 var currentCustomer = 0;
 class ChatMessages extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      load_more: false,
+      page: 1,
+      messages: []
     };
   }
 
-  handleReceivedMessage = () => {
-    console.log('received msg');
+  handleLoadMore = (e) => {
+    e.preventDefault();
+    this.setState({
+      ...this.state,
+      page: this.state.page += 1,
+      load_more: true
+    })
+  }
+
+  componentWillReceiveProps(newProps){
+    if(newProps.messages != this.props.messages){
+      this.setState({
+        ...this.state,
+        messages: newProps.messages.concat(this.state.messages)
+      })
+    }
   }
 
   componentDidUpdate() {
-    console.log('did update');
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
-      console.log('did update fetch messages');
       currentCustomer = id
       this.props.fetchMessages(id);
       App.cable.subscriptions.create(
         { channel: 'FacebookMessagesChannel', id: currentCustomer },
         {
           received: data => {
-            console.log('FacebookMessagesChannel');
+            // TODO: Build new message instead fetch all messages again
             console.log(data);
             this.props.fetchMessages(id);
           }
         }
       );
+    } else if (this.state.load_more === true) {
+      this.setState({
+        ...this.state,
+        load_more: false
+      });
+      this.props.fetchMessages(id, this.state.page);
     }
   }
 
   render() {
-    var messages = this.props.messages;
     return (
-      <div>
-        {messages.map((message) => (
+      <div className="row bottom-xs">
+        <div className="col-xs-12 chat__box">
+          {this.state.messages.map((message) => (
           <ChatMessage key={message.id} message={message}/>
-        ))}
+          ))}
+          <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
+        </div>
       </div>
     )
   }
@@ -60,8 +81,8 @@ function mapStateToProps(state) {
 
 function mapDispatch(dispatch) {
   return {
-    fetchMessages: (id) => {
-      dispatch(fetchMessages(id));
+    fetchMessages: (id, page = 1) => {
+      dispatch(fetchMessages(id, page));
     }
   };
 }
