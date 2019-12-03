@@ -12,12 +12,14 @@ class ChatMessages extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      messages: this.props.messages || []
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log(prevProps);
+  handleReceivedMessage = () => {
+    console.log('received msg');
+  }
+
+  componentDidUpdate() {
     console.log('did update');
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
@@ -30,25 +32,18 @@ class ChatMessages extends Component {
           received: data => {
             console.log('FacebookMessagesChannel');
             console.log(data);
-            this.setState({
-              messages: this.state.messages.concat(data.facebook_message)
-            });
+            this.props.fetchMessages(id);
           }
         }
       );
-      if (Object.keys(this.props.messages).length == 0) {
-        console.log('Object keys');
-        this.setState({
-          messages: this.props.messages
-        });
-      }
     }
   }
 
   render() {
+    var messages = this.props.messages;
     return (
       <div>
-        {this.state.messages.map((message) => (
+        {messages.map((message) => (
           <ChatMessage key={message.id} message={message}/>
         ))}
       </div>
