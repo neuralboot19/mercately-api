@@ -5,6 +5,7 @@ class Api::V1::CustomersController < ApplicationController
 
   def index
     @customers = current_retailer.customers.facebook_customers.active
+      .includes(:facebook_messages).order('facebook_messages.created_at asc')
     render status: 200, json: { customers: @customers }
   end
 
