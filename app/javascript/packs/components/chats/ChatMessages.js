@@ -66,7 +66,9 @@ class ChatMessages extends Component {
           ))}
         </div>
         <div className="col-xs-12">
-          <MessageForm/>
+          <MessageForm
+            currentCustomer={this.props.currentCustomer}
+          />
         </div>
       </div>
     )
