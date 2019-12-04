@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import { fetchMessages } from "../../actions/actions";
 
 import ChatMessage from './ChatMessage';
+import MessageForm from './MessageForm';
 
 var currentCustomer = 0;
 class ChatMessages extends Component {
@@ -64,11 +65,13 @@ class ChatMessages extends Component {
             <ChatMessage key={message.id} message={message}/>
           ))}
         </div>
+        <div className="col-xs-12">
+          <MessageForm/>
+        </div>
       </div>
     )
   }
 }
-
 
 function mapStateToProps(state) {
   return {

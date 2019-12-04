@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { sendMessage } from "../../actions/actions";
 
-import ChatMessage from './ChatMessage';
-
 var _updated = true;
 class MessageForm extends Component {
   constructor(props) {
@@ -16,10 +14,8 @@ class MessageForm extends Component {
 
   handleInputChange = (e) => {
     this.setState({
-      messageText: {
-        ...this.state.messageText,
-        [e.target.name]: e.target.value
-      }
+      ...this.state,
+      [e.target.name]: e.target.value
     })
   }
 
@@ -36,7 +32,7 @@ class MessageForm extends Component {
     return (
       <div>
         <form onSubmit={(e) => this.props.handleSubmit(e, this.state.messageText)}>
-          <textarea className='input' name="message" placeholder="Mensaje" value={this.state.messageText} onChange={this.handleInputChange}></textarea>
+          <textarea className='input' name="messageText" placeholder="Mensaje" value={this.state.messageText} onChange={this.handleInputChange}></textarea>
           <button type="submit">Save</button>
         </form>
       </div>
