@@ -5,12 +5,34 @@ import { fetchCustomers } from "../../actions/actions";
 
 import ChatListUser from './ChatListUser';
 
+var _shouldUpdate = true;
 class ChatList extends Component {
   constructor(props) {
     super(props)
     this.state = {
       customers: []
     };
+  }
+
+  findCustomerInArray = (arr, id) => (
+    arr.findIndex((el) => (
+      el.id == id
+    ))
+  )
+
+  removeFromArray = (arr, index) => {
+    arr.splice(index, 1);
+    return arr
+  }
+
+  updateCustomerList = (customer) => {
+    var customers = this.props.customers;
+    var index = this.findCustomerInArray(customers, customer.id);
+    var customerList = this.removeFromArray(customers, index);
+    customerList.unshift(customer);
+    this.setState({
+      customers: customerList
+    })
   }
 
   componentDidMount() {
@@ -20,19 +42,26 @@ class ChatList extends Component {
       { channel: 'CustomersChannel' },
       {
         received: data => {
-          // TODO: Build new message instead fetch all messages again
-          console.log('received data');
-          console.log(data);
-          this.props.fetchCustomers();
+          console.log('received data', data);
+          this.updateCustomerList(data.customer);
         }
       }
     );
   }
 
+  componentDidUpdate() {
+    if (_shouldUpdate) {
+      _shouldUpdate = false;
+      this.setState({
+        customers: this.props.customers
+      })
+    }
+  }
+
   render() {
     return (
       <div className="chat__selector">
-        {this.props.customers.map((customer) => <ChatListUser key={customer.id} customer={customer} handleOpenChat={this.props.handleOpenChat}/>)}
+        {this.state.customers.map((customer) => <ChatListUser key={customer.id} customer={customer} handleOpenChat={this.props.handleOpenChat}/>)}
       </div>
     );
   }
