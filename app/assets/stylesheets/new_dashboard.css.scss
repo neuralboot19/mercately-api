@@ -602,6 +602,31 @@
   margin-left: -10px !important;
 }
 
+.select-range {
+  border: 2px solid $secondary-color;
+  color: $secondary-color;
+  border-radius: 5px;
+  padding-right: 10px;
+  width: 170px;
+  float: right;
+  text-align: center;
+
+  input {
+    border: none;
+    outline: 0;
+    font-size: 11px;
+    color: $secondary-color;
+    outline: 0;
+    text-align: center;
+  }
+}
+
+.splitted-stats {
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.12);
+}
+
 .search-field {
   -webkit-appearance: textfield;
 }

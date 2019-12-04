@@ -2,16 +2,86 @@
   <div class="card">
     <div class="container-fluid index">
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-6 mb-20">
           <h1 class="d-inline index__title">Dashboard</h1>
           <div class="index__desc">
           </div>
         </div>
-        <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
+        <div class="col-xs-12 col-md-6 mt-8 t-right button-sm-and-down mb-20">
           <%= form_for(:search, url: retailers_dashboard_path(current_retailer), method: :get, html: { id: 'select_range' }) do |form| %>
-            <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
+            <div id="date-picker-container" class="select-range">
+              <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
+              <span class="c-secondary"><i class="fas fa-caret-down"></i></span>
+            </div>
           <% end %>
         </div>
+        <div class="col-xs-12 mt-40">
+          <div class="t-center">Visión General</div>
+          <div class="row">
+            <div class="col-xs-12 pl-0 mb-10 mt-15">
+              Ordenes Totales: <b class="c-secondary"><%= @orders_count %></b>
+            </div>
+            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="fas fa-check-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <div class="c-gray-label">Completadas</div>
+                <div class="c-secondary"><b><%= @success_orders_count %></b></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-1"></div>
+            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="far fa-check-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <div class="c-gray-label">Pendientes</div>
+                <div class="c-secondary"><b><%= @pending_orders_count %></b></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-1"></div>
+            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="fas fa-times-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <div class="c-gray-label">Canceladas</div>
+                <div class="c-secondary"><b><%= @cancelled_orders_count %></b></div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 pl-0 mb-10 mt-15">
+              Ganancias Totales: <b class="c-secondary">$<%= @profit_total %></b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 pl-0 mb-10 mt-15">
+              Total Mensajes: <b class="c-secondary"><%= @total_chats + @total_questions %></b>
+            </div>
+            <div class="col-xs-12 col-sm-4 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="far fa-comments fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-8 col-sm-8">
+                <div class="c-gray-label">Cantidad de Mensajes</div>
+                <div class="c-secondary"><b><%= @total_chats %></b></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-1"></div>
+            <div class="col-xs-12 col-sm-4 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="far fa-question-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-8 col-sm-8">
+                <div class="c-gray-label">Cantidad de Preguntas</div>
+                <div class="c-secondary"><b><%= @total_questions %></b></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12 divider mt-30"></div>
         <div class="col-xs-12 col-sm-4 product__info pb-12">
           <div class="t-center">Índice de ventas</div>
           <%= pie_chart [['Exitosas', @success_orders_count], ['Canceladas', @cancelled_orders_count], ['Pendientes', @pending_orders_count]] %>
@@ -80,7 +150,7 @@
           'Septiembre',
           'Octubre',
           'Noviembre',
-          'Deciembre'
+          'Diciembre'
         ],
         firstDay: 1
       }
@@ -88,6 +158,10 @@
       setTimeout(function() {
         $('#select_range').submit();
       }, 100)
+    });
+
+    $('#date-picker-container, #search_range').on('click', function() {
+      $('#search_range').data('daterangepicker').toggle();
     });
   });
 </script>
