@@ -1,105 +1,116 @@
-<div class="container-fluid reduced-container-padding mb-16">
-  <div class="card">
-    <div class="container-fluid order">
-      <div class="row">
-        <div class="col-xs-12 col-sm-6">
-          <table class="table_order_details mb-16">
-            <tr>
-              <td class="table_order_details__descriptor">Cliente</td>
-              <td class="table_order_details__value">
-                <%= @order.customer.full_name %><br/>
-                <%= @order.customer.email %><br/>
-                <%= @order.customer.phone %>
-              </td>
-            </tr>
-            <tr>
-              <td class="table_order_details__descriptor">Dirección</td>
-              <td class="table_order_details__value"><%= @order.customer.address %></td>
-            </tr>
-            <tr>
-              <td class="table_order_details__descriptor">Fecha de compra</td>
-              <td class="table_order_details__value"><%= show_date(@order.created_at) %></td>
-            </tr>
+<div id="print-show-order">
+  <div class="container-fluid reduced-container-padding mb-16">
+    <div class="card">
+      <div class="container-fluid order">
+        <div class="row">
+          <div id="order_retailer_name" class="col-sm-12 d-none">
+            <h3 class="pl-16"><%= @order.retailer.name %></h3>
+          </div>
+          <div class="col-xs-12 col-sm-5">
+            <table class="table_order_details mb-16">
               <tr>
-                <td class="table_order_details__descriptor">Estado</td>
-                <td class="table_order_details__value"><b class="cookie <%= cookie(@order.status) %>"><%= Order.enum_translation(:status, @order.status) %></b></td>
+                <td class="table_order_details__descriptor">Cliente</td>
+                <td class="table_order_details__value">
+                  <%= @order.customer.full_name %><br/>
+                  <%= @order.customer.email %><br/>
+                  <%= @order.customer.phone %>
+                </td>
               </tr>
-          </table>
-        </div>
-        <div class="col-xs-12 col-sm-6 hide-on-tablet-and-down">
-          <div class="mt-8 t-right">
-            <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
-            <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
-            <%= link_to retailers_order_messages_path(current_retailer, @order, return_to: 'order'), class: 'btn btn--cta' do %>
-              <i class="fas fa-comment-alt mr-5"></i>
-              Chat de la venta
-            <% end %>
-            <%= link_to retailers_orders_path(current_retailer, status: @order.status), class: 'btn btn--cta' do %>
-              <i class="fas fa-arrow-left mr-5"></i>
-              Volver
-            <% end %>
-            <%= link_to edit_retailers_order_path(current_retailer, @order), class: 'btn btn--cta' do %>
-              <i class="fas fa-edit mr-5"></i>
-              Editar
-            <% end %>
+              <tr>
+                <td class="table_order_details__descriptor">Dirección</td>
+                <td class="table_order_details__value"><%= @order.customer.address %></td>
+              </tr>
+              <tr>
+                <td class="table_order_details__descriptor">Fecha de compra</td>
+                <td class="table_order_details__value"><%= show_date(@order.created_at) %></td>
+              </tr>
+                <tr>
+                  <td class="table_order_details__descriptor">Estado</td>
+                  <td class="table_order_details__value"><b class="cookie <%= cookie(@order.status) %>"><%= Order.enum_translation(:status, @order.status) %></b></td>
+                </tr>
+            </table>
+          </div>
+          <div class="col-xs-12 col-sm-7 hide-on-tablet-and-down show-order-buttons-class hide-on-print">
+            <div class="mt-8 t-right">
+              <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
+              <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
+              <%= link_to retailers_order_messages_path(current_retailer, @order, return_to: 'order'), class: 'btn btn--cta' do %>
+                <i class="fas fa-comment-alt mr-5"></i>
+                Chat de la venta
+              <% end %>
+              <%= link_to retailers_orders_path(current_retailer, status: @order.status), class: 'btn btn--cta' do %>
+                <i class="fas fa-arrow-left mr-5"></i>
+                Volver
+              <% end %>
+              <a class="btn btn--cta" href="javascript:;" onclick="print();">
+                <i class="fas fa-print mr-5"></i>
+                Imprimir
+              </a>
+              <%= link_to edit_retailers_order_path(current_retailer, @order), class: 'btn btn--cta' do %>
+                <i class="fas fa-edit mr-5"></i>
+                Editar
+              <% end %>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="container-fluid order mt-25">
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="table box m-0">
-            <div class="table__header row hide-on-tablet-and-down center-sm">
-              <div class="col-sm-3">Producto</div>
-              <div class="col-sm-2">Variación</div>
-              <div class="col-sm-2">Cantidad</div>
-              <div class="col-sm-2">Precio</div>
-              <div class="col-sm-3">Sub-total</div>
-            </div>
-            <% @order.order_items.each do |oi| %>
-              <div class="divider"></div>
-              <div class="table__item row middle-xs">
-                <div class="col-xs-12 col-sm-3 t-center"><%= oi.product.title %></div>
-                <div class="col-xs-12 col-sm-2">
-                  <% if oi.product_variation %>
-                    <table class="table_details table_details--underlined w-100">
-                      <tbody>
-                        <% oi.product_variation.data['attribute_combinations'].each do |attr_comb| %>
-                          <tr>
-                            <td class="table_details__descriptor"><%= attr_comb['name'] %>:</td>
-                            <td class="table_details__value"><%= attr_comb['value_name'] %></td>
-                          </tr>
-                        <% end %>
-                      </tbody>
-                    </table>
-                  <% end %>
-                </div>
-                <div class="col-xs-4 col-sm-2 t-center">
-                  <span class="hide-on-md-and-up mr-5">Cantidad:</span>
-                  <%= oi.quantity %>
-                </div>
-                <div class="col-xs-4 col-sm-2 t-center c-secondary">
-                  <span class="hide-on-md-and-up mr-5">Precio:</span>
-                  $<%= oi.unit_price %>
-                </div>
-                <div class="col-xs-4 col-sm-3 t-center c-secondary">
-                  <span class="hide-on-md-and-up mr-5">Sub-total:</span>
-                  $<%= oi.subtotal %>
-                </div>
+      <div class="container-fluid order mt-25">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12">
+            <div class="table box m-0">
+              <div class="table__header row hide-on-tablet-and-down center-sm">
+                <div class="col-sm-3">Producto</div>
+                <div class="col-sm-2">Variación</div>
+                <div class="col-sm-2">Cantidad</div>
+                <div class="col-sm-2">Precio</div>
+                <div class="col-sm-3">Sub-total</div>
               </div>
-            <% end %>
+              <% @order.order_items.each do |oi| %>
+                <div class="divider"></div>
+                <div class="table__item row middle-xs">
+                  <div class="col-xs-12 col-sm-3 t-center"><%= oi.product.title %></div>
+                  <div class="col-xs-12 col-sm-2">
+                    <% if oi.product_variation %>
+                      <table class="table_details table_details--underlined w-100">
+                        <tbody>
+                          <% oi.product_variation.data['attribute_combinations'].each do |attr_comb| %>
+                            <tr>
+                              <td class="table_details__descriptor"><%= attr_comb['name'] %>:</td>
+                              <td class="table_details__value"><%= attr_comb['value_name'] %></td>
+                            </tr>
+                          <% end %>
+                        </tbody>
+                      </table>
+                    <% end %>
+                  </div>
+                  <div class="col-xs-4 col-sm-2 t-center">
+                    <span class="hide-on-md-and-up mr-5 hide-on-print">Cantidad:</span>
+                    <%= oi.quantity %>
+                  </div>
+                  <div class="col-xs-4 col-sm-2 t-center c-secondary">
+                    <span class="hide-on-md-and-up mr-5 hide-on-print">Precio:</span>
+                    $<%= oi.unit_price %>
+                  </div>
+                  <div class="col-xs-4 col-sm-3 t-center c-secondary">
+                    <span class="hide-on-md-and-up mr-5 hide-on-print">Sub-total:</span>
+                    $<%= oi.subtotal %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
           </div>
-        </div>
-        <div class="col-xs-12 my-8 t-right">
-          <div class="divider"></div>
-          <div class="box mt-16">
-            <div class="row end-xs">
-              <div class="col-xs-12 col-sm-3 t-center">
-                <h3>
-                  Total: <span class="ml-5 money" style="font-size: 22px;">$<%= @order.total %></span>
-                </h3>
+          <div class="col-xs-12 col-sm-12 my-8 t-right">
+            <div class="divider"></div>
+            <div class="box mt-16">
+              <div class="row end-xs">
+                <div class="col-sm-9">
+                </div>
+                <div class="col-xs-12 col-sm-3 t-center">
+                  <h3>
+                    Total: <span class="ml-5 money" style="font-size: 22px;">$<%= @order.total %></span>
+                  </h3>
+                </div>
               </div>
             </div>
           </div>
@@ -108,3 +119,26 @@
     </div>
   </div>
 </div>
+
+<script type="text/javascript">
+  function print() {
+    var content = document.getElementById("print-show-order");
+    var stylesheet = $('head').data('theme');
+    var winOpen = window.open('', '', '');
+
+    winOpen.document.write("<html><head>" +
+      "<style type=\"text/css\" media=\"print\">@import " + stylesheet + "</style>" +
+      "<link rel=\"stylesheet\" media=\"all\" type=\"text/css\" href=\"<%= asset_path 'new_dashboard.css' %>\">" +
+      "<link rel=\"stylesheet\" media=\"screen\" type=\"text/css\" href=\"<%= asset_path 'flexboxgrid.css' %>\">" +
+      "</head><body>");
+
+    winOpen.document.write(content.innerHTML.replace("show-order-buttons-class", "d-none"));
+    winOpen.document.write("</body></html>");
+
+    winOpen.focus();
+    setTimeout(function () {
+      winOpen.print();
+      winOpen.close();
+    }, 1000);
+  }
+</script>

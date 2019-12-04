@@ -42,7 +42,7 @@ label:hover, a:hover {
   cursor: pointer;
 }
 
-@for $space from 0 through 100 {
+@for $space from 0 through 250 {
   .w-#{$space} {
     width: #{$space}px;
   }
@@ -189,6 +189,10 @@ label:hover, a:hover {
 
 .c-black {
   color: #000 !important;
+}
+
+.c-gray-label {
+  color: #646464;
 }
 
 .warning-box {

@@ -58,4 +58,100 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#sort_by_completed_orders' do
+    let(:retailer) { create(:retailer) }
+    let(:customer1) { create(:customer, retailer: retailer) }
+    let(:customer2) { create(:customer, retailer: retailer) }
+    let!(:order1) { create(:order, customer: customer1, total_amount: 100, status: 'pending') }
+    let!(:order2) { create(:order, customer: customer2, total_amount: 200, status: 'success') }
+
+    context 'when the order is ascending' do
+      it 'returns the customer with less completed orders first' do
+        params = { q: { s: 'sort_by_completed_orders asc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order1.customer)
+      end
+    end
+
+    context 'when the order is descending' do
+      it 'returns the customer with more completed orders first' do
+        params = { q: { s: 'sort_by_completed_orders desc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order2.customer)
+      end
+    end
+  end
+
+  describe '#sort_by_pending_orders' do
+    let(:retailer) { create(:retailer) }
+    let(:customer1) { create(:customer, retailer: retailer) }
+    let(:customer2) { create(:customer, retailer: retailer) }
+    let!(:order1) { create(:order, customer: customer1, total_amount: 100, status: 'success') }
+    let!(:order2) { create(:order, customer: customer2, total_amount: 200, status: 'pending') }
+
+    context 'when the order is ascending' do
+      it 'returns the customer with less pending orders first' do
+        params = { q: { s: 'sort_by_pending_orders asc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order1.customer)
+      end
+    end
+
+    context 'when the order is descending' do
+      it 'returns the customer with more pending orders first' do
+        params = { q: { s: 'sort_by_pending_orders desc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order2.customer)
+      end
+    end
+  end
+
+  describe '#sort_by_canceled_orders' do
+    let(:retailer) { create(:retailer) }
+    let(:customer1) { create(:customer, retailer: retailer) }
+    let(:customer2) { create(:customer, retailer: retailer) }
+    let!(:order1) { create(:order, customer: customer1, total_amount: 100, status: 'pending') }
+    let!(:order2) { create(:order, customer: customer2, total_amount: 200, status: 'cancelled') }
+
+    context 'when the order is ascending' do
+      it 'returns the customer with less cancelled orders first' do
+        params = { q: { s: 'sort_by_canceled_orders asc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order1.customer)
+      end
+    end
+
+    context 'when the order is descending' do
+      it 'returns the customer with more cancelled orders first' do
+        params = { q: { s: 'sort_by_canceled_orders desc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order2.customer)
+      end
+    end
+  end
+
+  describe '#sort_by_total' do
+    let(:retailer) { create(:retailer) }
+    let(:customer1) { create(:customer, retailer: retailer) }
+    let(:customer2) { create(:customer, retailer: retailer) }
+    let!(:order1) { create(:order, customer: customer1, total_amount: 100, status: 'success') }
+    let!(:order2) { create(:order, customer: customer2, total_amount: 200, status: 'success') }
+
+    context 'when the order is ascending' do
+      it 'returns the customer with less profit first' do
+        params = { q: { s: 'sort_by_total asc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order1.customer)
+      end
+    end
+
+    context 'when the order is descending' do
+      it 'returns the customer with more profit first' do
+        params = { q: { s: 'sort_by_total desc' } }
+        result = retailer.customers.ransack(params[:q]).result
+        expect(result.first).to eq(order2.customer)
+      end
+    end
+  end
 end
