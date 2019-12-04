@@ -18,11 +18,7 @@ class ChatMessages extends Component {
 
   handleLoadMore = (e) => {
     e.preventDefault();
-    this.setState({
-      ...this.state,
-      page: this.state.page += 1,
-      load_more: true
-    })
+    this.setState({ page: this.state.page += 1,  load_more: true})
   }
 
   componentWillReceiveProps(newProps){
@@ -38,23 +34,24 @@ class ChatMessages extends Component {
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
       currentCustomer = id
-      this.props.fetchMessages(id);
+
+      this.setState({ messages: [],  page: 1}, () => {
+        this.props.fetchMessages(id);
+      });
+      
       App.cable.subscriptions.create(
         { channel: 'FacebookMessagesChannel', id: currentCustomer },
         {
           received: data => {
             // TODO: Build new message instead fetch all messages again
-            console.log(data);
             this.props.fetchMessages(id);
           }
         }
       );
     } else if (this.state.load_more === true) {
-      this.setState({
-        ...this.state,
-        load_more: false
+      this.setState({ load_more: false }, () => {
+        this.props.fetchMessages(id, this.state.page);
       });
-      this.props.fetchMessages(id, this.state.page);
     }
   }
 
