@@ -15,6 +15,18 @@ class ChatList extends Component {
 
   componentDidMount() {
     this.props.fetchCustomers();
+
+    App.cable.subscriptions.create(
+      { channel: 'CustomersChannel' },
+      {
+        received: data => {
+          // TODO: Build new message instead fetch all messages again
+          console.log('received data');
+          console.log(data);
+          this.props.fetchCustomers();
+        }
+      }
+    );
   }
 
   render() {

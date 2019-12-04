@@ -1,6 +1,5 @@
 this.App.counter = this.App.cable.subscriptions.create('CounterMessagingChannel', {
   received(data) {
-    console.log('CounterMessagingChannel');
     $(`#sidebar #sidebar__menu ${data['identifier']}`).html(data['total']);
     var currentTotal = $('#sidebar #sidebar__menu #item__cookie_total').html();
 
