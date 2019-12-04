@@ -32,7 +32,7 @@ class ChatList extends Component {
     customerList.unshift(customer);
     this.setState({
       customers: customerList
-    })
+    });
   }
 
   componentDidMount() {
@@ -42,7 +42,6 @@ class ChatList extends Component {
       { channel: 'CustomersChannel' },
       {
         received: data => {
-          console.log('received data', data);
           this.updateCustomerList(data.customer);
         }
       }
@@ -85,4 +84,3 @@ export default connect(
   mapState,
   mapDispatch
 )(withRouter(ChatList));
-

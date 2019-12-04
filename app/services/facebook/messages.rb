@@ -19,6 +19,10 @@ module Facebook
           FacebookMessageSerializer.new(message)
         ).serializable_hash
         FacebookMessagesChannel.broadcast_to customer, serialized_data
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          CustomerSerializer.new(customer)
+        ).serializable_hash
+        CustomersChannel.broadcast_to @facebook_retailer.retailer, serialized_data
       end
     end
 
