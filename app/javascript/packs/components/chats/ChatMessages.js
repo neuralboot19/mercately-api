@@ -38,7 +38,7 @@ class ChatMessages extends Component {
       this.setState({ messages: [],  page: 1}, () => {
         this.props.fetchMessages(id);
       });
-      
+
       App.cable.subscriptions.create(
         { channel: 'FacebookMessagesChannel', id: currentCustomer },
         {
