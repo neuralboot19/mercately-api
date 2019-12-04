@@ -62,10 +62,10 @@ class ChatMessages extends Component {
     return (
       <div className="row bottom-xs">
         <div className="col-xs-12 chat__box">
-          {this.state.messages.map((message) => (
-          <ChatMessage key={message.id} message={message}/>
-          ))}
           <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
+          {this.state.messages.map((message) => (
+            <ChatMessage key={message.id} message={message}/>
+          ))}
         </div>
       </div>
     )
