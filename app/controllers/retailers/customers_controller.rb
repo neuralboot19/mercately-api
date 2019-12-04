@@ -2,7 +2,12 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy, :customer_data]
 
   def index
-    @q = current_retailer.customers.active.ransack(params[:q])
+    @q = if params[:q]&.[](:s).blank?
+           current_retailer.customers.active.order(created_at: :desc).ransack(params[:q])
+         else
+           current_retailer.customers.active.ransack(params[:q])
+         end
+
     @customers = @q.result.page(params[:page])
   end
 

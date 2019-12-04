@@ -602,6 +602,10 @@
   margin-left: -10px !important;
 }
 
+.search-field {
+  -webkit-appearance: textfield;
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {
@@ -731,6 +735,10 @@
 @media screen and (max-width: 767px) {
   #meli-status-cont {
     margin-left: 0px !important;
+  }
+
+  .ordering-label, .filter-label {
+    text-align: left;
   }
 }
 
