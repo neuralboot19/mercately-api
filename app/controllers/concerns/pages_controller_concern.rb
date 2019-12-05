@@ -31,8 +31,9 @@ module PagesControllerConcern
     q = { orders_status_eq: 1, orders_created_at_gteq: @start_date, orders_created_at_lteq: @end_date }
     category_ids = current_retailer.products.ransack(q).result.pluck(:category_id).uniq
     @best_categories = Category.joins(products: { order_items: :order })
-      .where(id: category_ids, products: { retailer_id: current_retailer.id }, orders: { status: 1 })
-      .group(:id).order('sum(order_items.quantity * order_items.unit_price) desc')
+      .where(id: category_ids, products: { retailer_id: current_retailer.id }, orders: { status: 1, created_at:
+      @start_date.to_datetime..@end_date.to_datetime }).group(:id).order('sum(order_items.quantity * ' \
+      'order_items.unit_price) desc')
   end
 
   # Mejores clientes
