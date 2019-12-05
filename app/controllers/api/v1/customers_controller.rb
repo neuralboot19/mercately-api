@@ -28,7 +28,8 @@ class Api::V1::CustomersController < ApplicationController
         FacebookMessageSerializer.new(message)
       ).serializable_hash
       FacebookMessagesChannel.broadcast_to @customer, serialized_data
-      head :ok
+      
+      render status: 200, json: { message: message }
     end
   end
 

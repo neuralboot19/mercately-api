@@ -3,10 +3,6 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { sendMessage } from "../../actions/actions";
 
-var _updated = true;
-
-const csrfToken = document.querySelector('[name=csrf-token]').content
-
 class MessageForm extends Component {
   constructor(props) {
     super(props)
@@ -22,11 +18,9 @@ class MessageForm extends Component {
   }
 
   handleSubmit = (e) => {
-    e.preventDefault();
-    let text = { message: this.state.messageText }
-
+    let text = this.state.messageText
     this.setState({ messageText: '' }, () => {
-      this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
+      this.props.handleSubmitMessage(e, text)
     });
   }
 
@@ -40,7 +34,6 @@ class MessageForm extends Component {
   }
 }
 
-
 function mapStateToProps(state) {
   return {
     messageText: state.messageText || [],
@@ -49,9 +42,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    sendMessage: (id, message, token) => {
-      dispatch(sendMessage(id, message, token));
-    }
+
   };
 }
 

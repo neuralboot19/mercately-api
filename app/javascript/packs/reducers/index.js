@@ -20,6 +20,11 @@ const reducer = (state = initialState, action) => {
         ...state,
         messages: action.data.messages
       }
+    case 'SET_SEND_MESSAGE':
+      return {
+        ...state,
+        message: action.data.message
+      }
     default:
       return state;
   }

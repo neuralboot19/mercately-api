@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { fetchMessages } from "../../actions/actions";
+import { fetchMessages, sendMessage } from "../../actions/actions";
 
-import ChatMessage from './ChatMessage';
 import MessageForm from './MessageForm';
 
 var currentCustomer = 0;
+const csrfToken = document.querySelector('[name=csrf-token]').content
+
 class ChatMessages extends Component {
   constructor(props) {
     super(props)
@@ -23,29 +24,49 @@ class ChatMessages extends Component {
   }
 
   componentWillReceiveProps(newProps){
+    
+    console.log(newProps.messages, this.props.messages)
+
     if(newProps.messages != this.props.messages){
-      this.setState({
-        ...this.state,
-        messages: newProps.messages.concat(this.state.messages)
-      })
+        
+        console.log('')
+
+      // this.setState({
+      //   ...this.state,
+      //   messages: newProps.messages.concat(this.state.messages)
+      // })
     }
+
+  }
+
+  handleSubmitMessage = (e, message) => {
+    e.preventDefault();
+    let text = { message: message }
+    this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
   }
 
   componentDidUpdate() {
+
+    console.log('UPDATING ARRAY')
+
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
       currentCustomer = id
 
-      this.setState({ messages: [],  page: 1}, () => {
-        this.props.fetchMessages(id);
-      });
+      // this.setState({ messages: [],  page: 1}, () => {
+      //   this.props.fetchMessages(id);
+      // });
 
       App.cable.subscriptions.create(
         { channel: 'FacebookMessagesChannel', id: currentCustomer },
         {
           received: data => {
             // TODO: Build new message instead fetch all messages again
-            this.props.fetchMessages(id);
+            // this.props.fetchMessages(id);
+
+            this.setState({
+              messages: this.state.messages.push('hola')
+            })
           }
         }
       );
@@ -57,17 +78,23 @@ class ChatMessages extends Component {
   }
 
   render() {
+    console.log('state', this.state)
     return (
       <div className="row bottom-xs">
         <div className="col-xs-12 chat__box">
           <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
-          {this.state.messages.map((message) => (
-            <ChatMessage key={message.id} message={message}/>
-          ))}
+          {this.state.messages.map((message) => {
+            return(
+              <div key={message.id} className={'message' + message.sent_by_retailer == true ? 'message-by-retailer f-right' : ''}>
+                {message.text}
+              </div>
+            ) 
+          })}
         </div>
         <div className="col-xs-12">
           <MessageForm
             currentCustomer={this.props.currentCustomer}
+            handleSubmitMessage={this.handleSubmitMessage}
           />
         </div>
       </div>
@@ -78,6 +105,7 @@ class ChatMessages extends Component {
 function mapStateToProps(state) {
   return {
     messages: state.messages || [],
+    message: state.message || [],
   };
 }
 
@@ -85,6 +113,9 @@ function mapDispatch(dispatch) {
   return {
     fetchMessages: (id, page = 1) => {
       dispatch(fetchMessages(id, page));
+    },
+    sendMessage: (id, message, token) => {
+      dispatch(sendMessage(id, message, token));
     }
   };
 }
