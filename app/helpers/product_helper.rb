@@ -52,14 +52,6 @@ module ProductHelper
   def ordering_options
     [
       {
-        value: 'created_at asc',
-        label: 'Fecha de creación Asc'
-      },
-      {
-        value: 'created_at desc',
-        label: 'Fecha de creación Desc'
-      },
-      {
         value: 'title asc',
         label: 'Nombre del producto Asc'
       },
@@ -104,5 +96,9 @@ module ProductHelper
 
   def successfull_order_items_count(product)
     product.order_items.includes(:order).where(orders: { status: 'success' }).count
+  end
+
+  def total_sold(product)
+    product.order_items.includes(:order).where(orders: { status: 'success' }).sum(&:quantity)
   end
 end

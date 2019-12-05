@@ -2,20 +2,84 @@
   <div class="card">
     <div class="container-fluid index">
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-xs-12 col-md-6 mb-20">
           <h1 class="d-inline index__title">Dashboard</h1>
           <div class="index__desc">
           </div>
         </div>
-        <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
+        <div class="col-xs-12 col-md-6 mt-8 t-right button-sm-and-down mb-20">
           <%= form_for(:search, url: retailers_dashboard_path(current_retailer), method: :get, html: { id: 'select_range' }) do |form| %>
-            <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
+            <div id="date-picker-container" class="select-range">
+              <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
+              <span class="c-secondary"><i class="fas fa-caret-down"></i></span>
+            </div>
           <% end %>
         </div>
-        <div class="col-xs-12 col-sm-4 product__info pb-12">
-          <div class="t-center">Índice de ventas</div>
-          <%= pie_chart [['Exitosas', @success_orders_count], ['Canceladas', @cancelled_orders_count], ['Pendientes', @pending_orders_count]] %>
-          <div class="t-center">Total de ventas: <%= @orders_count %></div>
+        <div class="col-xs-12 mt-40">
+          <div class="t-center">Visión General</div>
+          <div class="row">
+            <div class="col-xs-12 pl-0 mb-10 mt-15">
+              Ordenes Totales: <b class="c-secondary"><%= @orders_count %></b>
+            </div>
+            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="fas fa-check-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <div class="c-gray-label">Completadas</div>
+                <div class="c-secondary"><b><%= @success_orders_count %></b></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-1"></div>
+            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="far fa-check-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <div class="c-gray-label">Pendientes</div>
+                <div class="c-secondary"><b><%= @pending_orders_count %></b></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-1"></div>
+            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="fas fa-times-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-6 col-sm-6">
+                <div class="c-gray-label">Canceladas</div>
+                <div class="c-secondary"><b><%= @cancelled_orders_count %></b></div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 pl-0 mb-10 mt-15">
+              Ganancias Totales: <b class="c-secondary">$<%= @profit_total %></b>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 pl-0 mb-10 mt-15">
+              Total Mensajes: <b class="c-secondary"><%= @total_chats + @total_questions %></b>
+            </div>
+            <div class="col-xs-12 col-sm-4 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="far fa-comments fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-8 col-sm-8">
+                <div class="c-gray-label">Cantidad de Mensajes</div>
+                <div class="c-secondary"><b><%= @total_chats %></b></div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-1"></div>
+            <div class="col-xs-12 col-sm-4 splitted-stats d-inline-flex">
+              <div class="col-xs-3 col-sm-3 c-secondary t-center">
+                <i class="far fa-question-circle fs-40 mt-5"></i>
+              </div>
+              <div class="col-xs-8 col-sm-8">
+                <div class="c-gray-label">Cantidad de Preguntas</div>
+                <div class="c-secondary"><b><%= @total_questions %></b></div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-xs-12 divider mt-30"></div>
         <div class="col-xs-12 col-sm-7 mt-40">
@@ -33,16 +97,16 @@
               <div class="row">
                 <div class="col-xs-12 col-sm-12 mt-10">
                   <div class="table box">
-                    <div class="table__header row center-sm">
-                      <div class="col-sm-2">Imagen</div>
-                      <div class="col-sm-6">Producto</div>
-                      <div class="col-sm-2">Vendidos</div>
-                      <div class="col-sm-2">Ganancia</div>
+                    <div class="table__header row center-sm hide-on-sm-and-down table-header-labels">
+                      <div class="col-xs-2 col-sm-2">Imagen</div>
+                      <div class="col-xs-6 col-sm-6">Producto</div>
+                      <div class="col-xs-2 col-sm-2">Vendidos</div>
+                      <div class="col-xs-2 col-sm-2">Ganancia</div>
                     </div>
-                    <% retailer_products(current_retailer).each do |product| %>
+                    <% @best_products.each do |product| %>
                       <div class="divider"></div>
                       <div class="table__item row middle-xs py-0">
-                        <div class="col-sm-2 t-center">
+                        <div class="col-xs-2 col-sm-2 t-center">
                           <% if product.main_picture_id %>
                             <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}") %>
                           <% elsif product.images&.first&.key.present? %>
@@ -51,9 +115,9 @@
                             <i class="fas fa-camera-retro fs-40 c-grey"></i>
                           <% end %>
                         </div>
-                        <div class="col-sm-6 t-center"><%= product.title %></div>
-                        <div class="col-sm-2 t-center"><%= product.sold_quantity %></div>
-                        <div class="col-sm-2 t-center c-green">$<%= product.earned %></div>
+                        <div class="col-xs-6 col-sm-6 t-center"><%= product.title %></div>
+                        <div class="col-xs-2 col-sm-2 t-center"><%= total_sold(product) %></div>
+                        <div class="col-xs-2 col-sm-2 t-center c-green">$<%= product.earned %></div>
                       </div>
                     <% end %>
                   </div>
@@ -64,19 +128,19 @@
               <div class="row">
                 <div class="col-xs-12 col-sm-12 mt-10">
                   <div class="table box">
-                    <div class="table__header row center-sm">
-                      <div class="col-sm-5">Nombre</div>
-                      <div class="col-sm-2">Productos</div>
-                      <div class="col-sm-2">Vendidos</div>
-                      <div class="col-sm-3">Ganancia</div>
+                    <div class="table__header row center-sm hide-on-sm-and-down table-header-labels">
+                      <div class="col-xs-5 col-sm-5">Nombre</div>
+                      <div class="col-xs-2 col-sm-2">Productos</div>
+                      <div class="col-xs-2 col-sm-2">Vendidos</div>
+                      <div class="col-xs-3 col-sm-3">Ganancia</div>
                     </div>
-                    <% products_by_category(current_retailer).each do |cat| %>
+                    <% @best_categories.each do |cat| %>
                       <div class="divider"></div>
                       <div class="table__item row middle-xs py-0">
-                        <div class="col-sm-5 t-center"><%= cat[:name] %></div>
-                        <div class="col-sm-2 t-center"><%= cat[:total_products] %></div>
-                        <div class="col-sm-2 t-center"><%= cat[:total_sold] %></div>
-                        <div class="col-sm-3 t-center c-green">$<%= cat[:earning] %></div>
+                        <div class="col-xs-5 col-sm-5 t-center"><%= cat.name %></div>
+                        <div class="col-xs-2 col-sm-2 t-center"><%= cat.total_products(current_retailer) %></div>
+                        <div class="col-xs-2 col-sm-2 t-center"><%= cat.total_products_sold(current_retailer, @start_date, @end_date) %></div>
+                        <div class="col-xs-3 col-sm-3 t-center c-green">$<%= cat.earnings(current_retailer, @start_date, @end_date) %></div>
                       </div>
                     <% end %>
                   </div>
@@ -93,22 +157,26 @@
                 <div class="row">
                   <div class="col-xs-12">
                     <div class="table box">
-                      <div class="table__header row center-sm">
+                      <div class="table__header row center-sm hide-on-sm-and-down table-header-labels">
                         <div class="col-sm-4">Cliente</div>
                         <div class="col-sm-4">Items</div>
                         <div class="col-sm-4">Ganancia</div>
                       </div>
-                      <% best_clients(current_retailer).each do |customer| %>
+                      <% @best_clients.each do |customer| %>
                         <div class="divider"></div>
                         <div class="table__item row middle-xs">
                           <div class="col-xs-4 col-sm-4">
-                            <div class="t-center"><%= customer.full_name || customer.meli_nickname %></div>
+                            <% if customer.full_name.present? %>
+                              <div class="t-center"><%= customer.full_name %></div>
+                            <% else %>
+                              <div class="t-center"><%= customer.meli_nickname || customer.email %></div>
+                            <% end %>
                           </div>
                           <div class="col-xs-4 col-sm-4">
-                            <div class="t-center"><%= customer.items_bought %></div>
+                            <div class="t-center"><%= customer.range_items_bought(@start_date, @end_date) %></div>
                           </div>
                           <div class="col-xs-4 col-sm-4">
-                            <div class="t-center c-green"><%= customer.earnings %></div>
+                            <div class="t-center c-green"><%= customer.range_earnings(@start_date, @end_date) %></div>
                           </div>
                         </div>
                       <% end %>
@@ -119,15 +187,6 @@
             </div>
           </div>
         </div>
-        <!--<div class="col-xs-12 col-sm-8">
-          <div class="t-center">Mejores clientes</div>
-          <%= bar_chart @better_customers, xtitle: 'Ordenes completadas', ytitle: 'Cliente' %>
-        </div>
-        <div class="col-xs-12 divider mt-0"></div>
-        <div class="col-xs-12 mt-40">
-          <div class="t-center">Productos mas vendidos</div>
-          <%= line_chart @better_products, xtitle: 'Fecha de la orden', ytitle: 'Cantidad vendida' %>
-        </div>-->
         <div class="col-xs-12 divider mt-30"></div>
         <div class="col-xs-12 mt-40">
           <div class="t-center">Total de ganancias</div>
@@ -182,7 +241,7 @@
           'Septiembre',
           'Octubre',
           'Noviembre',
-          'Deciembre'
+          'Diciembre'
         ],
         firstDay: 1
       }
@@ -204,6 +263,10 @@
       $('#dash-products-tab').removeClass('selected-tab');
       $('#dash-products-content').hide();
       $('#dash-categories-content').show();
+    });
+
+    $('#date-picker-container, #search_range').on('click', function() {
+      $('#search_range').data('daterangepicker').toggle();
     });
   });
 </script>

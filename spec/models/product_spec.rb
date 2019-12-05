@@ -379,4 +379,26 @@ RSpec.describe Product, type: :model do
       end
     end
   end
+
+  describe '#nullify_code' do
+    context 'when the code attribute is blank' do
+      let(:product) { build(:product, code: '') }
+
+      it 'sets to nil the code attribute before save' do
+        expect(product.code).to eq('')
+        product.save
+        expect(product.code).to be_nil
+      end
+    end
+
+    context 'when the code attribute is not blank' do
+      let(:product) { build(:product, code: 'PRODUCTO') }
+
+      it 'does not set to nil the code attribute before save' do
+        expect(product.code).to eq('PRODUCTO')
+        product.save
+        expect(product.code).not_to be_nil
+      end
+    end
+  end
 end

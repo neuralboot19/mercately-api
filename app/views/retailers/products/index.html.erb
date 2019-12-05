@@ -34,21 +34,16 @@
             <div class="box">
               <div class="row">
                 <div class="col-xs-12 col-sm-1 px-0 fs-14 no-style-filter">
-                  Busca por:
+                  Buscar por:
                 </div>
                 <div class="col-xs-12 col-sm-4 px-0">
-                  <%= f.search_field :title_or_meli_product_id_or_code_cont, class: 'input w-100', placeholder: 'Nombre, código del producto o código de MercadoLibre' %>
+                  <%= f.search_field :title_or_meli_product_id_or_code_cont, class: 'input search-field w-100', placeholder: 'Nombre, código del producto o código de MercadoLibre' %>
                 </div>
-                <div class="col-xs-12 col-sm-1">
+                <div class="col-xs-12 col-sm-2 px-0 pr-38 t-right mt-5 fs-14 no-style-filter filter-label">
+                  Filtrar por:
                 </div>
-                <div class="col-xs-12 col-sm-1 px-0 mt-5 fs-14 no-style-filter">
-                  Filtra por:
-                </div>
-                <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter">
+                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter">
                   <%= f.select :category_id_eq, categories_filter(current_retailer), { include_blank: true }, class: 'input' %>
-                </div>
-                <div class="col-xs-12 col-sm-2 px-0 mt-5 p-relative hide-on-sm-and-down">
-                  <%= f.submit 'Buscar', class: 'btn-btn btn-submit filter-button' %>
                 </div>
               </div>
             </div>
@@ -59,28 +54,31 @@
           <div class="col-xs-12">
             <div class="box">
               <div class="row">
-                <div class="col-xs-12 col-sm-1 px-0 mr-10 mt-5 fs-14 no-style-filter">
-                  Ordena por:
+                <div class="col-xs-12 col-sm-1 px-0 mt-5 fs-14 no-style-filter">
+                  Ordenar por:
                 </div>
-                <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter p-relative">
+                <div class="col-xs-12 col-sm-4 mr-10 px-0 mt-5 fs-14 no-style-filter">
                   <%= f.hidden_field :s, value: params[:q]&.[]('s').blank? ? 'created_at desc' : params[:q][:s] %>
-                  <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
-                      <span id="selected-order"></span>&nbsp;<i class="fas fa-sort"></i>
-                    </a>
+                  <div class="p-relative w-230">
+                    <label class="item__dropdown d-inline">
+                      <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
+                        <span id="selected-order">Seleccionar orden</span>&nbsp;<i class="fas fa-sort"></i>
+                      </a>
 
-                    <ul class="dropdown__menu w-100" id="order-list">
-                      <% ordering_options.each do |ord| %>
-                        <li value="<%= ord[:value] %>">
-                          <%= ord[:label] %>
-                        </li>
-                      <% end %>
-                    </ul>
-                  </label>
+                      <ul class="dropdown__menu w-100" id="order-list">
+                        <% ordering_options.each do |ord| %>
+                          <li value="<%= ord[:value] %>">
+                            <%= ord[:label] %>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </label>
+                  </div>
                 </div>
-                <div class="col-xs-12 col-sm-3">
+                <div class="col-xs-12 col-sm-2 pl-0 pr-25 mt-5 fs-14 t-right no-style-filter ordering-label">
+                  Estado de ML:
                 </div>
-                <div class="row" id="meli-status-cont">
+                <div class="row col-xs-12 col-sm-5 px-0 fs-14 no-style-filter" id="meli-status-cont">
                   <%= f.hidden_field :meli_status_eq, value: params[:q].blank? ? '' : params[:q][:meli_status_eq] %>
                   <%= f.hidden_field :meli_product_id_null, value: params[:q].blank? ? '' : params[:q][:meli_product_id_null] %>
                   <div class="mt-5 mr-10 px-0 no-style-filter meli-status-filter">
@@ -96,7 +94,7 @@
                     <b class="cookie cookie--blue fs-12" value="1">No publicado <i class="fas fa-check <%= 'd-none' if params[:q].blank? || params[:q][:meli_product_id_null] != '1' %>"></i></b>
                   </div>
                 </div>
-                <div class="col-xs-12 px-0 mt-10 d-none show-on-sm-and-down">
+                <div class="col-xs-12 px-0 mt-10">
                   <%= f.submit 'Buscar', class: 'btn-btn btn-submit' %>
                 </div>
               </div>

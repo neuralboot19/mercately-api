@@ -27,13 +27,17 @@ class Category < ApplicationRecord
     products.where(retailer_id: retailer.id).count
   end
 
-  def total_products_sold(retailer)
-    products.where(retailer_id: retailer.id).sum(&:sold_quantity)
+  def total_products_sold(retailer, start_date, end_date)
+    ids = products.where(retailer_id: retailer.id).ids
+    OrderItem.joins(:order).where(product_id: ids, orders: { status: 'success' })
+      .where('orders.created_at >= ? and orders.created_at <= ?', start_date.to_datetime, end_date.to_datetime)
+      .sum(&:quantity)
   end
 
-  def earnings(retailer)
+  def earnings(retailer, start_date, end_date)
     ids = products.where(retailer_id: retailer.id).ids
-    OrderItem.joins(:order).where(product_id: ids, orders: { status: 1 })
+    OrderItem.joins(:order).where(product_id: ids, orders: { status: 'success' })
+      .where('orders.created_at >= ? and orders.created_at <= ?', start_date.to_datetime, end_date.to_datetime)
       .sum { |oi| oi.quantity * oi.unit_price }.to_f.round(2)
   end
 
