@@ -141,17 +141,4 @@ RSpec.describe ProductHelper, type: :helper do
       expect(helper.successfull_order_items_count(product)).to eq(2)
     end
   end
-
-  describe '#total_sold' do
-    let(:product) { create(:product) }
-    let(:order) { create(:order, status: 'success') }
-
-    before do
-      create_list(:order_item, 2, product: product, order: order, quantity: 2)
-    end
-
-    it 'returns the total items sold of the product' do
-      expect(helper.total_sold(product)).to eq(4)
-    end
-  end
 end

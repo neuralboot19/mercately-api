@@ -116,8 +116,8 @@
                           <% end %>
                         </div>
                         <div class="col-xs-6 col-sm-6 t-center"><%= product.title %></div>
-                        <div class="col-xs-2 col-sm-2 t-center"><%= total_sold(product) %></div>
-                        <div class="col-xs-2 col-sm-2 t-center c-green">$<%= product.earned %></div>
+                        <div class="col-xs-2 col-sm-2 t-center"><%= product.range_total_sold(@start_date, @end_date) %></div>
+                        <div class="col-xs-2 col-sm-2 t-center c-green">$<%= product.range_total_earned(@start_date, @end_date) %></div>
                       </div>
                     <% end %>
                   </div>

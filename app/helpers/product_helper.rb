@@ -97,8 +97,4 @@ module ProductHelper
   def successfull_order_items_count(product)
     product.order_items.includes(:order).where(orders: { status: 'success' }).count
   end
-
-  def total_sold(product)
-    product.order_items.includes(:order).where(orders: { status: 'success' }).sum(&:quantity)
-  end
 end

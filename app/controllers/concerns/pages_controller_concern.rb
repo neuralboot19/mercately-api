@@ -3,20 +3,21 @@ module PagesControllerConcern
 
   # Carga la informacion para el tab Vision General del dashboard
   def general_info
-    @orders = Order.where(customer_id: current_retailer.customers.ids)
+    @customer_ids = current_retailer.customers.ids
+    @orders = Order.where(customer_id: @customer_ids)
     @orders_range = @orders.range_between(@start_date, @end_date)
     @orders_count = @orders_range.count
     @profit_total = @orders_range.success.sum { |ord| ord.total_amount || 0 }.to_f.round(2)
-    @success_orders_count = @orders_range.success.where(customer_id: current_retailer.customers.ids).count
-    @pending_orders_count = @orders_range.pending.where(customer_id: current_retailer.customers.ids).count
-    @cancelled_orders_count = @orders_range.cancelled.where(customer_id: current_retailer.customers.ids).count
+    @success_orders_count = @orders_range.success.where(customer_id: @customer_ids).count
+    @pending_orders_count = @orders_range.pending.where(customer_id: @customer_ids).count
+    @cancelled_orders_count = @orders_range.cancelled.where(customer_id: @customer_ids).count
     @incoming_total = @orders_range.success.group_by_day(:created_at).sum(:total_amount)
-    @chats = Message.where(customer_id: current_retailer.customers.ids, answer: nil)
+    @chats = Message.where(customer_id: @customer_ids, answer: nil)
     @total_chats = @chats.range_between(@start_date, @end_date)
-      .where(customer_id: current_retailer.customers.ids, answer: nil).count
-    @questions = Question.where(customer_id: current_retailer.customers.ids)
+      .where(customer_id: @customer_ids, answer: nil).count
+    @questions = Question.where(customer_id: @customer_ids)
     @total_questions = @questions.range_between(@start_date, @end_date)
-      .where(customer_id: current_retailer.customers.ids).count
+      .where(customer_id: @customer_ids).count
   end
 
   # Productos mas vendidos
