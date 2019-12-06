@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_15_123210) do
+ActiveRecord::Schema.define(version: 2019_11_28_114622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(version: 2019_11_15_123210) do
     t.string "feedback_message"
     t.integer "feedback_rating"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
+    t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
   end
 
   create_table "product_variations", force: :cascade do |t|
@@ -252,6 +253,7 @@ ActiveRecord::Schema.define(version: 2019_11_15_123210) do
     t.integer "meli_question_type"
     t.boolean "answered", default: false
     t.index ["customer_id"], name: "index_questions_on_customer_id"
+    t.index ["meli_id"], name: "index_questions_on_meli_id", unique: true
     t.index ["order_id"], name: "index_questions_on_order_id"
     t.index ["product_id"], name: "index_questions_on_product_id"
   end

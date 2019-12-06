@@ -247,7 +247,7 @@ li {
   align-items: center;
 }
 
-@for $space from 0 through 100 {
+@for $space from 0 through 250 {
   .w-#{$space} {
     width: #{$space}px;
   }

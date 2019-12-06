@@ -6,6 +6,8 @@ class Question < ApplicationRecord
   after_update :ml_answer_question, if: :answered?
   before_save :set_answered, if: :will_save_change_to_answer?
 
+  scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
+
   enum status: %i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]
   enum answer_status: %i[ACTIVE DISABLED]
   enum meli_question_type: %w[from_order from_product]

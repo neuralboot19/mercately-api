@@ -125,7 +125,7 @@ RSpec.describe ProductHelper, type: :helper do
 
   describe '#ordering_options' do
     it 'returns a list of options to filter' do
-      expect(helper.ordering_options.size).to eq(12)
+      expect(helper.ordering_options.size).to eq(10)
     end
   end
 

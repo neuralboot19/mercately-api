@@ -9,6 +9,7 @@ FactoryBot.define do
     condition { Product.conditions.keys.sample }
     description { Faker::Lorem.paragraph }
     sold_quantity { 0 }
+    code { nil }
 
     trait :from_ml do
       meli_product_id { "MEC#{Faker::Number.number(9)}" }

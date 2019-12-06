@@ -89,4 +89,16 @@ module ProductModelConcern
   def nullify_code
     self.code = nil if code.blank?
   end
+
+  # Suma la cantidad de items vendidos en el rango de fechas
+  def range_total_sold(start_date, end_date)
+    order_items.includes(:order).where(orders: { status: 'success', created_at:
+      start_date..end_date }).sum(&:quantity)
+  end
+
+  # Suma la ganancia de los items vendidos en el rango de fechas
+  def range_total_earned(start_date, end_date)
+    order_items.includes(:order).where(orders: { status: 'success', created_at:
+      start_date..end_date }).sum('order_items.quantity * order_items.unit_price')
+  end
 end
