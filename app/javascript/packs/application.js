@@ -3,9 +3,9 @@ import "regenerator-runtime/runtime";
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import configureStore from "./store/configureStore";
+import configureStore from "../store/configureStore";
 
-import AppRoutes from "./AppRoutes";
+import AppRoutes from "../AppRoutes";
 
 const store = configureStore();
 
