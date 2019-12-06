@@ -11,6 +11,8 @@ class RetailerUser < ApplicationRecord
 
   accepts_nested_attributes_for :retailer
 
+  attr_reader :raw_invitation_token
+
   def active_for_authentication?
     super && !removed_from_team?
   end
@@ -37,6 +39,6 @@ class RetailerUser < ApplicationRecord
 
     # Send email after create
     def send_welcome_email
-      RetailerMailer.welcome(self).deliver_now if persisted?
+      RetailerMailer.welcome(self).deliver_now if persisted? && retailer_admin?
     end
 end

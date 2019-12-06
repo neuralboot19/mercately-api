@@ -1,0 +1,31 @@
+es:
+  devise:
+    failure:
+      invited: "Tienes una invitación pendiente, aceptala para finalizar la creación de tu cuenta."
+    invitations:
+      send_instructions: "Un correo de invitación se ha enviado a %{email}."
+      invitation_token_invalid: "El token de la invitación no es válido!"
+      updated: "Tu contraseña fue creada con éxito. Has iniciado sesión."
+      updated_not_active: "Tu contraseña fue creada con éxito."
+      no_invitations_remaining: "No tienes invitaciones restantes."
+      invitation_removed: "Tu invitación fue eliminada."
+      new:
+        header: "Enviar invitación"
+        submit_button: "Enviar invitación"
+      edit:
+        header: "Ingresa tu contraseña"
+        submit_button: "Crear mi contraseña"
+    mailer:
+      invitation_instructions:
+        subject: "Instrucciones de invitación"
+        hello: "Hola %{email}"
+        someone_invited_you: "Alguien te ha invitado a %{url}, puedes aceptar a través del enlace de abajo."
+        accept: "Aceptar invitación"
+        accept_until: "Esta invitación caducará el %{due_date}."
+        ignore: "Si no quieres aceptar la invitación, por favor ignora este correo. Tu cuenta no se creará hasta que ingreses al link de arriba y configures tu contraseña."
+  time:
+    formats:
+      devise:
+        mailer:
+          invitation_instructions:
+            accept_until_format: "%B %d, %Y %I:%M %p"

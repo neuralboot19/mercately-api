@@ -6,8 +6,15 @@ class Retailers::SettingsController < RetailersController
   end
 
   def invite_team_member
-    user = RetailerUser.invite!(email: params['retailer_user']['email'], retailer_admin: false, retailer: current_retailer)
+    user = RetailerUser.invite!(email: params['retailer_user']['email'], retailer_admin: false, retailer: current_retailer) do |u|
+      u.skip_invitation = true
+    end
+
     if user
+      if RetailerMailer.invitation(user).deliver_now
+        user.update_column(:invitation_sent_at, Time.now.utc)
+      end
+
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario invitado con éxito.'
     else
@@ -18,7 +25,15 @@ class Retailers::SettingsController < RetailersController
 
   def reinvite_team_member
     user = RetailerUser.find(params['user'])
-    if user.invite!
+    if user
+      user.invite! do |u|
+        u.skip_invitation = true
+      end
+
+      if RetailerMailer.invitation(user).deliver_now
+        user.update_column(:invitation_sent_at, Time.now.utc)
+      end
+
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario invitado con éxito.'
     else
@@ -36,6 +51,5 @@ class Retailers::SettingsController < RetailersController
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Error al remover usuario.'
     end
-
   end
 end

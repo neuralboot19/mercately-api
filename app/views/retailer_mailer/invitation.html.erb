@@ -1,0 +1,51 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color">Hola</p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        <%= @user.retailer.name %> te ha invitado para que seas parte de su equipo en Mercately
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        Configura el inicio de sesión para tu cuenta haciendo click en el siguiente link:
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-15 t-color">
+        <a href="<%= @invitation_link %>"><%= @invitation_link %></a>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        Gracias,
+      </p>
+      <p class="fs-16 p-color lg-18">
+        Equipo Mercately
+      </p>
+    </div>
+
+    <div class="sign-container">
+      <p class="fs-16 p-color fw-bold">
+        2019 MERCATELY
+      </p>
+    </div>
+
+    <div id="social-media" class="social-media-container">
+      <%= image_tag 'facebook-logo.png', class:"social-media-icons" %>
+      <%= image_tag 'twitter.png', class:"social-media-icons" %>
+      <%= image_tag 'instagram.png', class:"social-media-icons" %>
+    </div>
+  </div>
+</div>
