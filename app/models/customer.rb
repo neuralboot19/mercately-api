@@ -56,6 +56,15 @@ class Customer < ApplicationRecord
     update(phone: phone_area + meli_customer.phone)
   end
 
+  def range_earnings(start_date, end_date)
+    orders.success.where(created_at: start_date..end_date).sum(&:total).to_f.round(2)
+  end
+
+  def range_items_bought(start_date, end_date)
+    orders.success.joins(:order_items).where(created_at: start_date..end_date)
+      .sum('order_items.quantity')
+  end
+
   private
 
     def update_valid_customer

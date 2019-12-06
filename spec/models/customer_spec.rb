@@ -154,4 +154,26 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#range_earnings' do
+    let(:order) { create(:order, customer: customer, status: 'success') }
+    let!(:order_item) { create(:order_item, order: order, quantity: 3, unit_price: 25) }
+
+    it 'returns the profit from the customer of bought products' do
+      start_date = 1.day.ago
+      end_date = Time.now
+      expect(customer.range_earnings(start_date, end_date)).to eq(75)
+    end
+  end
+
+  describe '#range_items_bought' do
+    let(:order) { create(:order, customer: customer, status: 'success') }
+    let!(:order_item) { create(:order_item, order: order, quantity: 3, unit_price: 25) }
+
+    it 'returns the quantity of items the customer has bought' do
+      start_date = 1.day.ago
+      end_date = Time.now
+      expect(customer.range_items_bought(start_date, end_date)).to eq(3)
+    end
+  end
 end
