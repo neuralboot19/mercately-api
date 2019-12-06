@@ -9,9 +9,10 @@ class CustomerDetails extends Component {
   }
 
   render() {
+    let customer = this.props.customerDetails
     return (
       <div className="customer_sidebar">
-        Heil!
+        <p>{customer.first_name} {customer.last_name}</p>
       </div>
     )
   }

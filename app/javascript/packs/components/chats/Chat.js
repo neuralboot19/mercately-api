@@ -8,14 +8,17 @@ class Chat extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentCustomer: 0
+      currentCustomer: 0,
+      currentCustomerDetails: {}
     };
   }
 
-  handleOpenChat = (id) => {
+  handleOpenChat = (customer_details) => {
+    console.log(customer_details)
     this.setState({
       ...this.state,
-      currentCustomer: id
+      currentCustomer: customer_details.id,
+      currentCustomerDetails: customer_details
     })
   }
 
@@ -35,7 +38,7 @@ class Chat extends Component {
           </div>
           <div className="col-sm-3">
             <CustomerDetails
-              currentCustomer={this.state.currentCustomer}
+              customerDetails={this.state.currentCustomerDetails}
             />
           </div>
         </div>

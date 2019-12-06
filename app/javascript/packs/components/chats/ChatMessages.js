@@ -14,7 +14,8 @@ class ChatMessages extends Component {
     this.state = {
       load_more: false,
       page: 1,
-      messages: []
+      messages: [],
+      new_message: false
     };
   }
 
@@ -24,17 +25,12 @@ class ChatMessages extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    
-    console.log(newProps.messages, this.props.messages)
 
-    if(newProps.messages != this.props.messages){
-        
-        console.log('')
-
-      // this.setState({
-      //   ...this.state,
-      //   messages: newProps.messages.concat(this.state.messages)
-      // })
+    if (newProps.messages != this.props.messages) {
+      this.setState({
+        new_message: false,
+        messages: newProps.messages.concat(this.state.messages)
+      })
     }
 
   }
@@ -42,31 +38,36 @@ class ChatMessages extends Component {
   handleSubmitMessage = (e, message) => {
     e.preventDefault();
     let text = { message: message }
-    this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
+    this.setState({ messages: this.state.messages.concat({text: message}), new_message: true}, () => {
+      this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
+    });
+
+  }
+
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
   }
 
   componentDidUpdate() {
-
-    console.log('UPDATING ARRAY')
-
+    this.scrollToBottom();
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
       currentCustomer = id
 
-      // this.setState({ messages: [],  page: 1}, () => {
-      //   this.props.fetchMessages(id);
-      // });
+      this.setState({ messages: [],  page: 1}, () => {
+        this.props.fetchMessages(id);
+      });
 
       App.cable.subscriptions.create(
         { channel: 'FacebookMessagesChannel', id: currentCustomer },
         {
           received: data => {
-            // TODO: Build new message instead fetch all messages again
-            // this.props.fetchMessages(id);
-
-            this.setState({
-              messages: this.state.messages.push('hola')
-            })
+            if (!this.state.new_message){
+              this.setState({
+                messages: this.state.messages.concat(data.facebook_message), 
+                new_message: false,
+              })
+            }
           }
         }
       );
@@ -78,7 +79,6 @@ class ChatMessages extends Component {
   }
 
   render() {
-    console.log('state', this.state)
     return (
       <div className="row bottom-xs">
         <div className="col-xs-12 chat__box">
@@ -90,13 +90,19 @@ class ChatMessages extends Component {
               </div>
             ) 
           })}
+          <div style={{ float:"left", clear: "both" }}
+            ref={(el) => { this.messagesEnd = el; }}>
+          </div>
         </div>
-        <div className="col-xs-12">
-          <MessageForm
-            currentCustomer={this.props.currentCustomer}
-            handleSubmitMessage={this.handleSubmitMessage}
-          />
-        </div>
+
+        { currentCustomer != 0 &&
+          <div className="col-xs-12">
+            <MessageForm
+              currentCustomer={this.props.currentCustomer}
+              handleSubmitMessage={this.handleSubmitMessage}
+            />
+          </div>
+        }
       </div>
     )
   }
