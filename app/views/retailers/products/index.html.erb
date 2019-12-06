@@ -10,7 +10,7 @@
         </div>
         <div class="col-xs-12 col-sm-8">
           <div class="index__ctas f-right">
-            <% if params[:q][:status_eq] == '0' %>
+            <% if params[:q].blank? || params[:q][:status_eq] == '0' %>
               <%= link_to 'Productos archivados', retailers_products_path(current_retailer, q: { 'status_eq': '1', 's': 'created_at desc' }), class: 'c-red no-style fs-14' %>
             <% else %>
               <%= link_to 'Productos activos', retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'c-red no-style fs-14' %>
@@ -27,28 +27,23 @@
     <%= render 'partials/incomplete_retailer' %>
 
     <%= search_form_for @q, url: retailers_products_path do |f| %>
-      <%= f.hidden_field :status_eq, value: params[:q][:status_eq] %>
+      <%= f.hidden_field :status_eq, value: params[:q]&.[]('status_eq').blank? ? '0' : params[:q][:status_eq] %>
       <div class="box">
         <div class="row mt-10">
           <div class="col-xs-12">
             <div class="box">
               <div class="row">
                 <div class="col-xs-12 col-sm-1 px-0 fs-14 no-style-filter">
-                  Busca por:
+                  Buscar por:
                 </div>
                 <div class="col-xs-12 col-sm-4 px-0">
-                  <%= f.search_field :title_or_meli_product_id_or_code_cont, class: 'input w-100', placeholder: 'Nombre, código del producto o código de MercadoLibre' %>
+                  <%= f.search_field :title_or_meli_product_id_or_code_cont, class: 'input search-field w-100', placeholder: 'Nombre, código del producto o código de MercadoLibre' %>
                 </div>
-                <div class="col-xs-12 col-sm-1">
+                <div class="col-xs-12 col-sm-2 px-0 pr-38 t-right mt-5 fs-14 no-style-filter filter-label">
+                  Filtrar por:
                 </div>
-                <div class="col-xs-12 col-sm-1 px-0 mt-5 fs-14 no-style-filter">
-                  Filtra por:
-                </div>
-                <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter">
+                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter">
                   <%= f.select :category_id_eq, categories_filter(current_retailer), { include_blank: true }, class: 'input' %>
-                </div>
-                <div class="col-xs-12 col-sm-2 px-0 mt-5 p-relative hide-on-sm-and-down">
-                  <%= f.submit 'Buscar', class: 'btn-btn btn-submit filter-button' %>
                 </div>
               </div>
             </div>
@@ -59,44 +54,47 @@
           <div class="col-xs-12">
             <div class="box">
               <div class="row">
-                <div class="col-xs-12 col-sm-1 px-0 mr-10 mt-5 fs-14 no-style-filter">
-                  Ordena por:
+                <div class="col-xs-12 col-sm-1 px-0 mt-5 fs-14 no-style-filter">
+                  Ordenar por:
                 </div>
-                <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.hidden_field :s, value: params[:q][:s] %>
-                  <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
-                      <span id="selected-order"></span>&nbsp;<i class="fas fa-sort"></i>
-                    </a>
+                <div class="col-xs-12 col-sm-4 mr-10 px-0 mt-5 fs-14 no-style-filter">
+                  <%= f.hidden_field :s, value: params[:q]&.[]('s').blank? ? 'created_at desc' : params[:q][:s] %>
+                  <div class="p-relative w-230">
+                    <label class="item__dropdown d-inline">
+                      <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
+                        <span id="selected-order">Seleccionar orden</span>&nbsp;<i class="fas fa-sort"></i>
+                      </a>
 
-                    <ul class="dropdown__menu w-100" id="order-list">
-                      <% ordering_options.each do |ord| %>
-                        <li value="<%= ord[:value] %>">
-                          <%= ord[:label] %>
-                        </li>
-                      <% end %>
-                    </ul>
-                  </label>
+                      <ul class="dropdown__menu w-100" id="order-list">
+                        <% ordering_options.each do |ord| %>
+                          <li value="<%= ord[:value] %>">
+                            <%= ord[:label] %>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </label>
+                  </div>
                 </div>
-                <div class="col-xs-12 col-sm-3">
+                <div class="col-xs-12 col-sm-2 pl-0 pr-25 mt-5 fs-14 t-right no-style-filter ordering-label">
+                  Estado de ML:
                 </div>
-                <div class="row" id="meli-status-cont">
-                  <%= f.hidden_field :meli_status_eq, value: params[:q][:meli_status_eq] %>
-                  <%= f.hidden_field :meli_product_id_null, value: params[:q][:meli_product_id_null] %>
+                <div class="row col-xs-12 col-sm-5 px-0 fs-14 no-style-filter" id="meli-status-cont">
+                  <%= f.hidden_field :meli_status_eq, value: params[:q].blank? ? '' : params[:q][:meli_status_eq] %>
+                  <%= f.hidden_field :meli_product_id_null, value: params[:q].blank? ? '' : params[:q][:meli_product_id_null] %>
                   <div class="mt-5 mr-10 px-0 no-style-filter meli-status-filter">
-                    <b class="cookie cookie--green fs-12" value="0">Activo <i class="fas fa-check <%= 'd-none' if params[:q][:meli_status_eq] != '0' %>"></i></b>
+                    <b class="cookie cookie--green fs-12" value="0">Activo <i class="fas fa-check <%= 'd-none' if params[:q].blank? || params[:q][:meli_status_eq] != '0' %>"></i></b>
                   </div>
                   <div class="mt-5 mr-10 px-0 no-style-filter meli-status-filter">
-                    <b class="cookie cookie--yellow fs-12" value="2">Pausado <i class="fas fa-check <%= 'd-none' if params[:q][:meli_status_eq] != '2' %>"></i></b>
+                    <b class="cookie cookie--yellow fs-12" value="2">Pausado <i class="fas fa-check <%= 'd-none' if params[:q].blank? || params[:q][:meli_status_eq] != '2' %>"></i></b>
                   </div>
                   <div class="mt-5 mr-10 px-0 no-style-filter meli-status-filter">
-                    <b class="cookie cookie--red fs-12" value="3">Cerrado <i class="fas fa-check <%= 'd-none' if params[:q][:meli_status_eq] != '3' %>"></i></b>
+                    <b class="cookie cookie--red fs-12" value="3">Cerrado <i class="fas fa-check <%= 'd-none' if params[:q].blank? || params[:q][:meli_status_eq] != '3' %>"></i></b>
                   </div>
                   <div class="mt-5 px-0 no-style-filter meli-status-filter">
-                    <b class="cookie cookie--blue fs-12" value="1">No publicado <i class="fas fa-check <%= 'd-none' if params[:q][:meli_product_id_null] != '1' %>"></i></b>
+                    <b class="cookie cookie--blue fs-12" value="1">No publicado <i class="fas fa-check <%= 'd-none' if params[:q].blank? || params[:q][:meli_product_id_null] != '1' %>"></i></b>
                   </div>
                 </div>
-                <div class="col-xs-12 px-0 mt-10 d-none show-on-sm-and-down">
+                <div class="col-xs-12 px-0 mt-10">
                   <%= f.submit 'Buscar', class: 'btn-btn btn-submit' %>
                 </div>
               </div>

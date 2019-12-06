@@ -3,8 +3,8 @@ class RetailerUsers::InvitationsController < Devise::InvitationsController
 
   protected
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:accept_invitation, keys: [:email, :password, :password_confirmation, :agree_terms,
-      :invitation_token])
-  end
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:accept_invitation, keys: [:email, :password, :password_confirmation,
+                                                                   :agree_terms, :invitation_token])
+    end
 end

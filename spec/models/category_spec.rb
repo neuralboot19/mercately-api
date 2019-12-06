@@ -3,6 +3,12 @@ require 'rails_helper'
 RSpec.describe Category, type: :model do
   subject(:category) { create(:category) }
 
+  let(:retailer) { create(:retailer) }
+  let(:order1) { create(:order, status: 'success') }
+  let(:order2) { create(:order, status: 'success') }
+  let(:product1) { create(:product, retailer: retailer, category: category) }
+  let(:product2) { create(:product, retailer: retailer, category: category) }
+
   describe 'associations' do
     it { is_expected.to have_many(:products) }
   end
@@ -107,6 +113,36 @@ RSpec.describe Category, type: :model do
 
     it 'returns the clean template variations' do
       expect(category.clean_template_variations).to eq result
+    end
+  end
+
+  describe '#total_products' do
+    let(:retailer) { create(:retailer) }
+
+    before do
+      create_list(:product, 5, retailer: retailer, category: category)
+    end
+
+    it 'returns the quantity of products of the category for the retailer' do
+      expect(category.total_products(retailer)).to eq(5)
+    end
+  end
+
+  describe '#total_products_sold' do
+    let!(:order_item1) { create(:order_item, order: order1, product: product1, quantity: 3) }
+    let!(:order_item2) { create(:order_item, order: order2, product: product2, quantity: 2) }
+
+    it 'returns the quantity of sold products of the category for the retailer' do
+      expect(category.total_products_sold(retailer, 1.day.ago, Time.now)).to eq(5)
+    end
+  end
+
+  describe '#earnings' do
+    let!(:order_item1) { create(:order_item, order: order1, product: product1, quantity: 3, unit_price: 25) }
+    let!(:order_item2) { create(:order_item, order: order2, product: product2, quantity: 2, unit_price: 5.5) }
+
+    it 'returns the profit of the category for the retailer' do
+      expect(category.earnings(retailer, 1.day.ago, Time.now)).to eq(86)
     end
   end
 end

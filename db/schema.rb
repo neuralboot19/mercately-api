@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_25_052545) do
+ActiveRecord::Schema.define(version: 2019_12_04_035146) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2019_11_25_052545) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.integer "meli_customer_id"
     t.string "meli_nickname"
+    t.integer "meli_customer_id"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(version: 2019_11_25_052545) do
     t.string "feedback_message"
     t.integer "feedback_rating"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
+    t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
   end
 
   create_table "product_variations", force: :cascade do |t|
@@ -252,6 +253,7 @@ ActiveRecord::Schema.define(version: 2019_11_25_052545) do
     t.integer "meli_question_type"
     t.boolean "answered", default: false
     t.index ["customer_id"], name: "index_questions_on_customer_id"
+    t.index ["meli_id"], name: "index_questions_on_meli_id", unique: true
     t.index ["order_id"], name: "index_questions_on_order_id"
     t.index ["product_id"], name: "index_questions_on_product_id"
   end
@@ -267,7 +269,7 @@ ActiveRecord::Schema.define(version: 2019_11_25_052545) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
-    t.boolean "retailer_admin"
+    t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
     t.datetime "invitation_sent_at"
@@ -276,6 +278,7 @@ ActiveRecord::Schema.define(version: 2019_11_25_052545) do
     t.string "invited_by_type"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
+    t.boolean "removed_from_team", default: false
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"

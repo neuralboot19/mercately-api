@@ -193,7 +193,7 @@ module MercadoLibre
     end
 
     def update_available_quantity(product, product_info)
-      product.status != 'archived' && product.available_quantity.positive? &&
+      product.status != 'archived' && (product.new_record? || product.available_quantity.positive?) &&
         product_info['available_quantity'].to_i.zero?
     end
 

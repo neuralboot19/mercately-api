@@ -96,7 +96,7 @@ module MercadoLibre
       product
     end
 
-    def update(product_info)
+    def update(product_info, from_order = false)
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
       new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
@@ -105,7 +105,8 @@ module MercadoLibre
 
       product.with_lock do
         return if product_info['status'] == 'closed' &&
-                  Product.find_by(meli_product_id: product_info['id']).blank?
+                  Product.find_by(meli_product_id: product_info['id']).blank? &&
+                  from_order == false
 
         category = @ml_categories.import_category(product_info['category_id'])
 
@@ -123,7 +124,7 @@ module MercadoLibre
       product
     end
 
-    def pull_update(product_id)
+    def pull_update(product_id, from_order = false)
       url = @api.get_product_url product_id
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
@@ -132,7 +133,7 @@ module MercadoLibre
 
       return if response.blank? || response['error'].present?
 
-      product = update(response)
+      product = update(response, from_order)
       @product_publish.automatic_re_publish(product)
 
       product

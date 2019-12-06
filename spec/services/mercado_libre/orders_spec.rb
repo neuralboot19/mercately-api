@@ -8,9 +8,21 @@ RSpec.describe MercadoLibre::Orders, vcr: true do
   let(:meli_retailer) { create(:meli_retailer) }
 
   describe '#import' do
-    it 'imports the order' do
-      VCR.use_cassette('orders/order') do
-        expect { orders_service.import('2155642803') }.to change(Order, :count).by(1)
+    context 'when the date of the order is lower than meli retailers creation date' do
+      it 'does not import the order' do
+        VCR.use_cassette('orders/order') do
+          expect { orders_service.import('2155642803') }.to change(Order, :count).by(0)
+        end
+      end
+    end
+
+    context 'when the date of the order is greater than meli retailers creation date' do
+      it 'imports the order' do
+        meli_retailer.update(created_at: '2019-01-01')
+
+        VCR.use_cassette('orders/order_imported') do
+          expect { orders_service.import('2221214824') }.to change(Order, :count).by(1)
+        end
       end
     end
   end

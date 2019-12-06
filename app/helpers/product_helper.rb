@@ -52,14 +52,6 @@ module ProductHelper
   def ordering_options
     [
       {
-        value: 'created_at asc',
-        label: 'Fecha de creación Asc'
-      },
-      {
-        value: 'created_at desc',
-        label: 'Fecha de creación Desc'
-      },
-      {
         value: 'title asc',
         label: 'Nombre del producto Asc'
       },

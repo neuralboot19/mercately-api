@@ -1,19 +1,17 @@
 class Retailers::SettingsController < RetailersController
-  
   def team
-    @team = current_retailer.retailer_users.where(removed_from_team: false).reject { |u| u == current_retailer_user } 
+    @team = current_retailer.retailer_users.where(removed_from_team: false).reject { |u| u == current_retailer_user }
     @user = RetailerUser.new
   end
 
   def invite_team_member
-    user = RetailerUser.invite!(email: params['retailer_user']['email'], retailer_admin: false, retailer: current_retailer) do |u|
+    user = RetailerUser.invite!(email: params['retailer_user']['email'], retailer_admin:
+      false, retailer: current_retailer) do |u|
       u.skip_invitation = true
     end
 
     if user
-      if RetailerMailer.invitation(user).deliver_now
-        user.update_column(:invitation_sent_at, Time.now.utc)
-      end
+      user.update_column(:invitation_sent_at, Time.now.utc) if RetailerMailer.invitation(user).deliver_now
 
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario invitado con éxito.'
@@ -30,9 +28,7 @@ class Retailers::SettingsController < RetailersController
         u.skip_invitation = true
       end
 
-      if RetailerMailer.invitation(user).deliver_now
-        user.update_column(:invitation_sent_at, Time.now.utc)
-      end
+      user.update_column(:invitation_sent_at, Time.now.utc) if RetailerMailer.invitation(user).deliver_now
 
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario invitado con éxito.'

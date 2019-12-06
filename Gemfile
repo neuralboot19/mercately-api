@@ -55,6 +55,7 @@ group :development, :test do
   gem 'factory_bot_rails', '~> 5.0', '>= 5.0.1'
   gem 'faker'
   gem 'dotenv-rails'
+  gem 'async'
 end
 
 group :development do

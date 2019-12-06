@@ -12,10 +12,11 @@ FactoryBot.define do
     state { 'Pichincha' }
     country_id { 'EC' }
     zip_code { '170207' }
+    meli_customer { nil }
 
     trait :from_ml do
-      meli_nickname
-      meli_customer_id
+      meli_nickname { meli_customer.nickname }
+      meli_customer_id { meli_customer.id }
     end
   end
 end
