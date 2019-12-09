@@ -577,6 +577,7 @@
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
+  display: inline-table;
   background-color: #555;
   color: #FFF;
   text-align: justify;
@@ -588,8 +589,8 @@
   /* Position the tooltip text */
   position: absolute;
   z-index: 1;
-  top: 6px;
-  left: 84px;
+  top: 4px;
+  left: 89px;
 
   /* Fade in tooltip */
   opacity: 0;
