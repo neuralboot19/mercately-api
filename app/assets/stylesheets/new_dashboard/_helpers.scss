@@ -42,7 +42,7 @@ label:hover, a:hover {
   cursor: pointer;
 }
 
-@for $space from 0 through 100 {
+@for $space from 0 through 250 {
   .w-#{$space} {
     width: #{$space}px;
   }
@@ -331,6 +331,10 @@ label:hover, a:hover {
   .hide-on-lg-and-down {
     display: none;
   }
+
+  .table-header-labels {
+    font-size: 12px;
+  }
 }
 
 @media screen and (max-width: 1024px) {
@@ -340,6 +344,10 @@ label:hover, a:hover {
 
   .reduced-container-padding {
     padding: 0 1rem;
+  }
+
+  .table-header-labels {
+    font-size: 12px;
   }
 }
 

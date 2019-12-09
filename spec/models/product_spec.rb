@@ -379,4 +379,54 @@ RSpec.describe Product, type: :model do
       end
     end
   end
+
+  describe '#nullify_code' do
+    context 'when the code attribute is blank' do
+      let(:product) { build(:product, code: '') }
+
+      it 'sets to nil the code attribute before save' do
+        expect(product.code).to eq('')
+        product.save
+        expect(product.code).to be_nil
+      end
+    end
+
+    context 'when the code attribute is not blank' do
+      let(:product) { build(:product, code: 'PRODUCTO') }
+
+      it 'does not set to nil the code attribute before save' do
+        expect(product.code).to eq('PRODUCTO')
+        product.save
+        expect(product.code).not_to be_nil
+      end
+    end
+  end
+
+  describe '#range_total_sold' do
+    let(:order) { create(:order, status: 'success') }
+
+    before do
+      create_list(:order_item, 2, product: product, order: order, quantity: 2)
+    end
+
+    it 'returns the total items sold of the product' do
+      start_date = 1.day.ago
+      end_date = Time.now
+      expect(product.range_total_sold(start_date, end_date)).to eq(4)
+    end
+  end
+
+  describe '#range_total_earned' do
+    let(:order) { create(:order, status: 'success') }
+
+    before do
+      create_list(:order_item, 2, product: product, order: order, quantity: 2, unit_price: 12.5)
+    end
+
+    it 'returns the total items sold of the product' do
+      start_date = 1.day.ago
+      end_date = Time.now
+      expect(product.range_total_earned(start_date, end_date)).to eq(50)
+    end
+  end
 end
