@@ -130,6 +130,16 @@ label:hover, a:hover {
   display: none;
 }
 
+@media screen and (min-width: 1024px) {
+  .d-md-none {
+    display: none;
+  }
+
+  .d-md-block {
+    display: block;
+  }
+}
+
 .d-none-important {
   display: none !important;
 }

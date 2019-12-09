@@ -1,5 +1,6 @@
+<!-- Sidebar -->
 <input type="checkbox" id="sidebar--toggle" class="d-none" />
-<section id="sidebar">
+<section id="sidebar" class="d-md-none">
   <div id="sidebar__logo">
     <%= image_tag 'dashboard/logo.png' %>
   </div>
@@ -60,3 +61,66 @@
     </ul>
   </div>
 </section>
+
+<!-- Sidebar PC -->
+<div class="p-fixed">
+  <section id="sidebar--pc" class="d-none d-md-block">
+    <div id="sidebar__logo--pc">
+      <%= image_tag 'dashboard/profile.png' %>
+    </div>
+    <div id="sidebar__menu--pc">
+      <ul class="menu no-style">
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-chart-line"></i>'), retailers_dashboard_path(current_retailer), class: 'item__name no-style' %>
+            <div class="tooltiptext">Dashboard</div>
+          </div>
+        </li>
+        <li class="menu__item ">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-users"></i>'), retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
+            <div class="tooltiptext">Clientes</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-poll"></i>'), retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
+            <div class="tooltiptext">Productos</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-clipboard-check"></i>'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
+            <div class="tooltiptext">Ordenes</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fab fa-whatsapp"></i>'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
+            <div class="tooltiptext">WhatsApp</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fab fa-facebook-messenger"></i>'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
+            <div class="tooltiptext">Messenger</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-link"></i>'), retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
+            <div class="tooltiptext">Integraciones</div>
+          </div>
+        </li>
+        <% if session[:old_retailer_id] %>
+          <li class="menu__item">
+            <div class="tooltip">
+              <%= link_to raw('<i class="fas fa-reply"></i>'), go_back_as_admin_admin_retailer_path(current_retailer) %>
+              <div class="tooltiptext">Regresar al admin</div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+</div>
