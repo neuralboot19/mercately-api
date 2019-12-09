@@ -23,7 +23,7 @@ class Retailers::OrdersController < RetailersController
     @order = Order.new(order_params)
 
     if @order.save
-      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden creada con éxito.'
+      redirect_to retailers_order_path(@retailer.slug, @retailer.web_id, @order), notice: 'Orden creada con éxito.'
     else
       @order.order_items -= @order.order_items.select { |oi| oi.product.blank? }
       render :new
@@ -34,7 +34,7 @@ class Retailers::OrdersController < RetailersController
     params[:order][:order_items_attributes] = process_items(params[:order][:order_items_attributes])
 
     if @order.update(order_params)
-      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden actualizada con éxito.'
+      redirect_to retailers_order_path(@retailer.slug, @retailer.web_id, @order), notice: 'Orden actualizada con éxito.'
     else
       render :edit
     end

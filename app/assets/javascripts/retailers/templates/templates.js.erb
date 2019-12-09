@@ -15,7 +15,7 @@ $('#template-chat-search').on('keyup search', function() {
 });
 
 function buildQuestionList(item) {
-  string = `<form action="/retailers/${$('#slug-id').val()}/messages/${$('#model-id').val()}/answer_question" accept-charset="UTF-8" method="post">` +
+  string = `<form action="/retailers/${$('#slug-id').val()}/${$('#web-id').val()}/messages/${$('#model-id').val()}/answer_question" accept-charset="UTF-8" method="post">` +
               '<input name="utf8" type="hidden" value="✓">' +
               '<input type="hidden" name="_method" value="put">' +
               `<input type="hidden" name="authenticity_token" value="${$('meta[name="csrf-token"]').attr('content')}">` +
@@ -34,7 +34,7 @@ function buildQuestionList(item) {
 }
 
 function buildChatList(item) {
-  string = `<form action="/retailers/${$('#slug-id').val()}/orders/${$('#order_id').val()}/send_message" accept-charset="UTF-8" method="post">` +
+  string = `<form action="/retailers/${$('#slug-id').val()}/${$('#web-id').val()}/orders/${$('#order_id').val()}/send_message" accept-charset="UTF-8" method="post">` +
               '<input name="utf8" type="hidden" value="✓">' +
               `<input type="hidden" name="authenticity_token" value="${$('meta[name="csrf-token"]').attr('content')}">` +
               `<input type="hidden" name="answer" id="answer" value="${item.answer}">` +

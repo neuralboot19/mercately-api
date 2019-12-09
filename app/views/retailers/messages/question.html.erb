@@ -7,7 +7,7 @@
         </div>
         <div class="col-xs-12 col-sm-8 hide-on-tablet-and-down">
           <div class="index__ctas f-right">
-            <%= link_to retailers_questions_path(current_retailer, answered: @question.answered), class: 'btn btn--cta' do %>
+            <%= link_to retailers_questions_path(current_retailer.slug, current_retailer.web_id, answered: @question.answered), class: 'btn btn--cta' do %>
               <i class="fas fa-arrow-left mr-5"></i>
               Atrás
             <% end %>
@@ -22,6 +22,7 @@
           <legend>Información de la pregunta</legend>
             <input type="hidden" id="model-id" value="<%= params[:question_id] %>" />
             <input type="hidden" id="slug-id" value="<%= params[:slug] %>" />
+            <input type="hidden" id="web-id" value="<%= params[:web_id] %>" />
             <div class="box pt-25">
               <div class="row">
                 <div class="col-xs-12 col-sm-3">
@@ -54,7 +55,7 @@
                       </p>
                     <% end %>
                     <% unless @question.answered %>
-                      <%= form_tag retailers_answer_question_path(current_retailer, @question), method: :put do %>
+                      <%= form_tag retailers_answer_question_path(current_retailer.slug, current_retailer.web_id, @question), method: :put do %>
                         <div class="row">
                           <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'input h-77' %>
                           <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 

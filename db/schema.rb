@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_28_114622) do
+ActiveRecord::Schema.define(version: 2019_12_09_174751) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -269,7 +269,21 @@ ActiveRecord::Schema.define(version: 2019_11_28_114622) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.boolean "retailer_admin", default: true
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.integer "invitation_limit"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.integer "invitations_count", default: 0
+    t.boolean "removed_from_team", default: false
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
+    t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
+    t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"
+    t.index ["invited_by_id"], name: "index_retailer_users_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_retailer_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_retailer_users_on_reset_password_token", unique: true
     t.index ["retailer_id"], name: "index_retailer_users_on_retailer_id"
   end
@@ -287,6 +301,7 @@ ActiveRecord::Schema.define(version: 2019_11_28_114622) do
     t.string "zip_code"
     t.string "phone_number"
     t.boolean "phone_verified"
+    t.string "web_id"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 

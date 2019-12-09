@@ -36,7 +36,7 @@ class Retailers::MessagesController < RetailersController
 
   def answer_question
     @question.update!(answer: params[:answer])
-    redirect_to retailers_questions_path(@retailer, answered: @question.answered), notice: 'Respuesta enviada'
+    redirect_to retailers_questions_path(@retailer.slug, @retailer.web_id, answered: @question.answered), notice: 'Respuesta enviada'
   end
 
   def send_message
@@ -51,9 +51,9 @@ class Retailers::MessagesController < RetailersController
     msg = MercadoLibre::Messages.new(@retailer).answer_message(@message)
     @message.meli_id = msg[0]&.[]('message_id')
     if @message.save
-      redirect_to retailers_order_messages_path(@retailer, order), notice: 'Mensage enviado'
+      redirect_to retailers_order_messages_path(@retailer.slug, @retailer.web_id, order), notice: 'Mensage enviado'
     else
-      redirect_to retailers_order_messages_path(@retailer, order), notice: 'No pudo enviarse'
+      redirect_to retailers_order_messages_path(@retailer.slug, @retailer.web_id, order), notice: 'No pudo enviarse'
     end
   end
 

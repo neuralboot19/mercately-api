@@ -10,7 +10,7 @@
             <i class="fas fa-arrow-left mr-5"></i>
             Volver
           <% end %>
-          <%= link_to edit_retailers_template_path(current_retailer, @template), class: 'btn btn--cta' do %>
+          <%= link_to edit_retailers_template_path(current_retailer.slug, current_retailer.web_id, @template), class: 'btn btn--cta' do %>
             <i class="far fa-edit mr-5"></i>
             Editar
           <% end %>

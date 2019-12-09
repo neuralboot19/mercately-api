@@ -41,7 +41,8 @@ class Retailers::ProductsController < RetailersController
       @product.reload
       @product.upload_ml
       @product.upload_variations(action_name, @variations)
-      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto creado con éxito.'
+      redirect_to retailers_product_path(@retailer.slug, @retailer.web_id, @product), notice:
+        'Producto creado con éxito.'
     else
       render :new
     end
@@ -61,7 +62,8 @@ class Retailers::ProductsController < RetailersController
 
     if @product.update(product_params)
       update_meli_info
-      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto actualizado con éxito.'
+      redirect_to retailers_product_path(@retailer.slug, @retailer.web_id, @product), notice:
+        'Producto actualizado con éxito.'
     else
       render :edit
     end
@@ -91,7 +93,7 @@ class Retailers::ProductsController < RetailersController
 
     if @product.save
       @product.update_ml_info(past_meli_status) if @product.meli_product_id
-      redirect_back fallback_location: retailers_product_path(@retailer, @product),
+      redirect_back fallback_location: retailers_product_path(@retailer.slug, @retailer.web_id, @product),
                     notice: 'Producto archivado con éxito.'
     else
       render :edit
@@ -105,7 +107,7 @@ class Retailers::ProductsController < RetailersController
 
     if @product.save
       @product.upload_ml if @product.meli_product_id
-      redirect_back fallback_location: retailers_product_path(@retailer, @product),
+      redirect_back fallback_location: retailers_product_path(@retailer.slug, @retailer.web_id, @product),
                     notice: 'Producto reactivado con éxito.'
     else
       render :edit
@@ -123,8 +125,8 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
-      redirect_to retailers_products_path(@retailer, q: { 'status_eq': 0, 's': 'created_at desc' }), notice:
-        'Producto publicado con éxito.'
+      redirect_to retailers_products_path(@retailer.slug, @retailer.web_id, q: { 'status_eq': 0, 's':
+        'created_at desc' }), notice: 'Producto publicado con éxito.'
     else
       render :edit
     end
@@ -136,7 +138,7 @@ class Retailers::ProductsController < RetailersController
 
     if @product.save
       @product.update_ml_info(past_meli_status)
-      redirect_back fallback_location: retailers_product_path(@retailer, @product),
+      redirect_back fallback_location: retailers_product_path(@retailer.slug, @retailer.web_id, @product),
                     notice: 'Estado actualizado con éxito.'
     else
       render :edit

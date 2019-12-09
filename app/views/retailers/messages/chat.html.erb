@@ -7,7 +7,7 @@
         </div>
         <div class="col-xs-12 col-sm-8 hide-on-tablet-and-down">
           <div class="index__ctas f-right">
-            <%= link_to @return_to == 'order' ? retailers_order_path(current_retailer, @order) : retailers_chats_path(current_retailer), class: 'btn btn--cta' do %>
+            <%= link_to @return_to == 'order' ? retailers_order_path(current_retailer.slug, current_retailer.web_id, @order) : retailers_chats_path(current_retailer.slug, current_retailer.web_id), class: 'btn btn--cta' do %>
               <i class="fas fa-arrow-left mr-5"></i>
               Atrás
             <% end %>
@@ -21,6 +21,7 @@
           <fieldset class="fieldset mt-16">
           <legend>Información de los mensajes</legend>
             <input type="hidden" id="slug-id" value="<%= params[:slug] %>" />
+            <input type="hidden" id="web-id" value="<%= params[:web_id] %>" />
             <div class="box pt-25">
               <div class="row">
                 <div class="col-xs-12 col-sm-3">

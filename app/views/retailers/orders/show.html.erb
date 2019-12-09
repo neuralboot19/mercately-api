@@ -34,11 +34,11 @@
             <div class="mt-8 t-right">
               <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
               <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
-              <%= link_to retailers_order_messages_path(current_retailer, @order, return_to: 'order'), class: 'btn btn--cta' do %>
+              <%= link_to retailers_order_messages_path(current_retailer.slug, current_retailer.web_id, @order, return_to: 'order'), class: 'btn btn--cta' do %>
                 <i class="fas fa-comment-alt mr-5"></i>
                 Chat de la venta
               <% end %>
-              <%= link_to retailers_orders_path(current_retailer, status: @order.status), class: 'btn btn--cta' do %>
+              <%= link_to retailers_orders_path(current_retailer.slug, current_retailer.web_id, status: @order.status), class: 'btn btn--cta' do %>
                 <i class="fas fa-arrow-left mr-5"></i>
                 Volver
               <% end %>
@@ -46,7 +46,7 @@
                 <i class="fas fa-print mr-5"></i>
                 Imprimir
               </a>
-              <%= link_to edit_retailers_order_path(current_retailer, @order), class: 'btn btn--cta' do %>
+              <%= link_to edit_retailers_order_path(current_retailer.slug, current_retailer.web_id, @order), class: 'btn btn--cta' do %>
                 <i class="fas fa-edit mr-5"></i>
                 Editar
               <% end %>

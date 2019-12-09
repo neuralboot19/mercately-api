@@ -113,7 +113,7 @@
                         </li>
                       </label>
                       <li>
-                        <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+                        <%= link_to edit_retailers_customer_path(current_retailer.slug, current_retailer.web_id, customer), class: 'c-black no-style' do %>
                           <i class="fas fa-edit mr-8"></i>
                           Editar
                         <% end %>
@@ -173,7 +173,7 @@
                         </li>
                       </label>
                       <li>
-                        <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+                        <%= link_to edit_retailers_customer_path(current_retailer.slug, current_retailer.web_id, customer), class: 'c-black no-style' do %>
                           <i class="fas fa-edit mr-8"></i>
                           Editar
                         <% end %>
@@ -212,7 +212,7 @@
                         </li>
                       </label>
                       <li>
-                        <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+                        <%= link_to edit_retailers_customer_path(current_retailer.slug, current_retailer.web_id, customer), class: 'c-black no-style' do %>
                           <i class="fas fa-edit mr-8"></i>
                           Editar
                         <% end %>
@@ -400,8 +400,8 @@
 
       editElement = document.getElementById('edit_customer_modal');
       editElementMobile = document.getElementById('edit_customer_modal_mobile');
-      editElement.href = `../<%= current_retailer.slug %>/customers/${mt.dataset.customer_id}/edit`;
-      editElementMobile.href = `../<%= current_retailer.slug %>/customers/${mt.dataset.customer_id}/edit`;
+      editElement.href = `../<%= current_retailer.web_id %>/customers/${mt.dataset.customer_id}/edit`;
+      editElementMobile.href = `../<%= current_retailer.web_id %>/customers/${mt.dataset.customer_id}/edit`;
     }
   })
 

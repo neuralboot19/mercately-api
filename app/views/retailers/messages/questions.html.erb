@@ -15,10 +15,10 @@
       <div class="row center-xs start-sm">
         <div class="col-xs-12">
           <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: false)) %>">
-            <%= link_to 'Sin responder', retailers_questions_path(current_retailer, answered: false) %>
+            <%= link_to 'Sin responder', retailers_questions_path(current_retailer.slug, current_retailer.web_id, answered: false) %>
           </div
           ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: true)) %>">
-            <%= link_to 'Respondidas', retailers_questions_path(current_retailer, answered: true) %>
+            <%= link_to 'Respondidas', retailers_questions_path(current_retailer.slug, current_retailer.web_id, answered: true) %>
           </div>
         </div>
       </div>
@@ -55,7 +55,7 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-secondary no-style' do %>
+                        <%= link_to retailers_question_path(current_retailer.slug, current_retailer.web_id, question), class: 'c-secondary no-style' do %>
                           <% if question.answered? %>
                             <i class="fas fa-eye mr-8"></i>
                             Ver
@@ -91,7 +91,7 @@
                   <%= show_date(question.created_at) %>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
-                  <%= link_to retailers_question_path(current_retailer, question), class: 'c-secondary no-style' do %>
+                  <%= link_to retailers_question_path(current_retailer.slug, current_retailer.web_id, question), class: 'c-secondary no-style' do %>
                     <% if question.answered? %>
                       Ver
                     <% else %>
@@ -107,7 +107,7 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_question_path(current_retailer, question), class: 'c-secondary no-style' do %>
+                        <%= link_to retailers_question_path(current_retailer.slug, current_retailer.web_id, question), class: 'c-secondary no-style' do %>
                           <% if question.answered? %>
                             <i class="fas fa-eye mr-8"></i>
                             Ver
