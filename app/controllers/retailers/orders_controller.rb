@@ -44,7 +44,8 @@ class Retailers::OrdersController < RetailersController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_order
-      @order = Order.find(params[:id])
+      @order = Order.find_by(web_id: params[:web_id] + params[:id])
+      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id) unless @order
     end
 
     def process_items(items)

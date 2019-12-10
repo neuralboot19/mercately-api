@@ -429,4 +429,67 @@ RSpec.describe Product, type: :model do
       expect(product.range_total_earned(start_date, end_date)).to eq(50)
     end
   end
+
+  describe '#generate_web_id' do
+    let(:retailer) { create(:retailer) }
+    let(:product) { build(:product, retailer: retailer) }
+
+    it 'generates the web_id field to products' do
+      expect(product.web_id).to be_nil
+      product.save
+      expect(product.web_id).to eq(retailer.web_id + product.id.to_s)
+    end
+  end
+
+  describe '#sort_by_earned' do
+    let(:retailer) { create(:retailer) }
+    let(:product1) { create(:product, retailer: retailer) }
+    let(:product2) { create(:product, retailer: retailer) }
+    let(:order1) { create(:order, status: 'success') }
+    let(:order2) { create(:order, status: 'success') }
+    let!(:order_item1) { create(:order_item, order: order1, product: product1, quantity: 1, unit_price: 50) }
+    let!(:order_item2) { create(:order_item, order: order2, product: product2, quantity: 2, unit_price: 35) }
+
+    context 'when the order is ascending' do
+      it 'returns the product with less profit first' do
+        params = { q: { s: 'sort_by_earned asc' } }
+        result = retailer.products.ransack(params[:q]).result
+        expect(result.first).to eq(order_item1.product)
+      end
+    end
+
+    context 'when the order is descending' do
+      it 'returns the product with more profit first' do
+        params = { q: { s: 'sort_by_earned desc' } }
+        result = retailer.products.ransack(params[:q]).result
+        expect(result.first).to eq(order_item2.product)
+      end
+    end
+  end
+
+  describe '#sort_by_order_items_count' do
+    let(:retailer) { create(:retailer) }
+    let(:product1) { create(:product, retailer: retailer) }
+    let!(:product2) { create(:product, retailer: retailer) }
+    let(:order1) { create(:order, status: 'success') }
+    let(:order2) { create(:order, status: 'success') }
+    let!(:order_item1) { create(:order_item, order: order1, product: product1) }
+    let!(:order_item2) { create(:order_item, order: order2, product: product1) }
+
+    context 'when the order is ascending' do
+      it 'returns the product with less orders' do
+        params = { q: { s: 'sort_by_order_items_count asc' } }
+        result = retailer.products.ransack(params[:q]).result
+        expect(result.first).to eq(product2)
+      end
+    end
+
+    context 'when the order is descending' do
+      it 'returns the product with more orders' do
+        params = { q: { s: 'sort_by_order_items_count desc' } }
+        result = retailer.products.ransack(params[:q]).result
+        expect(result.first).to eq(product1)
+      end
+    end
+  end
 end

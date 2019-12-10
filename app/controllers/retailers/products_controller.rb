@@ -149,7 +149,8 @@ class Retailers::ProductsController < RetailersController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_product
-      @product = Product.find(params[:id])
+      @product = Product.find_by(web_id: params[:web_id] + params[:id])
+      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id) unless @product
     end
 
     # Only allow a trusted parameter "white list" through.

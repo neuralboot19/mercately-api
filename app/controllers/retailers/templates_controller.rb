@@ -67,7 +67,8 @@ class Retailers::TemplatesController < RetailersController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_template
-      @template = Template.find(params[:id])
+      @template = Template.find_by(web_id: params[:web_id] + params[:id])
+      redirect_to retailers_dashboard_path(current_retailer.slug, current_retailer.web_id) unless @template
     end
 
     # Only allow a trusted parameter "white list" through.

@@ -176,4 +176,15 @@ RSpec.describe Customer, type: :model do
       expect(customer.range_items_bought(start_date, end_date)).to eq(3)
     end
   end
+
+  describe '#generate_web_id' do
+    let(:retailer) { create(:retailer) }
+    let(:customer) { build(:customer, retailer: retailer) }
+
+    it 'generates the web_id field to customers' do
+      expect(customer.web_id).to be_nil
+      customer.save
+      expect(customer.web_id).to eq(retailer.web_id + customer.id.to_s)
+    end
+  end
 end

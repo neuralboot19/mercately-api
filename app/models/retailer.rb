@@ -8,6 +8,7 @@ class Retailer < ApplicationRecord
 
   validates :name, presence: true
   validates :slug, uniqueness: true
+
   after_save :generate_slug, if: :saved_change_to_name?
   after_create :generate_web_id
 
@@ -47,6 +48,6 @@ class Retailer < ApplicationRecord
   private
 
     def generate_web_id
-      update web_id: id.to_s + ('a'..'z').to_a.shuffle[0,5].join
+      self.web_id = id.to_s + ('a'..'z').to_a.shuffle[0,5].join
     end
 end

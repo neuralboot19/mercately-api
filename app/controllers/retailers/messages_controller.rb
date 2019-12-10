@@ -24,7 +24,12 @@ class Retailers::MessagesController < RetailersController
   end
 
   def question
-    @question = Question.find(params[:question_id])
+    @question = Question.find_by(web_id: params[:web_id] + params[:question_id])
+    unless @question
+      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id)
+      return
+    end
+
     return @question unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
@@ -59,7 +64,12 @@ class Retailers::MessagesController < RetailersController
 
   def chat
     @return_to = params[:return_to]
-    @order = Order.find(params[:order_id])
+    @order = Order.find_by(web_id: params[:web_id] + params[:order_id])
+    unless @order
+      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id)
+      return
+    end
+
     total_unread = @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
 
     CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
@@ -70,6 +80,7 @@ class Retailers::MessagesController < RetailersController
   private
 
     def set_question
-      @question = Question.find(params[:id])
+      @question = Question.find_by(web_id: params[:web_id] + params[:id])
+      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id) unless @question
     end
 end

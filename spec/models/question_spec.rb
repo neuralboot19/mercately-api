@@ -69,4 +69,12 @@ RSpec.describe Question, type: :model do
       end
     end
   end
+
+  describe '#generate_web_id' do
+    it 'generates the web_id field to customers' do
+      expect(question.web_id).to be_nil
+      question.save
+      expect(question.web_id).to eq(retailer.web_id + question.id.to_s)
+    end
+  end
 end

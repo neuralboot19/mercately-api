@@ -20,6 +20,7 @@ class Product < ApplicationRecord
 
   before_update :assign_main_picture
   before_save :nullify_code
+  after_create :generate_web_id
 
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]
@@ -240,5 +241,9 @@ class Product < ApplicationRecord
 
     def set_ml_product_publish
       @set_ml_product_publish ||= MercadoLibre::ProductPublish.new(retailer)
+    end
+
+    def generate_web_id
+      self.web_id = retailer.web_id + id.to_s
     end
 end
