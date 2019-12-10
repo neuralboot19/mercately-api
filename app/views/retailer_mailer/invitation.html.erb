@@ -23,7 +23,7 @@
 
     <div class="ml-45 mt-20 mr-45">
       <p class="fs-15 t-color">
-        <a href="<%= @invitation_link %>"><%= @invitation_link %></a>
+        <%= link_to 'Unirme al Equipo', accept_retailer_user_invitation_url(invitation_token: @user.raw_invitation_token), class: 'btn-btn btn-submit' %>
       </p>
     </div>
 
