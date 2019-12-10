@@ -26,7 +26,7 @@ class Chat extends Component {
     return (
       <div className="box">
         <div className="row">
-          <div className="col-sm-3">
+          <div className="col-sm-3 chat_list_holder">
             <ChatList
               handleOpenChat={this.handleOpenChat}
             />

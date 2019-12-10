@@ -617,8 +617,11 @@
 
 // React
 .profile {
-  padding: 4px;
-  border-bottom: 1px solid #e7e7e7;
+  background-color: #F4F5F7;
+  border: 1px solid #F4F5F7;
+  border-radius: 5px;
+  padding: 15px 10px;
+  margin-bottom: 10px;
 
   &:hover {
     background-color: #eee;
@@ -636,8 +639,6 @@
   }
 
   &__selector {
-    border-right: 1px solid #e7e7e7;
-    max-width: 250px;
     height: 80vh;
     overflow-y: auto;
   }
@@ -658,3 +659,46 @@
     background-color: #2EABE2;
   }
 }
+
+
+
+/* Customer */
+
+.chat_list_holder{
+  background-color: #FFF;
+  padding: 20px 5px 0;
+}
+
+.img__profile .rounded-circle {
+  border: 1px solid red;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+}
+
+.outbound-message{
+  position: relative;
+  overflow: hidden;
+  padding: 5px 15px 5px 0;
+}
+
+.outbound-message div {
+  display: inline-block;
+  float: right;
+  vertical-align: top;
+  max-width: 75%;
+}
+
+
+.outbound-message div p {
+  background: #3d8bfc;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 400;
+  margin: 0;
+  color: #fff;
+  padding: 6px 14px 6px 14px;
+}
+
+

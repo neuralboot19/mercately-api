@@ -8,17 +8,19 @@ class ChatListUser extends Component {
   }
 
   render() {
+    let customer = this.props.customer
     return (
       <div className="profile fs-14 box" onClick={() => this.props.handleOpenChat(this.props.customer)}>
         <div className="profile__data row">
           <div className="img__profile col-xs-2 p-0">
-            <img src="https://cdn.kastatic.org/ka-perseus-graphie/8fae3d3d46f863fa793a6a3f3e6a200705716d9b.svg" alt="" className="rounded-circle mw-100"/>
+            <div className="rounded-circle mw-100" >
+              <p>{customer.first_name.charAt(0)} {customer.last_name.charAt(0)}</p>
+            </div>
           </div>
           <div className="col-xs-10">
-            <div className="profile__name">{this.props.customer.first_name} {this.props.customer.last_name}</div>
-            <div className="chat_msg">
-              ✔✔
-            </div>
+            <div className="profile__name">{customer.first_name} {customer.last_name}</div>
+
+            <div>Hace 23 mins</div>
           </div>
         </div>
       </div>

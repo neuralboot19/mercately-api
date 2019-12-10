@@ -82,11 +82,17 @@ class ChatMessages extends Component {
     return (
       <div className="row bottom-xs">
         <div className="col-xs-12 chat__box">
-          <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
+          {this.state.load_more && (
+            <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
+          )}
+          
           {this.state.messages.map((message) => {
             return(
-              <div key={message.id} className={'message' + message.sent_by_retailer == true ? 'message-by-retailer f-right' : ''}>
-                {message.text}
+              <div key={message.id} className={'message' + message.sent_by_retailer == true ? 'message-by-retailer f-right' : 'outbound-message'}>
+                <div>
+                  <p>{message.text}</p>
+                </div>
+                
               </div>
             ) 
           })}
