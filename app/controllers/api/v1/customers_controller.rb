@@ -10,8 +10,8 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def messages
-    @messages = @customer.facebook_messages.order(created_at: :desc).page(params[:page]).to_a.reverse
-    render status: 200, json: { messages: @messages }
+    @messages = @customer.facebook_messages.order(created_at: :desc).page(params[:page])
+    render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
   end
 
   def create_message
@@ -28,7 +28,6 @@ class Api::V1::CustomersController < ApplicationController
         FacebookMessageSerializer.new(message)
       ).serializable_hash
       FacebookMessagesChannel.broadcast_to @customer, serialized_data
-      
       render status: 200, json: { message: message }
     end
   end

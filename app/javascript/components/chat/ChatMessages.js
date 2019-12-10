@@ -16,7 +16,7 @@ class ChatMessages extends Component {
       load_more: false,
       page: 1,
       messages: [],
-      new_message: false
+      new_message: false,
     };
     this.bottomRef = React.createRef();
   }
@@ -42,7 +42,6 @@ class ChatMessages extends Component {
     this.setState({ messages: this.state.messages.concat({text: message}), new_message: true}, () => {
       this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
     });
-
   }
 
   scrollToBottom = () => {
@@ -81,10 +80,14 @@ class ChatMessages extends Component {
   }
 
   render() {
+    var loadMore;
+    if (this.props.total_pages > this.state.page) {
+      loadMore = <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
+    }
     return (
       <div className="row bottom-xs">
-        <div className="col-xs-12 chat__box">
-          <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
+        <div className="col-xs-12 chat__box pt-8">
+          {loadMore}
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
@@ -112,6 +115,7 @@ function mapStateToProps(state) {
   return {
     messages: state.messages || [],
     message: state.message || [],
+    total_pages: state.total_pages || 0,
   };
 }
 
