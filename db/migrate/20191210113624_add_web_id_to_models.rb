@@ -6,28 +6,29 @@ class AddWebIdToModels < ActiveRecord::Migration[5.2]
     add_column :questions, :web_id, :string
     add_column :templates, :web_id, :string
 
+    letters = ('a'..'z').to_a
     Customer.all.each do |c|
-      c.update_column(:web_id, c.retailer.web_id + c.id.to_s)
+      c.update_column(:web_id, c.retailer.id.to_s + letters.sample(5).join + c.id.to_s)
     end
 
     Product.all.each do |pro|
-      pro.update_column(:web_id, pro.retailer.web_id + pro.id.to_s)
+      pro.update_column(:web_id, pro.retailer.id.to_s + letters.sample(5).join + pro.id.to_s)
     end
 
     Order.all.each do |ord|
-      ord.update_column(:web_id, ord.retailer.web_id + ord.id.to_s)
+      ord.update_column(:web_id, ord.retailer.id.to_s + letters.sample(5).join + ord.id.to_s)
     end
 
     Question.all.each do |q|
-      q.update_column(:web_id, q.retailer.web_id + q.id.to_s)
+      q.update_column(:web_id, q.retailer.id.to_s + letters.sample(5).join + q.id.to_s)
     end
 
     Message.all.each do |m|
-      m.update_column(:web_id, m.retailer.web_id + m.id.to_s)
+      m.update_column(:web_id, m.retailer.id.to_s + letters.sample(5).join + m.id.to_s)
     end
 
     Template.all.each do |t|
-      t.update_column(:web_id, t.retailer.web_id + t.id.to_s)
+      t.update_column(:web_id, t.retailer.id.to_s + letters.sample(5).join + t.id.to_s)
     end
   end
 

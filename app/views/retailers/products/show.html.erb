@@ -5,16 +5,16 @@
       <div class="product__categories mt-0"><%= @product.category.name %></div>
     </div>
     <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
-      <%= link_to retailers_products_path(current_retailer.slug, current_retailer.web_id, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
+      <%= link_to retailers_products_path(current_retailer, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
         <i class="fas fa-arrow-left mr-5"></i>
         Volver
       <% end %>
-      <%= link_to edit_retailers_product_path(current_retailer.slug, current_retailer.web_id, @product), class: 'btn btn--cta' do %>
+      <%= link_to edit_retailers_product_path(current_retailer, @product), class: 'btn btn--cta' do %>
         <i class="far fa-edit mr-5"></i>
         Editar
       <% end %>
       <% if @product.status != 'archived' %>
-        <%= link_to retailers_archive_product_path(current_retailer.slug, current_retailer.web_id, @product), method: :put, data: { confirm: 'Está seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
+        <%= link_to retailers_archive_product_path(current_retailer, @product), method: :put, data: { confirm: 'Está seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
           <i class="far fa-trash-alt mr-5"></i>
           Archivar
         <% end %>

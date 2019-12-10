@@ -62,7 +62,17 @@ RSpec.describe Question, type: :model do
     end
 
     context 'when the answer is not empty' do
+      let(:ml_question) { instance_double(MercadoLibre::Questions) }
+
+      before do
+        allow(ml_question).to receive(:answer_question)
+          .with(anything).and_return('Question answered')
+        allow(MercadoLibre::Questions).to receive(:new).with(question.product.retailer)
+          .and_return(ml_question)
+      end
+
       it 'before save updates the answered attribute' do
+        question.product.retailer.meli_retailer = meli_retailer
         question.answer = 'Example answer'
         question.save
         expect(question.answered).to be true
@@ -71,10 +81,17 @@ RSpec.describe Question, type: :model do
   end
 
   describe '#generate_web_id' do
-    it 'generates the web_id field to customers' do
+    it 'generates the web_id field to questions' do
       expect(question.web_id).to be_nil
       question.save
-      expect(question.web_id).to eq(retailer.web_id + question.id.to_s)
+      expect(question.web_id).not_to be_nil
+    end
+  end
+
+  describe '#to_param' do
+    it 'returns the question web_id' do
+      question.save
+      expect(question.to_param).to eq(question.web_id)
     end
   end
 end

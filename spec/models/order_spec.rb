@@ -378,7 +378,14 @@ RSpec.describe Order, type: :model do
     it 'generates the web_id field to orders' do
       expect(order.web_id).to be_nil
       order.save
-      expect(order.web_id).to eq(retailer.web_id + order.id.to_s)
+      expect(order.web_id).not_to be_nil
+    end
+  end
+
+  describe '#to_param' do
+    it 'returns the order web_id' do
+      order.save
+      expect(order.to_param).to eq(order.web_id)
     end
   end
 end

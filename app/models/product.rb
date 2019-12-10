@@ -180,6 +180,10 @@ class Product < ApplicationRecord
     false
   end
 
+  def to_param
+    web_id
+  end
+
   private
 
     def images_count
@@ -244,6 +248,6 @@ class Product < ApplicationRecord
     end
 
     def generate_web_id
-      self.web_id = retailer.web_id + id.to_s
+      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end

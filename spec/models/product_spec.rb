@@ -431,13 +431,12 @@ RSpec.describe Product, type: :model do
   end
 
   describe '#generate_web_id' do
-    let(:retailer) { create(:retailer) }
-    let(:product) { build(:product, retailer: retailer) }
+    let(:product) { build(:product) }
 
     it 'generates the web_id field to products' do
       expect(product.web_id).to be_nil
       product.save
-      expect(product.web_id).to eq(retailer.web_id + product.id.to_s)
+      expect(product.web_id).not_to be_nil
     end
   end
 
@@ -490,6 +489,12 @@ RSpec.describe Product, type: :model do
         result = retailer.products.ransack(params[:q]).result
         expect(result.first).to eq(product1)
       end
+    end
+  end
+
+  describe '#to_param' do
+    it 'returns the product web_id' do
+      expect(product.to_param).to eq(product.web_id)
     end
   end
 end

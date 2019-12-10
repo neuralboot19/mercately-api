@@ -67,6 +67,10 @@ class Customer < ApplicationRecord
       .sum('order_items.quantity')
   end
 
+  def to_param
+    web_id
+  end
+
   private
 
     def update_valid_customer
@@ -76,6 +80,6 @@ class Customer < ApplicationRecord
     end
 
     def generate_web_id
-      self.web_id = retailer.web_id + id.to_s
+      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end

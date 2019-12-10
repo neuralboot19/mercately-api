@@ -55,6 +55,10 @@ class Order < ApplicationRecord
     messages.where(answer: nil).last&.created_at
   end
 
+  def to_param
+    web_id
+  end
+
   private
 
     def adjust_ml_stock
@@ -141,6 +145,6 @@ class Order < ApplicationRecord
     end
 
     def generate_web_id
-      self.web_id = retailer.web_id + id.to_s
+      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end

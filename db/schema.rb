@@ -305,7 +305,6 @@ ActiveRecord::Schema.define(version: 2019_12_10_113624) do
     t.string "zip_code"
     t.string "phone_number"
     t.boolean "phone_verified"
-    t.string "web_id"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 

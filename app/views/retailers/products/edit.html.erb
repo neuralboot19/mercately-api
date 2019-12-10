@@ -7,11 +7,11 @@
         </div>
         <div class="col-xs-12 col-sm-8 hide-on-tablet-and-down">
           <div class="index__ctas f-right">
-            <%= link_to retailers_products_path(current_retailer.slug, current_retailer.web_id, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
+            <%= link_to retailers_products_path(current_retailer, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
               <i class="fas fa-arrow-left mr-5"></i>
               Atrás
             <% end %>
-            <%= link_to retailers_product_path(current_retailer.slug, current_retailer.web_id, @product), class: 'btn btn--cta' do %>
+            <%= link_to retailers_product_path(current_retailer, @product), class: 'btn btn--cta' do %>
               <i class="fas fa-eye mr-5"></i>
               Ir al producto
             <% end %>

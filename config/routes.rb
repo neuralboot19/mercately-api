@@ -17,29 +17,27 @@ Rails.application.routes.draw do
 
   namespace :retailers do
     scope '/:slug' do
-      scope '/:web_id' do
-        get 'dashboard', to: 'pages#dashboard', as: :dashboard
-        resources :products do
-          member do
-            put 'reactive', to: 'products#reactive_product', as: :reactivate_product
-            put 'update_meli_status', to: 'products#update_meli_status'
-          end
+      get 'dashboard', to: 'pages#dashboard', as: :dashboard
+      resources :products do
+        member do
+          put 'reactive', to: 'products#reactive_product', as: :reactivate_product
+          put 'update_meli_status', to: 'products#update_meli_status'
         end
-        resources :orders do
-          get 'messages', to: 'messages#chat'
-          post 'send_message', to: 'messages#send_message', as: :send_message
-        end
-        resources :customers, except: [:destroy, :show]
-        resources :messages, only: [:show]
-        resources :templates
-        put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
-        get 'integrations', to: 'integrations#index'
-        get 'questions', to: 'messages#questions'
-        get 'chats', to: 'messages#chats'
-        get 'questions/:question_id', to: 'messages#question', as: :question
-        put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
-        put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
       end
+      resources :orders do
+        get 'messages', to: 'messages#chat'
+        post 'send_message', to: 'messages#send_message', as: :send_message
+      end
+      resources :customers, except: [:destroy, :show]
+      resources :messages, only: [:show]
+      resources :templates
+      put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
+      get 'integrations', to: 'integrations#index'
+      get 'questions', to: 'messages#questions'
+      get 'chats', to: 'messages#chats'
+      get 'questions/:question_id', to: 'messages#question', as: :question
+      put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
+      put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

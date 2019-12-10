@@ -109,15 +109,8 @@ RSpec.describe Retailer, type: :model do
 
   describe '#to_param' do
     it 'returns the retailer slug' do
-      expect(retailer.to_param).to eq(retailer.slug)
-    end
-  end
-
-  describe '#generate_web_id' do
-    it 'generates the web_id field to retailers' do
-      expect(retailer.web_id).to be_nil
       retailer.save
-      expect(retailer.web_id).not_to be_nil
+      expect(retailer.to_param).to eq(retailer.slug)
     end
   end
 end

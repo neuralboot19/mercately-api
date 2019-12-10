@@ -10,7 +10,6 @@ class Retailer < ApplicationRecord
   validates :slug, uniqueness: true
 
   after_save :generate_slug, if: :saved_change_to_name?
-  after_create :generate_web_id
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -44,10 +43,4 @@ class Retailer < ApplicationRecord
   def incomplete_meli_profile?
     id_number.blank? || address.blank? || city.blank? || state.blank?
   end
-
-  private
-
-    def generate_web_id
-      self.web_id = id.to_s + ('a'..'z').to_a.sample(5).join
-    end
 end

@@ -24,12 +24,7 @@ class Retailers::MessagesController < RetailersController
   end
 
   def question
-    @question = Question.find_by(web_id: params[:web_id] + params[:question_id])
-    unless @question
-      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id)
-      return
-    end
-
+    @question = Question.find_by(web_id: params[:question_id])
     return @question unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
@@ -41,12 +36,11 @@ class Retailers::MessagesController < RetailersController
 
   def answer_question
     @question.update!(answer: params[:answer])
-    redirect_to retailers_questions_path(@retailer.slug, @retailer.web_id, answered: @question.answered), notice:
-      'Respuesta enviada'
+    redirect_to retailers_questions_path(@retailer, answered: @question.answered), notice: 'Respuesta enviada'
   end
 
   def send_message
-    order = Order.find(params[:order_id])
+    order = Order.find_by(web_id: params[:order_id])
     @message = Message.new(
       order_id: order.id,
       customer_id: order.customer_id,
@@ -57,19 +51,15 @@ class Retailers::MessagesController < RetailersController
     msg = MercadoLibre::Messages.new(@retailer).answer_message(@message)
     @message.meli_id = msg[0]&.[]('message_id')
     if @message.save
-      redirect_to retailers_order_messages_path(@retailer.slug, @retailer.web_id, order), notice: 'Mensage enviado'
+      redirect_to retailers_order_messages_path(@retailer, order), notice: 'Mensage enviado'
     else
-      redirect_to retailers_order_messages_path(@retailer.slug, @retailer.web_id, order), notice: 'No pudo enviarse'
+      redirect_to retailers_order_messages_path(@retailer, order), notice: 'No pudo enviarse'
     end
   end
 
   def chat
     @return_to = params[:return_to]
-    @order = Order.find_by(web_id: params[:web_id] + params[:order_id])
-    unless @order
-      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id)
-      return
-    end
+    @order = Order.find_by(web_id: params[:order_id])
 
     total_unread = @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
 
@@ -81,7 +71,6 @@ class Retailers::MessagesController < RetailersController
   private
 
     def set_question
-      @question = Question.find_by(web_id: params[:web_id] + params[:id])
-      redirect_to retailers_dashboard_path(@retailer.slug, @retailer.web_id) unless @question
+      @question = Question.find_by(web_id: params[:id])
     end
 end

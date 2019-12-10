@@ -13,15 +13,21 @@ RSpec.describe Message, type: :model do
   end
 
   describe '#generate_web_id' do
-    let(:retailer) { create(:retailer) }
-    let(:customer) { create(:customer, retailer: retailer) }
-    let(:order) { create(:order, customer: customer) }
-    let(:message) { build(:message, order: order, customer: customer) }
+    let(:message) { build(:message) }
 
     it 'generates the web_id field to messages' do
       expect(message.web_id).to be_nil
       message.save
-      expect(message.web_id).to eq(retailer.web_id + message.id.to_s)
+      expect(message.web_id).not_to be_nil
+    end
+  end
+
+  describe '#to_param' do
+    let(:message) { create(:message) }
+
+    it 'returns the message web_id' do
+      message.save
+      expect(message.to_param).to eq(message.web_id)
     end
   end
 end

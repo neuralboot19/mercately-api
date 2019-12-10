@@ -23,13 +23,13 @@
       <div class="row center-xs start-sm">
         <div class="col-xs-12">
           <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'all')) %>">
-            <%= link_to 'Todas', retailers_orders_path(current_retailer.slug, current_retailer.web_id, status: 'all') %></div
+            <%= link_to 'Todas', retailers_orders_path(current_retailer, status: 'all') %></div
           ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'pending')) %>">
-            <%= link_to 'Pendientes', retailers_orders_path(current_retailer.slug, current_retailer.web_id, status: 'pending') %></div
+            <%= link_to 'Pendientes', retailers_orders_path(current_retailer, status: 'pending') %></div
           ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'success')) %>">
-            <%= link_to 'Exitosas', retailers_orders_path(current_retailer.slug, current_retailer.web_id, status: 'success') %></div
+            <%= link_to 'Exitosas', retailers_orders_path(current_retailer, status: 'success') %></div
           ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_orders_path(current_retailer, status: 'cancelled')) %>">
-            <%= link_to 'Canceladas', retailers_orders_path(current_retailer.slug, current_retailer.web_id, status: 'cancelled') %></div>
+            <%= link_to 'Canceladas', retailers_orders_path(current_retailer, status: 'cancelled') %></div>
         </div>
       </div>
     </div>
@@ -66,14 +66,14 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_order_path(current_retailer.slug, current_retailer.web_id, order), class: 'c-black no-style' do %>
+                        <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
                           <i class="fas fa-eye mr-8"></i>
                           Ver
                         <% end %>
                       </li>
                       <li class="divider"></li>
                       <li>
-                        <%= link_to edit_retailers_order_path(current_retailer.slug, current_retailer.web_id, order), class: 'c-black no-style' do %>
+                        <%= link_to edit_retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
                           <i class="fas fa-edit mr-8"></i>
                           Editar
                         <% end %>
@@ -93,10 +93,10 @@
                   <%= show_date(order.created_at) %>
                 </div>
                 <div class="col-xs-12 hide-on-1080-and-down orders__actions col-sm-1 t-center">
-                  <%= link_to retailers_order_path(current_retailer.slug, current_retailer.web_id, order), class: 'c-black no-style' do %>
+                  <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
                     <i class="fas fa-eye"></i>
                   <% end %>
-                  <%= link_to edit_retailers_order_path(current_retailer.slug, current_retailer.web_id, order), class: 'c-black no-style' do %>
+                  <%= link_to edit_retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
                     <i class="fas fa-edit"></i>
                   <% end %>
                 </div>
@@ -108,14 +108,14 @@
 
                     <ul class="dropdown__menu">
                       <li>
-                        <%= link_to retailers_order_path(current_retailer.slug, current_retailer.web_id, order), class: 'c-black no-style' do %>
+                        <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
                           <i class="fas fa-eye mr-8"></i>
                           Ver
                         <% end %>
                       </li>
                       <li class="divider"></li>
                       <li>
-                        <%= link_to edit_retailers_order_path(current_retailer.slug, current_retailer.web_id, order), class: 'c-black no-style' do %>
+                        <%= link_to edit_retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
                           <i class="fas fa-edit mr-8"></i>
                           Editar
                         <% end %>
