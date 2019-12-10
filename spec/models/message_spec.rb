@@ -17,7 +17,7 @@ RSpec.describe Message, type: :model do
     let(:customer) { create(:customer, retailer: retailer) }
     let(:order) { create(:order, customer: customer) }
     let(:message) { build(:message, order: order, customer: customer) }
- 
+
     it 'generates the web_id field to messages' do
       expect(message.web_id).to be_nil
       message.save

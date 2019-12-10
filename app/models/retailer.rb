@@ -48,6 +48,6 @@ class Retailer < ApplicationRecord
   private
 
     def generate_web_id
-      self.web_id = id.to_s + ('a'..'z').to_a.shuffle[0,5].join
+      self.web_id = id.to_s + ('a'..'z').to_a.sample(5).join
     end
 end

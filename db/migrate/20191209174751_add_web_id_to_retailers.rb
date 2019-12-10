@@ -4,8 +4,8 @@ class AddWebIdToRetailers < ActiveRecord::Migration[5.2]
 
     letters = ('a'..'z').to_a
     Retailer.all.each do |r|
-      wi = r.id.to_s + letters.shuffle[0,5].join
-      r.update(web_id: wi)
+      wi = r.id.to_s + letters.sample(5).join
+      r.update_column(:web_id, wi)
     end
   end
 

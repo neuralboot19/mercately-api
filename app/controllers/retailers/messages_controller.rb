@@ -41,7 +41,8 @@ class Retailers::MessagesController < RetailersController
 
   def answer_question
     @question.update!(answer: params[:answer])
-    redirect_to retailers_questions_path(@retailer.slug, @retailer.web_id, answered: @question.answered), notice: 'Respuesta enviada'
+    redirect_to retailers_questions_path(@retailer.slug, @retailer.web_id, answered: @question.answered), notice:
+      'Respuesta enviada'
   end
 
   def send_message

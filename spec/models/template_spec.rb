@@ -13,7 +13,7 @@ RSpec.describe Template, type: :model do
   describe '#generate_web_id' do
     let(:retailer) { create(:retailer) }
     let(:template) { build(:template, retailer: retailer) }
- 
+
     it 'generates the web_id field to templates' do
       expect(template.web_id).to be_nil
       template.save

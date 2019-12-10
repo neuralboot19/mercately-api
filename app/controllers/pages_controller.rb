@@ -1,9 +1,9 @@
 class PagesController < ApplicationController
   def index
-    if current_retailer_user
-      redirect_to retailers_dashboard_path(current_retailer_user.retailer.slug,
-        current_retailer_user.retailer.web_id)
-    end
+    return unless current_retailer_user
+
+    redirect_to retailers_dashboard_path(current_retailer_user.retailer.slug,
+                                         current_retailer_user.retailer.web_id)
   end
 
   def privacy
