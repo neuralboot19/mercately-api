@@ -6,6 +6,7 @@ import { fetchMessages, sendMessage } from "../../actions/actions";
 import MessageForm from './MessageForm';
 
 var currentCustomer = 0;
+var shouldScrollToBottom = true;
 const csrfToken = document.querySelector('[name=csrf-token]').content
 
 class ChatMessages extends Component {
@@ -17,22 +18,22 @@ class ChatMessages extends Component {
       messages: [],
       new_message: false
     };
+    this.bottomRef = React.createRef();
   }
 
   handleLoadMore = (e) => {
     e.preventDefault();
     this.setState({ page: this.state.page += 1,  load_more: true})
+    shouldScrollToBottom = false;
   }
 
   componentWillReceiveProps(newProps){
-
     if (newProps.messages != this.props.messages) {
       this.setState({
         new_message: false,
         messages: newProps.messages.concat(this.state.messages)
       })
     }
-
   }
 
   handleSubmitMessage = (e, message) => {
@@ -45,13 +46,14 @@ class ChatMessages extends Component {
   }
 
   scrollToBottom = () => {
-    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    this.bottomRef.current.scrollIntoView({ behavior: "smooth" });
   }
 
   componentDidUpdate() {
-    this.scrollToBottom();
+    if (shouldScrollToBottom) this.scrollToBottom();
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
+      shouldScrollToBottom = true;
       currentCustomer = id
 
       this.setState({ messages: [],  page: 1}, () => {
@@ -64,7 +66,7 @@ class ChatMessages extends Component {
           received: data => {
             if (!this.state.new_message){
               this.setState({
-                messages: this.state.messages.concat(data.facebook_message), 
+                messages: this.state.messages.concat(data.facebook_message),
                 new_message: false,
               })
             }
@@ -82,32 +84,24 @@ class ChatMessages extends Component {
     return (
       <div className="row bottom-xs">
         <div className="col-xs-12 chat__box">
-          {this.state.load_more && (
-            <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
-          )}
-          
-          {this.state.messages.map((message) => {
-            return(
-              <div key={message.id} className={'message' + message.sent_by_retailer == true ? 'message-by-retailer f-right' : 'outbound-message'}>
-                <div>
-                  <p>{message.text}</p>
-                </div>
-                
+          <a href="" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
+          {this.state.messages.map((message) => (
+            <div key={message.id} className="message">
+              <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
+                <p>{message.text}</p>
               </div>
-            ) 
-          })}
-          <div style={{ float:"left", clear: "both" }}
-            ref={(el) => { this.messagesEnd = el; }}>
-          </div>
+            </div>
+          ))}
+          <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
 
         { currentCustomer != 0 &&
-          <div className="col-xs-12">
-            <MessageForm
-              currentCustomer={this.props.currentCustomer}
-              handleSubmitMessage={this.handleSubmitMessage}
-            />
-          </div>
+        <div className="col-xs-12">
+          <MessageForm
+            currentCustomer={this.props.currentCustomer}
+            handleSubmitMessage={this.handleSubmitMessage}
+          />
+        </div>
         }
       </div>
     )

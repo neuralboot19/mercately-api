@@ -634,7 +634,7 @@
 
 .chat {
   &__box {
-    max-height: 500px;
+    height: 68vh;
     overflow-y: auto;
   }
 
@@ -651,19 +651,7 @@
   overflow-y: auto;
 }
 
-.message {
-  background-color: #E9EAEE;
-  border-radius: 7px;
-
-  &-by-retailer {
-    background-color: #2EABE2;
-  }
-}
-
-
-
 /* Customer */
-
 .chat_list_holder{
   background-color: #FFF;
   padding: 20px 5px 0;
@@ -677,28 +665,28 @@
   text-align: center;
 }
 
-.outbound-message{
+.message{
   position: relative;
   overflow: hidden;
   padding: 5px 15px 5px 0;
 }
 
-.outbound-message div {
+.message div {
   display: inline-block;
-  float: right;
   vertical-align: top;
   max-width: 75%;
 }
 
-
-.outbound-message div p {
-  background: #3d8bfc;
+.message div p {
+  background: #F1F0F0;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 400;
   margin: 0;
-  color: #fff;
   padding: 6px 14px 6px 14px;
 }
 
-
+.message-by-retailer p {
+  background: #3d8bfc !important;
+  color: #FFF;
+}
