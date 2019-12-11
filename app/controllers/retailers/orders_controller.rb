@@ -1,4 +1,5 @@
 class Retailers::OrdersController < RetailersController
+  before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_order, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -41,6 +42,11 @@ class Retailers::OrdersController < RetailersController
   end
 
   private
+
+    def check_ownership
+      order = Order.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless order && order.retailer.id == @retailer.id
+    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_order

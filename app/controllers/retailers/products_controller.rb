@@ -1,5 +1,7 @@
 class Retailers::ProductsController < RetailersController
   include ProductControllerConcern
+  before_action :check_ownership, only: [:show, :edit, :update, :archive_product, :reactive_product,
+                                         :upload_product_to_ml, :update_meli_status]
   before_action :set_product, only: [:show, :edit, :update, :archive_product, :reactive_product,
                                      :upload_product_to_ml, :update_meli_status]
   before_action :compile_variations, only: [:create, :update]
@@ -147,6 +149,11 @@ class Retailers::ProductsController < RetailersController
   end
 
   private
+
+    def check_ownership
+      product = Product.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless product && @retailer.products.exists?(product.id)
+    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_product

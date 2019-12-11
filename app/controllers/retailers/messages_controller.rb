@@ -1,4 +1,5 @@
 class Retailers::MessagesController < RetailersController
+  before_action :check_ownership, only: %i[show answer_question]
   before_action :set_question, only: %i[show answer_question]
 
   # GET /messages/1
@@ -25,6 +26,11 @@ class Retailers::MessagesController < RetailersController
 
   def question
     @question = Question.find_by(web_id: params[:question_id])
+    unless @question && @question.retailer.id == @retailer.id
+      redirect_to retailers_dashboard_path(@retailer)
+      return
+    end
+
     return @question unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
@@ -60,6 +66,10 @@ class Retailers::MessagesController < RetailersController
   def chat
     @return_to = params[:return_to]
     @order = Order.find_by(web_id: params[:order_id])
+    unless @order && @order.retailer.id == @retailer.id
+      redirect_to retailers_dashboard_path(@retailer)
+      return
+    end
 
     total_unread = @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
 
@@ -69,6 +79,11 @@ class Retailers::MessagesController < RetailersController
   end
 
   private
+
+    def check_ownership
+      question = Question.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless question && question.retailer.id == @retailer.id
+    end
 
     def set_question
       @question = Question.find_by(web_id: params[:id])

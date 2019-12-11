@@ -1,4 +1,5 @@
 class Retailers::TemplatesController < RetailersController
+  before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_template, only: [:show, :edit, :update, :destroy]
 
   # GET /templates
@@ -64,6 +65,11 @@ class Retailers::TemplatesController < RetailersController
   end
 
   private
+
+    def check_ownership
+      template = Template.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless template && @retailer.templates.exists?(template.id)
+    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_template

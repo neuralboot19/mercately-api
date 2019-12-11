@@ -1,8 +1,12 @@
 ActiveAdmin.register Order do
+  controller do
+    defaults finder: :find_by_web_id
+  end
+
   show do
     default_main_content
     panel 'Items' do
-      order_items = Order.find(params['id']).order_items
+      order_items = order.order_items
       table_for order_items do
         column :product
         column :quantity
