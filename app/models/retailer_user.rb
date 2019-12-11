@@ -1,7 +1,7 @@
 class RetailerUser < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
+  devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
   belongs_to :retailer
 
@@ -10,6 +10,16 @@ class RetailerUser < ApplicationRecord
   after_create :send_welcome_email
 
   accepts_nested_attributes_for :retailer
+
+  attr_reader :raw_invitation_token
+
+  def active_for_authentication?
+    super && !removed_from_team?
+  end
+
+  def inactive_message
+    !removed_from_team? ? super : 'Tu cuenta no se encuentra activa'
+  end
 
   private
 
@@ -29,6 +39,6 @@ class RetailerUser < ApplicationRecord
 
     # Send email after create
     def send_welcome_email
-      RetailerMailer.welcome(self).deliver_now if persisted?
+      RetailerMailer.welcome(self).deliver_now if persisted? && retailer_admin?
     end
 end
