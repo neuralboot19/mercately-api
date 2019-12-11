@@ -10,7 +10,7 @@ class ChatListUser extends Component {
   render() {
     let customer = this.props.customer
     return (
-      <div className="profile fs-14 box" onClick={() => this.props.handleOpenChat(this.props.customer)}>
+      <div className={`profile fs-14 box ${this.props.currentCustomer == customer.id ? 'border border--secondary' : 'border border--transparent'}`} onClick={() => this.props.handleOpenChat(this.props.customer)}>
         <div className="profile__data row">
           <div className="img__profile col-xs-2 p-0">
             <div className="rounded-circle mw-100" >

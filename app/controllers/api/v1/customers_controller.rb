@@ -21,7 +21,8 @@ class Api::V1::CustomersController < ApplicationController
       id_client: @customer.psid,
       facebook_retailer: current_retailer.facebook_retailer,
       text: params[:message],
-      sent_from_mercately: true
+      sent_from_mercately: true,
+      sent_by_retailer: true
     )
     if message.save
       serialized_data = ActiveModelSerializers::Adapter::Json.new(

@@ -24,11 +24,17 @@ class MessageForm extends Component {
     });
   }
 
+  onKeyPress = (e) => {
+    if(e.which === 13) {
+      e.preventDefault();
+      this.handleSubmit(e);
+    }
+  }
+
   render() {
     return (
       <div>
-        <textarea className='input' name="messageText" placeholder="Mensaje" value={this.state.messageText} onChange={this.handleInputChange}></textarea>
-        <button onClick={(e) => this.handleSubmit(e)}> Save</button>
+        <textarea className='input' name="messageText" placeholder="Mensaje" value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
       </div>
     )
   }

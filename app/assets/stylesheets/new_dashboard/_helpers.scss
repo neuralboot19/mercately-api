@@ -291,6 +291,18 @@ label:hover, a:hover {
   overflow-y: hidden;
 }
 
+.border {
+  border: 1px solid;
+
+  &--secondary {
+    border-color: $secondary-color;
+  }
+
+  &--transparent {
+    border-color: transparent;
+  }
+}
+
 @media screen and (min-width: 1680px) {
   .hide-on-2k {
     display: none;

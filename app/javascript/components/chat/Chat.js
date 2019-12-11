@@ -14,12 +14,11 @@ class Chat extends Component {
   }
 
   handleOpenChat = (customer_details) => {
-    console.log(customer_details)
     this.setState({
       ...this.state,
       currentCustomer: customer_details.id,
       currentCustomerDetails: customer_details
-    })
+    });
   }
 
   render() {
@@ -29,6 +28,7 @@ class Chat extends Component {
           <div className="col-sm-3 chat_list_holder">
             <ChatList
               handleOpenChat={this.handleOpenChat}
+              currentCustomer={this.state.currentCustomer}
             />
           </div>
           <div className="col-sm-6">
