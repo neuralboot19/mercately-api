@@ -24,6 +24,26 @@ class Chat extends Component {
   }
 
   render() {
+    var screen;
+    if (this.state.currentCustomer === 0) {
+      screen = <div className="col-sm-9">
+        Selecciona un chat
+      </div>
+    } else {
+      screen = <>
+        <div className="col-sm-6">
+          <ChatMessages
+            currentCustomer={this.state.currentCustomer}
+          />
+        </div>
+        <div className="col-sm-3">
+          <CustomerDetails
+            customerDetails={this.state.currentCustomerDetails}
+            currentRetailer={this.state.currentRetailer}
+          />
+        </div>
+      </>
+    }
     return (
       <div className="box">
         <div className="row">
@@ -33,17 +53,7 @@ class Chat extends Component {
               currentCustomer={this.state.currentCustomer}
             />
           </div>
-          <div className="col-sm-6">
-            <ChatMessages
-              currentCustomer={this.state.currentCustomer}
-            />
-          </div>
-          <div className="col-sm-3">
-            <CustomerDetails
-              customerDetails={this.state.currentCustomerDetails}
-              currentRetailer={this.state.currentRetailer}
-            />
-          </div>
+          {screen}
         </div>
       </div>
     )
