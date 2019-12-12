@@ -1,0 +1,100 @@
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row middle-xs">
+        <div class="col-xs-12 col-sm-6">
+          <h1 class="d-inline name">Equipo</h1>
+          <div class="index__desc">
+            Invita a tu equipo de trabajo
+          </div>
+
+          <% if current_retailer_user.retailer_admin %>
+            <%= form_for @user, url: invite_team_member_path(current_retailer), html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
+              <fieldset class="fieldset mt-16">
+                <div class="my-16">
+                  <%= f.label :email %>
+                  <%= f.text_field :email, class: 'input validate-email validate-required' %>
+                  <i class="validation-msg"></i>
+                </div>
+              </fieldset>
+              <div class="col-xs-12 pl-0">
+                <%= f.submit 'Enviar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid products">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="table box">
+            <div class="table__header row hide-on-tablet-and-down center-sm">
+              <div class="col-sm-4">Email</div>
+              <div class="col-sm-4">Fecha de invitación</div>
+              <div class="col-sm-3">Estado</div>
+              <div class="col-sm-1"></div>
+            </div>
+
+            <% @team.each do |member| %>
+              <div class="divider"></div>
+              <div class="table__item row middle-xs">
+                <div class="col-xs-6 col-sm-4">
+                  <div class="t-center truncate"><%= member.email %></div>
+                </div>
+                <div class="col-xs-4 col-sm-4 c-grey hide-on-sm-and-down">
+                  <div class="t-center truncate"><%= show_date(member.invitation_sent_at) %></div>
+                </div>
+                <div class="col-xs-5 col-sm-3">
+                  <div class="t-center">
+                    <% if member.removed_from_team %>
+                      <span class="c-red"><%= 'Inactivo' %></span>
+                    <% elsif member.invitation_accepted_at %>
+                      <span class="c-green"><%= 'Aceptado' %></span>
+                    <% else %>
+                      <span class="c-secondary"><%= 'Invitado' %></span>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="col-xs-1 col-sm-1 c-grey">
+                  <label class="item__dropdown d-inline">
+                    <a class="dropdown__button middle" tabindex="-1" href="#!">
+                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+                    </a>
+
+                    <ul class="dropdown__menu">
+                      <% if member.invitation_accepted_at.blank? && member.removed_from_team == false %>
+                        <li>
+                          <%= link_to reinvite_team_member_path(current_retailer, user: member), method: :post, class: 'c-black no-style' do %>
+                            <i class="far fa-paper-plane mr-8"></i>
+                            Reinvitar
+                          <% end %>
+                        </li>
+                      <% end %>
+                      <% if member.removed_from_team %>
+                        <li>
+                          <%= link_to reactive_team_member_path(current_retailer, user: member), method: :put, class: 'c-green no-style', data: { confirm: '¿Estás seguro de reactivar este miembro de tu equipo?' } do %>
+                            <i class="fas fa-check mr-8"></i>
+                            Reactivar
+                          <% end %>
+                        </li>
+                      <% else %>
+                        <li>
+                          <%= link_to remove_team_member_path(current_retailer, user: member), method: :post, class: 'c-red no-style', data: { confirm: '¿Estás seguro de remover este miembro de tu equipo?' } do %>
+                            <i class="fas fa-trash-alt mr-8"></i>
+                            Remover
+                          <% end %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </label>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

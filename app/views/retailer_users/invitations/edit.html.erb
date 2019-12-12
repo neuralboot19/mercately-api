@@ -1,0 +1,37 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="center">
+        <%= form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put }) do |f| %>
+          <%= render "retailer_users/shared/error_messages", resource: resource %>
+          <%= f.hidden_field :invitation_token, readonly: true %>
+          <h2 class="sign mt-100">Aceptar invitación</h2>
+
+          <% if f.object.class.require_password_on_accepting %>
+            <div class="group">
+              <%= f.password_field :password, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+              <%= f.label :password %>
+              <span class="bar"></span>
+            </div>
+
+            <div class="group">
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: '', class: 'input-standarization' %>
+              <%= f.label :password_confirmation, 'Confirme contraseña' %>
+              <span class="bar"></span>
+            </div>
+
+            <div class="group my-16">
+              <%= f.check_box :agree_terms, class: 'f-left w-auto', style: 'width: auto;' %>
+              <%= f.label :agree_terms, 'Acepto los', class: 'p-static' %>
+              <%= link_to 'términos y condiciones', terms_path, target: :_blank, class: 'link-register-terms' %>
+            </div>
+          <% end %>
+
+          <div class="btn-box">
+            <%= f.submit 'Empezar', class: 'btn-btn btn-submit w-100' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
