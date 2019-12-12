@@ -12,6 +12,10 @@ ActiveAdmin.register Question do
     actions
   end
 
+  controller do
+    defaults finder: :find_by_web_id
+  end
+
   show do
     attributes_table title: 'Pregunta' do
       row :id

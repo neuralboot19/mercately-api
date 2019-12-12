@@ -21,10 +21,14 @@ ActiveAdmin.register Customer do
     actions
   end
 
+  controller do
+    defaults finder: :find_by_web_id
+  end
+
   show do
     default_main_content
     panel 'Usuario de ML' do
-      customer = Customer.find(params['id']).meli_customer
+      customer = Customer.find_by(web_id: params['id']).meli_customer
       attributes_table_for customer do
         row :access_token
         row :meli_user_id

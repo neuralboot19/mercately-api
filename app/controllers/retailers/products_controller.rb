@@ -1,8 +1,9 @@
 class Retailers::ProductsController < RetailersController
   include ProductControllerConcern
-  before_action :set_product, only: [:show, :edit, :update, :product_with_variations, :price_quantity,
-                                     :archive_product, :reactive_product, :upload_product_to_ml,
-                                     :update_meli_status]
+  before_action :check_ownership, only: [:show, :edit, :update, :archive_product, :reactive_product,
+                                         :upload_product_to_ml, :update_meli_status]
+  before_action :set_product, only: [:show, :edit, :update, :archive_product, :reactive_product,
+                                     :upload_product_to_ml, :update_meli_status]
   before_action :compile_variations, only: [:create, :update]
 
   def index
@@ -68,6 +69,8 @@ class Retailers::ProductsController < RetailersController
   end
 
   def product_with_variations
+    @product = @retailer.products.find(params[:id])
+
     render json: {
       product: @product,
       variations: @product.product_variations,
@@ -76,6 +79,8 @@ class Retailers::ProductsController < RetailersController
   end
 
   def price_quantity
+    @product = @retailer.products.find(params[:id])
+
     render json: {
       id: @product.id,
       price: @product.price,
@@ -123,8 +128,8 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
-      redirect_to retailers_products_path(@retailer, q: { 'status_eq': 0, 's': 'created_at desc' }), notice:
-        'Producto publicado con éxito.'
+      redirect_to retailers_products_path(@retailer, q: { 'status_eq': 0, 's':
+        'created_at desc' }), notice: 'Producto publicado con éxito.'
     else
       render :edit
     end
@@ -145,9 +150,14 @@ class Retailers::ProductsController < RetailersController
 
   private
 
+    def check_ownership
+      product = Product.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless product && @retailer.products.exists?(product.id)
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_product
-      @product = Product.find(params[:id])
+      @product = Product.find_by(web_id: params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

@@ -1,4 +1,5 @@
 class Retailers::CustomersController < RetailersController
+  before_action :check_ownership, only: [:show, :edit, :update, :destroy, :customer_data]
   before_action :set_customer, only: [:show, :edit, :update, :destroy, :customer_data]
 
   def index
@@ -46,9 +47,14 @@ class Retailers::CustomersController < RetailersController
 
   private
 
+    def check_ownership
+      customer = Customer.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless customer && @retailer.customers.exists?(customer.id)
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_customer
-      @customer = Customer.find(params[:id])
+      @customer = Customer.find_by(web_id: params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

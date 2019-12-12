@@ -18,6 +18,10 @@ ActiveAdmin.register Product do
                 ml_attributes: [],
                 images: []
 
+  controller do
+    defaults finder: :find_by_web_id
+  end
+
   index do
     selectable_column
     id_column

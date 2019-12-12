@@ -6,7 +6,9 @@ class Customer < ApplicationRecord
   has_many :messages, dependent: :destroy
 
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+
   before_save :update_valid_customer
+  after_create :generate_web_id
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -65,11 +67,19 @@ class Customer < ApplicationRecord
       .sum('order_items.quantity')
   end
 
+  def to_param
+    web_id
+  end
+
   private
 
     def update_valid_customer
       return if valid_customer?
 
       self.valid_customer = first_name.present? || last_name.present? || email.present?
+    end
+
+    def generate_web_id
+      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end

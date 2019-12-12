@@ -9,6 +9,7 @@ class Order < ApplicationRecord
   before_save :set_positive_rating, if: :will_save_change_to_status?
   before_update :set_old_status, if: :will_save_change_to_status?
   after_update :adjust_ml_stock, if: :saved_change_to_status?
+  after_create :generate_web_id
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
@@ -52,6 +53,10 @@ class Order < ApplicationRecord
 
   def last_message_received_date
     messages.where(answer: nil).last&.created_at
+  end
+
+  def to_param
+    web_id
   end
 
   private
@@ -137,5 +142,9 @@ class Order < ApplicationRecord
 
     def set_old_status
       @status_was = status_was
+    end
+
+    def generate_web_id
+      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end
