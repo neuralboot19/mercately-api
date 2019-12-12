@@ -538,8 +538,37 @@
 }
 
 .logo-integration-platform {
-  width: 350px;
-  height: 98px;
+  width: 150px;
+  height: 150px;
+  padding: 2px;
+  border: 7px solid #1FABE2;
+  border-radius: 100%;
+  background-repeat: no-repeat;
+  margin: auto;
+}
+
+.integration__desc {
+  color: #686867;
+  line-height: 38px;
+  text-align: center;
+  min-height: 307px;
+  width: 80%;
+  margin-top: 21px;
+  margin-bottom: 21px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#messenger_logo {
+  background-image: url(image_path('dashboard/f_messenger.png'));
+  background-position: center center;
+  background-size: 120px 120px;
+}
+
+#ml_logo {
+  background-image: url(image_path('mercado-libre-logo-5.png'));
+  background-position: center center;
+  background-size: 120px;
 }
 
 .cookie__box {
