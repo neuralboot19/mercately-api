@@ -62,30 +62,44 @@ class ChatMessages extends Component {
     }
   }
 
+  handleChannelSubscription = () => {
+    App.cable.subscriptions.create(
+      { channel: 'FacebookMessagesChannel', id: currentCustomer },
+      {
+        received: data => {
+          if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id){
+            this.setState({
+              messages: this.state.messages.concat(data.facebook_message),
+              new_message: false,
+            })
+          }
+        }
+      }
+    );
+  }
+
+  componentDidMount() {
+    this.scrollToBottom();
+    let id = this.props.currentCustomer;
+    currentCustomer = id;
+
+    this.handleChannelSubscription();
+    this.setState({ messages: [],  page: 1}, () => {
+      this.props.fetchMessages(id);
+    });
+  }
+
   componentDidUpdate() {
     if (shouldScrollToBottom) this.scrollToBottom();
     let id = this.props.currentCustomer;
     if (currentCustomer !== id) {
       shouldScrollToBottom = true;
-      currentCustomer = id
+      currentCustomer = id;
 
+      this.handleChannelSubscription();
       this.setState({ messages: [],  page: 1}, () => {
         this.props.fetchMessages(id);
       });
-
-      App.cable.subscriptions.create(
-        { channel: 'FacebookMessagesChannel', id: currentCustomer },
-        {
-          received: data => {
-            if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id){
-              this.setState({
-                messages: this.state.messages.concat(data.facebook_message),
-                new_message: false,
-              })
-            }
-          }
-        }
-      );
     } else if (this.state.load_more === true) {
       this.setState({ load_more: false }, () => {
         this.props.fetchMessages(id, this.state.page);

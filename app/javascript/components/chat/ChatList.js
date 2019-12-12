@@ -89,7 +89,12 @@ class ChatList extends Component {
     return (
       <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
         {this.state.customers.map((customer) =>
-        <ChatListUser key={customer.id} currentCustomer={this.props.currentCustomer} customer={customer} handleOpenChat={this.props.handleOpenChat}/>)}
+        <ChatListUser
+          key={customer.id}
+          currentCustomer={this.props.currentCustomer}
+          customer={customer}
+          handleOpenChat={this.props.handleOpenChat}
+        />)}
       </div>
     );
   }

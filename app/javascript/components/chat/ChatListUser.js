@@ -21,7 +21,7 @@ class ChatListUser extends Component {
           <div className="col-xs-10">
             <div className="profile__name">{customer.first_name} {customer.last_name}</div>
 
-            <div>{moment(customer.recent_message_date).locale('es').fromNow()}</div>
+            <div className={true ? 't-bold' : ''}>{moment(customer.recent_message_date).locale('es').fromNow()}</div>
           </div>
         </div>
       </div>

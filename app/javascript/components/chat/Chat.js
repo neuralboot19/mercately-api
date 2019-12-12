@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, browserHistory, withRouter } from 'react-router-dom';
 
 import ChatMessages from '../chat/ChatMessages';
 import ChatList from '../chat/ChatList';
@@ -11,7 +10,6 @@ class Chat extends Component {
     this.state = {
       currentCustomer: 0,
       currentCustomerDetails: {},
-      currentRetailer: 'pruebasasd'
     };
   }
 
@@ -39,7 +37,6 @@ class Chat extends Component {
         <div className="col-sm-3">
           <CustomerDetails
             customerDetails={this.state.currentCustomerDetails}
-            currentRetailer={this.state.currentRetailer}
           />
         </div>
       </>
@@ -60,4 +57,4 @@ class Chat extends Component {
   }
 }
 
-export default withRouter(Chat);
+export default Chat;

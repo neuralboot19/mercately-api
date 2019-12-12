@@ -1,6 +1,6 @@
 <!-- Sidebar -->
 <input type="checkbox" id="sidebar--toggle" class="d-none" />
-<section id="sidebar" class="d-md-none">
+<section id="sidebar" class="hide-on-pc">
   <div id="sidebar__logo">
     <%= image_tag 'dashboard/logo.png' %>
   </div>
@@ -63,7 +63,7 @@
 </section>
 
 <!-- Sidebar PC -->
-<div class="p-fixed">
+<div class="p-fixed hide-on-tablet-and-down">
   <section id="sidebar--pc" class="d-none d-md-block">
     <div id="sidebar__logo--pc" class="p-18">
       <%= image_tag 'dashboard/profile.png' %>
@@ -84,26 +84,33 @@
         </li>
         <li class="menu__item">
           <div class="tooltip">
-            <%= link_to raw('<i class="item__icon fas fa-poll"></i>'), retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
+            <%= link_to raw('<i class="item__icon fas fa-boxes"></i>'), retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
             <div class="tooltiptext">Productos</div>
           </div>
         </li>
         <li class="menu__item">
           <div class="tooltip">
-            <%= link_to raw('<i class="item__icon fas fa-clipboard-check"></i>'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
+            <%= link_to raw('<i class="item__icon fas fa-file-invoice-dollar"></i>'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
             <div class="tooltiptext">Ordenes</div>
           </div>
         </li>
         <li class="menu__item">
           <div class="tooltip">
-            <%= link_to raw('<i class="item__icon fab fa-whatsapp"></i>'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
-            <div class="tooltiptext">WhatsApp</div>
+            <%= link_to image_tag('dashboard/ml_logo.png', class: 'w-45'), retailers_questions_path(current_retailer, answered: false), class: 'item__name no-style' %>
+            <div class="tooltiptext">MercadoLibre</div>
           </div>
         </li>
         <li class="menu__item">
           <div class="tooltip">
             <%= link_to raw('<i class="item__icon fab fa-facebook-messenger"></i>'), retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
             <div class="tooltiptext">Messenger</div>
+            <b class="item__cookie item__cookie_message"><%= quantity_unread_messages %></b>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-file-alt"></i>'), retailers_templates_path(current_retailer), class: 'item__name no-style' %>
+            <div class="tooltiptext">Plantillas</div>
           </div>
         </li>
         <li class="menu__item">
