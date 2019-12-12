@@ -40,7 +40,7 @@ class ChatMessages extends Component {
   }
 
   scrollToBottom = () => {
-    this.bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    this.bottomRef.current.scrollIntoView();
   }
 
   handleScrollToTop = (e) => {

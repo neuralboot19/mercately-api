@@ -12,6 +12,9 @@ class FacebookMessage < ApplicationRecord
     end
 
     def send_facebook_message
-      Facebook::Messages.new(facebook_retailer).send_message(id_client, text) if sent_from_mercately
+      if sent_from_mercately
+        m = Facebook::Messages.new(facebook_retailer).send_message(id_client, text)
+        update_column(:mid, m['message_id'])
+      end
     end
 end

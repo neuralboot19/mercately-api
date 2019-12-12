@@ -27,6 +27,10 @@ class Api::V1::CustomersController < ApplicationController
     )
     if message.save
       serialized_data = ActiveModelSerializers::Adapter::Json.new(
+        CustomerSerializer.new(@customer)
+      ).serializable_hash
+      CustomersChannel.broadcast_to current_retailer, serialized_data
+      serialized_data = ActiveModelSerializers::Adapter::Json.new(
         FacebookMessageSerializer.new(message)
       ).serializable_hash
       FacebookMessagesChannel.broadcast_to @customer, serialized_data
