@@ -1,6 +1,6 @@
 /* Customers */
-export const fetchCustomers = () => {
-  const endpoint = '/api/v1/customers';
+export const fetchCustomers = (page = 1) => {
+  const endpoint = `/api/v1/customers?page=${page}`;
   return dispatch =>
     fetch(endpoint, {
       method: "GET",

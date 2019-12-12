@@ -1,7 +1,8 @@
 let initialState = {
   customers: [],
   messages: [],
-  total_pages: 0
+  total_pages: 0,
+  total_customers: 0
 };
 
 const reducer = (state = initialState, action) => {
@@ -9,12 +10,13 @@ const reducer = (state = initialState, action) => {
     case 'GET_CURRENT_USER':
       return {
         ...state,
-        currentUser: action.response.data.user
+        currentUser: action.response.data.user,
       }
     case 'SET_CUSTOMERS':
       return {
         ...state,
-        customers: action.data.customers
+        customers: action.data.customers,
+        total_customers: action.data.total_customers
       }
     case 'SET_MESSAGES':
       return {

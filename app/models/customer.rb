@@ -1,4 +1,5 @@
 class Customer < ApplicationRecord
+  paginates_per 2
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
   has_many :orders, dependent: :destroy

@@ -5,8 +5,9 @@ class Api::V1::CustomersController < ApplicationController
 
   def index
     @customers = current_retailer.customers.facebook_customers.active
-      .includes(:facebook_messages).order('facebook_messages.created_at asc')
-    render status: 200, json: { customers: @customers }
+      .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
+      .joins(:facebook_messages).group('customers.id').order('recent_message_date desc').page(params[:page])
+    render status: 200, json: { customers: @customers, total_customers: @customers.total_pages }
   end
 
   def messages

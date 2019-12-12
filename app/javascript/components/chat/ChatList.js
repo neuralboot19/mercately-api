@@ -10,6 +10,7 @@ class ChatList extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      page: 1,
       customers: []
     };
   }
@@ -19,6 +20,15 @@ class ChatList extends Component {
       el.id == id
     ))
   )
+
+  handleLoadMore = (e) => {
+    e.preventDefault();
+    if (this.props.total_customers > this.state.page) {
+      let page = ++this.state.page;
+      this.setState({ page: page })
+      this.props.fetchCustomers(page);
+    }
+  }
 
   removeFromArray = (arr, index) => {
     arr.splice(index, 1);
@@ -33,6 +43,14 @@ class ChatList extends Component {
     this.setState({
       customers: customerList
     });
+  }
+
+  componentWillReceiveProps(newProps){
+    if (newProps.customers != this.props.customers) {
+      this.setState({
+        customers: this.state.customers.concat(newProps.customers)
+      })
+    }
   }
 
   componentDidMount() {
@@ -62,6 +80,7 @@ class ChatList extends Component {
       <div className="chat__selector">
         {this.state.customers.map((customer) =>
         <ChatListUser key={customer.id} currentCustomer={this.props.currentCustomer} customer={customer} handleOpenChat={this.props.handleOpenChat}/>)}
+        <a href="#!" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
       </div>
     );
   }
@@ -70,13 +89,14 @@ class ChatList extends Component {
 function mapState(state) {
   return {
     customers: state.customers || [],
+    total_customers: state.total_customers || 0,
   };
 }
 
 function mapDispatch(dispatch) {
   return {
-    fetchCustomers: () => {
-      dispatch(fetchCustomers());
+    fetchCustomers: (page = 1) => {
+      dispatch(fetchCustomers(page));
     }
   };
 }
