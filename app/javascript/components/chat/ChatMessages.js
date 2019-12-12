@@ -77,7 +77,7 @@ class ChatMessages extends Component {
         { channel: 'FacebookMessagesChannel', id: currentCustomer },
         {
           received: data => {
-            if (!this.state.new_message){
+            if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id){
               this.setState({
                 messages: this.state.messages.concat(data.facebook_message),
                 new_message: false,
