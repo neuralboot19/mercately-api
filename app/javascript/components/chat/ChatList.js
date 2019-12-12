@@ -21,8 +21,7 @@ class ChatList extends Component {
     ))
   )
 
-  handleLoadMore = (e) => {
-    e.preventDefault();
+  handleLoadMore = () => {
     if (this.props.total_customers > this.state.page) {
       let page = ++this.state.page;
       this.setState({ page: page })
@@ -43,6 +42,17 @@ class ChatList extends Component {
     this.setState({
       customers: customerList
     });
+  }
+
+  handleLoadMoreOnScrollToBottom = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    let el = e.target;
+    let style = window.getComputedStyle(el, null);
+    let scrollHeight = parseInt(style.getPropertyValue("height"));
+    if(el.scrollTop + scrollHeight >= el.scrollHeight) {
+      this.handleLoadMore();
+    }
   }
 
   componentWillReceiveProps(newProps){
@@ -77,10 +87,9 @@ class ChatList extends Component {
 
   render() {
     return (
-      <div className="chat__selector">
+      <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
         {this.state.customers.map((customer) =>
         <ChatListUser key={customer.id} currentCustomer={this.props.currentCustomer} customer={customer} handleOpenChat={this.props.handleOpenChat}/>)}
-        <a href="#!" onClick={(e) => this.handleLoadMore(e)}>Load more</a>
       </div>
     );
   }
