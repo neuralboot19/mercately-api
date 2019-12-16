@@ -1,7 +1,7 @@
 class RetailerUser < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
+  devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: %i[facebook]
   belongs_to :retailer
@@ -11,6 +11,8 @@ class RetailerUser < ApplicationRecord
   after_create :send_welcome_email
 
   accepts_nested_attributes_for :retailer
+
+  attr_reader :raw_invitation_token
 
   def self.from_omniauth(auth, retailer_user)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
@@ -35,6 +37,14 @@ class RetailerUser < ApplicationRecord
     facebook_service.subscribe_page_to_webhooks
   end
 
+  def active_for_authentication?
+    super && !removed_from_team?
+  end
+
+  def inactive_message
+    !removed_from_team? ? super : 'Tu cuenta no se encuentra activa'
+  end
+
   private
 
     def onboarding_status_format
@@ -53,6 +63,6 @@ class RetailerUser < ApplicationRecord
 
     # Send email after create
     def send_welcome_email
-      RetailerMailer.welcome(self).deliver_now if persisted?
+      RetailerMailer.welcome(self).deliver_now if persisted? && retailer_admin?
     end
 end

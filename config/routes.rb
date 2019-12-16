@@ -4,9 +4,14 @@ Rails.application.routes.draw do
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
     sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords',
-    omniauth_callbacks: 'retailer_users/omniauth_callbacks' }
+    omniauth_callbacks: 'retailer_users/omniauth_callbacks', invitations: 'retailer_users/invitations' }
   as :retailer_user do
     get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info
+    get 'retailers/:slug/team', to: 'retailers/settings#team', as: :edit_team
+    post 'retailers/:slug/invite_team_member', to: 'retailers/settings#invite_team_member', as: :invite_team_member
+    post 'retailers/:slug/reinvite_team_member', to: 'retailers/settings#reinvite_team_member', as: :reinvite_team_member
+    post 'retailers/:slug/remove_team_member', to: 'retailers/settings#remove_team_member', as: :remove_team_member
+    put 'retailers/:slug/reactive_team_member', to: 'retailers/settings#reactive_team_member', as: :reactive_team_member
   end
 
   devise_for :admin_users, ActiveAdmin::Devise.config

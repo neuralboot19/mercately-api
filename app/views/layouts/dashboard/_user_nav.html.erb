@@ -33,6 +33,14 @@
                   Editar perfil
                 <% end %>
               </li>
+              <% if current_retailer_user.retailer_admin? %>
+                <li>
+                  <%= link_to edit_team_path(current_retailer), class: 'no-style' do %>
+                    <i class="fas fa-users mr-8"></i>
+                    Equipo
+                  <% end %>
+                </li>
+              <% end %>
               <li class="divider"></li>
               <li>
                 <%= link_to destroy_retailer_user_session_path, method: :delete, class: 'no-style' do %>

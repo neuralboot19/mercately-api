@@ -9,6 +9,7 @@ class Retailer < ApplicationRecord
 
   validates :name, presence: true
   validates :slug, uniqueness: true
+
   after_save :generate_slug, if: :saved_change_to_name?
 
   enum id_type: %i[cedula pasaporte ruc]
