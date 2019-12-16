@@ -117,7 +117,7 @@ class ChatMessages extends Component {
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
-                <p>{message.text}</p>
+                {message.text != null ? (<p>{message.text}</p>) : (<img src={message.url} className="msg__img"/>)}
               </div>
             </div>
           ))}

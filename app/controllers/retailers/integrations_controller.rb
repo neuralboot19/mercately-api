@@ -49,7 +49,7 @@ class Retailers::IntegrationsController < RetailersController
     message_data = params['entry'][0]['messaging'][0]
     facebook_retailer = FacebookRetailer.find_by(uid: message_data['recipient']['id'])
     facebook_service = Facebook::Messages.new(facebook_retailer)
-    if message_data['message']&.[]('text')
+    if message_data['message']&.[]('text') || message_data['message']&.[]('attachments')
       facebook_service.save(message_data)
     elsif message_data['delivery']&.[]('mids')
       psid = message_data['sender']['id']

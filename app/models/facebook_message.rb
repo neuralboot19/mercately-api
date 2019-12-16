@@ -8,7 +8,7 @@ class FacebookMessage < ApplicationRecord
   private
 
     def sent_by_retailer?
-      update_columns(sent_by_retailer: true) if self.uid == self.facebook_retailer.uid
+      update_columns(sent_by_retailer: true) if self.sender_uid == self.facebook_retailer.uid
     end
 
     def send_facebook_message

@@ -92,7 +92,7 @@ class Retailers::MessagesController < RetailersController
     customer = Customer.find(params[:id])
     FacebookMessage.create(
       customer: customer,
-      uid: current_retailer_user.uid,
+      sender_uid: current_retailer_user.uid,
       id_client: customer.psid,
       facebook_retailer: current_retailer.facebook_retailer,
       text: params[:message],

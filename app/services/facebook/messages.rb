@@ -9,9 +9,11 @@ module Facebook
       message = FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
-        uid: message_data['sender']['id'],
+        sender_uid: message_data['sender']['id'],
         id_client: message_data['sender']['id'],
-        text: message_data['message']['text'],
+        text: message_data['message']&.[]('text'),
+        file_type: message_data['message']&.[]('attachments')&.[](0)&.[]('type'),
+        url: message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url'),
         reply_to: message_data['message']&.[]('reply_to')&.[]('mid')
       ).find_or_create_by(mid: message_data['message']['mid'])
       if message.persisted?
@@ -38,7 +40,7 @@ module Facebook
       FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
-        uid: @facebook_retailer.uid,
+        sender_uid: @facebook_retailer.uid,
         id_client: psid,
         text: response['message']
       ).find_or_create_by(mid: response['id'])

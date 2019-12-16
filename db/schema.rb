@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_10_113624) do
+ActiveRecord::Schema.define(version: 2019_12_16_213229) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -98,7 +98,7 @@ ActiveRecord::Schema.define(version: 2019_12_10_113624) do
   end
 
   create_table "facebook_messages", force: :cascade do |t|
-    t.string "uid"
+    t.string "sender_uid"
     t.string "id_client"
     t.bigint "facebook_retailer_id"
     t.text "text"
@@ -110,6 +110,8 @@ ActiveRecord::Schema.define(version: 2019_12_10_113624) do
     t.date "date_read"
     t.boolean "sent_from_mercately", default: false
     t.boolean "sent_by_retailer", default: false
+    t.string "file_type"
+    t.string "url"
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
   end
