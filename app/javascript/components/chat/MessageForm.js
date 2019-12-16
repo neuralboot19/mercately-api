@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { sendMessage } from "../../actions/actions";
 
 class MessageForm extends Component {
   constructor(props) {
@@ -18,7 +17,8 @@ class MessageForm extends Component {
   }
 
   handleSubmit = (e) => {
-    let text = this.state.messageText
+    let text = this.state.messageText;
+    if(text.trim() === '') return;
     this.setState({ messageText: '' }, () => {
       this.props.handleSubmitMessage(e, text)
     });
