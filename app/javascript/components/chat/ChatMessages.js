@@ -42,7 +42,6 @@ class ChatMessages extends Component {
   }
 
   scrollToBottom = () => {
-    console.log('ejecutar')
     this.bottomRef.current.scrollIntoView();
   }
 
