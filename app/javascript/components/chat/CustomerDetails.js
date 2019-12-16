@@ -1,15 +1,36 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { fetchCustomer } from "../../actions/actions";
+
+var is_updated = false;
 
 class CustomerDetails extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentCustomer: 0
+      currentCustomer: 0,
+      updated: false,
+      customer: {},
     };
   }
 
+  componentDidMount() {
+    this.props.fetchCustomer(this.props.customerDetails.id)
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.customerDetails.id !== this.props.customerDetails.id && !is_updated){
+      this.setState({ customer: this.props.customerDetails}, () => {
+        is_updated = true
+        this.props.fetchCustomer(this.props.customerDetails.id)
+      });      
+    } else {
+      is_updated = false
+    }
+  }
+
   render() {
-    let customer = this.props.customerDetails
+    let customer = this.props.customer
     return (
       <div className="customer_sidebar">
         <div className="customer_box">
@@ -53,4 +74,24 @@ class CustomerDetails extends Component {
   }
 }
 
-export default CustomerDetails;
+
+function mapState(state) {
+  return {
+    customer: state.customer || {},
+    updated: state.updated || false
+  };
+}
+
+function mapDispatch(dispatch) {
+  return {
+    fetchCustomer: (id) => {
+      dispatch(fetchCustomer(id));
+    }
+  };
+}
+
+export default connect(
+  mapState,
+  mapDispatch
+) (CustomerDetails);
+

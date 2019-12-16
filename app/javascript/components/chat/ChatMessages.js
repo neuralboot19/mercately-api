@@ -6,7 +6,6 @@ import { fetchMessages, sendMessage } from "../../actions/actions";
 import MessageForm from './MessageForm';
 
 var currentCustomer = 0;
-var shouldScrollToBottom = true;
 const csrfToken = document.querySelector('[name=csrf-token]').content
 
 class ChatMessages extends Component {
@@ -17,14 +16,17 @@ class ChatMessages extends Component {
       page: 1,
       messages: [],
       new_message: false,
+      scrolable: false
     };
     this.bottomRef = React.createRef();
   }
 
   handleLoadMore = () => {
+    let id = this.props.currentCustomer;
     if (this.props.total_pages > this.state.page) {
-      this.setState({ page: this.state.page += 1,  load_more: true})
-      shouldScrollToBottom = false;
+      this.setState({ page: this.state.page += 1, load_more: true, scrolable: false}, () => {
+        this.props.fetchMessages(id, this.state.page);
+      });
     }
   }
 
@@ -55,9 +57,11 @@ class ChatMessages extends Component {
 
   componentWillReceiveProps(newProps){
     if (newProps.messages != this.props.messages) {
+      this.scrollToBottom();
       this.setState({
         new_message: false,
-        messages: newProps.messages.concat(this.state.messages)
+        messages: newProps.messages.concat(this.state.messages),
+        load_more: false,
       })
     }
   }
@@ -79,31 +83,30 @@ class ChatMessages extends Component {
   }
 
   componentDidMount() {
-    this.scrollToBottom();
     let id = this.props.currentCustomer;
     currentCustomer = id;
 
-    this.handleChannelSubscription();
-    this.setState({ messages: [],  page: 1}, () => {
+    this.setState({ messages: [],  page: 1, scrolable: true}, () => {
+      this.handleChannelSubscription();
       this.props.fetchMessages(id);
+      this.scrollToBottom();
     });
   }
 
   componentDidUpdate() {
-    if (shouldScrollToBottom) this.scrollToBottom();
     let id = this.props.currentCustomer;
-    if (currentCustomer !== id) {
-      shouldScrollToBottom = true;
-      currentCustomer = id;
 
-      this.handleChannelSubscription();
-      this.setState({ messages: [],  page: 1}, () => {
+    if (currentCustomer !== id) {
+      currentCustomer = id;
+      this.scrollToBottom();
+      this.setState({ messages: [],  page: 1, scrolable: true}, () => {
+        this.handleChannelSubscription();
         this.props.fetchMessages(id);
       });
-    } else if (this.state.load_more === true) {
-      this.setState({ load_more: false }, () => {
-        this.props.fetchMessages(id, this.state.page);
-      });
+    }
+
+    if (this.state.scrolable) {
+      this.scrollToBottom();
     }
   }
 
