@@ -42,6 +42,29 @@ class Api::V1::CustomersController < ApplicationController
     end
   end
 
+  def send_img
+    message = FacebookMessage.new(
+      customer: @customer,
+      sender_uid: current_retailer_user.uid,
+      id_client: @customer.psid,
+      facebook_retailer: current_retailer.facebook_retailer,
+      file_data: params[:file_data].tempfile.path,
+      sent_from_mercately: true,
+      sent_by_retailer: true
+    )
+    if message.save
+      serialized_data = ActiveModelSerializers::Adapter::Json.new(
+        CustomerSerializer.new(@customer)
+      ).serializable_hash
+      CustomersChannel.broadcast_to current_retailer, serialized_data
+      serialized_data = ActiveModelSerializers::Adapter::Json.new(
+        FacebookMessageSerializer.new(message)
+      ).serializable_hash
+      FacebookMessagesChannel.broadcast_to @customer, serialized_data
+      render status: 200, json: { message: message }
+    end
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.

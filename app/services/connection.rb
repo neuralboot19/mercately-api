@@ -33,6 +33,19 @@ class Connection
     post_connection
   end
 
+  def self.post_form_request(connection, body)
+    post_connection = connection.post do |req|
+      req.body = body
+    end
+    Raven.capture_message(
+      body,
+      level: 'debug',
+      tags: { type: 'POST File', status: post_connection.status },
+      extra: { caller: caller }
+    )
+    post_connection
+  end
+
   def self.put_request(connection, body)
     put_connection = connection.put do |req|
       req.headers['Content-Type'] = 'application/json'

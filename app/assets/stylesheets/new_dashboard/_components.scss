@@ -636,6 +636,7 @@
   &__box {
     height: 68vh;
     overflow-y: auto;
+    background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url("https://image.shutterstock.com/image-vector/seamless-pattern-social-media-networking-260nw-1039923571.jpg");
   }
 
   &__selector {
@@ -744,4 +745,31 @@
 
 .msg__img {
   max-width: 200px;
+}
+
+.img_modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+
+  &__overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, .3);
+    width: 100vw;
+    height: 100vh;
+  }
+
+  img {
+    position: relative;
+    max-height: 80vh;
+    max-width: 70vw;
+  }
 }

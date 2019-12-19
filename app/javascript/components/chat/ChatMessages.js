@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { fetchMessages, sendMessage } from "../../actions/actions";
+import { fetchMessages, sendMessage, sendImg } from "../../actions/actions";
 
 import MessageForm from './MessageForm';
+import ImgModal from './ImgModal';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -16,7 +17,9 @@ class ChatMessages extends Component {
       page: 1,
       messages: [],
       new_message: false,
-      scrolable: false
+      scrolable: false,
+      isModalOpen: false,
+      url: ''
     };
     this.bottomRef = React.createRef();
   }
@@ -41,6 +44,13 @@ class ChatMessages extends Component {
     }, 100);
   }
 
+  handleSubmitImg = (file_data) => {
+    this.props.sendImg(this.props.currentCustomer, file_data, csrfToken);
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 100);
+  }
+
   scrollToBottom = () => {
     this.bottomRef.current.scrollIntoView();
   }
@@ -55,22 +65,12 @@ class ChatMessages extends Component {
     }
   }
 
-  componentWillReceiveProps(newProps){
-    if (newProps.messages != this.props.messages) {
-      this.scrollToBottom();
-      this.setState({
-        new_message: false,
-        messages: newProps.messages.concat(this.state.messages),
-        load_more: false,
-      })
-    }
-  }
-
   handleChannelSubscription = () => {
     App.cable.subscriptions.create(
       { channel: 'FacebookMessagesChannel', id: currentCustomer },
       {
         received: data => {
+          console.log('FacebookMessagesChannel', data);
           if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id){
             this.setState({
               messages: this.state.messages.concat(data.facebook_message),
@@ -80,6 +80,26 @@ class ChatMessages extends Component {
         }
       }
     );
+  }
+
+  toggleImgModal = (e) => {
+    var el = e.target;
+
+    this.setState({
+      url: el.src,
+      isModalOpen: !this.state.isModalOpen
+    });
+  }
+
+  componentWillReceiveProps(newProps){
+    if (newProps.messages != this.props.messages) {
+      this.scrollToBottom();
+      this.setState({
+        new_message: false,
+        messages: newProps.messages.concat(this.state.messages),
+        load_more: false,
+      })
+    }
   }
 
   componentDidMount() {
@@ -113,11 +133,16 @@ class ChatMessages extends Component {
   render() {
     return (
       <div className="row bottom-xs">
+        {this.state.isModalOpen && (
+          <ImgModal url={this.state.url} toggleImgModal={this.toggleImgModal}/>
+        )}
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
-                {message.text != null ? (<p>{message.text}</p>) : (<img src={message.url} className="msg__img"/>)}
+                {message.text != null ? (<p>{message.text}</p>) :
+                (<img src={message.url} className="msg__img"
+                onClick={(e) => this.toggleImgModal(e)}/>)}
               </div>
             </div>
           ))}
@@ -129,6 +154,7 @@ class ChatMessages extends Component {
           <MessageForm
             currentCustomer={this.props.currentCustomer}
             handleSubmitMessage={this.handleSubmitMessage}
+            handleSubmitImg={this.handleSubmitImg}
           />
         </div>
         }
@@ -152,6 +178,9 @@ function mapDispatch(dispatch) {
     },
     sendMessage: (id, message, token) => {
       dispatch(sendMessage(id, message, token));
+    },
+    sendImg: (id, body, token) => {
+      dispatch(sendImg(id, body, token));
     }
   };
 }

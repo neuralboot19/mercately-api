@@ -96,3 +96,28 @@ export const sendMessage = (id, body, token) => {
       });
   };
 };
+
+export const sendImg = (id, body, token) => {
+  const endpoint = `/api/v1/customers/${id}/messages/imgs`;
+  const csrf_token = token
+  return dispatch => {
+    fetch(endpoint, {
+      method: "POST",
+      credentials: 'same-origin',
+      headers: {
+        'X-CSRF-Token': csrf_token,
+      },
+      body: body,
+    })
+    .then(res => res.json())
+    .then(
+      data => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+    ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+  };
+};

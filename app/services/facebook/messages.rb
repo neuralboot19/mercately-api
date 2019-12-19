@@ -1,3 +1,5 @@
+require 'mime/types'
+
 module Facebook
   class Messages
     def initialize(facebook_retailer)
@@ -53,6 +55,17 @@ module Facebook
       JSON.parse(response.body)
     end
 
+    def send_attachment(to, file_data)
+      conn = Faraday.new(send_message_url) do |f|
+        f.request :multipart
+        f.request :url_encoded
+        f.adapter :net_http
+        f.response :logger, Logger.new(STDOUT), bodies: true
+      end
+      response = Connection.post_form_request(conn, prepare_attachment(to, file_data))
+      JSON.parse(response.body)
+    end
+
     private
 
       def prepare_message(to, message)
@@ -64,6 +77,18 @@ module Facebook
             "text": message
           }
         }.to_json
+      end
+
+      def prepare_attachment(to, file_path)
+        content_type = MIME::Types.type_for(file_path).first.content_type
+        {
+          "recipient": JSON.dump(id:  to),
+          "message": JSON.dump(attachment:  {
+            "type": "image",
+            "payload": {}
+          }),
+          "filedata": Faraday::UploadIO.new(file_path, content_type)
+        }
       end
 
       def send_message_url

@@ -33,6 +33,7 @@ gem 'kaminari', '~> 1.1', '>= 1.1.1'
 # Img upload
 gem 'cloudinary', require: false
 gem 'activestorage-cloudinary-service'
+gem 'mime-types', '~> 3.1'
 
 gem "rack-reverse-proxy", require: "rack/reverse_proxy"
 

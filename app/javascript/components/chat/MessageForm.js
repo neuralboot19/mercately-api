@@ -24,6 +24,25 @@ class MessageForm extends Component {
     });
   }
 
+  handleImgSubmit = (e) => {
+    var el = e.target;
+    var file = el.files[0];
+    if(!file.type.includes('image/')) {
+      alert('Error: El archivo debe ser una imagen');
+      return;
+    }
+
+    // Max 8 Mb allowed
+    if(file.size > 8*1024*1024) {
+      alert('Error: Maximo permitido 8MB');
+      return;
+    }
+
+    var data = new FormData();
+    data.append('file_data', file);
+    this.props.handleSubmitImg(data);
+  }
+
   onKeyPress = (e) => {
     if(e.which === 13) {
       e.preventDefault();
@@ -34,7 +53,9 @@ class MessageForm extends Component {
   render() {
     return (
       <div>
-        <textarea className='input' name="messageText" placeholder="Mensaje" value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+        <textarea className='input' name="messageText" placeholder="Mensaje" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+        <input id="attach" className="d-none" type="file" name="messageImg" accept="image/*" onChange={(e) => this.handleImgSubmit(e)}/>
+        <i className="fas fa-camera c-secondary fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
       </div>
     )
   }

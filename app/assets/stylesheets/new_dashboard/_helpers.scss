@@ -303,6 +303,10 @@ label:hover, a:hover {
   }
 }
 
+.cursor-pointer:hover {
+  cursor: pointer;
+}
+
 @media screen and (min-width: 1680px) {
   .hide-on-2k {
     display: none;
