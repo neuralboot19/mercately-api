@@ -318,6 +318,7 @@
   background-color: #FFF;
   padding: 8px;
   border-radius: 6px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 
   &__module {
     // padding-bottom: 24px;
@@ -771,5 +772,24 @@
     position: relative;
     max-height: 80vh;
     max-width: 70vw;
+  }
+}
+
+.text-input {
+  border-top: 1px solid #e7e7e7;
+  display: flex;
+  align-items: center;
+
+  textarea {
+    width: 95%;
+    border: 0;
+    padding: 8px;
+  }
+
+  .fas {
+    color: #e7e7e7;
+    &:hover {
+      color: $secondary-color;
+    }
   }
 }

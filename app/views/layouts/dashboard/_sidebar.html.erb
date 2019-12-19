@@ -106,10 +106,12 @@
                   <b class="item__cookie item__cookie_question"><%= quantity_unread_questions %></b>
                 <% end %>
               </div>
-              <%= link_to retailers_chats_path(current_retailer), class: 'c-white no-style' do %>
-                Chats
-                <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
-              <% end %>
+              <div>
+                <%= link_to retailers_chats_path(current_retailer), class: 'c-white no-style' do %>
+                  Chats
+                  <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
+                <% end %>
+              </div>
             </div>
             <b class="item__cookie item__cookie_total"><%= total_unread %></b>
           </div>

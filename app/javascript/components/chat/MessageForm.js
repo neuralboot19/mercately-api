@@ -52,10 +52,10 @@ class MessageForm extends Component {
 
   render() {
     return (
-      <div>
-        <textarea className='input' name="messageText" placeholder="Mensaje" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+      <div className="text-input">
+        <textarea name="messageText" placeholder="Mensaje" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
         <input id="attach" className="d-none" type="file" name="messageImg" accept="image/*" onChange={(e) => this.handleImgSubmit(e)}/>
-        <i className="fas fa-camera c-secondary fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
+        <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
       </div>
     )
   }
