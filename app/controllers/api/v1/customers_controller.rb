@@ -22,7 +22,7 @@ class Api::V1::CustomersController < ApplicationController
   def create_message
     message = FacebookMessage.new(
       customer: @customer,
-      uid: current_retailer_user.uid,
+      sender_uid: current_retailer_user.uid,
       id_client: @customer.psid,
       facebook_retailer: current_retailer.facebook_retailer,
       text: params[:message],
@@ -30,14 +30,6 @@ class Api::V1::CustomersController < ApplicationController
       sent_by_retailer: true
     )
     if message.save
-      serialized_data = ActiveModelSerializers::Adapter::Json.new(
-        CustomerSerializer.new(@customer)
-      ).serializable_hash
-      CustomersChannel.broadcast_to current_retailer, serialized_data
-      serialized_data = ActiveModelSerializers::Adapter::Json.new(
-        FacebookMessageSerializer.new(message)
-      ).serializable_hash
-      FacebookMessagesChannel.broadcast_to @customer, serialized_data
       render status: 200, json: { message: message }
     end
   end
@@ -53,14 +45,6 @@ class Api::V1::CustomersController < ApplicationController
       sent_by_retailer: true
     )
     if message.save
-      serialized_data = ActiveModelSerializers::Adapter::Json.new(
-        CustomerSerializer.new(@customer)
-      ).serializable_hash
-      CustomersChannel.broadcast_to current_retailer, serialized_data
-      serialized_data = ActiveModelSerializers::Adapter::Json.new(
-        FacebookMessageSerializer.new(message)
-      ).serializable_hash
-      FacebookMessagesChannel.broadcast_to @customer, serialized_data
       render status: 200, json: { message: message }
     end
   end

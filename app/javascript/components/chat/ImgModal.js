@@ -9,7 +9,7 @@ class ImgModal extends Component {
 
   render() {
     return (
-      <div class="img_modal">
+      <div className="img_modal">
         <div className="img_modal__overlay" onClick={(e) => this.props.toggleImgModal(e)}>
         </div>
         <img src={this.props.url} />

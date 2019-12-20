@@ -39,13 +39,31 @@ module Facebook
 
     def save_delivered(response, psid)
       customer = Customer.find_by(psid: psid)
-      FacebookMessage.create_with(
+      attachment_url = response['attachments']&.[]('data')&.[](0)&.[]('image_data')&.[]('url')
+      file_type = response['attachments']&.[]('data')&.[](0)&.[]('mime_type')
+      message = FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         sender_uid: @facebook_retailer.uid,
         id_client: psid,
+        file_type: file_type,
+        url: attachment_url,
         text: response['message']
       ).find_or_create_by(mid: response['id'])
+      if attachment_url && message.url.nil?
+        message.update(
+          url: attachment_url,
+          file_type: file_type
+        )
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          FacebookMessageSerializer.new(message)
+        ).serializable_hash
+        FacebookMessagesChannel.broadcast_to customer, serialized_data
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          CustomerSerializer.new(customer)
+        ).serializable_hash
+        CustomersChannel.broadcast_to @facebook_retailer.retailer, serialized_data
+      end
     end
 
     def send_message(to, message)
