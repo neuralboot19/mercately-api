@@ -641,6 +641,8 @@
   }
 
   &__selector {
+    border-right: 1px solid #e7e7e7;
+    padding: 0px 10px;
     height: 80vh;
     overflow-y: auto;
   }
