@@ -40,7 +40,7 @@ class MessageForm extends Component {
 
     var data = new FormData();
     data.append('file_data', file);
-    this.props.handleSubmitImg(data);
+    this.props.handleSubmitImg(el, data);
   }
 
   onKeyPress = (e) => {

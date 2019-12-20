@@ -635,13 +635,12 @@
 
 .chat {
   &__box {
-    height: 68vh;
+    height: 70vh;
     overflow-y: auto;
     background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url("https://image.shutterstock.com/image-vector/seamless-pattern-social-media-networking-260nw-1039923571.jpg");
   }
 
   &__selector {
-    border-right: 1px solid #e7e7e7;
     padding: 0px 10px;
     height: 80vh;
     overflow-y: auto;
@@ -708,6 +707,7 @@
 
 /* Customer */
 .chat_list_holder{
+  border-right: 1px solid #e7e7e7;
   background-color: #FFF;
   padding: 12px 5px 0;
 }

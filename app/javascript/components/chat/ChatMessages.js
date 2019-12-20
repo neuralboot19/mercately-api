@@ -44,8 +44,11 @@ class ChatMessages extends Component {
     }, 100);
   }
 
-  handleSubmitImg = (file_data) => {
-    this.props.sendImg(this.props.currentCustomer, file_data, csrfToken);
+  handleSubmitImg = (el, file_data) => {
+    var url = URL.createObjectURL(el.files[0]);
+    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true}), new_message: true}, () => {
+      this.props.sendImg(this.props.currentCustomer, file_data, csrfToken);
+    });
     setTimeout(() => {
       this.scrollToBottom();
     }, 100);
@@ -70,7 +73,6 @@ class ChatMessages extends Component {
       { channel: 'FacebookMessagesChannel', id: currentCustomer },
       {
         received: data => {
-          console.log('FacebookMessagesChannel', data);
           if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id){
             this.setState({
               messages: this.state.messages.concat(data.facebook_message),
