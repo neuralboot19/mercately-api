@@ -38,20 +38,16 @@ class ChatMessages extends Component {
     let text = { message: message }
     this.setState({ messages: this.state.messages.concat({text: message, sent_by_retailer: true}), new_message: true}, () => {
       this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
-    });
-    setTimeout(() => {
       this.scrollToBottom();
-    }, 100);
+    });
   }
 
   handleSubmitImg = (el, file_data) => {
     var url = URL.createObjectURL(el.files[0]);
     this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true}), new_message: true}, () => {
       this.props.sendImg(this.props.currentCustomer, file_data, csrfToken);
-    });
-    setTimeout(() => {
       this.scrollToBottom();
-    }, 100);
+    });
   }
 
   scrollToBottom = () => {
@@ -73,7 +69,7 @@ class ChatMessages extends Component {
       { channel: 'FacebookMessagesChannel', id: currentCustomer },
       {
         received: data => {
-          if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id){
+          if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id) {
             this.setState({
               messages: this.state.messages.concat(data.facebook_message),
               new_message: false,
@@ -95,7 +91,6 @@ class ChatMessages extends Component {
 
   componentWillReceiveProps(newProps){
     if (newProps.messages != this.props.messages) {
-      this.scrollToBottom();
       this.setState({
         new_message: false,
         messages: newProps.messages.concat(this.state.messages),
@@ -117,6 +112,11 @@ class ChatMessages extends Component {
 
   componentDidUpdate() {
     let id = this.props.currentCustomer;
+    if (this.state.new_message) {
+      this.setState({
+        new_message: false,
+      })
+    }
 
     if (currentCustomer !== id) {
       currentCustomer = id;
@@ -142,9 +142,12 @@ class ChatMessages extends Component {
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
-                {message.text != null ? (<p>{message.text}</p>) :
-                (<img src={message.url} className="msg__img"
-                onClick={(e) => this.toggleImgModal(e)}/>)}
+                {message.text != null ?
+                    (<p>{message.text}</p>) :
+                    (<div className="img-holder">
+                      <img src={message.url} className="msg__img"
+                        onClick={(e) => this.toggleImgModal(e)}/>
+                    </div>)}
               </div>
             </div>
           ))}

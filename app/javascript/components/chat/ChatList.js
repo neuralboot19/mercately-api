@@ -37,7 +37,11 @@ class ChatList extends Component {
   updateCustomerList = (customer) => {
     var customers = this.props.customers;
     var index = this.findCustomerInArray(customers, customer.id);
-    var customerList = this.removeFromArray(customers, index);
+    if (index !== -1) {
+      var customerList = this.removeFromArray(customers, index);
+    } else {
+      var customerList = customers;
+    }
     customerList.unshift(customer);
     this.setState({
       customers: customerList

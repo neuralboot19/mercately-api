@@ -637,7 +637,8 @@
   &__box {
     height: 70vh;
     overflow-y: auto;
-    background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url("https://image.shutterstock.com/image-vector/seamless-pattern-social-media-networking-260nw-1039923571.jpg");
+    background: linear-gradient(rgba(255,255,255,.85), rgba(255,255,255,.85)), url(image_path('dashboard/chat_background.jpg'));
+    background-size: 225px;
   }
 
   &__selector {
@@ -746,8 +747,17 @@
   color: #FFF;
 }
 
-.msg__img {
-  max-width: 200px;
+#bottomRef {
+  height: 15px;
+}
+
+.img-holder {
+  min-height: 200px;
+
+  .msg__img {
+    max-height: 200px;
+    max-width: 200px;
+  }
 }
 
 .img_modal {
