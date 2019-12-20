@@ -64,16 +64,27 @@ class ChatMessages extends Component {
     }
   }
 
+  findIndexInArray = (arr, id) => (
+    arr.findIndex((el) => (
+      el.id == id
+    ))
+  )
+
   handleChannelSubscription = () => {
     App.cable.subscriptions.create(
       { channel: 'FacebookMessagesChannel', id: currentCustomer },
       {
         received: data => {
-          if (!this.state.new_message && currentCustomer == data.facebook_message.customer_id) {
-            this.setState({
-              messages: this.state.messages.concat(data.facebook_message),
-              new_message: false,
-            })
+          var facebook_message = data.facebook_message;
+          if (currentCustomer == facebook_message.customer_id) {
+            if (facebook_message.url.trim() === '') {
+              if (!this.state.new_message) {
+                this.setState({
+                  messages: this.state.messages.concat(facebook_message),
+                  new_message: false,
+                })
+              }
+            }
           }
         }
       }
@@ -147,6 +158,9 @@ class ChatMessages extends Component {
                     (<div className="img-holder">
                       <img src={message.url} className="msg__img"
                         onClick={(e) => this.toggleImgModal(e)}/>
+                      {message.is_loading && (
+                        <div class="lds-dual-ring"></div>
+                      )}
                     </div>)}
               </div>
             </div>
