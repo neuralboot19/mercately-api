@@ -28,7 +28,7 @@
         <i class="item__icon fas fa-mail-bulk"></i>
         <label for="item--inbox" class="item__name">Inbox</label>
         <i class="item__arrow right"></i>
-        <b id="item__cookie_total" class="item__cookie"><%= total_unread %></b>
+        <b id="item__cookie_total" class="item__cookie item__cookie_total"><%= total_unread %></b>
         <ul class="submenu no-style">
           <li class="submenu__item">
             <%= link_to 'Preguntas', retailers_questions_path(current_retailer, answered: false), class: 'item__name no-style' %>
@@ -120,7 +120,7 @@
           <div class="tooltip">
             <%= link_to raw('<i class="item__icon fab fa-facebook-messenger"></i>'), retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
             <div class="tooltiptext">Messenger</div>
-            <b class="item__cookie item__cookie_message"><%= quantity_unread_messages %></b>
+            <b class="item__cookie item__cookie_facebook_messages"><%= facebook_unread_messages %></b>
           </div>
         </li>
         <li class="menu__item">

@@ -23,7 +23,6 @@ export const fetchCustomers = (page = 1) => {
 };
 
 export const fetchCustomer = (id) => {
-  console.log('aqui aqui', id)
   const endpoint = `/api/v1/customers/${id}`;
   return dispatch =>
     fetch(endpoint, {

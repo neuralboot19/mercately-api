@@ -8,6 +8,7 @@ import ImgModal from './ImgModal';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
+var channelSubscription;
 
 class ChatMessages extends Component {
   constructor(props) {
@@ -70,14 +71,14 @@ class ChatMessages extends Component {
     ))
   )
 
-  handleChannelSubscription = () => {
+  handleChannelSubscription = () => (
     App.cable.subscriptions.create(
       { channel: 'FacebookMessagesChannel', id: currentCustomer },
       {
         received: data => {
           var facebook_message = data.facebook_message;
           if (currentCustomer == facebook_message.customer_id) {
-            if (facebook_message.url.trim() === '') {
+            if (!facebook_message.url) {
               if (!this.state.new_message) {
                 this.setState({
                   messages: this.state.messages.concat(facebook_message),
@@ -88,8 +89,8 @@ class ChatMessages extends Component {
           }
         }
       }
-    );
-  }
+    )
+  )
 
   toggleImgModal = (e) => {
     var el = e.target;
@@ -115,7 +116,7 @@ class ChatMessages extends Component {
     currentCustomer = id;
 
     this.setState({ messages: [],  page: 1, scrolable: true}, () => {
-      this.handleChannelSubscription();
+      channelSubscription = this.handleChannelSubscription();
       this.props.fetchMessages(id);
       this.scrollToBottom();
     });
@@ -133,7 +134,8 @@ class ChatMessages extends Component {
       currentCustomer = id;
       this.scrollToBottom();
       this.setState({ messages: [],  page: 1, scrolable: true}, () => {
-        this.handleChannelSubscription();
+        channelSubscription.unsubscribe();
+        channelSubscription = this.handleChannelSubscription();
         this.props.fetchMessages(id);
       });
     }

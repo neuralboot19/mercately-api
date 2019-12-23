@@ -74,7 +74,11 @@ class ChatList extends Component {
       { channel: 'CustomersChannel' },
       {
         received: data => {
-          this.updateCustomerList(data.customer);
+          var customer = data.customer;
+          if (customer.id != this.props.currentCustomer) {
+            customer["unread_message?"] = true;
+          }
+          this.updateCustomerList(customer);
         }
       }
     );
