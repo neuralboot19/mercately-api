@@ -1,7 +1,7 @@
 class Api::V1::CustomersController < ApplicationController
   include CurrentRetailer
   before_action :authenticate_retailer_user!
-  before_action :set_customer, except: :index
+  before_action :set_customer, except: [:index, :set_message_as_readed]
 
   def index
     @customers = current_retailer.customers.facebook_customers.active
@@ -16,8 +16,14 @@ class Api::V1::CustomersController < ApplicationController
 
   def messages
     @messages = @customer.facebook_messages
-    @messages.update_all(date_read: Time.now)
+    @messages.unreaded.update_all(date_read: Time.now)
     @messages = @messages.order(created_at: :desc).page(params[:page])
+    CounterMessagingChannel.broadcast_to(
+      @customer.retailer.retailer_user,
+      identifier:'.item__cookie_facebook_messages',
+      action: 'add',
+      total: @customer.retailer.facebook_unread_messages.size
+    )
     render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
   end
 
@@ -49,6 +55,12 @@ class Api::V1::CustomersController < ApplicationController
     if message.save
       render status: 200, json: { message: message }
     end
+  end
+
+  def set_message_as_readed
+    @message = FacebookMessage.find(params[:id])
+    @message.update_column(:date_read, Time.now)
+    render status: 200, json: { message: @message }
   end
 
   private

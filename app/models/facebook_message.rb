@@ -8,6 +8,8 @@ class FacebookMessage < ApplicationRecord
   after_create :send_facebook_message
   after_create :broadcast_to_counter_channel
 
+  scope :unreaded, -> { where(date_read: nil) }
+
   private
 
     def sent_by_retailer?

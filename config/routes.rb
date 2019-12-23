@@ -78,6 +78,7 @@ Rails.application.routes.draw do
       get 'customers/:id/messages', to: 'customers#messages', as: :customer_messages
       post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
       post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img
+      post 'messages/:id/readed', to: 'customers#set_message_as_readed', as: :set_message_as_readed
     end
   end
 end
