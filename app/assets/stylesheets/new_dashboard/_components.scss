@@ -586,6 +586,7 @@
   border: 1px solid #555;
   border-radius: 4px;
   font-size: 16px;
+  max-width: unset;
 
   /* Position the tooltip text */
   position: absolute;
@@ -832,3 +833,45 @@
     transform: rotate(360deg);
   }
 }
+
+/* Editable content */
+
+.editable_field {
+  display: inline-block;
+  min-width: 100px;
+}
+
+.editable_field:hover {
+    cursor: pointer;
+}
+
+.editable_email {
+  color: #d93025 !important
+}
+
+.editable_phone {
+  color: #45ee56 !important;
+}
+
+.editable_map{
+  color: #feda3a !important;
+}
+
+
+.editable_card_id{
+  color: #3a71f1 !important;
+}
+
+
+
+.inline-block {
+  display: inline-block
+}
+
+
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block;
+  color: #aaa;
+}
+

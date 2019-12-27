@@ -1,8 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchCustomer } from "../../actions/actions";
+import { fetchCustomer, updateCustomer } from "../../actions/actions";
+import EditableField from './shared/EditableField'
+import SelectableField from './shared/SelectableField'
+
 
 var is_updated = false;
+const csrfToken = document.querySelector('[name=csrf-token]').content
+
 
 class CustomerDetails extends Component {
   constructor(props) {
@@ -20,23 +25,59 @@ class CustomerDetails extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.customerDetails.id !== this.props.customerDetails.id && !is_updated){
-      this.setState({ customer: this.props.customerDetails}, () => {
-        is_updated = true
-        this.props.fetchCustomer(this.props.customerDetails.id)
-      });      
+      is_updated = true
+      this.props.fetchCustomer(this.props.customerDetails.id)
     } else {
-      is_updated = false
+      if (this.state.customer.id !== this.props.customer.id){
+        this.setState({ customer: this.props.customer})
+      } else {
+        is_updated = false
+      }
     }
   }
 
+  handleInputChange = (evt, name) => {
+    let current_customer = this.state.customer
+    current_customer[name] = evt.target.value
+    this.setState({customer: current_customer});
+  }
+
+  handlesubmit = () => {
+    let customer = this.state.customer
+    this.props.updateCustomer(customer.id, this.getCustomerInfo() , csrfToken)
+  }
+
+  handleSelectChange = (option) => {
+    let current_customer = this.state.customer
+    current_customer['id_type'] = option.value
+    this.setState({customer: current_customer}, () => {
+      this.handlesubmit();
+    })
+  }
+
+  getCustomerInfo = () => {
+    let customer = this.state.customer
+    return {
+      customer: {
+        phone: customer.phone,
+        email: customer.email, 
+        id_type: customer.id_type,
+        id_number: customer.id_number,
+        address: customer.address,
+        city: customer.city,
+        state: customer.state
+      }
+    };
+  }
+
   render() {
-    let customer = this.props.customer
+    let customer = this.state.customer
     return (
       <div className="customer_sidebar">
         <div className="customer_box">
           <p>
             {customer.first_name} {customer.last_name}
-            <a href={window.location.href.replace('facebook_chats', `customers/${customer.id}/edit`)} target="_blank">
+            <a href={window.location.href.replace('facebook_chats', `customers/${customer.web_id}/edit`)} target="_blank">
               <i className="fs-18 mt-4 mr-4 f-right fas fa-external-link-alt"></i>
             </a>
           </p>
@@ -46,27 +87,99 @@ class CustomerDetails extends Component {
             <span>Detalles</span>
           </div>
           <div>
-            <p className="label">Teléfono:</p>
-            <i className="fs-18 mt-4 mr-4 fab fa-whatsapp-square"><span className="tag">{customer.phone}</span></i>
+            <div>
+              <i className="fs-18 mt-4 mr-4 fab fa-whatsapp-square editable_phone"/>
+              <p className="label inline-block">Teléfono:</p>
+            </div>
+              
+
+              { Object.keys(this.state.customer).length != 0   && (
+               <EditableField 
+                 handleInputChange={this.handleInputChange}
+                 content={this.state.customer.phone}
+                 handlesubmit={this.handlesubmit}
+                 targetName='phone'
+                 placeholder="Número"
+               />
+             )}
+
+
           </div>
           <div>
-            <p className="label">Email:</p>
-            <i className="fs-18 mt-4 mr-4 fas fa-envelope-square"><span className="tag">{customer.email}</span></i>
+
+            <div>
+              <i className="fs-18 mt-4 mr-4 fas fa-envelope-square editable_email" />
+              <p className="label inline-block">Email:</p>
+            </div>
+
+            
+
+            { Object.keys(this.state.customer).length != 0   && (
+               <EditableField 
+                 handleInputChange={this.handleInputChange}
+                 content={this.state.customer.email}
+                 handlesubmit={this.handlesubmit}
+                 targetName='email'
+                 placeholder="Email"
+               />
+             )}
           </div>
           <div>
-            <p className="label">Identificación:</p>
-            <i className="fs-18 mt-4 mr-4 fas fa-address-card"><span className="tag">{customer.id_number}</span></i>
+            
+            <div>
+              <i className="fs-18 mt-4 mr-4 fas fa-address-card editable_card_id" />
+              <p className="label inline-block">Identificación:</p>
+            </div>
+
+            <SelectableField 
+              selected={customer.id_type}
+              handleSelectChange={this.handleSelectChange}
+            />
+
+            <EditableField 
+              handleInputChange={this.handleInputChange}
+              content={this.state.customer.id_number}
+              handlesubmit={this.handlesubmit}
+              targetName='id_number'
+              placeholder="Identificación"
+            />
+
           </div>
           <div>
-            <p className="label">Dirección:</p>
-            <i className="fs-18 mt-4 mr-4 fas fa-map-marked-alt">
-              <span className="tag">
-                {customer.address == 0 || customer.address == null ? '' : `${customer.address}, `}
-                {customer.city == 0 || customer.city == null ? '' : `${customer.city}, `}
-                {customer.state}&nbsp;
-                {customer.zip_code}
-              </span>
-            </i>
+
+            <div>
+              <i className="fs-18 mt-4 mr-4 fas fa-map-marked-alt editable_map" />
+              <p className="label inline-block">Dirección:</p>
+            </div>
+
+            { Object.keys(this.state.customer).length != 0   && (
+              <div>
+                <EditableField 
+                  handleInputChange={this.handleInputChange}
+                  content={this.state.customer.address}
+                  handlesubmit={this.handlesubmit}
+                  targetName='address'
+                  placeholder="Dirección"
+                />
+                <br />
+                <EditableField 
+                  handleInputChange={this.handleInputChange}
+                  content={this.state.customer.city}
+                  handlesubmit={this.handlesubmit}
+                  targetName='city'
+                  placeholder="Ciudad"
+                />
+                <br />
+                <EditableField 
+                  handleInputChange={this.handleInputChange}
+                  content={this.state.customer.state}
+                  handlesubmit={this.handlesubmit}
+                  targetName='state'
+                  placeholder="Provincia/Estado"
+                />
+               </div>
+             )}
+
           </div>
         </div>
       </div>
@@ -86,6 +199,9 @@ function mapDispatch(dispatch) {
   return {
     fetchCustomer: (id) => {
       dispatch(fetchCustomer(id));
+    },
+    updateCustomer: (id, body, token) => {
+      dispatch(updateCustomer(id, body, token));
     }
   };
 }

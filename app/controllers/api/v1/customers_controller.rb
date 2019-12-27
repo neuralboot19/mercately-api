@@ -14,6 +14,14 @@ class Api::V1::CustomersController < ApplicationController
     render status: 200, json: { customer: @customer }
   end
 
+  def update
+    if @customer.update(customer_params)
+      render status: 200, json: { customer: @customer }
+    else
+      render status: 400, json: { error: 'error updating customer' }
+    end
+  end
+
   def messages
     @messages = @customer.facebook_messages
     @messages.unreaded.update_all(date_read: Time.now)
@@ -72,5 +80,21 @@ class Api::V1::CustomersController < ApplicationController
 
     def message_params
       params.require(:facebook_message).permit(:text)
+    end
+
+    def customer_params
+      params.require(:customer).permit(
+        :first_name,
+        :last_name,
+        :email,
+        :phone,
+        :id_type,
+        :id_number,
+        :address,
+        :city,
+        :state,
+        :zip_code,
+        :country_id
+      )
     end
 end
