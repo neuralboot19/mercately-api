@@ -100,9 +100,9 @@ module Facebook
       def prepare_attachment(to, file_path)
         content_type = MIME::Types.type_for(file_path).first.content_type
         {
-          "recipient": JSON.dump(id:  to),
-          "message": JSON.dump(attachment:  {
-            "type": "image",
+          "recipient": JSON.dump(id: to),
+          "message": JSON.dump(attachment: {
+            "type": 'image',
             "payload": {}
           }),
           "filedata": Faraday::UploadIO.new(file_path, content_type)

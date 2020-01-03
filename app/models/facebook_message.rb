@@ -30,7 +30,7 @@ class FacebookMessage < ApplicationRecord
     def broadcast_to_counter_channel
       CounterMessagingChannel.broadcast_to(
         facebook_retailer.retailer.retailer_user,
-        identifier:'.item__cookie_facebook_messages',
+        identifier: '.item__cookie_facebook_messages',
         action: 'add',
         total: facebook_retailer.retailer.facebook_unread_messages.size
       )

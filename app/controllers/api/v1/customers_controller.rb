@@ -28,7 +28,7 @@ class Api::V1::CustomersController < ApplicationController
     @messages = @messages.order(created_at: :desc).page(params[:page])
     CounterMessagingChannel.broadcast_to(
       @customer.retailer.retailer_user,
-      identifier:'.item__cookie_facebook_messages',
+      identifier: '.item__cookie_facebook_messages',
       action: 'add',
       total: @customer.retailer.facebook_unread_messages.size
     )
@@ -45,9 +45,7 @@ class Api::V1::CustomersController < ApplicationController
       sent_from_mercately: true,
       sent_by_retailer: true
     )
-    if message.save
-      render status: 200, json: { message: message }
-    end
+    render status: 200, json: { message: message } if message.save
   end
 
   def send_img
@@ -60,9 +58,7 @@ class Api::V1::CustomersController < ApplicationController
       sent_from_mercately: true,
       sent_by_retailer: true
     )
-    if message.save
-      render status: 200, json: { message: message }
-    end
+    render status: 200, json: { message: message } if message.save
   end
 
   def set_message_as_readed
