@@ -1,21 +1,19 @@
 ActiveAdmin.register Customer do
-  permit_params :first_name,
-                :last_name,
-                :email,
+  permit_params :email,
                 :id_type,
                 :id_number,
                 :address,
                 :city,
                 :state,
                 :zip_code,
-                :country_id
+                :country_id,
+                :full_name
 
   index do
     selectable_column
     id_column
     column :email
-    column :first_name
-    column :last_name
+    column :full_name
     column :meli_nickname
     column :retailer
     actions
@@ -110,9 +108,8 @@ ActiveAdmin.register Customer do
 
   form do |f|
     f.inputs do
+      f.input :full_name
       f.input :email
-      f.input :first_name
-      f.input :last_name
       f.input :id_type
       f.input :id_number
       f.input :address
