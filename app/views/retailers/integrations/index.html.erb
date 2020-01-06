@@ -14,10 +14,40 @@
     <%= render 'partials/incomplete_retailer' %>
 
     <div class="container-fluid">
-      <div class="row my-perc-10">
-        <div class="col-xs-12 col-md-12 mt-15">
+      <div class="row mb-30">
+        <div class="col-xs-12 col-md-6 mt-15">
           <div class="col-xs-12 pt-20 t-center">
-            <%= image_tag 'mercado-libre-logo-5.png', class: 'logo-integration-platform' %>
+            <div class="logo-integration-platform" id="messenger_logo"></div>
+            <div class="integration__desc">
+              Que no se te escape ningun cliente! Integra
+              Messenger a Mercately y responde todos los
+              mensajes desde un solo lugar. Podras personalizar
+              plantillas de respuesta rapida generar ordenes de
+              venta, asignar productos por cliente y mas.
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-12 btn-box">
+            <% if current_retailer.facebook_retailer %>
+              <p class="c-green fs-18 fs-sm-and-down-12">Conectado con Messenger Exitosamente</p>
+            <% else %>
+              <%= link_to 'Conectar con Messenger', retailer_user_facebook_omniauth_authorize_path, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-xs-12 col-md-6 mt-15">
+          <div class="col-xs-12 pt-20 t-center">
+            <div class="logo-integration-platform" id="ml_logo"></div>
+            <div class="integration__desc">
+              Conecta tu tienda de Mercado Libre con Mercately
+              y accede a las siguientes funcionalidades:<br/>
+              <ul class="t-justify mx-12">
+                <li>Respuesta de comentarios</li>
+                <li>Respuesta de chats</li>
+                <li>Publicacion de productos</li>
+                <li>Ordenes de venta</li>
+                <li>Registro de clientes</li>
+              </ul>
+            </div>
           </div>
           <div class="col-xs-12 col-md-12 btn-box">
             <% if current_retailer.meli_retailer %>

@@ -130,6 +130,16 @@ label:hover, a:hover {
   display: none;
 }
 
+@media screen and (min-width: 1024px) {
+  .d-md-none {
+    display: none;
+  }
+
+  .d-md-block {
+    display: block;
+  }
+}
+
 .d-none-important {
   display: none !important;
 }
@@ -279,6 +289,22 @@ label:hover, a:hover {
 
 .o-hidden {
   overflow-y: hidden;
+}
+
+.border {
+  border: 1px solid;
+
+  &--secondary {
+    border-color: $secondary-color;
+  }
+
+  &--transparent {
+    border-color: transparent;
+  }
+}
+
+.cursor-pointer:hover {
+  cursor: pointer;
 }
 
 @media screen and (min-width: 1680px) {
