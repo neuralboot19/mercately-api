@@ -23,7 +23,7 @@
                 </div>
                 <div class="my-16">
                   <%= retailer.label :retailer_number, 'Número de Teléfono (opcional)' %>
-                  <%= retailer.text_field :retailer_number, class: 'input' %>
+                  <%= retailer.text_field :retailer_number, class: 'input', onkeypress: 'onlyNumber(event)' %>
                 </div>
               <% end %>
             </fieldset>

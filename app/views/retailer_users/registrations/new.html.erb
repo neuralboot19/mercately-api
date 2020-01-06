@@ -22,7 +22,7 @@
 
           <div class="group">
             <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
-              <%= retailer.text_field :retailer_number, autocomplete: "retailer_phone", placeholder: '', class: 'input-standarization' %>
+              <%= retailer.text_field :retailer_number, autocomplete: "retailer_phone", placeholder: '', class: 'input-standarization', onkeypress: 'onlyNumber(event)' %>
               <%= retailer.label :retailer_number, 'Número de Teléfono (opcional)' %>
               <span class="bar"></span>
             <% end %>
