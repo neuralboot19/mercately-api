@@ -3,8 +3,8 @@ Rails.application.routes.draw do
 
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
-    sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords', invitations: 'retailer_users/invitations' }
-
+    sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords',
+    omniauth_callbacks: 'retailer_users/omniauth_callbacks', invitations: 'retailer_users/invitations' }
   as :retailer_user do
     get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info
     get 'retailers/:slug/team', to: 'retailers/settings#team', as: :edit_team
@@ -39,6 +39,9 @@ Rails.application.routes.draw do
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
+      get 'facebook_chats', to: 'messages#facebook_chats', as: :facebook_chats
+      get 'facebook_chat/:id', to: 'messages#facebook_chat', as: :facebook_chat
+      post 'facebook_chats/:id', to: 'messages#send_facebook_message', as: :send_facebook_message
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question', as: :question
@@ -47,6 +50,8 @@ Rails.application.routes.draw do
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
+    get 'messenger_callbacks', to: 'integrations#messenger_callbacks'
+    post 'messenger_callbacks', to: 'integrations#messenger_callbacks'
     get 'products/:id/product_with_variations', to: 'products#product_with_variations'
     get 'products/:id/price_quantity', to: 'products#price_quantity'
     get 'customers/:id', to: 'customers#customer_data'
@@ -64,4 +69,16 @@ Rails.application.routes.draw do
   # Dynamic error pages
   get "/404", to: "errors#not_found"
   get "/500", to: "errors#internal_error"
+
+  # REACT
+  namespace :api do
+    namespace :v1 do
+      resources :customers, only: [:index, :show, :update]
+
+      get 'customers/:id/messages', to: 'customers#messages', as: :customer_messages
+      post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
+      post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img
+      post 'messages/:id/readed', to: 'customers#set_message_as_readed', as: :set_message_as_readed
+    end
+  end
 end

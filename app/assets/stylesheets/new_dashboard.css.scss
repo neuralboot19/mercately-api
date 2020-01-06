@@ -127,9 +127,103 @@
   }
 }
 
+// Sidebar PC v3
+#sidebar--pc {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 100vh;
+  background-color: #FFF;
+  z-index: 100;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+
+  &__logo {
+    padding: 40px;
+    text-align: center;
+  }
+
+  .item {
+    &__icon {
+      color: $secondary-color;
+    }
+
+    &__checkbox { display: none; }
+
+    &__cookie {
+      float: right;
+      width: 22px;
+      height: 22px;
+      background-color: #F00;
+      color: #FFF;
+      border-radius: 7px;
+      text-align: center;
+      font-size: 14px;
+      margin-right: 8px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  }
+
+  .tooltiptext .item__cookie {
+    position: static;
+  }
+
+  .menu {
+    padding: 0;
+
+    &__item {
+      padding: 2px;
+      text-align: center;
+      font-size: 30px;
+      padding: 15px 0;
+
+      &:hover, &.menu__item--selected {
+        background-color: $secondary-color;
+        i {
+          color: #FFF;
+        }
+      }
+    }
+
+    a {
+      color: #FFF;
+
+      &:hover {
+        color: #aaa;
+      }
+    }
+  }
+
+  .submenu {
+    display: none;
+    max-height: 0;
+    // background-color: #eee;
+    padding: 11px;
+    transition: all .2s ease-in-out;
+    &__item {
+      margin: 12px;
+    }
+  }
+
+  .item__checkbox:checked {
+    & ~ .item__arrow.right {
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+    }
+    & ~ .submenu {
+      display: block;
+      max-height: 500px;
+    }
+  }
+}
+
 // Content
 #content {
-  margin-left: 300px;
+  margin-left: 80px;
   margin-bottom: 24px;
 
   h2 {
@@ -455,8 +549,37 @@
 }
 
 .logo-integration-platform {
-  width: 350px;
-  height: 98px;
+  width: 150px;
+  height: 150px;
+  padding: 2px;
+  border: 7px solid #1FABE2;
+  border-radius: 100%;
+  background-repeat: no-repeat;
+  margin: auto;
+}
+
+.integration__desc {
+  color: #686867;
+  line-height: 38px;
+  text-align: center;
+  min-height: 307px;
+  width: 80%;
+  margin-top: 21px;
+  margin-bottom: 21px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#messenger_logo {
+  background-image: url(image_path('dashboard/f_messenger.png'));
+  background-position: center center;
+  background-size: 120px 120px;
+}
+
+#ml_logo {
+  background-image: url(image_path('mercado-libre-logo-5.png'));
+  background-position: center center;
+  background-size: 120px;
 }
 
 .cookie__box {
@@ -602,6 +725,12 @@
   margin-left: -10px !important;
 }
 
+#chat_details {
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: 12px;
+}
+
 .dash-products-clients-container {
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.12);
   border-radius: 8px 8px 0px 0px;
@@ -692,10 +821,6 @@
     .menu {
       padding-left: 22px;
     }
-  }
-
-  #content {
-    margin-left: 250px;
   }
 
   .product {
