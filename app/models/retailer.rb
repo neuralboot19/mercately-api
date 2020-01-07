@@ -1,5 +1,4 @@
 class Retailer < ApplicationRecord
-  include RetailerModelConcern
   has_one :meli_retailer, dependent: :destroy
   has_one :retailer_user, dependent: :destroy
   has_one :facebook_retailer, dependent: :destroy
