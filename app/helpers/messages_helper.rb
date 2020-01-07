@@ -8,7 +8,7 @@ module MessagesHelper
   end
 
   def facebook_unread_messages
-    current_retailer.facebook_unread_messages.size
+    current_retailer.facebook_retailer&.facebook_unread_messages&.size
   end
 
   def quantity_unread_questions
