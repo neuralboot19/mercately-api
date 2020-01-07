@@ -44,9 +44,9 @@
               <%# <b class="item__cookie"><%= quantity_unread_messages ></b> %>
             </li>
           <% end %>
-          <li class="submenu__item">
+          <!--<li class="submenu__item">
             <%= link_to 'Plantillas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
-          </li>
+          </li>-->
         </ul>
       </li>
       <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_integrations_path(current_retailer)) %>">
@@ -123,12 +123,12 @@
             <b class="item__cookie item__cookie_facebook_messages"><%= facebook_unread_messages %></b>
           </div>
         </li>
-        <li class="menu__item">
+        <!--<li class="menu__item">
           <div class="tooltip">
             <%= link_to raw('<i class="item__icon fas fa-file-alt"></i>'), retailers_templates_path(current_retailer), class: 'item__name no-style' %>
             <div class="tooltiptext">Plantillas</div>
           </div>
-        </li>
+        </li>-->
         <li class="menu__item">
           <div class="tooltip">
             <%= link_to raw('<i class="item__icon fas fa-link"></i>'), retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
