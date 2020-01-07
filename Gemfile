@@ -21,6 +21,7 @@ gem 'sentry-raven', '~> 2.9'
 # Login and administration
 gem 'activeadmin', '~> 1.4', '>= 1.4.3'
 gem 'devise', '~> 4.6', '>= 4.6.1'
+gem 'omniauth-facebook', '~> 5.0'
 gem 'devise_invitable', '~> 2.0.0'
 gem 'faraday', '~> 0.15.4'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
@@ -32,6 +33,7 @@ gem 'kaminari', '~> 1.1', '>= 1.1.1'
 # Img upload
 gem 'cloudinary', require: false
 gem 'activestorage-cloudinary-service'
+gem 'mime-types', '~> 3.1'
 
 gem "rack-reverse-proxy", require: "rack/reverse_proxy"
 
@@ -42,11 +44,15 @@ gem 'select2-rails'
 gem 'scout_apm'
 gem 'chartkick', '~> 3.2.2'
 gem 'groupdate', '~> 4.2'
+gem 'active_model_serializers', '~> 0.10.0'
 
 # Datepicker
 gem 'jquery-rails'
 gem 'momentjs-rails'
 gem 'bootstrap-daterangepicker-rails', '~> 3.0.4'
+
+# WebPack
+gem 'webpacker', '~> 4.2'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

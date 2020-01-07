@@ -1,5 +1,6 @@
+<!-- Sidebar -->
 <input type="checkbox" id="sidebar--toggle" class="d-none" />
-<section id="sidebar">
+<section id="sidebar" class="hide-on-pc">
   <div id="sidebar__logo">
     <%= image_tag 'dashboard/logo.png' %>
   </div>
@@ -27,7 +28,7 @@
         <i class="item__icon fas fa-mail-bulk"></i>
         <label for="item--inbox" class="item__name">Inbox</label>
         <i class="item__arrow right"></i>
-        <b id="item__cookie_total" class="item__cookie"><%= total_unread %></b>
+        <b id="item__cookie_total" class="item__cookie item__cookie_total"><%= total_unread %></b>
         <ul class="submenu no-style">
           <li class="submenu__item">
             <%= link_to 'Preguntas', retailers_questions_path(current_retailer, answered: false), class: 'item__name no-style' %>
@@ -37,6 +38,12 @@
             <%= link_to 'Mensajes', retailers_chats_path(current_retailer), class: 'item__name no-style' %>
             <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
           </li>
+          <% if current_retailer.facebook_retailer %>
+            <li class="submenu__item">
+              <%= link_to 'Facebook Mensenger', retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
+              <%# <b class="item__cookie"><%= quantity_unread_messages ></b> %>
+            </li>
+          <% end %>
           <li class="submenu__item">
             <%= link_to 'Plantillas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
           </li>
@@ -54,3 +61,89 @@
     </ul>
   </div>
 </section>
+
+<!-- Sidebar PC -->
+<div class="p-fixed hide-on-tablet-and-down">
+  <section id="sidebar--pc" class="d-none d-md-block">
+    <div id="sidebar__logo--pc" class="p-18">
+      <%= image_tag 'dashboard/profile.png' %>
+    </div>
+    <div id="sidebar__menu--pc">
+      <ul class="menu no-style">
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-chart-line"></i>'), retailers_dashboard_path(current_retailer), class: 'item__name no-style' %>
+            <div class="tooltiptext">Dashboard</div>
+          </div>
+        </li>
+        <li class="menu__item ">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-users"></i>'), retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
+            <div class="tooltiptext">Clientes</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-boxes"></i>'), retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
+            <div class="tooltiptext">Productos</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-file-invoice-dollar"></i>'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
+            <div class="tooltiptext">Ordenes</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= image_tag('dashboard/ml_logo.png', class: 'w-45 item__name no-style') %>
+            <div class="tooltiptext" style="top: -28px;">
+              &nbsp;&nbsp;MercadoLibre&nbsp;&nbsp;<br/>
+              <div class="divider"></div>
+              <div>
+                <%= link_to retailers_questions_path(current_retailer, answered: false), class: 'c-white no-style' do %>
+                  Preguntas
+                  <b class="item__cookie item__cookie_question"><%= quantity_unread_questions %></b>
+                <% end %>
+              </div>
+              <div>
+                <%= link_to retailers_chats_path(current_retailer), class: 'c-white no-style' do %>
+                  Chats
+                  <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
+                <% end %>
+              </div>
+            </div>
+            <b class="item__cookie item__cookie_total"><%= total_unread %></b>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fab fa-facebook-messenger"></i>'), retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
+            <div class="tooltiptext">Messenger</div>
+            <b class="item__cookie item__cookie_facebook_messages"><%= facebook_unread_messages %></b>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-file-alt"></i>'), retailers_templates_path(current_retailer), class: 'item__name no-style' %>
+            <div class="tooltiptext">Plantillas</div>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to raw('<i class="item__icon fas fa-link"></i>'), retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
+            <div class="tooltiptext">Integraciones</div>
+          </div>
+        </li>
+        <% if session[:old_retailer_id] %>
+          <li class="menu__item">
+            <div class="tooltip">
+              <%= link_to raw('<i class="fas fa-reply"></i>'), go_back_as_admin_admin_retailer_path(current_retailer) %>
+              <div class="tooltiptext">Regresar al admin</div>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+</div>

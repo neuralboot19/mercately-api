@@ -78,6 +78,29 @@ class Retailers::MessagesController < RetailersController
       @retailer.unread_messages.size)
   end
 
+  def facebook_chats
+    @chats = current_retailer.customers.includes(:facebook_messages)
+      .where.not(facebook_messages: { id: nil }).page(params[:page])
+  end
+
+  def facebook_chat
+    @customer = Customer.find(params[:id])
+    @messages = @customer.facebook_messages.order(:created_at)
+  end
+
+  def send_facebook_message
+    customer = Customer.find(params[:id])
+    FacebookMessage.create(
+      customer: customer,
+      sender_uid: current_retailer_user.uid,
+      id_client: customer.psid,
+      facebook_retailer: current_retailer.facebook_retailer,
+      text: params[:message],
+      sent_from_mercately: true
+    )
+    redirect_back fallback_location: root_path
+  end
+
   private
 
     def check_ownership

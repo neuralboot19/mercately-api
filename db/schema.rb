@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2020_01_06_143458) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.string "meli_nickname"
     t.integer "meli_customer_id"
+    t.string "meli_nickname"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -92,8 +92,38 @@ ActiveRecord::Schema.define(version: 2020_01_06_143458) do
     t.string "zip_code"
     t.string "country_id"
     t.boolean "valid_customer", default: false
+    t.string "psid"
     t.string "web_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
+  end
+
+  create_table "facebook_messages", force: :cascade do |t|
+    t.string "sender_uid"
+    t.string "id_client"
+    t.bigint "facebook_retailer_id"
+    t.text "text"
+    t.string "mid"
+    t.string "reply_to"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "customer_id"
+    t.date "date_read"
+    t.boolean "sent_from_mercately", default: false
+    t.boolean "sent_by_retailer", default: false
+    t.string "file_type"
+    t.string "url"
+    t.string "file_data"
+    t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
+    t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
+  end
+
+  create_table "facebook_retailers", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "uid"
+    t.string "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
   end
 
   create_table "meli_customers", force: :cascade do |t|
@@ -273,6 +303,10 @@ ActiveRecord::Schema.define(version: 2020_01_06_143458) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -322,6 +356,9 @@ ActiveRecord::Schema.define(version: 2020_01_06_143458) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "facebook_messages", "customers"
+  add_foreign_key "facebook_messages", "facebook_retailers"
+  add_foreign_key "facebook_retailers", "retailers"
   add_foreign_key "meli_retailers", "retailers"
   add_foreign_key "questions", "products"
 end
