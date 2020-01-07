@@ -1,132 +1,56 @@
 <div class="container-fluid reduced-container-padding mb-16">
   <div class="card">
-    <div class="container-fluid index">
-      <div class="row middle-xs">
-        <div class="col-xs-12 col-sm-4">
-          <h1 class="d-inline index__title">Preguntas</h1>
-          <div class="index__desc">
-            Lista de preguntas
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="worm container-fluid">
-      <div class="row center-xs start-sm">
-        <div class="col-xs-12">
-          <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: false)) %>">
-            <%= link_to 'Sin responder', retailers_questions_path(current_retailer, answered: false) %>
-          </div
-          ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: true)) %>">
-            <%= link_to 'Respondidas', retailers_questions_path(current_retailer, answered: true) %>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="container-fluid products">
       <div class="row">
         <div class="col-xs-12">
-          <div class="table box">
-            <div class="table__header row hide-on-tablet-and-down center-sm">
-              <div class="col-sm-1">Usuario</div>
-              <div class="col-sm-3">Producto</div>
-              <div class="col-sm-4"></div>
-              <div class="col-sm-2"></div>
-              <div class="col-sm-1">Fecha</div>
-              <div class="col-sm-1"></div>
-            </div>
-            <% @questions.each do |question| %>
-              <div class="divider"></div>
-              <div class="table__item row">
-                <div class="col-xs-10 col-sm-1 t-center hide-on-sm-and-down">
-                  <div class="truncate">
-                    <%= question.customer.email.presence || question.customer.meli_nickname %>
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 col-sm-3 chat_list_holder">
+                  <div class="chat__selector">
+                    <% @questions.each do |question| %>
+                      <div class="profile fs-14 box border border--transparent">
+                        <div class="profile__data row">
+                          <div class="img__profile col-xs-2 p-0">
+                            <div class="rounded-circle mw-100">
+                              <p><%= two_upper_case_letters(question.customer.full_name.presence || question.customer.meli_nickname) %></p>
+                            </div>
+                          </div>
+                          <div class="col-xs-10">
+                            <div class="profile__name"><%= question.customer.full_name.presence || question.customer.meli_nickname %></div>
+                            <div class="">hace <%= time_ago_in_words(question.created_at) %></div>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
-                <div class="col-xs-10 col-sm-3 t-center">
-                  <%= question.product.title %>
+                <div class="col-xs-12 col-sm-6">
+                  <div class="row bottom-xs">
+                    <div class="col-xs-12 chat__box pt-8">
+                      <div id="bottomRef">
+                      </div>
+                    </div>
+                    <div class="col-xs-12">
+                      <div class="text-input">
+                        <textarea name="messageText" placeholder="Respuesta"></textarea>
+                      </div>
+                      <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
+                        direcciones exactas o nombres personales</i>
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
-                  <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_question_path(current_retailer, question.web_id), class: 'c-secondary no-style' do %>
-                          <% if question.answered? %>
-                            <i class="fas fa-eye mr-8"></i>
-                            Ver
-                          <% else %>
-                            Responder
-                          <% end %>
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
+                <div id="templates" class="col-xs-12 col-sm-3">
+                  <div class="customer_sidebar">
+                    <div class="customer_box">
+                      <p>Henry Remache<a href="http://mercately-staging.herokuapp.com/retailers/pruebasss/customers/6fztvw131/edit" target="_blank"><i class="fs-18 mt-4 mr-4 f-right fas fa-external-link-alt"></i></a></p>
+                    </div>
+                    <div class="customer_details">
+                      <div class="details_holder"><span>Detalles</span></div><div><div><i class="fs-18 mt-4 mr-4 fab fa-whatsapp-square editable_phone"></i><p class="label inline-block">Teléfono:</p></div><span class="editable_field" placeholder="Número" contenteditable="true">0996779124</span></div><div><div><i class="fs-18 mt-4 mr-4 fas fa-envelope-square editable_email"></i><p class="label inline-block">Email:</p></div><span class="editable_field" placeholder="Email" contenteditable="true">henry2992@hotmail.com</span></div><div><div><i class="fs-18 mt-4 mr-4 fas fa-address-card editable_card_id"></i><p class="label inline-block">Identificación:</p></div><div class="details-select-container css-2b097c-container"><div class="details-select__control css-1774rtq-control"><div class="details-select__value-container details-select__value-container--has-value css-1hwfws3"><div class="details-select__single-value css-1uccc91-singleValue">Cedula</div><div class="css-1g6gooi"><div class="details-select__input" style="display: inline-block;"><input autocapitalize="none" autocomplete="off" autocorrect="off" id="react-select-2-input" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" value="" style="box-sizing: content-box; width: 2px; background: 0px center; border: 0px; font-size: inherit; opacity: 1; outline: 0px; padding: 0px; color: inherit;"><div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: Poppins-Regular; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;"></div></div></div></div><div class="details-select__indicators css-1wy0on6"><span class="details-select__indicator-separator css-1okebmr-indicatorSeparator"></span><div aria-hidden="true" class="details-select__indicator details-select__dropdown-indicator css-tlfecz-indicatorContainer"><svg height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="css-19bqh2r"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg></div></div></div></div><span class="editable_field" placeholder="Identificación" contenteditable="true">0604354050</span></div><div><div><i class="fs-18 mt-4 mr-4 fas fa-map-marked-alt editable_map"></i><p class="label inline-block">Dirección:</p></div><div><span class="editable_field" placeholder="Dirección" contenteditable="true">Vos Andes</span><br><span class="editable_field" placeholder="Ciudad" contenteditable="true">Quito</span><br><span class="editable_field" placeholder="Provincia/Estado" contenteditable="true">Pichincha</span></div></div></div></div>
                 </div>
-                <div class="col-xs-12 col-sm-4 c-grey truncate">
-                  <br class="hide-on-md-and-up"/>
-                  <span class="c-secondary">
-                    Pregunta:
-                  </span> <%= question.question %>
-                  <br/>
-                  <br/>
-                  <span class="c-secondary">
-                    Respuesta:
-                  </span> <%= question.answer %>
-                </div>
-                <div class="col-xs-12 col-sm-2 t-center">
-                  <% if question.answered %>
-                    <b class="cookie__box cookie__box__green px-5">Respondido</b>
-                  <% elsif question.date_read.blank? %>
-                    <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
-                  <% else %>
-                    <b class="cookie__box cookie__box__green px-5">Visto</b>
-                  <% end %>
-                </div>
-                <div class="col-xs-12 col-sm-1 t-center">
-                  <%= show_date(question.created_at) %>
-                </div>
-                <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
-                  <%= link_to retailers_question_path(current_retailer, question.web_id), class: 'c-secondary no-style' do %>
-                    <% if question.answered? %>
-                      Ver
-                    <% else %>
-                      Responder
-                    <% end %>
-                  <% end %>
-                </div>
-                <div class="hide-on-sm-and-down hide-on-2k m-auto">
-                  <label class="item__dropdown dropdown d-inline">
-                    <a class="dropdown__button midd" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_question_path(current_retailer, question.web_id), class: 'c-secondary no-style' do %>
-                          <% if question.answered? %>
-                            <i class="fas fa-eye mr-8"></i>
-                            Ver
-                          <% else %>
-                            Responder
-                          <% end %>
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
-                </div>
-              </div>
-            <% end %>
-            <div class="row middle-xs center-xs">
-              <div class="col-xs-12">
-                <%= paginate @questions %>
               </div>
             </div>
-          </div>
+          </fieldset>
         </div>
       </div>
     </div>
