@@ -103,7 +103,7 @@
               <div>
                 <%= link_to retailers_questions_path(current_retailer, answered: false), class: 'c-white no-style' do %>
                   Preguntas
-                  <b class="item__cookie item__cookie_question"><%= quantity_unread_questions %></b>
+                  <b id="item__cookie_question" class="item__cookie item__cookie_question"><%= quantity_unread_questions %></b>
                 <% end %>
               </div>
               <div>
@@ -113,7 +113,7 @@
                 <% end %>
               </div>
             </div>
-            <b class="item__cookie item__cookie_total"><%= total_unread %></b>
+            <b id="item__cookie_total" class="item__cookie item__cookie_total"><%= total_unread %></b>
           </div>
         </li>
         <li class="menu__item">
