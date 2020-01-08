@@ -24,13 +24,19 @@ class Retailers::MessagesController < RetailersController
   end
 
   def question
-    @question = Question.find_by(web_id: params[:question_id])
-    unless @question && @question.retailer.id == @retailer.id
-      redirect_to retailers_dashboard_path(@retailer)
-      return
-    end
+    @question = Question.includes(:product).where(id: params[:question_id], products:
+      { retailer_id: current_retailer.id }).first
 
-    return @question unless @question.date_read.nil?
+    product = @question.product
+    url = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/"
+    key = product.main_picture_id ? product.images&.find(product.main_picture_id)&.key : product.images&.first&.key
+    url += key
+
+    render json: { question: @question, product: product, questions_total: product.questions.count, orders_total:
+      product.order_items.count, success_orders_total: product.order_items.includes(:order).where(orders:
+      { status: 'success' }).count, earned: product.earned, image: url }
+
+    return unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
 
@@ -41,7 +47,7 @@ class Retailers::MessagesController < RetailersController
 
   def answer_question
     @question.update!(answer: params[:answer])
-    redirect_to retailers_questions_path(@retailer, answered: @question.answered), notice: 'Respuesta enviada'
+    redirect_back fallback_location: root_path, notice: 'Respuesta enviada'
   end
 
   def send_message

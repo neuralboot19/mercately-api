@@ -7,8 +7,9 @@
               <div class="row">
                 <div class="col-xs-12 col-sm-3 chat_list_holder">
                   <div class="chat__selector">
+                    <input type="hidden" id="slug-id" value="<%= params[:slug] %>" />
                     <% @questions.each do |question| %>
-                      <div class="profile fs-14 box border border--transparent">
+                      <div id="<%= question.id %>" class="profile fs-14 box border border--transparent" onclick="getQuestionInfo(this)">
                         <div class="profile__data row">
                           <div class="img__profile col-xs-2 p-0">
                             <div class="rounded-circle mw-100">
@@ -17,36 +18,119 @@
                           </div>
                           <div class="col-xs-10">
                             <div class="profile__name"><%= question.customer.full_name.presence || question.customer.meli_nickname %></div>
-                            <div class="">hace <%= time_ago_in_words(question.created_at) %></div>
+                            <div class="<%= question.answered? == false ? 'fw-bold' : '' %>">hace <%= time_ago_in_words(question.created_at) %></div>
                           </div>
                         </div>
                       </div>
                     <% end %>
                   </div>
                 </div>
-                <div class="col-xs-12 col-sm-6">
-                  <div class="row bottom-xs">
+                <div class="col-xs-12 col-sm-5">
+                  <div id="select-question">
+                    <h4>Selecciona una pregunta</h4>
+                  </div>
+                  <div id="question-info" class="row bottom-xs d-none">
                     <div class="col-xs-12 chat__box pt-8">
-                      <div id="bottomRef">
+                      <div class="message">
+                        <div class="">
+                          <p id="q-text"></p>
+                        </div>
+                      </div>
+                      <div id="retailer-answer" class="message d-none">
+                        <div class="message-by-retailer f-right">
+                          <p id="a-text"></p>
+                        </div>
                       </div>
                     </div>
-                    <div class="col-xs-12">
-                      <div class="text-input">
-                        <textarea name="messageText" placeholder="Respuesta"></textarea>
-                      </div>
-                      <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
-                        direcciones exactas o nombres personales</i>
-                      </p>
+                    <div id="answer-holder" class="col-xs-12 d-none">
                     </div>
                   </div>
                 </div>
-                <div id="templates" class="col-xs-12 col-sm-3">
+                <div id="product-info" class="col-xs-12 col-sm-4 d-none">
                   <div class="customer_sidebar">
                     <div class="customer_box">
-                      <p>Henry Remache<a href="http://mercately-staging.herokuapp.com/retailers/pruebasss/customers/6fztvw131/edit" target="_blank"><i class="fs-18 mt-4 mr-4 f-right fas fa-external-link-alt"></i></a></p>
+                      <p id="product-title"></p>
                     </div>
-                    <div class="customer_details">
-                      <div class="details_holder"><span>Detalles</span></div><div><div><i class="fs-18 mt-4 mr-4 fab fa-whatsapp-square editable_phone"></i><p class="label inline-block">Teléfono:</p></div><span class="editable_field" placeholder="Número" contenteditable="true">0996779124</span></div><div><div><i class="fs-18 mt-4 mr-4 fas fa-envelope-square editable_email"></i><p class="label inline-block">Email:</p></div><span class="editable_field" placeholder="Email" contenteditable="true">henry2992@hotmail.com</span></div><div><div><i class="fs-18 mt-4 mr-4 fas fa-address-card editable_card_id"></i><p class="label inline-block">Identificación:</p></div><div class="details-select-container css-2b097c-container"><div class="details-select__control css-1774rtq-control"><div class="details-select__value-container details-select__value-container--has-value css-1hwfws3"><div class="details-select__single-value css-1uccc91-singleValue">Cedula</div><div class="css-1g6gooi"><div class="details-select__input" style="display: inline-block;"><input autocapitalize="none" autocomplete="off" autocorrect="off" id="react-select-2-input" spellcheck="false" tabindex="0" type="text" aria-autocomplete="list" value="" style="box-sizing: content-box; width: 2px; background: 0px center; border: 0px; font-size: inherit; opacity: 1; outline: 0px; padding: 0px; color: inherit;"><div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: Poppins-Regular; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;"></div></div></div></div><div class="details-select__indicators css-1wy0on6"><span class="details-select__indicator-separator css-1okebmr-indicatorSeparator"></span><div aria-hidden="true" class="details-select__indicator details-select__dropdown-indicator css-tlfecz-indicatorContainer"><svg height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="css-19bqh2r"><path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"></path></svg></div></div></div></div><span class="editable_field" placeholder="Identificación" contenteditable="true">0604354050</span></div><div><div><i class="fs-18 mt-4 mr-4 fas fa-map-marked-alt editable_map"></i><p class="label inline-block">Dirección:</p></div><div><span class="editable_field" placeholder="Dirección" contenteditable="true">Vos Andes</span><br><span class="editable_field" placeholder="Ciudad" contenteditable="true">Quito</span><br><span class="editable_field" placeholder="Provincia/Estado" contenteditable="true">Pichincha</span></div></div></div></div>
+                    <div class="box">
+                      <div class="row">
+                        <div class="col-xs-12 card__module p-0">
+                          <div class="products__img mt-15 mb-20 larger">
+                            <%= cl_image_tag('', id: 'product-img', class: 'larger') %>
+                          </div>
+                          <div class="card__title fs-15"><i class="fas fa-money-bill-alt primary"></i> Finanzas</div>
+                          <div class="box">
+                            <div class="row card__submodule center-xs">
+                              <div class="col-xs-12 submodule col-sm-4">
+                                <h4 id="product-orders" class="mt-0 mb-0"></h4>
+                                <h6>Ordenes</h6>
+                              </div>
+                              <div class="col-xs-12 submodule col-sm-4">
+                                <h4 id="product-success-orders" class="mt-0 mb-0"></h4>
+                                <h6>Ventas exitosas</h6>
+                              </div>
+                              <div class="col-xs-12 submodule col-sm-4">
+                                <h4 id="product-earned" class="mt-0 mb-0"></h4>
+                                <h6>Ganancia</h6>
+                              </div>
+                            </div>
+                            <div class="row card__submodule middle-xs center-xs">
+                              <div class="col-xs-12">
+                                <div class="circle my-16 p-0">
+                                  <h2 id="product-quantity"></h2>
+                                  <h6>Disponible</h6>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-12 card__module fs-12">
+                          <div class="card__title fs-15"><i class="fas fa-shopping-cart primary"></i> Mercado Libre Info</div>
+                          <div class="box">
+                            <div class="row">
+                              <div class="col-xs-12 col-sm-6">
+                                <table class="table_details table_details--underlined w-100">
+                                  <tr>
+                                    <td class="table_details__descriptor">Preguntas:</td>
+                                    <td id="product-questions" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Expiración:</td>
+                                    <td id="product-expiration" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Código:</td>
+                                    <td id="product-meli-id" class="table_details__value"></td>
+                                  </tr>
+                                </table>
+                              </div>
+                              <div class="col-xs-12 col-sm-6">
+                                <table class="table_details table_details--underlined w-100">
+                                  <tr>
+                                    <td class="table_details__descriptor">Condición:</td>
+                                    <td id="product-condition" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Tipo:</td>
+                                    <td id="product-listing-type" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Enlace:</td>
+                                    <td class="table_details__value">
+                                      <div class="truncate">
+                                        <a href="" target="_blank" id="product-ml-link">
+                                          Ver
+                                        </a>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -56,3 +140,5 @@
     </div>
   </div>
 </div>
+
+<script src="<%= asset_path 'retailers/questions/questions.js' %>" charset="utf-8"></script>
