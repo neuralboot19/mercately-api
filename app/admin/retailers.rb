@@ -25,6 +25,7 @@ ActiveAdmin.register Retailer do
     attributes_table title: 'Detalles del Retailer' do
       row :id
       row :name
+      row :retailer_number
       row :slug
       row :id_type
       row :id_number

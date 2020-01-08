@@ -43,7 +43,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
                                           :password,
                                           :password_confirmation,
                                           :agree_terms,
-                                          retailer_attributes: :name
+                                          retailer_attributes: [:name, :retailer_number]
                                         ])
     end
 
@@ -53,7 +53,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
                                           :email,
                                           :password,
                                           :password_confirmation,
-                                          retailer_attributes: [:id, :name]
+                                          retailer_attributes: [:id, :name, :retailer_number]
                                         ])
     end
 

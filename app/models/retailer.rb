@@ -14,7 +14,9 @@ class Retailer < ApplicationRecord
 
   enum id_type: %i[cedula pasaporte ruc]
 
-  delegate :facebook_unread_messages, to: :facebook_retailer
+  def facebook_unread_messages
+    facebook_retailer&.facebook_unread_messages
+  end
 
   def to_param
     slug
