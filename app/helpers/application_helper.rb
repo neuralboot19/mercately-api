@@ -10,4 +10,10 @@ module ApplicationHelper
   def show_date_without_hour(date)
     date&.strftime('%d-%b-%Y')
   end
+
+  def show_svg(path)
+    File.open("app/assets/images/#{path}", "rb") do |file|
+      raw file.read
+    end
+  end
 end
