@@ -20,6 +20,7 @@
 //= require chartkick
 //= require Chart.bundle
 //= require moment
+//= require moment/locale/es
 //= require daterangepicker
 //= require cable
 //= require channels/counter_messaging_channel
