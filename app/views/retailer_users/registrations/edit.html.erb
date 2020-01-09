@@ -16,12 +16,16 @@
 
             <fieldset class="fieldset mt-16">
               <legend>Información del comercio</legend>
-              <div class="my-16">
-                <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
+              <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
+                <div class="my-16">
                   <%= retailer.label :name, 'Nombre del comercio' %>
                   <%= retailer.text_field :name, autofocus: true, class: 'input' %>
-                <% end %>
-              </div>
+                </div>
+                <div class="my-16">
+                  <%= retailer.label :retailer_number, 'Número de Teléfono (opcional)' %>
+                  <%= retailer.text_field :retailer_number, class: 'input', onkeypress: 'onlyNumber(event)' %>
+                </div>
+              <% end %>
             </fieldset>
 
             <fieldset class="fieldset mt-16">

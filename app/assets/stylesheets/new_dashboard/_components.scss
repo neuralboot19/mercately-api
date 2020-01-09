@@ -671,6 +671,10 @@
 }
 .customer_sidebar i {
   color: #b1b8c4;
+
+  &.primary {
+    color: $primary-color;
+  }
 }
 
 .customer_sidebar .customer_box p i {
