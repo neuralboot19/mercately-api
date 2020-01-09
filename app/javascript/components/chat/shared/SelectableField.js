@@ -21,19 +21,29 @@ class SelectableField extends Component {
      super(props)
      this.state = {
       selected: null,
+      isUpdated: false
     };
    }
 
   componentDidUpdate(prevProps) {
+
     if (this.state.selected == null){
       this.findSelectedOption(this.props.selected)
+    } else {      
+      console.log("ver que son", prevProps.selected, this.state.selected.value)
+      if (prevProps.selected !== this.state.selected.value && this.state.isUpdated == true){
+        this.setState({isUpdated: false}, () => {
+          this.findSelectedOption(this.props.selected)
+        })
+      }      
     }
+
   }
 
   findSelectedOption = (option) => {
     options.find((element) => {
       if (element.value === option){
-        this.setState({selected: element});
+        this.setState({selected: element, isUpdated: true});
       };
     })
   }

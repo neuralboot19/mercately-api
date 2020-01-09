@@ -1,134 +1,144 @@
 <div class="container-fluid reduced-container-padding mb-16">
   <div class="card">
-    <div class="container-fluid index">
-      <div class="row middle-xs">
-        <div class="col-xs-12 col-sm-4">
-          <h1 class="d-inline index__title">Preguntas</h1>
-          <div class="index__desc">
-            Lista de preguntas
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="worm container-fluid">
-      <div class="row center-xs start-sm">
-        <div class="col-xs-12">
-          <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: false)) %>">
-            <%= link_to 'Sin responder', retailers_questions_path(current_retailer, answered: false) %>
-          </div
-          ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_questions_path(current_retailer, answered: true)) %>">
-            <%= link_to 'Respondidas', retailers_questions_path(current_retailer, answered: true) %>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="container-fluid products">
       <div class="row">
         <div class="col-xs-12">
-          <div class="table box">
-            <div class="table__header row hide-on-tablet-and-down center-sm">
-              <div class="col-sm-1">Usuario</div>
-              <div class="col-sm-3">Producto</div>
-              <div class="col-sm-4"></div>
-              <div class="col-sm-2"></div>
-              <div class="col-sm-1">Fecha</div>
-              <div class="col-sm-1"></div>
-            </div>
-            <% @questions.each do |question| %>
-              <div class="divider"></div>
-              <div class="table__item row">
-                <div class="col-xs-10 col-sm-1 t-center hide-on-sm-and-down">
-                  <div class="truncate">
-                    <%= question.customer.email.presence || question.customer.meli_nickname %>
+            <div class="box">
+              <div class="row">
+                <div class="col-xs-12 col-sm-3 chat_list_holder">
+                  <div class="chat__selector">
+                    <input type="hidden" id="slug-id" value="<%= params[:slug] %>" />
+                    <% @questions.each do |question| %>
+                      <div id="<%= question.id %>" class="profile fs-14 box border border--transparent" onclick="getQuestionInfo(this)">
+                        <div class="profile__data row">
+                          <div class="img__profile col-xs-2 p-0">
+                            <div class="rounded-circle mw-100">
+                              <p><%= two_upper_case_letters(question.customer.full_name.presence || question.customer.meli_nickname) %></p>
+                            </div>
+                          </div>
+                          <div class="col-xs-10">
+                            <div class="profile__name"><%= question.customer.full_name.presence || question.customer.meli_nickname %></div>
+                            <div class="<%= question.answered? == false ? 'fw-bold' : '' %>">hace <%= time_ago_in_words(question.created_at) %></div>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
                   </div>
                 </div>
-                <div class="col-xs-10 col-sm-3 t-center">
-                  <%= question.product.title %>
+                <div class="col-xs-12 col-sm-5">
+                  <div id="select-question">
+                    <h4>Selecciona una pregunta</h4>
+                  </div>
+                  <div id="question-info" class="row bottom-xs d-none">
+                    <div class="col-xs-12 chat__box pt-8">
+                      <div class="message">
+                        <div class="">
+                          <p id="q-text"></p>
+                        </div>
+                      </div>
+                      <div id="retailer-answer" class="message d-none">
+                        <div class="message-by-retailer f-right">
+                          <p id="a-text"></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="answer-holder" class="col-xs-12 d-none">
+                    </div>
+                  </div>
                 </div>
-                <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
-                  <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_question_path(current_retailer, question.web_id), class: 'c-secondary no-style' do %>
-                          <% if question.answered? %>
-                            <i class="fas fa-eye mr-8"></i>
-                            Ver
-                          <% else %>
-                            Responder
-                          <% end %>
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
+                <div id="product-info" class="col-xs-12 col-sm-4 d-none">
+                  <div class="customer_sidebar">
+                    <div class="customer_box">
+                      <p id="product-title"></p>
+                    </div>
+                    <div class="box">
+                      <div class="row">
+                        <div class="col-xs-12 card__module p-0">
+                          <div class="products__img mt-15 mb-20 larger">
+                            <%= cl_image_tag('', id: 'product-img', class: 'larger') %>
+                          </div>
+                          <div class="card__title fs-15"><i class="fas fa-money-bill-alt primary"></i> Finanzas</div>
+                          <div class="box">
+                            <div class="row card__submodule center-xs">
+                              <div class="col-xs-12 submodule col-sm-4">
+                                <h4 id="product-orders" class="mt-0 mb-0"></h4>
+                                <h6>Ordenes</h6>
+                              </div>
+                              <div class="col-xs-12 submodule col-sm-4">
+                                <h4 id="product-success-orders" class="mt-0 mb-0"></h4>
+                                <h6>Ventas exitosas</h6>
+                              </div>
+                              <div class="col-xs-12 submodule col-sm-4">
+                                <h4 id="product-earned" class="mt-0 mb-0"></h4>
+                                <h6>Ganancia</h6>
+                              </div>
+                            </div>
+                            <div class="row card__submodule middle-xs center-xs">
+                              <div class="col-xs-12">
+                                <div class="circle my-16 p-0">
+                                  <h2 id="product-quantity"></h2>
+                                  <h6>Disponible</h6>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-12 card__module fs-12">
+                          <div class="card__title fs-15"><i class="fas fa-shopping-cart primary"></i> Mercado Libre Info</div>
+                          <div class="box">
+                            <div class="row">
+                              <div class="col-xs-12 col-sm-6">
+                                <table class="table_details table_details--underlined w-100">
+                                  <tr>
+                                    <td class="table_details__descriptor">Preguntas:</td>
+                                    <td id="product-questions" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Expiración:</td>
+                                    <td id="product-expiration" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Código:</td>
+                                    <td id="product-meli-id" class="table_details__value"></td>
+                                  </tr>
+                                </table>
+                              </div>
+                              <div class="col-xs-12 col-sm-6">
+                                <table class="table_details table_details--underlined w-100">
+                                  <tr>
+                                    <td class="table_details__descriptor">Condición:</td>
+                                    <td id="product-condition" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Tipo:</td>
+                                    <td id="product-listing-type" class="table_details__value"></td>
+                                  </tr>
+                                  <tr>
+                                    <td class="table_details__descriptor">Enlace:</td>
+                                    <td class="table_details__value">
+                                      <div class="truncate">
+                                        <a href="" target="_blank" id="product-ml-link">
+                                          Ver
+                                        </a>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="col-xs-12 col-sm-4 c-grey truncate">
-                  <br class="hide-on-md-and-up"/>
-                  <span class="c-secondary">
-                    Pregunta:
-                  </span> <%= question.question %>
-                  <br/>
-                  <br/>
-                  <span class="c-secondary">
-                    Respuesta:
-                  </span> <%= question.answer %>
-                </div>
-                <div class="col-xs-12 col-sm-2 t-center">
-                  <% if question.answered %>
-                    <b class="cookie__box cookie__box__green px-5">Respondido</b>
-                  <% elsif question.date_read.blank? %>
-                    <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
-                  <% else %>
-                    <b class="cookie__box cookie__box__green px-5">Visto</b>
-                  <% end %>
-                </div>
-                <div class="col-xs-12 col-sm-1 t-center">
-                  <%= show_date(question.created_at) %>
-                </div>
-                <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
-                  <%= link_to retailers_question_path(current_retailer, question.web_id), class: 'c-secondary no-style' do %>
-                    <% if question.answered? %>
-                      Ver
-                    <% else %>
-                      Responder
-                    <% end %>
-                  <% end %>
-                </div>
-                <div class="hide-on-sm-and-down hide-on-2k m-auto">
-                  <label class="item__dropdown dropdown d-inline">
-                    <a class="dropdown__button midd" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_question_path(current_retailer, question.web_id), class: 'c-secondary no-style' do %>
-                          <% if question.answered? %>
-                            <i class="fas fa-eye mr-8"></i>
-                            Ver
-                          <% else %>
-                            Responder
-                          <% end %>
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
-                </div>
-              </div>
-            <% end %>
-            <div class="row middle-xs center-xs">
-              <div class="col-xs-12">
-                <%= paginate @questions %>
               </div>
             </div>
-          </div>
+          </fieldset>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script src="<%= asset_path 'retailers/questions/questions.js' %>" charset="utf-8"></script>
