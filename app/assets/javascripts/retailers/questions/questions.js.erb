@@ -1,4 +1,6 @@
 let webId;
+let pageId = 1;
+let totalPages;
 
 function getQuestionInfo(input) {
   var questionId = input.id;
@@ -78,3 +80,52 @@ function buildQuestionAnswer() {
 
   $('#answer-holder').html(string);
 }
+
+$('#q-list').scroll(function() {
+  if ($('#q-list').scrollTop() + parseInt($(window).height()) >= $('#q-list')[0].scrollHeight) {
+    pageId++;
+    if (pageId <= totalPages) {
+      loadQuestions();
+    }
+  }
+});
+
+function loadQuestions() {
+  getAjax(`${window.location.origin}/retailers/${$('#slug-id').val()}/questions_list?page=${pageId}`, function(data) {
+    var json = JSON.parse(data);
+    totalPages = json.total;
+    json.questions.forEach(buildQuestionList);
+  });
+}
+
+function buildQuestionList(question) {
+  if (question.full_name) {
+    splitted = question.full_name.split(' ');
+
+    letters = splitted[0] ? splitted[0].charAt(0) : '';
+    letters += (' ' + (splitted[1] ? splitted[1].charAt(0) : ''));
+    letters = letters.trim();
+  } else if (question.meli_nickname) {
+    letters = question.meli_nickname.charAt(0) + ' ' + question.meli_nickname.charAt(1);
+  }
+
+  string = `<div id="${question.id}" class="profile fs-14 box border border--transparent" onclick="getQuestionInfo(this)">` +
+           '<div class="profile__data row">' +
+           '<div class="img__profile col-xs-2 p-0">' +
+           '<div class="rounded-circle mw-100">' +
+           `<p>${letters.toUpperCase()}</p>` +
+           '</div>' +
+           '</div>' +
+           '<div class="col-xs-10">' +
+           `<div class="profile__name">${question.full_name || question.meli_nickname}</div>` +
+           `<div class="${ question.answered ? '' : 'fw-bold' }">${moment(question.created_at).locale('es').fromNow()}</div>` +
+           '</div>' +
+           '</div>' +
+           '</div>';
+
+  $('#q-list').append(string);
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+  loadQuestions();
+});
