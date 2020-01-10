@@ -16,10 +16,11 @@ Rails.application.routes.draw do
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  get '/blog' => redirect("https://www.mercately.com/blog/")
 
+  get '/blog' => redirect("https://www.mercately.com/blog/")
   get '/privacidad', to: 'pages#privacy', as: :privacy
   get '/terminos', to: 'pages#terms', as: :terms
+  get '/precios', to: 'pages#price', as: :pricing
 
   namespace :retailers do
     scope '/:slug' do
