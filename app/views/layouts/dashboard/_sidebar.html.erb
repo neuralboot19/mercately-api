@@ -116,13 +116,15 @@
             <b id="item__cookie_total" class="item__cookie item__cookie_total"><%= total_unread %></b>
           </div>
         </li>
-        <li class="menu__item">
-          <div class="tooltip">
-            <%= link_to image_tag('dashboard/messenger.png', class: 'item__name no-style'), retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
-            <div class="tooltiptext">Messenger</div>
-            <b class="item__cookie item__cookie_facebook_messages"><%= facebook_unread_messages %></b>
-          </div>
-        </li>
+        <% if current_retailer.facebook_retailer %>
+          <li class="menu__item">
+            <div class="tooltip">
+              <%= link_to image_tag('dashboard/messenger.png', class: 'item__name no-style'), retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
+              <div class="tooltiptext">Messenger</div>
+              <b class="item__cookie item__cookie_facebook_messages"><%= facebook_unread_messages %></b>
+            </div>
+          </li>
+        <% end %>
         <!--<li class="menu__item">
           <div class="tooltip">
             <%= link_to image_tag('dashboard/template.png', class: 'item__name no-style'), retailers_templates_path(current_retailer), class: 'item__name no-style' %>
