@@ -6,23 +6,8 @@
             <div class="box">
               <div class="row">
                 <div class="col-xs-12 col-sm-3 chat_list_holder">
-                  <div class="chat__selector">
-                    <input type="hidden" id="slug-id" value="<%= params[:slug] %>" />
-                    <% @questions.each do |question| %>
-                      <div id="<%= question.id %>" class="profile fs-14 box border border--transparent" onclick="getQuestionInfo(this)">
-                        <div class="profile__data row">
-                          <div class="img__profile col-xs-2 p-0">
-                            <div class="rounded-circle mw-100">
-                              <p><%= two_upper_case_letters(question.customer.full_name.presence || question.customer.meli_nickname) %></p>
-                            </div>
-                          </div>
-                          <div class="col-xs-10">
-                            <div class="profile__name"><%= question.customer.full_name.presence || question.customer.meli_nickname %></div>
-                            <div class="<%= question.answered? == false ? 'fw-bold' : '' %>">hace <%= time_ago_in_words(question.created_at) %></div>
-                          </div>
-                        </div>
-                      </div>
-                    <% end %>
+                  <input type="hidden" id="slug-id" value="<%= params[:slug] %>" />
+                  <div class="chat__selector" id="q-list">
                   </div>
                 </div>
                 <div class="col-xs-12 col-sm-5">
