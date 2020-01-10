@@ -1,4 +1,5 @@
 class Retailers::TemplatesController < RetailersController
+  before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_template, only: [:show, :edit, :update, :destroy]
 
   # GET /templates
@@ -24,7 +25,8 @@ class Retailers::TemplatesController < RetailersController
     @template = current_retailer.templates.new(template_params)
 
     if @template.save
-      redirect_to retailers_template_path(current_retailer, @template), notice: 'Plantilla creada con éxito.'
+      redirect_to retailers_template_path(current_retailer, @template), notice:
+        'Plantilla creada con éxito.'
     else
       render :new
     end
@@ -33,7 +35,8 @@ class Retailers::TemplatesController < RetailersController
   # PATCH/PUT /templates/1
   def update
     if @template.update(template_params)
-      redirect_to retailers_template_path(current_retailer, @template), notice: 'Plantilla actualizada con éxito.'
+      redirect_to retailers_template_path(current_retailer, @template), notice:
+        'Plantilla actualizada con éxito.'
     else
       render :edit
     end
@@ -63,9 +66,14 @@ class Retailers::TemplatesController < RetailersController
 
   private
 
+    def check_ownership
+      template = Template.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless template && @retailer.templates.exists?(template.id)
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_template
-      @template = Template.find(params[:id])
+      @template = Template.find_by(web_id: params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.

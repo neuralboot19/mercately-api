@@ -1,4 +1,5 @@
 class Retailers::MessagesController < RetailersController
+  before_action :check_ownership, only: %i[show answer_question]
   before_action :set_question, only: %i[show answer_question]
 
   # GET /messages/1
@@ -6,11 +7,10 @@ class Retailers::MessagesController < RetailersController
   end
 
   def questions
-    @questions = Question.includes(:customer, :product).where(meli_question_type: :from_product, answered:
-      params[:answered], products:
+    @questions = Question.includes(:customer, :product).where(meli_question_type: :from_product, products:
       {
         retailer_id: current_retailer.id
-      }).order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
+      }).order('questions.date_read IS NOT NULL, questions.created_at DESC')
   end
 
   def chats
@@ -24,8 +24,19 @@ class Retailers::MessagesController < RetailersController
   end
 
   def question
-    @question = Question.find(params[:question_id])
-    return @question unless @question.date_read.nil?
+    @question = Question.includes(:product).where(id: params[:question_id], products:
+      { retailer_id: current_retailer.id }).first
+
+    product = @question.product
+    url = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/"
+    key = product.main_picture_id ? product.images&.find(product.main_picture_id)&.key : product.images&.first&.key
+    url += key
+
+    render json: { question: @question, product: product, questions_total: product.questions.count, orders_total:
+      product.order_items.count, success_orders_total: product.order_items.includes(:order).where(orders:
+      { status: 'success' }).count, earned: product.earned, image: url }
+
+    return unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
 
@@ -36,11 +47,11 @@ class Retailers::MessagesController < RetailersController
 
   def answer_question
     @question.update!(answer: params[:answer])
-    redirect_to retailers_questions_path(@retailer, answered: @question.answered), notice: 'Respuesta enviada'
+    redirect_back fallback_location: root_path, notice: 'Respuesta enviada'
   end
 
   def send_message
-    order = Order.find(params[:order_id])
+    order = Order.find_by(web_id: params[:order_id])
     @message = Message.new(
       order_id: order.id,
       customer_id: order.customer_id,
@@ -59,7 +70,12 @@ class Retailers::MessagesController < RetailersController
 
   def chat
     @return_to = params[:return_to]
-    @order = Order.find(params[:order_id])
+    @order = Order.find_by(web_id: params[:order_id])
+    unless @order && @order.retailer.id == @retailer.id
+      redirect_to retailers_dashboard_path(@retailer)
+      return
+    end
+
     total_unread = @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
 
     CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
@@ -67,9 +83,37 @@ class Retailers::MessagesController < RetailersController
       @retailer.unread_messages.size)
   end
 
+  def facebook_chats
+    @chats = current_retailer.customers.includes(:facebook_messages)
+      .where.not(facebook_messages: { id: nil }).page(params[:page])
+  end
+
+  def facebook_chat
+    @customer = Customer.find(params[:id])
+    @messages = @customer.facebook_messages.order(:created_at)
+  end
+
+  def send_facebook_message
+    customer = Customer.find(params[:id])
+    FacebookMessage.create(
+      customer: customer,
+      sender_uid: current_retailer_user.uid,
+      id_client: customer.psid,
+      facebook_retailer: current_retailer.facebook_retailer,
+      text: params[:message],
+      sent_from_mercately: true
+    )
+    redirect_back fallback_location: root_path
+  end
+
   private
 
+    def check_ownership
+      question = Question.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless question && question.retailer.id == @retailer.id
+    end
+
     def set_question
-      @question = Question.find(params[:id])
+      @question = Question.find_by(web_id: params[:id])
     end
 end

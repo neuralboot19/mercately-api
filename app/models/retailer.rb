@@ -1,6 +1,7 @@
 class Retailer < ApplicationRecord
   has_one :meli_retailer, dependent: :destroy
   has_one :retailer_user, dependent: :destroy
+  has_one :facebook_retailer, dependent: :destroy
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
@@ -8,9 +9,14 @@ class Retailer < ApplicationRecord
 
   validates :name, presence: true
   validates :slug, uniqueness: true
+
   after_save :generate_slug, if: :saved_change_to_name?
 
   enum id_type: %i[cedula pasaporte ruc]
+
+  def facebook_unread_messages
+    facebook_retailer&.facebook_unread_messages
+  end
 
   def to_param
     slug

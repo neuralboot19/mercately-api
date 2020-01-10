@@ -5,6 +5,7 @@ class Question < ApplicationRecord
 
   after_update :ml_answer_question, if: :answered?
   before_save :set_answered, if: :will_save_change_to_answer?
+  after_create :generate_web_id
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
@@ -18,6 +19,10 @@ class Question < ApplicationRecord
     Question.exists?(meli_id: question_meli_id.to_s)
   end
 
+  def to_param
+    web_id
+  end
+
   private
 
     def ml_answer_question
@@ -26,5 +31,9 @@ class Question < ApplicationRecord
 
     def set_answered
       self.answered = true if answer.present?
+    end
+
+    def generate_web_id
+      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end

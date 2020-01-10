@@ -9,7 +9,8 @@ class OrderItem < ApplicationRecord
   before_destroy -> { catch_total('destroy') }
   before_save -> { catch_total('save') }
   after_update :update_ml_stock, if: :saved_change_to_quantity?
-  after_commit :update_order_total
+  after_save :update_order_total
+  after_destroy :update_order_total
   after_create :subtract_stock
   after_create -> { update_ml_stock('create') }
 

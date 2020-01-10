@@ -55,7 +55,7 @@
                         </p>
                       <% else %>
                         <p class="t-right">
-                          <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.updated_at) %></span>
+                          <label class="c-grey fs-14">Fecha:</label> <span class="c-secondary fs-14"><%= show_date(m.created_at) %></span>
                         </p>
                         <p class="t-right">
                           <label><%= m.answer %></label>
@@ -63,7 +63,7 @@
                       <% end %>
                     <% end %>
                     <%= form_tag retailers_order_send_message_path do %>
-                      <%= hidden_field_tag :order_id, @order.id %>
+                      <%= hidden_field_tag :order_id, @order.web_id %>
                       <div class="row mb-10">
                         <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'input h-77' %>
                       </div>
@@ -73,14 +73,14 @@
                     <% end %>
                   </fieldset>
                 </div>
-                <div id="templates" class="col-xs-12 col-sm-3">
+                <!--<div id="templates" class="col-xs-12 col-sm-3">
                   <fieldset class="fieldset mt-16">
                   <legend>Plantillas:</legend>
                     <input type="search" id="template-chat-search" class="input search-field w-100" placeholder="Busca por titulo o respuesta">
                     <div id="templates-container">
                     </div>
                   </fieldset>
-                </div>
+                </div>-->
               </div>
             </div>
           </fieldset>

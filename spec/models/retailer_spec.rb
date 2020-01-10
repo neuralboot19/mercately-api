@@ -109,6 +109,7 @@ RSpec.describe Retailer, type: :model do
 
   describe '#to_param' do
     it 'returns the retailer slug' do
+      retailer.save
       expect(retailer.to_param).to eq(retailer.slug)
     end
   end

@@ -91,6 +91,7 @@
                     <ul class="dropdown__menu">
                       <label class="c-black modal__toggler" for="modal--toggle"
                                                             data-customer_id="<%= customer.id %>"
+                                                            data-customer_web_id="<%= customer.web_id %>"
                                                             data-customer_name="<%= customer.full_name %>"
                                                             data-customer_email="<%= customer.email %>"
                                                             data-customer_phone="<%= customer.phone %>"
@@ -151,6 +152,7 @@
                     <ul class="dropdown__menu">
                       <label class="c-black modal__toggler" for="modal--toggle"
                                                             data-customer_id="<%= customer.id %>"
+                                                            data-customer_web_id="<%= customer.web_id %>"
                                                             data-customer_name="<%= customer.full_name %>"
                                                             data-customer_email="<%= customer.email %>"
                                                             data-customer_phone="<%= customer.phone %>"
@@ -190,6 +192,7 @@
                     <ul class="dropdown__menu">
                       <label class="c-black modal__toggler" for="modal--toggle"
                                                             data-customer_id="<%= customer.id %>"
+                                                            data-customer_web_id="<%= customer.web_id %>"
                                                             data-customer_name="<%= customer.full_name %>"
                                                             data-customer_email="<%= customer.email %>"
                                                             data-customer_phone="<%= customer.phone %>"
@@ -400,8 +403,8 @@
 
       editElement = document.getElementById('edit_customer_modal');
       editElementMobile = document.getElementById('edit_customer_modal_mobile');
-      editElement.href = `../<%= current_retailer.slug %>/customers/${mt.dataset.customer_id}/edit`;
-      editElementMobile.href = `../<%= current_retailer.slug %>/customers/${mt.dataset.customer_id}/edit`;
+      editElement.href = `../<%= current_retailer.slug %>/customers/${mt.dataset.customer_web_id}/edit`;
+      editElementMobile.href = `../<%= current_retailer.slug %>/customers/${mt.dataset.customer_web_id}/edit`;
     }
   })
 

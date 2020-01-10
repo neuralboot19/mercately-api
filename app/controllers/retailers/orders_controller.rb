@@ -1,4 +1,5 @@
 class Retailers::OrdersController < RetailersController
+  before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_order, only: [:show, :edit, :update, :destroy]
 
   def index
@@ -23,7 +24,7 @@ class Retailers::OrdersController < RetailersController
     @order = Order.new(order_params)
 
     if @order.save
-      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden creada con éxito.'
+      redirect_to retailers_order_path(@retailer, @order), notice: 'Orden creada con éxito.'
     else
       @order.order_items -= @order.order_items.select { |oi| oi.product.blank? }
       render :new
@@ -34,7 +35,7 @@ class Retailers::OrdersController < RetailersController
     params[:order][:order_items_attributes] = process_items(params[:order][:order_items_attributes])
 
     if @order.update(order_params)
-      redirect_to retailers_order_path(@retailer.slug, @order), notice: 'Orden actualizada con éxito.'
+      redirect_to retailers_order_path(@retailer, @order), notice: 'Orden actualizada con éxito.'
     else
       render :edit
     end
@@ -42,9 +43,14 @@ class Retailers::OrdersController < RetailersController
 
   private
 
+    def check_ownership
+      order = Order.find_by(web_id: params[:id])
+      redirect_to retailers_dashboard_path(@retailer) unless order && order.retailer.id == @retailer.id
+    end
+
     # Use callbacks to share common setup or constraints between actions.
     def set_order
-      @order = Order.find(params[:id])
+      @order = Order.find_by(web_id: params[:id])
     end
 
     def process_items(items)

@@ -2,7 +2,8 @@ class RetailerUser < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :validatable,
+         :omniauthable, omniauth_providers: %i[facebook]
   belongs_to :retailer
 
   validate :onboarding_status_format
@@ -12,6 +13,29 @@ class RetailerUser < ApplicationRecord
   accepts_nested_attributes_for :retailer
 
   attr_reader :raw_invitation_token
+
+  def self.from_omniauth(auth, retailer_user)
+    retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
+    retailer_user.handle_page_connection
+    retailer_user
+  end
+
+  # TODO: mover a FacebookRetailer
+  def handle_page_connection
+    facebook_retailer = FacebookRetailer.create_with(
+      uid: uid,
+      access_token: facebook_access_token
+    ).find_or_create_by(retailer_id: retailer.id)
+    # TODO: manejar errores del response de facebook
+    facebook_service = Facebook::Api.new(facebook_retailer, self)
+    response = facebook_service.long_live_user_access_token
+    self.facebook_access_token = response['access_token']
+    self.facebook_access_token_expiration = Time.now + response['expires_in'].seconds if response['expires_in']
+    save!
+    facebook_service = Facebook::Api.new(facebook_retailer, self)
+    facebook_service.update_retailer_access_token
+    facebook_service.subscribe_page_to_webhooks
+  end
 
   def active_for_authentication?
     super && !removed_from_team?

@@ -1,0 +1,80 @@
+let webId;
+
+function getQuestionInfo(input) {
+  var questionId = input.id;
+
+  $('.profile').removeClass('border--secondary');
+  $('.profile').addClass('border--transparent');
+  $(`#${input.id}`).removeClass('border--transparent');
+  $(`#${input.id}`).addClass('border--secondary');
+
+  $('#question-info').show();
+  $('#product-info').show();
+  $('#select-question').hide();
+
+  getAjax(`${window.location.origin}/retailers/${$('#slug-id').val()}/questions/${questionId}`, function(data) {
+    var json = JSON.parse(data);
+    var question = json.question;
+    var product = json.product;
+    webId = question.web_id;
+    productWebId = product.web_id;
+
+    $('#q-text').html(question.question);
+
+    if (question.answered) {
+      $('#a-text').html(question.answer);
+      $('#retailer-answer').show();
+      $('#answer-holder').hide();
+    } else {
+      buildQuestionAnswer();
+      $('#answer-holder').show();
+      $('#retailer-answer').hide();
+    }
+
+    $('#product-title').html(product.title);
+    $('#product-quantity').html(product.available_quantity);
+    $('#product-expiration').html(moment(product.meli_end_time).format('MM/DD/YYYY'));
+    $('#product-meli-id').html(product.meli_product_id);
+    $('#product-listing-type').html(product.meli_listing_type_id);
+    $('#product-ml-link').attr('href', product.meli_permalink);
+    $('#product-condition').html(humanizeCondition(product.condition));
+    $('#product-questions').html(json.questions_total);
+    $('#product-orders').html(json.orders_total);
+    $('#product-success-orders').html(json.success_orders_total);
+    $('#product-earned').html('$' + json.earned.toString());
+    $('#product-img').attr('src', json.image);
+
+    $('#product-title').append(
+      `<a href="${window.location.origin}/retailers/${$('#slug-id').val()}/products/${productWebId}" target="_blank">` +
+        '<i class="fs-18 mt-4 mr-4 f-right fas fa-external-link-alt"></i>' +
+      '</a>'
+    );
+  });
+}
+
+function humanizeCondition(condition) {
+  if (condition === 'new_product') {
+    return 'Nuevo';
+  } else if (condition === 'used') {
+    return 'Usado';
+  } else {
+    return 'Sin especificar';
+  }
+}
+
+function buildQuestionAnswer() {
+  string = `<form action="/retailers/${$('#slug-id').val()}/messages/${webId}/answer_question" accept-charset="UTF-8" method="post">` +
+              '<input name="utf8" type="hidden" value="✓">' +
+              '<input type="hidden" name="_method" value="put">' +
+              `<input type="hidden" name="authenticity_token" value="${$('meta[name="csrf-token"]').attr('content')}">` +
+              '<div class="text-input">'+
+                '<textarea name="answer" placeholder="Respuesta" maxlength="140"></textarea>' +
+              '</div>' +
+              '<input type="submit" name="commit" value="Enviar" class="btn-btn btn-submit w-100" data-disable-with="Enviar">' +
+              '<p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, ' +
+              'direcciones exactas o nombres personales</i>' +
+              '</p>' +
+            '</form>';
+
+  $('#answer-holder').html(string);
+}

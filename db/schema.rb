@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_04_035146) do
+ActiveRecord::Schema.define(version: 2020_01_06_143458) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.string "meli_nickname"
     t.integer "meli_customer_id"
+    t.string "meli_nickname"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -92,7 +92,38 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.string "zip_code"
     t.string "country_id"
     t.boolean "valid_customer", default: false
+    t.string "psid"
+    t.string "web_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
+  end
+
+  create_table "facebook_messages", force: :cascade do |t|
+    t.string "sender_uid"
+    t.string "id_client"
+    t.bigint "facebook_retailer_id"
+    t.text "text"
+    t.string "mid"
+    t.string "reply_to"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "customer_id"
+    t.date "date_read"
+    t.boolean "sent_from_mercately", default: false
+    t.boolean "sent_by_retailer", default: false
+    t.string "file_type"
+    t.string "url"
+    t.string "file_data"
+    t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
+    t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
+  end
+
+  create_table "facebook_retailers", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "uid"
+    t.string "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
   end
 
   create_table "meli_customers", force: :cascade do |t|
@@ -182,6 +213,7 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.integer "feedback_reason"
     t.string "feedback_message"
     t.integer "feedback_rating"
+    t.string "web_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
   end
@@ -226,6 +258,7 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.integer "meli_status"
     t.integer "from", default: 0
     t.string "code"
+    t.string "web_id"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
     t.index ["retailer_id", "code"], name: "index_products_on_retailer_id_and_code", unique: true
@@ -252,6 +285,7 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.datetime "date_created_answer"
     t.integer "meli_question_type"
     t.boolean "answered", default: false
+    t.string "web_id"
     t.index ["customer_id"], name: "index_questions_on_customer_id"
     t.index ["meli_id"], name: "index_questions_on_meli_id", unique: true
     t.index ["order_id"], name: "index_questions_on_order_id"
@@ -269,6 +303,10 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -301,6 +339,7 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.string "zip_code"
     t.string "phone_number"
     t.boolean "phone_verified"
+    t.string "retailer_number"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 
@@ -312,10 +351,14 @@ ActiveRecord::Schema.define(version: 2019_12_04_035146) do
     t.datetime "updated_at", null: false
     t.boolean "enable_for_questions", default: false
     t.boolean "enable_for_chats", default: false
+    t.string "web_id"
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "facebook_messages", "customers"
+  add_foreign_key "facebook_messages", "facebook_retailers"
+  add_foreign_key "facebook_retailers", "retailers"
   add_foreign_key "meli_retailers", "retailers"
   add_foreign_key "questions", "products"
 end
