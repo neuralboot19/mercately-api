@@ -7,10 +7,6 @@ class Retailers::MessagesController < RetailersController
   end
 
   def questions
-    @questions = Question.includes(:customer, :product).where(meli_question_type: :from_product, products:
-      {
-        retailer_id: current_retailer.id
-      }).order('questions.date_read IS NOT NULL, questions.created_at DESC')
   end
 
   def chats
@@ -104,6 +100,16 @@ class Retailers::MessagesController < RetailersController
       sent_from_mercately: true
     )
     redirect_back fallback_location: root_path
+  end
+
+  def questions_list
+    @questions = Question.joins(:customer, :product).where(meli_question_type: :from_product, products:
+      {
+        retailer_id: current_retailer.id
+      }).select('questions.*, customers.full_name, customers.meli_nickname')
+      .order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
+
+    render json: { questions: @questions, total: @questions.total_pages }
   end
 
   private
