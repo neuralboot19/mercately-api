@@ -671,6 +671,10 @@
 }
 .customer_sidebar i {
   color: #b1b8c4;
+
+  &.primary {
+    color: $primary-color;
+  }
 }
 
 .customer_sidebar .customer_box p i {
@@ -875,3 +879,97 @@
   color: #aaa;
 }
 
+.table__pricing {
+  border-collapse: collapse;
+  width: 1000px;
+
+  th {
+    font-size: 18px;
+    padding: 12px;
+  }
+
+  tbody {
+    background-color: #fff;
+    border: 2px solid #eee;
+    border-radius: 3px;
+    
+    tr:first-child {
+      font-size: 26px;
+      td {
+        padding: 8px 12px;
+      }
+    }
+
+    tr td {
+      border-left: 1px solid #eee;
+      padding: 8px;
+
+      &:first-child {
+        border-left: 0;
+      }
+    }
+
+    .pricing__section {
+      border-top: 1px solid #eee;
+    }
+  }
+
+  tfoot {
+    td:first-child {
+      background-color: transparent;
+    }
+
+    td {
+      border-left: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      padding: 8px;
+      background-color: #fff;
+      text-align: center;
+    }
+
+    td:last-child {
+      border-right: 1px solid #eee;
+    }
+  }
+
+  tr td:first-child {
+    color: #aaa;
+    padding-left: 12px;
+  }
+}
+
+.pricing__start {
+  display: inline-block;
+  border-radius: 10px;
+  background-color: #26abe2;
+  color: #fff;
+  padding: 4px 8px;
+  text-decoration: none;
+  margin-top: 12px;
+}
+
+.pricing__contact {
+  display: inline-block;
+  border-radius: 10px;
+  border: 6px solid #0e1022;
+  padding: 4px 8px;
+  text-decoration: none;
+  margin-top: 12px;
+  color: #000;
+}
+
+.ws-contact {
+  border-radius: 10px;
+  background-color: #5fc993;
+  padding: 4px 8px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.pricing__card {
+  background-color: #fff;
+  border: 1px solid #d7d7d7;
+  padding: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}

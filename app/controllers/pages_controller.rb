@@ -3,6 +3,9 @@ class PagesController < ApplicationController
     redirect_to retailers_dashboard_path(current_retailer_user.retailer) if current_retailer_user
   end
 
+  def price
+  end
+
   def privacy
   end
 

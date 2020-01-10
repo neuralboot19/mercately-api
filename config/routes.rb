@@ -16,10 +16,11 @@ Rails.application.routes.draw do
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  get '/blog' => redirect("https://www.mercately.com/blog/")
 
+  get '/blog' => redirect("https://www.mercately.com/blog/")
   get '/privacidad', to: 'pages#privacy', as: :privacy
   get '/terminos', to: 'pages#terms', as: :terms
+  get '/precios', to: 'pages#price', as: :pricing
 
   namespace :retailers do
     scope '/:slug' do
@@ -47,6 +48,7 @@ Rails.application.routes.draw do
       get 'questions/:question_id', to: 'messages#question', as: :question
       put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
       put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
+      get 'questions_list', to: 'messages#questions_list'
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

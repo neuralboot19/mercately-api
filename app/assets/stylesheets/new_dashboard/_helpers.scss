@@ -43,6 +43,10 @@ label:hover, a:hover {
 }
 
 @for $space from 0 through 250 {
+  .fz-#{$space} {
+    font-size: #{$space}px;
+  }
+
   .w-#{$space} {
     width: #{$space}px;
   }
@@ -160,6 +164,10 @@ label:hover, a:hover {
   text-align: justify;
 }
 
+.fw-bold {
+  font-weight: bold;
+}
+
 .f-right {
   float: right;
 }
@@ -174,7 +182,7 @@ label:hover, a:hover {
 }
 
 .c-primary {
-  color: $primary-color;
+  color: $primary-color !important;
 }
 
 .c-secondary {
@@ -199,6 +207,10 @@ label:hover, a:hover {
 
 .c-black {
   color: #000 !important;
+}
+
+.c-dark {
+  color: #4F4F4F !important;
 }
 
 .c-gray-label {
@@ -301,6 +313,14 @@ label:hover, a:hover {
   &--transparent {
     border-color: transparent;
   }
+
+  &-bottom td {
+    border-bottom: 1px solid #aaa;
+  }
+}
+
+.m-a {
+  margin: auto;
 }
 
 .cursor-pointer:hover {
