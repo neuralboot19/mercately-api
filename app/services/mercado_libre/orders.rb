@@ -32,7 +32,7 @@ module MercadoLibre
         item = OrderItem.find_or_initialize_by(order_id: order.id, product_id: product.id)
 
         product_variation = ProductVariation.find_by(variation_meli_id: order_item['item']['variation_id']) if
-          order_item['item']['variation_id'].present?
+          order_item['item']['variation_id'].present? && product.parent_product.blank?
 
         item.update_attributes!(quantity: order_item['quantity'], from_ml: true, change_sold_quantity:
           product_exist, unit_price: order_item['unit_price'], product_variation_id: product_variation&.id)
