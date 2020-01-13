@@ -4,13 +4,9 @@
       <div class="box">
         <fieldset class="fieldset mt-16 row">
           <legend>Información básica de cliente</legend>
-          <div class="my-16 col-xs-12 col-md-6">
-            <%= f.label :first_name, 'Nombre' %>
-            <%= f.text_field :first_name, class: 'input' %>
-          </div>
-          <div class="my-16 col-xs-12 col-md-6">
-            <%= f.label :last_name, 'Apellido' %>
-            <%= f.text_field :last_name, class: 'input' %>
+          <div class="my-16 col-xs-12">
+            <%= f.label :full_name, 'Nombres' %>
+            <%= f.text_field :full_name, class: 'input' %>
           </div>
           <div class="my-16 col-xs-12">
             <%= f.label :email %>
@@ -21,29 +17,33 @@
             <%= f.label :phone, 'Teléfono' %>
             <%= f.text_field :phone, class: 'input' %>
           </div>
-          <div class="my-16 col-xs-12 col-md-6">
-            <%= f.label :id_type, 'Tipo de identificación' %>
-            <%= f.select :id_type, Customer.id_types.keys, class: 'input' %>
+          <div class="row">
+            <div class="my-16 col-xs-12 col-md-6">
+              <%= f.label :id_type, 'Tipo de identificación' %>
+              <%= f.select :id_type, Customer.id_types.keys, class: 'input' %>
+            </div>
+            <div class="my-16 col-xs-12 col-md-6">
+              <%= f.label :id_number, 'Identificación' %>
+              <%= f.text_field :id_number, class: 'input' %>
+            </div>
           </div>
-          <div class="my-16 col-xs-12 col-md-6">
-            <%= f.label :id_number, 'Identificación' %>
-            <%= f.text_field :id_number, class: 'input' %>
-          </div>
-          <div class="my-16 col-xs-12 col-md-3">
-            <%= f.label :address, 'Dirección' %>
-            <%= f.text_field :address, class: 'input' %>
-          </div>
-          <div class="my-16 col-xs-12 col-md-3">
-            <%= f.label :city, 'Ciudad' %>
-            <%= f.text_field :city, class: 'input' %>
-          </div>
-          <div class="my-16 col-xs-12 col-md-3">
-            <%= f.label :state, 'Estado (Provincia)' %>
-            <%= f.text_field :state, class: 'input' %>
-          </div>
-          <div class="my-16 col-xs-12 col-md-3">
-            <%= f.label :zip_code, 'Zip' %>
-            <%= f.text_field :zip_code, class: 'input' %>
+          <div class="row">
+            <div class="my-16 col-xs-12 col-md-3">
+              <%= f.label :address, 'Dirección' %>
+              <%= f.text_field :address, class: 'input' %>
+            </div>
+            <div class="my-16 col-xs-12 col-md-3">
+              <%= f.label :city, 'Ciudad' %>
+              <%= f.text_field :city, class: 'input' %>
+            </div>
+            <div class="my-16 col-xs-12 col-md-3">
+              <%= f.label :state, 'Estado (Provincia)' %>
+              <%= f.text_field :state, class: 'input' %>
+            </div>
+            <div class="my-16 col-xs-12 col-md-3">
+              <%= f.label :zip_code, 'Zip' %>
+              <%= f.text_field :zip_code, class: 'input' %>
+            </div>
           </div>
         </fieldset>
         <div class="btn-box col-xs-12">

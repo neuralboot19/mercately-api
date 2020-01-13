@@ -136,8 +136,8 @@ module MercadoLibre
       end
 
       def save_customer_data(customer)
-        customer.update!(first_name: @first_name) if customer.first_name.blank? && @first_name.present?
-        customer.update!(last_name: @last_name) if customer.last_name.blank? && @last_name.present?
+        full_name = "#{@first_name} #{@last_name}".strip
+        customer.update!(full_name: full_name) if customer.full_name.blank? && full_name.present?
         customer.generate_phone
 
         customer

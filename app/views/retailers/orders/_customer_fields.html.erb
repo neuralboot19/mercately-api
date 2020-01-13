@@ -11,20 +11,16 @@
             </a>
           </div>
           <div class="col-xs-12 col-md-6 my-16">
-            <%= f.label :first_name, 'Nombre' %>
-            <%= f.text_field :first_name, class: 'input' %>
+            <%= f.label :full_name, 'Nombres' %>
+            <%= f.text_field :full_name, class: 'input' %>
           </div>
-          <div class="col-xs-12 col-md-6 my-16">
-            <%= f.label :last_name, 'Apellido' %>
-            <%= f.text_field :last_name, class: 'input' %>
-          </div>
-        </div>
-        <div class="row col-xs-12">
           <div class="col-xs-12 col-md-6 my-16">
             <%= f.label :email %>
             <%= f.text_field :email, class: 'input validate-email' %>
             <i class="validation-msg"></i>
           </div>
+        </div>
+        <div class="row col-xs-12">
           <div class="col-xs-12 col-md-6 my-16">
             <%= f.label :phone, 'Teléfono' %>
             <%= f.text_field :phone, class: 'input' %>

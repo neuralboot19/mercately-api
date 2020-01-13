@@ -17,7 +17,8 @@ module Facebook
       Customer.create_with(
         retailer: @facebook_retailer.retailer,
         first_name: response['first_name'],
-        last_name: response['last_name']
+        last_name: response['last_name'],
+        full_name: "#{response['first_name']} #{response['last_name']}"
       ).find_or_create_by(psid: psid)
     end
 

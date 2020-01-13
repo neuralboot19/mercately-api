@@ -19,8 +19,7 @@
                       <% if @question.customer.meli_customer.email %>
                         <b class="normal black-text">Usuario:</b> <%= @question.customer.meli_customer.nickname %><br/>
                         <b class="normal black-text">Email:</b> <%= @question.customer.email %><br/>
-                        <b class="normal black-text">Nombre:</b> <%= @question.customer.first_name %><br/>
-                        <b class="normal black-text">Apellido:</b> <%= @question.customer.last_name %><br/>
+                        <b class="normal black-text">Nombres:</b> <%= @question.customer.full_name %><br/>
                         <b class="normal black-text">Número:</b> <%= @question.customer.phone %>
                       <% else %>
                         <b class="normal black-text">Usuario:</b> <%= @question.customer.meli_customer.nickname %><br/>

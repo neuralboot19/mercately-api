@@ -28,7 +28,7 @@
                   <fieldset class="fieldset mt-16">
                   <legend>Enviado por:</legend>
                     <p>
-                      <label class="c-grey fs-14">Usuario:</label> <span class="c-secondary fs-14"><%= @question.customer.first_name.present? ? @question.customer.full_name() : (@question.customer.meli_nickname ||
+                      <label class="c-grey fs-14">Usuario:</label> <span class="c-secondary fs-14"><%= @question.customer.full_name.present? ? @question.customer.full_name : (@question.customer.meli_nickname ||
                       @question.customer.meli_customer.nickname) %></span>
                     </p>
                     <p>
