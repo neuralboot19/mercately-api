@@ -102,7 +102,7 @@ module MercadoLibre
       new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
       product = @utility.search_product(product, @retailer, product_info, new_product_with_parent)
-      return product if product&.parent_product
+      return product if product&.parent_product == true
 
       product.with_lock do
         return if product_info['status'] == 'closed' &&

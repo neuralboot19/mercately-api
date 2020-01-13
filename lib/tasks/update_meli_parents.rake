@@ -3,8 +3,8 @@ task update_meli_parents: :environment do
     next unless retailer.meli_retailer
 
     @api = MercadoLibre::Api.new(retailer.meli_retailer)
-    retailer.products.each do |product|
-      url = @api.get_product_url(product)
+    retailer.products.where.not(meli_product_id: nil).each do |product|
+      url = @api.get_product_url(product.meli_product_id)
       response = faraday_request_get(url)
 
       if response['id'].present?
@@ -12,7 +12,7 @@ task update_meli_parents: :environment do
 
         if response['parent_item_id'].present?
           parents = parents.push(parent: response['parent_item_id'])
-          product.update_column(meli_parent: parents)
+          product.update_column(:meli_parent, parents)
         end
       end
     end
