@@ -15,6 +15,7 @@ FactoryBot.define do
       meli_product_id { "MEC#{Faker::Number.number(9)}" }
       meli_status { 'active' }
       meli_listing_type_id { 'free' }
+      meli_parent { [{ 'parent': "MEC#{Faker::Number.number(9)}" }] }
       ml_attributes do
         '[{
           "value_name": "Marfil",
