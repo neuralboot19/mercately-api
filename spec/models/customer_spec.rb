@@ -20,10 +20,6 @@ RSpec.describe Customer, type: :model do
     it { is_expected.to allow_value('', nil).for(:email) }
   end
 
-  describe '#full_name' do
-    it { expect(customer.full_name).to eq "#{customer.first_name} #{customer.last_name}" }
-  end
-
   describe '#earnings' do
     let!(:order) { create(:order, :completed, customer: customer) }
     let!(:order_items) { create_list(:order_item, 5, order: order, product: product, unit_price: 5, quantity: 5) }
