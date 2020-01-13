@@ -13,7 +13,6 @@ class Product < ApplicationRecord
   validates :title, presence: true
   validates :price, presence: true
   validates :code, uniqueness: { scope: :retailer_id, message: 'Código ya está en uso.' }, allow_blank: true
-  validate :images_count
   validate :check_variations
   validate :check_images
   validate :check_main_image
@@ -185,10 +184,6 @@ class Product < ApplicationRecord
   end
 
   private
-
-    def images_count
-      errors.add(:base, 'Máximo de imagenes: 10') if images.count > 10
-    end
 
     def create_variations(variations)
       variations.each do |var|
