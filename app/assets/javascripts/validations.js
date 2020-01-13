@@ -52,7 +52,6 @@ function validateImages(form) {
   }
 
   productId = document.getElementById('product_id');
-  meliStatus = document.getElementById('product_meli_status');
   uploadProduct = document.getElementById('product_upload_product');
   uploadedImages = false;
   message = document.getElementById('product_images_error');
@@ -63,7 +62,7 @@ function validateImages(form) {
     }
   });
 
-  if (!productId.value && (meliStatus || (uploadProduct && uploadProduct.checked)) && !uploadedImages) {
+  if (!productId.value && (uploadProduct && uploadProduct.checked) && !uploadedImages) {
     $(message).text('Imágenes requeridas');
     return false;
   }
