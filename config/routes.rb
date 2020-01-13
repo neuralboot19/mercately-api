@@ -81,6 +81,9 @@ Rails.application.routes.draw do
       post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
       post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img
       post 'messages/:id/readed', to: 'customers#set_message_as_readed', as: :set_message_as_readed
+
+      post 'whatsapp', to: 'whatsapp#create'
+
     end
   end
 end
