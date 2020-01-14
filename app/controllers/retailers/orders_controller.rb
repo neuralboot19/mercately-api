@@ -84,11 +84,10 @@ class Retailers::OrdersController < RetailersController
         ],
         customer_attributes: [
           :id,
-          :first_name,
-          :last_name,
           :email,
           :phone,
-          :retailer_id
+          :retailer_id,
+          :full_name
         ]
       )
     end

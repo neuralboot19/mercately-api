@@ -1,6 +1,6 @@
 class Retailers::CustomersController < RetailersController
-  before_action :check_ownership, only: [:show, :edit, :update, :destroy, :customer_data]
-  before_action :set_customer, only: [:show, :edit, :update, :destroy, :customer_data]
+  before_action :check_ownership, only: [:show, :edit, :update, :destroy]
+  before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   def index
     @q = if params[:q]&.[](:s).blank?
@@ -42,6 +42,8 @@ class Retailers::CustomersController < RetailersController
   end
 
   def customer_data
+    @customer = current_retailer.customers.active.find(params[:id])
+
     render json: { customer: @customer }
   end
 
@@ -60,8 +62,6 @@ class Retailers::CustomersController < RetailersController
     # Only allow a trusted parameter "white list" through.
     def customer_params
       params.require(:customer).permit(
-        :first_name,
-        :last_name,
         :email,
         :phone,
         :id_type,
@@ -70,7 +70,8 @@ class Retailers::CustomersController < RetailersController
         :city,
         :state,
         :zip_code,
-        :country_id
+        :country_id,
+        :full_name
       )
     end
 end
