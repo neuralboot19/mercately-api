@@ -28,7 +28,11 @@
           <% if @order.id.blank? %>
             <input type="hidden" name="order[customer_attributes][id]" id="order_customer_attributes_id">
           <% end %>
-          <input type="hidden" value="<%= current_retailer.id %>" name="order[customer_attributes][retailer_id]" id="order_customer_attributes_retailer_id">
+          <% if @hide_client_form %>
+            <input type="hidden" value="<%= current_retailer.id %>" name="order[customer_attributes][retailer_id]" id="order_customer_attributes_retailer_id" disabled="disabled">
+          <% else %>
+            <input type="hidden" value="<%= current_retailer.id %>" name="order[customer_attributes][retailer_id]" id="order_customer_attributes_retailer_id">
+          <% end %>
         </div>
       </div>
     </fieldset>
