@@ -21,6 +21,15 @@ ActiveAdmin.register Retailer do
     end
   end
 
+  csv do
+    column :id
+    column :name
+    column :city
+    column :phone_number
+    column :retailer_number
+    column :created_at
+  end
+
   show do
     attributes_table title: 'Detalles del Retailer' do
       row :id
