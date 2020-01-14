@@ -5,21 +5,23 @@
         <legend>Información de la venta</legend>
         <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
         <input type="hidden" id="hidden-meli-id" value="<%= @order.meli_order_id %>" />
-        <div class="my-16" id="customer_id_container">
-          <%= f.label :customer_id, 'Cliente' %>
-          <%= f.select :customer_id, current_retailer.customers.active.map { |c| [c.full_name, c.id] }, { include_blank: false }, class: 'input', onchange: 'updateEditForm()' %>
-        </div>
-        <div id="add_customer_container" class="links mt-16 mb-24 pb-10">
-          <a class="btn btn--cta fs-12 fs-sm-and-down-8 f-right" onclick="editClient()" id="edit_customer">
-            <i class="fas fa-edit mr-5"></i>
-            Editar cliente
-          </a>
-          <%= link_to_add_association f, :customer, partial: 'new_customer_fields', class: 'btn btn--cta fs-12 fs-sm-and-down-8 f-right', id: 'add_customer' do %>
-            <i class="fas fa-plus mr-5"></i>
-            Agregar cliente
-          <% end %>
-        </div>
-        <div id="edit-client-order-form" class="d-none">
+        <% if @hide_client_form %>
+          <div class="my-16" id="customer_id_container">
+            <%= f.label :customer_id, 'Cliente' %>
+            <%= f.select :customer_id, current_retailer.customers.active.map { |c| [c.full_name, c.id] }, { include_blank: false }, class: 'input', onchange: 'updateEditForm()' %>
+          </div>
+          <div id="add_customer_container" class="links mt-16 mb-24 pb-10">
+            <a class="btn btn--cta fs-12 fs-sm-and-down-8 f-right" onclick="editClient()" id="edit_customer">
+              <i class="fas fa-edit mr-5"></i>
+              Editar cliente
+            </a>
+            <%= link_to_add_association f, :customer, partial: 'new_customer_fields', class: 'btn btn--cta fs-12 fs-sm-and-down-8 f-right', id: 'add_customer' do %>
+              <i class="fas fa-plus mr-5"></i>
+              Agregar cliente
+            <% end %>
+          </div>
+        <% end %>
+        <div id="edit-client-order-form" class="<%= 'd-none' if @hide_client_form %>">
           <%= f.fields_for :customer, @customer do |cust| %>
             <%= render "customer_fields", f: cust %>
           <% end %>

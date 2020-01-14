@@ -12,10 +12,22 @@ class Retailers::OrdersController < RetailersController
 
   def new
     @order = Order.new
+    @hide_client_form = true
+
+    if params[:customer_id].present?
+      @order.customer_id = params[:customer_id]
+    elsif params[:full_name].present?
+      @order.customer = Customer.new
+      @order.customer.full_name = params[:full_name]
+      @order.customer.email = params[:email]
+      @order.customer.phone = params[:phone]
+      @hide_client_form = false
+    end
   end
 
   def edit
     @customer = @order.customer
+    @hide_client_form = true
   end
 
   def create
