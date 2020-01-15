@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_06_152541) do
+ActiveRecord::Schema.define(version: 2020_01_10_141919) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2020_01_06_152541) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.integer "meli_customer_id"
     t.string "meli_nickname"
+    t.integer "meli_customer_id"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -92,9 +92,9 @@ ActiveRecord::Schema.define(version: 2020_01_06_152541) do
     t.string "zip_code"
     t.string "country_id"
     t.boolean "valid_customer", default: false
-    t.string "psid"
     t.string "web_id"
     t.string "full_name"
+    t.string "psid"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -260,6 +260,7 @@ ActiveRecord::Schema.define(version: 2020_01_06_152541) do
     t.integer "from", default: 0
     t.string "code"
     t.string "web_id"
+    t.jsonb "meli_parent", default: []
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
     t.index ["retailer_id", "code"], name: "index_products_on_retailer_id_and_code", unique: true
@@ -304,10 +305,6 @@ ActiveRecord::Schema.define(version: 2020_01_06_152541) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -318,6 +315,10 @@ ActiveRecord::Schema.define(version: 2020_01_06_152541) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"

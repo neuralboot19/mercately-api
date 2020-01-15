@@ -82,6 +82,7 @@ module MercadoLibre
         incoming_images: product_info['pictures'],
         from: 'mercadolibre',
         main_image: product_info['pictures'].present?,
+        meli_parent: product_info['parent_item_id'] ? [{ 'parent': product_info['parent_item_id'] }] : [],
         retailer: @retailer
       ).find_or_create_by!(meli_product_id: product_info['id'])
 
@@ -100,8 +101,8 @@ module MercadoLibre
       product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
       new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
-      product = Product.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
-        new_product_with_parent
+      product = @utility.search_product(product, @retailer, product_info, new_product_with_parent)
+      return product if product.parent_product == true
 
       product.with_lock do
         return if product_info['status'] == 'closed' &&

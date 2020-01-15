@@ -28,7 +28,7 @@ class Product < ApplicationRecord
   enum from: %i[mercately mercadolibre], _prefix: true
 
   attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
-                :changed_main_image
+                :changed_main_image, :parent_product
 
   ransacker :sort_by_earned do
     Arel.sql('coalesce((select sum(quantity * unit_price) as total from order_items, orders where ' \

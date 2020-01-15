@@ -24,6 +24,7 @@ ActiveAdmin.register Retailer do
   csv do
     column :id
     column :name
+    column(:email) { |retailer| retailer.retailer_user.email }
     column :city
     column :phone_number
     column :retailer_number
