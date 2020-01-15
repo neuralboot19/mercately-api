@@ -236,4 +236,68 @@ RSpec.describe MercadoLibre::ProductsUtility do
       end
     end
   end
+
+  describe '.search_product' do
+    let(:retailer) { create(:retailer) }
+    let!(:ml_product) { create(:product, :from_ml, retailer: retailer, meli_product_id: 'MEC123456789') }
+    let(:new_product) { build(:product, :from_ml) }
+    let(:product_info) do
+      {
+        parent_item_id: 'MEC123456789'
+      }.with_indifferent_access
+    end
+
+    context 'when the product comes from a parent, and the parent exists in DB' do
+      it 'returns the parent product' do
+        expect(products_utility_service.search_product(new_product, retailer, product_info, true).id).to eq(ml_product.id)
+      end
+    end
+
+    context 'when the product is a parent of another product in DB' do
+      it 'returns the child product' do
+        product_info['id'] = 'MEC123456789'
+        ml_product.update(meli_parent: [{ 'parent': 'MEC123456789' }])
+        expect(products_utility_service.search_product(new_product, retailer, product_info, false).id).to eq(ml_product.id)
+      end
+    end
+
+    context 'when the product is a new record without parent and is not parent of another one' do
+      it 'returns the product itself' do
+        product_info['parent_item_id'] = nil
+        expect(products_utility_service.search_product(new_product, retailer, product_info, false)).to eq(new_product)
+      end
+    end
+  end
+
+  describe '.insert_parent_id' do
+    let(:new_product) { create(:product, :from_ml, meli_parent: []) }
+    let(:product_info) do
+      {
+        parent_item_id: nil
+      }.with_indifferent_access
+    end
+
+    context 'when the product coming from ML does not have a parent' do
+      it 'does not add a meli_parent to the product' do
+        expect(products_utility_service.insert_parent_id(new_product, product_info)).to eq([])
+      end
+    end
+
+    context 'when the product coming from ML has a parent, but its already added to the product' do
+      it 'does not add a meli_parent to the product' do
+        new_product.update(meli_parent: [{ 'parent': 'MEC123456789' }])
+        product_info['parent_item_id'] = 'MEC123456789'
+        expect(products_utility_service.insert_parent_id(new_product, product_info).to_json)
+          .to eq([{ 'parent': 'MEC123456789' }].to_json)
+      end
+    end
+
+    context 'when the product coming from ML has a parent, and its not added to the product yet' do
+      it 'adda the meli_parent to the product' do
+        product_info['parent_item_id'] = 'MEC123456789'
+        expect(products_utility_service.insert_parent_id(new_product, product_info).to_json)
+          .to eq([{ 'parent': 'MEC123456789' }].to_json)
+      end
+    end
+  end
 end
