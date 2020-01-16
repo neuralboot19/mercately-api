@@ -56,6 +56,11 @@ p{
   font-size: 14px;
   font-weight: 600;
   line-height: 17px;
+
+  &.card-mobile-title {
+    font-size: 17px;
+    color: $primary-color;
+  }
 }
 .container .p-blue{
   color: #26abe2;
@@ -193,13 +198,23 @@ p{
 
   .sell-text {
     text-align: center;
-    font-size: 40px;
     padding-top: 190px;
+
+    p {
+      font-size: 40px;
+      color: #FFF;
+      margin: 0;
+    }
   }
 
   .additional-text {
     text-align: center;
-    font-size: 20px;
+
+    p {
+      font-size: 20px;
+      color: #FFF;
+      margin: 0;
+    }
   }
 
   .buttons-header {
@@ -266,6 +281,101 @@ p{
 .text-second {
   margin-left: 155px;
   font-size: 13px;
+}
+
+.home-circle {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  min-height: 80px;
+  padding: 16px;
+  border-radius: 150px;
+  margin: 24px;
+  background-color: #FFF;
+  text-align: center;
+
+  .inner-circle {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    border: none;
+    border-radius: 150px;
+
+    &.sell-inner-circle {
+      background-color: #1954F5;
+    }
+
+    &.product-inner-circle {
+      background-color: #5078F1;
+    }
+
+    &.communication-inner-circle {
+      background-color: #2B5CFF;
+    }
+
+    &.stats-inner-circle {
+      background-color: #9438EF;
+    }
+
+    &.client-inner-circle {
+      background-color: #425AC6;
+    }
+
+    .img-sell {
+      width: 30px;
+      height: 45px;
+      margin-top: 16px;
+    }
+
+    .img-product {
+      width: 30px;
+      height: 35px;
+      margin-top: 23px;
+    }
+
+    .img-communication {
+      width: 45px;
+      height: 35px;
+      margin: 0;
+      margin-top: 23px;
+    }
+
+    .img-stats {
+      width: 40px;
+      height: 35px;
+      margin: 0;
+      margin-top: 23px;
+    }
+
+    .img-client {
+      width: 40px;
+      height: 40px;
+      margin: 0;
+      margin-top: 20px;
+    }
+  }
+
+  &.sell-circle {
+    border: 8px solid #185CF4;
+  }
+
+  &.product-circle {
+    border: 8px solid #6070F2;
+  }
+
+  &.communication-circle {
+    border: 8px solid #4950FE;
+  }
+
+  &.stats-circle {
+    border: 8px solid #9238EE;
+  }
+
+  &.client-circle {
+    border: 8px solid #5145A1;
+  }
 }
 
 .between{
@@ -771,6 +881,20 @@ p{
     margin-left: 55px;
     font-size: 10px;
   }
+
+  .home-header {
+    .sell-text {
+      p {
+        font-size: 35px;
+      }
+    }
+
+    .additional-text {
+      p {
+        font-size: 16px;
+      }
+    }
+  }
 }
 
 @media (max-width: 1023px){
@@ -809,6 +933,20 @@ p{
 
     input {
       margin-bottom: 20px;
+    }
+  }
+
+  .home-header {
+    .sell-text {
+      p {
+        font-size: 30px;
+      }
+    }
+
+    .additional-text {
+      p {
+        font-size: 15px;
+      }
     }
   }
 }
