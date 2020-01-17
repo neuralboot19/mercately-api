@@ -10,7 +10,7 @@ module MercadoLibre
       url = get_question_url(question_id)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
-      save_question(response) if response
+      save_question(response) if response&.[]('id').present?
     end
 
     def save_question(question_info)

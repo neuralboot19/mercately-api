@@ -187,7 +187,12 @@ module MercadoLibre
         product.available_quantity = product_info['available_quantity']
       end
 
-      product.sold_quantity = product_info['sold_quantity'] if product.new_record?
+      if product.new_record?
+        product.sold_quantity = product_info['sold_quantity']
+        product.meli_parent = []
+      end
+
+      product.meli_parent = insert_parent_id(product, product_info)
 
       product
     end
@@ -204,6 +209,28 @@ module MercadoLibre
     def new_product_has_parent?(product, product_info)
       product.new_record? && product_info['parent_item_id'].present? &&
         Product.exists?(meli_product_id: product_info['parent_item_id'])
+    end
+
+    def search_product(product, retailer, product_info, new_product_with_parent)
+      return Product.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
+        new_product_with_parent
+
+      aux_product = retailer.products.where('meli_parent @> ?', [{ 'parent': product_info['id'] }].to_json).first if
+        product.new_record?
+
+      if aux_product.present?
+        aux_product.parent_product = true
+        return aux_product
+      end
+
+      product
+    end
+
+    def insert_parent_id(product, product_info)
+      return product.meli_parent if product_info['parent_item_id'].blank? ||
+                                    product.meli_parent.any? { |mp| mp['parent'] == product_info['parent_item_id'] }
+
+      product.meli_parent.push(parent: product_info['parent_item_id'])
     end
   end
 end
