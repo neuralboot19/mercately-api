@@ -873,12 +873,26 @@
   color: #feda3a !important;
 }
 
+.editable_name{
+  color: #3a71f1 !important;
+}
 
 .editable_card_id{
   color: #3a71f1 !important;
 }
 
+.details-select__placeholder {
+  margin-top: -6px;
+}
 
+.details-select__indicator-separator {
+  margin-top: -1px !important;
+  height: 27px !important;
+}
+
+.details-select__indicator {
+  margin-top: -10px !important;
+}
 
 .inline-block {
   display: inline-block
@@ -889,6 +903,10 @@
   content: attr(placeholder);
   display: block;
   color: #aaa;
+}
+
+.number_flag{
+  width: 15px
 }
 
 .table__pricing {

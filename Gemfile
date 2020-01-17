@@ -31,7 +31,7 @@ gem 'ancestry', '~> 3.0', '>= 3.0.5'
 gem 'kaminari', '~> 1.1', '>= 1.1.1'
 
 # Img upload
-gem 'cloudinary', require: false
+gem 'cloudinary'
 gem 'activestorage-cloudinary-service'
 gem 'mime-types', '~> 3.1'
 

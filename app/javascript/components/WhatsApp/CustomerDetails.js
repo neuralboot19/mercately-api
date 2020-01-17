@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { fetchCustomer, updateCustomer } from "../../actions/actions";
-import EditableField from './shared/EditableField'
-import SelectableField from './shared/SelectableField'
+import EditableField from '../chat/shared/EditableField'
+import SelectableField from '../chat/shared/SelectableField'
+import EcFlag from 'images/flags/ecuador.png'
+
 
 var is_updated = false;
 const csrfToken = document.querySelector('[name=csrf-token]').content
-
 
 class CustomerDetails extends Component {
   constructor(props) {
@@ -58,7 +59,8 @@ class CustomerDetails extends Component {
     let customer = this.state.customer
     return {
       customer: {
-        phone: customer.phone,
+        first_name: customer.first_name,
+        last_name: customer.last_name,
         email: customer.email, 
         id_type: customer.id_type,
         id_number: customer.id_number,
@@ -75,8 +77,8 @@ class CustomerDetails extends Component {
       <div className="customer_sidebar">
         <div className="customer_box">
           <p>
-            {customer.first_name} {customer.last_name}
-            <a href={window.location.href.replace('facebook_chats', `customers/${customer.web_id}/edit`)} target="_blank">
+            {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.phone}`}
+            <a href={window.location.href.replace('whatsapp_chats', `customers/${customer.web_id}/edit`)} target="_blank">
               <i className="fs-18 mt-4 mr-4 f-right fas fa-external-link-alt"></i>
             </a>
           </p>
@@ -87,30 +89,41 @@ class CustomerDetails extends Component {
           </div>
           <div>
             <div>
+              <i className="fs-18 mt-4 mr-4 fas fa-user editable_name" />
+              <p className="label inline-block">Nombres</p>
+            </div>
+            { Object.keys(this.state.customer).length != 0   && (
+              <div> 
+                <EditableField 
+                  handleInputChange={this.handleInputChange}
+                  content={this.state.customer.first_name}
+                  handlesubmit={this.handlesubmit}
+                  targetName='first_name'
+                  placeholder="Nombre"
+                />
+                <br />
+                <EditableField 
+                 handleInputChange={this.handleInputChange}
+                 content={this.state.customer.last_name}
+                 handlesubmit={this.handlesubmit}
+                 targetName='last_name'
+                 placeholder="Apellido"
+               />
+              </div>
+             )}
+          </div>
+          <div>
+            <div>
               <i className="fs-18 mt-4 mr-4 fab fa-whatsapp-square editable_phone"/>
               <p className="label inline-block">Teléfono:</p>
             </div>
-              
-
-              { Object.keys(this.state.customer).length != 0   && (
-               <EditableField 
-                 handleInputChange={this.handleInputChange}
-                 content={this.state.customer.phone}
-                 handlesubmit={this.handlesubmit}
-                 targetName='phone'
-                 placeholder="Número"
-               />
-             )}
-
-
+            <div><img className="number_flag" src={EcFlag} />  {customer.phone}</div>
           </div>
           <div>
-
             <div>
               <i className="fs-18 mt-4 mr-4 fas fa-envelope-square editable_email" />
               <p className="label inline-block">Email:</p>
             </div>
-
             { Object.keys(this.state.customer).length != 0   && (
                <EditableField 
                  handleInputChange={this.handleInputChange}
@@ -177,22 +190,11 @@ class CustomerDetails extends Component {
                </div>
              )}
 
+
           </div>
         </div>
 
-        <div className="t-center mt-20">
-          {this.state.customer.id &&
-            <a href={window.location.href.replace('facebook_chats', `orders/new?customer_id=${this.state.customer.id}`)} target="_blank" className="btn btn--cta">
-              Generar Venta
-            </a>
-          }
 
-          {!this.state.customer.id &&
-            <a href={window.location.href.replace('facebook_chats', `orders/new?full_name=${this.state.customer.full_name}&email=${this.state.customer.email}&phone=${this.state.customer.phone}`)} target="_blank" className="btn btn--cta">
-              Generar Venta
-            </a>
-          }
-        </div>
       </div>
     )
   }

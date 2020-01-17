@@ -1,4 +1,17 @@
 ActiveAdmin.register Retailer do
+  permit_params :name,
+                :id_type,
+                :id_number,
+                :address,
+                :city,
+                :state,
+                :zip_code,
+                :phone_number,
+                :whats_app_enabled,
+                :karix_account_uid,
+                :karix_account_token,
+                :karix_whatsapp_phone
+  
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -15,6 +28,9 @@ ActiveAdmin.register Retailer do
     end
     column 'Facebook User Id' do |retailer|
       retailer.facebook_retailer&.uid
+    end
+    column 'WhatsApp Account Id' do |retailer|
+      retailer.karix_account_uid
     end
     column :retailer_user
     column :created_at
@@ -93,6 +109,15 @@ ActiveAdmin.register Retailer do
       end
     end
 
+    panel 'Información de WhatsApp' do
+      attributes_table_for retailer do
+        row :whats_app_enabled
+        row :karix_account_uid
+        row :karix_account_token
+        row :karix_whatsapp_phone
+      end
+    end
+
     panel 'Plan' do
       plan = retailer.payment_plan
       attributes_table_for plan do
@@ -115,6 +140,10 @@ ActiveAdmin.register Retailer do
       f.input :state
       f.input :zip_code
       f.input :phone_number
+      f.input :whats_app_enabled
+      f.input :karix_account_uid
+      f.input :karix_account_token
+      f.input :karix_whatsapp_phone
     end
     f.actions
   end

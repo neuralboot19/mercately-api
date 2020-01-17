@@ -577,7 +577,7 @@
 
 .integration__desc {
   color: #686867;
-  line-height: 38px;
+  line-height: 30px;
   text-align: center;
   min-height: 307px;
   width: 80%;
@@ -597,6 +597,18 @@
   background-image: url(image_path('mercado-libre-logo-5.png'));
   background-position: center center;
   background-size: 120px;
+}
+
+#whats_app_logo {
+  background-image: url(image_path('whats_app.png'));
+  background-position: center center;
+  background-size: 120px;
+}
+
+.btn-aligned {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
 }
 
 .cookie__box {
