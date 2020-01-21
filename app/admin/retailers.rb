@@ -13,6 +13,9 @@ ActiveAdmin.register Retailer do
     column 'Meli User Id' do |retailer|
       retailer.meli_retailer&.meli_user_id
     end
+    column 'Facebook User Id' do |retailer|
+      retailer.facebook_retailer&.uid
+    end
     column :retailer_user
     column :created_at
     actions
@@ -74,6 +77,17 @@ ActiveAdmin.register Retailer do
         row :customer_id
         row :meli_token_updated_at
         row :meli_info_updated_at
+        row :created_at
+        row :updated_at
+      end
+    end
+
+    panel 'Información de Facebook' do
+      fb_info = retailer.facebook_retailer
+      attributes_table_for fb_info do
+        row :id
+        row :uid
+        row :access_token
         row :created_at
         row :updated_at
       end
