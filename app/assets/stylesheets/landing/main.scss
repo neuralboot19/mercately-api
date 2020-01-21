@@ -195,6 +195,7 @@ p{
   height: 700px;
   background-size: 100% 100%;
   background-image: url(image_path('landing/home_header.png'));
+  background-color: #286EB5;
 
   .sell-text {
     text-align: center;
@@ -224,15 +225,40 @@ p{
   }
 }
 
-.middle-section {
-  height: 750px;
-  padding-top: 20px;
+.flyers-section {
+  background-color: #286EB5;
+
+  .title {
+    font-size: 35px;
+  }
+
+  p {
+    color: #FFF;
+  }
+
+  .img-flyer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .divide-flyers {
+    border-right: 2px solid #FFF;
+  }
+
+  .alignment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flyer-text {
+    text-align: left;
+  }
 }
 
-.infographic {
-  height: 550px;
-  background-size: 100% 100%;
-  background-image: url(image_path('landing/infografia.png'));
+.middle-section {
+  padding-top: 50px;
 }
 
 .div-general-texts {
@@ -708,121 +734,251 @@ p{
   }
 }
 
-@media (min-width: 1999px){
-  .infographic {
-    width: 27%;
-    max-width: 27%;
-    flex-basis: 27%;
+@media (min-width: 1800px){
+  .div-general-texts {
+    width: 600px;
+    height: 210px;
   }
 
-  .div-fill {
-    width: 31.33333333%;
-    max-width: 31.33333333%;
-    flex-basis: 31.33333333%;
+  .clients-text {
+    margin-top: 810px;
   }
 
-  .text-main {
-    margin-left: 350px;
+  .stats-text {
+    margin-top: 580px;
   }
 
-  .text-second {
-    margin-left: 355px;
-  }
-}
-
-@media (min-width: 1900px) and (max-width: 1998px){
-  .infographic {
-    width: 27%;
-    max-width: 27%;
-    flex-basis: 27%;
+  .communication-text {
+    margin-top: 350px;
   }
 
-  .div-fill {
-    width: 31.33333333%;
-    max-width: 31.33333333%;
-    flex-basis: 31.33333333%;
+  .products-text {
+    margin-top: 125px;
   }
 
-  .text-main {
-    margin-left: 300px;
+  .title-info {
+    margin-left: 220px;
+    margin-top: 40px;
   }
 
-  .text-second {
-    margin-left: 305px;
-  }
-}
-
-@media (min-width: 1800px) and (max-width: 1899px){
-  .infographic {
-    width: 30.33333333%;
-    max-width: 30.33333333%;
-    flex-basis: 30.33333333%;
-  }
-
-  .div-fill {
-    width: 28%;
-    max-width: 28%;
-    flex-basis: 28%;
-  }
-
-  .text-main {
-    margin-left: 300px;
-  }
-
-  .text-second {
-    margin-left: 305px;
-  }
-}
-
-@media (min-width: 1551px) and (max-width: 1799px){
-  .text-main {
+  .text-info {
     margin-left: 220px;
   }
 
+  .text-main {
+    margin-left: 250px;
+  }
+
   .text-second {
-    margin-left: 225px;
+    margin-left: 255px;
+    font-size: 16px;
   }
 }
 
-@media (min-width: 1500px) and (max-width: 1550px){
-  .infographic {
-    width: 35.33333333%;
-    max-width: 35.33333333%;
-    flex-basis: 35.33333333%;
+@media (min-width: 1700px) and (max-width: 1799px){
+  .div-general-texts {
+    width: 500px;
+    height: 180px;
   }
 
-  .div-fill {
-    width: 23%;
-    max-width: 23%;
-    flex-basis: 23%;
+  .clients-text {
+    margin-top: 780px;
+  }
+
+  .stats-text {
+    margin-top: 560px;
+  }
+
+  .communication-text {
+    margin-top: 350px;
+  }
+
+  .products-text {
+    margin-top: 115px;
+  }
+
+  .title-info {
+    margin-left: 190px;
+    margin-top: 25px;
+  }
+
+  .text-info {
+    margin-left: 190px;
+    font-size: 14px;
+  }
+
+  .text-main {
+    margin-left: 190px;
+  }
+
+  .text-second {
+    margin-left: 195px;
+  }
+}
+
+@media (min-width: 1600px) and (max-width: 1699px){
+  .div-general-texts {
+    width: 500px;
+    height: 180px;
+  }
+
+  .clients-text {
+    margin-top: 720px;
+  }
+
+  .stats-text {
+    margin-top: 520px;
+  }
+
+  .communication-text {
+    margin-top: 310px;
+  }
+
+  .products-text {
+    margin-top: 105px;
+  }
+
+  .title-info {
+    margin-left: 190px;
+    margin-top: 25px;
+  }
+
+  .text-info {
+    margin-left: 190px;
+    font-size: 14px;
+  }
+
+  .text-main {
+    margin-left: 190px;
+  }
+
+  .text-second {
+    margin-left: 195px;
+  }
+}
+
+@media (min-width: 1500px) and (max-width: 1599px){
+  .div-general-texts {
+    width: 450px;
+    height: 160px;
+  }
+
+  .clients-text {
+    margin-top: 670px;
+  }
+
+  .stats-text {
+    margin-top: 480px;
+  }
+
+  .communication-text {
+    margin-top: 290px;
+  }
+
+  .products-text {
+    margin-top: 105px;
+  }
+
+  .sells-text {
+    margin-top: -80px;
+  }
+
+  .title-info {
+    margin-left: 170px;
+    margin-top: 25px;
+  }
+
+  .text-info {
+    margin-left: 170px;
+    font-size: 12px;
+  }
+
+  .text-main {
+    margin-left: 190px;
+  }
+
+  .text-second {
+    margin-left: 195px;
   }
 }
 
 @media (min-width: 1400px) and (max-width: 1499px){
-  .infographic {
-    width: 37.33333333%;
-    max-width: 37.33333333%;
-    flex-basis: 37.33333333%;
+  .div-general-texts {
+    width: 450px;
+    height: 160px;
   }
 
-  .div-fill {
-    width: 21%;
-    max-width: 21%;
-    flex-basis: 21%;
+  .clients-text {
+    margin-top: 610px;
+  }
+
+  .stats-text {
+    margin-top: 430px;
+  }
+
+  .communication-text {
+    margin-top: 250px;
+  }
+
+  .products-text {
+    margin-top: 75px;
+  }
+
+  .title-info {
+    margin-left: 170px;
+    margin-top: 25px;
+  }
+
+  .text-info {
+    margin-left: 170px;
+    font-size: 12px;
+  }
+
+  .text-main {
+    margin-left: 180px;
+    font-size: 30px;
+  }
+
+  .text-second {
+    margin-left: 185px;
+    font-size: 13px;
   }
 }
 
 @media (min-width: 1300px) and (max-width: 1399px){
-  .infographic {
-    width: 40.33333333%;
-    max-width: 40.33333333%;
-    flex-basis: 40.33333333%;
+  .div-general-texts {
+    width: 430px;
+    height: 150px;
   }
 
-  .div-fill {
-    width: 18%;
-    max-width: 18%;
-    flex-basis: 18%;
+  .clients-text {
+    margin-top: 570px;
+  }
+
+  .stats-text {
+    margin-top: 410px;
+  }
+
+  .communication-text {
+    margin-top: 250px;
+  }
+
+  .products-text {
+    margin-top: 90px;
+  }
+
+  .sells-text {
+    margin-top: -70px;
+  }
+
+  .title-info {
+    margin-left: 160px;
+    margin-top: 25px;
+  }
+
+  .text-info {
+    margin-left: 160px;
+    font-size: 11px;
   }
 
   .text-main {
@@ -835,51 +991,120 @@ p{
   }
 }
 
-@media (min-width: 1100px) and (max-width: 1299px){
-  .infographic {
-    width: 45.33333333%;
-    max-width: 45.33333333%;
-    flex-basis: 45.33333333%;
+@media (min-width: 1200px) and (max-width: 1299px){
+  .div-general-texts {
+    width: 350px;
+    height: 130px;
   }
 
-  .div-fill {
-    width: 10%;
-    max-width: 10%;
-    flex-basis: 10%;
+  .clients-text {
+    margin-top: 540px;
+  }
+
+  .stats-text {
+    margin-top: 390px;
+  }
+
+  .communication-text {
+    margin-top: 230px;
+  }
+
+  .products-text {
+    margin-top: 70px;
+  }
+
+  .sells-text {
+    margin-top: -80px;
+  }
+
+  .title-info {
+    margin-left: 140px;
+    margin-top: 25px;
+  }
+
+  .text-info {
+    margin-left: 140px;
+    font-size: 9px;
   }
 
   .text-main {
     margin-left: 80px;
-    font-size: 30px;
   }
 
   .text-second {
     margin-left: 85px;
     font-size: 12px;
   }
+
+  .flyers-section {
+    .title {
+      p {
+        font-size: 30px;
+      }
+    }
+
+    .flyer-text {
+      text-align: center;
+    }
+  }
 }
 
-@media (min-width: 1020px) and (max-width: 1099px){
-  .infographic {
-    width: 50.33333333%;
-    max-width: 50.33333333%;
-    flex-basis: 50.33333333%;
+@media (min-width: 1024px) and (max-width: 1199px){
+  .div-general-texts {
+    width: 320px;
+    height: 110px;
   }
 
-  .div-fill {
-    width: 8%;
-    max-width: 8%;
-    flex-basis: 8%;
+  .clients-text {
+    margin-top: 500px;
+  }
+
+  .stats-text {
+    margin-top: 350px;
+  }
+
+  .communication-text {
+    margin-top: 210px;
+  }
+
+  .products-text {
+    margin-top: 70px;
+  }
+
+  .sells-text {
+    margin-top: -60px;
+  }
+
+  .title-info {
+    margin-left: 120px;
+    margin-top: 20px;
+  }
+
+  .text-info {
+    margin-left: 120px;
+    font-size: 9px;
   }
 
   .text-main {
     margin-left: 50px;
-    font-size: 20px;
+    font-size: 30px;
   }
 
   .text-second {
     margin-left: 55px;
     font-size: 10px;
+  }
+
+  .flyers-section {
+    .title {
+      p {
+        font-size: 30px;
+      }
+    }
+
+    .flyer-text {
+      text-align: center;
+    }
   }
 
   .home-header {
@@ -947,6 +1172,22 @@ p{
       p {
         font-size: 15px;
       }
+    }
+  }
+
+  .flyers-section {
+    .title {
+      p {
+        font-size: 20px;
+      }
+    }
+
+    .flyer-text {
+      text-align: center;
+    }
+
+    .divide-flyers {
+      border: none;
     }
   }
 }

@@ -1,26 +1,61 @@
 <div class="home-header">
   <div class="sell-text mb-25">
-    <div class="mb-20"><p>!HEY TU!</p></div>
-    <div><p>VENDE EN MERCADO LIBRE</p></div>
-    <div><p>COMO NUNCA ANTES</p></div>
+    <div class="mb-20"><p>LLEVA TU NEGOCIO AL SIGUIENTE NIVEL</p></div>
   </div>
 
   <div class="additional-text">
     <div class="mb-15">
-      <p>!Estás a un solo paso de incrementar tus ventas en mercado libre!</p>
+      <p>¡Estás a un solo paso de aumentar tus ventas!</p>
     </div>
     <div>
-      <p>Únete a Mercately y tendrás acceso a potentes herramientas que te permitirán
-      lograr tus objetivos e incrementar tus ingresos.</p>
+      <p>Únete a Mercately y ten acceso a potentes herramientas que te permitirán
+      mejorar tu productividad, centralizar tu comunicación y, lo más importante, vender más.</p>
     </div>
   </div>
 
-  <div class="buttons-header mt-15">
+  <div class="buttons-header mt-25">
     <div class="col-xs-12 col-md-6 t-right">
       <%= button_to 'PRUÉBALO 7 DÍAS', new_retailer_user_registration_path, method: :get, class: 'know-more-button' %>
     </div>
     <div class="col-xs-12 col-md-6">
       <label for="modal--toggle" class="request-demo-label">AGENDAR UNA PRESENTACIÓN</label>
+    </div>
+  </div>
+</div>
+<div class="flyers-section">
+  <div class="row t-center pb-20">
+    <div class="col-xs-12 title">
+      <p>NOS INTEGRAMOS PARA MEJORAR TU NEGOCIO</p>
+    </div>
+    <div class="col-xs-12 col-md-4 divide-flyers alignment">
+      <div class="row">
+        <div class="col-xs-12 col-md-4 img-flyer">
+          <%= image_tag 'landing/logo-whatsapp.png' %>
+        </div>
+        <div class="col-xs-12 col-md-8 flyer-text">
+          <p>Con un solo número de Whatsapp, todo tu equipo puede manejar las ventas desde un solo lugar.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-4 divide-flyers alignment">
+      <div class="row">
+        <div class="col-xs-12 col-md-4 img-flyer">
+          <%= image_tag 'landing/logo-messenger.png' %>
+        </div>
+        <div class="col-xs-12 col-md-8 flyer-text">
+          <p>¡Convierte una conversación de Facebook en un proceso de venta! Guarda los datos de tus prospectos, dales seguimiento y conviértelos en clientes.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-4 alignment">
+      <div class="row">
+        <div class="col-xs-12 col-md-4 img-flyer">
+          <%= image_tag 'landing/logo-mercado-libre.png' %>
+        </div>
+        <div class="col-xs-12 col-md-8 flyer-text">
+          <p>¡Te ayudamos a vender de forma automática! Con nosotros podrás sincronizar tu inventario, publicar de forma masiva y más.</p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -35,31 +70,32 @@
     que ayudarán a optimizar tu negocio y vender más.
   </div>
   <div class="row col-md-12">
-    <div class="col-md-3 div-fill">
+    <div class="col-md-1 div-fill">
     </div>
-    <div class="col-md-4 infographic">
+    <div class="col-md-6 infographic">
+      <%= image_tag 'landing/imagen-infografia.png' %>
     </div>
     <div class="col-md-5 div-info">
       <div class="div-texts-container">
         <div class="sells-text pr-20 p-absolute div-general-texts">
-          <div class="ml-150 mt-30 fs-14">Ventas</div>
-          <div class="ml-150 fs-11">Da seguimiento a tus clientes con nuestro CRM, genera órdenes de venta y factura su transacción de manera inmediata.</div>
+          <div class="title-info">Ventas</div>
+          <div class="text-info">Da seguimiento a tus clientes con nuestro CRM, genera órdenes de venta y factura su transacción de manera inmediata.</div>
         </div>
         <div class="products-text pr-20 p-absolute div-general-texts">
-          <div class="ml-150 mt-22 fs-14">Productos</div>
-          <div class="ml-150 fs-11">Controla todo el inventario y sincronízalo entre tu tienda física y online. Puedes agregar imágenes, clasificarlos, otorgar códigos y más.</div>
+          <div class="title-info">Productos</div>
+          <div class="text-info">Controla todo el inventario y sincronízalo entre tu tienda física y online. Puedes agregar imágenes, clasificarlos, otorgar códigos y más.</div>
         </div>
         <div class="communication-text pr-20 p-absolute div-general-texts">
-          <div class="ml-150 mt-22 fs-14">Comunicación</div>
-          <div class="ml-150 fs-11">¡Responde las preguntas y chats de tus clientes! Nos integramos a Facebook, Whatsapp y Mercado Libre para que centralices la comunicación de tu negocio.</div>
+          <div class="title-info">Comunicación</div>
+          <div class="text-info">¡Responde las preguntas y chats de tus clientes! Nos integramos a Facebook, Whatsapp y Mercado Libre para que centralices la comunicación de tu negocio.</div>
         </div>
         <div class="stats-text pr-20 p-absolute div-general-texts">
-          <div class="ml-150 mt-22 fs-14">Estadísticas</div>
-          <div class="ml-150 fs-11">¡Obtén reportes inmediatos del desempeño de tu negocio! Visualiza flujos de venta, desempeño de productos, total de ganacias y más.</div>
+          <div class="title-info">Estadísticas</div>
+          <div class="text-info">¡Obtén reportes inmediatos del desempeño de tu negocio! Visualiza flujos de venta, desempeño de productos, total de ganacias y más.</div>
         </div>
         <div class="clients-text pr-20 p-absolute div-general-texts">
-          <div class="ml-150 mt-30 fs-14">Clientes</div>
-          <div class="ml-150 fs-11">¡Que no se te pierda ni uno solo! Registra toda la información de tus clientes y conócelos más a fondo.</div>
+          <div class="title-info">Clientes</div>
+          <div class="text-info">¡Que no se te pierda ni uno solo! Registra toda la información de tus clientes y conócelos más a fondo.</div>
         </div>
       </div>
     </div>
@@ -135,7 +171,7 @@
   </div>
 </div>
 
-<%= image_tag 'landing/promise.png', class: 'w-100', id: 'what-is-it' %>
+<%= image_tag 'landing/promise.png', class: 'w-100 mt-40', id: 'what-is-it' %>
 <div class="container-fluid mt-25">
   <div class="row">
     <div class="col-xs-12 col-sm-4 mt-40">
