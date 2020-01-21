@@ -347,7 +347,7 @@ label:hover, a:hover {
 
 @media screen and (min-width: $screen-sm) {
   .hide-on-md-and-up {
-    display: none;
+    display: none !important;
   }
 }
 
