@@ -123,12 +123,15 @@ function appendTemplate(able_to_delete) {
 
   variationElement.appendChild(variationDiv);
 
+  addCommonElements = false;
+
   for (temp in template) {
     if (template[temp]['tags']['allow_variations'] === undefined) {
       continue;
     }
 
     variationElement.appendChild(buildElement(template, temp));
+    addCommonElements = true;
 
     /*
     if (elementInfo["type"] === "number_unit") {
@@ -137,7 +140,9 @@ function appendTemplate(able_to_delete) {
     */
   }
 
-  container.appendChild(addCommonVariationElements(variationElement));
+  if (addCommonElements) {
+    container.appendChild(addCommonVariationElements(variationElement));
+  }
 
   //container.appendChild(includeImages(variationElement));
 }
