@@ -52,6 +52,6 @@ class Retailer < ApplicationRecord
   end
 
   def save_free_plan
-    PaymentPlan.create(retailer: r)
+    PaymentPlan.create(retailer: self)
   end
 end
