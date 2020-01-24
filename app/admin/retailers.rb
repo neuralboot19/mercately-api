@@ -92,6 +92,17 @@ ActiveAdmin.register Retailer do
         row :updated_at
       end
     end
+
+    panel 'Plan' do
+      plan = retailer.payment_plan
+      attributes_table_for plan do
+        row :price
+        row :start_date
+        row :next_pay_date
+        row :status
+        row :plan
+      end
+    end
   end
 
   form do |f|
