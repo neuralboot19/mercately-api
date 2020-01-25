@@ -19,6 +19,8 @@ module MercadoLibre
       product = Product.find_by(meli_product_id: question_info['item_id']) || MercadoLibre::Products.new(@retailer)
         .import_product([question_info['item_id']]).first
 
+      return unless product.present?
+
       question.update_attributes!(
         product: product,
         question: question_info['text'],

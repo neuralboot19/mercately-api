@@ -29,7 +29,7 @@ module MercadoLibre
         product_exist = @retailer.products.exists?(meli_product_id: order_item['item']['id'])
         product = MercadoLibre::Products.new(@retailer).pull_update(order_item['item']['id'], true)
 
-        if product.parent_product.blank?
+        if product.present? && product.parent_product.blank?
           item = OrderItem.find_or_initialize_by(order_id: order.id, product_id: product.id)
 
           product_variation = ProductVariation.find_by(variation_meli_id: order_item['item']['variation_id']) if
