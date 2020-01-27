@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
       put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
       get 'questions_list', to: 'messages#questions_list'
+      get 'pricing', to: 'payment_plans#index', as: :payment_plans
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
@@ -59,6 +60,7 @@ Rails.application.routes.draw do
     get 'customers/:id', to: 'customers#customer_data'
     get 'templates/templates_for_questions', to: 'templates#templates_for_questions'
     get 'templates/templates_for_chats', to: 'templates#templates_for_chats'
+    post 'plan_subscribe', to: 'payment_plans#subscribe', as: :plan_subscribe
   end
 
   put 'retailer_user/onboarding_status', to: 'retailer_users#update_onboarding_info', as: :update_onboarding_info
