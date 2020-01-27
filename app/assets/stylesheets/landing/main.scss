@@ -1232,3 +1232,36 @@ p{
     }
   }
 }
+
+.div_feature {
+  padding-left: 140px;
+  width: 260px;
+  height: 150px;
+  background-size: 400px;
+  background-repeat: no-repeat;
+  background-position: left center;
+  text-align: left;
+  margin: auto;
+  font-size: 12px;
+  p {
+    color: #fff;
+    transform: translateY(35px);
+    padding-right: 20px;
+  }
+}
+
+#div1 {
+  background-image: url(image_path('landing/div_clientes.png'));
+}
+
+#div2 {
+  background-image: url(image_path('landing/div_productos.png'));
+}
+
+#div3 {
+  background-image: url(image_path('landing/div_communication.png'));
+}
+
+#div4 {
+  background-image: url(image_path('landing/div_stats.png'));
+}

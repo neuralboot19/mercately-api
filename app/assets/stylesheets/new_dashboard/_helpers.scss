@@ -345,6 +345,12 @@ label:hover, a:hover {
   }
 }
 
+@media screen and (max-width: $screen-sm) {
+  .hide-on-md-and-down {
+    display: none !important;
+  }
+}
+
 @media screen and (min-width: $screen-sm) {
   .hide-on-md-and-up {
     display: none !important;
