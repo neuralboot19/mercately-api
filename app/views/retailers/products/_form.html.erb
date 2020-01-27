@@ -125,7 +125,7 @@
               <div id="container_image_<%= i %>" class="uploader center mr-10 d-none-important">
                 <i class="fas fa-camera-retro fs-40"></i>
                 <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
-                <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});" %>
+                <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});", accept: 'image/*' %>
               </div>
               <div id="main_picture_text_<%= i %>" class="fs-12 fw-bold t-center pr-10 d-none delete-image-text">
                 Foto principal
@@ -151,7 +151,7 @@
               <div id="container_image_<%= i %>" class="uploader center mr-10 <%= 'd-none-important' if i > 3 %>">
                 <i class="fas fa-camera-retro fs-40"></i>
                 <label for="product_images_<%= i %>" class="py-10 uploader-text">Agregar</label>
-                <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});" %>
+                <%= f.file_field :images, name: "product[images][#{i}]", id: "product_images_#{i}", class: 'uploadedImages validate-image-presence', onchange: "readURL(this, #{i});", accept: 'image/*' %>
               </div>
               <div id="main_picture_text_<%= i %>" class="fs-12 fw-bold t-center pr-10 d-none delete-image-text">
                 Foto principal
