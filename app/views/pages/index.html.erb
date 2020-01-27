@@ -14,8 +14,8 @@
   </div>
 
   <div class="buttons-header mt-25">
-    <%= button_to 'PRUÉBALO 7 DÍAS', new_retailer_user_registration_path, method: :get, class: 'know-more-button mr-16 w-224' %>
-    <label for="modal--toggle" class="request-demo-label">AGENDAR PRESENTACIÓN</label>
+    <%= button_to 'REGISTRATE', new_retailer_user_registration_path, method: :get, class: 'know-more-button mr-sm-16 w-224' %>
+    <label for="modal--toggle" class="request-demo-label fz-15">AGENDAR PRESENTACIÓN</label>
   </div>
 </div>
 <div class="flyers-section">
@@ -65,22 +65,45 @@
   <div class="c-gray-label col-xs-12 t-center">
     que ayudarán a optimizar tu negocio y vender más.
   </div>
-  <div class="hide-on-md-and-down row center-xs middle-xs">
-    <div class="col-md-6">
-      <div id="div1" class="div_feature">
+  <div class="hide-on-md-and-down row middle-xs start-md center-xs">
+    <div class="col-lg-6">
+      <div id="div1" class="div_feature f-right">
+        <div class="home-circle sell-circle d-inline-block mr-0">
+          <div class="inner-circle sell-inner-circle">
+            <%= image_tag 'landing/sell-home-icon.png', alt: 'Ventas', class: 'img-sell' %>
+          </div>
+        </div>
         <p>Da seguimiento a tus clientes con nuestro CRM, genera órdenes de venta y factura su transacción de manera inmediata.</p>
       </div>
-      <div id="div2" class="div_feature">
+      <div id="div2" class="div_feature f-right">
+        <div class="home-circle product-circle d-inline-block mr-0">
+          <div class="inner-circle product-inner-circle">
+            <%= image_tag 'landing/product-home-icon.png', alt: 'Productos', class: 'img-product' %>
+          </div>
+        </div>
         <p>Controla todo el inventario y sincronízalo entre tu tienda física y online. Puedes agregar imágenes, clasificarlos, otorgar códigos y más.</p>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-lg-6">
       <div id="div3" class="div_feature">
+        <div class="home-circle communication-circle d-inline-block mr-0">
+          <div class="inner-circle communication-inner-circle">
+            <%= image_tag 'landing/communication-home-icon.png', alt: 'Comunicación', class: 'img-communication' %>
+          </div>
+        </div>
         <p>¡Responde las preguntas y chats de tus clientes! Nos integramos a Facebook, Whatsapp y Mercado Libre para que centralices la comunicación de tu negocio.</p>
       </div>
       <div id="div4" class="div_feature">
+        <div class="home-circle stats-circle d-inline-block mr-0">
+          <div class="inner-circle stats-inner-circle">
+            <%= image_tag 'landing/stats-home-icon.png', alt: 'Estadísticas', class: 'img-stats' %>
+          </div>
+        </div>
         <p>¡Obtén reportes inmediatos del desempeño de tu negocio! Visualiza flujos de venta, desempeño de productos, total de ganacias y más.</p>
       </div>
+    </div>
+    <div class="col-xs-12 t-center mt-16">
+      <%= button_to 'REGISTRATE', new_retailer_user_registration_path, method: :get, class: 'know-more-button--inverted w-224' %>
     </div>
   </div>
   <div class="row col-md-12 hide-on-md-and-up">
@@ -152,6 +175,9 @@
           </div>
         </li>
       </ul>
+    </div>
+    <div class="col-xs-12 t-center mt-16">
+      <%= button_to 'REGISTRATE', new_retailer_user_registration_path, method: :get, class: 'know-more-button--inverted w-224' %>
     </div>
   </div>
 </div>
