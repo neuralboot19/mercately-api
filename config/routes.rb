@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   get '/privacidad', to: 'pages#privacy', as: :privacy
   get '/terminos', to: 'pages#terms', as: :terms
   get '/precios', to: 'pages#price', as: :pricing
+  get '/crm', to: 'pages#crm', as: :crm
 
   namespace :retailers do
     scope '/:slug' do

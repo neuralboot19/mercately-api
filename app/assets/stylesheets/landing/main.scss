@@ -501,3 +501,13 @@ p{
     color: #aaa !important;
   }
 }
+
+#crm {
+  background-image: url(image_path('crm/hero.png'));
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  #contact {
+    background: linear-gradient(to right, #402560, #4B6A9E);
+  }
+}
