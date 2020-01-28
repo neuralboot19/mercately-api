@@ -11,6 +11,10 @@ jobs:
           PGUSER: postgres
           RAILS_ENV: test
           CC_TEST_REPORTER_ID: f4dddb9a79406166efb2d61ccb817f9de5cc19f5fa71219fd4909263ca21dc02
+          RECAPTCHA_SITE_KEY: 6LeXk9MUAAAAAKSLKa1Mw6sxT4WH9FfAx9j7xoha
+          RECAPTCHA_SECRET_KEY: 6LeXk9MUAAAAADEx_aJ_DjL4NXwlznot_KrWNEVT
+          RECAPTCHA_SITE_KEY_V2: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+          RECAPTCHA_SECRET_KEY_V2: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
       - image: circleci/postgres:11.1-alpine
         environment:
           POSTGRES_USER: postgres
@@ -30,7 +34,7 @@ jobs:
           command: cp config/database.yml.example config/database.yml
 
       - run:
-          name: Which bundler?
+          name: What bundler?
           command: bundle -v
 
       # Restore bundle cache
