@@ -83,6 +83,12 @@ label:hover, a:hover {
     padding-top: #{$space}px !important;
   }
 
+  @media screen and (min-width: 767px) {
+    .m-sm-#{$space} {
+      margin: #{$space}px !important;
+    }
+  }
+
   @each $side in $sides {
     .m#{str-slice($side, 0, 1)}-#{$space} {
       margin-#{$side}: #{$space}px !important;
@@ -90,6 +96,12 @@ label:hover, a:hover {
 
     .p#{str-slice($side, 0, 1)}-#{$space} {
       padding-#{$side}: #{$space}px !important;
+    }
+
+    @media screen and (min-width: 767px) {
+      .m#{str-slice($side, 0, 1)}-sm-#{$space} {
+        margin-#{$side}: #{$space}px !important;
+      }
     }
   }
 }
@@ -345,9 +357,15 @@ label:hover, a:hover {
   }
 }
 
+@media screen and (max-width: $screen-sm) {
+  .hide-on-md-and-down {
+    display: none !important;
+  }
+}
+
 @media screen and (min-width: $screen-sm) {
   .hide-on-md-and-up {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -418,5 +436,11 @@ label:hover, a:hover {
     .fs-sm-and-down-#{$size} {
       @include fs-mixin(#{$size}px);
     }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .hide-on-sm-and-up {
+    display: none;
   }
 }
