@@ -2,6 +2,7 @@ class Retailer < ApplicationRecord
   has_one :meli_retailer, dependent: :destroy
   has_one :retailer_user, dependent: :destroy
   has_one :facebook_retailer, dependent: :destroy
+  has_one :payment_plan, dependent: :destroy
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
@@ -11,6 +12,7 @@ class Retailer < ApplicationRecord
   validates :slug, uniqueness: true
 
   after_save :generate_slug, if: :saved_change_to_name?
+  after_create :save_free_plan
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -47,5 +49,9 @@ class Retailer < ApplicationRecord
 
   def incomplete_meli_profile?
     id_number.blank? || address.blank? || city.blank? || state.blank?
+  end
+
+  def save_free_plan
+    PaymentPlan.create(retailer: self)
   end
 end

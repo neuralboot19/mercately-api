@@ -1,0 +1,166 @@
+<style type="text/css" media="screen">
+.pricing__card {
+  height: 90%;
+}
+</style>
+<% if @payment_plan.is_active? %>
+  <div class="container-fluid reduced-container-padding mb-16">
+    <div class="card">
+      <div class="container-fluid index">
+        <div class="row">
+          <div class="col-xs-12 col-md-6 mb-20">
+            <h1 class="d-inline index__title">Planes de pago</h1>
+            <div class="index__desc">
+            </div>
+          </div>
+        </div>
+        <div class="row" style="flex-wrap: wrap;">
+          <div class="col-xs-12">
+            Datos del plan
+            <ul>
+              <li>Nombre del plan: <%= @payment_plan.plan.capitalize %></li>
+              <li>Precio mensual: $<%= @payment_plan.price.to_f %></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="container-fluid reduced-container-padding mb-16">
+    <div class="card">
+      <div class="container-fluid index">
+        <div class="row">
+          <div class="col-xs-12 col-md-6 mb-20">
+            <h1 class="d-inline index__title">Planes de pago</h1>
+            <div class="index__desc">
+            </div>
+          </div>
+        </div>
+        <div class="row" style="flex-wrap: wrap;">
+          <div class="col-xs-12 col-sm-3">
+            <div class="pricing__card t-center fz-16">
+              <h2 class="c-primary fz-24">BÁSICO</h2>
+              <b class="fz-16">$29.99</b> al mes<br/>
+              Ideal para negocios que estan empezando<br/>
+              <p class="fz-16">
+                Manejo de inventario<br/>
+                Facturación electronica<br/>
+                Múltiples usuarios<br/>
+                Múltiples locaciones
+              </p>
+              <br/>
+              <label for="basic" class="pricing__start fz-16">COMPRAR</label>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <div class="pricing__card t-center fz-16">
+              <h2 class="c-primary fz-24">PROFESIONAL</h2>
+              <b class="fz-16">$39.99</b> al mes<br/>
+              Capitalizate y eleva tus ventas<br/>
+              <p class="fz-16">
+                Beneficios del plan Básico<br/>
+                Mercado Libre<br/>
+                Facebook Shops
+              </p>
+              <br/>
+              <br/>
+              <label for="professional" class="pricing__start fz-16">COMPRAR</label>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <div class="pricing__card t-center fz-16">
+              <h2 class="c-primary fz-24">AVANZADO</h2>
+              <b class="fz-16">$109.99</b> al mes<br/>
+              Aumenta tus ingrasos como nunca antes<br/>
+              <p class="fz-16">
+                Beneficios del plan Profesional<br/>
+                Instagram<br/>
+                Facebook Messenger<br/>
+                WhatsApp
+              </p>
+
+              <br/>
+              <label for="advanced" class="pricing__start fz-16">COMPRAR</label>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-3">
+            <div class="pricing__card t-center fz-16">
+              <h2 class="c-primary fz-24">Enterprise</h2>
+              <b class="fz-16">$229.99</b> al mes<br/>
+              Conviertete en nuestro socio<br/>
+              <p class="fz-16">
+                Todo lo anterior<br/>
+                API de desarrollo
+              </p>
+
+              <br/>
+              <br/>
+              <br/>
+              <label for="enterprise" class="pricing__start fz-16">COMPRAR</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
+  
+  <div class="modal">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-xs-12 col-md-8 middle">
+          <label class="modal__background" for="modal--toggle"></label>
+          <div class="modal__window box p-16">
+            <div class="row middle-xs">
+              <div class="col-xs-12 col-sm-8">
+                <div class="index__ctas f-right">
+                  <label class="skip modal__close" for="modal--toggle">
+                    <i class="far fa-times-circle"></i>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <p>Agregar Targeta</p>
+
+                <%= form_for :plan, url: retailers_plan_subscribe_path do |f| %>
+
+                  <%= f.check_box :agree_terms, class: 'f-left w-auto', style: 'width: auto;' %>
+                  <%= f.label :agree_terms, 'He leído y acepto los', class: 'p-static' %>
+                  <%= link_to 'términos y condiciones', terms_path, target: :_blank, class: 'link-register-terms' %>
+                  <br />
+                  <%= f.submit 'Comprar' %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+<script charset="utf-8">
+  document.addEventListener("DOMContentLoaded", function() {
+    var toggler = document.getElementById('modal--toggle');
+    toggler.checked = false;
+    document.querySelectorAll('.pricing__card label').forEach(function(el) {
+      el.onclick = function() {
+        toggler.checked = true;
+      }
+    })
+
+    document.getElementById('payment-form').addEventListener('keyup', function(event) {
+      // Number 13 is the "Enter" key on the keyboard
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById('').click();
+      }
+    });
+  });
+</script>

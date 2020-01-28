@@ -1,96 +1,265 @@
-<div class="center-landing">
-  <%= image_tag 'landing/animacion.gif', class: 'giftcenter', alt: 'Sincronización Mercadolibre' %>
-  <div class="box">
-    <h1>Vende más y mejor en MercadoLibre</h1>
-    <p>Mercately aumenta tus ventas en MercadoLibre a través de herramientas de gestión que optimizan tu negocio.</p>
-    <div class="center-landing box-actions">
-      <%= button_to 'PRUEBA GRATIS', new_retailer_user_registration_path, method: :get, class: 'btn-landing bg-primary' %>
-      <%= link_to 'SABER MÁS', '#know-more', class: 'btn-landing bg-secondary normal' %>
-    </div>
-  </div>
-</div>
-<div class="section container">
-
-  <div class="title">
-    <h2 id="what-is-it">Sincroniza tu tienda con MercadoLibre y gestiona todo desde un solo lugar</h2>
-    <p>Somos la primera plataforma que se adapta a tu tienda para que la vincules con MercadoLibre, ahorres tiempo, agilices procesos y logres mejores resultados.</p>
+<div class="home-header">
+  <div class="sell-text mb-25">
+    <div class="mb-20 t-bold"><p>LLEVA TU NEGOCIO AL SIGUIENTE NIVEL</p></div>
   </div>
 
-  <ul class="icon-list">
-    <li>
-      <div>
-        <%= image_tag 'landing/file-transfer.png', alt: 'Inventario MercadoLibre' %>
-      </div>
-      <div class="content">
-        <h3>Sincronizador de inventario</h3>
-        <p>Mantén actualizado el stock de tus productos.</p>
-      </div>
-    </li>
-    <li>
-      <div>
-        <%= image_tag 'landing/conversation.png', alt: 'Preguntas Mercadolibre' %>
-      </div>
-      <div class="content">
-        <h3>Responde a tus clientes de forma rápida</h3>
-        <p>Envía mensajes instantáneos a tus compradores.</p>
-      </div>
-    </li>
-    <li>
-      <div>
-        <%= image_tag 'landing/check.png', alt: 'Ganancias Ventas Mercadolibre' %>
-      </div>
-      <div class="content">
-        <h3>Genera reportes de ventas y ganancias</h3>
-        <p>Entérate exactamente de cuánto vendes y cuáles son tus ganancias.</p>
-      </div>
-    </li>
-    <li>
-      <div>
-        <%= image_tag 'landing/consumer.png', alt: 'Clientes Mercadolibre' %>
-      </div>
-      <div class="content">
-        <h3>Publica de forma automática</h3>
-        <p>Sube un producto a tu inventario y véndelo automáticamente en MercadoLibre.</p>
-      </div>
-    </li>
-  </ul>
-</div>
-<div class="section dark tinyleft">
-  <div class="container">
-    <h3 class="not-margin-bottom">NO MÁS PROCESOS MANUALES</h3>
-    <p>Vende más con el mejor sistema</p>
-    <b>40% incremento de productividad</b><br /><br />
-    <%= button_to 'PRUEBA GRATIS', new_retailer_user_registration_path, method: :get, class: 'know-more-button' %>
-  </div>
-</div>
-<div class="section mountain">
-  <div class="container">
-    <div class="title">
-      <h2 id="know-more">Mercately es tu mejor aliado para llevar tus ventas y gestión de inventario al siguiente nivel</h2>
-      <p class="p-blue">REGÍSTRATE AHORA Y COMIENZA GRATIS A:</p>
+  <div class="additional-text m-a px-16" style="max-width: 700px;">
+    <div class="mb-15">
+      <p class="t-bold">¡Estás a un solo paso de aumentar tus ventas!</p>
     </div>
-  </div>
-  <div class="center-landing">
     <div>
-      <ul class="list torigth">
-        <li>Vender más productos con menos esfuerzo.</li>
-        <li>Gestiona tu inventario automáticamente.</li>
-        <li>Mejorar la comunicación con tus clientes.</li>
-        <li>Gestiona tus ganancias automáticamente.</li>
-        <li>Descubre rápidamente tus productos más y menos vendidos.</li>
-        <li>Maneja varias cuentas de Mercadolibre desde un mismo lugar.</li>
-      </ul>
-      <div class="trial-free-container">
-        <%= button_to 'PRUEBA GRATIS', new_retailer_user_registration_path, method: :get, class: 'btn-landing bg-secondary-big' %>
-      </div>
+      <p class="t-bold">Únete a Mercately y ten acceso a potentes herramientas que te permitirán
+      mejorar tu productividad, centralizar tu comunicación y, lo más importante, vender más.</p>
     </div>
-    <%= image_tag 'landing/graph.png', width: '350', alt: 'Inventario Mercadolibre' %>
   </div>
 
+  <div class="buttons-header mt-25">
+    <%= button_to 'REGISTRATE GRATIS', new_retailer_user_registration_path, method: :get, class: 'know-more-button mr-sm-16 w-224' %>
+    <label for="modal--toggle" class="request-demo-label fz-15">AGENDAR PRESENTACIÓN</label>
+  </div>
+</div>
+<div class="flyers-section">
+  <div class="row t-center pb-20">
+    <div class="col-xs-12 title">
+      <p>NOS INTEGRAMOS PARA MEJORAR TU NEGOCIO</p>
+    </div>
+    <div class="col-xs-12 col-md-4 divide-flyers alignment">
+      <div class="row">
+        <div class="col-xs-12 col-md-4 img-flyer">
+          <%= image_tag 'landing/logo-whatsapp.png' %>
+        </div>
+        <div class="col-xs-12 col-md-8 flyer-text">
+          <p>Con un solo número de Whatsapp, todo tu equipo puede manejar las ventas desde un solo lugar.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-4 divide-flyers alignment">
+      <div class="row">
+        <div class="col-xs-12 col-md-4 img-flyer">
+          <%= image_tag 'landing/logo-messenger.png' %>
+        </div>
+        <div class="col-xs-12 col-md-8 flyer-text">
+          <p>¡Convierte una conversación de Facebook en un proceso de venta! Guarda los datos de tus prospectos, dales seguimiento y conviértelos en clientes.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-md-4 alignment">
+      <div class="row">
+        <div class="col-xs-12 col-md-4 img-flyer">
+          <%= image_tag 'landing/logo-mercado-libre.png' %>
+        </div>
+        <div class="col-xs-12 col-md-8 flyer-text">
+          <p>¡Te ayudamos a vender de forma automática! Con nosotros podrás sincronizar tu inventario, publicar de forma masiva y más.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="middle-section">
+  <div class="fw-bold fz-40 col-xs-12 t-center">
+    Conocemos tus problemas
+  </div>
+  <div class="c-gray-label col-xs-12 t-center">
+    Hemos analizado a cientos de negocios y por eso hemos creado herramientas
+  </div>
+  <div class="c-gray-label col-xs-12 t-center">
+    que ayudarán a optimizar tu negocio y vender más.
+  </div>
+  <div class="hide-on-md-and-down row middle-xs start-md center-xs">
+    <div class="col-lg-6">
+      <div id="div1" class="div_feature f-right">
+        <div class="home-circle sell-circle d-inline-block mr-0">
+          <div class="inner-circle sell-inner-circle">
+            <%= image_tag 'landing/sell-home-icon.png', alt: 'Ventas', class: 'img-sell' %>
+          </div>
+        </div>
+        <p>Da seguimiento a tus clientes con nuestro CRM, genera órdenes de venta y factura su transacción de manera inmediata.</p>
+      </div>
+      <div id="div2" class="div_feature f-right">
+        <div class="home-circle product-circle d-inline-block mr-0">
+          <div class="inner-circle product-inner-circle">
+            <%= image_tag 'landing/product-home-icon.png', alt: 'Productos', class: 'img-product' %>
+          </div>
+        </div>
+        <p>Controla todo el inventario y sincronízalo en tiempo real entre tu tienda física, online, MercadoLibre y Facebook sin ningun esfuerzo.</p>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div id="div3" class="div_feature">
+        <div class="home-circle communication-circle d-inline-block mr-0">
+          <div class="inner-circle communication-inner-circle">
+            <%= image_tag 'landing/communication-home-icon.png', alt: 'Comunicación', class: 'img-communication' %>
+          </div>
+        </div>
+        <p>¡Responde las preguntas y chats de tus clientes! Nos integramos a Facebook, Whatsapp y Mercado Libre para que centralices la comunicación de tu negocio.</p>
+      </div>
+      <div id="div4" class="div_feature">
+        <div class="home-circle stats-circle d-inline-block mr-0">
+          <div class="inner-circle stats-inner-circle">
+            <%= image_tag 'landing/stats-home-icon.png', alt: 'Estadísticas', class: 'img-stats' %>
+          </div>
+        </div>
+        <p>¡Obtén reportes inmediatos del desempeño de tu negocio! Visualiza flujos de venta, desempeño de productos, total de ganacias y más.</p>
+      </div>
+    </div>
+    <div class="col-xs-12 t-center mt-16">
+      <%= button_to 'REGISTRATE GRATIS', new_retailer_user_registration_path, method: :get, class: 'know-more-button--inverted w-224' %>
+    </div>
+  </div>
+  <div class="row col-md-12 hide-on-md-and-up">
+    <div class="container mb-30">
+      <ul class="icon-list">
+        <li>
+          <div>
+            <div class="home-circle sell-circle">
+              <div class="inner-circle sell-inner-circle">
+                <%= image_tag 'landing/sell-home-icon.png', alt: 'Ventas', class: 'img-sell' %>
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <p class="card-mobile-title">Ventas</p>
+            <p>Da seguimiento a tus clientes con nuestro CRM, genera órdenes de venta y factura su transacción de manera inmediata.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <div class="home-circle product-circle">
+              <div class="inner-circle product-inner-circle">
+                <%= image_tag 'landing/product-home-icon.png', alt: 'Productos', class: 'img-product' %>
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <p class="card-mobile-title">Productos</p>
+            <p>Controla todo el inventario y sincronízalo entre tu tienda física y online. Puedes agregar imágenes, clasificarlos, otorgar códigos y más.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <div class="home-circle communication-circle">
+              <div class="inner-circle communication-inner-circle">
+                <%= image_tag 'landing/communication-home-icon.png', alt: 'Comunicación', class: 'img-communication' %>
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <p class="card-mobile-title">Comunicación</p>
+            <p>¡Responde las preguntas y chats de tus clientes! Nos integramos a Facebook, Whatsapp y Mercado Libre para que centralices la comunicación de tu negocio.</p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <div class="home-circle stats-circle">
+              <div class="inner-circle stats-inner-circle">
+                <%= image_tag 'landing/stats-home-icon.png', alt: 'Estadísticas', class: 'img-stats' %>
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <p class="card-mobile-title">Estadísticas</p>
+            <p>¡Obtén reportes inmediatos del desempeño de tu negocio! Visualiza flujos de venta, desempeño de productos, total de ganacias y más.</p>
+          </div>
+        </li>
+        <li class="hide-on-md-and-up">
+          <div>
+            <div class="home-circle client-circle">
+              <div class="inner-circle client-inner-circle">
+                <%= image_tag 'landing/client-home-icon.png', alt: 'Clientes', class: 'img-client' %>
+              </div>
+            </div>
+          </div>
+          <div class="content">
+            <p class="card-mobile-title">Clientes</p>
+            <p>¡Que no se te pierda ni uno solo! Registra toda la información de tus clientes y conócelos más a fondo.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="col-xs-12 t-center mt-16">
+      <%= button_to 'REGISTRATE GRATIS', new_retailer_user_registration_path, method: :get, class: 'know-more-button--inverted w-224' %>
+    </div>
+  </div>
+</div>
+<div id="promise" class="mt-40">
+  <div class="container-fluid">
+    <div class="row middle-xs">
+      <div class="col-xs-12 col-md-6"></div>
+      <div class="col-xs-12 col-md-6">
+        <h2 class="c-white">¡Somos más que una simple plataforma!</h2>
+        <p class="c-white">
+          En Mercately queremos ayudarte a incrementar tus ventas<br/>
+          de forma exponencial, gestionando todos los sistemas de inventario, ventas<br/>
+          y comunicación con el cliente desde un solo lugar. Nuestro equipo<br/>
+          todos los días trabaja apasionadamente para ayudarte a conseguir<br/>
+          tus objetivos ya que sabemos que lo puedes lograr.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container-fluid mt-25">
+  <div class="row">
+    <div class="col-xs-12 col-sm-4 mt-40">
+      <div class="t-center">
+        <%= image_tag 'landing/house.png', class: 'w-90' %>
+        <p class="t-center fz-16">+100 Negocios</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-4 mt-40">
+      <div class="t-center">
+        <%= image_tag 'landing/inventory.png', class: 'w-90' %>
+        <p class="t-center fz-16">+50 000 Articulos Subidos</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-4 mt-40">
+      <div class="t-center">
+        <%= image_tag 'landing/waarudo.png', class: 'w-90' %>
+        <p class="t-center fz-16">Presencia en 3 paises</p>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-12 col-sm-5 mt-40">
+      <div class="t-center">
+        <%= image_tag 'landing/msg.png', class: 'w-90' %>
+        <p class="t-center fz-16">+25 000 chats iniciados</p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-5 mt-40">
+      <div class="t-center">
+        <%= image_tag 'landing/cart.png', class: 'w-90' %>
+        <p class="t-center fz-16">+10 000 ventas generadas</p>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-40">
+    <div class="col-xs-12 t-center fz-16 mt-16">
+      ¿Tienes Preguntas?<br/>
+      <br/>
+      Encantados te ayudaremos<br/>
+      <br/>
+      <a class="ws-contact fz-16" href="https://api.whatsapp.com/send?l=es&phone=593978795356&text=Hola%20quiero%20saber%20más%20de%20Mercately.com" target="_blank"><i class="fab fa-whatsapp fz-16 mr-5"></i>CHATEA CON NOSOTROS</a>
+      <br/>
+      <br/>
+      O solicita una demo totalmente gratis
+      <br/>
+      <div>
+        <label for="modal--toggle" class="pricing__contact fz-16">QUIERO UNA DEMO</label>
+      </div>
+    </div>
+  </div>
 </div>
 <div id="help-info" class="section bg-primary tinyleft mount">
   <div class="container">
-    <b>¿Tienes alguna pregunta? ingresa a nuestro <a href="" class="secondary">centro de ayuda</a> y estaremos felices de ayudarte con 
+    <b class="fz-16">¿Tienes alguna pregunta? ingresa a nuestro <a href="" class="fz-16 secondary">centro de ayuda</a> y estaremos felices de ayudarte con 
     cualquier duda que tengas. Si deseas reportar errores, también puedes escribirnos.</b>
   </div>
+</div>
+<div>
+<div class="bubble ws-bubble">
+  <%= link_to 'https://api.whatsapp.com/send?l=es&phone=593978795356&text=Hola%20quiero%20saber%20más%20de%20Mercately.com', target: '_blank' do %>
+    <i class="fab fa-whatsapp"></i>
+  <% end %>
 </div>

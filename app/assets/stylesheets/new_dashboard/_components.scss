@@ -403,6 +403,18 @@
     width: 50px;
     height: 50px;
   }
+
+  &.ws-bubble {
+    background-color: #5FC993;
+    z-index: 1000;
+
+    a {
+      i {
+        font-size: 35px;
+        margin-top: 7px;
+      }
+    }
+  }
 }
 
 .circle {
