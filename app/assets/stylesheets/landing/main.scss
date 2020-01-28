@@ -1296,3 +1296,13 @@ p{
     transform: translate(-30px, 6px);
   }
 }
+
+.grecaptcha-badge { visibility: hidden; }
+
+.subtitle {
+  color: #aaa;
+  font-size: 12px;
+  a {
+    color: #aaa;
+  }
+}

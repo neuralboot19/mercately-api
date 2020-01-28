@@ -67,6 +67,19 @@
                     <%= label_tag :message, 'Mensaje' %>
                     <%= text_area_tag :message, nil, class: 'input h-unset' %>
                   </div>
+                  <div class="mt-8 mb-12">
+                    <% if @show_checkbox_recaptcha %>
+                      <%= recaptcha_tags(site_key: ENV['RECAPTCHA_SITE_KEY_V2']) %>
+                    <% else %>
+                      <%= recaptcha_v3(action: 'schedule') %>
+                      <div class="subtitle">
+                        Este sitio está protegido por reCAPTCHA bajo los
+                        <a href="https://policies.google.com/terms">terminos de servicio</a>
+                        y la
+                        <a href="https://policies.google.com/privacy">política de privacidad</a> de Google
+                      </div>
+                    <% end %>
+                  </div>
                 </fieldset>
                 <div class="btn-box col-xs-12">
                   <%= submit_tag 'Solicitar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
