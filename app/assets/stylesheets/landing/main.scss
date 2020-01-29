@@ -45,14 +45,17 @@ p{
   }
 }
 
-.container{
-  text-align: center;
-  width: 80%; 
-  margin: 0 auto;
+.container {
+  margin: 0 6px;
 }
 
-.container p{
-  color: #4c536a;
+@media screen and (min-width: 478px) {
+  .container {
+    margin: auto;
+  }
+}
+
+.container p {
   font-size: 14px;
   font-weight: 600;
   line-height: 17px;
@@ -225,11 +228,12 @@ p{
     }
   }
 
-  .buttons-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+}
+
+.buttons-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .flyers-section {
@@ -756,9 +760,41 @@ p{
 }
 
 #crm {
-  background-image: url(image_path('crm/hero.png'));
   background-size: cover;
   background-repeat: no-repeat;
+  position: relative;
+  z-index: 1;
+}
+
+.z-index-1 {
+  position: relative;
+  z-index: 1;
+}
+
+#crm-img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50vw;
+}
+
+@media screen and (min-width: 478px) {
+  #person_2 {
+    transform: translateX(-50px);
+  }
+  #person {
+    transform: translateX(50px);
+  }
+}
+
+.testimonial-data {
+  transform: translateY(-20px);
+}
+
+.down-quotes {
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 @media (min-width: 1800px){
@@ -1311,4 +1347,11 @@ p{
   a {
     color: #aaa;
   }
+}
+
+.demo-request-form {
+  background: linear-gradient(to right, #402560, #4B6A9E);
+  max-width: 450px;
+  margin: 8px auto;
+  border-radius: 8px;
 }
