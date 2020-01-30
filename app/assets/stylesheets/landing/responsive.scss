@@ -162,6 +162,20 @@
 		font-size: 16px;
 		font-weight: 300;
 	}
+
+	.home-header {
+    .sell-text {
+      p {
+        font-size: 20px;
+      }
+    }
+
+    .additional-text {
+      p {
+        font-size: 12px;
+      }
+    }
+  }
 }
 
 @media (min-width: 481px) and (max-width: 766px) {

@@ -3,7 +3,7 @@ function setInputValid(el) {
   var $result = $(el).siblings('.validation-msg')
 
   el.classList.remove('input--invalid');
-  $result.html('&nbsp;');
+  $result.html(null);
 }
 
 function onlyNumber(e) {
@@ -61,7 +61,7 @@ function validateImages(form) {
     if ($(image).val()) {
       uploadedImages = true;
 
-      if (image.files && image.files[0] && !image.files[0].type.includes('image/')) {
+      if (image.files && image.files[0] && !['image/jpg', 'image/jpeg', 'image/png'].includes(image.files[0].type)) {
         wrongFormat = true;
       }
     }
@@ -77,7 +77,7 @@ function validateImages(form) {
     return false;
   }
 
-  $(message).html('&nbsp;');
+  $(message).html(null);
   return true;
 }
 
@@ -112,7 +112,7 @@ function validateForm(e, form) {
 
   document.querySelectorAll(`#${form.id} .validate-association-presence`).forEach(function(association) {
     var $result = $(association).siblings('.validation-msg');
-    $result.html('&nbsp;');
+    $result.html(null);
 
     if ($(association).find('.association-item').length < 1) {
       $result.html('Debe agregar al menos uno');

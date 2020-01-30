@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_24_142108) do
+ActiveRecord::Schema.define(version: 2020_01_24_024402) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
     t.datetime "updated_at", null: false
     t.integer "retailer_id"
     t.string "phone"
-    t.string "meli_nickname"
     t.integer "meli_customer_id"
+    t.string "meli_nickname"
     t.integer "id_type"
     t.string "id_number"
     t.string "address"
@@ -92,10 +92,9 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
     t.string "zip_code"
     t.string "country_id"
     t.boolean "valid_customer", default: false
+    t.string "psid"
     t.string "web_id"
     t.string "full_name"
-    t.string "psid"
-    t.string "karix_whatsapp_phone"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -154,10 +153,6 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
     t.string "error_message"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "retailer_id"
-    t.bigint "customer_id"
-    t.index ["customer_id"], name: "index_karix_whatsapp_messages_on_customer_id"
-    t.index ["retailer_id"], name: "index_karix_whatsapp_messages_on_retailer_id"
     t.index ["uid"], name: "index_karix_whatsapp_messages_on_uid", unique: true
   end
 
@@ -257,12 +252,38 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
     t.bigint "retailer_id"
     t.decimal "price", default: "0.0"
     t.date "start_date", default: -> { "CURRENT_TIMESTAMP" }
-    t.date "next_pay_date"
+    t.date "next_payday"
+    t.integer "last_payment_status", default: 0
     t.integer "status", default: 0
+    t.date "guaranteed_until"
+    t.string "email"
+    t.string "stripe_id"
+    t.string "stripe_card_id"
     t.integer "plan", default: 0
+    t.string "card_holder"
+    t.string "last4"
+    t.string "brand"
+    t.string "funding"
+    t.integer "exp_month"
+    t.integer "exp_year"
+    t.string "address"
+    t.string "city"
+    t.string "state"
+    t.string "zip_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "access_to_ml", default: false
+    t.boolean "access_to_fb", default: false
     t.index ["retailer_id"], name: "index_payment_plans_on_retailer_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.bigint "payment_plan_id"
+    t.decimal "price"
+    t.string "stripe_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_plan_id"], name: "index_payments_on_payment_plan_id"
   end
 
   create_table "product_variations", force: :cascade do |t|
@@ -351,6 +372,10 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -361,10 +386,6 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"
@@ -389,9 +410,6 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
     t.boolean "phone_verified"
     t.string "retailer_number"
     t.boolean "whats_app_enabled", default: false
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
-    t.string "karix_whatsapp_phone"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 
@@ -415,5 +433,6 @@ ActiveRecord::Schema.define(version: 2020_01_24_142108) do
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"
   add_foreign_key "payment_plans", "retailers"
+  add_foreign_key "payments", "payment_plans"
   add_foreign_key "questions", "products"
 end

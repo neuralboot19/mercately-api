@@ -19,7 +19,7 @@
       <%= link_to 'Precios', pricing_path %>
       <%= link_to 'Ingresar', new_retailer_user_session_path %>
       <%= link_to 'Prueba Gratis', new_retailer_user_registration_path %>
-      <label for="modal--toggle">Solicitar una demo</label>
+      <label for="modal--toggle" class="hide-on-sm-and-up show-on-sm-and-down">Solicitar una demo</label>
     </div>
   </div>
 </header>
@@ -66,6 +66,19 @@
                   <div class="mt-8 mb-12">
                     <%= label_tag :message, 'Mensaje' %>
                     <%= text_area_tag :message, nil, class: 'input h-unset' %>
+                  </div>
+                  <div class="mt-8 mb-12">
+                    <% if @show_checkbox_recaptcha %>
+                      <%= recaptcha_tags(site_key: ENV['RECAPTCHA_SITE_KEY_V2']) %>
+                    <% else %>
+                      <%= recaptcha_v3(action: 'schedule') %>
+                      <div class="subtitle">
+                        Este sitio está protegido por reCAPTCHA bajo los
+                        <a href="https://policies.google.com/terms">terminos de servicio</a>
+                        y la
+                        <a href="https://policies.google.com/privacy">política de privacidad</a> de Google
+                      </div>
+                    <% end %>
                   </div>
                 </fieldset>
                 <div class="btn-box col-xs-12">
