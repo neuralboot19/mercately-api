@@ -12,31 +12,29 @@
     <div class="row middle-xs">
       <div class="col-xs-12 col-md-6">
         <h1 class="t-center">
-          LLEVA TU NEGOCIO AL SIGUIENTE NIVEL<br/>
+          LLEVA TU NEGOCIO AL SIGUIENTE NIVEL
           CON NUESTRO CRM
         </h1>
-        <h2 class="t-center">
+        <h2 class="t-center" style="font-family: 'Poppins-Light';">
           Mercately es el unico CRM que integra comunicación con tu
           cliente, ventas e inventario para elevar tus ventas como
           nunca antes.
         </h2>
-        <h4 class="t-center">TENEMOS TODO LO QUE NECESITAS EN UNA SOLA PLATAFORMA</h4>
+        <h4 class="t-center">Tenemos todo lo que necesitas en una sola plataforma</h4>
         <div class="t-center">
-          <%= image_tag 'dashboard/order-new.png', class: 'mx-4 w-30 w-sm-50' %>
-          <%= image_tag 'dashboard/product.png', class: 'mx-4 w-30 w-sm-50' %>
-          <%= image_tag 'dashboard/mercadol.png', class: 'mx-4 w-30 w-sm-50' %>
-          <%= image_tag 'dashboard/messenger.png', class: 'mx-4 w-30 w-sm-50' %>
-          <%= image_tag 'dashboard/what.png', class: 'mx-4 w-30 w-sm-50' %>
+          <%= image_tag 'crm/ml.png', class: 'mx-4 w-30 w-sm-50' %>
+          <%= image_tag 'crm/whatsapp.png', class: 'mx-4 w-30 w-sm-50' %>
+          <%= image_tag 'crm/messenger.png', class: 'mx-4 w-30 w-sm-45' %>
         </div>
         <div class="t-center buttons-header mt-12">
-          <%= button_to 'REGISTRATE GRATIS', new_retailer_user_registration_path, method: :get, class: 'know-more-button mr-sm-16 w-224' %>
+          <%= button_to 'REGISTRATE GRATIS', new_retailer_user_registration_path, method: :get, class: 'know-more-button--inverted mr-sm-16 w-224' %>
         </div>
       </div>
       <div class="col-xs-12 col-md-6">
         <div class="demo-request-form">
           <%= form_tag request_demo_path, method: :post, id: 'form_demo_2', class: 'validate-form col-xs-12 p-16' do %>
             <fieldset class="fieldset mt-16 t-left">
-              <legend class="m-a t-center">QUIERES INFORMACION PERSONALIZADA?<BR/>NOSOTROS TE CONTACTAMOS</legend>
+              <legend class="m-a t-center" style="font-family: 'Poppins-Bold';">QUIERES INFORMACION PERSONALIZADA?<BR/>NOSOTROS TE CONTACTAMOS</legend>
               <div class="mt-8 mb-12">
                 <%= label_tag :name, 'Nombre*' %>
                 <%= text_field_tag :name, nil, class: 'input validate-required', placeholder: 'Nombre y apellido' %>
@@ -129,11 +127,11 @@
           <div class="divider"></div>
         </div>
         <div class="col-xs-12 col-md-6">
-          <%= image_tag 'crm/person_2.png', id: 'person_2', class: 'w-100' %>
+          <%= image_tag 'crm/person_2.png', class: 'w-100' %>
         </div>
-        <div class="col-xs-12 col-md-6 c-grey">
+        <div class="col-xs-12 col-md-6 c-grey lh-2">
           <b class="fz-20 c-black">Manten conversaciones activas y transforma a tus interesados en clientes!</b>
-          <p class="c-grey">
+          <p class="c-grey lh-2">
             Con Mercately puedes conectarte a Mercado Libre, Facebook, y Whatsapp para que puedas manejar toda la comunicación con tus clientes desde un solo lugar.<br/>
             En conjunto con el CRM podrás:
           </p>
@@ -145,21 +143,21 @@
           </ol>
         </div>
         <div class="col-xs-12 col-md-6 c-grey">
-          <div class="ml-sm-16">
+          <div class="ml-sm-16 lh-2">
             <b class="fz-20 c-black">Une a tu CRM con poderosas herramientas de gestion para tu negocio</b>
-            <p class="c-grey">
+            <p class="c-grey lh-2">
               Mercately integra funcionalidades que hace que tu CRM se complemente a la perfeccion con diferentes areas de tu negocio:
             </p>
             <ol class="ol">
               <li>Controla tood el inventario de tus productos por locales</li>
               <li>Genera ordenes de venta y maneja un embudo de conversiones</li>
               <li>Sincroniza tu tienda con ventas en canales digitales</li>
-              <li>Da acceso a diferentes usuarios, controla todo en equipo</li>
+              <li>Responder conversaciones entre varios operadores al mismo tiempo. ¡Todo con un mismo número de teléfono!</li>
             </ol>
           </div>
         </div>
         <div class="col-xs-12 col-md-6">
-          <%= image_tag 'crm/person.png', id: 'person', class: 'w-100' %>
+          <%= image_tag 'crm/person.png', class: 'w-100' %>
         </div>
       </div>
       <div class="row mt-40">
