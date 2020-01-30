@@ -54,16 +54,26 @@ function validateImages(form) {
   productId = document.getElementById('product_id');
   uploadProduct = document.getElementById('product_upload_product');
   uploadedImages = false;
+  wrongFormat = false;
   message = document.getElementById('product_images_error');
 
   document.querySelectorAll(`#${form.id} .validate-image-presence`).forEach(function(image) {
     if ($(image).val()) {
       uploadedImages = true;
+
+      if (image.files && image.files[0] && !image.files[0].type.includes('image/')) {
+        wrongFormat = true;
+      }
     }
   });
 
   if (!productId.value && (uploadProduct && uploadProduct.checked) && !uploadedImages) {
     $(message).text('Imágenes requeridas');
+    return false;
+  }
+
+  if (wrongFormat) {
+    $(message).text('Las imágenes deben ser JPG/JPEG o PNG');
     return false;
   }
 
