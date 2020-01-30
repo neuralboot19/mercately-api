@@ -429,8 +429,6 @@ ActiveRecord::Schema.define(version: 2020_01_24_024402) do
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
   add_foreign_key "facebook_retailers", "retailers"
-  add_foreign_key "karix_whatsapp_messages", "customers"
-  add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"
   add_foreign_key "payment_plans", "retailers"
   add_foreign_key "payments", "payment_plans"
