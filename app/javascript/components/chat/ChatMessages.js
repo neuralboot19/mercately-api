@@ -79,14 +79,13 @@ class ChatMessages extends Component {
         received: data => {
           var facebook_message = data.facebook_message;
           if (currentCustomer == facebook_message.customer_id) {
-            if (!facebook_message.url) {
+            debugger;
               if (!this.state.new_message) {
                 this.setState({
                   messages: this.state.messages.concat(facebook_message),
                   new_message: false,
                 })
               }
-            }
             this.props.setMessageAsReaded(facebook_message.id, csrfToken);
           }
         }
