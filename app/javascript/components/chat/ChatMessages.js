@@ -5,6 +5,7 @@ import { fetchMessages, sendMessage, sendImg, setMessageAsReaded } from "../../a
 
 import MessageForm from './MessageForm';
 import ImgModal from './ImgModal';
+import ChatMessage from './ChatMessage';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -78,13 +79,11 @@ class ChatMessages extends Component {
         received: data => {
           var facebook_message = data.facebook_message;
           if (currentCustomer == facebook_message.customer_id) {
-            if (!facebook_message.url) {
-              if (!this.state.new_message) {
-                this.setState({
-                  messages: this.state.messages.concat(facebook_message),
-                  new_message: false,
-                })
-              }
+            if (!this.state.new_message) {
+              this.setState({
+                messages: this.state.messages.concat(facebook_message),
+                new_message: false,
+              })
             }
             this.props.setMessageAsReaded(facebook_message.id, csrfToken);
           }
@@ -156,15 +155,7 @@ class ChatMessages extends Component {
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
-                {message.text ?
-                    (<p>{message.text}</p>) :
-                    (<div className="img-holder">
-                      <img src={message.url} className="msg__img"
-                        onClick={(e) => this.toggleImgModal(e)}/>
-                      {message.is_loading && (
-                        <div class="lds-dual-ring"></div>
-                      )}
-                    </div>)}
+                <ChatMessage message={message}/>
               </div>
             </div>
           ))}
