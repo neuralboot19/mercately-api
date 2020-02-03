@@ -166,8 +166,8 @@
                         <div class="divider"></div>
                         <div class="table__item row middle-xs">
                           <div class="col-xs-4 col-sm-4">
-                            <% if customer.full_name.present? %>
-                              <div class="t-center"><%= customer.full_name %></div>
+                            <% if customer.full_names.present? %>
+                              <div class="t-center"><%= customer.full_names %></div>
                             <% else %>
                               <div class="t-center"><%= customer.meli_nickname || customer.email %></div>
                             <% end %>
