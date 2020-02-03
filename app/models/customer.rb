@@ -5,6 +5,7 @@ class Customer < ApplicationRecord
   has_many :questions, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
+  has_many :karix_whatsapp_messages, dependent: :destroy
 
   validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
@@ -72,6 +73,20 @@ class Customer < ApplicationRecord
   def range_items_bought(start_date, end_date)
     orders.success.joins(:order_items).where(created_at: start_date..end_date)
       .sum('order_items.quantity')
+  end
+
+  def karix_unread_message?
+    last_message = karix_whatsapp_messages.where(direction: 'inbound').last
+    return false unless last_message.present?
+
+    last_message.status != 'read'
+  end
+
+  def recent_inbound_message_date
+    last_message = karix_whatsapp_messages.where(direction: 'inbound').last
+    return Time.now - 30.hours unless last_message.present?
+
+    last_message.created_time
   end
 
   def to_param

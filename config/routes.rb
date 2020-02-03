@@ -41,9 +41,14 @@ Rails.application.routes.draw do
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
+      #Facebook Chats
       get 'facebook_chats', to: 'messages#facebook_chats', as: :facebook_chats
       get 'facebook_chat/:id', to: 'messages#facebook_chat', as: :facebook_chat
       post 'facebook_chats/:id', to: 'messages#send_facebook_message', as: :send_facebook_message
+      
+      # WhatsApp Chats
+      get 'whatsapp_chats', to: 'whats_app#index', as: :whats_app_chats
+
       get 'questions', to: 'messages#questions'
       get 'chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question', as: :question
@@ -84,9 +89,18 @@ Rails.application.routes.draw do
       post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
       post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img
       post 'messages/:id/readed', to: 'customers#set_message_as_readed', as: :set_message_as_readed
-
+      # For 360
       post 'whatsapp', to: 'whatsapp#create'
+      # For Karix
+      post 'karix_whatsapp', to: 'karix_whatsapp#save_message'
+      post 'karix_send_whatsapp_message', to: 'karix_whatsapp#create'
+      get 'karix_whatsapp_customers', to: 'karix_whatsapp#index', as: :karix_customers
+      get 'karix_whatsapp_customers/:id/messages', to: 'karix_whatsapp#messages', as: :karix_customer_messages
+      post 'karix_whatsapp_send_file/:id', to: 'karix_whatsapp#send_file', as: :karix_send_file
+      put 'karix_whatsapp_update_message_read/:id', to: 'karix_whatsapp#message_read', as: :karix_message_read
 
+      resources :karix_whatsapp, only: [:index, :create]
+      resources :karix_whatsapp_templates, only: [:index]
     end
   end
 end

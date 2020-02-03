@@ -14,4 +14,9 @@ module MessagesHelper
   def quantity_unread_questions
     current_retailer.unread_questions.size
   end
+
+  def whatsapp_unread_messages
+    total = current_retailer.karix_unread_whatsapp_messages.size
+    total > 9 ? '9+' : total
+  end
 end

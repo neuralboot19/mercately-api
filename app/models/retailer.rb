@@ -7,6 +7,8 @@ class Retailer < ApplicationRecord
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
   has_many :templates, dependent: :destroy
+  has_many :karix_whatsapp_messages, dependent: :destroy
+  has_many :karix_whatsapp_templates, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, uniqueness: true
@@ -45,6 +47,11 @@ class Retailer < ApplicationRecord
 
   def unread_questions
     Question.includes(:customer).where(date_read: nil, customers: { retailer_id: id })
+  end
+
+  def karix_unread_whatsapp_messages
+    karix_whatsapp_messages.includes(:customer).where.not(status: 'read').where(direction: 'inbound', customers:
+      { retailer_id: id })
   end
 
   def incomplete_meli_profile?

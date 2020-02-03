@@ -4,6 +4,9 @@ import { BrowserRouter as Router, Route, browserHistory, withRouter } from 'reac
 import { createBrowserHistory } from "history";
 
 import Chat from './components/chat/Chat';
+import WhatsApp from './components/WhatsApp';
+
+
 
 const customHistory = createBrowserHistory();
 
@@ -14,6 +17,11 @@ const AppRoutes = ({ store }) => (
         exact
         path="/retailers/:slug/facebook_chats"
         component={Chat}
+      />
+      <Route
+        exact
+        path="/retailers/:slug/whatsapp_chats"
+        component={WhatsApp}
       />
     </Router>
   </Provider>

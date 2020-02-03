@@ -125,12 +125,15 @@
             </div>
           </li>
         <% end %>
-        <!--<li class="menu__item">
-          <div class="tooltip">
-            <%= link_to image_tag('dashboard/template.png', class: 'item__name no-style'), retailers_templates_path(current_retailer), class: 'item__name no-style' %>
-            <div class="tooltiptext">Plantillas</div>
-          </div>
-        </li>-->
+        <% if current_retailer.whats_app_enabled %>
+          <li class="menu__item">
+            <div class="tooltip">
+              <%= link_to image_tag('dashboard/what.png', class: 'item__name no-style'), retailers_whats_app_chats_path(current_retailer), class: 'item__name no-style' %>
+              <div class="tooltiptext">WhatsApp</div>
+              <b class="item__cookie item__cookie_whatsapp_messages"><%= whatsapp_unread_messages %></b>
+            </div>
+          </li>
+        <% end %>
         <li class="menu__item">
           <div class="tooltip">
             <%= link_to image_tag('dashboard/integration.png', class: 'item__name no-style'), retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
