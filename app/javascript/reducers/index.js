@@ -34,6 +34,24 @@ const reducer = (state = initialState, action) => {
         ...state,
         message: action.data.message
       }
+    case 'SET_WHATSAPP_CUSTOMERS':
+      return {
+        ...state,
+        customers: action.data.customers,
+        total_customers: action.data.total_customers
+      }
+    case 'SET_WHATSAPP_MESSAGES':
+      return {
+        ...state,
+        messages: action.data.messages,
+        total_pages: action.data.total_pages
+      }
+    case 'SET_WHATSAPP_TEMPLATES':
+      return {
+        ...state,
+        templates: action.data.templates,
+        total_template_pages: action.data.total_pages
+      }
     default:
       return state;
   }

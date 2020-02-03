@@ -1,6 +1,8 @@
 class Api::V1::CustomersController < ApplicationController
   include CurrentRetailer
+  include ActionView::Helpers::TextHelper
   before_action :authenticate_retailer_user!
+  before_action :sanitize_params, only: [:update]
   before_action :set_customer, except: [:index, :set_message_as_readed]
 
   def index
@@ -76,6 +78,12 @@ class Api::V1::CustomersController < ApplicationController
 
     def message_params
       params.require(:facebook_message).permit(:text)
+    end
+
+    def sanitize_params
+      params[:customer].each_pair do |param|
+        params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish if params[:customer][param.first]
+      end
     end
 
     def customer_params

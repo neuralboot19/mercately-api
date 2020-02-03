@@ -12,6 +12,9 @@ class PagesController < ApplicationController
   def terms
   end
 
+  def crm
+  end
+
   def request_demo
     recaptcha_valid = if params['g-recaptcha-response']&.[]('schedule')
                         verify_recaptcha(action: 'schedule')

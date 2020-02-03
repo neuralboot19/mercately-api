@@ -4,7 +4,6 @@ import { fetchCustomer, updateCustomer } from "../../actions/actions";
 import EditableField from './shared/EditableField'
 import SelectableField from './shared/SelectableField'
 
-
 var is_updated = false;
 const csrfToken = document.querySelector('[name=csrf-token]').content
 
@@ -111,8 +110,6 @@ class CustomerDetails extends Component {
               <i className="fs-18 mt-4 mr-4 fas fa-envelope-square editable_email" />
               <p className="label inline-block">Email:</p>
             </div>
-
-            
 
             { Object.keys(this.state.customer).length != 0   && (
                <EditableField 

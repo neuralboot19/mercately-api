@@ -87,6 +87,9 @@ label:hover, a:hover {
     .m-sm-#{$space} {
       margin: #{$space}px !important;
     }
+    .w-sm-#{$space} {
+      width: #{$space}px !important;
+    }
   }
 
   @each $side in $sides {
@@ -104,6 +107,10 @@ label:hover, a:hover {
       }
     }
   }
+}
+
+.w-400 {
+  width: 400px;
 }
 
 .m-auto {
@@ -198,7 +205,7 @@ label:hover, a:hover {
 }
 
 .c-secondary {
-  color: $secondary-color;
+  color: $secondary-color !important;
 }
 
 .c-grey {
@@ -242,12 +249,26 @@ label:hover, a:hover {
   border-radius: .25rem;
 }
 
+.bg-white {
+  background-color: #fff;
+}
+
 .bg-blue {
   background-color: #2EABE2;
 }
 
 .d-block {
   display: block !important;
+}
+
+.bg-grey {
+  background-color: #EBEBEB;
+}
+
+.ol {
+  li {
+    list-style: decimal;
+  }
 }
 
 .opacity-5 {

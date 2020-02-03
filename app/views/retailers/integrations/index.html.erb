@@ -15,18 +15,21 @@
 
     <div class="container-fluid">
       <div class="row mb-30">
-        <div class="col-xs-12 col-md-6 mt-15">
+        <div class="col-xs-12 col-md-6 mt-15 p-relative">
           <div class="col-xs-12 pt-20 t-center">
             <div class="logo-integration-platform" id="messenger_logo"></div>
             <div class="integration__desc">
-              Que no se te escape ningun cliente! Integra
-              Messenger a Mercately y responde todos los
-              mensajes desde un solo lugar. Podras personalizar
-              plantillas de respuesta rapida generar ordenes de
-              venta, asignar productos por cliente y mas.
+              Mejora el servicio y la comunicación con tus clientes y prospectos mediante nuestra integración en Facebook Messenger. Podrás realizar las siguientes funcionalidades:
+              <ul class="t-justify mx-12 pb-45">
+                <li>Recibe y envía mensajes directos desde Mercately a Facebook Messenger.</li>
+                <li>Utiliza nuestras plantillas para agilizar tus conversaciones.</li>
+                <li>Conoce a tus clientes más a fondo con nuestro CRM.</li>
+                <li>Responde a los chats y comentarios de Mercadolibre más rápido mediantes nuestras plantillas.</li>
+                <li>Inicia conversaciones efectivas con tus clientes por medio de nuestras <strong>campañas de Facebook Messenger</strong>.</li>
+              </ul>
             </div>
           </div>
-          <div class="col-xs-12 col-md-12 btn-box">
+          <div class="col-xs-12 col-md-12 btn-box btn-aligned">
             <% if current_retailer.facebook_retailer %>
               <p class="c-green fs-18 fs-sm-and-down-12">Conectado con Messenger Exitosamente</p>
             <% else %>
@@ -34,27 +37,48 @@
             <% end %>
           </div>
         </div>
-        <div class="col-xs-12 col-md-6 mt-15">
+        <div class="col-xs-12 col-md-6 mt-15 p-relative">
           <div class="col-xs-12 pt-20 t-center">
             <div class="logo-integration-platform" id="ml_logo"></div>
             <div class="integration__desc">
-              Conecta tu tienda de Mercado Libre con Mercately
-              y accede a las siguientes funcionalidades:<br/>
-              <ul class="t-justify mx-12">
-                <li>Respuesta de comentarios</li>
-                <li>Respuesta de chats</li>
-                <li>Publicacion de productos</li>
-                <li>Ordenes de venta</li>
-                <li>Registro de clientes</li>
+              Conecta tu tienda de Mercado Libre con Mercately y accede a las siguientes funcionalidades:<br/>
+              <ul class="t-justify mx-12 pb-45">
+                <li>Actualiza tu inventario local en conjunto con tu inventario de MercadoLibre en tiempo real.No más ventas de artículos que ya no tienes disponibles. </li>
+                <li>Republicación automática de productos que todavía tienes en tu inventario. No más ventas perdidas por olvidar republicar un artículo. </li>
+                <li>Sincronización de órdenes y recibe órdenes directamente de mercadolibre o crea órdenes de tu tienda física. Olvídate de sincronizar tu inventario con cada orden y recibe más información de tus clientes.</li>
+                <li>Responde a los chats y comentarios de Mercadolibre más rápido mediantes nuestras plantillas.</li>
+                <li>Recibe información más detallada de tus clientes y tus productos.</li>
               </ul>
             </div>
           </div>
-          <div class="col-xs-12 col-md-12 btn-box">
+          <div class="col-xs-12 col-md-12 btn-box btn-aligned">
             <% if current_retailer.meli_retailer %>
               <p class="c-green fs-18 fs-sm-and-down-12">Conectado con Mercado Libre Exitosamente</p>
             <% else %>
               <%= link_to 'Conectar con Mercado Libre', ec_auth_url, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
             <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-30">
+        <div class="col-xs-12 col-md-6 mt-15 p-relative">
+          <div class="col-xs-12 pt-20 t-center">
+            <div class="logo-integration-platform" id="whats_app_logo"></div>
+            <div class="integration__desc">
+              Únete a la aplicación más usada de comunicación del mundo y conecta con millones de usuarios con Mercately y WhatsApp:<br/>
+              <ul class="t-justify mx-12 pb-45">
+                <li>LLeva la comunicación más lejos con la API oficial de WhatsApp Business.</li>
+                <li>Convierte a tu Whatsapp en multi-usuario controla la comunicación con tus clientes junto a tu equipo de agentes.</li>
+                <li>Utiliza plantillas para responder más rápido a tus clientes, no los dejes escapar.</li>
+                <li>Ordenes de venta</li>
+                <li>Automatiza la interacción con tus clientes para mejorar las ventas de tu negocio.</li>
+                <li>Inicia conversaciones efectivas con tus clientes con nuestras <strong>campañas de WhatsApp</strong> </li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-12 btn-box btn-aligned">
+              <a class="fs-sm-and-down-8 fs-12 btn-btn btn-submit" href="https://api.whatsapp.com/send?l=es&phone=593978795356&text=Hola%20quiero%20vender%20más%20por%20WhatsApp" target="_blank">
+                <i class="fab fa-whatsapp fz-16 mr-5"></i>Conectar con WhatsApp</a>
           </div>
         </div>
       </div>
