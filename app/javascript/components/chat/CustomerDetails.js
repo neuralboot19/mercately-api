@@ -188,7 +188,7 @@ class CustomerDetails extends Component {
           }
 
           {!this.state.customer.id &&
-            <a href={window.location.href.replace('facebook_chats', `orders/new?full_name=${this.state.customer.full_name}&email=${this.state.customer.email}&phone=${this.state.customer.phone}`)} target="_blank" className="btn btn--cta">
+            <a href={window.location.href.replace('facebook_chats', `orders/new?first_name=${this.state.customer.first_name}&last_name=${this.state.customer.last_name}&email=${this.state.customer.email}&phone=${this.state.customer.phone}`)} target="_blank" className="btn btn--cta">
               Generar Venta
             </a>
           }

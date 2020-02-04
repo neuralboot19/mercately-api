@@ -138,6 +138,7 @@ $(document).ready(function() {
     $('#add_customer').hide();
     $('#edit_customer').hide();
     $('#customer_id_container').hide();
+    $('#order_customer_attributes_id').prop('disabled', true);
   });
 
   $('#add_customer_container').on('cocoon:after-remove', function(e, removedItem) {
@@ -171,7 +172,8 @@ function updateEditForm() {
     var customer = json['customer'];
 
     $('#order_customer_attributes_id').val(customer.id);
-    $('#order_customer_attributes_full_name').val(customer.full_name);
+    $('#order_customer_attributes_first_name').val(customer.first_name);
+    $('#order_customer_attributes_last_name').val(customer.last_name);
     $('#order_customer_attributes_email').val(customer.email);
     $('#order_customer_attributes_phone').val(customer.phone);
   });
@@ -187,7 +189,8 @@ function hideClientForm() {
 
 function disableEditForm() {
   $('#order_customer_attributes_id').prop('disabled', true);
-  $('#order_customer_attributes_full_name').prop('disabled', true);
+  $('#order_customer_attributes_first_name').prop('disabled', true);
+  $('#order_customer_attributes_last_name').prop('disabled', true);
   $('#order_customer_attributes_email').prop('disabled', true);
   $('#order_customer_attributes_phone').prop('disabled', true);
   $('#order_customer_attributes_retailer_id').prop('disabled', true);
@@ -195,7 +198,8 @@ function disableEditForm() {
 
 function enableEditForm() {
   $('#order_customer_attributes_id').prop('disabled', false);
-  $('#order_customer_attributes_full_name').prop('disabled', false);
+  $('#order_customer_attributes_first_name').prop('disabled', false);
+  $('#order_customer_attributes_last_name').prop('disabled', false);
   $('#order_customer_attributes_email').prop('disabled', false);
   $('#order_customer_attributes_phone').prop('disabled', false);
   $('#order_customer_attributes_retailer_id').prop('disabled', false);

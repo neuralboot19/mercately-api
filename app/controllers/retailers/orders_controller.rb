@@ -16,9 +16,10 @@ class Retailers::OrdersController < RetailersController
 
     if params[:customer_id].present?
       @order.customer_id = params[:customer_id]
-    elsif params[:full_name].present?
+    elsif params[:first_name].present?
       @order.customer = Customer.new
-      @order.customer.full_name = params[:full_name]
+      @order.customer.first_name = params[:first_name]
+      @order.customer.last_name = params[:last_name]
       @order.customer.email = params[:email]
       @order.customer.phone = params[:phone]
       @hide_client_form = false
@@ -99,7 +100,8 @@ class Retailers::OrdersController < RetailersController
           :email,
           :phone,
           :retailer_id,
-          :full_name
+          :first_name,
+          :last_name
         ]
       )
     end

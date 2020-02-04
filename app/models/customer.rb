@@ -39,6 +39,10 @@ class Customer < ApplicationRecord
       'orders.customer_id = customers.id and orders.status = 1), 0)')
   end
 
+  def full_names
+    "#{first_name} #{last_name}"
+  end
+
   def earnings
     orders.success.map(&:total).sum.to_f.round(2)
   end
@@ -89,6 +93,20 @@ class Customer < ApplicationRecord
     last_message.created_time
   end
 
+  def bought_items
+    product_ids = OrderItem.where(order_id: orders.success.pluck(:id)).pluck(:product_id).uniq
+    Product.where(id: product_ids)
+  end
+
+  def order_items_product(product)
+    orders.success.joins(:order_items).where(order_items: { product_id: product.id }).size
+  end
+
+  def earned_by_product(product)
+    orders.success.joins(:order_items).where(order_items: { product_id: product.id })
+      .sum('order_items.quantity * order_items.unit_price')
+  end
+
   def to_param
     web_id
   end
@@ -98,7 +116,7 @@ class Customer < ApplicationRecord
     def update_valid_customer
       return if valid_customer?
 
-      self.valid_customer = full_name.present? || email.present?
+      self.valid_customer = first_name.present? || last_name.present? || email.present?
     end
 
     def generate_web_id
