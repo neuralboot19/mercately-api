@@ -100,15 +100,11 @@ function loadQuestions() {
 
 function buildQuestionList(question) {
   letters = '';
-  if (question.first_name) {
-    letters = question.first_name.charAt(0);
+  if (question.first_name && question.last_name) {
+    letters = question.first_name.charAt(0) + ' ' + question.last_name.charAt(0);
   }
 
-  if (question.last_name) {
-    letters += (' ' + question.last_name.charAt(0));
-  }
-
-  if (!question.first_name && !question.last_name && question.meli_nickname) {
+  if ((!question.first_name || !question.last_name) && question.meli_nickname) {
     letters = question.meli_nickname.charAt(0) + ' ' + question.meli_nickname.charAt(1);
   }
 
@@ -120,7 +116,7 @@ function buildQuestionList(question) {
            '</div>' +
            '</div>' +
            '<div class="col-xs-10">' +
-           `<div class="profile__name">${(question.first_name + ' ' + question.last_name) || question.meli_nickname}</div>` +
+           `<div class="profile__name">${question.first_name && question.last_name ? (question.first_name + ' ' + question.last_name) : question.meli_nickname}</div>` +
            `<div class="${ question.answered ? '' : 'fw-bold' }">${moment(question.created_at).locale('es').fromNow()}</div>` +
            '</div>' +
            '</div>' +
