@@ -29,7 +29,7 @@
                   Buscar por:
                 </div>
                 <div class="col-xs-12 col-sm-4 px-0">
-                  <%= f.search_field :full_name_or_phone_or_email_cont, class: 'input search-field', placeholder: 'Busca por nombres, email o teléfono' %>
+                  <%= f.search_field :first_name_or_last_name_or_phone_or_email_cont, class: 'input search-field', placeholder: 'Busca por nombres, email o teléfono' %>
                 </div>
                 <div class="col-xs-12 col-sm-2 mt-5 pl-0 fs-14 no-style-filter t-right ordering-label">
                   Ordenar por:
@@ -77,7 +77,7 @@
               <div class="divider"></div>
               <div class="table__item row middle-xs">
                 <div class="col-xs-4 col-sm-2">
-                  <div class="t-center"><%= customer.full_name %></div>
+                  <div class="t-center"><%= customer.full_names %></div>
                 </div>
                 <div class="col-xs-4 col-sm-1 c-grey">
                   <div class="t-center truncate"><%= customer.email %></div>
@@ -92,7 +92,7 @@
                       <label class="c-black modal__toggler" for="modal--toggle"
                                                             data-customer_id="<%= customer.id %>"
                                                             data-customer_web_id="<%= customer.web_id %>"
-                                                            data-customer_name="<%= customer.full_name %>"
+                                                            data-customer_name="<%= customer.full_names %>"
                                                             data-customer_email="<%= customer.email %>"
                                                             data-customer_phone="<%= customer.phone %>"
                                                             data-customer_address="<%= customer.address %>"
@@ -153,7 +153,7 @@
                       <label class="c-black modal__toggler" for="modal--toggle"
                                                             data-customer_id="<%= customer.id %>"
                                                             data-customer_web_id="<%= customer.web_id %>"
-                                                            data-customer_name="<%= customer.full_name %>"
+                                                            data-customer_name="<%= customer.full_names %>"
                                                             data-customer_email="<%= customer.email %>"
                                                             data-customer_phone="<%= customer.phone %>"
                                                             data-customer_address="<%= customer.address %>"
@@ -193,7 +193,7 @@
                       <label class="c-black modal__toggler" for="modal--toggle"
                                                             data-customer_id="<%= customer.id %>"
                                                             data-customer_web_id="<%= customer.web_id %>"
-                                                            data-customer_name="<%= customer.full_name %>"
+                                                            data-customer_name="<%= customer.full_names %>"
                                                             data-customer_email="<%= customer.email %>"
                                                             data-customer_phone="<%= customer.phone %>"
                                                             data-customer_address="<%= customer.address %>"

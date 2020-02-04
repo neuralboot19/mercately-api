@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_30_124044) do
+ActiveRecord::Schema.define(version: 2020_02_03_192004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,7 +94,6 @@ ActiveRecord::Schema.define(version: 2020_01_30_124044) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
-    t.string "full_name"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
