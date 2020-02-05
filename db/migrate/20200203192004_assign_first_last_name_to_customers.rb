@@ -4,7 +4,7 @@ class AssignFirstLastNameToCustomers < ActiveRecord::Migration[5.2]
       arr = c.full_name.split(' ')
 
       if arr.size == 1
-        c.update_column(first_name, arr[0])
+        c.update_column(:first_name, arr[0])
       elsif arr.size == 2
         c.update_columns(first_name: arr[0], last_name: arr[1])
       elsif arr.size == 3
