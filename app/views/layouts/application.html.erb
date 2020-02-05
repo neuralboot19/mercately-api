@@ -22,6 +22,9 @@
       <% end %>
     </div>
     <%= render 'layouts/footer' %>
+    <% if ENV['ENVIRONMENT'] == 'production' && current_page?(root_path) %>
+      <script src="//assets.pcrl.co/js/jstracker.min.js"></script>
+    <% end %>
   </body>
 
   <% if notice %>

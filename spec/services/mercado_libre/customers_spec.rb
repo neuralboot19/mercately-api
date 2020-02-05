@@ -23,7 +23,7 @@ RSpec.describe MercadoLibre::Customers, vcr: true do
         VCR.use_cassette('customers/customer') do
           expect { customers_service.import('445351893') }.to change(Customer, :count).by(1)
           customer = MeliCustomer.find_by(meli_user_id: '445351893').customers.last
-          expect(customer.full_name).not_to be_nil
+          expect(customer.full_names).not_to be_nil
         end
       end
     end

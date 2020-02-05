@@ -71,7 +71,8 @@ class Retailers::CustomersController < RetailersController
         :state,
         :zip_code,
         :country_id,
-        :full_name
+        :first_name,
+        :last_name
       )
     end
 end

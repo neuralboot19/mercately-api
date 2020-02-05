@@ -5,8 +5,12 @@
         <fieldset class="fieldset mt-16 row">
           <legend>Información básica de cliente</legend>
           <div class="my-16 col-xs-12">
-            <%= f.label :full_name, 'Nombres' %>
-            <%= f.text_field :full_name, class: 'input' %>
+            <%= f.label :first_name, 'Nombre' %>
+            <%= f.text_field :first_name, class: 'input' %>
+          </div>
+          <div class="my-16 col-xs-12">
+            <%= f.label :last_name, 'Apellido' %>
+            <%= f.text_field :last_name, class: 'input' %>
           </div>
           <div class="my-16 col-xs-12">
             <%= f.label :email %>

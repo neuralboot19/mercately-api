@@ -106,7 +106,7 @@ class Retailers::MessagesController < RetailersController
     @questions = Question.joins(:customer, :product).where(meli_question_type: :from_product, products:
       {
         retailer_id: current_retailer.id
-      }).select('questions.*, customers.full_name, customers.meli_nickname')
+      }).select('questions.*, customers.first_name, customers.last_name, customers.meli_nickname')
       .order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
 
     render json: { questions: @questions, total: @questions.total_pages }

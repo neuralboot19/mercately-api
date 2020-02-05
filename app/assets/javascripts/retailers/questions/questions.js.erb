@@ -99,13 +99,12 @@ function loadQuestions() {
 }
 
 function buildQuestionList(question) {
-  if (question.full_name) {
-    splitted = question.full_name.split(' ');
+  letters = '';
+  if (question.first_name && question.last_name) {
+    letters = question.first_name.charAt(0) + ' ' + question.last_name.charAt(0);
+  }
 
-    letters = splitted[0] ? splitted[0].charAt(0) : '';
-    letters += (' ' + (splitted[1] ? splitted[1].charAt(0) : ''));
-    letters = letters.trim();
-  } else if (question.meli_nickname) {
+  if ((!question.first_name || !question.last_name) && question.meli_nickname) {
     letters = question.meli_nickname.charAt(0) + ' ' + question.meli_nickname.charAt(1);
   }
 
@@ -117,7 +116,7 @@ function buildQuestionList(question) {
            '</div>' +
            '</div>' +
            '<div class="col-xs-10">' +
-           `<div class="profile__name">${question.full_name || question.meli_nickname}</div>` +
+           `<div class="profile__name">${question.first_name && question.last_name ? (question.first_name + ' ' + question.last_name) : question.meli_nickname}</div>` +
            `<div class="${ question.answered ? '' : 'fw-bold' }">${moment(question.created_at).locale('es').fromNow()}</div>` +
            '</div>' +
            '</div>' +
