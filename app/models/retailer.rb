@@ -61,4 +61,12 @@ class Retailer < ApplicationRecord
   def save_free_plan
     PaymentPlan.create(retailer: self)
   end
+
+  def counter_karix_messages
+    karix_whatsapp_messages.where(message_type: 'conversation').size
+  end
+
+  def counter_karix_notifications
+    karix_whatsapp_messages.where(message_type: 'notification').size
+  end
 end

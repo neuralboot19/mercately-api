@@ -126,6 +126,8 @@ ActiveAdmin.register Retailer do
         row :next_pay_date
         row :status
         row :plan
+        row :karix_available_messages
+        row :karix_available_notifications
       end
     end
   end
