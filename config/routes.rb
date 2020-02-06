@@ -36,7 +36,7 @@ Rails.application.routes.draw do
         get 'messages', to: 'messages#chat'
         post 'send_message', to: 'messages#send_message', as: :send_message
       end
-      resources :customers, except: [:destroy, :show]
+      resources :customers, except: [:destroy]
       resources :messages, only: [:show]
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question

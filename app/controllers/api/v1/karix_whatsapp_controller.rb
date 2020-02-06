@@ -25,6 +25,9 @@ class Api::V1::KarixWhatsappController < ApplicationController
     if response['error'].present?
       render status: 500, json: { message: response['error']['message'] }
     else
+      message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
+      message = ws_message_service.assign_message(message, current_retailer, response['objects'][0])
+      message.save
       render status: 200, json: { message: response['objects'][0] }
     end
   end
