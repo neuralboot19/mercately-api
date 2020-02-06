@@ -1,0 +1,67 @@
+var auxTemplate = [];
+var templateSelected = '';
+
+function setKarixTemplate(index) {
+  $('#karix-templates-list').hide();
+  $('#karix-template-edition').show();
+  templateSelected = $(`#template-${index}`).html();
+
+  auxTemplate = templateSelected.split('');
+
+  let new_array = templateSelected.split('');
+  let container = $('#karix-template-text').html('');
+  new_array.map((key, index) => {
+    if (key == '*'){
+      container.append(`<input value="" onChange="changeTemplate(this, ${index})" />`);
+    } else {
+      container.append(`${key}`);
+    }
+  });
+}
+
+function changeTemplate(e, id) {
+  templateSelected.split('').map((key, index) => {
+    if (key == '*'){
+      if (index == id && e.value && e.value !== '') {
+        auxTemplate[index] = e.value;
+      } else if (index == id && (!e.value || e.value === '')) {
+        auxTemplate[index] = '*';
+      }
+    }
+  })
+}
+
+function cancelTemplate() {
+  $('#karix-templates-list').show();
+  $('#karix-template-edition').hide();
+  auxTemplate = [];
+  templateSelected = '';
+  $('#modal--toggle').attr('checked', false);
+}
+
+function sendTemplate() {
+  var allFilled = true;
+  auxTemplate.map((key) => {
+    if (key === '*') {
+      allFilled = false;
+    }
+  })
+
+  if (allFilled) {
+    data = {
+      message: auxTemplate.join(''),
+      customer_id: $('#karix-customer-id').val()
+    }
+
+    $.ajax({
+      url: '/api/v1/karix_send_whatsapp_message',
+      type: 'POST',
+      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+      data: data
+    });
+
+    cancelTemplate();
+  } else {
+    alert('Debe llenar todos los campos editables');
+  }
+}
