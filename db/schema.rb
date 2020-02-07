@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_03_192004) do
+ActiveRecord::Schema.define(version: 2020_02_05_135636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -264,12 +264,14 @@ ActiveRecord::Schema.define(version: 2020_02_03_192004) do
   create_table "payment_plans", force: :cascade do |t|
     t.bigint "retailer_id"
     t.decimal "price", default: "0.0"
-    t.date "start_date", default: -> { "CURRENT_TIMESTAMP" }
+    t.date "start_date", default: -> { "now()" }
     t.date "next_pay_date"
     t.integer "status", default: 0
     t.integer "plan", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "karix_available_messages", default: 0
+    t.integer "karix_available_notifications", default: 0
     t.index ["retailer_id"], name: "index_payment_plans_on_retailer_id"
   end
 
