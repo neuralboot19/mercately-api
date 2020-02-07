@@ -20,9 +20,46 @@
             <ul>
               <li>Nombre del plan: <%= @payment_plan.plan.capitalize %></li>
               <li>Precio mensual: $<%= @payment_plan.price.to_f %></li>
+              <% if @payment_plan.plan != 0 %>
+                <li>Fecha de próximo pago: <%= @payment_plan.next_pay_date&.strftime("%d/%m/%Y") %></li>
+              <% end %>
+              <% if current_retailer.whats_app_enabled  %>
+                <li> Mensajes de WhatsApp disponibles: 
+                  <p>Conversación: <%= @payment_plan.karix_available_messages - current_retailer.counter_karix_messages %> 
+                    <br />
+                  Notificación: <%= @payment_plan.karix_available_notifications - current_retailer.counter_karix_notifications %></p>
+                </li>
+              <% end %>
             </ul>
           </div>
         </div>
+        <% if current_retailer.whats_app_enabled && @user_messages.present? %>
+          <div class="row">
+            <div class="col-xs-12">
+              <h3>Consumo de WhatsApp</h3>
+              <table class="whats_app_table w-100">
+                <tr>
+                  <th>Mes</th>
+                  <th>Tipo de Mensaje</th>
+                  <th>Total</th>
+                </tr>
+                <% @user_messages.each do |message| %>
+                  <tr>
+                    <td><%= message[:month] + ' ' + message[:year] %></td>
+                    <td>
+                      <p>Conversación</p>
+                      <p>Notificación</p>
+                    </td>
+                    <td>
+                      <p><%= message[:total_conversation] %></p>
+                      <p><%= message[:total_notification] %></p>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>
