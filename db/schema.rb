@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_05_135636) do
+ActiveRecord::Schema.define(version: 2020_02_11_133903) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -399,8 +399,6 @@ ActiveRecord::Schema.define(version: 2020_02_05_135636) do
     t.boolean "phone_verified"
     t.string "retailer_number"
     t.boolean "whats_app_enabled", default: false
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
     t.string "karix_whatsapp_phone"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end

@@ -8,8 +8,6 @@ ActiveAdmin.register Retailer do
                 :zip_code,
                 :phone_number,
                 :whats_app_enabled,
-                :karix_account_uid,
-                :karix_account_token,
                 :karix_whatsapp_phone
   
   filter :name
@@ -29,8 +27,8 @@ ActiveAdmin.register Retailer do
     column 'Facebook User Id' do |retailer|
       retailer.facebook_retailer&.uid
     end
-    column 'WhatsApp Account Id' do |retailer|
-      retailer.karix_account_uid
+    column 'Karix Phone Number' do |retailer|
+      retailer.karix_whatsapp_phone
     end
     column :retailer_user
     column :created_at
@@ -112,8 +110,6 @@ ActiveAdmin.register Retailer do
     panel 'Información de WhatsApp' do
       attributes_table_for retailer do
         row :whats_app_enabled
-        row :karix_account_uid
-        row :karix_account_token
         row :karix_whatsapp_phone
       end
     end
@@ -143,8 +139,6 @@ ActiveAdmin.register Retailer do
       f.input :zip_code
       f.input :phone_number
       f.input :whats_app_enabled
-      f.input :karix_account_uid
-      f.input :karix_account_token
       f.input :karix_whatsapp_phone
     end
     f.actions
