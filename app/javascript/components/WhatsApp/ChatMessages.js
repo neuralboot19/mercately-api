@@ -149,11 +149,6 @@ class ChatMessages extends Component {
     ))
   )
 
-  removeFromArray = (arr, index) => {
-    arr.splice(index, 1);
-    return arr
-  }
-
   removeByTextArray = (arr, text) => {
     var index = arr.findIndex((el) => (
       el.content_text === text && !el.id
@@ -173,7 +168,7 @@ class ChatMessages extends Component {
         received: data => {
           var karix_message = data.karix_whatsapp_message;
           if (currentCustomer == karix_message.customer_id) {
-            if (!karix_message.content_media_url) {
+            if (karix_message.content_type == 'text') {
               if (!this.state.new_message) {
                 var messages = this.state.messages;
                 var index = this.findMessageInArray(messages, karix_message.id);
@@ -184,16 +179,10 @@ class ChatMessages extends Component {
                     messages: this.state.messages.concat(karix_message),
                     new_message: false,
                   })
-                } else {
-                  messages = this.removeFromArray(messages, index);
-                  messages.push(karix_message)
-                  this.setState({
-                    messages: messages,
-                    new_message: false,
-                  })
                 }
               }
-            } else if (karix_message.content_media_type === 'image' && karix_message.direction === 'inbound') {
+            } else if ((['image', 'voice', 'audio', 'video'].includes(karix_message.content_media_type) || karix_message.content_type == 'location') &&
+              karix_message.direction === 'inbound') {
               this.setState({
                 messages: this.state.messages.concat(karix_message),
                 new_message: false,
@@ -365,8 +354,21 @@ class ChatMessages extends Component {
                         <div class="lds-dual-ring"></div>
                       )}
                     </div>)}
-                    {message.content_media_caption &&
-                    (<p>{message.content_media_caption}</p>)}
+                {message.content_type == 'media' && (message.content_media_type == 'voice' || message.content_media_type == 'audio') && (
+                  <audio controls>
+                    <source src={message.content_media_url}/>
+                  </audio>
+                )}
+                {message.content_type == 'media' && message.content_media_type == 'video' && (
+                  <video width="320" height="240" controls>
+                    <source src={message.content_media_url}/>
+                  </video>
+                )}
+                {message.content_type == 'location' &&
+                    (<p className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
+                      <i className="fas fa-globe-europe mr-8"></i>Ver ubicación</a></p>)}
+                {message.content_media_caption &&
+                  (<p>{message.content_media_caption}</p>)}
               </div>
             </div>
           ))}
