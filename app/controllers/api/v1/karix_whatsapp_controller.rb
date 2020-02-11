@@ -54,7 +54,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       return
     end
 
-    retailer = Retailer.find_by(karix_account_uid: params['data']['account_uid'])
+    retailer = Retailer.find(params['account_id'])
 
     if retailer
       message = retailer.karix_whatsapp_messages.find_or_initialize_by(uid: params['data']['uid'])

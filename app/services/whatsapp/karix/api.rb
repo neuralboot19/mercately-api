@@ -17,7 +17,7 @@ module Whatsapp
           content: {
             text: params[:message]
           },
-          events_url: ENV['KARIX_WEBHOOK']
+          events_url: "#{ENV['KARIX_WEBHOOK']}?account_id=#{retailer.id}"
         }.to_json
       end
 
