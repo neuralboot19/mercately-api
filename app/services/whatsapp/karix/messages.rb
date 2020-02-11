@@ -41,7 +41,7 @@ module Whatsapp
 
       def prepare_connection(retailer, url)
         conn = Connection.prepare_connection(url)
-        conn.basic_auth(retailer.karix_account_uid, retailer.karix_account_token)
+        conn.basic_auth(ENV['KARIX_ACCOUNT_UID'], ENV['KARIX_ACCOUNT_TOKEN'])
         conn.headers['Authorization']
 
         conn
