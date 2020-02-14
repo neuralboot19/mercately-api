@@ -35,10 +35,6 @@ class Retailers::MessagesController < RetailersController
     return unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
-
-    CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
-      '#item__cookie_question', action: 'subtract', q: 1, total:
-      @retailer.unread_questions.size)
   end
 
   def answer_question
@@ -72,11 +68,7 @@ class Retailers::MessagesController < RetailersController
       return
     end
 
-    total_unread = @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
-
-    CounterMessagingChannel.broadcast_to(current_retailer_user, identifier:
-      '#item__cookie_message', action: 'subtract', q: total_unread, total:
-      @retailer.unread_messages.size)
+    @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
   end
 
   def facebook_chats

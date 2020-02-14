@@ -8,7 +8,7 @@ module Facebook
 
     def save(message_data)
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
-      message = FacebookMessage.create_with(
+      FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         sender_uid: message_data['sender']['id'],
@@ -18,16 +18,6 @@ module Facebook
         url: message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url'),
         reply_to: message_data['message']&.[]('reply_to')&.[]('mid')
       ).find_or_create_by(mid: message_data['message']['mid'])
-      if message.persisted?
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          FacebookMessageSerializer.new(message)
-        ).serializable_hash
-        FacebookMessagesChannel.broadcast_to customer, serialized_data
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          CustomerSerializer.new(customer)
-        ).serializable_hash
-        CustomersChannel.broadcast_to @facebook_retailer.retailer, serialized_data
-      end
     end
 
     def import_delivered(message_id, psid)
@@ -55,14 +45,6 @@ module Facebook
           url: attachment_url,
           file_type: file_type
         )
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          FacebookMessageSerializer.new(message)
-        ).serializable_hash
-        FacebookMessagesChannel.broadcast_to customer, serialized_data
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          CustomerSerializer.new(customer)
-        ).serializable_hash
-        CustomersChannel.broadcast_to @facebook_retailer.retailer, serialized_data
       end
     end
 

@@ -28,7 +28,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
       message = ws_message_service.assign_message(message, current_retailer, response['objects'][0])
       message.save
-      broadcast_data(current_retailer, message)
+
       render status: 200, json: { message: response['objects'][0] }
     end
   end
@@ -40,7 +40,6 @@ class Api::V1::KarixWhatsappController < ApplicationController
     # pertenecientes al customer en cuestion
     @messages.where(direction: 'inbound').where.not(status: 'read').update_all(status: 'read')
     @messages = @messages.order(created_time: :desc).page(params[:page])
-    broadcast_data(current_retailer)
 
     if @messages.present?
       render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
@@ -61,7 +60,6 @@ class Api::V1::KarixWhatsappController < ApplicationController
       message = retailer.karix_whatsapp_messages.find_or_initialize_by(uid: params['data']['uid'])
       message = ws_message_service.assign_message(message, retailer, params['data'])
       message.save
-      broadcast_data(retailer, message) if message.persisted?
 
       render status: 200, json: { message: 'succesful' }
     else
@@ -75,6 +73,10 @@ class Api::V1::KarixWhatsappController < ApplicationController
     if response['error'].present?
       render status: 500, json: { message: response['error']['message'] }
     else
+      message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
+      message = ws_message_service.assign_message(message, current_retailer, response['objects'][0])
+      message.save
+
       render status: 200, json: { message: response['objects'][0] }
     end
   end
@@ -83,7 +85,6 @@ class Api::V1::KarixWhatsappController < ApplicationController
     @message = @customer.karix_whatsapp_messages.find(params[:message_id])
 
     if @message.update_column(:status, 'read')
-      broadcast_data(current_retailer)
       render status: 200, json: { message: @message }
     else
       render status: 500, json: { message: 'Error al actualizar mensaje' }
@@ -122,24 +123,6 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     def set_customer
       @customer = Customer.find(params[:customer_id] || params[:id])
-    end
-
-    def broadcast_data(retailer, message = nil)
-      total = retailer.karix_unread_whatsapp_messages.size
-      CounterMessagingChannel.broadcast_to(retailer.retailer_users.where(retailer_admin: true).first, identifier:
-        '.item__cookie_whatsapp_messages', total: total > 9 ? '9+' : total )
-
-      if message.present?
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          KarixWhatsappMessageSerializer.new(message)
-        ).serializable_hash
-        KarixWhatsappMessagesChannel.broadcast_to message.customer, serialized_data
-
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          KarixCustomerSerializer.new(message.customer)
-        ).serializable_hash
-        KarixCustomersChannel.broadcast_to retailer, serialized_data
-      end
     end
 
     def ws_message_service
