@@ -61,19 +61,6 @@ class WhatsAppChatList extends Component {
 
   componentDidMount() {
     this.props.fetchWhatsAppCustomers();
-
-    App.cable.subscriptions.create(
-      { channel: 'KarixCustomersChannel' },
-      {
-        received: data => {
-          var customer = data.customer;
-          if (customer.id != this.props.currentCustomer) {
-            customer["karix_unread_message?"] = true;
-          }
-          this.updateCustomerList(customer);
-        }
-      }
-    );
   }
 
   componentWillReceiveProps(newProps){
