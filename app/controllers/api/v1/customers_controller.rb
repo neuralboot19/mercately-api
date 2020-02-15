@@ -28,12 +28,7 @@ class Api::V1::CustomersController < ApplicationController
     @messages = @customer.facebook_messages
     @messages.unreaded.update_all(date_read: Time.now)
     @messages = @messages.order(created_at: :desc).page(params[:page])
-    CounterMessagingChannel.broadcast_to(
-      @customer.retailer.retailer_user,
-      identifier: '.item__cookie_facebook_messages',
-      action: 'add',
-      total: @customer.retailer.facebook_unread_messages.size
-    )
+
     render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
   end
 

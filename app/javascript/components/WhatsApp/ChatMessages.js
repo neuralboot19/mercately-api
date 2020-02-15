@@ -8,7 +8,7 @@ import Modal from 'react-modal';
 var currentCustomer = 0;
 var total_pages = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
-var channelSubscription;
+
 const customStyles = {
   content : {
     top                   : '50%',
@@ -59,7 +59,6 @@ class ChatMessages extends Component {
     var rDate = moment(this.props.recentInboundMessageDate);
     this.state.can_write = moment().diff(rDate, 'hours') < 24;
     this.setState({ messages: [],  page: 1, scrolable: true}, () => {
-      channelSubscription = this.handleChannelSubscription();
       this.props.fetchWhatsAppMessages(id);
       this.scrollToBottom();
     });
@@ -92,8 +91,6 @@ class ChatMessages extends Component {
       this.state.can_write = moment().diff(rDate, 'hours') < 24;
       this.scrollToBottom();
       this.setState({ messages: [],  page: 1, scrolable: true}, () => {
-        channelSubscription.unsubscribe();
-        channelSubscription = this.handleChannelSubscription();
         this.props.fetchWhatsAppMessages(id);
       });
 
@@ -160,44 +157,6 @@ class ChatMessages extends Component {
 
     return arr
   }
-
-  handleChannelSubscription = () => (
-    App.cable.subscriptions.create(
-      { channel: 'KarixWhatsappMessagesChannel', id: currentCustomer },
-      {
-        received: data => {
-          var karix_message = data.karix_whatsapp_message;
-          if (currentCustomer == karix_message.customer_id) {
-            if (karix_message.content_type == 'text') {
-              if (!this.state.new_message) {
-                var messages = this.state.messages;
-                var index = this.findMessageInArray(messages, karix_message.id);
-                messages = this.removeByTextArray(messages, karix_message.content_text);
-
-                if (index === -1) {
-                  this.setState({
-                    messages: this.state.messages.concat(karix_message),
-                    new_message: false,
-                  })
-                }
-              }
-            } else if ((['image', 'voice', 'audio', 'video'].includes(karix_message.content_media_type) || karix_message.content_type == 'location') &&
-              karix_message.direction === 'inbound') {
-              this.setState({
-                messages: this.state.messages.concat(karix_message),
-                new_message: false,
-              })
-            }
-
-            if (karix_message.direction === 'inbound') {
-              this.props.setWhatsAppMessageAsReaded(currentCustomer, {message_id: karix_message.id}, csrfToken);
-              this.state.can_write = true;
-            }
-          }
-        }
-      }
-    )
-  )
 
   handleScrollToTop = (e) => {
     e.preventDefault();

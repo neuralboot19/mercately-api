@@ -34,9 +34,6 @@ module MercadoLibre
         date_created_question: question_info['date_created'],
         meli_question_type: Question.meli_question_types[:from_product]
       )
-
-      CounterMessagingChannel.broadcast_to(@retailer.retailer_user, identifier:
-        '#item__cookie_question', action: 'add', total: @retailer.unread_questions.size)
     end
 
     def answer_question(question)

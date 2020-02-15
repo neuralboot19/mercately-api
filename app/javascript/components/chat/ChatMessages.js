@@ -9,7 +9,6 @@ import ChatMessage from './ChatMessage';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
-var channelSubscription;
 
 class ChatMessages extends Component {
   constructor(props) {
@@ -72,26 +71,6 @@ class ChatMessages extends Component {
     ))
   )
 
-  handleChannelSubscription = () => (
-    App.cable.subscriptions.create(
-      { channel: 'FacebookMessagesChannel', id: currentCustomer },
-      {
-        received: data => {
-          var facebook_message = data.facebook_message;
-          if (currentCustomer == facebook_message.customer_id) {
-            if (!this.state.new_message) {
-              this.setState({
-                messages: this.state.messages.concat(facebook_message),
-                new_message: false,
-              })
-            }
-            this.props.setMessageAsReaded(facebook_message.id, csrfToken);
-          }
-        }
-      }
-    )
-  )
-
   toggleImgModal = (e) => {
     var el = e.target;
 
@@ -116,7 +95,6 @@ class ChatMessages extends Component {
     currentCustomer = id;
 
     this.setState({ messages: [],  page: 1, scrolable: true}, () => {
-      channelSubscription = this.handleChannelSubscription();
       this.props.fetchMessages(id);
       this.scrollToBottom();
     });
@@ -134,8 +112,6 @@ class ChatMessages extends Component {
       currentCustomer = id;
       this.scrollToBottom();
       this.setState({ messages: [],  page: 1, scrolable: true}, () => {
-        channelSubscription.unsubscribe();
-        channelSubscription = this.handleChannelSubscription();
         this.props.fetchMessages(id);
       });
     }

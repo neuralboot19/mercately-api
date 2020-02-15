@@ -69,19 +69,6 @@ class ChatList extends Component {
 
   componentDidMount() {
     this.props.fetchCustomers();
-
-    App.cable.subscriptions.create(
-      { channel: 'CustomersChannel' },
-      {
-        received: data => {
-          var customer = data.customer;
-          if (customer.id != this.props.currentCustomer) {
-            customer["unread_message?"] = true;
-          }
-          this.updateCustomerList(customer);
-        }
-      }
-    );
   }
 
   componentDidUpdate() {
