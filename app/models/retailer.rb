@@ -1,4 +1,6 @@
 class Retailer < ApplicationRecord
+  require 'bcrypt'
+  
   has_one :meli_retailer, dependent: :destroy
   has_one :retailer_user, dependent: :destroy
   has_one :facebook_retailer, dependent: :destroy
@@ -69,4 +71,17 @@ class Retailer < ApplicationRecord
   def counter_karix_notifications
     karix_whatsapp_messages.where(message_type: 'notification').size
   end
+
+  def generate_api_key
+    api_key = SecureRandom.hex
+    encripted_api_key = ::BCrypt::Password.create(api_key)
+    loop do
+      break unless Retailer.find_by_encripted_api_key(encripted_api_key)
+      api_key = SecureRandom.hex
+      encripted_api_key = ::BCrypt::Password.create(api_key)
+    end
+    update(encripted_api_key: encripted_api_key, last_api_key_modified_date: Time.zone.now)
+    api_key
+  end
+
 end

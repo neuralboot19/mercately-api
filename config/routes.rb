@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     post 'retailers/:slug/reinvite_team_member', to: 'retailers/settings#reinvite_team_member', as: :reinvite_team_member
     post 'retailers/:slug/remove_team_member', to: 'retailers/settings#remove_team_member', as: :remove_team_member
     put 'retailers/:slug/reactive_team_member', to: 'retailers/settings#reactive_team_member', as: :reactive_team_member
+    get 'retailers/:slug/api_key', to: 'retailers/settings#api_key', as: :api_key
+    post 'retailers/:slug/generate_api_key', to: 'retailers/settings#generate_api_key', as: :generate_api_key
   end
 
   devise_for :admin_users, ActiveAdmin::Devise.config

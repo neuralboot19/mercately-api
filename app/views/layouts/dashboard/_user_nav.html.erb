@@ -47,6 +47,12 @@
                   Planes de pago
                 <% end %>
               </li>
+              <li>
+                <%= link_to api_key_path(current_retailer), class: 'no-style' do %>
+                  <i class="fas fa-credit-card mr-8"></i>
+                  API Key
+                <% end %>
+              </li>
               <li class="divider"></li>
               <li>
                 <%= link_to destroy_retailer_user_session_path, method: :delete, class: 'no-style' do %>
