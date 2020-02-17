@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_17_044134) do
+ActiveRecord::Schema.define(version: 2020_02_17_154531) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -257,6 +257,7 @@ ActiveRecord::Schema.define(version: 2020_02_17_044134) do
     t.string "feedback_message"
     t.integer "feedback_rating"
     t.string "web_id"
+    t.string "pack_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
   end

@@ -23,7 +23,8 @@ module MercadoLibre
       order = Order.find_or_initialize_by(meli_order_id: order_info['id'])
 
       order.update_attributes!(customer: customer, total_amount: order_info['total_amount'], currency_id:
-        order_info['currency_id'], merc_status: order_info['status'], created_at: order_info['date_created'])
+        order_info['currency_id'], merc_status: order_info['status'], created_at: order_info['date_created'],
+        pack_id: order_info['pack_id'])
 
       order_info['order_items'].each do |order_item|
         product_exist = @retailer.products.exists?(meli_product_id: order_item['item']['id'])
