@@ -41,7 +41,7 @@ module MercadoLibre
     end
 
     def answer_message(message)
-      url = post_answer_url
+      url = post_answer_url(message)
       conn = Connection.prepare_connection(url)
       response = Connection.post_request(conn, prepare_message_answer(message))
       JSON.parse(response.body)
@@ -76,9 +76,7 @@ module MercadoLibre
               "site_id": 'MEC'
             }
           ],
-          "text": {
-            "plain": message.answer
-          }
+          "text": message.answer
         }.to_json
       end
 
@@ -89,12 +87,13 @@ module MercadoLibre
         "https://api.mercadolibre.com/messages/#{message_id}?#{params.to_query}"
       end
 
-      def post_answer_url
+      def post_answer_url(message)
         params = {
           access_token: @meli_retailer.access_token,
           application_id: ENV['MERCADO_LIBRE_ID']
         }
-        "https://api.mercadolibre.com/messages?#{params.to_query}"
+        "https://api.mercadolibre.com/messages/packs/#{message.order.pack_id || message.order.meli_order_id}/" \
+          "sellers/#{@meli_retailer.meli_user_id}?#{params.to_query}"
       end
   end
 end
