@@ -8,7 +8,7 @@ module Facebook
 
     def save(message_data)
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
-      FacebookMessage.create_with(
+      message = FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         sender_uid: message_data['sender']['id'],
@@ -18,6 +18,19 @@ module Facebook
         url: message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url'),
         reply_to: message_data['message']&.[]('reply_to')&.[]('mid')
       ).find_or_create_by(mid: message_data['message']['mid'])
+      if message.persisted?
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          FacebookMessageSerializer.new(message)
+        ).serializable_hash
+        redis.publish 'message_facebook_chat', {facebook_message: serialized_data, room:
+          @facebook_retailer.retailer.id}.to_json
+
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          CustomerSerializer.new(customer)
+        ).serializable_hash
+        redis.publish 'customer_facebook_chat', {customer: serialized_data, room:
+          @facebook_retailer.retailer.id}.to_json
+      end
     end
 
     def import_delivered(message_id, psid)
@@ -45,6 +58,17 @@ module Facebook
           url: attachment_url,
           file_type: file_type
         )
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          FacebookMessageSerializer.new(message)
+        ).serializable_hash
+        redis.publish 'message_facebook_chat', {facebook_message: serialized_data, room:
+          @facebook_retailer.retailer.id}.to_json
+
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          CustomerSerializer.new(customer)
+        ).serializable_hash
+        redis.publish 'customer_facebook_chat', {customer: serialized_data, room:
+          @facebook_retailer.retailer.id}.to_json
       end
     end
 
@@ -104,6 +128,10 @@ module Facebook
           access_token: @facebook_retailer.access_token
         }
         "https://graph.facebook.com/#{message_id}?#{params.to_query}"
+      end
+
+      def redis
+        @redis ||= Redis.new()
       end
   end
 end

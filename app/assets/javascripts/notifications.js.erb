@@ -1,0 +1,32 @@
+var http = ENV['ENVIRONMENT'];
+var url;
+
+if (http == "production") {
+  url = "https://wss.mercately.com/";
+} else if (http == "staging") {
+  url = "https://swss.mercately.com/";
+} else {
+  url = "http://" + ENV['DOMAIN'] + ":8181";
+}
+
+var socket = io.connect(url);
+
+socket.on('connect', function() {
+  socket.emit('create_room', roomId);
+});
+
+socket.on('new_message_counter', function(data) {
+  $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).html(data['total']);
+
+  if (data['identifier'] === '#item__cookie_message' || data['identifier'] === '#item__cookie_question') {
+    var currentTotal = $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').html();
+
+    if (data['action'] === 'add') {
+      currentTotal = parseInt(currentTotal) + 1;
+    } else {
+      currentTotal = parseInt(currentTotal) - parseInt(data['q']);
+    }
+
+    $('#sidebar .item__cookie_total, #sidebar--pc .item__cookie_total').html(currentTotal);
+  }
+});

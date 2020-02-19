@@ -52,8 +52,8 @@ class Retailer < ApplicationRecord
   end
 
   def karix_unread_whatsapp_messages
-    karix_whatsapp_messages.includes(:customer).where.not(status: 'read').where(direction: 'inbound', customers:
-      { retailer_id: id })
+    karix_whatsapp_messages.includes(:customer).where.not(status: 'read', account_uid: nil)
+      .where(direction: 'inbound', customers: { retailer_id: id })
   end
 
   def incomplete_meli_profile?
