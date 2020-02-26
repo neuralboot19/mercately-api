@@ -10,12 +10,7 @@ class Connection
   def self.get_request(connection)
     get_connection = connection.get
     json_body = get_connection.body
-    Raven.capture_message(
-      json_body,
-      level: 'debug',
-      tags: { type: 'GET', status: get_connection.status },
-      extra: { caller: caller }
-    )
+
     JSON.parse(json_body)
   end
 
@@ -24,12 +19,7 @@ class Connection
       req.headers['Content-Type'] = 'application/json'
       req.body = body
     end
-    Raven.capture_message(
-      body,
-      level: 'debug',
-      tags: { type: 'POST', status: post_connection.status },
-      extra: { caller: caller }
-    )
+
     post_connection
   end
 
@@ -37,12 +27,7 @@ class Connection
     post_connection = connection.post do |req|
       req.body = body
     end
-    Raven.capture_message(
-      body,
-      level: 'debug',
-      tags: { type: 'POST File', status: post_connection.status },
-      extra: { caller: caller }
-    )
+
     post_connection
   end
 
@@ -52,12 +37,7 @@ class Connection
       req.headers['Accept'] = 'application/json'
       req.body = body
     end
-    Raven.capture_message(
-      body,
-      level: 'debug',
-      tags: { type: 'PUT', status: put_connection.status },
-      extra: { caller: caller }
-    )
+
     put_connection
   end
 end
