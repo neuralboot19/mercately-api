@@ -42,11 +42,11 @@
       dataType: 'json',
       beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
       success: function(data) {
-        insertionString = '<input type="text" readonly class="input search-field fs-18 mb-10" ';
-        insertionString += 'value=" ' +data['info']['data']['attributes']['api_key']+ ' "/>';
-        insertionString += '<div>Para maximizar la seguridad, Mercately almacena las API Keys con un algoritmo de encriptación irreversible, ';
-        insertionString += 'lo que quiere decir que usted debe copiar en este mismo momento la cadena de texto mostrada.';
-        insertionString += 'Si la llegase a perder, usted deberá generar una nueva.</div>';
+        insertionString = '<input type="text" readonly class="input search-field fs-18 mb-10" \
+        value=" ' +data['info']['data']['attributes']['api_key']+ ' "/> \
+        <div>Para maximizar la seguridad, Mercately almacena las API Keys con un algoritmo de encriptación irreversible, \
+        lo que quiere decir que usted debe copiar en este mismo momento la cadena de texto mostrada. \
+        Si la llegase a perder, usted deberá generar una nueva.</div>';
         $('#api-key-container').html(insertionString);
       }
     });
