@@ -47,10 +47,18 @@ module MercadoLibre
       if response.status == 201
         body = JSON.parse(response.body)
         update_product(product, body)
+        {
+          uploaded: true,
+          body: body
+        }
       else
         puts '\n\n\n\n------- EXCEPTION IN ML -------\n'
         puts response.body
         puts '\n-------------------------------\n\n\n\n'
+        {
+          uploaded: false,
+          body: JSON.parse(response.body)
+        }
       end
     end
 

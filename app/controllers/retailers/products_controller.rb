@@ -38,11 +38,10 @@ class Retailers::ProductsController < RetailersController
 
     @product.images = params[:product][:images]
     if @product.save
-      @product.update_main_picture if @main_image
+      @product.update_main_picture
       @product.reload
-      @product.upload_ml
-      @product.upload_variations(action_name, @variations)
-      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto creado con éxito.'
+      post_product_to_ml
+      redirect_to retailers_product_path(@retailer, @product), notice: @notice
     else
       render :new
     end
@@ -62,7 +61,7 @@ class Retailers::ProductsController < RetailersController
 
     if @product.update(product_params)
       update_meli_info
-      redirect_to retailers_product_path(@retailer, @product), notice: 'Producto actualizado con éxito.'
+      redirect_to retailers_product_path(@retailer, @product), notice: @notice
     else
       render :edit
     end
@@ -93,25 +92,31 @@ class Retailers::ProductsController < RetailersController
     past_meli_status = @product.meli_status
     @product.status = 'archived'
     @product.meli_status = 'closed' if @product.meli_product_id
+    notice = 'Producto archivado con éxito.'
 
     if @product.save
-      @product.update_ml_info(past_meli_status) if @product.meli_product_id
+      updated_info = @product.update_ml_info(past_meli_status)
+      notice = 'Error: tu producto no pudo ser cerrado en MercadoLibre.' if
+        updated_info&.[](:updated) == false
       redirect_back fallback_location: retailers_product_path(@retailer, @product),
-                    notice: 'Producto archivado con éxito.'
+                    notice: notice
     else
       render :edit
     end
   end
 
   def reactive_product
-    @product.upload_product = true
+    past_meli_status = @product.meli_status
     @product.status = 'active'
     @product.meli_status = 'active' if @product.meli_product_id
+    notice = 'Producto reactivado con éxito.'
 
     if @product.save
-      @product.upload_ml if @product.meli_product_id
+      updated_info = @product.update_ml_info(past_meli_status)
+      notice = 'Error: tu producto no pudo ser activado en MercadoLibre.' if
+        updated_info&.[](:updated) == false
       redirect_back fallback_location: retailers_product_path(@retailer, @product),
-                    notice: 'Producto reactivado con éxito.'
+                    notice: notice
     else
       render :edit
     end
@@ -119,6 +124,7 @@ class Retailers::ProductsController < RetailersController
 
   def upload_product_to_ml
     @product.upload_product = true
+    notice = 'Producto publicado con éxito.'
 
     if @product.product_without_images?
       render :edit
@@ -126,10 +132,12 @@ class Retailers::ProductsController < RetailersController
     end
 
     if @product.save
-      @product.upload_ml
+      uploaded_info = @product.upload_ml
       @product.upload_variations(action_name, @product.product_variations)
+      notice = 'Error: tu producto no pudo ser publicado en MercadoLibre.' if
+        uploaded_info&.[](:uploaded) == false
       redirect_to retailers_products_path(@retailer, q: { 'status_eq': 0, 's':
-        'created_at desc' }), notice: 'Producto publicado con éxito.'
+        'created_at desc' }), notice: notice
     else
       render :edit
     end
@@ -138,11 +146,14 @@ class Retailers::ProductsController < RetailersController
   def update_meli_status
     past_meli_status = @product.meli_status
     @product.meli_status = params[:status]
+    notice = 'Estado actualizado con éxito.'
 
     if @product.save
-      @product.update_ml_info(past_meli_status)
+      updated_info = @product.update_ml_info(past_meli_status)
+      notice = 'Error: estado del producto no pudo ser actualizado en MercadoLibre.' if
+        updated_info&.[](:updated) == false
       redirect_back fallback_location: retailers_product_path(@retailer, @product),
-                    notice: 'Estado actualizado con éxito.'
+                    notice: notice
     else
       render :edit
     end

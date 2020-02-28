@@ -11,7 +11,18 @@ module MercadoLibre
       url = @api.get_re_publish_product_url(product.meli_product_id)
       conn = Connection.prepare_connection(url)
       response = Connection.post_request(conn, @utility.prepare_re_publish_product(product))
-      puts response.body if response.status != 201
+      if response.status == 201
+        {
+          updated: true,
+          body: JSON.parse(response.body)
+        }
+      else
+        puts response.body
+        {
+          updated: false,
+          body: JSON.parse(response.body)
+        }
+      end
     end
 
     def send_update(product, past_meli_status = nil)
@@ -21,8 +32,16 @@ module MercadoLibre
       push_description_update(product)
       if response.status == 200
         load_pictures_to_ml(product)
+        {
+          updated: true,
+          body: JSON.parse(response.body)
+        }
       else
         puts response.body
+        {
+          updated: false,
+          body: JSON.parse(response.body)
+        }
       end
     end
 
