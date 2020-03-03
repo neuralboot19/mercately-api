@@ -74,12 +74,13 @@ class Retailer < ApplicationRecord
 
   def generate_api_key
     api_key = ''
+    new_encripted_api_key = ''
     loop do
       api_key = SecureRandom.hex
-      encripted_api_key = ::BCrypt::Password.create(api_key)
-      break unless Retailer.find_by_encripted_api_key(encripted_api_key)
+      new_encripted_api_key = ::BCrypt::Password.create(api_key)
+      break unless Retailer.find_by_encripted_api_key(new_encripted_api_key)
     end
-    update_attributes(encripted_api_key: encripted_api_key, last_api_key_modified_date: Time.zone.now)
+    update_attributes(encripted_api_key: new_encripted_api_key, last_api_key_modified_date: Time.zone.now)
     api_key
   end
 

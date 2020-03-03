@@ -30,6 +30,11 @@ RSpec.describe 'Settings', type: :request do
         headers = { "ACCEPT" => "application/json" }
         post generate_api_key_path(retailer), :headers => headers
 
+        retailer_user.reload
+
+        expect(retailer_user.retailer.encripted_api_key).not_to eq(nil)
+        expect(retailer_user.retailer.last_api_key_modified_date).not_to eq(nil)
+
         json_response = JSON.parse(response.body)
 
         expect(response.content_type).to eq("application/json")
