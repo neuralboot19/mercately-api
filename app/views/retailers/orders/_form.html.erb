@@ -20,6 +20,8 @@
               Agregar cliente
             <% end %>
           </div>
+        <% else %>
+          <%= f.hidden_field :customer_id %>
         <% end %>
         <div id="edit-client-order-form" class="<%= 'd-none' if @hide_client_form %>">
           <%= f.fields_for :customer, @customer do |cust| %>

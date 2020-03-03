@@ -16,6 +16,8 @@ class Retailers::OrdersController < RetailersController
 
     if params[:customer_id].present?
       @order.customer_id = params[:customer_id]
+      customer = Customer.find(params[:customer_id])
+      @hide_client_form = false unless customer.valid_customer?
     elsif params[:first_name].present?
       @order.customer = Customer.new
       @order.customer.first_name = params[:first_name]

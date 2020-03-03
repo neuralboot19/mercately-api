@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchCustomer, updateCustomer } from "../../../actions/actions";
+import { fetchCustomer, updateCustomer } from "../../actions/actions";
 import EditableField from '../shared/EditableField'
 import SelectableField from '../shared/SelectableField'
 import EcFlag from 'images/flags/ecuador.png'

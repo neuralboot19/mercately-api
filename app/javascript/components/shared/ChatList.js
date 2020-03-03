@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { fetchCustomers } from "../../actions/actions";
-
 import ChatListUser from './ChatListUser';
+import { fetchWhatsAppCustomers } from "../../actions/whatsapp_karix";
+
 
 var _shouldUpdate = true;
 class ChatList extends Component {
@@ -25,7 +26,13 @@ class ChatList extends Component {
     if (this.props.total_customers > this.state.page) {
       let page = ++this.state.page;
       this.setState({ page: page })
-      this.props.fetchCustomers(page);
+
+      if (this.props.chatType == "facebook"){
+        this.props.fetchCustomers(page);
+      }
+      if (this.props.chatType == "whatsapp"){
+        this.props.fetchWhatsAppCustomers(page);
+      }
     }
   }
 
@@ -68,8 +75,14 @@ class ChatList extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchCustomers();
-    socket.on("customer_facebook_chat", data => this.updateList(data));
+    if (this.props.chatType == "facebook"){
+      this.props.fetchCustomers();
+      socket.on("customer_facebook_chat", data => this.updateList(data));
+    }
+    if (this.props.chatType == "whatsapp"){
+      this.props.fetchWhatsAppCustomers();
+      socket.on("customer_chat", data => this.updateList(data));
+    }
   }
 
   componentDidUpdate() {
@@ -84,7 +97,12 @@ class ChatList extends Component {
   updateList = (data) => {
     var customer = data.customer.customer;
     if (customer.id != this.props.currentCustomer) {
-      customer["karix_unread_message?"] = true;
+      if (this.props.chatType == "facebook"){
+        customer["unread_message?"] = true;
+      }
+      if (this.props.chatType == "whatsapp"){
+        customer["karix_unread_message?"] = true;
+      }
     }
     this.updateCustomerList(customer);
   }
@@ -98,6 +116,7 @@ class ChatList extends Component {
           currentCustomer={this.props.currentCustomer}
           customer={customer}
           handleOpenChat={this.props.handleOpenChat}
+          chatType={this.props.chatType}
         />)}
       </div>
     );
@@ -115,6 +134,9 @@ function mapDispatch(dispatch) {
   return {
     fetchCustomers: (page = 1) => {
       dispatch(fetchCustomers(page));
+    },
+    fetchWhatsAppCustomers: (page = 1) => {
+      dispatch(fetchWhatsAppCustomers(page));
     }
   };
 }
