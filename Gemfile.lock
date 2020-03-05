@@ -401,6 +401,7 @@ DEPENDENCIES
   activestorage-cloudinary-service
   ancestry (~> 3.0, >= 3.0.5)
   async
+  bcrypt (~> 3.1.7)
   bootsnap (>= 1.1.0)
   bootstrap-daterangepicker-rails (~> 3.0.4)
   byebug
@@ -453,4 +454,4 @@ RUBY VERSION
    ruby 2.5.3p105
 
 BUNDLED WITH
-   2.0.1
+   2.1.2

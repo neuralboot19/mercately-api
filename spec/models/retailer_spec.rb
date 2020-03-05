@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'bcrypt'
 
 RSpec.describe Retailer, type: :model do
   subject(:retailer) { build(:retailer) }
@@ -104,6 +105,14 @@ RSpec.describe Retailer, type: :model do
         retailer.id_number = nil
         expect(retailer.incomplete_meli_profile?).to be true
       end
+    end
+  end
+
+  describe '#generate_api_key' do
+    it 'returns unique api_key string of 32 chars and stores the encripted api_key to the db' do
+      api_key = retailer.generate_api_key
+      expect(api_key.size).to be 32
+      expect(Retailer.where(encripted_api_key: retailer.encripted_api_key).count).to be 1
     end
   end
 

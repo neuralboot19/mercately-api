@@ -13,7 +13,7 @@ gem 'coffee-rails', '~> 4.2'
 # gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'redis', '~> 4.0'
-# gem 'bcrypt', '~> 3.1.7'
+gem 'bcrypt', '~> 3.1.7'
 
 # Send error logs
 gem 'sentry-raven', '~> 2.9'

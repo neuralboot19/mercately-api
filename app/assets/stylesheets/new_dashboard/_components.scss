@@ -42,11 +42,11 @@
   margin: 0 4px;
   font-size: 13px;
   color: #000;
-
+  cursor: pointer;
+  
   &--cta {
     border: 2px solid $secondary-color;
     color: $secondary-color;
-
     &:hover {
       color: #FFF;
       background-color: $secondary-color;
