@@ -14,7 +14,6 @@ class Retailer < ApplicationRecord
 
   validates :name, presence: true
   validates :slug, uniqueness: true
-  validates_associated :facebook_retailer
 
   after_save :generate_slug, if: :saved_change_to_name?
   after_create :save_free_plan
