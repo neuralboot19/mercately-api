@@ -1,12 +1,23 @@
+# frozen_string_literal: true
+
 class Retailers::CustomersController < RetailersController
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   def index
+    cus = current_retailer.customers
+      .select("customers.*,
+                     (COUNT(orders)) as total_orders,
+                     (case when orders.status = 0 then COUNT(orders) else 0 end) as pending_orders,
+                     (case when orders.status = 1 then COUNT(orders) else 0 end) as successfull_orders,
+                     (case when orders.status = 2 then COUNT(orders) else 0 end) as cancelled_orders")
+      .joins('INNER JOIN orders ON orders.customer_id = customers.id')
+      .group('customers.id, orders.status').active
+
     @q = if params[:q]&.[](:s).blank?
-           current_retailer.customers.active.order(created_at: :desc).ransack(params[:q])
+           cus.order(created_at: :desc).ransack(params[:q])
          else
-           current_retailer.customers.active.ransack(params[:q])
+           cus.ransack(params[:q])
          end
 
     @customers = @q.result.page(params[:page])
