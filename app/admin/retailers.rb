@@ -154,6 +154,7 @@ ActiveAdmin.register Retailer do
     retailer_user = retailer.retailer_users.first
     session[:old_retailer_id] = current_retailer_user.retailer.slug if current_retailer_user
     session[:current_retailer] = retailer
+    session[:room_id] = retailer.id
     sign_in(:retailer_user, retailer_user)
     redirect_to root_path
   end
