@@ -16,6 +16,7 @@ module MercadoLibre
     def save_question(question_info)
       customer = MercadoLibre::Customers.new(@retailer).import(question_info['from']['id'])
       question = Question.find_or_initialize_by(meli_id: question_info['id'])
+      new_question = question.new_record?
       product = Product.find_by(meli_product_id: question_info['item_id']) || MercadoLibre::Products.new(@retailer)
         .import_product([question_info['item_id']]).first
 
@@ -34,6 +35,11 @@ module MercadoLibre
         date_created_question: question_info['date_created'],
         meli_question_type: Question.meli_question_types[:from_product]
       )
+
+      if new_question
+        redis.publish 'new_message_counter', {identifier: '#item__cookie_question', action: 'add', total:
+          @retailer.unread_questions.size, room: @retailer.id}.to_json
+      end
     end
 
     def answer_question(question)
@@ -78,6 +84,10 @@ module MercadoLibre
           access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/answers?#{params.to_query}"
+      end
+
+      def redis
+        @redis ||= Redis.new()
       end
   end
 end

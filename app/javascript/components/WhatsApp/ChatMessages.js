@@ -64,6 +64,38 @@ class ChatMessages extends Component {
     });
 
     this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
+    socket.on("message_chat", data => this.updateChat(data));
+  }
+
+  updateChat = (data) => {
+    var karix_message = data.karix_whatsapp_message.karix_whatsapp_message;
+    if (currentCustomer == karix_message.customer_id) {
+      if (karix_message.content_type == 'text') {
+        if (!this.state.new_message) {
+          var messages = this.state.messages;
+          var index = this.findMessageInArray(messages, karix_message.id);
+          messages = this.removeByTextArray(messages, karix_message.content_text);
+
+          if (index === -1) {
+            this.setState({
+              messages: this.state.messages.concat(karix_message),
+              new_message: false,
+            })
+          }
+        }
+      } else if ((['image', 'voice', 'audio', 'video'].includes(karix_message.content_media_type) || karix_message.content_type == 'location') &&
+        karix_message.direction === 'inbound') {
+        this.setState({
+          messages: this.state.messages.concat(karix_message),
+          new_message: false,
+        })
+      }
+
+      if (karix_message.direction === 'inbound') {
+        this.props.setWhatsAppMessageAsReaded(currentCustomer, {message_id: karix_message.id}, csrfToken);
+        this.state.can_write = true;
+      }
+    }
   }
 
   componentWillReceiveProps(newProps){

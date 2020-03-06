@@ -61,6 +61,7 @@ class WhatsAppChatList extends Component {
 
   componentDidMount() {
     this.props.fetchWhatsAppCustomers();
+    socket.on("customer_chat", data => this.updateList(data));
   }
 
   componentWillReceiveProps(newProps){
@@ -69,6 +70,14 @@ class WhatsAppChatList extends Component {
         customers: this.state.customers.concat(newProps.customers)
       })
     }
+  }
+
+  updateList = (data) => {
+    var customer = data.customer.customer;
+    if (customer.id != this.props.currentCustomer) {
+      customer["karix_unread_message?"] = true;
+    }
+    this.updateCustomerList(customer);
   }
 
   render() {

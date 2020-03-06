@@ -103,4 +103,6 @@ Rails.application.configure do
   Raven.configure do |config|
     config.dsn = ENV['SENTRY_DSN']
   end
+
+  config.secret_key_base = ENV['SECRET_KEY_BASE']
 end

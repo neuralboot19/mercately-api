@@ -6,6 +6,7 @@ class FacebookMessage < ApplicationRecord
 
   after_create :sent_by_retailer?
   after_create :send_facebook_message
+  after_create :broadcast_to_counter_channel
 
   scope :unreaded, -> { where(date_read: nil) }
 
@@ -24,5 +25,14 @@ class FacebookMessage < ApplicationRecord
             end
         update_column(:mid, m['message_id'])
       end
+    end
+
+    def broadcast_to_counter_channel
+      redis.publish 'new_message_counter', {identifier: '.item__cookie_facebook_messages', action: 'add', total:
+        facebook_retailer.retailer.facebook_unread_messages.size, room: facebook_retailer.retailer.id}.to_json
+    end
+
+    def redis
+      @redis ||= Redis.new()
     end
 end

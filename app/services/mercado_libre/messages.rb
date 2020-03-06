@@ -28,8 +28,10 @@ module MercadoLibre
         created_at: message_info['date']
       )
 
+      action = 'add'
       if message_info['date_read'].present?
-        order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
+        action = 'subtract'
+        total_unread = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
           .update_all(date_read: message_info['date_read'])
       end
 
@@ -38,6 +40,8 @@ module MercadoLibre
       else
         message.update(question: message_info['text']['plain'])
       end
+
+      insert_notification(is_an_answer, action, total_unread)
     end
 
     def answer_message(message)
@@ -61,6 +65,13 @@ module MercadoLibre
         order.blank? || order.created_at < @meli_retailer.created_at ||
           (is_an_answer && order.retailer_id != @retailer.id) ||
           (is_an_answer == false && order.customer.id != customer.id)
+      end
+
+      def insert_notification(is_an_answer, action, total_unread)
+        return if is_an_answer
+
+        redis.publish 'new_message_counter', {identifier: '#item__cookie_message', action: action, q:
+          total_unread, total: @retailer.unread_messages.size, room: @retailer.id}.to_json
       end
 
       def prepare_message_answer(message)
@@ -94,6 +105,10 @@ module MercadoLibre
         }
         "https://api.mercadolibre.com/messages/packs/#{message.order.pack_id || message.order.meli_order_id}/" \
           "sellers/#{@meli_retailer.meli_user_id}?#{params.to_query}"
+      end
+
+      def redis
+        @redis ||= Redis.new()
       end
   end
 end
