@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Product < ApplicationRecord
   include ProductModelConcern
   paginates_per 50
@@ -123,7 +125,7 @@ class Product < ApplicationRecord
 
   def earned
     order_items.includes(:order).where(orders: { status: 'success' })
-      .map { |oi| oi.quantity * oi.unit_price }.sum
+      .sum('order_items.quantity * order_items.unit_price')
   end
 
   # TODO: move to service (or controller (?))

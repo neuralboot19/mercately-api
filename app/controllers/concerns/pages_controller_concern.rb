@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module PagesControllerConcern
   extend ActiveSupport::Concern
 
@@ -22,25 +24,40 @@ module PagesControllerConcern
 
   # Productos mas vendidos
   def best_sold_products
-    q = { orders_status_eq: 1, orders_created_at_gteq: @start_date, orders_created_at_lteq:
-      @end_date, s: 'sort_by_earned desc' }
-    @best_products = current_retailer.products.ransack(q).result.group('products.id').limit(10).with_attached_images
+    q = {
+      orders_status_eq: 1,
+      orders_created_at_gteq: @start_date,
+      orders_created_at_lteq:@end_date,
+      s: 'sort_by_earned desc'
+    }
+    @best_products = current_retailer.products.includes(:order_items).ransack(q).result
+      .group('products.id').limit(10).with_attached_images
   end
 
   # Categorias mas vendidas
   def best_categories
-    q = { orders_status_eq: 1, orders_created_at_gteq: @start_date, orders_created_at_lteq: @end_date }
+    q = {
+      orders_status_eq: 1,
+      orders_created_at_gteq: @start_date,
+      orders_created_at_lteq: @end_date
+    }
     category_ids = current_retailer.products.ransack(q).result.pluck(:category_id).uniq
     @best_categories = Category.joins(products: { order_items: :order })
-      .where(id: category_ids, products: { retailer_id: current_retailer.id }, orders: { status: 1, created_at:
-      @start_date.to_datetime..@end_date.to_datetime }).group(:id).order('sum(order_items.quantity * ' \
-      'order_items.unit_price) desc')
+      .where(
+        id: category_ids,
+        products: { retailer_id: current_retailer.id },
+        orders: { status: 1, created_at:@start_date.to_datetime..@end_date.to_datetime }
+      ).group(:id).order('sum(order_items.quantity * order_items.unit_price) desc')
   end
 
   # Mejores clientes
   def best_clients
-    q = { orders_status_eq: 1, orders_created_at_gteq: @start_date, orders_created_at_lteq:
-      @end_date, s: 'sort_by_total desc' }
+    q = {
+      orders_status_eq: 1,
+      orders_created_at_gteq: @start_date,
+      orders_created_at_lteq:@end_date,
+      s: 'sort_by_total desc'
+    }
     @best_clients = current_retailer.customers.ransack(q).result.group('customers.id').limit(10)
   end
 end
