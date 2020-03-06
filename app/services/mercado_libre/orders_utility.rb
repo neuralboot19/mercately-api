@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MercadoLibre
   class OrdersUtility
     def prepare_order_feedback(order)
