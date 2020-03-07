@@ -83,7 +83,8 @@ class Retailers::CustomersController < RetailersController
         :zip_code,
         :country_id,
         :first_name,
-        :last_name
+        :last_name,
+        :notes
       )
     end
 end
