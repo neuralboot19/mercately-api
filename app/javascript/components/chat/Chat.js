@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import ChatMessages from '../chat/ChatMessages';
 import ChatList from '../chat/ChatList';
-import CustomerDetails from '../chat/CustomerDetails';
+import CustomerDetails from '../chat/shared/CustomerDetails';
 
 class Chat extends Component {
   constructor(props) {
@@ -38,6 +38,7 @@ class Chat extends Component {
         <div className="col-sm-3">
           <CustomerDetails
             customerDetails={this.state.currentCustomerDetails}
+            chatType='facebook_chats'
           />
         </div>
       </>

@@ -20,15 +20,19 @@ module ProductControllerConcern
 
   # Ejecuta la logica posterior al update del producto
   def update_meli_info
+    @notice = 'Producto actualizado con éxito.'
     past_meli_status = @product.meli_status
-    @product.update_main_picture if @main_image
+    @product.update_main_picture
     @product.delete_images(params[:product][:delete_images], @variations, past_meli_status) if
     params[:product][:delete_images].present?
     @product.reload
-    @product.update_ml_info(past_meli_status)
-    @product.upload_ml if @product.meli_product_id.blank? && @product.upload_product == true
+    updated_info = @product.update_ml_info(past_meli_status)
+    uploaded_info = @product.upload_ml if @product.meli_product_id.blank? && @product.upload_product == true
     @product.upload_variations(action_name, @variations)
     @product.update_status_publishment
+
+    @notice = 'Error: tu producto no pudo ser actualizado en MercadoLibre.' if
+      updated_info&.[](:updated) == false || uploaded_info&.[](:uploaded) == false
   end
 
   # procesa las imagenes a guardar para darles las dimensiones correctas
@@ -112,5 +116,15 @@ module ProductControllerConcern
     end
 
     output_attributes
+  end
+
+  def post_product_to_ml
+    @notice = 'Producto creado con éxito.'
+
+    uploaded_info = @product.upload_ml
+    @product.upload_variations(action_name, @variations)
+
+    @notice = 'Error: tu producto no pudo ser publicado en MercadoLibre.' if
+      uploaded_info&.[](:uploaded) == false
   end
 end

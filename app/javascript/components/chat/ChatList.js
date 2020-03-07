@@ -69,6 +69,7 @@ class ChatList extends Component {
 
   componentDidMount() {
     this.props.fetchCustomers();
+    socket.on("customer_facebook_chat", data => this.updateList(data));
   }
 
   componentDidUpdate() {
@@ -78,6 +79,14 @@ class ChatList extends Component {
         customers: this.props.customers
       })
     }
+  }
+
+  updateList = (data) => {
+    var customer = data.customer.customer;
+    if (customer.id != this.props.currentCustomer) {
+      customer["karix_unread_message?"] = true;
+    }
+    this.updateCustomerList(customer);
   }
 
   render() {

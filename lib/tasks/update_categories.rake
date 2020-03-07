@@ -12,6 +12,7 @@ task update_categories: :environment do
   puts 'Updating categories'
   ActiveRecord::Base.transaction do
     Product.where.not(meli_product_id: nil).each do |product|
+      next unless product.retailer.meli_retailer
       MercadoLibre::Products.new(product.retailer).pull_update(product.meli_product_id)
     end
 

@@ -7,7 +7,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
   def index
     @customers = current_retailer.customers
       .select('customers.*, max(karix_whatsapp_messages.created_time) as recent_message_date')
-      .joins(:karix_whatsapp_messages).group('customers.id').order('recent_message_date desc').page(params[:page])
+      .joins(:karix_whatsapp_messages).where.not(karix_whatsapp_messages: { account_uid: nil })
+      .group('customers.id').order('recent_message_date desc').page(params[:page])
 
     if @customers.present?
       render status: 200, json: { customers: @customers.as_json(methods:
@@ -30,6 +31,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       message.save
 
       render status: 200, json: { message: response['objects'][0] }
+      broadcast_data(current_retailer, message)
     end
   end
 
@@ -43,6 +45,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     if @messages.present?
       render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
+      broadcast_data(current_retailer)
     else
       render status: 404, json: { message: 'Messages not found' }
     end
@@ -62,6 +65,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       message.save
 
       render status: 200, json: { message: 'succesful' }
+      broadcast_data(retailer, message) if message.persisted?
     else
       render status: 404, json: { message: 'Retailer not found' }
     end
@@ -86,6 +90,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     if @message.update_column(:status, 'read')
       render status: 200, json: { message: @message }
+      broadcast_data(current_retailer)
     else
       render status: 500, json: { message: 'Error al actualizar mensaje' }
     end
@@ -127,5 +132,27 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     def ws_message_service
       @ws_message_service = Whatsapp::Karix::Messages.new
+    end
+
+    def broadcast_data(retailer, message = nil)
+      total = retailer.karix_unread_whatsapp_messages.size
+      redis.publish 'new_message_counter', {identifier: '.item__cookie_whatsapp_messages', total:
+        total > 9 ? '9+' : total, room: retailer.id}.to_json
+
+      if message.present?
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          KarixWhatsappMessageSerializer.new(message)
+        ).serializable_hash
+        redis.publish 'message_chat', {karix_whatsapp_message: serialized_data, room: retailer.id}.to_json
+
+        serialized_data = ActiveModelSerializers::Adapter::Json.new(
+          KarixCustomerSerializer.new(message.customer)
+        ).serializable_hash
+        redis.publish 'customer_chat', {customer: serialized_data, room: retailer.id}.to_json
+      end
+    end
+
+    def redis
+      @redis ||= Redis.new()
     end
 end

@@ -90,3 +90,6 @@ gem 'premailer-rails'
 gem 'mini_magick'
 
 gem 'sidekiq'
+
+# Socket
+gem 'socket.io-rails'

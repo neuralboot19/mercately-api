@@ -98,6 +98,8 @@ class ChatMessages extends Component {
       this.props.fetchMessages(id);
       this.scrollToBottom();
     });
+
+    socket.on("message_facebook_chat", data => this.updateChat(data));
   }
 
   componentDidUpdate() {
@@ -118,6 +120,19 @@ class ChatMessages extends Component {
 
     if (this.state.scrolable) {
       this.scrollToBottom();
+    }
+  }
+
+  updateChat = (data) =>{
+    var facebook_message = data.facebook_message.facebook_message;
+    if (currentCustomer == facebook_message.customer_id) {
+      if (!this.state.new_message) {
+        this.setState({
+          messages: this.state.messages.concat(facebook_message),
+          new_message: false,
+        })
+      }
+      this.props.setMessageAsReaded(facebook_message.id, csrfToken);
     }
   }
 

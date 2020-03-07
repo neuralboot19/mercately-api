@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import WhatsAppChatList from '../WhatsApp/WhatsAppChatList';
 import ChatMessages from '../WhatsApp/ChatMessages';
-import CustomerDetails from '../WhatsApp/CustomerDetails';
+import CustomerDetails from '../chat/shared/CustomerDetails';
 
 
 class WhatsApp extends Component {
@@ -52,6 +52,7 @@ class WhatsApp extends Component {
               <div className="col-sm-3">
                 <CustomerDetails
                   customerDetails={this.state.currentCustomerDetails}
+                  chatType='whatsapp_chats'
                 />
               </div>
             }
