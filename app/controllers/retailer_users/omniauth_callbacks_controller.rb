@@ -10,7 +10,9 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
 
     @retailer_user = RetailerUser.from_omniauth(auth, current_retailer_user)
 
-    if @retailer_user.persisted?
+    if @retailer_user.retailer.facebook_retailer.nil?
+      redirect_to root_path, notice: 'Ya existe una cuenta de Mercately con esta cuenta de Facebook'
+    elsif @retailer_user.persisted?
       sign_in_and_redirect @retailer_user, event: :authentication
       set_flash_message(:notice, :success, kind: 'Facebook') if is_navigational_format?
     else
