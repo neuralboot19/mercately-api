@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
 import ChatMessages from '../chat/ChatMessages';
-import ChatList from '../chat/ChatList';
-import CustomerDetails from '../chat/shared/CustomerDetails';
+import ChatList from '../shared/ChatList';
+import CustomerDetails from './../shared/CustomerDetails';
 
 class Chat extends Component {
   constructor(props) {
@@ -50,6 +50,7 @@ class Chat extends Component {
             <ChatList
               handleOpenChat={this.handleOpenChat}
               currentCustomer={this.state.currentCustomer}
+              chatType="facebook"
             />
           </div>
           {screen}
