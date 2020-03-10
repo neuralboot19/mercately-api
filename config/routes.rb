@@ -65,6 +65,7 @@ Rails.application.routes.draw do
       put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
       get 'questions_list', to: 'messages#questions_list'
       get 'pricing', to: 'payment_plans#index', as: :payment_plans
+      post 'export_customers', to: 'customers#export', as: :export_customers
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

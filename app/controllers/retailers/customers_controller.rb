@@ -15,6 +15,15 @@ class Retailers::CustomersController < RetailersController
 
     @customers = @q.result.page(params[:page])
     ActiveRecord::Precounter.new(@customers).precount(:orders_pending, :orders_success, :orders_cancelled)
+    @export_params = export_params
+  end
+
+  def export
+    Customers::ExportCustomersJob.perform_later(current_retailer_user.retailer.id,
+                                                current_retailer_user.email,
+                                                export_params)
+    redirect_to(retailers_customers_path(current_retailer),
+                notice: 'La exportación está en proceso, recibirá un mail cuando esté lista.')
   end
 
   def show
@@ -80,5 +89,9 @@ class Retailers::CustomersController < RetailersController
         :last_name,
         :notes
       )
+    end
+
+    def export_params
+      params.permit('q' => %w[first_name_or_last_name_or_phone_or_email_cont s])
     end
 end

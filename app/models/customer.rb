@@ -125,6 +125,16 @@ class Customer < ApplicationRecord
     web_id
   end
 
+  def self.to_csv(customers)
+    attributes = %w[first_name last_name email phone id_type id_number]
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+      customers.each do |customer|
+        csv << attributes.map { |attr| customer.send(attr) }
+      end
+    end
+  end
+
   private
 
     def update_valid_customer
