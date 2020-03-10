@@ -171,6 +171,11 @@ input:required, input:invalid {
       color: mix(black, $muted-color, 30%);
     }
   }
+  &.btn-input {
+    font-size: 13.333px;
+    padding-bottom: 5px;
+    padding-top: 9px;
+  }
 }
 
 .btn-box {
