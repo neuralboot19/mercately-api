@@ -23,7 +23,7 @@ gem 'activeadmin', '~> 1.4', '>= 1.4.3'
 gem 'devise', '~> 4.6', '>= 4.6.1'
 gem 'omniauth-facebook', '~> 5.0'
 gem 'devise_invitable', '~> 2.0.0'
-gem 'faraday', '~> 0.15.4'
+gem 'faraday', '~> 0.16.0'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
 gem 'ancestry', '~> 3.0', '>= 3.0.5'
 
@@ -46,6 +46,7 @@ gem 'chartkick', '~> 3.2.2'
 gem 'groupdate', '~> 4.2'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'recaptcha', '~> 5.3'
+gem 'gibbon', '~> 3.3', '>= 3.3.3'
 
 # Datepicker
 gem 'jquery-rails'

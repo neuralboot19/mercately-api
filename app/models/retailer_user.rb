@@ -8,7 +8,6 @@ class RetailerUser < ApplicationRecord
 
   validate :onboarding_status_format
   validates :agree_terms, presence: true
-  after_create :send_welcome_email
 
   accepts_nested_attributes_for :retailer
 
@@ -59,10 +58,5 @@ class RetailerUser < ApplicationRecord
              [true, false].include?(ActiveModel::Type::Boolean.new.cast(onboarding_status[:completed]))
         errors.add(:onboarding_status, 'valores invalidos')
       end
-    end
-
-    # Send email after create
-    def send_welcome_email
-      RetailerMailer.welcome(self).deliver_now if persisted? && retailer_admin?
     end
 end

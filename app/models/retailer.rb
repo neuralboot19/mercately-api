@@ -17,6 +17,7 @@ class Retailer < ApplicationRecord
 
   after_save :generate_slug, if: :saved_change_to_name?
   after_create :save_free_plan
+  after_create :send_to_mailchimp
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -60,9 +61,6 @@ class Retailer < ApplicationRecord
     id_number.blank? || address.blank? || city.blank? || state.blank?
   end
 
-  def save_free_plan
-    PaymentPlan.create(retailer: self)
-  end
 
   def counter_karix_messages
     karix_whatsapp_messages.where(message_type: 'conversation').size
@@ -84,4 +82,13 @@ class Retailer < ApplicationRecord
     api_key
   end
 
+  private
+
+    def save_free_plan
+      PaymentPlan.create(retailer: self)
+    end
+
+    def send_to_mailchimp
+      Retailers::ListOnMailchimpJob.perform_later(id) if persisted? && ENV['ENVIRONMENT'] == 'production'
+    end
 end
