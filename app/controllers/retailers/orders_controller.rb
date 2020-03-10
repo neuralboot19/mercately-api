@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 class Retailers::OrdersController < RetailersController
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_order, only: [:show, :edit, :update, :destroy]
 
   def index
-    @orders = Order.retailer_orders(current_retailer.id, params['status'])
+    @orders = Order.includes(products: :product_variations).retailer_orders(current_retailer.id, params['status'])
       .order('created_at desc').page(params[:page])
   end
 
