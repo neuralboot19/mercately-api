@@ -23,7 +23,8 @@ module MercadoLibre
     end
 
     def save_variations(product, variations, new_product_with_parent = false)
-      current_variations = product.product_variations.pluck(:variation_meli_id).compact
+      current_variations = product.product_variations.all_variations(product.id).pluck(:variation_meli_id)
+        .compact
       variation_ids = variations.map { |var| var['id'] }.compact
       current_variations -= variation_ids if current_variations.present?
 
@@ -56,7 +57,7 @@ module MercadoLibre
             end
           end
         end
-        product.product_variations
+        product.product_variations.all_variations(product.id)
           .find_or_initialize_by(variation_meli_id: variation['id'])
       end
   end
