@@ -26,6 +26,12 @@ Rails.application.routes.draw do
   get '/crm', to: 'pages#crm', as: :crm
 
   namespace :retailers do
+    namespace :api, defaults: { format: :json } do
+      namespace :v1 do
+        get 'ping', to: 'welcome#ping'
+      end
+    end
+
     scope '/:slug' do
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
       resources :products do
@@ -47,7 +53,7 @@ Rails.application.routes.draw do
       get 'facebook_chats', to: 'messages#facebook_chats', as: :facebook_chats
       get 'facebook_chat/:id', to: 'messages#facebook_chat', as: :facebook_chat
       post 'facebook_chats/:id', to: 'messages#send_facebook_message', as: :send_facebook_message
-      
+
       # WhatsApp Chats
       get 'whatsapp_chats', to: 'whats_app#index', as: :whats_app_chats
 

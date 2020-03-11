@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_09_143611) do
+ActiveRecord::Schema.define(version: 2020_03_11_175554) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -402,9 +402,11 @@ ActiveRecord::Schema.define(version: 2020_03_09_143611) do
     t.string "retailer_number"
     t.boolean "whats_app_enabled", default: false
     t.string "karix_whatsapp_phone"
-    t.string "encripted_api_key"
+    t.string "encrypted_api_key"
     t.datetime "last_api_key_modified_date"
-    t.index ["encripted_api_key"], name: "index_retailers_on_encripted_api_key", unique: true
+    t.string "encrypted_api_key_iv"
+    t.string "encrypted_api_key_salt"
+    t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 
