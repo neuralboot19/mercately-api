@@ -104,7 +104,8 @@ class Api::V1::CustomersController < ApplicationController
         :city,
         :state,
         :zip_code,
-        :country_id
+        :country_id,
+        :notes
       )
     end
 end
