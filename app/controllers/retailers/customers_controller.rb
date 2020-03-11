@@ -11,7 +11,7 @@ class Retailers::CustomersController < RetailersController
                      (case when orders.status = 0 then COUNT(orders) else 0 end) as pending_orders,
                      (case when orders.status = 1 then COUNT(orders) else 0 end) as successfull_orders,
                      (case when orders.status = 2 then COUNT(orders) else 0 end) as cancelled_orders")
-      .joins('INNER JOIN orders ON orders.customer_id = customers.id')
+      .joins('LEFT JOIN orders ON orders.customer_id = customers.id')
       .group('customers.id, orders.status').active
 
     @q = if params[:q]&.[](:s).blank?
