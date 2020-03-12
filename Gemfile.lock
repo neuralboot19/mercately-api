@@ -405,7 +405,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers (~> 0.10.0)
   activeadmin (~> 1.4, >= 1.4.3)
-  activerecord-precounter
+  activerecord-precounter (~> 0.3.3)
   activestorage-cloudinary-service
   ancestry (~> 3.0, >= 3.0.5)
   async

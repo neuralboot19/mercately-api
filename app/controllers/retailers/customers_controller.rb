@@ -14,9 +14,7 @@ class Retailers::CustomersController < RetailersController
          end
 
     @customers = @q.result.page(params[:page])
-    ActiveRecord::Precounter.new(@customers).precount(:orders_pending)
-    ActiveRecord::Precounter.new(@customers).precount(:orders_success)
-    ActiveRecord::Precounter.new(@customers).precount(:orders_cancelled)
+    ActiveRecord::Precounter.new(@customers).precount(:orders_pending, :orders_success, :orders_cancelled)
   end
 
   def show

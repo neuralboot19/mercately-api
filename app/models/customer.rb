@@ -2,9 +2,11 @@ class Customer < ApplicationRecord
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
   has_many :orders, dependent: :destroy
+
   has_many :orders_pending, -> { pending }, class_name: 'Order', inverse_of: :customer
   has_many :orders_success, -> { success }, class_name: 'Order', inverse_of: :customer
   has_many :orders_cancelled, -> { cancelled }, class_name: 'Order', inverse_of: :customer
+
   has_many :questions, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
@@ -21,6 +23,8 @@ class Customer < ApplicationRecord
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :facebook_customers, -> { where.not(psid: nil) }
+
+  default_scope { eager_load(:orders_success) }
 
   ransacker :sort_by_completed_orders do
     Arel.sql('coalesce((select count(orders.id) as total from orders where ' \
@@ -47,7 +51,7 @@ class Customer < ApplicationRecord
   end
 
   def earnings
-    orders.success.map(&:total).sum.to_f.round(2)
+    orders_success.map(&:total).sum.to_f.round(2)
   end
 
   def generate_phone
