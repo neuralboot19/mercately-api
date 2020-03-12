@@ -94,3 +94,5 @@ gem 'sidekiq'
 
 # Socket
 gem 'socket.io-rails'
+
+gem 'activerecord-precounter'

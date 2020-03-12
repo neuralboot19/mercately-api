@@ -50,6 +50,8 @@ GEM
       activemodel (= 5.2.3)
       activesupport (= 5.2.3)
       arel (>= 9.0)
+    activerecord-precounter (0.3.3)
+      activerecord (>= 5)
     activestorage (5.2.3)
       actionpack (= 5.2.3)
       activerecord (= 5.2.3)
@@ -403,6 +405,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers (~> 0.10.0)
   activeadmin (~> 1.4, >= 1.4.3)
+  activerecord-precounter
   activestorage-cloudinary-service
   ancestry (~> 3.0, >= 3.0.5)
   async
