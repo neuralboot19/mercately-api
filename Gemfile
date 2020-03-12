@@ -72,6 +72,14 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'rb-readline'
+  gem 'capistrano',         require: false
+  gem 'capistrano-rvm',     require: false
+  gem 'capistrano-rails',   require: false
+  gem 'capistrano-bundler', require: false
+  gem 'capistrano-pm2', git: 'https://github.com/aidistan/capistrano-pm2.git'
+  gem 'capistrano-systemd-multiservice', require: false
+  gem 'capistrano-rails-console', require: false
+
 end
 
 group :test do
