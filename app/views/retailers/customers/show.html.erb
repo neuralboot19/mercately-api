@@ -328,7 +328,7 @@
                 <p class="fs-30 mt-0">Plantillas</p>
               </div>
               <div id="karix-templates-list">
-                <% @customer.retailer.karix_whatsapp_templates.each_with_index do |template, index| %>
+                <% @customer.retailer.karix_whatsapp_templates.active.each_with_index do |template, index| %>
                   <div class="row">
                     <div class="col-md-10">
                       <p id="template-<%= index %>"><%= template.text %></p>
