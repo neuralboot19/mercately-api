@@ -11,7 +11,7 @@ class Retailers::SettingsController < RetailersController
       u.skip_invitation = true
     end
 
-    if user
+    if user&.persisted?
       user.update_column(:invitation_sent_at, Time.now.utc) if RetailerMailer.invitation(user).deliver_now
 
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
