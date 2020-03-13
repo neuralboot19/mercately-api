@@ -11,6 +11,6 @@ class RetailerUsers::InvitationsController < Devise::InvitationsController
     end
 
     def after_accept
-      session[:room_id] = current_retailer_user.retailer_id if current_retailer_user.invitation_accepted_at
+      session[:room_id] = current_retailer_user.retailer_id if current_retailer_user&.invitation_accepted_at
     end
 end
