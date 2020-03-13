@@ -5,7 +5,7 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   def index
-    cus = current_retailer.customers.active
+    cus = Customer.eager_load(:orders_success).active.where(retailer_id: current_retailer.id)
 
     @q = if params[:q]&.[](:s).blank?
            cus.order(created_at: :desc).ransack(params[:q])
