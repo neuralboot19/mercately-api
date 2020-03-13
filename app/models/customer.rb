@@ -24,8 +24,6 @@ class Customer < ApplicationRecord
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :facebook_customers, -> { where.not(psid: nil) }
 
-  default_scope { eager_load(:orders_success) }
-
   ransacker :sort_by_completed_orders do
     Arel.sql('coalesce((select count(orders.id) as total from orders where ' \
       'orders.customer_id = customers.id and orders.status = 1), 0)')
