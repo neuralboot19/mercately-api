@@ -28,6 +28,13 @@ module Mercately
 
     config.active_job.queue_adapter = :sidekiq
 
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '/retailers/api/v1/*', headers: :any, methods: [:get, :post, :put, :patch, :delete]
+      end
+    end
+
     # Reverse Proxy for Blog
     config.middleware.insert(0, Rack::ReverseProxy) do
       reverse_proxy_options preserve_host: true

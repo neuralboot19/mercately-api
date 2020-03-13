@@ -13,7 +13,7 @@ gem 'coffee-rails', '~> 4.2'
 # gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 # gem 'redis', '~> 4.0'
-gem 'bcrypt', '~> 3.1.7'
+gem 'attr_encrypted', '~> 3.1'
 
 # Send error logs
 gem 'sentry-raven', '~> 2.9'
@@ -23,7 +23,7 @@ gem 'activeadmin', '~> 1.4', '>= 1.4.3'
 gem 'devise', '~> 4.6', '>= 4.6.1'
 gem 'omniauth-facebook', '~> 5.0'
 gem 'devise_invitable', '~> 2.0.0'
-gem 'faraday', '~> 0.15.4'
+gem 'faraday', '~> 0.16.0'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
 gem 'ancestry', '~> 3.0', '>= 3.0.5'
 
@@ -46,6 +46,7 @@ gem 'chartkick', '~> 3.2.2'
 gem 'groupdate', '~> 4.2'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'recaptcha', '~> 5.3'
+gem 'gibbon', '~> 3.3', '>= 3.3.3'
 
 # Datepicker
 gem 'jquery-rails'
@@ -71,6 +72,15 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'rb-readline'
+  gem 'letter_opener', '~> 1.7'
+  gem 'capistrano',         require: false
+  gem 'capistrano-rvm',     require: false
+  gem 'capistrano-rails',   require: false
+  gem 'capistrano-bundler', require: false
+  gem 'capistrano-pm2', git: 'https://github.com/aidistan/capistrano-pm2.git'
+  gem 'capistrano-systemd-multiservice', require: false
+  gem 'capistrano-rails-console', require: false
+
 end
 
 group :test do
@@ -93,3 +103,11 @@ gem 'sidekiq'
 
 # Socket
 gem 'socket.io-rails'
+
+gem 'activerecord-precounter', '~> 0.3.3'
+
+# CORS
+gem 'rack-cors', '~> 1.1', '>= 1.1.1'
+
+# API
+gem 'fast_jsonapi', '~> 1.5'

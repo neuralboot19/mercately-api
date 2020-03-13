@@ -1,6 +1,7 @@
 class FacebookRetailer < ApplicationRecord
   belongs_to :retailer
   has_many :facebook_messages, dependent: :destroy
+  validates_uniqueness_of :uid, message: 'Ya existe una cuenta de Mercately con esta cuenta de Facebook'
 
   def facebook_unread_messages
     facebook_messages.includes(:customer).where(

@@ -1,12 +1,12 @@
 import React from "react";
 
-const ChatMessage = ({message}) => {
+const ChatMessage = ({message, toggleImgModal}) => {
   var tag;
   switch (message.file_type) {
     case 'image':
       tag = <div className="img-holder">
         <img src={message.url} className="msg__img"
-          onClick={(e) => this.toggleImgModal(e)}/>
+          onClick={(e) => toggleImgModal(e)}/>
         {message.is_loading && (
           <div class="lds-dual-ring"></div>
         )}

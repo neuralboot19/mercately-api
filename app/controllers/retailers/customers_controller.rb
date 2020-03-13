@@ -1,15 +1,20 @@
+# frozen_string_literal: true
+
 class Retailers::CustomersController < RetailersController
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   def index
+    cus = Customer.eager_load(:orders_success).active.where(retailer_id: current_retailer.id)
+
     @q = if params[:q]&.[](:s).blank?
-           current_retailer.customers.active.order(created_at: :desc).ransack(params[:q])
+           cus.order(created_at: :desc).ransack(params[:q])
          else
-           current_retailer.customers.active.ransack(params[:q])
+           cus.ransack(params[:q])
          end
 
     @customers = @q.result.page(params[:page])
+    ActiveRecord::Precounter.new(@customers).precount(:orders_pending, :orders_success, :orders_cancelled)
   end
 
   def show
@@ -72,7 +77,8 @@ class Retailers::CustomersController < RetailersController
         :zip_code,
         :country_id,
         :first_name,
-        :last_name
+        :last_name,
+        :notes
       )
     end
 end

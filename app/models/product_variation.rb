@@ -1,5 +1,6 @@
 class ProductVariation < ApplicationRecord
   default_scope -> { where('product_variations.status = 0') }
+  scope :all_variations, -> (product_id) { unscope(:where).where(product_id: product_id) }
 
   belongs_to :product
   has_many :order_items

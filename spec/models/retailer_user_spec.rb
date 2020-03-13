@@ -27,12 +27,6 @@ RSpec.describe RetailerUser, type: :model do
     end
   end
 
-  describe '#send_welcome_email' do
-    it 'sends a welcome email after creating a retailer user' do
-      expect { retailer_user.save }.to change { ActionMailer::Base.deliveries.size }.by(1)
-    end
-  end
-
   describe '#active_for_authentication?' do
     context 'when retailer user is removed from team' do
       it 'returns false' do

@@ -2,6 +2,11 @@ class Customer < ApplicationRecord
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
   has_many :orders, dependent: :destroy
+
+  has_many :orders_pending, -> { pending }, class_name: 'Order', inverse_of: :customer
+  has_many :orders_success, -> { success }, class_name: 'Order', inverse_of: :customer
+  has_many :orders_cancelled, -> { cancelled }, class_name: 'Order', inverse_of: :customer
+
   has_many :questions, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
@@ -44,7 +49,7 @@ class Customer < ApplicationRecord
   end
 
   def earnings
-    orders.success.map(&:total).sum.to_f.round(2)
+    orders_success.map(&:total).sum.to_f.round(2)
   end
 
   def generate_phone

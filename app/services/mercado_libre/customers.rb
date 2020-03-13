@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MercadoLibre
   class Customers
     def initialize(retailer, order_params = {})

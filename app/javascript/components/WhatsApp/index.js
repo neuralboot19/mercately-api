@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import WhatsAppChatList from '../WhatsApp/WhatsAppChatList';
+import ChatList from '../shared/ChatList';
 import ChatMessages from '../WhatsApp/ChatMessages';
-import CustomerDetails from '../chat/shared/CustomerDetails';
+import CustomerDetails from './../shared/CustomerDetails';
 
 
 class WhatsApp extends Component {
@@ -28,12 +28,12 @@ class WhatsApp extends Component {
         <div className="box">
           <div className="row">
             <div className="col-sm-3 chat_list_holder">
-              <WhatsAppChatList
+              <ChatList
                 handleOpenChat={this.handleOpenChat}
                 currentCustomer={this.state.currentCustomer}
+                chatType='whatsapp'
               />
             </div>
-
 
             {this.state.currentCustomer === 0 ? (
               <div className="col-sm-9">

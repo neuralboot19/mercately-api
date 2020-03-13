@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { fetchCustomer, updateCustomer } from "../../../actions/actions";
+import { fetchCustomer, updateCustomer } from "../../actions/actions";
 import EditableField from '../shared/EditableField'
 import SelectableField from '../shared/SelectableField'
 import EcFlag from 'images/flags/ecuador.png'
@@ -66,7 +66,8 @@ class CustomerDetails extends Component {
         id_number: customer.id_number,
         address: customer.address,
         city: customer.city,
-        state: customer.state
+        state: customer.state,
+        notes: customer.notes
       }
     };
   }
@@ -164,7 +165,6 @@ class CustomerDetails extends Component {
 
           </div>
           <div>
-
             <div>
               <i className="fs-18 mt-4 mr-4 fas fa-map-marked-alt editable_map" />
               <p className="label inline-block">Dirección:</p>
@@ -197,9 +197,20 @@ class CustomerDetails extends Component {
                 />
                </div>
              )}
-
-
           </div>
+
+          <div>
+            <EditableField 
+              handleInputChange={this.handleInputChange}
+              content={this.state.customer.notes}
+              handlesubmit={this.handlesubmit}
+              targetName='notes'
+              placeholder="Notas"
+              givenClass='editable-notes'
+            />
+          </div>
+
+
         </div>
 
         <div className="t-center mt-20">

@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { sendWhatsAppMessage, fetchWhatsAppMessages, sendWhatsAppImg, setWhatsAppMessageAsReaded, fetchWhatsAppTemplates } from "../../actions/whatsapp_karix";
-import ImgModal from '../../components/chat/ImgModal';
 import Modal from 'react-modal';
 
 var currentCustomer = 0;
@@ -329,7 +328,11 @@ class ChatMessages extends Component {
     return (
       <div className="row bottom-xs">
         {this.state.isImgModalOpen && (
-          <ImgModal url={this.state.url} toggleImgModal={this.toggleImgModal}/>
+          <div className="img_modal">
+            <div className="img_modal__overlay" onClick={(e) => this.toggleImgModal(e)}>
+            </div>
+            <img src={this.state.url} />
+          </div>
         )}
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
           {this.state.messages.map((message) => (
@@ -365,8 +368,6 @@ class ChatMessages extends Component {
           ))}
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
-        
-
 
         { this.props.currentCustomer != 0 && this.state.can_write &&
           <div className="col-xs-12">
@@ -426,18 +427,8 @@ class ChatMessages extends Component {
               </div>
             )
           }
-
-          
-
-
-        </Modal>       
-
+        </Modal>
       </div>
-
-      
-
-      
-
     )
   }
 }

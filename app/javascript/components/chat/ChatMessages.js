@@ -4,8 +4,7 @@ import { withRouter } from "react-router-dom";
 import { fetchMessages, sendMessage, sendImg, setMessageAsReaded } from "../../actions/actions";
 
 import MessageForm from './MessageForm';
-import ImgModal from './ImgModal';
-import ChatMessage from './ChatMessage';
+import Message from './Message';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -140,13 +139,17 @@ class ChatMessages extends Component {
     return (
       <div className="row bottom-xs">
         {this.state.isModalOpen && (
-          <ImgModal url={this.state.url} toggleImgModal={this.toggleImgModal}/>
+          <div className="img_modal">
+            <div className="img_modal__overlay" onClick={(e) => this.toggleImgModal(e)}>
+            </div>
+            <img src={this.state.url} />
+          </div>
         )}
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
-                <ChatMessage message={message}/>
+                <Message message={message} toggleImgModal={this.toggleImgModal}/>
               </div>
             </div>
           ))}

@@ -1,6 +1,8 @@
 class Retailer < ApplicationRecord
-  require 'bcrypt'
-  
+  attr_encrypted :api_key,
+                 mode: :per_attribute_iv_and_salt,
+                 key: ENV['SECRET_KEY_BASE']
+
   has_one :meli_retailer, dependent: :destroy
   has_one :retailer_user, dependent: :destroy
   has_one :facebook_retailer, dependent: :destroy
@@ -17,6 +19,7 @@ class Retailer < ApplicationRecord
 
   after_save :generate_slug, if: :saved_change_to_name?
   after_create :save_free_plan
+  after_create :send_to_mailchimp
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -60,10 +63,6 @@ class Retailer < ApplicationRecord
     id_number.blank? || address.blank? || city.blank? || state.blank?
   end
 
-  def save_free_plan
-    PaymentPlan.create(retailer: self)
-  end
-
   def counter_karix_messages
     karix_whatsapp_messages.where(message_type: 'conversation').size
   end
@@ -73,15 +72,19 @@ class Retailer < ApplicationRecord
   end
 
   def generate_api_key
-    api_key = ''
-    new_encripted_api_key = ''
-    loop do
-      api_key = SecureRandom.hex
-      new_encripted_api_key = ::BCrypt::Password.create(api_key)
-      break unless Retailer.find_by_encripted_api_key(new_encripted_api_key)
-    end
-    update_attributes(encripted_api_key: new_encripted_api_key, last_api_key_modified_date: Time.zone.now)
+    api_key = SecureRandom.hex
+    update_attributes(api_key: api_key, last_api_key_modified_date: Time.zone.now)
+
     api_key
   end
 
+  private
+
+    def save_free_plan
+      PaymentPlan.create(retailer: self)
+    end
+
+    def send_to_mailchimp
+      Retailers::ListOnMailchimpJob.perform_later(id) if persisted? && ENV['ENVIRONMENT'] == 'production'
+    end
 end
