@@ -107,6 +107,9 @@ GEM
     capistrano-rails-console (2.3.0)
       capistrano (>= 3.5.0, < 4.0.0)
       sshkit-interactive (~> 0.3.0)
+    capistrano-rails-logs-tail (1.0.5)
+      capistrano (>= 3.4.0, < 4.0.0)
+      capistrano-rails
     capistrano-rvm (0.1.2)
       capistrano (~> 3.0)
       sshkit (~> 1.2)
@@ -464,6 +467,7 @@ DEPENDENCIES
   capistrano-pm2!
   capistrano-rails
   capistrano-rails-console
+  capistrano-rails-logs-tail (~> 1.0.5)
   capistrano-rvm
   capistrano-systemd-multiservice
   chartkick (~> 3.2.2)

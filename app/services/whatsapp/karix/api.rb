@@ -65,6 +65,24 @@ module Whatsapp
         content_type = MIME::Types.type_for(file.tempfile.path).first.content_type
         return 'image' if content_type&.include?('image')
       end
+
+      def prepare_welcome_message_body(retailer)
+        message = 'Bienvenido a Mercately.com, centralizamos tus canales de ventas y comunicación.'
+        message += 'Si necesitas ayuda no dudes en contactarnos.'
+        sender = Retailer.find_by(karix_whatsapp_phone: '+593989083446')
+
+        {
+          channel: 'whatsapp',
+          source: sender.karix_whatsapp_phone,
+          destination: [
+            retailer.retailer_number
+          ],
+          content: {
+            text: message
+          },
+          events_url: "#{ENV['KARIX_WEBHOOK']}?account_id=#{sender.id}"
+        }.to_json
+      end
     end
   end
 end
