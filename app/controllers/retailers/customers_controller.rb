@@ -5,14 +5,7 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
   def index
-    cus = current_retailer.customers
-      .select("customers.*,
-                     (COUNT(orders)) as total_orders,
-                     (case when orders.status = 0 then COUNT(orders) else 0 end) as pending_orders,
-                     (case when orders.status = 1 then COUNT(orders) else 0 end) as successfull_orders,
-                     (case when orders.status = 2 then COUNT(orders) else 0 end) as cancelled_orders")
-      .joins('LEFT JOIN orders ON orders.customer_id = customers.id')
-      .group('customers.id, orders.status').active
+    cus = current_retailer.customers.active
 
     @q = if params[:q]&.[](:s).blank?
            cus.order(created_at: :desc).ransack(params[:q])
@@ -21,6 +14,7 @@ class Retailers::CustomersController < RetailersController
          end
 
     @customers = @q.result.page(params[:page])
+    ActiveRecord::Precounter.new(@customers).precount(:orders_pending, :orders_success, :orders_cancelled)
   end
 
   def show
