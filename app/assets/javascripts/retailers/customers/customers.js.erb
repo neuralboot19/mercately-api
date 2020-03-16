@@ -37,6 +37,7 @@ function cancelTemplate() {
   auxTemplate = [];
   templateSelected = '';
   $('#modal--toggle').attr('checked', false);
+  $('body').toggleClass('o-hidden');
 }
 
 function sendTemplate() {
