@@ -17,6 +17,7 @@ class Customer < ApplicationRecord
 
   before_save :update_valid_customer
   after_create :generate_web_id
+  before_validation :strip_whitespace
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -126,5 +127,9 @@ class Customer < ApplicationRecord
 
     def generate_web_id
       update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
+    end
+
+    def strip_whitespace
+      self.phone = phone.strip unless phone.nil?
     end
 end
