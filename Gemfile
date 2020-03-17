@@ -80,7 +80,7 @@ group :development do
   gem 'capistrano-pm2', git: 'https://github.com/aidistan/capistrano-pm2.git'
   gem 'capistrano-systemd-multiservice', require: false
   gem 'capistrano-rails-console', require: false
-
+  gem 'capistrano-rails-logs-tail', '~> 1.0.5'
 end
 
 group :test do

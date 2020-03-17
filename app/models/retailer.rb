@@ -20,6 +20,8 @@ class Retailer < ApplicationRecord
   after_save :generate_slug, if: :saved_change_to_name?
   after_create :save_free_plan
   after_create :send_to_mailchimp
+  before_create :format_phone_number
+  after_create :send_welcome_ws
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -86,5 +88,32 @@ class Retailer < ApplicationRecord
 
     def send_to_mailchimp
       Retailers::ListOnMailchimpJob.perform_later(id) if persisted? && ENV['ENVIRONMENT'] == 'production'
+    end
+
+    def format_phone_number
+      return unless retailer_number.present?
+
+      self.retailer_number = '+593' + retailer_number[1,9] if
+        retailer_number.size == 10 && retailer_number[0] == '0'
+
+      self.retailer_number = '+' + retailer_number if
+        retailer_number.size == 12 && retailer_number[0,3] == '593'
+    end
+
+    def send_welcome_ws
+      return unless retailer_number.present? && retailer_number[0] == '+' && ENV['ENVIRONMENT'] == 'production'
+
+      response = ws_message_service.send_welcome_message(self)
+
+      unless response['error'].present?
+        sender = Retailer.find_by(karix_whatsapp_phone: '+593989083446')
+        message = sender.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
+        message = ws_message_service.assign_message(message, sender, response['objects'][0])
+        message.save
+      end
+    end
+
+    def ws_message_service
+      @ws_message_service = Whatsapp::Karix::Messages.new
     end
 end

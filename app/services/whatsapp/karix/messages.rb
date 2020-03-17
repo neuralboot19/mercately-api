@@ -55,6 +55,13 @@ module Whatsapp
             ws_api.prepare_whatsapp_message_file(retailer, customer, params)
         end
       end
+
+      def send_welcome_message(retailer)
+        url = ws_api.prepare_send_whatsapp_message_url
+        conn = prepare_connection(retailer, url)
+        response = Connection.post_request(conn, ws_api.prepare_welcome_message_body(retailer))
+        JSON.parse(response.body)
+      end
     end
   end
 end
