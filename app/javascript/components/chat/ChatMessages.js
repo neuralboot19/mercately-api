@@ -44,7 +44,7 @@ class ChatMessages extends Component {
 
   handleSubmitImg = (el, file_data) => {
     var url = URL.createObjectURL(el.files[0]);
-    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true}), new_message: true}, () => {
+    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true, file_type: this.fileType(el.files[0].type), filename: el.files[0].name}), new_message: true}, () => {
       this.props.sendImg(this.props.currentCustomer, file_data, csrfToken);
       this.scrollToBottom();
     });
@@ -125,13 +125,35 @@ class ChatMessages extends Component {
   updateChat = (data) =>{
     var facebook_message = data.facebook_message.facebook_message;
     if (currentCustomer == facebook_message.customer_id) {
-      if (!this.state.new_message) {
+      if (!this.state.new_message && facebook_message.sent_by_retailer == false) {
         this.setState({
           messages: this.state.messages.concat(facebook_message),
           new_message: false,
         })
       }
       this.props.setMessageAsReaded(facebook_message.id, csrfToken);
+    }
+  }
+
+  downloadFile = (e, file_url, filename) => {
+    e.preventDefault();
+    var link = document.createElement('a');
+    link.href = file_url;
+    link.download = filename;
+    link.click();
+  }
+
+  fileType = (file_type) => {
+    if (file_type == null) {
+      return file_type;
+    } else if (file_type.includes('image/') || file_type == 'image') {
+      return 'image';
+    } else if (['application/pdf', 'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file_type) ||
+      file_type == 'file') {
+        return 'file';
+    } else if (file_type.includes('audio/') || file_type == 'audio') {
+      return 'audio';
     }
   }
 
@@ -149,7 +171,7 @@ class ChatMessages extends Component {
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
-                <Message message={message} toggleImgModal={this.toggleImgModal}/>
+                <Message message={message} toggleImgModal={this.toggleImgModal} downloadFile={this.downloadFile} fileType={this.fileType}/>
               </div>
             </div>
           ))}

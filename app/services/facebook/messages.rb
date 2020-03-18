@@ -8,6 +8,8 @@ module Facebook
 
     def save(message_data)
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
+      url = message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
+      file_name = File.basename(URI.parse(url)&.path) if url.present?
       message = FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
@@ -15,8 +17,9 @@ module Facebook
         id_client: message_data['sender']['id'],
         text: message_data['message']&.[]('text'),
         file_type: message_data['message']&.[]('attachments')&.[](0)&.[]('type'),
-        url: message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url'),
-        reply_to: message_data['message']&.[]('reply_to')&.[]('mid')
+        url: url,
+        reply_to: message_data['message']&.[]('reply_to')&.[]('mid'),
+        filename: file_name
       ).find_or_create_by(mid: message_data['message']['mid'])
       if message.persisted?
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
@@ -42,8 +45,10 @@ module Facebook
 
     def save_delivered(response, psid)
       customer = Customer.find_by(psid: psid)
-      attachment_url = response['attachments']&.[]('data')&.[](0)&.[]('image_data')&.[]('url')
-      file_type = response['attachments']&.[]('data')&.[](0)&.[]('mime_type')
+      attachment = response['attachments']&.[]('data')&.[](0)
+      file_type = attachment&.[]('mime_type')
+      file_name = attachment&.[]('name')
+      attachment_url = grab_url(response, file_type)
       message = FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
@@ -51,12 +56,14 @@ module Facebook
         id_client: psid,
         file_type: file_type,
         url: attachment_url,
-        text: response['message']
+        text: response['message'],
+        filename: file_name
       ).find_or_create_by(mid: response['id'])
       if attachment_url && message.url.nil?
         message.update(
           url: attachment_url,
-          file_type: file_type
+          file_type: file_type,
+          filename: message.filename.presence || file_name
         )
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
           FacebookMessageSerializer.new(message)
@@ -79,14 +86,14 @@ module Facebook
       JSON.parse(response.body)
     end
 
-    def send_attachment(to, file_data)
+    def send_attachment(to, file_data, filename)
       conn = Faraday.new(send_message_url) do |f|
         f.request :multipart
         f.request :url_encoded
         f.adapter :net_http
         f.response :logger, Logger.new(STDOUT), bodies: true
       end
-      response = Connection.post_form_request(conn, prepare_attachment(to, file_data))
+      response = Connection.post_form_request(conn, prepare_attachment(to, file_data, filename))
       JSON.parse(response.body)
     end
 
@@ -103,15 +110,17 @@ module Facebook
         }.to_json
       end
 
-      def prepare_attachment(to, file_path)
+      def prepare_attachment(to, file_path, filename)
         content_type = MIME::Types.type_for(file_path).first.content_type
+        type = check_content_type(content_type)
+
         {
           "recipient": JSON.dump(id: to),
           "message": JSON.dump(attachment: {
-            "type": 'image',
+            "type": type,
             "payload": {}
           }),
-          "filedata": Faraday::UploadIO.new(file_path, content_type)
+          "filedata": Faraday::UploadIO.new(file_path, content_type, filename)
         }
       end
 
@@ -132,6 +141,23 @@ module Facebook
 
       def redis
         @redis ||= Redis.new()
+      end
+
+      def check_content_type(content_type)
+        return unless content_type.present?
+        return 'image' if content_type.include?('image/')
+        return 'file' if ['application/pdf', 'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
+      end
+
+      def grab_url(response, content_type)
+        type = check_content_type(content_type)
+        return unless type.present?
+
+        attachment = response['attachments']&.[]('data')&.[](0)
+        return attachment&.[]('image_data')&.[]('url') if type == 'image'
+
+        attachment&.[]('file_url')
       end
   end
 end

@@ -56,7 +56,8 @@ class Api::V1::CustomersController < ApplicationController
       facebook_retailer: current_retailer.facebook_retailer,
       file_data: params[:file_data].tempfile.path,
       sent_from_mercately: true,
-      sent_by_retailer: true
+      sent_by_retailer: true,
+      filename: File.basename(params[:file_data].original_filename)
     )
     render status: 200, json: { message: message } if message.save
   end

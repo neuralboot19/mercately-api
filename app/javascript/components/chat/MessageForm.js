@@ -43,6 +43,26 @@ class MessageForm extends Component {
     this.props.handleSubmitImg(el, data);
   }
 
+  handleFileSubmit = (e) => {
+    var el = e.target;
+    var file = el.files[0];
+
+    if(!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+      alert('Error: El archivo debe ser de tipo PDF o Word');
+      return;
+    }
+
+    // Max 20 Mb allowed
+    if(file.size > 20*1024*1024) {
+      alert('Error: Maximo permitido 20MB');
+      return;
+    }
+
+    var data = new FormData();
+    data.append('file_data', file);
+    this.props.handleSubmitImg(el, data);
+  }
+
   onKeyPress = (e) => {
     if(e.which === 13) {
       e.preventDefault();
@@ -56,6 +76,8 @@ class MessageForm extends Component {
         <textarea name="messageText" placeholder="Mensaje" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
         <input id="attach" className="d-none" type="file" name="messageImg" accept="image/*" onChange={(e) => this.handleImgSubmit(e)}/>
         <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
+        <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
+        <i className="fas fa-file-alt fs-24 ml-5 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
       </div>
     )
   }
