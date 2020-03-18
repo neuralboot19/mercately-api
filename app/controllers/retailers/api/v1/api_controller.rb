@@ -1,8 +1,9 @@
 module Retailers::Api::V1
   class ApiController < ActionController::Base
     include Responseable
+    skip_before_action :verify_authenticity_token
+
     include ActionController::MimeResponds
-    include ActionController::HttpAuthentication::Token::ControllerMethods
     respond_to :json
     rescue_from Exception, with: :render_internal_server_error
     rescue_from ActiveRecord, with: :render_internal_server_error
