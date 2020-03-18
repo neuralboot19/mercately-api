@@ -15,6 +15,7 @@ jobs:
           RECAPTCHA_SECRET_KEY: 6LeXk9MUAAAAADEx_aJ_DjL4NXwlznot_KrWNEVT
           RECAPTCHA_SITE_KEY_V2: 6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
           RECAPTCHA_SECRET_KEY_V2: 6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+          SECRET_KEY_BASE: e0bb1e68988682bbefbf536f262cefb21268d12ce9a23b2f896e78e8d5a93813ab1030af64518238d2d6f932b06e97deeb602586e9d82682b0e182ccefd74599
       - image: circleci/postgres:11.1-alpine
         environment:
           POSTGRES_USER: postgres
