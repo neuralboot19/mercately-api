@@ -1,0 +1,60 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://graph.facebook.com/2701618273252603?access_token=EAACx6JZCO4HYBAKlbKurdBSYxgrnaZAbsxZCwA7CM8YUY8a28wD3ag5nxWfOELceZBHbZCbvuq2n5ZAs0aVA4TEAF7SwCUujvrfs1KI2VaLzruW91MCZCyXjPLuz2osZAZBPBApryz2LRVWC0DMYZCDLGrZAo9IkuhKHnBanzooxd6mrgZDZD&fields=first_name,last_name,profile_pic
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.16.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Etag:
+      - '"a936afd8975d64139499b6406aec5e4112f69ecf"'
+      X-Business-Use-Case-Usage:
+      - '{"101072371445783":[{"type":"messenger","call_count":1,"total_cputime":1,"total_time":1,"estimated_time_to_regain_access":0}]}'
+      Content-Type:
+      - application/json; charset=UTF-8
+      Facebook-Api-Version:
+      - v6.0
+      Strict-Transport-Security:
+      - max-age=15552000; preload
+      Pragma:
+      - no-cache
+      X-Fb-Rev:
+      - '1001870448'
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      X-Fb-Trace-Id:
+      - C+1Rk2TwPnF
+      X-Fb-Request-Id:
+      - AEI0raGvgUGBMZ_Zb6Eif0d
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      X-Fb-Debug:
+      - "/iB0zUsE6f8IiMfYYWXDP5oRLvOmg8JSJyJz/9ddtMMtWoy1zPqPw0yxR5VNVSTEJcqIE+GWbLENUIVKS8xcIQ=="
+      Date:
+      - Fri, 20 Mar 2020 17:09:43 GMT
+      Alt-Svc:
+      - h3-27=":443"; ma=3600
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '216'
+    body:
+      encoding: UTF-8
+      string: '{"first_name":"Elvis","last_name":"Olivar","profile_pic":"https:\/\/platform-lookaside.fbsbx.com\/platform\/profilepic\/?psid=2701618273252603&width=1024&ext=1587316183&hash=AeQAyVHmRQz2x_vx","id":"2701618273252603"}'
+    http_version: 
+  recorded_at: Fri, 20 Mar 2020 17:09:44 GMT
+recorded_with: VCR 5.0.0

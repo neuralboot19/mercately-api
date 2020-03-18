@@ -21,7 +21,7 @@ class FacebookMessage < ApplicationRecord
         m = if text.present?
               Facebook::Messages.new(facebook_retailer).send_message(id_client, text)
             elsif file_data.present?
-              Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data)
+              Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename)
             end
         update_column(:mid, m['message_id'])
       end
