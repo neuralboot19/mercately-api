@@ -32,7 +32,7 @@ RSpec.describe 'Retailers::Api::V1::Welcome', type: :request do
       expect(body['message']).to eq('Unauthorized')
     end
 
-    it 'responses an Not Found response if slug NOT exists' do
+    it 'responses a Not Found response if slug NOT exists' do
       # Generating credentials for the retailer
       api_key = retailer_user.retailer.generate_api_key
 

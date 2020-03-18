@@ -21,17 +21,18 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
   def create
     customer = current_retailer.customers.find(params[:customer_id])
-    response = ws_message_service.send_message(current_retailer, customer, params, 'text')
+    karix_helper = KarixNotificationHelper
+    response = karix_helper.ws_message_service.send_message(current_retailer, customer, params, 'text')
 
     if response['error'].present?
       render status: 500, json: { message: response['error']['message'] }
     else
       message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
-      message = ws_message_service.assign_message(message, current_retailer, response['objects'][0])
+      message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
       message.save
 
       render status: 200, json: { message: response['objects'][0] }
-      broadcast_data(current_retailer, message)
+      karix_helper.broadcast_data(current_retailer, message)
     end
   end
 
@@ -45,7 +46,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     if @messages.present?
       render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
-      broadcast_data(current_retailer)
+      KarixNotificationHelper.broadcast_data(current_retailer)
     else
       render status: 404, json: { message: 'Messages not found' }
     end
@@ -61,24 +62,26 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     if retailer
       message = retailer.karix_whatsapp_messages.find_or_initialize_by(uid: params['data']['uid'])
-      message = ws_message_service.assign_message(message, retailer, params['data'])
+      karix_helper = KarixNotificationHelper
+      message = karix_helper.ws_message_service.assign_message(message, retailer, params['data'])
       message.save
 
       render status: 200, json: { message: 'succesful' }
-      broadcast_data(retailer, message) if message.persisted?
+      karix_helper.broadcast_data(retailer, message) if message.persisted?
     else
       render status: 404, json: { message: 'Retailer not found' }
     end
   end
 
   def send_file
-    response = ws_message_service.send_message(current_retailer, @customer, params, 'file')
+    karix_helper = KarixNotificationHelper
+    response = karix_helper.ws_message_service.send_message(current_retailer, @customer, params, 'file')
 
     if response['error'].present?
       render status: 500, json: { message: response['error']['message'] }
     else
       message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
-      message = ws_message_service.assign_message(message, current_retailer, response['objects'][0])
+      message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
       message.save
 
       render status: 200, json: { message: response['objects'][0] }
@@ -90,7 +93,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     if @message.update_column(:status, 'read')
       render status: 200, json: { message: @message }
-      broadcast_data(current_retailer)
+      KarixNotificationHelper.broadcast_data(current_retailer)
     else
       render status: 500, json: { message: 'Error al actualizar mensaje' }
     end
@@ -128,31 +131,5 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     def set_customer
       @customer = Customer.find(params[:customer_id] || params[:id])
-    end
-
-    def ws_message_service
-      @ws_message_service = Whatsapp::Karix::Messages.new
-    end
-
-    def broadcast_data(retailer, message = nil)
-      total = retailer.karix_unread_whatsapp_messages.size
-      redis.publish 'new_message_counter', {identifier: '.item__cookie_whatsapp_messages', total:
-        total > 9 ? '9+' : total, room: retailer.id}.to_json
-
-      if message.present?
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          KarixWhatsappMessageSerializer.new(message)
-        ).serializable_hash
-        redis.publish 'message_chat', {karix_whatsapp_message: serialized_data, room: retailer.id}.to_json
-
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          KarixCustomerSerializer.new(message.customer)
-        ).serializable_hash
-        redis.publish 'customer_chat', {customer: serialized_data, room: retailer.id}.to_json
-      end
-    end
-
-    def redis
-      @redis ||= Redis.new()
     end
 end

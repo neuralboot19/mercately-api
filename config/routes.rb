@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     namespace :api, defaults: { format: :json } do
       namespace :v1 do
         get 'ping', to: 'welcome#ping'
+        post 'karix/whatsapp/send/message', to: 'karix_whatsapp#create'
       end
     end
 
