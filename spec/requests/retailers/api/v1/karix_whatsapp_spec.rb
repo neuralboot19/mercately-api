@@ -104,9 +104,9 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
 
         # Making the request
-        post '/retailers/api/v1/karix/whatsapp/send/message',
+        post '/retailers/api/v1/whatsapp/send_notification',
              params: {
-               customer_id: customer.id,
+               phone_number: '+5939983770633',
                message: 'My Message Text'
              },
              headers: {
@@ -127,9 +127,10 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         allow_any_instance_of(subject).to receive(:send_message).and_return(karix_error_response)
 
         # Making the request
-        post '/retailers/api/v1/karix/whatsapp/send/message',
+        post '/retailers/api/v1/whatsapp/send_notification',
              params: {
                customer_id: customer.id,
+               phone_number: '+5939983770633',
                message: 'My Message Text'
              },
              headers: {
@@ -146,44 +147,9 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       end
     end
 
-    it 'responses an unauthorized response if message NOT present' do
+    it 'responses a 500 Internal Server Error response if phone_number NOT present' do
       # Making the request
-      post '/retailers/api/v1/karix/whatsapp/send/message',
-           params: {
-             customer_id: 99
-           },
-           headers: {
-             'Slug': slug,
-             'Api-Key': api_key
-           }
-      expect(response.code).to eq('401')
-
-      # Once the response is 200 the message should be 'Ok'
-      body = JSON.parse(response.body)
-      expect(body['message']).to eq('Unauthorized')
-    end
-
-    it 'responses a Not Found response if customer_id NOT exists' do
-      # Making the request
-      post '/retailers/api/v1/karix/whatsapp/send/message',
-           params: {
-             customer_id: 99,
-             message: 'My Message Text'
-           },
-           headers: {
-             'Slug': slug,
-             'Api-Key': api_key
-           }
-      expect(response.code).to eq('404')
-
-      # Once the response is 200 the message should be 'Ok'
-      body = JSON.parse(response.body)
-      expect(body['message']).to eq('Resource not found')
-    end
-
-    it 'responses a Not Found response if customer_id NOT present' do
-      # Making the request
-      post '/retailers/api/v1/karix/whatsapp/send/message',
+      post '/retailers/api/v1/whatsapp/send_notification',
            params: {
              message: 'My Message Text'
            },
@@ -191,11 +157,28 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
              'Slug': slug,
              'Api-Key': api_key
            }
-      expect(response.code).to eq('404')
+      expect(response.code).to eq('500')
 
       # Once the response is 200 the message should be 'Ok'
       body = JSON.parse(response.body)
-      expect(body['message']).to eq('Resource not found')
+      expect(body['message']).to eq('Error: Missing phone number and/or message')
+    end
+
+    it 'responses a 500 Internal Server Error response if message NOT present' do
+      # Making the request
+      post '/retailers/api/v1/whatsapp/send_notification',
+           params: {
+            phone_number: '+5939983770633',
+           },
+           headers: {
+             'Slug': slug,
+             'Api-Key': api_key
+           }
+      expect(response.code).to eq('500')
+
+      # Once the response is 200 the message should be 'Ok'
+      body = JSON.parse(response.body)
+      expect(body['message']).to eq('Error: Missing phone number and/or message')
     end
   end
 end
