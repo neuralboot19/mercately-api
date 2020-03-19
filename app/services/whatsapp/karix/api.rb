@@ -12,7 +12,7 @@ module Whatsapp
           channel: 'whatsapp',
           source: retailer.karix_whatsapp_phone,
           destination: [
-            customer.phone
+            params[:phone_number] || customer.phone
           ],
           content: {
             text: params[:message]
