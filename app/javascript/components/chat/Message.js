@@ -1,8 +1,8 @@
 import React from "react";
 
-const ChatMessage = ({message, toggleImgModal}) => {
+const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
   var tag;
-  switch (message.file_type) {
+  switch (fileType(message.file_type)) {
     case 'image':
       tag = <div className="img-holder">
         <img src={message.url} className="msg__img"
@@ -21,6 +21,12 @@ const ChatMessage = ({message, toggleImgModal}) => {
           <div class="lds-dual-ring"></div>
         )}
       </div>
+        break;
+    case 'file':
+        tag = <p className="fs-15"><a href="" onClick={(e) => downloadFile(e, message.url, message.filename)}><i className="fas fa-file-download mr-8"></i>{message.filename || 'Descargar archivo'}</a></p>
+        {message.is_loading && (
+          <div class="lds-dual-ring"></div>
+        )}
         break;
     default:
       tag = <p>{message.text}</p>

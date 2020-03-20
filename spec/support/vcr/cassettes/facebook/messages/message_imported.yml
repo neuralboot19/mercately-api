@@ -1,0 +1,65 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://graph.facebook.com/m_5zQXER3IeTxCOXaHhNOhD0OUElOLpk3ODw-8fGJl54d3iTker4IqLmXsMnseIWB5jfv61RUW9yCCJdOcqegr2w?access_token=EAACx6JZCO4HYBAKlbKurdBSYxgrnaZAbsxZCwA7CM8YUY8a28wD3ag5nxWfOELceZBHbZCbvuq2n5ZAs0aVA4TEAF7SwCUujvrfs1KI2VaLzruW91MCZCyXjPLuz2osZAZBPBApryz2LRVWC0DMYZCDLGrZAo9IkuhKHnBanzooxd6mrgZDZD&fields=message,attachments,created_time,to,from
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      User-Agent:
+      - Faraday v0.16.2
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Vary:
+      - Accept-Encoding
+      Etag:
+      - '"8274066962f33eba37d5ed5c1cc148d5c8aa18e6"'
+      X-Business-Use-Case-Usage:
+      - '{"101072371445783":[{"type":"messenger","call_count":1,"total_cputime":1,"total_time":1,"estimated_time_to_regain_access":0}]}'
+      Content-Type:
+      - application/json; charset=UTF-8
+      Facebook-Api-Version:
+      - v6.0
+      Strict-Transport-Security:
+      - max-age=15552000; preload
+      Pragma:
+      - no-cache
+      X-Fb-Rev:
+      - '1001870448'
+      Access-Control-Allow-Origin:
+      - "*"
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      X-Fb-Trace-Id:
+      - EXqd3KOC5cM
+      X-Fb-Request-Id:
+      - ApdZ2AyXk1cEH00PtABsrJO
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      X-Fb-Debug:
+      - pedo+O5ZkKbH8Y+foRQr+/o9UEm+B3mLa8NcsYYE0Gpc+TNoavTH2U5c/gtpAVDYR82ZGhh9FjPdYK1WYkk8Wg==
+      Date:
+      - Fri, 20 Mar 2020 17:35:25 GMT
+      Alt-Svc:
+      - h3-27=":443"; ma=3600
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '773'
+    body:
+      encoding: ASCII-8BIT
+      string: '{"message":"","attachments":{"data":[{"id":"300708634236822","mime_type":"application\/pdf","name":"Documento
+        sin ti\u0301tulo.pdf","size":37382,"file_url":"https:\/\/cdn.fbsbx.com\/v\/t59.2708-21\/90302115_300708637570155_7636801350956744704_n.pdf\/Documento-sin-ti\u0025CC\u002581tulo.pdf?_nc_cat=105&_nc_sid=0cab14&_nc_ohc=MC8kLJzODswAX9OAnHi&_nc_ht=cdn.fbsbx.com&oh=6d61846bc8404ac26fcab90a563bbe0e&oe=5E76996A&dl=1"}],"paging":{"cursors":{"before":"MAZDZD","after":"MAZDZD"},"next":"https:\/\/graph.facebook.com\/v6.0\/m_5zQXER3IeTxCOXaHhNOhD0OUElOLpk3ODw-8fGJl54d3iTker4IqLmXsMnseIWB5jfv61RUW9yCCJdOcqegr2w\/attachments?access_token=EAACx6JZCO4HYBAKlbKurdBSYxgrnaZAbsxZCwA7CM8YUY8a28wD3ag5nxWfOELceZBHbZCbvuq2n5ZAs0aVA4TEAF7SwCUujvrfs1KI2VaLzruW91MCZCyXjPLuz2osZAZBPBApryz2LRVWC0DMYZCDLGrZAo9IkuhKHnBanzooxd6mrgZDZD&limit=25&after=MAZDZD"}},"created_time":"2020-03-20T14:08:43+0000","to":{"data":[{"name":"Elvis
+        Olivar","email":"2701618273252603\u0040facebook.com","id":"2701618273252603"}]},"from":{"name":"Desarrollo
+        Web","email":"101072371445783\u0040facebook.com","id":"101072371445783"},"id":"m_5zQXER3IeTxCOXaHhNOhD0OUElOLpk3ODw-8fGJl54d3iTker4IqLmXsMnseIWB5jfv61RUW9yCCJdOcqegr2w"}'
+    http_version: 
+  recorded_at: Fri, 20 Mar 2020 17:35:26 GMT
+recorded_with: VCR 5.0.0
