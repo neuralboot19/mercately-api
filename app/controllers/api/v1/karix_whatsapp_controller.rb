@@ -5,10 +5,21 @@ class Api::V1::KarixWhatsappController < ApplicationController
   protect_from_forgery :only => [:save_message]
 
   def index
+
     @customers = current_retailer.customers
       .select('customers.*, max(karix_whatsapp_messages.created_time) as recent_message_date')
-      .joins(:karix_whatsapp_messages).where.not(karix_whatsapp_messages: { account_uid: nil })
+      .joins(:karix_whatsapp_messages)
+      .where.not(karix_whatsapp_messages: { account_uid: nil })
       .group('customers.id').order('recent_message_date desc').page(params[:page])
+
+    if params[:customerSearch]
+      @customers = @customers.where("CONCAT(lower(customers.first_name), lower(customers.last_name)) ILIKE ?
+        OR lower(customers.email) iLIKE ? 
+        OR lower(customers.phone) iLIKE ?", 
+        "%#{params[:customerSearch].downcase.delete(' ')}%",
+        "%#{params[:customerSearch]}%",
+        "%#{params[:customerSearch]}%")
+    end
 
     if @customers.present?
       render status: 200, json: { customers: @customers.as_json(methods:
