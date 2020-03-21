@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import { fetchCustomers } from "../../actions/actions";
 import ChatListUser from './ChatListUser';
 import { fetchWhatsAppCustomers } from "../../actions/whatsapp_karix";
+import Loader from 'images/dashboard/loader.jpg'
 
 
 var _shouldUpdate = true;
@@ -12,7 +13,9 @@ class ChatList extends Component {
     super(props)
     this.state = {
       page: 1,
-      customers: []
+      customers: [],
+      searchString: '', 
+      shouldUpdate: true
     };
   }
 
@@ -66,6 +69,33 @@ class ChatList extends Component {
     }
   }
 
+  handleChatSearch = (e) => {
+    let value;
+    value = e.target.value;
+    this.setState({
+      searchString: value,
+    });
+  }
+
+  handleKeyPress = event => {
+    if (event.key === "Enter") {
+      this.setState({shouldUpdate: true}, () => { 
+        this.applySearch();
+      })
+    }
+  };
+
+  applySearch = () => {
+    this.setState({customers: []}, () => {
+      if (this.props.chatType == 'whatsapp'){
+        this.props.fetchWhatsAppCustomers(1, this.state.searchString);  
+      }
+      if (this.props.chatType == 'facebook'){
+        this.props.fetchCustomers(1, this.state.searchString);
+      }
+    })
+  }
+
   componentWillReceiveProps(newProps){
     if (newProps.customers != this.props.customers) {
       this.setState({
@@ -86,10 +116,10 @@ class ChatList extends Component {
   }
 
   componentDidUpdate() {
-    if (_shouldUpdate) {
-      _shouldUpdate = false;
+    if (this.state.shouldUpdate) {
       this.setState({
-        customers: this.props.customers
+        customers: this.props.customers,
+        shouldUpdate: false
       })
     }
   }
@@ -109,16 +139,44 @@ class ChatList extends Component {
 
   render() {
     return (
-      <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
-        {this.state.customers.map((customer) =>
-        <ChatListUser
-          key={customer.id}
-          currentCustomer={this.props.currentCustomer}
-          customer={customer}
-          handleOpenChat={this.props.handleOpenChat}
-          chatType={this.props.chatType}
-        />)}
+      <div>
+        {this.state.shouldUpdate ? 
+          <div className="chat_loader"><img src={Loader} /></div>
+        :
+          <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
+            <div >
+              <input
+                type="text"
+                value={this.state.searchString}
+                onChange={e =>
+                  this.handleChatSearch(e)
+                }
+                placeholder="Busqueda por email, nombre o número"
+                style={{
+                  width: "100%",
+                  borderRadius: "5px",
+                  marginBottom: "20px",
+                  border: "1px solid #ddd",
+                  padding: "8px 0px",
+                }}
+                className="form-control"
+                onKeyPress={this.handleKeyPress}
+              />
+            </div>
+
+            {this.state.customers.map((customer) =>
+            <ChatListUser
+              key={customer.id}
+              currentCustomer={this.props.currentCustomer}
+              customer={customer}
+              handleOpenChat={this.props.handleOpenChat}
+              chatType={this.props.chatType}
+            />)}
+          </div>
+        }
       </div>
+
+
     );
   }
 }
@@ -132,11 +190,11 @@ function mapState(state) {
 
 function mapDispatch(dispatch) {
   return {
-    fetchCustomers: (page = 1) => {
-      dispatch(fetchCustomers(page));
+    fetchCustomers: (page = 1, params) => {
+      dispatch(fetchCustomers(page, params));
     },
-    fetchWhatsAppCustomers: (page = 1) => {
-      dispatch(fetchWhatsAppCustomers(page));
+    fetchWhatsAppCustomers: (page = 1, params) => {
+      dispatch(fetchWhatsAppCustomers(page, params));
     }
   };
 }

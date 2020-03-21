@@ -845,6 +845,14 @@
   animation: lds-dual-ring 1.2s linear infinite;
 }
 
+.chat_loader {
+  text-align: center;
+}
+
+.chat_loader img{
+  width: 50px;
+}
+
 @keyframes lds-dual-ring {
   0% {
     transform: rotate(0deg);
