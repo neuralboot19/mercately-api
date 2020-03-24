@@ -23,8 +23,8 @@ module Whatsapp
 
       def prepare_whatsapp_message_file(retailer, customer, params)
         resource_type = get_resource_type(params[:file_data])
-        upload_url = cloudinary_upload_file_url(resource_type)
-        response = upload_file_to_cloudinary(params[:file_data])
+        response = upload_file_to_cloudinary(params[:file_data], resource_type)
+        filename = response['original_filename'] if resource_type == 'document'
 
         {
           channel: 'whatsapp',
@@ -35,35 +35,38 @@ module Whatsapp
           content: {
             media: {
               url: response['secure_url'] || response['url'],
-              caption: params[:caption]
+              caption: params[:caption] || filename
             }
           },
           events_url: "#{ENV['KARIX_WEBHOOK']}?account_id=#{retailer.id}"
         }.to_json
       end
 
-      def cloudinary_upload_file_url(resource_type)
-        "https://api.cloudinary.com/v1_1/#{ENV['CLOUDINARY_CLOUD_NAME']}/#{resource_type}/upload"
-      end
-
-      def upload_file_to_cloudinary(file)
+      def upload_file_to_cloudinary(file, resource_type)
         timestamp = Time.now.to_i
 
         params_to_sign = {
           timestamp: timestamp
         }
 
+        public_id = File.basename(file.original_filename) if resource_type == 'document'
+
         Cloudinary::Uploader.upload(
           file,
+          public_id: public_id,
           api_key: ENV['CLOUDINARY_API_KEY'],
           timestamp: timestamp,
-          signature: Cloudinary::Utils.api_sign_request(params_to_sign, ENV['CLOUDINARY_API_SECRET'])
+          signature: Cloudinary::Utils.api_sign_request(params_to_sign, ENV['CLOUDINARY_API_SECRET']),
+          resource_type: resource_type == 'image' ? 'image' : 'raw'
         )
       end
 
       def get_resource_type(file)
         content_type = MIME::Types.type_for(file.tempfile.path).first.content_type
-        return 'image' if content_type&.include?('image')
+        return unless content_type.present?
+        return 'image' if content_type.include?('image')
+        return 'document' if ['application/pdf', 'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
       end
 
       def prepare_welcome_message_body(retailer)
