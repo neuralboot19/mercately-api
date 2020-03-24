@@ -14,7 +14,11 @@ module CurrentRetailer
 
     def set_retailer
       unless session[:current_retailer]
-        @retailer = Retailer.find_by(slug: params[:slug])
+        @retailer = if params[:slug].present?
+          Retailer.find_by(slug: params[:slug])
+        else
+          current_retailer_user&.retailer
+        end
         session[:current_retailer] = @retailer
       else
         @retailer = Retailer.find(session[:current_retailer]['id'])

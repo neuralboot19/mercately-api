@@ -24,6 +24,14 @@ class Customer < ApplicationRecord
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :facebook_customers, -> { where.not(psid: nil) }
+  scope :by_search_text, (lambda do |search_text|
+    where("CONCAT(REPLACE(lower(customers.first_name), '\s', ''), REPLACE(lower(customers.last_name), '\s', '')) ILIKE ?
+          OR lower(customers.email) iLIKE ?
+          OR lower(customers.phone) iLIKE ?",
+          "%#{search_text.downcase.delete(' ')}%",
+          "%#{search_text}%",
+          "%#{search_text}%")
+  end)
 
   ransacker :sort_by_completed_orders do
     Arel.sql('coalesce((select count(orders.id) as total from orders where ' \

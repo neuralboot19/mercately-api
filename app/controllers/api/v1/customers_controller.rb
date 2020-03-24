@@ -11,14 +11,7 @@ class Api::V1::CustomersController < ApplicationController
       .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
       .joins(:facebook_messages).group('customers.id').order('recent_message_date desc').page(params[:page])
 
-    if params[:customerSearch]
-      @customers = @customers.where("CONCAT(lower(customers.first_name), lower(customers.last_name)) ILIKE ?
-        OR lower(customers.email) iLIKE ? 
-        OR lower(customers.phone) iLIKE ?", 
-        "%#{params[:customerSearch].downcase.delete(' ')}%",
-        "%#{params[:customerSearch]}%",
-        "%#{params[:customerSearch]}%")
-    end
+    @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
 
     render status: 200, json: { customers: @customers.as_json(methods: :unread_message?), total_customers: @customers.total_pages }
   end
