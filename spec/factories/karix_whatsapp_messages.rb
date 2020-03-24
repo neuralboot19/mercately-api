@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :karix_whatsapp_message do
-    uid { "MyString" }
-    account_uid { "MyString" }
+    uid { Faker::IDNumber.valid }
+    account_uid { Faker::IDNumber.valid }
     source { "MyString" }
     destination { "MyString" }
     country { "MyString" }
@@ -12,5 +12,7 @@ FactoryBot.define do
     updated_time { "2020-01-17 15:16:14" }
     status { "MyString" }
     direction { "MyString" }
+    retailer
+    customer
   end
 end

@@ -18,5 +18,9 @@ FactoryBot.define do
       meli_nickname { meli_customer.nickname }
       meli_customer_id { meli_customer.id }
     end
+
+    trait :from_fb do
+      psid { rand(10000..20000) }
+    end
   end
 end
