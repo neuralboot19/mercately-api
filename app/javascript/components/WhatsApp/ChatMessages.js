@@ -82,7 +82,7 @@ class ChatMessages extends Component {
             })
           }
         }
-      } else if ((['image', 'voice', 'audio', 'video'].includes(karix_message.content_media_type) || karix_message.content_type == 'location') &&
+      } else if ((['image', 'voice', 'audio', 'video', 'document'].includes(karix_message.content_media_type) || karix_message.content_type == 'location') &&
         karix_message.direction === 'inbound') {
         this.setState({
           messages: this.state.messages.concat(karix_message),
@@ -220,10 +220,55 @@ class ChatMessages extends Component {
 
   handleSubmitImg = (el, file_data) => {
     var url = URL.createObjectURL(el.files[0]);
-    this.setState({ messages: this.state.messages.concat({content_type: 'media', content_media_type: 'image', content_media_url: url, direction: 'outbound'}), new_message: true}, () => {
+    var type = this.fileType(el.files[0].type);
+    var caption = type == 'document' ? el.files[0].name : null;
+    this.setState({ messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption}), new_message: true}, () => {
       this.props.sendWhatsAppImg(this.props.currentCustomer, file_data, csrfToken);
       this.scrollToBottom();
     });
+  }
+
+  handleFileSubmit = (e) => {
+    var el = e.target;
+    var file = el.files[0];
+
+    if(!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+      alert('Error: El archivo debe ser de tipo PDF o Word');
+      return;
+    }
+
+    // Max 20 Mb allowed
+    if(file.size > 20*1024*1024) {
+      alert('Error: Maximo permitido 20MB');
+      return;
+    }
+
+    var data = new FormData();
+    data.append('file_data', file);
+    this.handleSubmitImg(el, data);
+  }
+
+  fileType = (file_type) => {
+    if (file_type == null) {
+      return file_type;
+    } else if (file_type.includes('image/') || file_type == 'image') {
+      return 'image';
+    } else if (['application/pdf', 'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file_type) ||
+      file_type == 'document') {
+        return 'document';
+    } else if (file_type.includes('audio/') || ['audio', 'voice'].includes(file_type)) {
+      return 'audio';
+    }
+  }
+
+  downloadFile = (e, file_url, filename) => {
+    e.preventDefault();
+    var link = document.createElement('a');
+    link.href = file_url;
+    link.target = '_blank';
+    link.download = filename;
+    link.click();
   }
 
   toggleImgModal = (e) => {
@@ -361,7 +406,10 @@ class ChatMessages extends Component {
                 {message.content_type == 'location' &&
                     (<p className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
                       <i className="fas fa-globe-europe mr-8"></i>Ver ubicación</a></p>)}
-                {message.content_media_caption &&
+                {message.content_type == 'media' && message.content_media_type == 'document' && (
+                  <p className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></p>
+                )}
+                {message.content_media_caption && message.content_media_type !== 'document' &&
                   (<p>{message.content_media_caption}</p>)}
               </div>
             </div>
@@ -375,6 +423,8 @@ class ChatMessages extends Component {
               <textarea name="messageText" placeholder="Mensaje" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
               <input id="attach" className="d-none" type="file" name="messageImg" accept="image/jpg, image/jpeg, image/png" onChange={(e) => this.handleImgSubmit(e)}/>
               <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
+              <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
+              <i className="fas fa-file-alt fs-24 ml-5 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
             </div>
           </div>
         }
