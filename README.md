@@ -57,11 +57,11 @@ In order to use the WhatsApp integration in development mode with Karix, you nee
 - Exec `./ngrok http 3000`
 - Sign up on [Karix](https://www.karix.io/)
 - Copy to your `.env` file these variables: `KARIX_ACCOUNT_UID={your Karix ACCOUNT ID}`, and `KARIX_ACCOUNT_TOKEN={your Karix ACCOUNT TOKEN}`. These two values can be found in your Karix dashboard after signing up|in.
-- Edit your Retailer and update these two attributes: `whats_app_enabled` set to `true`, and `karix_whatsapp_phone` set to `+13253077759`
+- Edit your Retailer and update these two attributes: `whats_app_enabled` set to `true`, and `karix_whatsapp_phone` set to the sandbox phone number provided and specified in the Karix Dashboard, let's say `+13253077759`, for instance
 - In your Karix dashboard, put the following URL in the text input besides the button `Edit Webhook URL` and click it later, `https://[your ngrok subdomain].ngrok.io/api/v1/karix_whatsapp?account_id={your Retailer ID}`
 - Copy to your `.env` file the next variable: `KARIX_WEBHOOK={https://[your ngrok subdomain].ngrok.io/api/v1/karix_whatsapp}`
 - In your cellphone, save this number `+13253077759`
-- To join the sandbox of your Karix account, you have to send a whatsapp message to the number saved in the past step, with the text indicated in your Karix dashboard, for example, something like this: `join generic-crayfish`. In general, that's the structure of the message, what changes between accounts is the last part of it, i.e: `join xxxxx-xxxxxx`. You should receive an answer with the text that you are already part of the sandbox.
+- To join your Karix sandbox account, you have to send a whatsapp message, to the number saved in the past step, with the text indicated in your Karix dashboard, for example, something like this: `join generic-crayfish`. In general, that's the structure of the message, what changes between accounts is the last part of it, i.e: `join xxxxx-xxxxxx`. You should receive an answer with the text that you are already part of the sandbox.
 
 #### Facebook Messenger
 In order to use the Messenger integration in development mode, you need to follow the next steps:
@@ -74,7 +74,7 @@ In order to use the Messenger integration in development mode, you need to follo
 - Type a Display Name and Click `Create App ID`
 - Go to `Settings` -> `Basic` in the left sidebar and copy to your `.env` file the next variables: `FACEBOOK_APP_ID={ID of your Facebook App}`, and `FACEBOOK_APP_SECRET={App Secret of your Facebook App}`.
 - In the same view of the past step, put in the text input `App Domains` this: `[your ngrok subdomain].ngrok.io`
-- In the same view, go down and click `Add Platform` and select in the modal `Website`. Put in the text input `Site URL` this `https://[your ngrok subdomain].ngrok.io/` and finally click `Save Changes`
+- In the same view, scroll down and click `Add Platform` and select in the modal `Website`. Put in the text input `Site URL` this `https://[your ngrok subdomain].ngrok.io/` and finally click `Save Changes`
 - Go to `Dashboard` in the left sidebar and in the section `Add a Product`, click `Set Up` on the `Facebook Login` option.
 - Go to `Facebook Login` -> `Settings` in the left sidebar, in the text input `Valid OAuth Redirect URIs` put `https://[your ngrok subdomain].ngrok.io/auth/facebook/callback` and click `Save Changes`
 - Go back to `Dashboard`, go to the section `Add a Product`, and click `Set Up` on the `Webhooks` option.
@@ -82,10 +82,10 @@ In order to use the Messenger integration in development mode, you need to follo
 - In the modal, put this `https://[your ngrok subdomain].ngrok.io/retailers/messenger_callbacks` in the text input `Callback URL` and put this `3388c56076ff02f0463f9b605958fa961e4457148586c791ccc0b04b3920c58e` in the text input `Verify Token` and click `Verify and Save`
 - Copy to your `.env` file this variable: `FACEBOOK_VERIFY_TOKEN=3388c56076ff02f0463f9b605958fa961e4457148586c791ccc0b04b3920c58e`
 - Go back to `Dashboard`, go to the section `Add a Product`, and click `Set Up` on the `Messenger` option.
-- In the view shown after the past step, or clicking in the sidebar `Messenger` -> `Settings`, go down to the section `Access Tokens`, click on `Add or Remove Pages`, this will take you to select the page you want to link with your app (select only one page) and grant all permissions solicited in the view.
-- Go down in the same view to the section `Webhooks`, and click `Add Subscriptions`, in the modal, select the next three options: `messages`, `message_deliveries` and `message_reads` and click `Save`
+- In the view shown after the past step, or clicking in the sidebar `Messenger` -> `Settings`, scroll down to the section `Access Tokens`, click on `Add or Remove Pages`, this will take you to select the page you want to link with your app (select only one page) and grant all permissions solicited in the view.
+- Scroll down in the same view to the section `Webhooks`, and click `Add Subscriptions`, in the modal, select the next three options: `messages`, `message_deliveries` and `message_reads` and click `Save`
 - Log into your Mercately account, go to the sidebar `Integraciones` option, and click `Conectar con Messenger`, this will take you to the facebook views to connect your app with Mercately.
-- You have to grant all permissions solicited in the modal shown, so Mercately could administrate your Facebook App (select only on page in the modals shown in this step). Your config should look like this:
+- You have to grant all permissions solicited in the modal shown, so your Facebook App could be properly managed (select only one page in the modals shown in this step). Your config should look like this:
 ![Your config should look like this](https://i.imgur.com/KPp7Z21.png)
 
 #### Create ML test users
