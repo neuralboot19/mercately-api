@@ -111,3 +111,6 @@ gem 'rack-cors', '~> 1.1', '>= 1.1.1'
 
 # API
 gem 'fast_jsonapi', '~> 1.5'
+
+# Database
+gem 'with_advisory_lock', '~> 4.6'
