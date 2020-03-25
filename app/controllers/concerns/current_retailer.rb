@@ -21,7 +21,9 @@ module CurrentRetailer
         end
         session[:current_retailer] = @retailer
       else
-        @retailer = Retailer.find(session[:current_retailer]['id'])
+        Retailer.with_advisory_lock('retailers_lock') do
+          @retailer = Retailer.find(session[:current_retailer]['id'])
+        end
       end
     end
 end
