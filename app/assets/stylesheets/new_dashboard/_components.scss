@@ -438,7 +438,7 @@
   }
 }
 
-.modal {
+.modal, .modal-index {
   position: fixed;
   top: 0;
   left: 0;
@@ -538,7 +538,7 @@
   transition: all 0.4s ease-out;
 }
 
-#modal--toggle:checked ~ .modal {
+#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index {
   display: block;
 }
 
@@ -575,7 +575,7 @@
 }
 
 @media screen and (max-height: 680px) {
-  .modal__window {
+  .modal__window, .modal-index__window {
     height: 542px;
   }
 }

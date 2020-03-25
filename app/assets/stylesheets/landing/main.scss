@@ -677,7 +677,7 @@ p{
   }
 }
 
-.modal {
+.modal, .modal-index {
   position: fixed;
   top: 0;
   left: 0;
@@ -717,7 +717,7 @@ p{
   }
 }
 
-#modal--toggle:checked ~ .modal {
+#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index {
   display: block;
 }
 
@@ -727,7 +727,7 @@ p{
 }
 
 @media screen and (max-height: 680px) {
-  .modal__window {
+  .modal__window, .modal-index__window {
     height: 542px;
   }
 }
