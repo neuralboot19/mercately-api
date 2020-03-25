@@ -37,6 +37,7 @@ function cancelTemplate() {
   auxTemplate = [];
   templateSelected = '';
   $('#modal--toggle').attr('checked', false);
+  $('#modal--toggle-index').attr('checked', false);
   $('body').toggleClass('o-hidden');
 }
 
@@ -51,7 +52,7 @@ function sendTemplate() {
   if (allFilled) {
     data = {
       message: auxTemplate.join(''),
-      customer_id: $('#karix-customer-id').val()
+      customer_id: $('#karix-customer-id').val() || $('#customer_id_index').val()
     }
 
     $.ajax({

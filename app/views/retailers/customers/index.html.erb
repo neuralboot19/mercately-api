@@ -106,6 +106,13 @@
                 </div>
                 <div class="col-xs-4 col-sm-2 c-grey">
                   <div class="t-center truncate"><%= customer.phone %></div>
+                  <% if current_retailer.whats_app_enabled && customer.phone.present? && customer.phone[0] == '+' %><br />
+                    <div class="t-center"><label for="modal--toggle-index" class="request-demo-label ws-contact d-none"
+                      data-customer_full_names="<%= customer.full_names %>"
+                      data-customer_id="<%= customer.id %>">
+                    <i class="fab fa-whatsapp fz-16 mr-5"></i>
+                    Enviar Notificación</label></div>
+                  <% end %>
                 </div>
                 <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
                   <div class="box">
@@ -230,6 +237,56 @@
   </div>
 </div>
 
+<input type="checkbox" class="d-none" name="modal--toggle-index" id="modal--toggle-index" />
+<div class="modal-index">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal-index__background" for="modal--toggle-index"></label>
+        <div class="modal-index__window box p-4 h-unset mt-0" style="z-index: 1000;">
+          <label class="modalindex__close" for="modal--toggle-index">
+            <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
+          </label>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="col-md-12">
+                <h1 id="customer_name_index" class="d-inline name mb-10"></h1>
+                <input type="hidden" id="customer_id_index">
+              </div>
+              <div class="divider"></div>
+              <div id="karix-templates-list">
+                <% current_retailer.karix_whatsapp_templates.active.each_with_index do |template, index| %>
+                  <div class="row">
+                    <div class="col-md-10">
+                      <p id="template-<%= index %>"><%= template.text %></p>
+                    </div>
+                    <div class="col-md-2">
+                      <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+              <div id="karix-template-edition" class="col-xs-12">
+                <div id="karix-template-text">
+                </div>
+                <div class="row mt-30">
+                  <div class="col-md-6 t-right">
+                    <button onClick="cancelTemplate()">Cancelar</button>
+                  </div>
+                  <div class="col-md-6 t-left">
+                    <button onClick="sendTemplate()">Enviar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script charset="utf-8">
   document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('modal--toggle').checked = false;
@@ -257,4 +314,22 @@
       document.getElementById('customer_notes').innerHTML = mt.dataset.customer_notes;
     }
   });
+
+  document.querySelectorAll('.ws-contact').forEach(function(mt) {
+    mt.onclick = function(e) {
+      document.getElementById('customer_name_index').innerHTML = mt.dataset.customer_full_names;
+      document.getElementById('customer_id_index').value = mt.dataset.customer_id;
+    }
+  });
+
+  $(document).ready(function() {
+    $('#modal--toggle-index').on('change', function(e) {
+      $('body').toggleClass('o-hidden');
+    })
+
+    $('#karix-template-edition').hide();
+    $('.ws-contact').show();
+  });
 </script>
+
+<script src="<%= asset_path 'retailers/customers/customers.js' %>" charset="utf-8"></script>
