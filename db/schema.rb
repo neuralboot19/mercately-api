@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_172333) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
+    t.integer "is_client", default: 0, null: false
     t.text "notes"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
@@ -267,7 +268,7 @@ ActiveRecord::Schema.define(version: 2020_03_18_172333) do
   create_table "payment_plans", force: :cascade do |t|
     t.bigint "retailer_id"
     t.decimal "price", default: "0.0"
-    t.date "start_date", default: -> { "now()" }
+    t.date "start_date", default: -> { "CURRENT_TIMESTAMP" }
     t.date "next_pay_date"
     t.integer "status", default: 0
     t.integer "plan", default: 0
