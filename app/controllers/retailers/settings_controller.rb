@@ -1,13 +1,17 @@
 class Retailers::SettingsController < RetailersController
-  
+
   def team
     @team = current_retailer.retailer_users.reject { |u| u == current_retailer_user }
     @user = RetailerUser.new
   end
 
   def invite_team_member
-    user = RetailerUser.invite!(email: params['retailer_user']['email'], retailer_admin:
-      false, retailer: current_retailer) do |u|
+    user = RetailerUser.invite!(
+      first_name: invitation_params[:first_name],
+      last_name: invitation_params[:last_name],
+      email: invitation_params[:email],
+      retailer_admin: false,
+      retailer: current_retailer) do |u|
       u.skip_invitation = true
     end
 
@@ -61,8 +65,7 @@ class Retailers::SettingsController < RetailersController
     end
   end
 
-  def api_key
-  end
+  def api_key; end
 
   def generate_api_key
     api_key =  @retailer.generate_api_key
@@ -75,5 +78,11 @@ class Retailers::SettingsController < RetailersController
         }}
       }
     end
+  end
+
+  private
+
+  def invitation_params
+    params.require(:retailer_user).permit(:email, :first_name, :last_name)
   end
 end

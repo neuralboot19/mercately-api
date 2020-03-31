@@ -9,7 +9,6 @@ ActiveAdmin.register Retailer do
                 :phone_number,
                 :whats_app_enabled,
                 :karix_whatsapp_phone
-  
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -42,6 +41,8 @@ ActiveAdmin.register Retailer do
     column :id
     column :name
     column(:email) { |retailer| retailer.retailer_user.email }
+    column(:first_name) { |retailer| retailer.retailer_user.first_name }
+    column(:last_name) { |retailer| retailer.retailer_user.last_name }
     column :city
     column :phone_number
     column :retailer_number
@@ -52,6 +53,12 @@ ActiveAdmin.register Retailer do
     attributes_table title: 'Detalles del Retailer' do
       row :id
       row :name
+      row :first_name do |retailer|
+        retailer.retailer_user&.first_name
+      end
+      row :last_name do |retailer|
+        retailer.retailer_user&.last_name
+      end
       row :retailer_number
       row :slug
       row :id_type

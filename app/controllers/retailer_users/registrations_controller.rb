@@ -40,6 +40,8 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     def configure_sign_up_params
       devise_parameter_sanitizer.permit(:sign_up, keys: [
                                           :email,
+                                          :first_name,
+                                          :last_name,
                                           :password,
                                           :password_confirmation,
                                           :agree_terms,
@@ -51,6 +53,8 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     def configure_account_update_params
       devise_parameter_sanitizer.permit(:account_update, keys: [
                                           :email,
+                                          :first_name,
+                                          :last_name,
                                           :password,
                                           :password_confirmation,
                                           retailer_attributes: [:id, :name, :retailer_number]
