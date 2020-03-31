@@ -46,7 +46,6 @@ RSpec.configure do |config|
   # Use Devise helpers in tests
   config.include Devise::Test::ControllerHelpers, type: :controller
   config.include Devise::Test::IntegrationHelpers, type: :request
-  config.include Devise::TestHelpers, type: :controller
   config.include Warden::Test::Helpers
 
   # FactoryBot support

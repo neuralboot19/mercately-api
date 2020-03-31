@@ -25,6 +25,10 @@ RSpec.describe RetailerMailer, type: :mailer do
     let(:retailer_user) { create(:retailer_user, retailer: retailer, email: 'retailer@example.com') }
     let(:retailer) { create(:retailer, name: 'Retailer Example') }
 
+    it 'shows full_name to invited' do
+      expect(mail.body.encoded).to include("Hola #{retailer_user.full_name}")
+    end
+
     it 'shows the correct subject to invited' do
       expect(mail.subject).to eq('Retailer Example te ha invitado a su equipo en Mercately')
     end

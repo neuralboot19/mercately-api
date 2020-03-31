@@ -44,6 +44,10 @@ class RetailerUser < ApplicationRecord
     !removed_from_team? ? super : 'Tu cuenta no se encuentra activa'
   end
 
+  def full_name
+    "#{first_name} #{last_name}"
+  end
+
   private
 
     def onboarding_status_format

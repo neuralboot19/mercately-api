@@ -10,10 +10,20 @@
 
           <% if current_retailer_user.retailer_admin %>
             <%= form_for @user, url: invite_team_member_path(current_retailer), html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
-              <fieldset class="fieldset mt-16">
-                <div class="my-16">
+              <fieldset class="row fieldset mt-16">
+                <div class="col-sm my-16">
                   <%= f.label :email %>
                   <%= f.text_field :email, class: 'input validate-email validate-required' %>
+                  <i class="validation-msg"></i>
+                </div>
+                <div class="col-sm my-16">
+                  <%= f.label 'Nombre' %>
+                  <%= f.text_field :first_name, class: 'input validate-required' %>
+                  <i class="validation-msg"></i>
+                </div>
+                <div class="col-sm my-16">
+                  <%= f.label 'Apellido' %>
+                  <%= f.text_field :last_name, class: 'input validate-required' %>
                   <i class="validation-msg"></i>
                 </div>
               </fieldset>

@@ -47,7 +47,7 @@ module PagesControllerConcern
         id: category_ids,
         products: { retailer_id: current_retailer.id },
         orders: { status: 1, created_at:@start_date.to_datetime..@end_date.to_datetime }
-      ).group(:id).order('sum(order_items.quantity * order_items.unit_price) desc')
+      ).group(:id).order(Arel.sql('sum(order_items.quantity * order_items.unit_price) desc'))
   end
 
   # Mejores clientes

@@ -7,6 +7,13 @@
           <div class="index__desc">
           </div>
         </div>
+        <% if flash[:alert] %>
+          <div class="col-xs-12 mb-20">
+            <div class="warning-box" role="alert">
+              <strong>¡Ups!</strong> <%= flash[:alert] %>
+            </div>
+          </div>
+        <% end %>
         <div class="col-xs-12 col-md-6 mt-8 t-right button-sm-and-down mb-20">
           <%= form_for(:search, url: retailers_dashboard_path(current_retailer), method: :get, html: { id: 'select_range' }) do |form| %>
             <div id="date-picker-container" class="select-range">
