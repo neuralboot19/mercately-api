@@ -60,4 +60,12 @@ RSpec.describe RetailerUser, type: :model do
       end
     end
   end
+
+  describe '#full_name' do
+    it 'returns a full name' do
+      retailer_user  = described_class.new(first_name: 'John', last_name: 'Wick')
+
+      expect(retailer_user.full_name).to eq('John Wick')
+    end
+  end
 end

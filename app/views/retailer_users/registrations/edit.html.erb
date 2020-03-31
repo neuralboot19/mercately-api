@@ -29,6 +29,18 @@
             </fieldset>
 
             <fieldset class="fieldset mt-16">
+              <legend>Información del Usuario</legend>
+              <div class="my-16">
+                <%= f.label :first_name, 'Nombre' %>
+                <%= f.text_field :first_name, autofocus: true, class: 'input' %>
+              </div>
+              <div class="my-16">
+                <%= f.label :last_name, 'Apellido' %>
+                <%= f.text_field :last_name, class: 'input' %>
+              </div>
+            </fieldset>
+
+            <fieldset class="fieldset mt-16">
               <legend>Información de la cuenta</legend>
               <div class="my-16">
                 <%= f.label :email, 'Correo' %>
