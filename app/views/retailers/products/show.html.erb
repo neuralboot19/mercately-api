@@ -68,20 +68,43 @@
             </div>
           </div>
         </div>
-        <div class="row info__details">
-          <div class="col-xs-12 c-gray-label my-8">Características:</div>
-          <div class="col-xs-12 col-sm-12">
-            <table class="table_details w-100">
-              <% if @product.code.present? %>
+        <% if @product.code.present? %>
+          <div class="row">
+            <div class="col-xs-12 c-gray-label my-8">Código:</div>
+            <div class="col-xs-12">
+              <div class="p-16 c-grey t-justify">
+                <%= @product.code %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if current_retailer.facebook_catalog&.connected? %>
+          <div class="row info__details">
+            <div class="col-xs-12 c-gray-label my-8">Características de Facebook:</div>
+            <div class="col-xs-12 col-sm-12">
+              <table class="table_details w-100">
                 <tr>
                   <td class="table_details__descriptor">
-                    Código
+                    Marca
                   </td>
                   <td class="table_details__value">
-                    <%= @product.code %>
+                    <%= @product.brand %>
                   </td>
                 </tr>
-              <% end %>
+              </table>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="row info__details">
+          <% if current_retailer.meli_retailer %>
+            <div class="col-xs-12 c-gray-label my-8">Características de Mercado Libre:</div>
+          <% else %>
+            <div class="col-xs-12 c-gray-label my-8">Características:</div>
+          <% end %>
+          <div class="col-xs-12 col-sm-12">
+            <table class="table_details w-100">
               <% @product.editable_attributes.each do |attribute| %>
                 <tr>
                   <td class="table_details__descriptor">
@@ -148,7 +171,7 @@
       <div class="box">
         <div class="row">
           <div class="col-xs-12 card__module p-0">
-            <div class="card__title"><i class="fas fa-money-bill-alt c-primary"></i> Finanzas</div>
+            <div class="card__title"><i class="fas fa-money-bill-alt c-secondary"></i> Finanzas</div>
             <div class="box">
               <div class="row card__submodule center-xs">
                 <div class="col-xs-12 submodule col-sm-4">
@@ -176,7 +199,7 @@
           </div>
           <% if @product.meli_product_id %>
             <div class="col-xs-12 card__module">
-              <div class="card__title"><i class="fas fa-shopping-cart c-primary"></i> Mercado Libre Info</div>
+              <div class="card__title"><%= image_tag 'dashboard/ml_logo.png', class: 'h-18 w-23' %> Mercado Libre Info</div>
               <div class="box">
                 <div class="row">
                   <div class="col-xs-12 col-sm-6">
@@ -218,6 +241,45 @@
                             </a>
                           </div>
                         </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <% if @product.facebook_product_id %>
+            <div class="col-xs-12 card__module">
+              <div class="card__title"><i class="fab fa-facebook c-secondary"></i> Facebook Info</div>
+              <div class="box">
+                <div class="row">
+                  <div class="col-xs-12 col-sm-6">
+                    <table class="table_details table_details--underlined w-100">
+                      <tr>
+                        <td class="table_details__descriptor">Condición:</td>
+                        <td class="table_details__value"><%= humanize_ml_condition(@product.condition) == 'No especificado' ? 'Usado' : humanize_ml_condition(@product.condition) %></td>
+                      </tr>
+                      <tr>
+                        <td class="table_details__descriptor">Código:</td>
+                        <td class="table_details__value fs-14 pr-0"><%= @product.facebook_product_id %></td>
+                      </tr>
+                    </table>
+                  </div>
+                  <div class="col-xs-12 col-sm-6">
+                    <table class="table_details table_details--underlined w-100">
+                      <tr>
+                        <td class="table_details__descriptor">Enlace:</td>
+                        <td class="table_details__value">
+                          <div class="truncate">
+                            <a href="https://www.facebook.com/commerce/products/<%= @product.facebook_product_id %>/" target="_blank">
+                              Ver
+                            </a>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="table_details__descriptor">Catálogo:</td>
+                        <td class="table_details__value fs-14"><%= current_retailer.facebook_catalog&.name %></td>
                       </tr>
                     </table>
                   </div>

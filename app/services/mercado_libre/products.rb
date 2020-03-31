@@ -127,6 +127,7 @@ module MercadoLibre
         product.incoming_images = product_info['pictures']
         product.incoming_variations = product_info['variations']
         product.main_image = product_info['pictures'].present?
+        product.avoid_update_inventory = true
         product.save!
 
         after_save_data(product, product_info, new_product_with_parent)
@@ -208,6 +209,7 @@ module MercadoLibre
 
         pull_images(product, product_info['pictures'])
 
+        product.update_facebook_product
         @ml_questions.import_inherited_questions(product) if new_product_with_parent
       end
 

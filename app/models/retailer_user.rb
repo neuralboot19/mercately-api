@@ -15,9 +15,16 @@ class RetailerUser < ApplicationRecord
 
   attr_reader :raw_invitation_token
 
-  def self.from_omniauth(auth, retailer_user)
+  def self.from_omniauth(auth, retailer_user, permissions)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
-    retailer_user.handle_page_connection
+
+    retailer_user.handle_page_connection if
+      permissions.any? { |p| p['permission'] == 'manage_pages' && p['status'] == 'granted' }
+
+    retailer_user.handle_catalog_connection if
+      permissions.any? { |p| p['permission'] == 'catalog_management' && p['status'] == 'granted' }
+
+    retailer_user.long_live_user_access_token
     retailer_user
   end
 
@@ -27,15 +34,23 @@ class RetailerUser < ApplicationRecord
       uid: uid,
       access_token: facebook_access_token
     ).find_or_create_by(retailer_id: retailer.id)
-    # TODO: manejar errores del response de facebook
+
     facebook_service = Facebook::Api.new(facebook_retailer, self)
+    facebook_service.update_retailer_access_token
+    facebook_service.subscribe_page_to_webhooks
+  end
+
+  def handle_catalog_connection
+    FacebookCatalog.find_or_create_by(retailer_id: retailer.id)
+  end
+
+  def long_live_user_access_token
+    # TODO: manejar errores del response de facebook
+    facebook_service = Facebook::Api.new(nil, self)
     response = facebook_service.long_live_user_access_token
     self.facebook_access_token = response['access_token']
     self.facebook_access_token_expiration = Time.now + response['expires_in'].seconds if response['expires_in']
     save!
-    facebook_service = Facebook::Api.new(facebook_retailer, self)
-    facebook_service.update_retailer_access_token
-    facebook_service.subscribe_page_to_webhooks
   end
 
   def active_for_authentication?

@@ -20,6 +20,7 @@ class Retailer < ApplicationRecord
 
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
+  has_one :facebook_catalog, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, uniqueness: true
@@ -172,6 +173,10 @@ class Retailer < ApplicationRecord
 
   def messenger_inactive_message
     automatic_answers.find_by(platform: :messenger, message_type: :inactive_customer, status: :active)
+  end
+
+  def retailer_user_connected_to_fb
+    retailer_users.where.not(uid: nil, provider: nil, facebook_access_token: nil).first
   end
 
   private

@@ -10,12 +10,19 @@ FactoryBot.define do
     trait :with_retailer do
       association :retailer
     end
+
     trait :admin do
       retailer_admin { true }
     end
 
     trait :agent do
       retailer_admin { false }
+    end
+
+    trait :from_fb do
+      uid { Faker::IDNumber.valid }
+      provider { 'facebook' }
+      facebook_access_token { 'EAACx6JZCO4HYBAKlbKurdBSYxgrnaZAbsxZCwA7CM8YUY8a28wD3ag5nxWfOELceZBHbZCbvuq2n5ZAs0aVA4TEAF7SwCUujvrfs1KI2VaLzruW91MCZCyXjPLuz2osZAZBPBApryz2LRVWC0DMYZCDLGrZAo9IkuhKHnBanzooxd6mrgZDZD' }
     end
   end
 end

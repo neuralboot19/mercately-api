@@ -4,7 +4,7 @@
       <div class="box">
         <div class="row">
           <%= f.hidden_field :id %>
-
+          <%= f.hidden_field :facebook_product_id %>
           <%= render 'partials/incomplete_retailer' %>
 
           <fieldset class="col-xs-12 fieldset mt-16">
@@ -27,17 +27,31 @@
               <%= f.hidden_field :category_id %>
             <% end %>
 
-            <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' &&
-              @retailer.incomplete_meli_profile? == false %>
-              <div class="my-16">
-                <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
-                <% if @product.new_record? %>
-                  <%= f.check_box :upload_product, { 'checked': true } %>
-                <% elsif @product.meli_product_id.blank? %>
-                  <%= f.check_box :upload_product %>
+            <div class="box">
+              <div class="row">
+                <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' &&
+                  @retailer.incomplete_meli_profile? == false %>
+                  <div class="col-xs-12 pl-0 col-sm-6 my-16">
+                    <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
+                    <% if @product.new_record? %>
+                      <%= f.check_box :upload_product, { 'checked': true } %>
+                    <% elsif @product.meli_product_id.blank? %>
+                      <%= f.check_box :upload_product %>
+                    <% end %>
+                  </div>
+                <% end %>
+                <% if @retailer.facebook_catalog&.connected? && (@product.new_record? || (@product.facebook_product_id.blank? && @product.connected_to_facebook == false)) && @product.status != 'archived' %>
+                  <div class="col-xs-12 pl-0 col-sm-6 my-16">
+                    <%= f.label :upload_to_facebook, 'Publicar producto en Catálogo de Facebook' %><br/>
+                    <% if @product.new_record? %>
+                      <%= f.check_box :upload_to_facebook, { 'checked': true } %>
+                    <% elsif @product.facebook_product_id.blank? %>
+                      <%= f.check_box :upload_to_facebook %>
+                    <% end %>
+                  </div>
                 <% end %>
               </div>
-            <% end %>
+            </div>
 
             <div class="box">
               <div class="row">
@@ -57,6 +71,17 @@
                 </div>
               </div>
             </div>
+
+            <% if @product.new_record? %>
+              <div class="box">
+                <div class="row">
+                  <div class="col-xs-12 pl-0 col-sm-4 my-16">
+                    <%= f.label :code, 'Código' %><br/>
+                    <%= f.text_field :code, class: 'input' %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
           </fieldset>
 
           <% if action_name == 'edit' || action_name == 'update' %>
@@ -69,20 +94,46 @@
                       <%= f.select :meli_status, Product.meli_statuses.keys.collect { |m| [ Product.enum_translation(:meli_status, m), m ]}, disabled: disabled_meli_statuses, class: 'input' %>
                     </div>
                   <% end %>
+                  <% unless @product.new_record? %>
+                    <div class="col-xs-12 col-sm-6 my-16">
+                      <%= f.label :code, 'Código' %><br/>
+                      <%= f.text_field :code, class: 'input' %>
+                  <% end %>
+                </div>
+              </div>
+            </fieldset>
+          <% end %>
+
+          <% if @retailer.facebook_catalog&.connected? %>
+            <fieldset class="col-xs-12 fieldset">
+              <legend>Características de Facebook</legend>
+              <div class="box">
+                <div class="row col-xs-12 pl-0">
+                  <div class="col-xs-12 col-md-6 my-16 pl-0">
+                    <%= f.label :brand, 'Marca' %><br/>
+                    <%= f.text_field :brand, class: 'input validate-required' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="col-xs-12 col-md-6 my-16 pl-0">
+                    <%= f.label :url, 'URL' %><br/>
+                    <%= f.text_field :url, class: 'input validate-required validate-url' %>
+                    <i class="validation-msg"></i><br />
+                    <% if @show_phone_message %>
+                      <small>Configura el teléfono de tu negocio para crear un link de WhatsApp por defecto</small>
+                    <% end %>
+                  </div>
                 </div>
               </div>
             </fieldset>
           <% end %>
 
           <fieldset class="col-xs-12 fieldset">
-            <legend>Características</legend>
+            <% if @retailer.meli_retailer %>
+              <legend>Características de Mercado Libre</legend>
+            <% else %>
+              <legend>Características</legend>
+            <% end %>
             <div class="box">
-              <div class="row col-xs-12 pl-0">
-                <div class="col-xs-12 col-md-6 my-16 pl-0">
-                  <%= f.label :code, 'Código' %><br/>
-                  <%= f.text_field :code, class: 'input' %>
-                </div>
-              </div>
               <div id="attributes-container" class="row pl-0 col-xs-12 my-16"></div>
             </div>
           </fieldset>
@@ -91,7 +142,8 @@
             <div class="box">
               <div class="col-xs-12 pl-0 my-16">
                 <%= f.label :description, 'Descripción' %>
-                <%= f.text_area :description, placeholder: '', class: 'input h-77' %>
+                <%= f.text_area :description, placeholder: '', class: 'input h-77 validate-required' %>
+                <i class="validation-msg"></i><br />
               </div>
             </div>
           </fieldset>

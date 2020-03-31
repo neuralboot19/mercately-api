@@ -40,4 +40,10 @@ class Connection
 
     put_connection
   end
+
+  def self.delete_request(connection)
+    delete_connection = connection.delete
+
+    delete_connection
+  end
 end
