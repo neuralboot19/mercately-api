@@ -1,6 +1,11 @@
 class Retailers::SettingsController < RetailersController
 
   def team
+    unless current_retailer_user.retailer_admin
+      redirect_to root_path
+      return
+    end
+
     @team = current_retailer.retailer_users.reject { |u| u == current_retailer_user }
     @user = RetailerUser.new
   end
