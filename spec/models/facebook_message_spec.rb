@@ -1,7 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe FacebookMessage, type: :model do
-  subject(:facebook_message) { create(:facebook_message) }
+  subject(:facebook_message) { create(:facebook_message, facebook_retailer: facebook_retailer) }
+
+  let!(:retailer) { create(:retailer) }
+  let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
+  let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer)}
 
   describe 'associations' do
     it { is_expected.to belong_to(:facebook_retailer) }
@@ -20,7 +24,6 @@ RSpec.describe FacebookMessage, type: :model do
     end
 
     context 'when sender and facebook retailer are the same' do
-      let(:facebook_retailer) { create(:facebook_retailer) }
       let(:facebook_msg_sent) do
         create(:facebook_message, facebook_retailer: facebook_retailer, sender_uid: facebook_retailer.uid)
       end
@@ -32,7 +35,6 @@ RSpec.describe FacebookMessage, type: :model do
   end
 
   describe '#send_facebook_message' do
-    let(:facebook_retailer) { create(:facebook_retailer) }
     let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
     let(:facebook_msg_sent) do
       create(:facebook_message, facebook_retailer: facebook_retailer, sent_from_mercately: true, text: 'Testing')

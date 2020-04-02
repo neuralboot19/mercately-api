@@ -35,9 +35,8 @@ class Retailers::MessagesController < RetailersController
     return unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
-
-    redis.publish 'new_message_counter', {identifier: '#item__cookie_question', action: 'subtract', q:
-      1, total: @retailer.unread_questions.size, room: current_retailer.id}.to_json
+    ml_helper = MercadoLibreNotificationHelper
+    ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'questions', 'subtract', 1)
   end
 
   def answer_question
@@ -72,9 +71,8 @@ class Retailers::MessagesController < RetailersController
     end
 
     total_unread = @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
-
-    redis.publish 'new_message_counter', {identifier: '#item__cookie_message', action: 'subtract', q:
-      total_unread, total: @retailer.unread_messages.size, room: current_retailer.id}.to_json
+    ml_helper = MercadoLibreNotificationHelper
+    ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'messages', 'subtract', total_unread)
   end
 
   def facebook_chats
@@ -119,9 +117,5 @@ class Retailers::MessagesController < RetailersController
 
     def set_question
       @question = Question.find_by(web_id: params[:id])
-    end
-
-    def redis
-      @redis ||= Redis.new()
     end
 end

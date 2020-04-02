@@ -76,7 +76,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
     end
 
     def after_sign_up_path_for(_resource)
-      session[:room_id] = current_retailer_user.retailer.id
+      session[:room_id] = current_retailer_user.id
       retailers_integrations_path(current_retailer_user.retailer, onboarding: true)
     end
 end

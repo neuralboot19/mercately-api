@@ -6,6 +6,18 @@ class ChatListUser extends Component {
     super(props)
   }
 
+  agentName = (agent) => {
+    if (agent) {
+      if (/^\s*$/.test(agent.email)) {
+        return 'No asignado'
+      } else {
+        return /^\s*$/.test(agent.full_name) ? 'Asignado a ' + agent.email : 'Asignado a ' + agent.full_name;
+      }
+    } else {
+      return 'No asignado';
+    }
+  }
+
   render() {
     let customer = this.props.customer
     return (
@@ -30,7 +42,10 @@ class ChatListUser extends Component {
                 {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.phone}`}
               </div>
               <div className={customer["karix_unread_message?"] ? 'fw-bold' : ''}>
-                {moment(customer.recent_message_date).locale('es').fromNow()}
+                {moment(customer.recent_message_date || customer.recent_inbound_message_date).locale('es').fromNow()}
+              </div>
+              <div>
+                <small>{this.agentName(customer.assigned_agent)}</small>
               </div>
             </div>
           )}

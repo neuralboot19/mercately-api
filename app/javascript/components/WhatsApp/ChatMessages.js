@@ -1,7 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { sendWhatsAppMessage, fetchWhatsAppMessages, sendWhatsAppImg, setWhatsAppMessageAsReaded, fetchWhatsAppTemplates } from "../../actions/whatsapp_karix";
+import {
+  sendWhatsAppMessage,
+  fetchWhatsAppMessages,
+  sendWhatsAppImg,
+  setWhatsAppMessageAsReaded,
+  fetchWhatsAppTemplates,
+  changeCustomerAgent } from "../../actions/whatsapp_karix";
 import Modal from 'react-modal';
 
 var currentCustomer = 0;
@@ -28,16 +34,17 @@ class ChatMessages extends Component {
       messageText: '',
       messages: [],
       new_message: false,
-      page: 1, 
+      page: 1,
       scrolable: false,
       load_more: false,
       can_write: true,
       isModalOpen: false,
       isTemplateSelected: false,
-      templateSelected: '', 
+      templateSelected: '',
       templateEdited: false,
       templatePage: 1,
-      auxTemplateSelected: []
+      auxTemplateSelected: [],
+      agents: []
     };
     this.bottomRef = React.createRef();
   }
@@ -296,7 +303,7 @@ class ChatMessages extends Component {
   }
 
   changeTemplateSelected = (e, id) => {
-    this.state.templateSelected.split('').map((key, index) => { 
+    this.state.templateSelected.split('').map((key, index) => {
       if (key == '*'){
         if (index == id && e.target.value && e.target.value !== '') {
           this.state.auxTemplateSelected[index] = e.target.value;
@@ -313,7 +320,7 @@ class ChatMessages extends Component {
 
   getTextInput = () => {
     let new_array = this.state.templateSelected.split('')
-    return new_array.map((key, index) => { 
+    return new_array.map((key, index) => {
       if (key == '*'){
         return <input value='' onChange={ (e) => this.changeTemplateSelected(e, index)}   /> ;
       } else {
@@ -324,7 +331,7 @@ class ChatMessages extends Component {
 
   getTextInputEdited = () => {
     let new_array = this.state.templateSelected.split('')
-    return new_array.map((key, index) => { 
+    return new_array.map((key, index) => {
       if (key == '*'){
         return <input value={this.state.auxTemplateSelected[index] === '*' ? '' : this.state.auxTemplateSelected[index] } onChange={ (e) => this.changeTemplateSelected(e, index)}   /> ;
       } else {
@@ -362,16 +369,44 @@ class ChatMessages extends Component {
     }
   }
 
+  handleAgentAssignment = () => {
+    var value = parseInt($('#agents').val());
+    var agent = this.props.agents.filter(agent => agent.id === value);
+
+    var r = confirm("Estás seguro de asignar este chat a otro agente?");
+    if (r == true) {
+      var params = {
+        agent: {
+          retailer_user_id: agent[0] ? agent[0].id : null
+        }
+      };
+
+      this.props.customerDetails.assigned_agent.id = value;
+      this.props.changeCustomerAgent(this.props.currentCustomer, params, csrfToken);
+    }
+  }
+
   render() {
 
     if (this.state.templateEdited == false){
-      screen = this.getTextInput();  
+      screen = this.getTextInput();
     } else {
       screen = this.getTextInputEdited();
-    }    
+    }
 
     return (
       <div className="row bottom-xs">
+        { this.props.currentCustomer != 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+          (<div className="top-chat-bar">
+            Asignado a:&nbsp;&nbsp;
+            <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={() => this.handleAgentAssignment()}>
+              <option value="">No asignado</option>
+              {this.props.agents.map((agent) => (
+                <option value={agent.id}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
+              ))}
+            </select>
+          </div>
+          )}
         {this.state.isImgModalOpen && (
           <div className="img_modal">
             <div className="img_modal__overlay" onClick={(e) => this.toggleImgModal(e)}>
@@ -417,10 +452,10 @@ class ChatMessages extends Component {
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
 
-        { this.props.currentCustomer != 0 && this.state.can_write &&
+        { this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
           <div className="col-xs-12">
             <div className="text-input">
-              <textarea name="messageText" placeholder="Mensaje" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+              <textarea name="messageText" placeholder="Mensajes" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
               <input id="attach" className="d-none" type="file" name="messageImg" accept="image/jpg, image/jpeg, image/png" onChange={(e) => this.handleImgSubmit(e)}/>
               <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
               <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
@@ -429,9 +464,15 @@ class ChatMessages extends Component {
           </div>
         }
 
-        { this.props.currentCustomer != 0 && !this.state.can_write &&
+        { this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
           <div className="col-xs-12">
             <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={(e) => this.toggleModal() }   >plantilla</a>.</p>
+          </div>
+        }
+
+        { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId &&
+          <div className="col-xs-12">
+            <p>Esta conversación ya ha sido asignada a otro usuario.</p>
           </div>
         }
 
@@ -444,7 +485,7 @@ class ChatMessages extends Component {
               <button onClick={(e) => this.toggleModal()}>Cerrar</button>
             </div>
           </div>
-          { !this.state.isTemplateSelected ? 
+          { !this.state.isTemplateSelected ?
             (
               <div>
                 {this.props.templates.map((template) => (
@@ -492,6 +533,7 @@ function mapStateToProps(state) {
     total_pages: state.total_pages || 0,
     templates: state.templates || [],
     total_template_pages: state.total_template_pages || 0,
+    agents: state.agents || []
   };
 }
 
@@ -511,6 +553,9 @@ function mapDispatch(dispatch) {
     },
     fetchWhatsAppTemplates: (page = 1, token) => {
       dispatch(fetchWhatsAppTemplates(page, token));
+    },
+    changeCustomerAgent: (id, body, token) => {
+      dispatch(changeCustomerAgent(id, body, token));
     }
   };
 }

@@ -97,6 +97,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :customers, only: [:index, :show, :update]
 
+      put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
+
       get 'customers/:id/messages', to: 'customers#messages', as: :customer_messages
       post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
       post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img

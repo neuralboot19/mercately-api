@@ -1,6 +1,9 @@
 class Customer < ApplicationRecord
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
+  has_one :agent_customer
+  has_one :agent, class_name: 'RetailerUser', source: 'retailer_user', through: :agent_customer
+
   has_many :orders, dependent: :destroy
 
   has_many :orders_pending, -> { pending }, class_name: 'Order', inverse_of: :customer
@@ -133,6 +136,14 @@ class Customer < ApplicationRecord
         csv << attributes.map { |attr| customer.send(attr) }
       end
     end
+  end
+
+  def assigned_agent
+    {
+      id: agent&.id || '',
+      full_name: agent&.full_name || '',
+      email: agent&.email || ''
+    }
   end
 
   private

@@ -4,7 +4,10 @@ require 'vcr'
 RSpec.describe Facebook::Messages, vcr: true do
   subject(:messages_service) { described_class.new(facebook_retailer) }
 
-  let(:facebook_retailer) { create(:facebook_retailer) }
+  let!(:retailer) { create(:retailer) }
+  let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
+  let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer)}
+
   let(:customer) { create(:customer, retailer: facebook_retailer.retailer, psid: message_data_save['sender']['id']) }
   let(:message_id) { 'm_5zQXER3IeTxCOXaHhNOhD0OUElOLpk3ODw-8fGJl54d3iTker4IqLmXsMnseIWB5jfv61RUW9yCCJdOcqegr2w' }
 

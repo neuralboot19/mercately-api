@@ -18,4 +18,10 @@ class RetailerMailer < ApplicationMailer
     attachments['customers.csv'] = { mime_type: 'text/csv', content: csv_file }
     mail to: retailer_email, subject: 'Mercately Exportación de Clientes Completa'
   end
+
+  def chat_assignment_notification(agent_customer, retailer_user)
+    @agent_customer = agent_customer
+    @retailer_user = retailer_user
+    mail to: agent_customer.retailer_user.email, subject: 'Nuevo chat asignado'
+  end
 end

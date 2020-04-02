@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Retailers::PagesController, type: :controller do
-  let(:retailer_user) { create(:retailer_user, first_name: '', last_name: '' ) }
+  let(:retailer_user) { create(:retailer_user, :with_retailer, first_name: '', last_name: '' ) }
 
   before do
     sign_in retailer_user

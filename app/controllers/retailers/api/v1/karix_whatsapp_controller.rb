@@ -25,7 +25,8 @@ module Retailers::Api::V1
       message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
       message.save
 
-      karix_helper.broadcast_data(current_retailer, message)
+      agents = message.customer.agent.present? ? [message.customer.agent] : current_retailer.retailer_users.to_a
+      karix_helper.broadcast_data(current_retailer, agents, message)
       set_response(200, 'Ok', format_response(response['objects'][0]))
     end
 

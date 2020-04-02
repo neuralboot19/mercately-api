@@ -41,7 +41,7 @@
                   </div>
                   <div class="col-xs-12 col-sm-6">
                     <label class="c-grey fs-14">Teléfono:</label> <span class="c-secondary fs-14"><%= @customer.phone %></span>
-                    <% if @customer.retailer.whats_app_enabled && @customer.phone.present? && @customer.phone[0] == '+' %><br />
+                    <% if can_send_whatsapp_notification?(current_retailer_user, @customer) %>
                       <label for="modal--toggle" class="request-demo-label fz-15 ws-contact d-none">
                       <i class="fab fa-whatsapp fz-16 mr-5"></i>
                       Enviar Notificación

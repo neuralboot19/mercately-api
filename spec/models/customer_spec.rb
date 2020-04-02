@@ -4,6 +4,7 @@ RSpec.describe Customer, type: :model do
   subject(:customer) { create(:customer) }
 
   describe 'associations' do
+    it { is_expected.to have_one(:agent_customer) }
     it { is_expected.to belong_to(:retailer) }
     it { is_expected.to belong_to(:meli_customer).optional }
     it { is_expected.to have_many(:orders).dependent(:destroy) }
@@ -186,6 +187,39 @@ RSpec.describe Customer, type: :model do
   describe '#to_param' do
     it 'returns the customer web_id' do
       expect(customer.to_param).to eq(customer.web_id)
+    end
+  end
+
+  describe '#assigned_agent' do
+    context 'when the customer is assigned to an agent' do
+      let(:retailer_user) { create(:retailer_user, :with_retailer) }
+      let(:agent_customer) { create(:agent_customer, retailer_user: retailer_user, customer: subject) }
+
+      let(:response) do
+        {
+          id: agent_customer.retailer_user.id,
+          full_name: agent_customer.retailer_user.full_name,
+          email: agent_customer.retailer_user.email
+        }
+      end
+
+      it 'returns the agent information' do
+        expect(agent_customer.customer.assigned_agent).to eq(response)
+      end
+    end
+
+    context 'when the customer is not assigned to an agent' do
+      let(:response) do
+        {
+          id: '',
+          full_name: '',
+          email: ''
+        }
+      end
+
+      it 'returns an empty object' do
+        expect(customer.assigned_agent).to eq(response)
+      end
     end
   end
 end

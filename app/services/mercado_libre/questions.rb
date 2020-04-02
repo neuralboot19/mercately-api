@@ -37,8 +37,8 @@ module MercadoLibre
       )
 
       if new_question
-        redis.publish 'new_message_counter', {identifier: '#item__cookie_question', action: 'add', total:
-          @retailer.unread_questions.size, room: @retailer.id}.to_json
+        ml_helper = MercadoLibreNotificationHelper
+        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'questions', 'add', 1)
       end
     end
 
@@ -84,10 +84,6 @@ module MercadoLibre
           access_token: @meli_retailer.access_token
         }
         "https://api.mercadolibre.com/answers?#{params.to_query}"
-      end
-
-      def redis
-        @redis ||= Redis.new()
       end
   end
 end

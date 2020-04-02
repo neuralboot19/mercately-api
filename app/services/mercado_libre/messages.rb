@@ -70,8 +70,8 @@ module MercadoLibre
       def insert_notification(is_an_answer, action, total_unread)
         return if is_an_answer
 
-        redis.publish 'new_message_counter', {identifier: '#item__cookie_message', action: action, q:
-          total_unread, total: @retailer.unread_messages.size, room: @retailer.id}.to_json
+        ml_helper = MercadoLibreNotificationHelper
+        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'messages', action, total_unread)
       end
 
       def prepare_message_answer(message)
@@ -105,10 +105,6 @@ module MercadoLibre
         }
         "https://api.mercadolibre.com/messages/packs/#{message.order.pack_id || message.order.meli_order_id}/" \
           "sellers/#{@meli_retailer.meli_user_id}?#{params.to_query}"
-      end
-
-      def redis
-        @redis ||= Redis.new()
       end
   end
 end

@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Customers', type: :request do
-  let(:retailer) { create(:retailer) }
-  let(:retailer_user) { create(:retailer_user, retailer: retailer) }
-  let(:facebook_retailer) { create(:facebook_retailer, retailer: retailer)}
+  let!(:retailer) { create(:retailer) }
+  let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
+  let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer)}
 
-  let(:customer1) { create(:customer, :from_fb, retailer: retailer) }
-  let(:customer2) { create(:customer, :from_fb, retailer: retailer) }
+  let!(:customer1) { create(:customer, :from_fb, retailer: retailer) }
+  let!(:customer2) { create(:customer, :from_fb, retailer: retailer) }
 
   before do
     # Facebook messages for customer1 and customer2
