@@ -7,26 +7,181 @@ RSpec.describe MercadoLibre::Products, vcr: true do
   let(:retailer) { meli_retailer.retailer }
   let(:meli_retailer) { create(:meli_retailer) }
   let(:category) { create(:category, meli_id: 'MEC1368') }
+  let(:category_imported) { create(:category, meli_id: 'MEC1649') }
+  let(:set_ml_categories) { instance_double(MercadoLibre::Categories) }
+
   let(:meli_id_uri) do
     URI("https://api.mercadolibre.com/users/#{meli_retailer.meli_user_id}/items/search?" \
       'status=active&limit=1&orders=last_updated_desc&' \
       "access_token=#{meli_retailer.access_token}")
   end
+
   let(:picture_id_uri) do
     URI('https://api.mercadolibre.com/items/' \
       "#{meli_product_id}/?access_token=#{meli_retailer.access_token}")
   end
+
   let(:meli_product_id) do
     VCR.use_cassette('products/last_product_updated_id') do
       response = JSON.parse(Net::HTTP.get_response(meli_id_uri).body)
       response['results'].first
     end
   end
+
   let(:main_image_id) do
     VCR.use_cassette('products/get_item_main_image') do
       response = JSON.parse(Net::HTTP.get_response(picture_id_uri).body)
       response['pictures'].first['id']
     end
+  end
+
+  let(:product_response) do
+    {
+      'id': 'MEC424912703',
+      'site_id': 'MEC',
+      'title': 'Computadora',
+      'subtitle': nil,
+      'seller_id': 471889087,
+      'category_id': 'MEC1649',
+      'official_store_id': nil,
+      'price': nil,
+      'base_price': nil,
+      'original_price': nil,
+      'inventory_id': nil,
+      'currency_id': 'USD',
+      'initial_quantity': 9,
+      'available_quantity': 9,
+      'sold_quantity': 0,
+      'sale_terms': [],
+      'buying_mode': 'buy_it_now',
+      'listing_type_id': 'free',
+      'start_time': '2020-03-06T01:39:10.000Z',
+      'stop_time': '2020-05-04T04:00:00.000Z',
+      'end_time': '2020-05-04T04:00:00.000Z',
+      'expiration_time': nil,
+      'condition': 'new',
+      'permalink': 'https://articulo.mercadolibre.com.ec/MEC-424912703-computadora-_JM',
+      'thumbnail': 'http://mec-s2-p.mlstatic.com/963548-MEC41018006190_032020-I.jpg',
+      'secure_thumbnail': 'https://mec-s2-p.mlstatic.com/963548-MEC41018006190_032020-I.jpg',
+      'pictures': [
+        {
+          'id': '963548-MEC41018006190_032020',
+          'url': 'http://mec-s2-p.mlstatic.com/963548-MEC41018006190_032020-O.jpg',
+          'secure_url': 'https://mec-s2-p.mlstatic.com/963548-MEC41018006190_032020-O.jpg',
+          'size': '500x430',
+          'max_size': '500x430',
+          'quality': ''
+        }
+      ],
+      'video_id': nil,
+      'descriptions': [
+        {
+          'id': 'MEC424912703-2552817158'
+        }
+      ],
+      'accepts_mercadopago': false,
+      'non_mercado_pago_payment_methods': [],
+      'shipping': {
+        'mode': 'not_specified',
+        'methods': [],
+        'tags': [],
+        'dimensions': nil,
+        'local_pick_up': false,
+        'free_shipping': false,
+        'logistic_type': 'not_specified',
+        'store_pick_up': false
+      },
+      'international_delivery_mode': 'none',
+      'seller_address': {
+        'address_line': 'Test Address 123',
+        'city': {
+          'name': 'Quito'
+        },
+        'state': {
+          'id': 'EC-P',
+          'name': 'Pichincha ( Quito )'
+        },
+        'country': {
+          'id': 'EC',
+          'name': 'Ecuador'
+        },
+        'id': 1065793801
+      },
+      'seller_contact': nil,
+      'location': {},
+      'coverage_areas': [],
+      'attributes': [
+        {
+          'id': 'ITEM_CONDITION',
+          'name': 'Condición del ítem',
+          'value_id': '2230284',
+          'value_name': 'Nuevo',
+          'value_struct': nil,
+          'values': [
+            {
+              'id': '2230284',
+              'name': 'Nuevo',
+              'struct': nil
+            }
+          ],
+          'attribute_group_id': '',
+          'attribute_group_name': ''
+        },
+        {
+          'id': 'BRAND',
+          'name': 'Marca',
+          'value_id': nil,
+          'value_name': 'Samsumg',
+          'value_struct': nil,
+          'values': [
+            {
+              'id': nil,
+              'name': 'Samsumg',
+              'struct': nil
+            }
+          ],
+          'attribute_group_id': 'OTHERS',
+          'attribute_group_name': 'Otros'
+        }
+      ],
+      'warnings': [],
+      'listing_source': '',
+      'variations': [],
+      'status': 'active',
+      'sub_status': [],
+      'tags': [
+        'good_quality_picture',
+        'test_item'
+      ],
+      'warranty': nil,
+      'catalog_product_id': nil,
+      'domain_id': 'MEC-DESKTOP_COMPUTERS',
+      'seller_custom_field': nil,
+      'parent_item_id': nil,
+      'differential_pricing': nil,
+      'deal_ids': [],
+      'automatic_relist': false,
+      'date_created': '2020-03-06T01:39:10.000Z',
+      'last_updated': '2020-03-13T15:48:38.507Z',
+      'health': nil,
+      'catalog_listing': false,
+      'item_relations': []
+    }.with_indifferent_access
+  end
+
+  let(:product_description) do
+    {
+      'text': '',
+      'plain_text': 'PC escritorio buena y muy confiable.',
+      'last_updated': '2020-03-06T13:51:55.000Z',
+      'date_created': '2020-03-06T01:39:10.000Z',
+      'snapshot': {
+        'url': 'http://descriptions.mlstatic.com/D-MEC424912703.jpg?hash=8520c3b8559cb08aa7e782b8f5334ffe_0x0',
+        'width': 0,
+        'height': 0,
+        'status': ''
+      }
+    }.with_indifferent_access
   end
 
   describe '#search_items' do
@@ -127,6 +282,37 @@ RSpec.describe MercadoLibre::Products, vcr: true do
 
           expect(product.reload.images.size).to eq(1)
         end
+      end
+    end
+
+    context 'when the price of the product is null' do
+      it 'does not save the product' do
+        allow(set_ml_categories).to receive(:import_category)
+          .with(anything).and_return(category_imported)
+        allow(MercadoLibre::Categories).to receive(:new).with(retailer)
+          .and_return(set_ml_categories)
+        allow_any_instance_of(Product).to receive(:attach_image).and_return(true)
+        allow_any_instance_of(described_class).to receive(:import_product_description)
+          .and_return(product_description)
+        allow(Connection).to receive(:get_request).and_return(product_response)
+
+        expect { products_service.pull_update(product_response['id']) }.to change(Product, :count).by(0)
+      end
+    end
+
+    context 'when the price of the product is not null' do
+      it 'saves the product' do
+        allow(set_ml_categories).to receive(:import_category)
+          .with(anything).and_return(category_imported)
+        allow(MercadoLibre::Categories).to receive(:new).with(retailer)
+          .and_return(set_ml_categories)
+        allow_any_instance_of(Product).to receive(:attach_image).and_return(true)
+        allow_any_instance_of(described_class).to receive(:import_product_description)
+          .and_return(product_description)
+        allow(Connection).to receive(:get_request).and_return(product_response)
+
+        product_response['price'] = 150
+        expect { products_service.pull_update(product_response['id']) }.to change(Product, :count).by(1)
       end
     end
   end
@@ -257,6 +443,29 @@ RSpec.describe MercadoLibre::Products, vcr: true do
           response = JSON.parse(Net::HTTP.get_response(uri).body)
           expect(response['status']).to eq('closed')
         end
+      end
+    end
+  end
+
+  describe '#save_product' do
+    before do
+      allow(set_ml_categories).to receive(:import_category)
+        .with(anything).and_return(category_imported)
+      allow(MercadoLibre::Categories).to receive(:new).with(retailer)
+        .and_return(set_ml_categories)
+      allow_any_instance_of(Product).to receive(:attach_image).and_return(true)
+    end
+
+    context 'when the price of the product is null' do
+      it 'does not save the product' do
+        expect { products_service.save_product(product_response, product_description) }.to change(Product, :count).by(0)
+      end
+    end
+
+    context 'when the price of the product is not null' do
+      it 'saves the product' do
+        product_response['price'] = 150
+        expect { products_service.save_product(product_response, product_description) }.to change(Product, :count).by(1)
       end
     end
   end
