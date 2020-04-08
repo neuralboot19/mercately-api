@@ -16,7 +16,18 @@
 
             <fieldset class="fieldset mt-16">
               <legend>Información del comercio</legend>
+
               <%= f.fields_for :retailer, f.object.retailer || f.object.build_retailer do |retailer| %>
+                <% if retailer.object.avatar.attached? %>
+                  <%= cl_image_tag("#{retailer.object.avatar.key}", :transformation => { :width => 200, :crop => "pad" }) %>
+                <% end %>
+                <div class="my-16">
+                  <%= retailer.file_field :avatar, class: 'uploadedImages', accept: 'image/jpg, image/jpeg, image/png' %>
+                  <label class='btn btn--cta' for="retailer_user_retailer_attributes_avatar">
+                    <i class="fas fa-upload mr-5"></i>
+                    <%= retailer.object.avatar.attached? ? 'Actualizar' : 'Agregar' %> Logotipo del Comercio
+                  </label>
+                </div>
                 <div class="my-16">
                   <%= retailer.label :name, 'Nombre del comercio' %>
                   <%= retailer.text_field :name, autofocus: true, class: 'input' %>

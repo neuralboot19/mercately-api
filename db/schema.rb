@@ -94,7 +94,6 @@ ActiveRecord::Schema.define(version: 2020_03_30_171457) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
-    t.integer "is_client", default: 0, null: false
     t.text "notes"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end

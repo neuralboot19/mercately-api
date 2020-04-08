@@ -7,6 +7,7 @@ class Retailer < ApplicationRecord
   has_one :retailer_user, dependent: :destroy
   has_one :facebook_retailer, dependent: :destroy
   has_one :payment_plan, dependent: :destroy
+  has_one_attached :avatar
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
   has_many :retailer_users, dependent: :destroy
@@ -22,6 +23,10 @@ class Retailer < ApplicationRecord
   after_create :send_to_mailchimp
   before_create :format_phone_number
   after_create :send_welcome_ws
+
+  validates :slug,
+            exclusion: { in: %w(www),
+            message: "%{value} is reserved." }
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -78,6 +83,10 @@ class Retailer < ApplicationRecord
     update_attributes(api_key: api_key, last_api_key_modified_date: Time.zone.now)
 
     api_key
+  end
+
+  def public_phone_number
+    karix_whatsapp_phone || phone_number
   end
 
   private

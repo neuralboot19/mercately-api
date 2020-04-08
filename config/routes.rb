@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
-  root 'pages#index'
+  constraints(SubdomainRoutes) do
+    root to: 'pages#index'
+  end
+
+  constraints(!SubdomainRoutes) do
+    root to: 'pages#catalog'
+    get '/:web_id', to: 'pages#product', as: :product_catalog
+  end
 
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',

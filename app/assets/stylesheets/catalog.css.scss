@@ -1,0 +1,141 @@
+@import 'flexboxgrid';
+@import 'font_awesome5_webfont';
+
+/*Header*/
+
+.catalog-header{
+	text-align: center;
+}
+
+.catalog-header .shop-logo img{
+	width: 200px;
+}
+
+.catalog-header .shop-name {
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.catalog-header .shop-name span {
+	text-transform: uppercase;
+	color: #25262a;
+	letter-spacing: .2em;
+	font-size: 20px;
+	padding-left: 10px;
+	padding-right: 10px;
+	border: 2px solid #25262a;
+}
+
+
+
+/* Product info*/
+
+.product-card{
+	box-shadow: 0 0 30px -10px rgba(0, 0, 0, 0.1);
+	background: #fff;
+	border: 1px solid #dee2e6 !important;
+	text-align: center;
+	height: 100%;
+	margin-bottom: 25px;
+	padding: 25px;
+}
+
+.product_info{
+	line-height: 1.7;
+	color: #8c92a0;
+	font-weight: 300;
+	font-size: 16px;	
+}
+
+.product_image img {
+	max-width: 100%;
+	height: 150px;
+}
+
+.product_info h3 {
+	font-size: 20px;
+	margin-bottom: 0;
+	height: 30px;
+	line-height: 20px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.product_info .product_description {
+	line-height: 1.7;
+	color: #8c92a0;
+	font-weight: 300;
+	font-size: 14px;
+	letter-spacing: 0.8px;
+	margin: 0;
+	height: 100px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.product_info .product_price {
+	line-height: 1.7;
+	font-size: 15px;
+	color: #7971ea;
+	font-weight: bold;
+	letter-spacing: 0.75px;
+	margin: -5px 0 0 0;
+} 
+
+.product_info h3 a {
+	color: #7971ea;
+	text-decoration: none;
+	background-color: transparent;
+	height: 130px;
+}
+
+/* Product Show*/
+
+.product-image-holder{
+	height: 500px;
+	text-align: center;		
+}
+
+.product-image-holder img {
+	max-width: 100%;
+	height: 250px;
+}
+
+.product-info-holder h2{
+	margin: 0px;
+	margin-bottom: 0.5rem;
+	font-family: inherit;
+	font-weight: 500;
+	line-height: 1.2;
+}
+
+.product-info-holder small {
+	font-size: 10px;
+}
+
+.product-info-description{
+	line-height: 1.7;
+  color: #8c92a0;
+  font-weight: 300;
+  font-size: 16px;
+  max-height: 200px
+}
+
+.product-info-price {
+	line-height: 1.7;
+	font-size: 15px;
+	color: #7971ea;
+	font-weight: bold;
+	letter-spacing: 0.75px;
+}
+    
+.product-info-contact-btn a{
+	width: 200px;
+  background-color: #25D366;
+  padding: 13px 50px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+}
