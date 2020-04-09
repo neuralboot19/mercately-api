@@ -1,12 +1,6 @@
 Rails.application.routes.draw do
-  constraints(SubdomainRoutes) do
-    root to: 'pages#index'
-  end
+  root to: 'pages#index'
 
-  constraints(!SubdomainRoutes) do
-    root to: 'pages#catalog'
-    get '/:web_id', to: 'pages#product', as: :product_catalog
-  end
 
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
@@ -31,6 +25,8 @@ Rails.application.routes.draw do
   get '/terminos', to: 'pages#terms', as: :terms
   get '/precios', to: 'pages#price', as: :pricing
   get '/crm', to: 'pages#crm', as: :crm
+  get '/:slug/catalog/:web_id', to: 'pages#product', as: :product_catalog
+  get '/:slug/catalog', to: 'pages#catalog', as: :catalog
 
   namespace :retailers do
     namespace :api, defaults: { format: :json } do

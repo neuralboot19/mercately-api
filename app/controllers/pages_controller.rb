@@ -1,6 +1,5 @@
 class PagesController < ApplicationController
   layout 'catalog', only: [:catalog, :product]
-  before_action :ensure_subdomain, only: [:catalog, :product]
   before_action :set_retailer, only: [:catalog, :product]
 
   def index
@@ -45,6 +44,6 @@ class PagesController < ApplicationController
   private
 
     def set_retailer
-      @retailer = Retailer.find_by_slug(request.subdomain)
+      @retailer = Retailer.find_by_slug(params[:slug])
     end
 end

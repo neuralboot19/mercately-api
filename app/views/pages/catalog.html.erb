@@ -16,7 +16,7 @@
             <div class="product_info">
               <!-- Card header text -->
               <h3>
-                <%= link_to product.title, product_catalog_url(product.web_id)  %>
+                <%= link_to product.title, product_catalog_url(@retailer.slug, product.web_id)  %>
               </h3>
               <!-- Card header subtitle -->
               <p class="product_description"><%= product.description %></p>
