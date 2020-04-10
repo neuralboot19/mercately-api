@@ -25,8 +25,7 @@ Rails.application.routes.draw do
   get '/terminos', to: 'pages#terms', as: :terms
   get '/precios', to: 'pages#price', as: :pricing
   get '/crm', to: 'pages#crm', as: :crm
-  get '/:slug/:web_id', to: 'pages#product', as: :product_catalog
-  get '/:slug', to: 'pages#catalog', as: :catalog
+
 
   namespace :retailers do
     namespace :api, defaults: { format: :json } do
@@ -116,4 +115,7 @@ Rails.application.routes.draw do
       resources :karix_whatsapp_templates, only: [:index]
     end
   end
+
+  get '/:slug/:web_id', to: 'pages#product', as: :product_catalog
+  get '/:slug', to: 'pages#catalog', as: :catalog
 end
