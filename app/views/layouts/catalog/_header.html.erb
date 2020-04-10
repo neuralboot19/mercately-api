@@ -1,0 +1,10 @@
+<div class="catalog-header">
+	<% if @retailer.avatar.attached? %>
+	  <div class="shop-logo">
+	  	<%= cl_image_tag("#{@retailer.avatar.key}", :transformation => { :width => 200, :crop => "pad" }) %>	
+	  </div>
+	  <div class="shop-name">
+	  	<span><%= @retailer.name %></span>
+	  </div>
+	<% end %>
+</div>

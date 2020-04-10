@@ -1,0 +1,27 @@
+<div class="site-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="product-image-holder">
+          <% if @product.images.attached? %>
+            <%= cl_image_tag("#{@product.images.find(@product.main_picture_id || @product.images.first.id).key}", :transformation => { :width => 500, :crop => "pad" }) %>
+          <% else %>
+            <i class="fas fa-camera-retro fs-40 c-grey"></i>
+          <% end %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="product-info-holder">
+          <h2 class="text-black"><%= @product.title %></h2>
+          <small><%= pluralize(@product.available_quantity < 0 ? 0 : @product.available_quantity, 'Disponible', 'Disponibles') %></small>
+          <div class="product-info-description">
+            <p><%= @product.description %></p>
+          </div>
+          <p class="product-info-price"><strong class="text-primary h4">$<%= @product.price.to_f.round(2) %></strong></p>
+          <p class="product-info-contact-btn"><a href="https://api.whatsapp.com/send?l=es&phone=<%= @product.retailer.public_phone_number %>" target="blank" class="buy-now btn btn-sm btn-primary"><i class="fab fa-whatsapp"></i> Contactar Tienda</a></p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
