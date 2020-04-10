@@ -26,6 +26,8 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
                end
 
     if is_valid
+      avatar = account_update_params[:retailer_attributes][:avatar] || nil
+      current_retailer.avatar.attach(avatar) if avatar.present?
       set_flash_message :notice, :updated
       bypass_sign_in(current_retailer_user) if changed_password
       redirect_to after_update_path_for(current_retailer_user)
@@ -57,7 +59,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
                                           :last_name,
                                           :password,
                                           :password_confirmation,
-                                          retailer_attributes: [:id, :name, :retailer_number]
+                                          retailer_attributes: [:id, :avatar, :name, :retailer_number]
                                         ])
     end
 
