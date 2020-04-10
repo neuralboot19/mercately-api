@@ -1,33 +1,33 @@
 <div class="container">
-  <div class="row">
-    <% @products.each do |product| %>
-      <div class="col-md-4">
-        <div class="space_wrapper">
-          <div class="product-card">
-            <figure class="product_image">
-              <%= link_to product_catalog_url(@retailer.slug, product.web_id) do %>
-                <% if product.images.attached? %>
-                  <%= cl_image_tag("#{product.images.find(product.main_picture_id || product.images.first.id).key}", :transformation => { :width => 500, :crop => "pad" }) %>
-                <% else %>
-                  <i class="fas fa-camera-retro fs-40 c-grey"></i>
+  <% @products.each_slice(3) do |slice| %>
+    <div class="row">
+      <% slice.each do |product| %>
+        <div class="col-md-4">
+          <div class="space_wrapper">
+            <div class="product-card">
+              <figure class="product_image">
+                <%= link_to product_catalog_url(@retailer.slug, product.web_id) do %>
+                  <% if product.images.attached? %>
+                    <%= cl_image_tag("#{product.images.find(product.main_picture_id || product.images.first.id).key}", :transformation => { :width => 500, :crop => "pad" }) %>
+                  <% else %>
+                    <i class="fas fa-camera-retro fs-40 c-grey"></i>
+                  <% end %>
                 <% end %>
-              <% end %>
-            </figure>
-            <div class="product_info">
-              <!-- Card header text -->
-              <h3>
-                <%= link_to product.title, product_catalog_url(@retailer.slug, product.web_id)  %>
-              </h3>
-              <!-- Card header subtitle -->
-              <p class="product_description"><%= product.description %></p>
-              <!-- Card price -->
-              <p class="product_price">$<%= product.price.to_f.round(2) %></p>
+              </figure>
+              <div class="product_info">
+                <!-- Card header text -->
+                <h3>
+                  <%= link_to product.title, product_catalog_url(@retailer.slug, product.web_id)  %>
+                </h3>
+                <!-- Card header subtitle -->
+                <p class="product_description"><%= product.description %></p>
+                <!-- Card price -->
+                <p class="product_price">$<%= product.price.to_f.round(2) %></p>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    <% end %>
-  <div>
-</div>
-
-
+        </div >
+      <% end %>
+    </div>
+  <% end %>
+</div> 

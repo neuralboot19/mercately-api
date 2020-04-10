@@ -1,4 +1,4 @@
-@import 'flexboxgrid';
+@import "bootstrap";
 @import 'font_awesome5_webfont';
 
 /*Header*/
@@ -30,7 +30,7 @@
 
 /* Product info*/
 
-.product-card{
+.product-card {
 	box-shadow: 0 0 30px -10px rgba(0, 0, 0, 0.1);
 	background: #fff;
 	border: 1px solid #dee2e6 !important;
@@ -94,7 +94,6 @@
 /* Product Show*/
 
 .product-image-holder{
-	height: 500px;
 	text-align: center;		
 }
 
@@ -130,12 +129,41 @@
 	font-weight: bold;
 	letter-spacing: 0.75px;
 }
+
+.product-info-contact-btn {
+		text-align: center;
+	}
     
 .product-info-contact-btn a{
-	width: 200px;
+	width: 50%;
   background-color: #25D366;
   padding: 13px 50px;
   border-radius: 5px;
   color: white;
   text-decoration: none;
+  border-color: #25D366 !important
 }
+
+.product-info-contact-btn a:hover {
+  border-color: #25D366 !important;
+  background-color: #25D366;
+}
+
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+	.product-image-holder{
+		height: 500px;
+	}
+
+	.product-info-contact-btn {
+		text-align: left
+	}
+
+	.product-info-contact-btn a{
+		width: 250px;
+	}
+
+
+}
+
