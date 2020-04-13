@@ -87,6 +87,9 @@ function validateForm(e, form) {
 
   // checks es un arreglo de booleans que vigila si todas las validaciones pasaron
   checks = [];
+  if (form.id === 'new_product' || form.id.indexOf('edit_product') !== -1) {
+    productCondition = document.getElementById('product_condition');
+  }
 
   document.querySelectorAll(`#${form.id} input, #${form.id} textarea`).forEach(function(input) {
     // inputChecks es un arreglo de booleans que vigila si todas las validaciones del input pasaron
@@ -104,6 +107,12 @@ function validateForm(e, form) {
       if (input.classList.contains('validate-email')) {
         checks.push(validateEmail(input));
         inputChecks.push(validateEmail(input));
+      }
+      if (input.classList.contains('new-required-item-field')) {
+        if (productCondition.value === 'new_product') {
+          checks.push(inputRequired(input));
+          inputChecks.push(inputRequired(input));
+        }
       }
 
       if (!inputChecks.includes(false)) setInputValid(input);

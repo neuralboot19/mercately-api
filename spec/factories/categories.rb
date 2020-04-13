@@ -6,7 +6,7 @@ FactoryBot.define do
       [{
         "name": 'Marca',
         "tags": {
-          "catalog_required": true
+          "new_required": true
         },
         "hierarchy": 'PARENT_PK',
         "attribute_group_name": 'Otros',

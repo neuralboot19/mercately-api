@@ -36,7 +36,7 @@ RSpec.describe Category, type: :model do
          'id' => 'BRAND',
          'name' => 'Marca',
          'relevance' => 1,
-         'tags' => { 'catalog_required' => true },
+         'tags' => { 'new_required' => true },
          'value_max_length' => 255,
          'value_type' => 'string' },
        { 'attribute_group_id' => 'OTHERS',
