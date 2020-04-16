@@ -10,8 +10,29 @@
 // Active Admin's got SASS!
 @import "active_admin/mixins";
 @import "active_admin/base";
+@import "active_admin/searchable_select";
 
 // Overriding any non-variable SASS must be done after the fact.
 // For example, to change the default status-tag color:
 //
 //   .status_tag { background: #6090DB; }
+
+form fieldset.actions a.action {
+  border-radius: 200px;
+  display: inline-block;
+  font-weight: bold;
+  line-height: 12px;
+  margin-right: 3px;
+  padding: 7px 16px 6px;
+  text-decoration: none;
+  background-image: linear-gradient(180deg, #FFFFFF, #E7E7E7);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1), 0 1px 0 0 rgba(255, 255, 255, 0.8) inset;
+  border: solid 1px #c7c7c7;
+  text-shadow: #fff 0 1px 0;
+  color: #5E6469;
+
+  &:hover {
+    background-color: #FFFFFF;
+    background-image: linear-gradient(180deg, #FFFFFF, #F1F1F1);
+  }
+}
