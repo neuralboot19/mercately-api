@@ -12,6 +12,7 @@ FactoryBot.define do
     updated_time { "2020-01-17 15:16:14" }
     status { "MyString" }
     direction { "MyString" }
+    message_type { 'notification' }
     retailer
     customer
   end

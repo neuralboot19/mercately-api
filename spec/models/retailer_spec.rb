@@ -186,4 +186,17 @@ RSpec.describe Retailer, type: :model do
       expect(retailer.admin).to eq(retailer_user_admin)
     end
   end
+
+  describe '#positive_balance?' do
+    it 'will return true if ws_balance >= 0.0672' do
+      retailer.save
+      expect(retailer.positive_balance?).to eq(true)
+    end
+
+    it 'will return false if ws_balance < 0.0672' do
+      retailer.ws_balance = 0.05
+      retailer.save
+      expect(retailer.positive_balance?).to eq(false)
+    end
+  end
 end

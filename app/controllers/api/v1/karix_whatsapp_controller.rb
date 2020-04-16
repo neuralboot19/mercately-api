@@ -1,6 +1,7 @@
 class Api::V1::KarixWhatsappController < ApplicationController
   include CurrentRetailer
   before_action :authenticate_retailer_user!, except: :save_message
+  before_action :validate_balance, only: [:create, :send_file]
   before_action :set_customer, only: [:messages, :send_file, :message_read]
   protect_from_forgery :only => [:save_message]
 
@@ -97,9 +98,9 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
       agents = message.customer.agent.present? ? [message.customer.agent] : retailer.retailer_users.to_a
       karix_helper.broadcast_data(retailer, agents, message) if message.persisted?
-      render status: 200, json: { message: 'succesful' }
+      render status: 200, json: { message: 'Succesful' }
     else
-      render status: 404, json: { message: 'Retailer not found' }
+      render status: 404, json: { message: 'Account not found' }
     end
   end
 
@@ -142,36 +143,15 @@ class Api::V1::KarixWhatsappController < ApplicationController
   end
 
   private
-     # Only allow a trusted parameter "white list" through.
-    def karix_whatsapp_params
-      params.require(:karix_whatsapp).permit(
-        :uid,
-        :account_uid,
-        :source,
-        :destination,
-        :country,
-        :content_type,
-        :content_text,
-        :content_media_url,
-        :content_media_caption,
-        :content_media_type,
-        :content_location_longitude,
-        :content_location_latitude,
-        :content_location_label,
-        :content_location_address,
-        :created_time,
-        :sent_time,
-        :delivered_time,
-        :updated_time,
-        :status,
-        :direction,
-        :channel,
-        :error_code,
-        :error_message
-      )
-    end
-
     def set_customer
       @customer = Customer.find(params[:customer_id] || params[:id])
+    end
+
+    def validate_balance
+      unless current_retailer.positive_balance?
+        render status: 401, json: { message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
+                                             'por favor, contáctese con su agente de ventas para recargar su saldo' }
+        return
+      end
     end
 end

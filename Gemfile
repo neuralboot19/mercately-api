@@ -20,6 +20,7 @@ gem 'sentry-raven', '~> 2.9'
 
 # Login and administration
 gem 'activeadmin', '~> 1.4', '>= 1.4.3'
+gem 'activeadmin-searchable_select', '~> 1.2'
 gem 'devise', '~> 4.6', '>= 4.6.1'
 gem 'omniauth-facebook', '~> 5.0'
 gem 'devise_invitable', '~> 2.0.0'
