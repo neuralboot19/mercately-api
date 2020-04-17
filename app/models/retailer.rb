@@ -111,6 +111,14 @@ class Retailer < ApplicationRecord
     ws_balance >= 0.0672
   end
 
+  def notification_messages
+    karix_whatsapp_messages.notification_messages
+  end
+
+  def conversation_messages
+    karix_whatsapp_messages.conversation_messages
+  end
+
   private
 
     def save_free_plan

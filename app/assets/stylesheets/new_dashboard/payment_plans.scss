@@ -1,14 +1,25 @@
 .whats_app_table {
   border: 1px solid black;
+  padding: 1em;
 }
 
-.whats_app_table th{
-  text-align: left;
-}
+.whats_app_table {
+  th, td {
+    text-align: left;
 
+    &.right {
+      text-align: right;
+    }
+
+    &.total {
+      border-top: solid thin black;
+      font-weight: bold;
+    }
+  }
+}
 .whats_app_table tr th{
   border-bottom: 1px solid black;
-  padding: 0px;	
+  padding: 0px;
 }
 
 .whats_app_table td{
