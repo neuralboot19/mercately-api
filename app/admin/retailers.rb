@@ -138,6 +138,12 @@ ActiveAdmin.register Retailer do
         row 'Costo por mensaje de Conversación' do
           retailer.ws_conversation_cost
         end
+        row 'Cantidad de Mensajes de Notificación' do
+          retailer.notification_messages.count
+        end
+        row 'Cantidad de Mensajes de Conversación' do
+          retailer.conversation_messages.count
+        end
       end
     end
 
@@ -149,8 +155,6 @@ ActiveAdmin.register Retailer do
         row :next_pay_date
         row :status
         row :plan
-        row :karix_available_messages
-        row :karix_available_notifications
       end
     end
   end

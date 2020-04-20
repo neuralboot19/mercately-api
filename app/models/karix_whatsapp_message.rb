@@ -5,6 +5,8 @@ class KarixWhatsappMessage < ApplicationRecord
   after_create :substract_from_balance
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
+  scope :notification_messages, -> { where(message_type: 'notification') }
+  scope :conversation_messages, -> { where(message_type: 'conversation') }
 
   private
     def substract_from_balance

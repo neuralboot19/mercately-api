@@ -3,7 +3,7 @@ class TopUp < ApplicationRecord
 
   after_create :update_ws_balance
 
-  validates :amount, presence: true, numericality: { greater_than_or_equal_to: 25.0 }
+  validates :amount, presence: true
   validates :retailer, presence: true
 
   private

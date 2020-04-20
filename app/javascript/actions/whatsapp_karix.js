@@ -5,7 +5,7 @@ export const fetchWhatsAppCustomers = (page = 1, params) => {
   if (params !== '' && params !== undefined) {
     endpoint += `&customerSearch=${params}`
   }
-  
+
   return dispatch =>
     fetch(endpoint, {
       method: "GET",
@@ -44,7 +44,12 @@ export const sendWhatsAppMessage = (body, token) => {
     })
     .then(res => res.json())
     .then(
-      data => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+      data => {
+        if (data.status && data.status == 401)
+          dispatch({ type: 'UNAUTHORIZED_SEND_MESSAGE', data })
+        else
+          dispatch({ type: 'SET_SEND_MESSAGE', data })
+      },
       err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
     ).catch((error) => {
         if (error.response)

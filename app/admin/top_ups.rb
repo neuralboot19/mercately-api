@@ -10,11 +10,7 @@ ActiveAdmin.register TopUp do
     column :retailer do |tu|
       "#{tu.retailer.name}(#{tu.retailer.slug})"
     end
-
-    column 'Saldo Actual' do |tu|
-      tu.retailer.ws_balance
-    end
-
+    column :amount
     column :created_at
     actions
   end

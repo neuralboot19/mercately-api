@@ -10,7 +10,6 @@ RSpec.describe TopUp, type: :model do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:retailer) }
     it { is_expected.to validate_presence_of(:amount) }
-    it { is_expected.to validate_numericality_of(:amount).is_greater_than_or_equal_to(25.0) }
   end
 
   it 'will update the retailer ws_balance after create' do

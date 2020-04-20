@@ -75,8 +75,13 @@ class Api::V1::KarixWhatsappController < ApplicationController
         .retailer_users.to_a
       KarixNotificationHelper.broadcast_data(current_retailer, agents)
 
-      render status: 200, json: { messages: @messages.to_a.reverse, agents:
-        current_retailer.team_agents, total_pages: @messages.total_pages }
+      if current_retailer.positive_balance?
+        render status: 200, json: { messages: @messages.to_a.reverse, agents:
+          current_retailer.team_agents, total_pages: @messages.total_pages }
+      else
+        render status: 401, json: { messages: @messages.to_a.reverse, agents:
+          current_retailer.team_agents, total_pages: @messages.total_pages, balance_error_info: balance_error }
+      end
     else
       render status: 404, json: { message: 'Messages not found' }
     end
@@ -147,10 +152,18 @@ class Api::V1::KarixWhatsappController < ApplicationController
       @customer = Customer.find(params[:customer_id] || params[:id])
     end
 
+    def balance_error
+      {
+        status: 401,
+        message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
+                 'por favor, contáctese con su agente de ventas para recargar su saldo'
+      }
+    end
+
     def validate_balance
       unless current_retailer.positive_balance?
-        render status: 401, json: { message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
-                                             'por favor, contáctese con su agente de ventas para recargar su saldo' }
+        render status: 401,
+               json: balance_error
         return
       end
     end
