@@ -464,17 +464,28 @@ class ChatMessages extends Component {
           </div>
         }
 
-        { this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
-          <div className="col-xs-12">
-            <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={(e) => this.toggleModal() }   >plantilla</a>.</p>
-          </div>
+        { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId ?
+          (
+            <div className="col-xs-12">
+              <p>Esta conversación ya ha sido asignada a otro usuario.</p>
+            </div>
+            )
+          : (
+            this.props.errorSendMessageStatus ?
+              (
+                <div className="col-xs-12">
+                  <p>{this.props.errorSendMessageText}</p>
+                </div>
+              )
+              : (
+                this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+                  <div className="col-xs-12">
+                    <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={(e) => this.toggleModal() }   >plantilla</a>.</p>
+                  </div>
+              )
+          )
         }
 
-        { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId &&
-          <div className="col-xs-12">
-            <p>Esta conversación ya ha sido asignada a otro usuario.</p>
-          </div>
-        }
 
         <Modal isOpen={this.state.isModalOpen} style={customStyles}>
           <div className="row">
@@ -533,7 +544,9 @@ function mapStateToProps(state) {
     total_pages: state.total_pages || 0,
     templates: state.templates || [],
     total_template_pages: state.total_template_pages || 0,
-    agents: state.agents || []
+    agents: state.agents || [],
+    errorSendMessageStatus: state.errorSendMessageStatus,
+    errorSendMessageText: state.errorSendMessageText
   };
 }
 

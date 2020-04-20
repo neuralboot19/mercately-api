@@ -205,7 +205,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     end
 
     context 'when the message is not sent' do
-      it 'fails, will response a 500 status' do
+      it 'fails and will response a 500 status' do
         allow_any_instance_of(subject).to receive(:send_message).and_return({ 'error': { 'message':
           'Connection rejected' }}.with_indifferent_access)
 
@@ -220,6 +220,23 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         expect(body['message']).to eq('Connection rejected')
       end
     end
+
+    context 'because of the retailer has not enough balance' do
+      it 'fails and will response a 401 status' do
+        retailer.update_attributes(ws_balance: 0.0671)
+
+        post '/api/v1/karix_send_whatsapp_message',
+          params: {
+            customer_id: customer1.id,
+            message: 'New whatsapp message'
+          }
+
+        body = JSON.parse(response.body)
+        expect(response.code).to eq('401')
+        expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                      'por favor, contáctese con su agente de ventas para recargar su saldo')
+      end
+    end
   end
 
   describe 'GET #messages' do
@@ -230,6 +247,21 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
         expect(response.code).to eq('200')
         expect(body['messages'].count).to eq(6)
+      end
+
+      context 'but retailer has not enough balance' do
+        it 'responses a 401 status' do
+          retailer.update_attributes(ws_balance: 0.0671)
+
+          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('401')
+          expect(body['messages'].count).to eq(6)
+          expect(body['balance_error_info']['status']).to eq(401)
+          expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                                              'por favor, contáctese con su agente de ventas para recargar su saldo')
+        end
       end
     end
 
@@ -255,7 +287,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         body = JSON.parse(response.body)
 
         expect(response.code).to eq('200')
-        expect(body['message']).to eq('succesful')
+        expect(body['message']).to eq('Succesful')
       end
     end
 
@@ -285,7 +317,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         body = JSON.parse(response.body)
 
         expect(response.code).to eq('404')
-        expect(body['message']).to eq('Retailer not found')
+        expect(body['message']).to eq('Account not found')
       end
     end
   end
@@ -341,6 +373,21 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         body = JSON.parse(response.body)
         expect(response.code).to eq('200')
         expect(body['message']['status']).to eq('read')
+      end
+    end
+
+    context 'when the message is not updated because of errors' do
+      it 'will response a 500 status' do
+        allow_any_instance_of(KarixWhatsappMessage).to receive(:update_column).and_return(false)
+
+        put "/api/v1/karix_whatsapp_update_message_read/#{customer1.id}",
+          params: {
+            message_id: message.id
+          }
+
+        body = JSON.parse(response.body)
+        expect(response.code).to eq('500')
+        expect(body['message']).to eq('Error al actualizar mensaje')
       end
     end
   end

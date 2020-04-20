@@ -8,7 +8,10 @@ ActiveAdmin.register Retailer do
                 :zip_code,
                 :phone_number,
                 :whats_app_enabled,
-                :karix_whatsapp_phone
+                :karix_whatsapp_phone,
+                :ws_balance,
+                :ws_notification_cost,
+                :ws_conversation_cost
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -29,11 +32,16 @@ ActiveAdmin.register Retailer do
     column 'Karix Phone Number' do |retailer|
       retailer.karix_whatsapp_phone
     end
+    column :ws_balance
     column :retailer_user
     column :created_at
     actions
     column 'Login' do |resource|
       link_to 'Login as', login_as_admin_retailer_path(resource), class: 'member_link edit_link'
+    end
+
+    column 'Agregar Saldo' do |resource|
+      link_to 'Agregar Saldo', new_admin_top_up_path(retailer_id: resource.id), class: 'member_link edit_link'
     end
   end
 
@@ -46,6 +54,9 @@ ActiveAdmin.register Retailer do
     column :city
     column :phone_number
     column :retailer_number
+    column :ws_balance
+    column :ws_notification_cost
+    column :ws_conversation_cost
     column :created_at
   end
 
@@ -118,6 +129,21 @@ ActiveAdmin.register Retailer do
       attributes_table_for retailer do
         row :whats_app_enabled
         row :karix_whatsapp_phone
+        row 'Saldo' do |retailer|
+          retailer.ws_balance
+        end
+        row 'Costo por mensaje de Notificación' do
+          retailer.ws_notification_cost
+        end
+        row 'Costo por mensaje de Conversación' do
+          retailer.ws_conversation_cost
+        end
+        row 'Cantidad de Mensajes de Notificación' do
+          retailer.notification_messages.count
+        end
+        row 'Cantidad de Mensajes de Conversación' do
+          retailer.conversation_messages.count
+        end
       end
     end
 
@@ -129,8 +155,6 @@ ActiveAdmin.register Retailer do
         row :next_pay_date
         row :status
         row :plan
-        row :karix_available_messages
-        row :karix_available_notifications
       end
     end
   end
@@ -147,6 +171,9 @@ ActiveAdmin.register Retailer do
       f.input :phone_number
       f.input :whats_app_enabled
       f.input :karix_whatsapp_phone
+      f.input :ws_balance
+      f.input :ws_notification_cost
+      f.input :ws_conversation_cost
     end
     f.actions
   end

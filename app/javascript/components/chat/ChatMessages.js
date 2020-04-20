@@ -196,7 +196,7 @@ function mapStateToProps(state) {
   return {
     messages: state.messages || [],
     message: state.message || [],
-    total_pages: state.total_pages || 0,
+    total_pages: state.total_pages || 0
   };
 }
 

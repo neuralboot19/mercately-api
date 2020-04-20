@@ -19,16 +19,12 @@
             Datos del plan
             <ul>
               <li>Nombre del plan: <%= @payment_plan.plan.capitalize %></li>
-              <li>Precio mensual: $<%= @payment_plan.price.to_f %></li>
+              <li>Precio mensual: <%= '$ %05.2f' % @payment_plan.price.to_f %></li>
               <% if @payment_plan.plan != 0 %>
                 <li>Fecha de próximo pago: <%= @payment_plan.next_pay_date&.strftime("%d/%m/%Y") %></li>
               <% end %>
               <% if current_retailer.whats_app_enabled  %>
-                <li> Mensajes de WhatsApp disponibles: 
-                  <p>Conversación: <%= @payment_plan.karix_available_messages - current_retailer.counter_karix_messages %> 
-                    <br />
-                  Notificación: <%= @payment_plan.karix_available_notifications - current_retailer.counter_karix_notifications %></p>
-                </li>
+                <li> Saldo WhatsApp: <strong><%= '$ %05.4f' % @payment_plan.retailer.ws_balance.round(4) %></strong></li>
               <% end %>
             </ul>
           </div>
@@ -41,21 +37,43 @@
                 <tr>
                   <th>Mes</th>
                   <th>Tipo de Mensaje</th>
-                  <th>Total</th>
+                  <th class='right'>Costo</th>
+                  <th class='right'>Cantidad</th>
+                  <th class='right'>Subtotal</th>
                 </tr>
+                <% total = 0 %>
                 <% @user_messages.each do |message| %>
+                  <% subtotal = 0 %>
+                  <% totalM = 0 %>
                   <tr>
                     <td><%= message[:month] + ' ' + message[:year] %></td>
                     <td>
                       <p>Conversación</p>
                       <p>Notificación</p>
                     </td>
-                    <td>
+                    <td class='right'>
+                      <p><%= '$ %05.4f' % @payment_plan.retailer.ws_conversation_cost %></p>
+                      <p><%= '$ %05.4f' % @payment_plan.retailer.ws_notification_cost %></p>
+                    </td>
+                    <td class='right'>
                       <p><%= message[:total_conversation] %></p>
                       <p><%= message[:total_notification] %></p>
                     </td>
+                    <td class='right'>
+                      <p><%= '$ %05.4f' % subtotalC = (@payment_plan.retailer.ws_conversation_cost * message[:total_conversation].to_int) %></p>
+                      <p><%= '$ %05.4f' % subtotalN =(@payment_plan.retailer.ws_notification_cost * message[:total_notification].to_int) %></p>
+                    </td>
+                    <% '$ %05.4f' % subtotal = (subtotalC + subtotalN) %>
+                    <% totalM += subtotal %>
+                  </tr>
+                  <tr>
+                    <td colspan='6' class='right total'><h4>Total Mes: <%= '$ %05.4f' % totalM %></h4></td>
+                    <% total += totalM %>
                   </tr>
                 <% end %>
+                <tr>
+                  <td colspan='6' class='right total'><h3>Total General: <%= '$ %05.4f' % total %></h3></td>
+                </tr>
               </table>
             </div>
           </div>
@@ -141,9 +159,9 @@
       </div>
     </div>
   </div>
-  
+
   <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
-  
+
   <div class="modal">
     <div class="container">
       <div class="row">

@@ -180,6 +180,26 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       body = JSON.parse(response.body)
       expect(body['message']).to eq('Error: Missing phone number and/or message')
     end
+
+    it 'responses with a 401 Internal Server Error response if retailer has not enough Whatsapp balance' do
+      retailer.update_attributes(ws_balance: 0.0671)
+
+      # Making the request
+      post '/retailers/api/v1/whatsapp/send_notification',
+           params: {
+             phone_number: '+5939983770633',
+             message: 'My Message Text'
+           },
+           headers: {
+             'Slug': slug,
+             'Api-Key': api_key
+           }
+      expect(response.code).to eq('401')
+
+      body = JSON.parse(response.body)
+      expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                    'por favor, contáctese con su agente de ventas para recargar su saldo')
+    end
   end
 end
 

@@ -24,4 +24,9 @@ class RetailerMailer < ApplicationMailer
     @retailer_user = retailer_user
     mail to: agent_customer.retailer_user.email, subject: 'Nuevo chat asignado'
   end
+
+  def running_out_balance(retailer)
+    @retailer = retailer
+    mail to: retailer.admin.email, subject: 'Su saldo está a punto de terminarse'
+  end
 end

@@ -1,5 +1,7 @@
 module Retailers::Api::V1
   class KarixWhatsappController < Retailers::Api::V1::ApiController
+    before_action :validate_balance, only: [:create]
+
     KARIX_PERMITED_PARAMS = %w[
       channel
       content
@@ -34,6 +36,14 @@ module Retailers::Api::V1
 
       def format_response(object)
         object.slice(*KARIX_PERMITED_PARAMS).to_json
+      end
+
+      def validate_balance
+        unless current_retailer.positive_balance?
+          render status: 401, json: { message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
+                                               'por favor, contáctese con su agente de ventas para recargar su saldo' }
+          return
+        end
       end
   end
 end

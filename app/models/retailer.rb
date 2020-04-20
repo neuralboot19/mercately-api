@@ -14,6 +14,7 @@ class Retailer < ApplicationRecord
   has_many :templates, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :karix_whatsapp_templates, dependent: :destroy
+  has_many :top_ups, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, uniqueness: true
@@ -104,6 +105,18 @@ class Retailer < ApplicationRecord
 
   def admin
     retailer_users.find_by(retailer_admin: true)
+  end
+
+  def positive_balance?
+    ws_balance >= 0.0672
+  end
+
+  def notification_messages
+    karix_whatsapp_messages.notification_messages
+  end
+
+  def conversation_messages
+    karix_whatsapp_messages.conversation_messages
   end
 
   private
