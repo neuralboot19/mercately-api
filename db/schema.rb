@@ -420,8 +420,8 @@ ActiveRecord::Schema.define(version: 2020_04_14_220246) do
     t.string "encrypted_api_key_salt"
     t.float "ws_balance", default: 0.0
     t.float "ws_next_notification_balance", default: 1.5
-    t.float "ws_notification_cost", default: 0.005
-    t.float "ws_conversation_cost", default: 0.0672
+    t.float "ws_notification_cost", default: 0.0672
+    t.float "ws_conversation_cost", default: 0.005
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
