@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_30_171457) do
+ActiveRecord::Schema.define(version: 2020_04_14_220246) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,15 @@ ActiveRecord::Schema.define(version: 2020_03_30_171457) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "agent_customers", force: :cascade do |t|
+    t.bigint "retailer_user_id", null: false
+    t.bigint "customer_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_agent_customers_on_customer_id"
+    t.index ["retailer_user_id"], name: "index_agent_customers_on_retailer_user_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -409,6 +418,10 @@ ActiveRecord::Schema.define(version: 2020_03_30_171457) do
     t.datetime "last_api_key_modified_date"
     t.string "encrypted_api_key_iv"
     t.string "encrypted_api_key_salt"
+    t.float "ws_balance", default: 0.0
+    t.float "ws_next_notification_balance", default: 1.5
+    t.float "ws_notification_cost", default: 0.005
+    t.float "ws_conversation_cost", default: 0.0672
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
@@ -425,7 +438,17 @@ ActiveRecord::Schema.define(version: 2020_03_30_171457) do
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
   end
 
+  create_table "top_ups", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.float "amount", default: 0.0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_top_ups_on_retailer_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "agent_customers", "customers"
+  add_foreign_key "agent_customers", "retailer_users"
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
   add_foreign_key "facebook_retailers", "retailers"

@@ -46,7 +46,7 @@
               <div class="col-sm-3">Fecha de compra</div>
               <div class="col-sm-1"></div>
             </div>
-            <%= render partial: "sale", collection: @orders, as: :order, cached: true %>
+            <%= render partial: "sale", collection: @orders, as: :order %>
             <div class="row middle-xs center-xs">
               <div class="col-xs-12">
                 <%= paginate @orders %>

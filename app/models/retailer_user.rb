@@ -5,6 +5,7 @@ class RetailerUser < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :omniauthable, omniauth_providers: %i[facebook]
   belongs_to :retailer
+  has_many :agent_customers
 
   validate :onboarding_status_format
   validates :agree_terms, presence: true
@@ -46,6 +47,19 @@ class RetailerUser < ApplicationRecord
 
   def full_name
     "#{first_name} #{last_name}"
+  end
+
+  def admin?
+    retailer_admin
+  end
+
+  def agent?
+    !retailer_admin
+  end
+
+  def customers
+    Customer.joins(:agent_customer).where('retailer_user_id = ?', id) +
+      Customer.joins(:retailer).where.not(id: AgentCustomer.all.pluck(:customer_id)).where(retailer_id: retailer_id)
   end
 
   private

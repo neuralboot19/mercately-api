@@ -9,4 +9,10 @@ module CustomerHelper
        'sort_by_canceled_orders desc', label: 'Ventas canceladas' }, { value: 'sort_by_total asc', label:
        'Total Asc' }, { value: 'sort_by_total desc', label: 'Total Desc' }]
   end
+
+  def can_send_whatsapp_notification?(retailer_user, customer)
+    agent_or_asigned = retailer_user.agent? && retailer_user.customers.select { |c| c.id == customer.id }.any?
+    return false unless retailer_user.admin? || ( agent_or_asigned )
+    retailer_user.retailer.whats_app_enabled && customer.phone.present? && customer.phone[0] == '+'
+  end
 end

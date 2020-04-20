@@ -5,7 +5,7 @@ export const fetchWhatsAppCustomers = (page = 1, params) => {
   if (params !== '' && params !== undefined) {
     endpoint += `&customerSearch=${params}`
   }
-  
+
   return dispatch =>
     fetch(endpoint, {
       method: "GET",
@@ -44,7 +44,12 @@ export const sendWhatsAppMessage = (body, token) => {
     })
     .then(res => res.json())
     .then(
-      data => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+      data => {
+        if (data.status && data.status == 401)
+          dispatch({ type: 'UNAUTHORIZED_SEND_MESSAGE', data })
+        else
+          dispatch({ type: 'SET_SEND_MESSAGE', data })
+      },
       err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
     ).catch((error) => {
         if (error.response)
@@ -152,4 +157,32 @@ export const fetchWhatsAppTemplates = (page = 1) => {
         else
           alert("An unexpected error occurred.");
       });
+};
+
+export const changeCustomerAgent = (id, body, token) => {
+  const endpoint = `/api/v1/customers/${id}/assign_agent`;
+  const csrf_token = token
+  return dispatch => {
+    fetch(endpoint, {
+      method: "PUT",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrf_token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(body),
+    })
+    .then(res => res.json())
+    .then(
+      data => dispatch({ type: 'CHANGE_CUSTOMER_AGENT', data }),
+      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+    ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+  };
 };

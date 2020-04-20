@@ -337,7 +337,12 @@ function setElement(container, element, template, index, isNumberUnit) {
   element.setAttribute("name", attrName);
   element.setAttribute("id", attrId);
   element.setAttribute("type", elementInfo["element_type"]);
-  element.setAttribute("class", "input validate-required");
+
+  if (template[index]['tags']['new_required'] !== undefined) {
+    element.setAttribute("class", "input new-required-item-field");
+  } else {
+    element.setAttribute("class", "input validate-required");
+  }
 
   if (productInfo && currentTemplate === undefined) {
     for (pi in productInfo['ml_attributes']) {
@@ -537,6 +542,24 @@ function buildMessageError() {
   message.setAttribute("class", "validation-msg");
 
   return message;
+}
+
+function changeCondition() {
+  productCondition = document.getElementById('product_condition');
+
+  document.querySelectorAll('input, textarea').forEach(function(input) {
+    if (input.classList.contains('new-required-item-field')) {
+      var result = $(input).siblings('.validation-msg');
+
+      if (productCondition.value === 'new_product' && !$(input).val()) {
+        input.classList.add('input--invalid');
+        result.text('Campo requerido');
+      } else {
+        input.classList.remove('input--invalid');
+        result.html(null);
+      }
+    }
+  });
 }
 
 document.addEventListener("DOMContentLoaded", function() {

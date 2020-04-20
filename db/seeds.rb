@@ -7,7 +7,7 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 if Rails.env.development?
   # AdminUser.create(email: 'admin@example.com', password: 'password', password_confirmation: 'password')
-  # r_user = FactoryBot.create(:retailer_user, email: 'retailer_user@example.com')
+  # r_user = FactoryBot.create(:retailer_user, :with_retailer, email: 'retailer_user@example.com')
   (1..50).each do |i|
     customer = Customer.create(phone: '+123456789' + i.to_s + 'fake', retailer_id: 9)
 

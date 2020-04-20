@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   root to: 'pages#index'
 
-
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
     sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords',
@@ -25,7 +24,6 @@ Rails.application.routes.draw do
   get '/terminos', to: 'pages#terms', as: :terms
   get '/precios', to: 'pages#price', as: :pricing
   get '/crm', to: 'pages#crm', as: :crm
-
 
   namespace :retailers do
     namespace :api, defaults: { format: :json } do
@@ -96,6 +94,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :customers, only: [:index, :show, :update]
+
+      put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
 
       get 'customers/:id/messages', to: 'customers#messages', as: :customer_messages
       post 'customers/:id/messages', to: 'customers#create_message', as: :create_message

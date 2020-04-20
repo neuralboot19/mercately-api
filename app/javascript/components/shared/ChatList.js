@@ -44,7 +44,8 @@ class ChatList extends Component {
     return arr
   }
 
-  updateCustomerList = (customer) => {
+  updateCustomerList = (data) => {
+    var customer = data.customer.customer;
     var customers = this.props.customers;
     var index = this.findCustomerInArray(customers, customer.id);
     if (index !== -1) {
@@ -52,7 +53,15 @@ class ChatList extends Component {
     } else {
       var customerList = customers;
     }
-    customerList.unshift(customer);
+
+    if (!data.remove_only) {
+      customerList.unshift(customer);
+    }
+
+    if (this.props.chatType == 'whatsapp') {
+      this.props.setRemovedCustomerInfo(data);
+    }
+
     this.setState({
       customers: customerList
     });
@@ -134,7 +143,7 @@ class ChatList extends Component {
         customer["karix_unread_message?"] = true;
       }
     }
-    this.updateCustomerList(customer);
+    this.updateCustomerList(data);
   }
 
   render() {

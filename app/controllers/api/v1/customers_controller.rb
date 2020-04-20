@@ -29,14 +29,14 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def messages
+    facebook_helper = FacebookNotificationHelper
     @messages = @customer.facebook_messages
     @messages.unreaded.update_all(date_read: Time.now)
     @messages = @messages.order(created_at: :desc).page(params[:page])
 
+    retailer = @customer.retailer
+    facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a)
     render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
-
-    redis.publish 'new_message_counter', {identifier: '.item__cookie_facebook_messages', action: 'add', total:
-      @customer.retailer.facebook_unread_messages.size, room: @customer.retailer.id}.to_json
   end
 
   def create_message
@@ -67,13 +67,13 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def set_message_as_readed
+    facebook_helper = FacebookNotificationHelper
     @message = FacebookMessage.find(params[:id])
     @message.update_column(:date_read, Time.now)
-    render status: 200, json: { message: @message }
 
-    redis.publish 'new_message_counter', {identifier: '.item__cookie_facebook_messages', action: 'subtract', q:
-      1, total: @message.customer.retailer.facebook_unread_messages.size, room:
-      @message.customer.retailer.id}.to_json
+    retailer = @message.customer.retailer
+    facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a)
+    render status: 200, json: { message: @message }
   end
 
   private
@@ -91,10 +91,6 @@ class Api::V1::CustomersController < ApplicationController
       params[:customer].each_pair do |param|
         params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish if params[:customer][param.first]
       end
-    end
-
-    def redis
-      @redis ||= Redis.new()
     end
 
     def customer_params

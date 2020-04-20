@@ -10,6 +10,9 @@ class WhatsApp extends Component {
     this.state = {
       currentCustomer: 0,
       currentCustomerDetails: {},
+      removedCustomer: null,
+      removedCustomerId: null,
+      newAgentAssignedId: null
     };
   }
 
@@ -18,8 +21,19 @@ class WhatsApp extends Component {
     this.setState({
       ...this.state,
       currentCustomer: customer_details.id,
-      currentCustomerDetails: customer_details
+      currentCustomerDetails: customer_details,
+      removedCustomer: null,
+      removedCustomerId: null,
+      newAgentAssignedId: null
     });
+  }
+
+  setRemovedCustomerInfo = (data) => {
+    this.setState({
+      removedCustomer: data.remove_only,
+      removedCustomerId: data.customer.customer.id,
+      newAgentAssignedId: this.state.currentCustomer == data.customer.customer.id ? data.customer.customer.assigned_agent.id : null
+    })
   }
 
   render() {
@@ -32,6 +46,7 @@ class WhatsApp extends Component {
                 handleOpenChat={this.handleOpenChat}
                 currentCustomer={this.state.currentCustomer}
                 chatType='whatsapp'
+                setRemovedCustomerInfo={this.setRemovedCustomerInfo}
               />
             </div>
 
@@ -44,6 +59,10 @@ class WhatsApp extends Component {
                   <ChatMessages
                     currentCustomer={this.state.currentCustomer}
                     recentInboundMessageDate={this.state.currentCustomerDetails.recent_inbound_message_date}
+                    customerDetails={this.state.currentCustomerDetails}
+                    removedCustomer={this.state.removedCustomer}
+                    removedCustomerId={this.state.removedCustomerId}
+                    newAgentAssignedId={this.state.newAgentAssignedId}
                   />
                 </div>
             )}

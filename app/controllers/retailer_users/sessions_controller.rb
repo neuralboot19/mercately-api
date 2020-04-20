@@ -15,6 +15,6 @@ class RetailerUsers::SessionsController < Devise::SessionsController
       MercadoLibre::Retailer.new(retailer).update_retailer_info if
         retailer.meli_retailer && retailer.incomplete_meli_profile?
 
-      session[:room_id] = retailer.id
+      session[:room_id] = current_retailer_user.id
     end
 end

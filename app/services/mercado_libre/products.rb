@@ -65,6 +65,8 @@ module MercadoLibre
     end
 
     def save_product(product_info, description)
+      return if product_info['price'].blank?
+
       category = @ml_categories.import_category(product_info['category_id'])
 
       product = Product.create_with(
@@ -142,7 +144,7 @@ module MercadoLibre
       description = import_product_description(response)
       response = response.merge(description) if [nil, 201].include? description['status']
 
-      return if response.blank? || response['error'].present?
+      return if response.blank? || response['error'].present? || response['price'].blank?
 
       product = update(response, from_order)
       @product_publish.automatic_re_publish(product)

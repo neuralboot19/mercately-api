@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Retailers::Api::V1::Welcome', type: :request do
   describe 'GET #ping' do
-    let(:retailer_user) { create(:retailer_user, email: 'retailer@example.com') }
+    let(:retailer_user) { create(:retailer_user, :with_retailer, email: 'retailer@example.com') }
 
     it 'responses successfully if credentials are correct' do
       # Generating credentials for the retailer

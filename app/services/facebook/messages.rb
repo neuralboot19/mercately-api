@@ -22,17 +22,9 @@ module Facebook
         filename: file_name
       ).find_or_create_by(mid: message_data['message']['mid'])
       if message.persisted?
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          FacebookMessageSerializer.new(message)
-        ).serializable_hash
-        redis.publish 'message_facebook_chat', {facebook_message: serialized_data, room:
-          @facebook_retailer.retailer.id}.to_json
-
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          CustomerSerializer.new(customer)
-        ).serializable_hash
-        redis.publish 'customer_facebook_chat', {customer: serialized_data, room:
-          @facebook_retailer.retailer.id}.to_json
+        facebook_helper = FacebookNotificationHelper
+        retailer = @facebook_retailer.retailer
+        facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, message)
       end
     end
 
@@ -65,17 +57,10 @@ module Facebook
           file_type: file_type,
           filename: message.filename.presence || file_name
         )
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          FacebookMessageSerializer.new(message)
-        ).serializable_hash
-        redis.publish 'message_facebook_chat', {facebook_message: serialized_data, room:
-          @facebook_retailer.retailer.id}.to_json
 
-        serialized_data = ActiveModelSerializers::Adapter::Json.new(
-          CustomerSerializer.new(customer)
-        ).serializable_hash
-        redis.publish 'customer_facebook_chat', {customer: serialized_data, room:
-          @facebook_retailer.retailer.id}.to_json
+        facebook_helper = FacebookNotificationHelper
+        retailer = @facebook_retailer.retailer
+        facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, message)
       end
     end
 
@@ -137,10 +122,6 @@ module Facebook
           access_token: @facebook_retailer.access_token
         }
         "https://graph.facebook.com/#{message_id}?#{params.to_query}"
-      end
-
-      def redis
-        @redis ||= Redis.new()
       end
 
       def check_content_type(content_type)

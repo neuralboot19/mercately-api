@@ -122,4 +122,81 @@ RSpec.describe Retailer, type: :model do
       expect(retailer.to_param).to eq(retailer.slug)
     end
   end
+
+  describe '#karix_unread_whatsapp_messages' do
+    subject(:retailer) { create(:retailer) }
+
+    let(:customer_one) { create(:customer, retailer: retailer) }
+    let(:customer_two) { create(:customer, retailer: retailer) }
+    let(:retailer_user_admin) { create(:retailer_user, :admin, retailer: retailer) }
+    let(:retailer_user_agent) { create(:retailer_user, :agent, retailer: retailer) }
+
+    let!(:agent_customer_one) do
+      create(:agent_customer, retailer_user: retailer_user_admin, customer: customer_one)
+    end
+
+    let(:agent_customer_two) do
+      create(:agent_customer, retailer_user: retailer_user_agent, customer: customer_two)
+    end
+
+    before do
+      create_list(:karix_whatsapp_message, 3, retailer: retailer, customer: customer_one, status:
+        'delivered', direction: 'inbound')
+      create_list(:karix_whatsapp_message, 2, retailer: retailer, customer: customer_two, status:
+        'delivered', direction: 'inbound')
+    end
+
+    context 'when the retailer user is an admin' do
+      it 'returns all the messages of all customers' do
+        expect(retailer.karix_unread_whatsapp_messages(retailer_user_admin).count).to eq(5)
+      end
+    end
+
+    context 'when the retailer user is not an admin' do
+      it 'returns only the messages of customers assigned to it' do
+        expect(retailer.karix_unread_whatsapp_messages(agent_customer_two.retailer_user).count).to eq(2)
+      end
+    end
+  end
+
+  describe '#team_agents' do
+    subject(:retailer) { create(:retailer) }
+
+    let!(:retailer_user_admin) { create(:retailer_user, :with_retailer, :admin, retailer: retailer) }
+
+    let!(:retailer_user_agent) do
+      create(:retailer_user, :with_retailer, :agent, retailer: retailer, invitation_accepted_at: Date.today)
+    end
+
+    let!(:retailer_user_agent_two) do
+      create(:retailer_user, :with_retailer, :agent, retailer: retailer, invitation_accepted_at: Date.today, removed_from_team: true)
+    end
+
+    it 'returns the active retailer users belonging to the retailer' do
+      expect(retailer.team_agents.count).to eq(2)
+    end
+  end
+
+  describe '#admin' do
+    subject(:retailer) { create(:retailer) }
+
+    let!(:retailer_user_admin) { create(:retailer_user, :with_retailer, :admin, retailer: retailer) }
+
+    it 'returns the admin retailer user' do
+      expect(retailer.admin).to eq(retailer_user_admin)
+    end
+  end
+
+  describe '#positive_balance?' do
+    it 'will return true if ws_balance >= 0.0672' do
+      retailer.save
+      expect(retailer.positive_balance?).to eq(true)
+    end
+
+    it 'will return false if ws_balance < 0.0672' do
+      retailer.ws_balance = 0.05
+      retailer.save
+      expect(retailer.positive_balance?).to eq(false)
+    end
+  end
 end

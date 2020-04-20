@@ -14,6 +14,7 @@ class Retailer < ApplicationRecord
   has_many :templates, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :karix_whatsapp_templates, dependent: :destroy
+  has_many :top_ups, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, uniqueness: true
@@ -61,9 +62,17 @@ class Retailer < ApplicationRecord
     Question.includes(:customer).where(date_read: nil, customers: { retailer_id: id })
   end
 
-  def karix_unread_whatsapp_messages
-    karix_whatsapp_messages.includes(:customer).where.not(status: 'read', account_uid: nil)
+  def karix_unread_whatsapp_messages(retailer_user)
+    messages = karix_whatsapp_messages.includes(:customer).where.not(status: 'read', account_uid: nil)
       .where(direction: 'inbound', customers: { retailer_id: id })
+    return messages if retailer_user.admin?
+
+    customer_ids = messages.pluck(:customer_id).compact
+    remove_customer_ids = AgentCustomer.where(customer_id: customer_ids).where.not(retailer_user_id: retailer_user.id)
+      .pluck(:customer_id).compact
+    customer_ids -= remove_customer_ids
+
+    messages.where(customer_id: customer_ids)
   end
 
   def incomplete_meli_profile?
@@ -87,6 +96,27 @@ class Retailer < ApplicationRecord
 
   def public_phone_number
     karix_whatsapp_phone || phone_number
+  end
+
+  def team_agents
+    retailer_users.where(removed_from_team: false).where.not(invitation_accepted_at: nil) +
+      retailer_users.where(retailer_admin: true)
+  end
+
+  def admin
+    retailer_users.find_by(retailer_admin: true)
+  end
+
+  def positive_balance?
+    ws_balance >= 0.0672
+  end
+
+  def notification_messages
+    karix_whatsapp_messages.notification_messages
+  end
+
+  def conversation_messages
+    karix_whatsapp_messages.conversation_messages
   end
 
   private

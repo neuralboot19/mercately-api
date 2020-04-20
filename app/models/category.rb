@@ -11,7 +11,8 @@ class Category < ApplicationRecord
     template.map do |temp|
       temp['id'] if temp['tags']['allow_variations'].blank? &&
                     (temp['tags']['catalog_required'] ||
-                    temp['tags']['required']) && check_not_used_attr(temp)
+                    temp['tags']['required'] ||
+                    temp['tags']['new_required']) && check_not_used_attr(temp)
     end.compact
   end
 
@@ -19,7 +20,8 @@ class Category < ApplicationRecord
     template.map do |temp|
       temp if (temp['tags']['allow_variations'] ||
                             temp['tags']['catalog_required'] ||
-                            temp['tags']['required']) && check_not_used_attr(temp)
+                            temp['tags']['required'] ||
+                            temp['tags']['new_required']) && check_not_used_attr(temp)
     end.compact
   end
 
