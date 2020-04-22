@@ -6,6 +6,7 @@ class RetailerUser < ApplicationRecord
          :omniauthable, omniauth_providers: %i[facebook]
   belongs_to :retailer
   has_many :agent_customers
+  has_many :mobile_tokens, dependent: :destroy
 
   validate :onboarding_status_format
   validates :agree_terms, presence: true

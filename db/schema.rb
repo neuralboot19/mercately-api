@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_14_220246) do
+ActiveRecord::Schema.define(version: 2020_04_22_172314) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -240,6 +240,19 @@ ActiveRecord::Schema.define(version: 2020_04_14_220246) do
     t.index ["retailer_id"], name: "index_meli_retailers_on_retailer_id"
   end
 
+  create_table "mobile_tokens", force: :cascade do |t|
+    t.bigint "retailer_user_id"
+    t.string "device"
+    t.string "encrypted_token"
+    t.string "encrypted_token_iv"
+    t.string "encrypted_token_salt"
+    t.datetime "expiration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["device", "retailer_user_id"], name: "index_mobile_tokens_on_device_and_retailer_user_id", unique: true
+    t.index ["retailer_user_id"], name: "index_mobile_tokens_on_retailer_user_id"
+  end
+
   create_table "order_items", force: :cascade do |t|
     t.bigint "order_id"
     t.bigint "product_id"
@@ -455,6 +468,7 @@ ActiveRecord::Schema.define(version: 2020_04_14_220246) do
   add_foreign_key "karix_whatsapp_messages", "customers"
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"
+  add_foreign_key "mobile_tokens", "retailer_users"
   add_foreign_key "payment_plans", "retailers"
   add_foreign_key "questions", "products"
 end
