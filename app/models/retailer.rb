@@ -103,8 +103,8 @@ class Retailer < ApplicationRecord
       retailer_users.where(retailer_admin: true)
   end
 
-  def admin
-    retailer_users.find_by(retailer_admin: true)
+  def admins
+    retailer_users.where(retailer_admin: true)
   end
 
   def positive_balance?
