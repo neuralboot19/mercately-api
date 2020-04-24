@@ -5,6 +5,7 @@ RSpec.describe RetailerUser, type: :model do
 
   describe 'associations' do
     it { is_expected.to have_many(:agent_customers) }
+    it { is_expected.to have_many(:mobile_tokens) }
     it { is_expected.to belong_to(:retailer) }
     it { is_expected.to accept_nested_attributes_for(:retailer) }
   end
