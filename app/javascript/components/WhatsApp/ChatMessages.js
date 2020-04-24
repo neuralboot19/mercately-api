@@ -452,18 +452,6 @@ class ChatMessages extends Component {
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
 
-        { this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
-          <div className="col-xs-12">
-            <div className="text-input">
-              <textarea name="messageText" placeholder="Mensajes" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
-              <input id="attach" className="d-none" type="file" name="messageImg" accept="image/jpg, image/jpeg, image/png" onChange={(e) => this.handleImgSubmit(e)}/>
-              <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
-              <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
-              <i className="fas fa-file-alt fs-24 ml-5 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
-            </div>
-          </div>
-        }
-
         { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId ?
           (
             <div className="col-xs-12">
@@ -478,14 +466,26 @@ class ChatMessages extends Component {
                 </div>
               )
               : (
-                this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
-                  <div className="col-xs-12">
-                    <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={(e) => this.toggleModal() }   >plantilla</a>.</p>
-                  </div>
+                this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) ?
+                  (
+                    <div className="col-xs-12">
+                      <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={(e) => this.toggleModal() }   >plantilla</a>.</p>
+                    </div>
+                  ) : (
+                    this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+                      <div className="col-xs-12">
+                        <div className="text-input">
+                          <textarea name="messageText" placeholder="Mensajes" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+                          <input id="attach" className="d-none" type="file" name="messageImg" accept="image/jpg, image/jpeg, image/png" onChange={(e) => this.handleImgSubmit(e)}/>
+                          <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
+                          <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
+                          <i className="fas fa-file-alt fs-24 ml-5 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
+                        </div>
+                      </div>
+                  )
               )
           )
         }
-
 
         <Modal isOpen={this.state.isModalOpen} style={customStyles}>
           <div className="row">
