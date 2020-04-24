@@ -11,9 +11,7 @@ module FacebookNotificationHelper
         ).serializable_hash
     end
 
-    admin = retailer.admin
-    exist_admin = retailer_users.any? { |u| u.id == admin.id }
-    retailer_users << admin unless exist_admin
+    retailer_users = retailer_users | retailer.admins
 
     retailer_users.each do |ret_u|
       redis.publish 'new_message_counter', {identifier: '.item__cookie_facebook_messages', total:

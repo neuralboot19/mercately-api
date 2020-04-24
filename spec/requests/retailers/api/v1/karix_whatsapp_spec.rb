@@ -145,6 +145,32 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         expect(body['message']).to eq('Error')
         expect(body['info']).to eq(karix_error_response['objects'][0]['error'])
       end
+
+      it 'responses a 500 Internal Server Error response if raises an ActiveRecord exception' do
+        # Stubbing the respose from Karix
+        allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
+
+        # stub the ActiveRecord::RecordInvalid
+        allow_any_instance_of(KarixWhatsappMessage).to receive(:save) do |instance|
+          instance.errors.add(:base, 'test error')
+          raise(ActiveRecord::RecordInvalid, instance)
+        end
+
+        # Making the request
+        post '/retailers/api/v1/whatsapp/send_notification',
+             params: {
+               phone_number: '+5939983770633',
+               message: 'My Message Text'
+             },
+             headers: {
+               'Slug': slug,
+               'Api-Key': api_key
+             }
+
+        expect(response.code).to eq('400')
+        body = JSON.parse(response.body)
+        expect(body['message']).to eq(["test error"])
+      end
     end
 
     it 'responses a 500 Internal Server Error response if phone_number NOT present' do
@@ -159,7 +185,6 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
            }
       expect(response.code).to eq('500')
 
-      # Once the response is 200 the message should be 'Ok'
       body = JSON.parse(response.body)
       expect(body['message']).to eq('Error: Missing phone number and/or message')
     end
@@ -176,7 +201,6 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
            }
       expect(response.code).to eq('500')
 
-      # Once the response is 200 the message should be 'Ok'
       body = JSON.parse(response.body)
       expect(body['message']).to eq('Error: Missing phone number and/or message')
     end
@@ -199,6 +223,25 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       body = JSON.parse(response.body)
       expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
                                     'por favor, contáctese con su agente de ventas para recargar su saldo')
+    end
+
+    it 'responses a 500 Internal Server Error response if raises an exception' do
+      allow(KarixNotificationHelper).to receive(:ws_message_service).and_return(Exception)
+
+      # Making the request
+      post '/retailers/api/v1/whatsapp/send_notification',
+           params: {
+             phone_number: '+5939983770633',
+             message: 'My Message Text'
+           },
+           headers: {
+             'Slug': slug,
+             'Api-Key': api_key
+           }
+      expect(response.code).to eq('500')
+
+      body = JSON.parse(response.body)
+      expect(body['message']).to eq("undefined method `send_message' for Exception:Class")
     end
   end
 end

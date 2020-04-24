@@ -8,7 +8,9 @@ RSpec.describe Question, type: :model do
   let(:product) { create(:product, retailer: retailer) }
 
   describe 'enums' do
-    it { is_expected.to define_enum_for(:status).with_values(%i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW]) }
+    it { is_expected.to define_enum_for(:status).with_values(
+      %i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW BANNED DELETED]
+    ) }
     it { is_expected.to define_enum_for(:answer_status).with_values(%i[ACTIVE DISABLED]) }
     it { is_expected.to define_enum_for(:meli_question_type).with_values(%w[from_order from_product]) }
   end

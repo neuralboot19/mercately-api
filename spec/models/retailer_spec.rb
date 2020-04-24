@@ -177,13 +177,14 @@ RSpec.describe Retailer, type: :model do
     end
   end
 
-  describe '#admin' do
+  describe '#admins' do
     subject(:retailer) { create(:retailer) }
 
-    let!(:retailer_user_admin) { create(:retailer_user, :with_retailer, :admin, retailer: retailer) }
+    let!(:retailer_user_admin1) { create(:retailer_user, :with_retailer, :admin, retailer: retailer) }
+    let!(:retailer_user_admin2) { create(:retailer_user, :with_retailer, :admin, retailer: retailer) }
 
-    it 'returns the admin retailer user' do
-      expect(retailer.admin).to eq(retailer_user_admin)
+    it 'returns all admins for the retailer' do
+      expect(retailer.admins.to_a).to eq(RetailerUser.where(retailer_admin: true).order(id: :desc).to_a)
     end
   end
 

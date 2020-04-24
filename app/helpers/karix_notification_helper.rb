@@ -13,9 +13,7 @@ module KarixNotificationHelper
         ).serializable_hash
     end
 
-    admin = retailer.admin
-    exist_admin = retailer_users.any? { |u| u.id == admin.id }
-    retailer_users << admin unless exist_admin
+    retailer_users = retailer_users | retailer.admins
 
     retailer_users.each do |ret_u|
       total = retailer.karix_unread_whatsapp_messages(ret_u).size
