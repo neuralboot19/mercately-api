@@ -73,7 +73,7 @@ class ChatList extends Component {
     let el = e.target;
     let style = window.getComputedStyle(el, null);
     let scrollHeight = parseInt(style.getPropertyValue("height"));
-    if(el.scrollTop + scrollHeight >= el.scrollHeight) {
+    if(el.scrollTop + scrollHeight >= el.scrollHeight - 5) {
       this.handleLoadMore();
     }
   }
