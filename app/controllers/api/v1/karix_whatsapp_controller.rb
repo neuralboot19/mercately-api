@@ -7,7 +7,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
   def index
     @customers = current_retailer.customers
-      .select('customers.*, max(karix_whatsapp_messages.created_time) as recent_message_date')
+      .select('customers.*, max(karix_whatsapp_messages.created_at) as recent_message_date')
       .joins(:karix_whatsapp_messages)
       .where.not(karix_whatsapp_messages: { account_uid: nil })
       .group('customers.id').order('recent_message_date desc').page(params[:page])
@@ -31,9 +31,17 @@ class Api::V1::KarixWhatsappController < ApplicationController
     @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
 
     if @customers.present?
-      render status: 200, json: { customers: @customers.as_json(methods:
-        [:karix_unread_message?, :recent_inbound_message_date, :assigned_agent]), total_customers:
-        @customers.total_pages }
+      render status: 200, json: {
+        customers: @customers.as_json(
+          methods: [
+            :karix_unread_message?,
+            :recent_inbound_message_date,
+            :assigned_agent,
+            :last_whatsapp_message
+          ]
+        ),
+        total_customers: @customers.total_pages
+      }
     else
       render status: 404, json: { message: 'Customers not found' }
     end

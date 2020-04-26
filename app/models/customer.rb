@@ -146,6 +146,10 @@ class Customer < ApplicationRecord
     }
   end
 
+  def last_whatsapp_message
+    karix_whatsapp_messages.last
+  end
+
   private
 
     def update_valid_customer
