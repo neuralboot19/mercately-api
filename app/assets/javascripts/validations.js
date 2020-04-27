@@ -81,6 +81,28 @@ function validateImages(form) {
   return true;
 }
 
+function validateAnyRequired(form) {
+  var anyFilled = false;
+  var count = 0
+  var message = document.getElementById('validate-any-error');
+
+  document.querySelectorAll(`#${form.id} .validate-any-required`).forEach(function(input) {
+    if (input.value) {
+      anyFilled = true;
+    }
+
+    count = count + 1;
+  });
+
+  if (anyFilled || count == 0) {
+    $(message).hide();
+    return true;
+  } else if (!anyFilled && count != 0) {
+    $(message).show();
+    return false;
+  }
+}
+
 // Subscripcion del formulario a validaciones
 function validateForm(e, form) {
   e.preventDefault();
@@ -130,6 +152,7 @@ function validateForm(e, form) {
   });
 
   checks.push(validateImages(form));
+  checks.push(validateAnyRequired(form));
 
   if (!checks.includes(false)) form.submit();
 }

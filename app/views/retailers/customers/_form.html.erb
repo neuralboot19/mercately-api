@@ -6,20 +6,25 @@
           <legend>Información básica de cliente</legend>
           <div class="my-16 col-xs-12">
             <%= f.label :first_name, 'Nombre' %>
-            <%= f.text_field :first_name, class: 'input' %>
+            <%= f.text_field :first_name, class: 'input validate-required' %>
+            <i class="validation-msg"></i>
           </div>
           <div class="my-16 col-xs-12">
             <%= f.label :last_name, 'Apellido' %>
-            <%= f.text_field :last_name, class: 'input' %>
+            <%= f.text_field :last_name, class: 'input validate-required' %>
+            <i class="validation-msg"></i>
           </div>
           <div class="my-16 col-xs-12">
+            <div id="validate-any-error" class="d-none">
+              <i class="validation-msg">Debe llenar alguno de los campos Email o Teléfono</i><br />
+            </div>
             <%= f.label :email %>
-            <%= f.text_field :email, class: 'input validate-email validate-required' %>
+            <%= f.text_field :email, class: 'input validate-email validate-any-required' %>
             <i class="validation-msg"></i>
           </div>
           <div class="my-16 col-xs-12">
             <%= f.label :phone, 'Teléfono' %>
-            <%= f.text_field :phone, class: 'input' %>
+            <%= f.text_field :phone, class: 'input validate-any-required' %>
           </div>
           <div class="row">
             <div class="my-16 col-xs-12 col-md-6">
