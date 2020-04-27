@@ -29,8 +29,7 @@ class SelectableField extends Component {
 
     if (this.state.selected == null){
       this.findSelectedOption(this.props.selected)
-    } else {      
-      console.log("ver que son", prevProps.selected, this.state.selected.value)
+    } else {
       if (prevProps.selected !== this.state.selected.value && this.state.isUpdated == true){
         this.setState({isUpdated: false}, () => {
           this.findSelectedOption(this.props.selected)
