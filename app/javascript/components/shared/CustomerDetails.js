@@ -28,7 +28,7 @@ class CustomerDetails extends Component {
       is_updated = true
       this.props.fetchCustomer(this.props.customerDetails.id)
     } else {
-      if (this.state.customer.id !== this.props.customer.id){
+      if (this.state.customer.id !== this.props.customer.id || this.state.customer.phone !== this.props.customer.phone){
         this.setState({ customer: this.props.customer})
       } else {
         is_updated = false
@@ -119,7 +119,7 @@ class CustomerDetails extends Component {
               <i className="fs-18 mt-4 mr-4 fab fa-whatsapp-square editable_phone"/>
               <p className="label inline-block">Teléfono:</p>
             </div>
-            <div><img className="number_flag" src={EcFlag} />
+            <div>{this.state.customer.emoji_flag}
               <EditableField 
                 handleInputChange={this.handleInputChange}
                 content={this.state.customer.phone}

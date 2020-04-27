@@ -22,9 +22,15 @@
             <%= f.text_field :email, class: 'input validate-email validate-any-required' %>
             <i class="validation-msg"></i>
           </div>
-          <div class="my-16 col-xs-12">
-            <%= f.label :phone, 'Teléfono' %>
-            <%= f.text_field :phone, class: 'input validate-any-required' %>
+          <div class="row">
+            <div class="my-16 col-xs-12 col-md-6">
+              <%= f.label :country_id, 'País' %>
+              <%= f.country_select("country_id", { format: :with_country_code, include_blank: true }, { class: 'input' }) %>
+            </div>
+            <div class="my-16 col-xs-12 col-md-6">
+              <%= f.label :phone, 'Teléfono' %>
+              <%= f.text_field :phone, class: 'input validate-any-required', onkeypress: 'onlyNumber(event)' %>
+            </div>
           </div>
           <div class="row">
             <div class="my-16 col-xs-12 col-md-6">

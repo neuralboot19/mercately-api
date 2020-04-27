@@ -106,4 +106,14 @@ RSpec.describe 'Api::V1::Customers', type: :request do
       end
     end
   end
+
+  describe 'GET #show' do
+    it 'returns the customer data' do
+      get api_v1_customer_path(customer1.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['customer']).not_to be nil
+    end
+  end
 end

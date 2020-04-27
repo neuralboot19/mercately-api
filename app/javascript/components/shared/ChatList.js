@@ -92,7 +92,7 @@ class ChatList extends Component {
         customerList = this.removeFromArray(customerList, index);
         customerList.unshift(customer);
       } else {
-        customerList[index]= customer;
+        customerList[index] = customer;
       }
     }
 

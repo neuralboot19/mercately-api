@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Retailers::CustomersController < RetailersController
+  include CustomerControllerConcern
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
 
@@ -34,6 +35,7 @@ class Retailers::CustomersController < RetailersController
   end
 
   def edit
+    edit_setup
   end
 
   def create
