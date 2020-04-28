@@ -7,7 +7,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
   def index
     @customers = current_retailer.customers
-      .select('customers.*, max(karix_whatsapp_messages.created_at) as recent_message_date')
+      .select('customers.*, max(karix_whatsapp_messages.created_time) as recent_message_date')
       .joins(:karix_whatsapp_messages)
       .where.not(karix_whatsapp_messages: { account_uid: nil })
       .group('customers.id').order('recent_message_date desc').page(params[:page])

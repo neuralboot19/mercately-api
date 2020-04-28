@@ -776,7 +776,7 @@ i {
   }
 
   &.fa-sync {
-    -webkit-animation: rotation 2s infinite linear;
+    -webkit-animation: rotation 2s 5s linear;
   }
 
   @-webkit-keyframes rotation {
