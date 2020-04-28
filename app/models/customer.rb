@@ -150,6 +150,14 @@ class Customer < ApplicationRecord
     karix_whatsapp_messages.last
   end
 
+  def recent_karix_message_date
+    karix_whatsapp_messages.last&.created_time
+  end
+
+  def recent_facebook_message_date
+    facebook_messages.last&.created_at
+  end
+
   private
 
     def update_valid_customer
