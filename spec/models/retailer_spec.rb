@@ -184,7 +184,7 @@ RSpec.describe Retailer, type: :model do
     let!(:retailer_user_admin2) { create(:retailer_user, :with_retailer, :admin, retailer: retailer) }
 
     it 'returns all admins for the retailer' do
-      expect(retailer.admins.to_a).to eq(RetailerUser.where(retailer_admin: true).order(id: :desc).to_a)
+      expect(retailer.admins.order(id: :desc).to_a).to eq(RetailerUser.where(retailer_admin: true).order(id: :desc).to_a)
     end
   end
 

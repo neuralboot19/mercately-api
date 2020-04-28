@@ -39,7 +39,13 @@ class ChatListUser extends Component {
           { this.props.chatType == 'whatsapp' && (
             <div className="col-xs-10">
               <div className="profile__name">
-                {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.phone}`}
+                {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.phone}`}&nbsp;&nbsp;
+                { customer.last_whatsapp_message.direction === 'outbound' &&
+                  <i className={ `fas fa-${
+                    customer.last_whatsapp_message.status === 'sent' ? 'check stroke' : (customer.last_whatsapp_message.status === 'delivered' ? 'check-double stroke' : ( customer.last_whatsapp_message.status === 'read' ? 'check-double black' : 'sync black'))
+                  }`
+                  }></i>
+                }
               </div>
               <div className={customer["karix_unread_message?"] ? 'fw-bold' : ''}>
                 {moment(customer.recent_message_date || customer.recent_inbound_message_date).locale('es').fromNow()}

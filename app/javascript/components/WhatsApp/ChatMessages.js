@@ -44,7 +44,8 @@ class ChatMessages extends Component {
       templateEdited: false,
       templatePage: 1,
       auxTemplateSelected: [],
-      agents: []
+      agents: [],
+      updated: true
     };
     this.bottomRef = React.createRef();
   }
@@ -79,14 +80,17 @@ class ChatMessages extends Component {
       if (karix_message.content_type == 'text') {
         if (!this.state.new_message) {
           var messages = this.state.messages;
+          var message_id = karix_message.id;
+
+          messages = this.removeByTextArray(messages, karix_message.content_text, message_id);
           var index = this.findMessageInArray(messages, karix_message.id);
-          messages = this.removeByTextArray(messages, karix_message.content_text);
 
           if (index === -1) {
             this.setState({
-              messages: this.state.messages.concat(karix_message),
+              messages: this.state.messages.concat(karix_message).sort((a, b) => (a.id > b.id) ? 1 : -1),
               new_message: false,
-            })
+              updated: false
+            }, () => this.setState({ updated: true}))
           }
         }
       } else if ((['image', 'voice', 'audio', 'video', 'document'].includes(karix_message.content_media_type) || karix_message.content_type == 'location') &&
@@ -105,7 +109,7 @@ class ChatMessages extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    if (newProps.messages != this.props.messages) {
+    if (newProps.messages != this.props.messages && newProps.updated == this.props.updated) {
       this.setState({
         new_message: false,
         messages: newProps.messages.concat(this.state.messages),
@@ -140,7 +144,6 @@ class ChatMessages extends Component {
     }
   }
 
-
   scrollToBottom = () => {
     this.bottomRef.current.scrollIntoView();
   }
@@ -172,7 +175,14 @@ class ChatMessages extends Component {
     }
 
     let text = { message: message, customer_id: this.props.currentCustomer}
-    this.setState({ messages: this.state.messages.concat({content_type: 'text', content_text: message, direction: 'outbound'}), new_message: true}, () => {
+    this.setState({ messages: this.state.messages.concat({
+      content_type: 'text',
+      content_text: message,
+      direction: 'outbound',
+      last_whatsapp_message: {
+        status: 'queued'
+      }
+    }), new_message: true}, () => {
       this.props.sendWhatsAppMessage(text, csrfToken);
       this.scrollToBottom();
     });
@@ -184,10 +194,12 @@ class ChatMessages extends Component {
     ))
   )
 
-  removeByTextArray = (arr, text) => {
-    var index = arr.findIndex((el) => (
-      el.content_text === text && !el.id
-    ))
+  removeByTextArray = (arr, text, id=null) => {
+    var index = arr.findIndex((el) => el.content_text === text && !el.created_at)
+
+    if (index === -1) {
+      index = arr.findIndex((el) => el.content_text === text && el.id === id)
+    }
 
     if (index !== -1) {
       arr.splice(index, 1);
@@ -419,7 +431,14 @@ class ChatMessages extends Component {
             <div key={message.id} className="message">
               <div className={ message.direction == 'outbound' ? 'message-by-retailer f-right' : '' } >
                 {message.content_type == 'text' &&
-                    (<p>{message.content_text}</p>)}
+                  <p className={message.status === 'read' ? 'read-message' : ''}>{message.content_text} {
+                    message.direction == 'outbound' &&
+                      <i className={ `fas fa-${
+                        message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double' : 'sync'))
+                      }`
+                      }></i>
+                  }</p>
+                }
                 {message.content_type == 'media' && message.content_media_type == 'image' &&
                     (<div className="img-holder">
                       <img src={message.content_media_url} className="msg__img"
