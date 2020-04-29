@@ -67,7 +67,8 @@ class CustomerDetails extends Component {
         address: customer.address,
         city: customer.city,
         state: customer.state,
-        notes: customer.notes
+        notes: customer.notes,
+        phone: customer.phone
       }
     };
   }
@@ -131,7 +132,7 @@ class CustomerDetails extends Component {
           <div>
             <div>
               <i className="fs-18 mt-4 mr-4 fas fa-envelope-square editable_email" />
-              <p className="label inline-block">Email:</p>
+              <p className="label inline-block">Email:</p> <small className="validation-msg">{this.props.errors.email}</small>
             </div>
             { Object.keys(this.state.customer).length != 0   && (
                <EditableField 
@@ -235,7 +236,8 @@ class CustomerDetails extends Component {
 function mapState(state) {
   return {
     customer: state.customer || {},
-    updated: state.updated || false
+    updated: state.updated || false,
+    errors: state.errors || {}
   };
 }
 

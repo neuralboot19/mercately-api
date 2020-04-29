@@ -24,7 +24,7 @@ class Api::V1::CustomersController < ApplicationController
     if @customer.update(customer_params)
       render status: 200, json: { customer: @customer }
     else
-      render status: 400, json: { error: 'error updating customer' }
+      render status: 400, json: { customer: @customer, errors: @customer.errors }
     end
   end
 

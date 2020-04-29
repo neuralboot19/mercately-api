@@ -34,7 +34,7 @@ class ChatList extends Component {
         this.props.fetchCustomers(page);
       }
       if (this.props.chatType == "whatsapp"){
-        this.props.fetchWhatsAppCustomers(page);
+        this.props.fetchWhatsAppCustomers(page, '', this.state.customers.length);
       }
     }
   }
@@ -46,16 +46,16 @@ class ChatList extends Component {
 
   updateCustomerList = (data) => {
     var customer = data.customer.customer;
-    var customers = this.props.customers;
+    var customers = this.state.customers;
     var index = this.findCustomerInArray(customers, customer.id);
-    if (index !== -1) {
-      var customerList = this.removeFromArray(customers, index);
-    } else {
-      var customerList = customers;
+    var customerList = customers;
+
+    if (index !== -1 && data.remove_only) {
+      customerList = this.removeFromArray(customerList, index);
     }
 
     if (!data.remove_only) {
-      customerList.unshift(customer);
+      customerList = this.insertCustomer(customerList, customer, index);
     }
 
     if (this.props.chatType == 'whatsapp') {
@@ -65,6 +65,38 @@ class ChatList extends Component {
     this.setState({
       customers: customerList
     });
+  }
+
+  findInsertPosition = (arr, date) => (
+    arr.findIndex((el) => (
+      moment(el.recent_message_date) <= moment(date)
+    ))
+  )
+
+  insertCustomer = (customerList, customer, index) => {
+    if (index === -1) {
+      if (customerList.length == 0) {
+        customerList.unshift(customer);
+        return customerList;
+      }
+
+      if (customerList[customerList.length - 1].recent_message_date < customer.recent_message_date) {
+        var position = this.findInsertPosition(customerList, customer.recent_message_date);
+
+        if (position !== -1) {
+          customerList.splice(position, 0, customer);
+        }
+      }
+    } else {
+      if (customerList[index].recent_message_date != customer.recent_message_date) {
+        customerList = this.removeFromArray(customerList, index);
+        customerList.unshift(customer);
+      } else {
+        customerList[index]= customer;
+      }
+    }
+
+    return customerList;
   }
 
   handleLoadMoreOnScrollToBottom = (e) => {
@@ -97,7 +129,7 @@ class ChatList extends Component {
   applySearch = () => {
     this.setState({customers: []}, () => {
       if (this.props.chatType == 'whatsapp'){
-        this.props.fetchWhatsAppCustomers(1, this.state.searchString);  
+        this.props.fetchWhatsAppCustomers(1, this.state.searchString, 0);  
       }
       if (this.props.chatType == 'facebook'){
         this.props.fetchCustomers(1, this.state.searchString);
@@ -119,7 +151,7 @@ class ChatList extends Component {
       socket.on("customer_facebook_chat", data => this.updateList(data));
     }
     if (this.props.chatType == "whatsapp"){
-      this.props.fetchWhatsAppCustomers();
+      this.props.fetchWhatsAppCustomers(1, '', this.state.customers.length);
       socket.on("customer_chat", data => this.updateList(data));
     }
   }
@@ -138,9 +170,6 @@ class ChatList extends Component {
     if (customer.id != this.props.currentCustomer) {
       if (this.props.chatType == "facebook"){
         customer["unread_message?"] = true;
-      }
-      if (this.props.chatType == "whatsapp"){
-        customer["karix_unread_message?"] = true;
       }
     }
     this.updateCustomerList(data);
@@ -202,8 +231,8 @@ function mapDispatch(dispatch) {
     fetchCustomers: (page = 1, params) => {
       dispatch(fetchCustomers(page, params));
     },
-    fetchWhatsAppCustomers: (page = 1, params) => {
-      dispatch(fetchWhatsAppCustomers(page, params));
+    fetchWhatsAppCustomers: (page = 1, params, offset) => {
+      dispatch(fetchWhatsAppCustomers(page, params, offset));
     }
   };
 }

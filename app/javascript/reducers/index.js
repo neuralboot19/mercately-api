@@ -17,7 +17,8 @@ const reducer = (state = initialState, action) => {
     case 'SET_CUSTOMER':
       return {
         ...state,
-        customer: action.data.customer
+        customer: action.data.customer,
+        errors: action.data.errors
       }
     case 'SET_CUSTOMERS':
       return {

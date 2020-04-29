@@ -70,4 +70,40 @@ RSpec.describe 'Api::V1::Customers', type: :request do
       expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
     end
   end
+
+  describe 'PUT #update' do
+    let(:customer) { create(:customer) }
+
+    let(:data) do
+      {
+        first_name: 'Example',
+        last_name: 'Test',
+        phone: '+593123456789',
+        email: 'example@test.com'
+      }
+    end
+
+    context 'when data is correct' do
+      it 'updates the customer' do
+        put api_v1_customer_path(customer.id), params: { customer: data }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customer']['email']).to eq(data[:email])
+        expect(body['errors']).to be nil
+      end
+    end
+
+    context 'when some attribute is not correct' do
+      it 'does not update the customer' do
+        data[:email] = 'example@test.'
+        put api_v1_customer_path(customer.id), params: { customer: data }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:bad_request)
+        expect(body['errors']).not_to be nil
+        expect(body['errors']['email']).to eq(['invalido'])
+      end
+    end
+  end
 end

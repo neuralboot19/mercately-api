@@ -1,6 +1,6 @@
 /* Customers */
-export const fetchWhatsAppCustomers = (page = 1, params) => {
-  let endpoint = `/api/v1/karix_whatsapp_customers?page=${page}`;
+export const fetchWhatsAppCustomers = (page = 1, params, offset) => {
+  let endpoint = `/api/v1/karix_whatsapp_customers?page=${page}&offset=${offset}`;
 
   if (params !== '' && params !== undefined) {
     endpoint += `&customerSearch=${params}`
