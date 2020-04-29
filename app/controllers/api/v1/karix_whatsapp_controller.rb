@@ -6,29 +6,25 @@ class Api::V1::KarixWhatsappController < ApplicationController
   protect_from_forgery :only => [:save_message]
 
   def index
-    @customers = current_retailer.customers
+    customers = if current_retailer_user.admin?
+                  current_retailer.customers
+                elsif current_retailer_user.agent?
+                  filtered_customers = current_retailer_user.customers
+                  Customer.where(id: (filtered_customers).pluck(:id))
+                end
+
+    @customers = customers
       .select('customers.*, max(karix_whatsapp_messages.created_time) as recent_message_date')
       .joins(:karix_whatsapp_messages)
       .where.not(karix_whatsapp_messages: { account_uid: nil })
-      .group('customers.id').order('recent_message_date desc').page(params[:page])
-
-    if current_retailer_user.agent?
-      # Despues de obtener la lista de ids de los clientes que tienen chats
-      agent_customers = AgentCustomer.preload(:customer)
-
-      # Se consiguen los customers con agente asignado diferente al agente logueado(current_retailer_user)
-      customers_not_current = agent_customers.where.not(retailer_user: current_retailer_user)
-                                             .map { |ac| ac.customer }
-
-      # Son eliminados aquellos clientes a los que ya han sido asignados a otros retailers
-      # de la lista de customers con chats de whatsapp
-      filtered_customers = @customers.map { |c| c } - customers_not_current
-
-      # Se prepara la lista de clientes final
-      @customers = Customer.where(id: (filtered_customers).pluck(:id)).page(params[:page])
-    end
+      .group('customers.id').order('recent_message_date desc')
+      .page(params[:page])
 
     @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
+
+    # Se debe quitar primero el offset de Kaminari para que pueda tomar el del parametro
+    @customers = @customers.offset(false).offset(params[:offset])
+    total_pages = @customers.total_pages
 
     if @customers.present?
       render status: 200, json: {
@@ -40,7 +36,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
             :last_whatsapp_message
           ]
         ),
-        total_customers: @customers.total_pages
+        total_customers: total_pages
       }
     else
       render status: 404, json: { message: 'Customers not found' }

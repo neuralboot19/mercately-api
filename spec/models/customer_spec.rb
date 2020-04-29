@@ -222,4 +222,26 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#recent_karix_message_date' do
+    let(:customer) { create(:customer) }
+    let!(:message1) { create(:karix_whatsapp_message, customer: customer, created_time: Time.now) }
+    let!(:message2) { create(:karix_whatsapp_message, customer: customer, created_time: Time.now) }
+    let!(:message3) { create(:karix_whatsapp_message, customer: customer, created_time: Time.now) }
+
+    it 'returns the creation date of the last message' do
+      expect(customer.recent_karix_message_date).to eq(message3.created_time)
+    end
+  end
+
+  describe '#recent_facebook_message_date' do
+    let(:customer) { create(:customer) }
+    let!(:message1) { create(:facebook_message, customer: customer) }
+    let!(:message2) { create(:facebook_message, customer: customer) }
+    let!(:message3) { create(:facebook_message, customer: customer) }
+
+    it 'returns the creation date of the last message' do
+      expect(customer.recent_facebook_message_date).to eq(message3.created_at)
+    end
+  end
 end

@@ -48,7 +48,7 @@ class ChatListUser extends Component {
                 }
               </div>
               <div className={customer["karix_unread_message?"] ? 'fw-bold' : ''}>
-                {moment(customer.recent_message_date || customer.recent_inbound_message_date).locale('es').fromNow()}
+                {moment(customer.recent_message_date).locale('es').fromNow()}
               </div>
               <div>
                 <small>{this.agentName(customer.assigned_agent)}</small>
