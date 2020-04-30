@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_22_172314) do
+ActiveRecord::Schema.define(version: 2020_04_30_142030) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -448,6 +448,8 @@ ActiveRecord::Schema.define(version: 2020_04_22_172314) do
     t.boolean "enable_for_questions", default: false
     t.boolean "enable_for_chats", default: false
     t.string "web_id"
+    t.boolean "enable_for_messenger", default: false
+    t.boolean "enable_for_whatsapp", default: false
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
   end
 

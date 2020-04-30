@@ -75,6 +75,18 @@ const reducer = (state = initialState, action) => {
         errorSendMessageStatus: action.data.status,
         errorSendMessageText: action.data.message,
       }
+    case 'SET_WHATSAPP_FAST_ANSWERS':
+      return {
+        ...state,
+        fast_answers: action.data.templates.data,
+        total_pages: action.data.total_pages
+      }
+    case 'SET_MESSENGER_FAST_ANSWERS':
+      return {
+        ...state,
+        fast_answers: action.data.templates.data,
+        total_pages: action.data.total_pages
+      }
     default:
       return state;
   }

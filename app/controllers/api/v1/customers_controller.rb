@@ -1,10 +1,10 @@
 class Api::V1::CustomersController < ApplicationController
-  # TODO RENAME TO FACEBOOKCHATSCONTROLLER
+  # TODO: RENAME TO FACEBOOKCHATSCONTROLLER
   include CurrentRetailer
   include ActionView::Helpers::TextHelper
   before_action :authenticate_retailer_user!
   before_action :sanitize_params, only: [:update]
-  before_action :set_customer, except: [:index, :set_message_as_readed]
+  before_action :set_customer, except: [:index, :set_message_as_readed, :fast_answers_for_messenger]
 
   def index
     @customers = current_retailer.customers.facebook_customers.active
@@ -13,7 +13,8 @@ class Api::V1::CustomersController < ApplicationController
 
     @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
 
-    render status: 200, json: { customers: @customers.as_json(methods: :unread_message?), total_customers: @customers.total_pages }
+    render status: 200, json: { customers: @customers.as_json(methods: :unread_message?), total_customers:
+      @customers.total_pages }
   end
 
   def show
@@ -76,6 +77,15 @@ class Api::V1::CustomersController < ApplicationController
     render status: 200, json: { message: @message }
   end
 
+  # Filtra las plantillas para messenger por titulo o respuesta
+  def fast_answers_for_messenger
+    templates = current_retailer.templates.for_messenger.where('title ILIKE ?' \
+      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%").page(params[:page])
+
+    serialized = Api::V1::TemplateSerializer.new(templates)
+    render status: 200, json: { templates: serialized, total_pages: templates.total_pages }
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
@@ -89,7 +99,8 @@ class Api::V1::CustomersController < ApplicationController
 
     def sanitize_params
       params[:customer].each_pair do |param|
-        params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish if params[:customer][param.first]
+        params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish if
+          params[:customer][param.first]
       end
     end
 

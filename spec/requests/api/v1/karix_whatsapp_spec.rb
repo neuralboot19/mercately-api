@@ -391,4 +391,39 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
     end
   end
+
+  describe 'GET #fast_answers_for_whatsapp' do
+    before do
+      create_list(:template, 3, :for_whatsapp, retailer: retailer)
+      create_list(:template, 2, :for_messenger, retailer: retailer)
+      create_list(:template, 2, :for_whatsapp, retailer: retailer, title: 'Texto de prueba')
+      create(:template, :for_whatsapp, retailer: retailer, answer: 'Contenido de prueba')
+    end
+
+    it 'returns a whatsapp fast answers list' do
+      get api_v1_fast_answers_for_whatsapp_path
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['templates']['data'].count).to eq(6)
+    end
+
+    it 'filters by title' do
+      get api_v1_fast_answers_for_whatsapp_path, params: { search: 'texto' }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['templates']['data'].count).to eq(2)
+      expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+    end
+
+    it 'filters by content' do
+      get api_v1_fast_answers_for_whatsapp_path, params: { search: 'contenido' }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['templates']['data'].count).to eq(1)
+      expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+    end
+  end
 end
