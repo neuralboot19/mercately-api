@@ -118,3 +118,8 @@ gem 'fast_jsonapi', '~> 1.5'
 
 # Database
 gem 'with_advisory_lock', '~> 4.6'
+
+# Countries info
+gem 'country_select', '~> 4.0'
+gem 'phony', '~> 2.18.12'
+gem 'phonelib', '~> 0.6.43'

@@ -244,4 +244,77 @@ RSpec.describe Customer, type: :model do
       expect(customer.recent_facebook_message_date).to eq(customer.facebook_messages.last.created_at)
     end
   end
+
+  describe '#emoji_flag' do
+    let(:customer) { create(:customer, country_id: nil) }
+
+    context 'when the country is not set' do
+      it 'returns nil' do
+        expect(customer.emoji_flag).to be nil
+      end
+    end
+
+    context 'when the country is set' do
+      it 'returns the flag emoji' do
+        customer.update_column(:country_id, 'EC')
+        c = ISO3166::Country.new(customer.country_id)
+        expect(customer.emoji_flag).to eq(c.emoji_flag)
+      end
+    end
+  end
+
+  describe '#country' do
+    let(:customer) { create(:customer, country_id: nil) }
+
+    context 'when the country is not set' do
+      it 'returns nil' do
+        expect(customer.country).to be nil
+      end
+    end
+
+    context 'when the country is set' do
+      it 'returns a country instance' do
+        customer.update_column(:country_id, 'EC')
+        expect(customer.country).to be_instance_of(ISO3166::Country)
+      end
+    end
+  end
+
+  describe '#format_phone_number' do
+    let(:customer) { create(:customer, country_id: nil) }
+
+    it 'returns nil unless country and phone are present' do
+      expect(customer.send(:format_phone_number)).to be nil
+    end
+
+    it 'gives format to the phone' do
+      customer.country_id = 'EC'
+      customer.phone = '123456789'
+      expect(customer.send(:format_phone_number)).to eq('+593123456789')
+    end
+  end
+
+  describe '#split_phone' do
+    context 'when the phone is not present' do
+      it 'returns nil' do
+        subject.phone = nil
+        expect(subject.split_phone).to be nil
+      end
+    end
+
+    context 'when the phone is correct' do
+      it 'returns an array with the number parsed' do
+        subject.phone = '+593123456789'
+        expect(subject.split_phone).to be_instance_of(Array)
+        expect(subject.split_phone[0]).to eq('593')
+      end
+    end
+
+    context 'when the phone is not correct' do
+      it 'returns nil' do
+        subject.phone = '0923456789'
+        expect(subject.split_phone).to be nil
+      end
+    end
+  end
 end

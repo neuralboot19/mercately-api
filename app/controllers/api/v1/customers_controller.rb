@@ -17,14 +17,14 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def show
-    render status: 200, json: { customer: @customer }
+    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag]) }
   end
 
   def update
     if @customer.update(customer_params)
-      render status: 200, json: { customer: @customer }
+      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag]) }
     else
-      render status: 400, json: { customer: @customer, errors: @customer.errors }
+      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag]), errors: @customer.errors }
     end
   end
 
