@@ -57,7 +57,7 @@
                       <%= form_tag retailers_answer_question_path(current_retailer, @question), method: :put do %>
                         <div class="row">
                           <%= text_area_tag :answer, nil, placeholder: 'Texto de respuesta', class: 'input h-77' %>
-                          <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
+                          <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto, como teléfonos, 
                           direcciones exactas o nombres personales</i></p>
                         </div>
                         <div class="t-center">
