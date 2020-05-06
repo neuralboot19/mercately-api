@@ -37,25 +37,14 @@
                 <div class="col-xs-12 col-sm-3">
                   <p>
                     <label class="c-grey fs-14">Plataformas:</label><br />
-                    <% if @template.enable_for_questions %>
-                      <span class="c-secondary fs-14">
-                        Preguntas de MercadoLibre
-                      </span><br />
-                    <% end %>
-                    <% if @template.enable_for_chats %>
-                      <span class="c-secondary fs-14">
-                        Mensajes de MercadoLibre
-                      </span><br />
+                    <% if @template.enable_for_whatsapp %>
+                      <span class="mr-10 c-secondary"><i class="fab fa-whatsapp fs-27"></i></span>
                     <% end %>
                     <% if @template.enable_for_messenger %>
-                      <span class="c-secondary fs-14">
-                        Facebook Messenger
-                      </span><br />
+                      <span class="mr-10 c-secondary"><i class="fab fa-facebook-messenger fs-25"></i></span>
                     <% end %>
-                    <% if @template.enable_for_whatsapp %>
-                      <span class="c-secondary fs-14">
-                        WhatsApp
-                      </span>
+                    <% if @template.enable_for_questions || @template.enable_for_chats %>
+                      <span class="mr-10"><%= image_tag 'dashboard/ml_logo.png', class: 'w-30 h-23' %></span>
                     <% end %>
                   </p>
                 </div>

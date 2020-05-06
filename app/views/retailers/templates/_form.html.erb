@@ -9,61 +9,63 @@
               <%= f.label :title, 'Título' %><br/>
               <%= f.text_field :title, class: 'input', maxlength: '60' %>
             </div>
-
-            <div class="row">
-              <div class="mb-8 my-16 col-xs-12 col-sm-6">
-                <div class="d-inline-flex">
-                  <div>
-                    <%= f.check_box :enable_for_questions, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_questions } %>
-                  </div>
-                  <div>
-                    <%= f.label :enable_for_questions, 'Para preguntas de MercadoLibre' %>
-                  </div>
-                </div>
-                <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, 
-                direcciones exactas o nombres personales</i></p>
-              </div>
-
-              <div class="mb-8 my-16 col-xs-12 col-sm-6">
-                <div class="d-inline-flex">
-                  <div>
-                    <%= f.check_box :enable_for_chats, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_chats } %>
-                  </div>
-                  <div>
-                    <%= f.label :enable_for_chats, 'Para mensajes de MercadoLibre', class: 'p-static' %>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="mb-8 my-16 col-xs-12 col-sm-6">
-                <div class="d-inline-flex">
-                  <div>
-                    <%= f.check_box :enable_for_messenger, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_messenger } %>
-                  </div>
-                  <div>
-                    <%= f.label :enable_for_messenger, 'Para Facebook Messenger' %>
-                  </div>
-                </div>
-              </div>
-
-              <div class="mb-8 my-16 col-xs-12 col-sm-6">
-                <div class="d-inline-flex">
-                  <div>
-                    <%= f.check_box :enable_for_whatsapp, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_whatsapp } %>
-                  </div>
-                  <div>
-                    <%= f.label :enable_for_whatsapp, 'Para WhatsApp', class: 'p-static' %>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <div class="mb-8 my-16">
               <%= f.label :answer, 'Contenido' %>
               <%= f.text_area :answer, placeholder: 'Texto de respuesta', class: 'input h-77' %>
             </div>
-
+            <%= f.label 'Plataformas' %>
+            <div class="row">
+              <% if current_retailer.whats_app_enabled %>
+                <div class="mb-8 my-16 col-xs-12 col-sm-6">
+                  <div class="d-inline-flex">
+                    <div>
+                      <%= f.check_box :enable_for_whatsapp, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_whatsapp } %>
+                    </div>
+                    <div>
+                      <%= f.label :enable_for_whatsapp, 'WhatsApp', class: 'p-static' %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              <% if current_retailer.facebook_retailer %>
+                <div class="mb-8 my-16 col-xs-12 col-sm-6">
+                  <div class="d-inline-flex">
+                    <div>
+                      <%= f.check_box :enable_for_messenger, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_messenger } %>
+                    </div>
+                    <div>
+                      <%= f.label :enable_for_messenger, 'Facebook Messenger' %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <% if current_retailer.meli_retailer %>
+              <div class="row">
+                <div class="mb-8 my-16 col-xs-12 col-sm-6">
+                  <div class="d-inline-flex">
+                    <div>
+                      <%= f.check_box :enable_for_questions, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_questions } %>
+                    </div>
+                    <div>
+                      <%= f.label :enable_for_questions, 'Preguntas de MercadoLibre' %>
+                    </div>
+                  </div>
+                  <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto, como teléfonos, 
+                  direcciones exactas o nombres personales</i></p>
+                </div>
+                <div class="mb-8 my-16 col-xs-12 col-sm-6">
+                  <div class="d-inline-flex">
+                    <div>
+                      <%= f.check_box :enable_for_chats, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_chats } %>
+                    </div>
+                    <div>
+                      <%= f.label :enable_for_chats, 'Mensajes de MercadoLibre', class: 'p-static' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
             <div class="btn-box col-xs-12">
               <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
             </div>

@@ -508,7 +508,7 @@ class ChatMessages extends Component {
                           <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
                           <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
                           <i className="fas fa-file-alt fs-24 ml-5 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
-                          <i className="fas fa-comment-dots fs-24 ml-5 cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
+                          <i className="fas fa-paper-plane fs-22 ml-5 cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
                         </div>
                       </div>
                   )
