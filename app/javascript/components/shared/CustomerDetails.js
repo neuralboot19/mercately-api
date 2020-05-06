@@ -3,8 +3,6 @@ import { connect } from "react-redux";
 import { fetchCustomer, updateCustomer } from "../../actions/actions";
 import EditableField from '../shared/EditableField'
 import SelectableField from '../shared/SelectableField'
-import EcFlag from 'images/flags/ecuador.png'
-
 
 var is_updated = false;
 const csrfToken = document.querySelector('[name=csrf-token]').content

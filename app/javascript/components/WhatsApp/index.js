@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import ChatList from '../shared/ChatList';
 import ChatMessages from '../WhatsApp/ChatMessages';
 import CustomerDetails from './../shared/CustomerDetails';
-
+import FastAnswers from './../shared/FastAnswers';
 
 class WhatsApp extends Component {
   constructor(props) {
@@ -12,7 +12,9 @@ class WhatsApp extends Component {
       currentCustomerDetails: {},
       removedCustomer: null,
       removedCustomerId: null,
-      newAgentAssignedId: null
+      newAgentAssignedId: null,
+      showFastAnswers: false,
+      fastAnswerText: null
     };
   }
 
@@ -24,7 +26,8 @@ class WhatsApp extends Component {
       currentCustomerDetails: customer_details,
       removedCustomer: null,
       removedCustomerId: null,
-      newAgentAssignedId: null
+      newAgentAssignedId: null,
+      showFastAnswers: false
     });
   }
 
@@ -33,6 +36,18 @@ class WhatsApp extends Component {
       removedCustomer: data.remove_only,
       removedCustomerId: data.customer.customer.id,
       newAgentAssignedId: this.state.currentCustomer == data.customer.customer.id ? data.customer.customer.assigned_agent.id : null
+    })
+  }
+
+  toggleFastAnswers = () => {
+    this.setState({
+      showFastAnswers: !this.state.showFastAnswers
+    })
+  }
+
+  changeFastAnswerText = (text) => {
+    this.setState({
+      fastAnswerText: text
     })
   }
 
@@ -63,11 +78,14 @@ class WhatsApp extends Component {
                     removedCustomer={this.state.removedCustomer}
                     removedCustomerId={this.state.removedCustomerId}
                     newAgentAssignedId={this.state.newAgentAssignedId}
+                    toggleFastAnswers={this.toggleFastAnswers}
+                    fastAnswerText={this.state.fastAnswerText}
+                    changeFastAnswerText={this.changeFastAnswerText}
                   />
                 </div>
             )}
 
-            {this.state.currentCustomer != 0 &&
+            {this.state.currentCustomer != 0 && this.state.showFastAnswers == false &&
               <div className="col-sm-3">
                 <CustomerDetails
                   customerDetails={this.state.currentCustomerDetails}
@@ -75,7 +93,16 @@ class WhatsApp extends Component {
                 />
               </div>
             }
-            
+
+            {this.state.currentCustomer != 0 && this.state.showFastAnswers &&
+              <div className="col-sm-3">
+                <FastAnswers
+                  chatType='whatsapp'
+                  changeFastAnswerText={this.changeFastAnswerText}
+                  toggleFastAnswers={this.toggleFastAnswers}
+                />
+              </div>
+            }
           </div>
         </div>
       </div>

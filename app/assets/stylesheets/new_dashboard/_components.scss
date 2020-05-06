@@ -609,6 +609,10 @@
   /* Fade in tooltip */
   opacity: 0;
   transition: opacity 0.3s;
+
+  &.positioned {
+    top: -15px;
+  }
 }
 
 /* Tooltip arrow */
@@ -1078,4 +1082,33 @@ i {
   padding: 1rem;
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+.fast_answer_content {
+  background-color: #F4F5F7;
+  border: 1px solid #F4F5F7;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  .select_answer {
+    cursor: pointer;
+    font-size: 12px;
+    margin-bottom: 5px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.fast_answer_selector {
+  border-left: 1px solid #e7e7e7;
+  padding: 0px 10px;
+  height: 85vh;
+  overflow-y: auto;
 }

@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import ChatMessages from '../chat/ChatMessages';
 import ChatList from '../shared/ChatList';
 import CustomerDetails from './../shared/CustomerDetails';
+import FastAnswers from './../shared/FastAnswers';
 
 class Chat extends Component {
   constructor(props) {
@@ -10,6 +11,8 @@ class Chat extends Component {
     this.state = {
       currentCustomer: 0,
       currentCustomerDetails: {},
+      showFastAnswers: false,
+      fastAnswerText: null
     };
   }
 
@@ -18,8 +21,21 @@ class Chat extends Component {
     this.setState({
       ...this.state,
       currentCustomer: customer_details.id,
-      currentCustomerDetails: customer_details
+      currentCustomerDetails: customer_details,
+      showFastAnswers: false
     });
+  }
+
+  toggleFastAnswers = () => {
+    this.setState({
+      showFastAnswers: !this.state.showFastAnswers
+    })
+  }
+
+  changeFastAnswerText = (text) => {
+    this.setState({
+      fastAnswerText: text
+    })
   }
 
   render() {
@@ -33,14 +49,30 @@ class Chat extends Component {
         <div className="col-sm-6">
           <ChatMessages
             currentCustomer={this.state.currentCustomer}
+            toggleFastAnswers={this.toggleFastAnswers}
+            fastAnswerText={this.state.fastAnswerText}
+            changeFastAnswerText={this.changeFastAnswerText}
           />
         </div>
-        <div className="col-sm-3">
-          <CustomerDetails
-            customerDetails={this.state.currentCustomerDetails}
-            chatType='facebook_chats'
-          />
-        </div>
+
+        {this.state.showFastAnswers == false &&
+          <div className="col-sm-3">
+            <CustomerDetails
+              customerDetails={this.state.currentCustomerDetails}
+              chatType='facebook_chats'
+            />
+          </div>
+        }
+
+        {this.state.showFastAnswers &&
+          <div className="col-sm-3">
+            <FastAnswers
+              chatType='facebook'
+              changeFastAnswerText={this.changeFastAnswerText}
+              toggleFastAnswers={this.toggleFastAnswers}
+            />
+          </div>
+        }
       </>
     }
     return (

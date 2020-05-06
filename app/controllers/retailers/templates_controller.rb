@@ -26,7 +26,7 @@ class Retailers::TemplatesController < RetailersController
 
     if @template.save
       redirect_to retailers_template_path(current_retailer, @template), notice:
-        'Plantilla creada con éxito.'
+        'Respuesta creada con éxito.'
     else
       render :new
     end
@@ -36,7 +36,7 @@ class Retailers::TemplatesController < RetailersController
   def update
     if @template.update(template_params)
       redirect_to retailers_template_path(current_retailer, @template), notice:
-        'Plantilla actualizada con éxito.'
+        'Respuesta actualizada con éxito.'
     else
       render :edit
     end
@@ -45,7 +45,7 @@ class Retailers::TemplatesController < RetailersController
   # DELETE /templates/1
   def destroy
     @template.destroy
-    redirect_to retailers_templates_url, notice: 'Pantilla eliminada con éxito.'
+    redirect_to retailers_templates_url, notice: 'Respuesta eliminada con éxito.'
   end
 
   # Filtra las plantillas para preguntas por titulo o respuesta
@@ -82,7 +82,9 @@ class Retailers::TemplatesController < RetailersController
         :title,
         :answer,
         :enable_for_questions,
-        :enable_for_chats
+        :enable_for_chats,
+        :enable_for_messenger,
+        :enable_for_whatsapp
       )
     end
 end

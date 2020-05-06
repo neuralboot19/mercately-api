@@ -22,8 +22,12 @@
         <i class="item__icon fas fa-clipboard-check"></i>
         <%= link_to 'Ventas', retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
       </li>
+      <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_templates_path(current_retailer)) %>">
+        <i class="item__icon fas fa-paper-plane"></i>
+        <%= link_to 'Respuestas Rápidas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
+      </li>
       <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_chats_path(current_retailer)) ||
-        current_page?(retailers_questions_path(current_retailer)) || current_page?(retailers_templates_path(current_retailer)) %>">
+        current_page?(retailers_questions_path(current_retailer)) %>">
         <input type="checkbox" id="item--inbox" class="item__checkbox" />
         <i class="item__icon fas fa-mail-bulk"></i>
         <label for="item--inbox" class="item__name">Inbox</label>
@@ -44,9 +48,6 @@
               <%# <b class="item__cookie"><%= quantity_unread_messages ></b> %>
             </li>
           <% end %>
-          <!--<li class="submenu__item">
-            <%= link_to 'Plantillas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
-          </li>-->
         </ul>
       </li>
       <li class="menu__item <%= 'menu__item--selected' if current_page?(retailers_integrations_path(current_retailer)) %>">
@@ -114,6 +115,14 @@
               </div>
             </div>
             <b id="item__cookie_total" class="item__cookie item__cookie_total"><%= total_unread %></b>
+          </div>
+        </li>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= link_to retailers_templates_path(current_retailer), class: 'item__name no-style' do %>
+              <i class="fas fa-paper-plane c-secondary fs-30 mb-10"></i>
+            <% end %>
+            <div class="tooltiptext positioned">Respuestas Rápidas</div>
           </div>
         </li>
         <% if current_retailer.facebook_retailer %>
