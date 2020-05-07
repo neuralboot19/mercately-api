@@ -3,7 +3,7 @@
     <div class="container-fluid index">
       <div class="row middle-xs">
         <div class="col-xs-12 col-sm-4">
-          <h1 class="d-inline name">Plantilla</h1>
+          <h1 class="d-inline name">Respuesta Rápida</h1>
         </div>
         <div class="col-xs-12 col-md-8 mt-16 t-right button-sm-and-down">
           <%= link_to retailers_templates_path, class: 'btn btn--cta' do %>
@@ -21,29 +21,31 @@
       <div class="row">
         <div class="col-xs-12">
           <fieldset class="fieldset mt-16">
-            <legend>Información de la plantilla</legend>
+            <legend>Información de la respuesta</legend>
             <div class="box pt-25">
               <div class="row">
                 <div class="col-xs-12 col-sm-3">
                   <p>
-                    <label class="c-grey fs-14">Descripción:</label> <span class="c-secondary fs-14"><%= @template.title %></span>
+                    <label class="c-grey fs-14">Título:</label><br /><span class="c-secondary fs-14"><%= @template.title %></span>
                   </p>
                 </div>
                 <div class="col-xs-12 col-sm-6">
                   <p>
-                    <label class="c-grey fs-14">Respuesta:</label> <span class="c-secondary fs-14"><%= @template.answer %></span>
+                    <label class="c-grey fs-14">Contenido:</label><br /><span class="c-secondary fs-14"><%= @template.answer %></span>
                   </p>
                 </div>
                 <div class="col-xs-12 col-sm-3">
                   <p>
-                    <label class="c-grey fs-14">Tipo:</label> <span class="c-secondary fs-14">
-                      <% if @template.enable_for_questions %>
-                        Pregunta
-                      <% end %>
-                      <% if @template.enable_for_chats %>
-                        Chat
-                      <% end %>
-                    </span>
+                    <label class="c-grey fs-14">Plataformas:</label><br />
+                    <% if @template.enable_for_whatsapp %>
+                      <span class="mr-10 c-secondary"><i class="fab fa-whatsapp fs-27"></i></span>
+                    <% end %>
+                    <% if @template.enable_for_messenger %>
+                      <span class="mr-10 c-secondary"><i class="fab fa-facebook-messenger fs-25"></i></span>
+                    <% end %>
+                    <% if @template.enable_for_questions || @template.enable_for_chats %>
+                      <span class="mr-10"><%= image_tag 'dashboard/ml_logo.png', class: 'w-30 h-23' %></span>
+                    <% end %>
                   </p>
                 </div>
               </div>

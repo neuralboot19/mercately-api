@@ -2,8 +2,7 @@ module Whatsapp
   module Karix
     class Messages
       def assign_message(message, retailer, ws_data)
-        phone = ws_data['direction'] == 'inbound' ? ws_data['source'] : ws_data['destination']
-        customer = ws_customer_service.save_customer(retailer, phone)
+        customer = ws_customer_service.save_customer(retailer, ws_data)
 
         message.attributes = { account_uid: ws_data['account_uid'], source: ws_data['source'], destination:
           ws_data['destination'], country: ws_data['country'], content_type: ws_data['content_type'], content_text:

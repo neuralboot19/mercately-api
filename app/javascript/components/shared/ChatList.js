@@ -6,15 +6,13 @@ import ChatListUser from './ChatListUser';
 import { fetchWhatsAppCustomers } from "../../actions/whatsapp_karix";
 import Loader from 'images/dashboard/loader.jpg'
 
-
-var _shouldUpdate = true;
 class ChatList extends Component {
   constructor(props) {
     super(props)
     this.state = {
       page: 1,
       customers: [],
-      searchString: '', 
+      searchString: '',
       shouldUpdate: true
     };
   }
@@ -31,10 +29,10 @@ class ChatList extends Component {
       this.setState({ page: page })
 
       if (this.props.chatType == "facebook"){
-        this.props.fetchCustomers(page);
+        this.props.fetchCustomers(page, this.state.searchString);
       }
       if (this.props.chatType == "whatsapp"){
-        this.props.fetchWhatsAppCustomers(page, '', this.state.customers.length);
+        this.props.fetchWhatsAppCustomers(page, this.state.searchString, this.state.customers.length);
       }
     }
   }
@@ -92,7 +90,7 @@ class ChatList extends Component {
         customerList = this.removeFromArray(customerList, index);
         customerList.unshift(customer);
       } else {
-        customerList[index]= customer;
+        customerList[index] = customer;
       }
     }
 
@@ -127,7 +125,7 @@ class ChatList extends Component {
   };
 
   applySearch = () => {
-    this.setState({customers: []}, () => {
+    this.setState({customers: [], page: 1}, () => {
       if (this.props.chatType == 'whatsapp'){
         this.props.fetchWhatsAppCustomers(1, this.state.searchString, 0);  
       }

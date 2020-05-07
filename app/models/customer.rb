@@ -1,4 +1,5 @@
 class Customer < ApplicationRecord
+  include CustomerModelConcern
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
   has_one :agent_customer
@@ -21,8 +22,11 @@ class Customer < ApplicationRecord
   before_save :update_valid_customer
   after_create :generate_web_id
   before_validation :strip_whitespace
+  before_save :format_phone_number
 
   enum id_type: %i[cedula pasaporte ruc]
+
+  attr_accessor :ml_generated_phone
 
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
@@ -67,6 +71,7 @@ class Customer < ApplicationRecord
   def generate_phone
     return unless phone.blank? && meli_customer&.phone.present?
 
+    self.ml_generated_phone = true
     phone_area = ''
     if meli_customer.phone_area.present?
       phone_area = if country_id == 'EC' && meli_customer.phone_area[0] != '0'
@@ -158,6 +163,27 @@ class Customer < ApplicationRecord
     facebook_messages.last&.created_at
   end
 
+  def emoji_flag
+    return unless country.present?
+
+    country.emoji_flag
+  end
+
+  def country
+    @country ||= ISO3166::Country.new(country_id)
+  end
+
+  def split_phone
+    return unless phone.present?
+
+    begin
+      Phony.split(phone.gsub('+', ''))
+    rescue Phony::SplittingError => e
+      Rails.logger.error(e)
+      return
+    end
+  end
+
   private
 
     def update_valid_customer
@@ -172,5 +198,21 @@ class Customer < ApplicationRecord
 
     def strip_whitespace
       self.phone = phone.strip unless phone.nil?
+    end
+
+    def format_phone_number
+      return unless phone.present? && ml_generated_phone.blank?
+
+      splitted_phone = split_phone
+      prefix = splitted_phone&.[](0)
+
+      aux_phone = phone.gsub('+', '')
+      if country_id.present?
+        if prefix == country.country_code
+          self.phone = "+#{aux_phone}"
+        else
+          self.phone = "+#{country.country_code}#{aux_phone}"
+        end
+      end
     end
 end

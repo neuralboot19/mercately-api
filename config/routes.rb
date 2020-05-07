@@ -123,6 +123,9 @@ Rails.application.routes.draw do
 
       resources :karix_whatsapp, only: [:index, :create]
       resources :karix_whatsapp_templates, only: [:index]
+
+      get 'fast_answers_for_messenger', to: 'customers#fast_answers_for_messenger'
+      get 'fast_answers_for_whatsapp', to: 'karix_whatsapp#fast_answers_for_whatsapp'
     end
   end
 

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Api::V1::Customers', type: :request do
   let!(:retailer) { create(:retailer) }
   let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
-  let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer)}
+  let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
 
   let!(:customer1) { create(:customer, :from_fb, retailer: retailer) }
   let!(:customer2) { create(:customer, :from_fb, retailer: retailer) }
@@ -104,6 +104,51 @@ RSpec.describe 'Api::V1::Customers', type: :request do
         expect(body['errors']).not_to be nil
         expect(body['errors']['email']).to eq(['invalido'])
       end
+    end
+  end
+
+  describe 'GET #show' do
+    it 'returns the customer data' do
+      get api_v1_customer_path(customer1.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['customer']).not_to be nil
+    end
+  end
+
+  describe 'GET #fast_answers_for_messenger' do
+    before do
+      create_list(:template, 3, :for_messenger, retailer: retailer)
+      create_list(:template, 2, :for_whatsapp, retailer: retailer)
+      create_list(:template, 2, :for_messenger, retailer: retailer, title: 'Texto de prueba')
+      create(:template, :for_messenger, retailer: retailer, answer: 'Contenido de prueba')
+    end
+
+    it 'returns a messenger fast answers list' do
+      get api_v1_fast_answers_for_messenger_path
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['templates']['data'].count).to eq(6)
+    end
+
+    it 'filters by title' do
+      get api_v1_fast_answers_for_messenger_path, params: { search: 'texto' }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['templates']['data'].count).to eq(2)
+      expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+    end
+
+    it 'filters by content' do
+      get api_v1_fast_answers_for_messenger_path, params: { search: 'contenido' }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['templates']['data'].count).to eq(1)
+      expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
     end
   end
 end

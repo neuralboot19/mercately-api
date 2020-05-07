@@ -19,7 +19,8 @@ class ChatMessages extends Component {
       new_message: false,
       scrolable: false,
       isModalOpen: false,
-      url: ''
+      url: '',
+      fastAnswerText: null
     };
     this.bottomRef = React.createRef();
   }
@@ -86,6 +87,13 @@ class ChatMessages extends Component {
         messages: newProps.messages.concat(this.state.messages),
         load_more: false,
       })
+    }
+
+    if (newProps.fastAnswerText) {
+      this.setState({
+        fastAnswerText: newProps.fastAnswerText
+      })
+      this.props.changeFastAnswerText(null);
     }
   }
 
@@ -157,6 +165,16 @@ class ChatMessages extends Component {
     }
   }
 
+  toggleFastAnswers = () => {
+    this.props.toggleFastAnswers();
+  }
+
+  emptyFastAnswerText = () => {
+    this.setState({
+      fastAnswerText: null
+    })
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -184,6 +202,9 @@ class ChatMessages extends Component {
             currentCustomer={this.props.currentCustomer}
             handleSubmitMessage={this.handleSubmitMessage}
             handleSubmitImg={this.handleSubmitImg}
+            toggleFastAnswers={this.toggleFastAnswers}
+            fastAnswerText={this.state.fastAnswerText}
+            emptyFastAnswerText={this.emptyFastAnswerText}
           />
         </div>
         }

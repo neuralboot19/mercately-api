@@ -3,14 +3,14 @@ class Api::V1::KarixWhatsappController < ApplicationController
   before_action :authenticate_retailer_user!, except: :save_message
   before_action :validate_balance, only: [:create, :send_file]
   before_action :set_customer, only: [:messages, :send_file, :message_read]
-  protect_from_forgery :only => [:save_message]
+  protect_from_forgery only: [:save_message]
 
   def index
     customers = if current_retailer_user.admin?
                   current_retailer.customers
                 elsif current_retailer_user.agent?
                   filtered_customers = current_retailer_user.customers
-                  Customer.where(id: (filtered_customers).pluck(:id))
+                  Customer.where(id: filtered_customers.pluck(:id))
                 end
 
     @customers = customers
@@ -53,8 +53,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
     else
       has_agent = customer.agent_customer.present?
       # Asignamos(solo la primera interaccion) el agente/admin al customer
-      AgentCustomer.create_with(retailer_user: current_retailer_user)
-                   .find_or_create_by(customer: customer)
+      AgentCustomer.create_with(retailer_user: current_retailer_user).find_or_create_by(customer: customer)
 
       message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
       message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
@@ -75,8 +74,12 @@ class Api::V1::KarixWhatsappController < ApplicationController
     @messages = @messages.order(created_time: :desc).page(params[:page])
 
     if @messages.present?
-      agents = @messages.first.customer.agent.present? ? [@messages.first.customer.agent] : current_retailer
-        .retailer_users.to_a
+      agents = if @messages.first.customer.agent.present?
+                 [@messages.first.customer.agent]
+               else
+                 current_retailer.retailer_users.to_a
+               end
+
       KarixNotificationHelper.broadcast_data(current_retailer, agents)
 
       if current_retailer.positive_balance?
@@ -123,8 +126,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       karix_helper = KarixNotificationHelper
       has_agent = @customer.agent_customer.present?
       # Asignamos(solo la primera interaccion) el agente/admin al customer
-      AgentCustomer.create_with(retailer_user: current_retailer_user)
-                   .find_or_create_by(customer: @customer)
+      AgentCustomer.create_with(retailer_user: current_retailer_user).find_or_create_by(customer: @customer)
 
       message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
       message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
@@ -132,7 +134,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
       unless has_agent
         karix_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil,
-          @customer.agent_customer)
+                                    @customer.agent_customer)
       end
 
       render status: 200, json: { message: response['objects'][0] }
@@ -151,7 +153,17 @@ class Api::V1::KarixWhatsappController < ApplicationController
     end
   end
 
+  # Filtra las plantillas para whatsapp por titulo o respuesta
+  def fast_answers_for_whatsapp
+    templates = current_retailer.templates.for_whatsapp.where('title ILIKE ?' \
+      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%").page(params[:page])
+
+    serialized = Api::V1::TemplateSerializer.new(templates)
+    render status: 200, json: { templates: serialized, total_pages: templates.total_pages }
+  end
+
   private
+
     def set_customer
       @customer = Customer.find(params[:customer_id] || params[:id])
     end
@@ -165,10 +177,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
     end
 
     def validate_balance
-      unless current_retailer.positive_balance?
-        render status: 401,
-               json: balance_error
-        return
-      end
+      return if current_retailer.positive_balance?
+
+      render status: 401, json: balance_error
     end
 end
