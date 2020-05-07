@@ -11,9 +11,16 @@ FactoryBot.define do
     delivered_time { "2020-01-17 15:16:14" }
     updated_time { "2020-01-17 15:16:14" }
     status { "MyString" }
-    direction { "MyString" }
     message_type { 'notification' }
     retailer
     customer
+
+    trait :inbound do
+      direction { 'inbound' }
+    end
+
+    trait :outbound do
+      direction { 'outbound' }
+    end
   end
 end

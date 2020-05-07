@@ -100,6 +100,9 @@ Rails.application.routes.draw do
   get "/404", to: "errors#not_found"
   get "/500", to: "errors#internal_error"
 
+  # Gupshup callback
+  post 'gupshup/ws', to: 'gupshup_whatsapp#save_message'
+
   # REACT
   namespace :api do
     namespace :v1 do

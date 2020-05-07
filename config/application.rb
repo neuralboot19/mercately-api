@@ -4,7 +4,8 @@ require 'rails/all'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
-Bundler.require(*Rails.groups)
+# Bundler.require(*Rails.groups)
+Bundler.require(:default, Rails.env)
 
 module Mercately
   class Application < Rails::Application
@@ -39,6 +40,10 @@ module Mercately
     config.middleware.insert(0, Rack::ReverseProxy) do
       reverse_proxy_options preserve_host: true
       reverse_proxy(/^\/blog(\/.*)$/, 'https://blog.mercately.com$1')
+    end
+
+    config.generators do |g|
+      g.orm :active_record
     end
   end
 end

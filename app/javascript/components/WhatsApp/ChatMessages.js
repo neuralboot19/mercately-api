@@ -83,7 +83,7 @@ class ChatMessages extends Component {
           var message_id = karix_message.id;
 
           messages = this.removeByTextArray(messages, karix_message.content_text, message_id);
-          var index = this.findMessageInArray(messages, karix_message.id);
+          var index = this.findMessageInArray(messages, message_id);
 
           if (index === -1) {
             this.setState({
@@ -184,9 +184,7 @@ class ChatMessages extends Component {
       content_type: 'text',
       content_text: message,
       direction: 'outbound',
-      last_whatsapp_message: {
-        status: 'queued'
-      }
+      status: 'enqueued'
     }), new_message: true}, () => {
       this.props.sendWhatsAppMessage(text, csrfToken);
       this.scrollToBottom();
@@ -200,10 +198,15 @@ class ChatMessages extends Component {
   )
 
   removeByTextArray = (arr, text, id=null) => {
-    var index = arr.findIndex((el) => el.content_text === text && !el.created_at)
+    let index;
 
-    if (index === -1) {
+    if (id) {
       index = arr.findIndex((el) => el.content_text === text && el.id === id)
+      if (index === -1) {
+        index = arr.findIndex((el) => el.content_text === text && !el.id)
+      }
+    } else {
+      index = arr.findIndex((el) => el.content_text === text && !el.id)
     }
 
     if (index !== -1) {
@@ -440,8 +443,8 @@ class ChatMessages extends Component {
             <div key={message.id} className="message">
               <div className={ message.direction == 'outbound' ? 'message-by-retailer f-right' : '' } >
                 {message.content_type == 'text' &&
-                  <p className={message.status === 'read' ? 'read-message' : ''}>{message.content_text} {
-                    message.direction == 'outbound' &&
+                  <p className={message.status === 'read' && this.props.handleMessageEvents === true  ? 'read-message' : ''}>{message.content_text} {
+                    message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
                       <i className={ `fas fa-${
                         message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double' : 'sync'))
                       }`
@@ -574,6 +577,7 @@ function mapStateToProps(state) {
     templates: state.templates || [],
     total_template_pages: state.total_template_pages || 0,
     agents: state.agents || [],
+    handleMessageEvents: state.handle_message_events || false,
     errorSendMessageStatus: state.errorSendMessageStatus,
     errorSendMessageText: state.errorSendMessageText
   };

@@ -18,8 +18,12 @@ module KarixNotificationHelper
     retailer_users.each do |ret_u|
       total = retailer.karix_unread_whatsapp_messages(ret_u).size
 
-      redis.publish 'new_message_counter', {identifier: '.item__cookie_whatsapp_messages', total:
-        total > 9 ? '9+' : total, room: ret_u.id}.to_json
+      redis.publish 'new_message_counter',
+                    {
+                      identifier: '.item__cookie_whatsapp_messages',
+                      total: total,
+                      room: ret_u.id
+                    }.to_json
 
       if message.present?
         redis.publish 'message_chat', {karix_whatsapp_message: serialized_message, room: ret_u.id}.to_json

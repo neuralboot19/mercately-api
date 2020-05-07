@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
-  let(:retailer) { create(:retailer) }
+  let(:retailer) { create(:retailer, :karix_integrated) }
   let(:retailer_user) { create(:retailer_user, :admin, retailer: retailer) }
 
   let(:customer1) { create(:customer, retailer: retailer) }
@@ -387,7 +387,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
         body = JSON.parse(response.body)
         expect(response.code).to eq('500')
-        expect(body['message']).to eq('Error al actualizar mensaje')
+        expect(body['message']).to eq('Error al actualizar mensajes')
       end
     end
   end

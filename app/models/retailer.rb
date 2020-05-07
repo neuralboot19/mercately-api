@@ -1,4 +1,6 @@
 class Retailer < ApplicationRecord
+  include PhoneNumberConcern
+
   attr_encrypted :api_key,
                  mode: :per_attribute_iv_and_salt,
                  key: ENV['SECRET_KEY_BASE']
@@ -13,6 +15,8 @@ class Retailer < ApplicationRecord
   has_many :retailer_users, dependent: :destroy
   has_many :templates, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
+  has_many :gupshup_whatsapp_messages, dependent: :destroy
+
   has_many :karix_whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
 
@@ -75,6 +79,20 @@ class Retailer < ApplicationRecord
     messages.where(customer_id: customer_ids)
   end
 
+  def gupshup_unread_whatsapp_messages(retailer_user)
+    messages = gupshup_whatsapp_messages.includes(:customer).where.not(status: 'read', whatsapp_message_id: nil)
+      .where(direction: 'inbound', customers: { retailer_id: id })
+    return messages if retailer_user.admin?
+    customer_ids = messages.pluck(:customer_id).compact
+    remove_customer_ids = AgentCustomer.where(customer_id: customer_ids)
+                                       .where.not(retailer_user_id: retailer_user.id)
+                                       .pluck(:customer_id)
+                                       .compact
+    customer_ids -= remove_customer_ids
+
+    messages.where(customer_id: customer_ids)
+  end
+
   def incomplete_meli_profile?
     id_number.blank? || address.blank? || city.blank? || state.blank?
   end
@@ -117,6 +135,26 @@ class Retailer < ApplicationRecord
 
   def conversation_messages
     karix_whatsapp_messages.conversation_messages
+  end
+
+  def gupshup_temporal_messages
+    GupshupTemporalMessageState.where(
+      retailer_id: self.id
+    ).order_by({event_timestamp: -1})
+  end
+
+  def whatsapp_phone_number(with_plus_sign=nil)
+    self.phone_number(with_plus_sign)
+  end
+
+  def karix_integrated?
+    whats_app_enabled? && karix_whatsapp_phone.present?
+  end
+
+  def gupshup_integrated?
+    whats_app_enabled? &&
+    gupshup_phone_number.present? &&
+    gupshup_src_name.present?
   end
 
   private

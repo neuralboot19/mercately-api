@@ -1,5 +1,6 @@
 class Customer < ApplicationRecord
-  include CustomerModelConcern
+  include PhoneNumberConcern
+
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
   has_one :agent_customer
@@ -15,6 +16,7 @@ class Customer < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
+  has_many :gupshup_whatsapp_messages, dependent: :destroy
 
   validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
@@ -101,18 +103,23 @@ class Customer < ApplicationRecord
       .sum('order_items.quantity')
   end
 
-  def karix_unread_message?
-    last_message = karix_whatsapp_messages.where(direction: 'inbound').last
+  def unread_whatsapp_message?
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    last_message = self.send(messages).where(direction: 'inbound').last
     return false unless last_message.present?
 
     last_message.status != 'read'
   end
 
   def recent_inbound_message_date
-    last_message = karix_whatsapp_messages.where(direction: 'inbound').last
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    last_message = self.send(messages).where(direction: 'inbound').last
     return Time.now - 30.hours unless last_message.present?
 
-    last_message.created_time
+    return last_message.created_time if retailer.karix_integrated?
+    last_message.created_at
   end
 
   def bought_items
@@ -152,15 +159,27 @@ class Customer < ApplicationRecord
   end
 
   def last_whatsapp_message
-    karix_whatsapp_messages.last
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+    self.send(messages).last
   end
 
-  def recent_karix_message_date
-    karix_whatsapp_messages.last&.created_time
+  def recent_message_date
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    return self.send(messages).last&.created_time if retailer.karix_integrated?
+    self.send(messages).last&.created_at
   end
 
   def recent_facebook_message_date
     facebook_messages.last&.created_at
+  end
+
+  def whatsapp_messages
+    if retailer.karix_integrated?
+      karix_whatsapp_messages
+    elsif retailer.gupshup_integrated?
+      gupshup_whatsapp_messages
+    end
   end
 
   def emoji_flag
@@ -182,6 +201,10 @@ class Customer < ApplicationRecord
       Rails.logger.error(e)
       return
     end
+  end
+
+  def handle_message_events?
+    retailer.karix_integrated?
   end
 
   private

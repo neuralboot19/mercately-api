@@ -118,7 +118,7 @@ class ChatList extends Component {
 
   handleKeyPress = event => {
     if (event.key === "Enter") {
-      this.setState({shouldUpdate: true}, () => { 
+      this.setState({shouldUpdate: true}, () => {
         this.applySearch();
       })
     }
@@ -127,7 +127,7 @@ class ChatList extends Component {
   applySearch = () => {
     this.setState({customers: [], page: 1}, () => {
       if (this.props.chatType == 'whatsapp'){
-        this.props.fetchWhatsAppCustomers(1, this.state.searchString, 0);  
+        this.props.fetchWhatsAppCustomers(1, this.state.searchString, 0);
       }
       if (this.props.chatType == 'facebook'){
         this.props.fetchCustomers(1, this.state.searchString);
@@ -176,7 +176,7 @@ class ChatList extends Component {
   render() {
     return (
       <div>
-        {this.state.shouldUpdate ? 
+        {this.state.shouldUpdate ?
           <div className="chat_loader"><img src={Loader} /></div>
         :
           <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>

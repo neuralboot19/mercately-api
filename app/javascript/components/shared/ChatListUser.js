@@ -40,14 +40,14 @@ class ChatListUser extends Component {
             <div className="col-xs-10">
               <div className="profile__name">
                 {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.phone}`}&nbsp;&nbsp;
-                { customer.last_whatsapp_message.direction === 'outbound' &&
+                { customer.last_whatsapp_message.direction === 'outbound' && customer['handle_message_events?'] === true &&
                   <i className={ `fas fa-${
                     customer.last_whatsapp_message.status === 'sent' ? 'check stroke' : (customer.last_whatsapp_message.status === 'delivered' ? 'check-double stroke' : ( customer.last_whatsapp_message.status === 'read' ? 'check-double black' : 'sync black'))
                   }`
                   }></i>
                 }
               </div>
-              <div className={customer["karix_unread_message?"] ? 'fw-bold' : ''}>
+              <div className={customer["unread_message?"] ? 'fw-bold' : ''}>
                 {moment(customer.recent_message_date).locale('es').fromNow()}
               </div>
               <div>

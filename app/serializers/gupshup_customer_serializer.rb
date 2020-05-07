@@ -1,0 +1,1 @@
+class GupshupCustomerSerializer < KarixCustomerSerializer; end

@@ -22,5 +22,13 @@ FactoryBot.define do
     trait :from_fb do
       psid { rand(10000..20000) }
     end
+
+    trait :with_retailer_karix_integrated do
+      association :retailer, factory: [:retailer, :karix_integrated]
+    end
+
+    trait :with_retailer_gupshup_integrated do
+      association :retailer, factory: [:retailer, :gupshup_integrated]
+    end
   end
 end

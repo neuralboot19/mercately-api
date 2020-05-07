@@ -3,7 +3,7 @@ class Retailers::PaymentPlansController < RetailersController
 
   def index
     @payment_plan = PaymentPlan.find_by(retailer_id: current_retailer.id)
-    used_karix_whatsapp_messages
+    used_whatsapp_messages
   end
 
   def subscribe

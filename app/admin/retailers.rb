@@ -11,7 +11,9 @@ ActiveAdmin.register Retailer do
                 :karix_whatsapp_phone,
                 :ws_balance,
                 :ws_notification_cost,
-                :ws_conversation_cost
+                :ws_conversation_cost,
+                :gupshup_phone_number,
+                :gupshup_src_name
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -55,8 +57,10 @@ ActiveAdmin.register Retailer do
     column :phone_number
     column :retailer_number
     column :ws_balance
+    column :karix_whatsapp_phone
     column :ws_notification_cost
     column :ws_conversation_cost
+    column :gupshup_phone_number
     column :created_at
   end
 
@@ -134,16 +138,25 @@ ActiveAdmin.register Retailer do
         row 'Saldo' do |retailer|
           retailer.ws_balance
         end
-        row 'Costo por mensaje de Notificación' do
+        row 'Cantidad(Gupshup) de Mensajes de Entrada' do
+          retailer.gupshup_whatsapp_messages.where(direction: 'inbound').count
+        end
+        row 'Cantidad(Gupshup) de Mensajes de Salida' do
+          retailer.gupshup_whatsapp_messages.where(direction: 'outbound').count
+        end
+        row 'Total(Gupshup) de Mensajes Gestionados' do
+          retailer.gupshup_whatsapp_messages.count
+        end
+        row 'Costo(Karix) por mensaje de Notificación' do
           retailer.ws_notification_cost
         end
-        row 'Costo por mensaje de Conversación' do
+        row 'Costo(Karix) por mensaje de Conversación' do
           retailer.ws_conversation_cost
         end
-        row 'Cantidad de Mensajes de Notificación' do
+        row 'Cantidad(Karix) de Mensajes de Notificación' do
           retailer.notification_messages.count
         end
-        row 'Cantidad de Mensajes de Conversación' do
+        row 'Cantidad(Karix) de Mensajes de Conversación' do
           retailer.conversation_messages.count
         end
       end
@@ -178,6 +191,8 @@ ActiveAdmin.register Retailer do
       f.input :ws_balance
       f.input :ws_notification_cost
       f.input :ws_conversation_cost
+      f.input :gupshup_phone_number
+      f.input :gupshup_src_name
     end
     f.actions
   end

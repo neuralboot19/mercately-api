@@ -1,8 +1,8 @@
 class KarixWhatsappMessage < ApplicationRecord
+  include BalanceConcern
+
   belongs_to :retailer
   belongs_to :customer
-
-  after_create :substract_from_balance
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :notification_messages, -> { where(message_type: 'notification').where.not(status: 'failed') }

@@ -11,8 +11,8 @@ FactoryBot.define do
     phone_verified { true }
     ws_balance { 5 }
     ws_next_notification_balance { 1.5 }
-    ws_notification_cost { 0.005 }
-    ws_conversation_cost { 0.0672 }
+    ws_notification_cost { 0.0672 }
+    ws_conversation_cost { 0.005 }
 
     trait :with_retailer_user do
       association :retailer_user
@@ -20,6 +20,17 @@ FactoryBot.define do
 
     trait :whatsapp_enabled do
       whats_app_enabled { true }
+    end
+
+    trait :karix_integrated do
+      whats_app_enabled { true }
+      karix_whatsapp_phone { Faker::PhoneNumber.cell_phone_with_country_code }
+    end
+
+    trait :gupshup_integrated do
+      whats_app_enabled { true }
+      gupshup_src_name { 'MySrCName' }
+      gupshup_phone_number { Faker::PhoneNumber.cell_phone_with_country_code }
     end
   end
 end

@@ -11,6 +11,6 @@ class TopUp < ApplicationRecord
     def update_ws_balance
       retailer.ws_balance += amount
       retailer.ws_next_notification_balance = 1.5
-      retailer.save
+      retailer.save!
     end
 end
