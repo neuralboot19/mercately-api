@@ -1,9 +1,9 @@
 class KarixCustomerSerializer < ActiveModel::Serializer
   attributes :id, :first_name, :last_name, :email, :phone, :address, :city, :state, :zip_code, :id_number,
-             :unread_message?, :recent_inbound_message_date, :assigned_agent, :last_whatsapp_message,
+             :unread_whatsapp_message?, :recent_inbound_message_date, :assigned_agent, :last_whatsapp_message,
              :recent_message_date, :handle_message_events?
 
-  def unread_message?
+  def unread_whatsapp_message?
     object.unread_whatsapp_message?
   end
 
@@ -20,7 +20,7 @@ class KarixCustomerSerializer < ActiveModel::Serializer
   end
 
   def recent_message_date
-    object.recent_message_date
+    object.recent_whatsapp_message_date
   end
 
   def handle_message_events?

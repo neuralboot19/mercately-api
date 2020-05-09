@@ -13,6 +13,9 @@ module CustomerHelper
   def can_send_whatsapp_notification?(retailer_user, customer)
     agent_or_asigned = retailer_user.agent? && retailer_user.customers.select { |c| c.id == customer.id }.any?
     return false unless retailer_user.admin? || ( agent_or_asigned )
-    retailer_user.retailer.whats_app_enabled && customer.phone.present? && customer.phone[0] == '+'
+
+    return true if retailer_user.retailer.gupshup_integrated? && customer.whatsapp_opt_in == true
+
+    retailer_user.retailer.karix_integrated? && customer.phone.present? && customer.phone[0] == '+'
   end
 end

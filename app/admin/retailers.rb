@@ -135,6 +135,8 @@ ActiveAdmin.register Retailer do
         row :karix_whatsapp_phone
         row :karix_account_uid
         row :karix_account_token
+        row :gupshup_src_name
+        row :gupshup_phone_number
         row 'Saldo' do |retailer|
           retailer.ws_balance
         end

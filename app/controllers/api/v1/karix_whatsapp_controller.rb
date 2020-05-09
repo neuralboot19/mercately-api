@@ -25,7 +25,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       render status: 200, json: {
         customers: @customers.as_json(
           methods: [
-            :unread_message?,
+            :unread_whatsapp_message?,
             :recent_inbound_message_date,
             :assigned_agent,
             :last_whatsapp_message,

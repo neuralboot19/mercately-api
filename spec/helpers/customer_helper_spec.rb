@@ -40,6 +40,7 @@ RSpec.describe CustomerHelper, type: :helper do
       context 'when the customer have phone number but not in international format' do
         it 'returns false' do
           retailer_user_admin.retailer.whats_app_enabled = true
+          retailer_user_admin.retailer.karix_whatsapp_phone = '09123456789'
           agent_customer.customer.phone = '0123456789'
 
           expect(helper.can_send_whatsapp_notification?(retailer_user_admin,
@@ -48,12 +49,28 @@ RSpec.describe CustomerHelper, type: :helper do
       end
 
       context 'when the retailer has whatsapp enabled and customers phone is well formatted' do
-        it 'returns true' do
-          agent_customer.customer.phone = '+593123456789'
-          retailer_user_admin.retailer.whats_app_enabled = true
+        context 'when the retailer is connected to gupshup' do
+          it 'returns true' do
+            agent_customer.customer.phone = '+593123456789'
+            agent_customer.customer.whatsapp_opt_in = true
+            retailer_user_admin.retailer.whats_app_enabled = true
+            retailer_user_admin.retailer.gupshup_phone_number = '593123456789'
+            retailer_user_admin.retailer.gupshup_src_name = 'MecatelyTest'
 
-          expect(helper.can_send_whatsapp_notification?(retailer_user_admin,
-            agent_customer.customer)).to be true
+            expect(helper.can_send_whatsapp_notification?(retailer_user_admin,
+              agent_customer.customer)).to be true
+          end
+        end
+
+        context 'when the retailer is connected to karix' do
+          it 'returns true' do
+            agent_customer.customer.phone = '+593123456789'
+            retailer_user_admin.retailer.whats_app_enabled = true
+            retailer_user_admin.retailer.karix_whatsapp_phone = '593123456789'
+
+            expect(helper.can_send_whatsapp_notification?(retailer_user_admin,
+              agent_customer.customer)).to be true
+          end
         end
       end
     end
@@ -62,6 +79,7 @@ RSpec.describe CustomerHelper, type: :helper do
       context 'when the customer does not have phone number' do
         it 'returns false' do
           retailer_user_with_customer.retailer.whats_app_enabled = true
+          retailer_user_with_customer.retailer.karix_whatsapp_phone = '+593123456789'
           agent_customer.customer.phone = nil
 
           expect(helper.can_send_whatsapp_notification?(retailer_user_with_customer,
@@ -72,6 +90,7 @@ RSpec.describe CustomerHelper, type: :helper do
       context 'when the customer have phone number but not in international format' do
         it 'returns false' do
           retailer_user_with_customer.retailer.whats_app_enabled = true
+          retailer_user_with_customer.retailer.karix_whatsapp_phone = '+593123456789'
           agent_customer.customer.phone = '0123456789'
 
           expect(helper.can_send_whatsapp_notification?(retailer_user_with_customer,
@@ -83,6 +102,7 @@ RSpec.describe CustomerHelper, type: :helper do
         it 'returns true' do
           agent_customer.customer.phone = '+593123456789'
           retailer_user_with_customer.retailer.whats_app_enabled = true
+          retailer_user_with_customer.retailer.karix_whatsapp_phone = '+593123456789'
 
           expect(helper.can_send_whatsapp_notification?(retailer_user_with_customer,
             agent_customer.customer)).to be true

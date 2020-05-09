@@ -47,7 +47,7 @@ class ChatListUser extends Component {
                   }></i>
                 }
               </div>
-              <div className={customer["unread_message?"] ? 'fw-bold' : ''}>
+              <div className={customer["unread_whatsapp_message?"] ? 'fw-bold' : ''}>
                 {moment(customer.recent_message_date).locale('es').fromNow()}
               </div>
               <div>

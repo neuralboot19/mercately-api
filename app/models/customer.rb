@@ -25,10 +25,11 @@ class Customer < ApplicationRecord
   after_create :generate_web_id
   before_validation :strip_whitespace
   before_save :format_phone_number
+  after_save :verify_opt_in
 
   enum id_type: %i[cedula pasaporte ruc]
 
-  attr_accessor :ml_generated_phone
+  attr_accessor :ml_generated_phone, :send_for_opt_in
 
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
@@ -163,7 +164,7 @@ class Customer < ApplicationRecord
     self.send(messages).last
   end
 
-  def recent_message_date
+  def recent_whatsapp_message_date
     messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
 
     return self.send(messages).last&.created_time if retailer.karix_integrated?
@@ -237,5 +238,26 @@ class Customer < ApplicationRecord
           self.phone = "+#{country.country_code}#{aux_phone}"
         end
       end
+    end
+
+    def verify_opt_in
+      return unless retailer.gupshup_integrated? && ActiveModel::Type::Boolean.new.cast(send_for_opt_in) == true &&
+        whatsapp_opt_in == false && phone.present?
+
+      number = self.phone_number(false)
+      CSV.open("#{Rails.public_path}/#{id}_opt_in.csv", 'wb') do |csv|
+        csv << [number]
+      end
+
+      info = gupshup_service.upload_list(File.open("#{Rails.public_path}/#{id}_opt_in.csv"))
+      File.delete("#{Rails.public_path}/#{id}_opt_in.csv")
+
+      return unless info.present? && info&.[](:code) == '200'
+
+      update(whatsapp_opt_in: true) if info&.[](:body)&.[]('status') == true
+    end
+
+    def gupshup_service
+      @gupshup_service ||= Whatsapp::Gupshup::V1::Outbound::Users.new(retailer)
     end
 end

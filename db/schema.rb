@@ -11,10 +11,14 @@
 # It's strongly recommended that you check this file into your version control system.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 2020_05_11_134140) do
 =======
 ActiveRecord::Schema.define(version: 2020_05_07_142550) do
 >>>>>>> fd149e9... Gupshup Whatsapp Integrarion
+=======
+ActiveRecord::Schema.define(version: 2020_05_08_161528) do
+>>>>>>> 69d8c83... Verified opt in for customers
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -108,6 +112,7 @@ ActiveRecord::Schema.define(version: 2020_05_07_142550) do
     t.string "psid"
     t.string "web_id"
     t.text "notes"
+    t.boolean "whatsapp_opt_in", default: false
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
