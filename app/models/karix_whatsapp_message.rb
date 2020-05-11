@@ -9,7 +9,10 @@ class KarixWhatsappMessage < ApplicationRecord
   scope :conversation_messages, -> { where(message_type: 'conversation') }
 
   private
+
     def substract_from_balance
+      return unless status != 'failed'
+
       amount = retailer.send("ws_#{ message_type }_cost")
       retailer.ws_balance -= amount
 

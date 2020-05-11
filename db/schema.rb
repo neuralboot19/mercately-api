@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_30_142030) do
+ActiveRecord::Schema.define(version: 2020_05_11_134140) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -435,6 +435,8 @@ ActiveRecord::Schema.define(version: 2020_04_30_142030) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.005
+    t.string "karix_account_uid"
+    t.string "karix_account_token"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end

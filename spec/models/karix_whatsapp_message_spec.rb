@@ -13,6 +13,14 @@ RSpec.describe KarixWhatsappMessage, type: :model do
     let!(:customer1) { create(:customer, retailer: retailer) }
     let!(:customer2) { create(:customer, retailer: retailer) }
 
+    it 'will not substract the retailer\'s ws_conversation_cost from the retailer balance if status is failed' do
+      former_retailer_balance = retailer.ws_balance
+      create(:karix_whatsapp_message, retailer: retailer, customer: customer1, message_type: 'conversation',
+        status: 'failed')
+
+      expect(retailer.reload.ws_balance).to eq(former_retailer_balance)
+    end
+
     it 'will substract the retailer\'s ws_conversation_cost from the retailer balance if message_type is \'conversation\'' do
       former_retailer_balance = retailer.ws_balance
       create(:karix_whatsapp_message, retailer: retailer, customer: customer1, message_type: 'conversation')
