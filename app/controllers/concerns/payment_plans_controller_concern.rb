@@ -19,8 +19,10 @@ module PaymentPlansControllerConcern
 
   def used_karix_whatsapp_messages
     messages = current_retailer.karix_whatsapp_messages.range_between(@payment_plan.start_date, Time.now)
-    @conversations = messages.where(message_type: 'conversation').group_by_month(:created_at).count
-    @notifications = messages.where(message_type: 'notification').group_by_month(:created_at).count
+    @conversations = messages.where(message_type: 'conversation').where.not(status: 'failed')
+      .group_by_month(:created_at).count
+    @notifications = messages.where(message_type: 'notification').where.not(status: 'failed')
+      .group_by_month(:created_at).count
 
     keys = (@conversations.keys + @notifications.keys).uniq.sort
     @user_messages = []
