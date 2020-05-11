@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { fetchMessages, sendMessage, sendImg, setMessageAsReaded } from "../../actions/actions";
+import { fetchMessages, sendMessage, sendImg, setMessageAsRead } from "../../actions/actions";
 
 import MessageForm from './MessageForm';
 import Message from './Message';
@@ -139,7 +139,7 @@ class ChatMessages extends Component {
           new_message: false,
         })
       }
-      this.props.setMessageAsReaded(facebook_message.id, csrfToken);
+      this.props.setMessageAsRead(facebook_message.id, csrfToken);
     }
   }
 
@@ -232,8 +232,8 @@ function mapDispatch(dispatch) {
     sendImg: (id, body, token) => {
       dispatch(sendImg(id, body, token));
     },
-    setMessageAsReaded: (id, token) => {
-      dispatch(setMessageAsReaded(id, token))
+    setMessageAsRead: (id, token) => {
+      dispatch(setMessageAsRead(id, token))
     }
   };
 }

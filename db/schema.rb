@@ -12,6 +12,7 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ActiveRecord::Schema.define(version: 2020_05_11_134140) do
 =======
 ActiveRecord::Schema.define(version: 2020_05_07_142550) do
@@ -19,6 +20,9 @@ ActiveRecord::Schema.define(version: 2020_05_07_142550) do
 =======
 ActiveRecord::Schema.define(version: 2020_05_08_161528) do
 >>>>>>> 69d8c83... Verified opt in for customers
+=======
+ActiveRecord::Schema.define(version: 2020_05_11_215825) do
+>>>>>>> 7629f80... Gupshup Whatsapp Integration - Adding the Template feature
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -202,15 +206,6 @@ ActiveRecord::Schema.define(version: 2020_05_08_161528) do
     t.index ["customer_id"], name: "index_karix_whatsapp_messages_on_customer_id"
     t.index ["retailer_id"], name: "index_karix_whatsapp_messages_on_retailer_id"
     t.index ["uid"], name: "index_karix_whatsapp_messages_on_uid", unique: true
-  end
-
-  create_table "karix_whatsapp_templates", force: :cascade do |t|
-    t.bigint "retailer_id"
-    t.string "text"
-    t.integer "status", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["retailer_id"], name: "index_karix_whatsapp_templates_on_retailer_id"
   end
 
   create_table "meli_customers", force: :cascade do |t|
@@ -500,6 +495,15 @@ ActiveRecord::Schema.define(version: 2020_05_08_161528) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["retailer_id"], name: "index_top_ups_on_retailer_id"
+  end
+
+  create_table "whatsapp_templates", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "text"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_whatsapp_templates_on_retailer_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

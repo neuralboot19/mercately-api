@@ -129,7 +129,7 @@ module Whatsapp::Gupshup::V1
               end
             end
           else
-            GupshupTemporalMessageState.with_advisory_lock(
+            GupshupWhatsappMessage.with_advisory_lock(
               "#{@retailer.to_global_id}_#{wm_id}"
             ) do
               GupshupTemporalMessageState.create(

@@ -55,14 +55,14 @@ class GupshupWhatsappMessageSerializer
     message = object.message_payload
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless type == 'location'
-    message['longitude']
+    message['payload']['payload']['longitude']
   end
 
   attribute :content_location_latitude do |object|
     message = object.message_payload
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless type == 'location'
-    message['latitude']
+    message['payload']['payload']['latitude']
   end
 
   attribute :content_location_label do |object|

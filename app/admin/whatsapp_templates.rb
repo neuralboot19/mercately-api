@@ -1,4 +1,4 @@
-ActiveAdmin.register KarixWhatsappTemplate do
+ActiveAdmin.register WhatsappTemplate do
   permit_params :text,
                 :status,
                 :retailer_id

@@ -224,6 +224,10 @@ RSpec.describe Customer, type: :model do
   end
 
   describe '#recent_inbound_message_date' do
+    before do
+      travel_to Time.now
+    end
+
     context 'when karix integrated' do
       let(:customer) { create(:customer, :with_retailer_karix_integrated) }
       let!(:message1) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
@@ -244,6 +248,10 @@ RSpec.describe Customer, type: :model do
       it 'returns the creation date of the last message' do
         expect(customer.recent_inbound_message_date).to eq(message3.created_at)
       end
+    end
+
+    after do
+      travel_back
     end
   end
 

@@ -17,7 +17,7 @@ class Retailer < ApplicationRecord
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :gupshup_whatsapp_messages, dependent: :destroy
 
-  has_many :karix_whatsapp_templates, dependent: :destroy
+  has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
 
   validates :name, presence: true

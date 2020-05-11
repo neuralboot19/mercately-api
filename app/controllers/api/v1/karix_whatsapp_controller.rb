@@ -151,11 +151,9 @@ class Api::V1::KarixWhatsappController < ApplicationController
       if current_retailer.karix_integrated?
         KarixNotificationHelper.broadcast_data(current_retailer, agents)
       elsif current_retailer.gupshup_integrated?
-        @message = Whatsapp::Gupshup::V1::Helpers::Messages.new(@message).notify_messages!(
+        @message = Whatsapp::Gupshup::V1::Helpers::Messages.new(@message).notify_read!(
           current_retailer,
-          agents,
-          @customer,
-          true
+          agents
         )
       end
       render status: 200, json: { message: @message }
@@ -221,9 +219,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
         render status: 500, json: { message: response['error']['message'] }
       else
         has_agent = customer.agent_customer.present?
-        # Asignamos(solo la primera interaccion) el agente/admin al customer
-        AgentCustomer.create_with(retailer_user: current_retailer_user)
-                     .find_or_create_by(customer: customer)
+        assign_agent(customer)
 
         message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
         message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
@@ -236,10 +232,23 @@ class Api::V1::KarixWhatsappController < ApplicationController
     end
 
     def send_gupshup_notification(customer, params, type)
-      gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, customer)
+      agent_customer = assign_agent(customer)
+
+      gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
       gws.send_message(type: 'text', text: params[:message])
 
+      message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new(gws)
+
+      agents = current_retailer.retailer_users.to_a
+      message_helper.notify_agent!(current_retailer, agents, agent_customer)
+
       render status: 200, json: { message: 'Notificación enviada' }
+    end
+
+    def assign_agent(customer)
+      # Asignamos(solo la primera interacción) el agente/admin al customer
+      AgentCustomer.create_with(retailer_user: current_retailer_user)
+                   .find_or_create_by(customer: customer)
     end
 
     def customer_messages

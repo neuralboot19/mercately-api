@@ -125,7 +125,7 @@ Rails.application.routes.draw do
       put 'karix_whatsapp_update_message_read/:id', to: 'karix_whatsapp#message_read', as: :karix_message_read
 
       resources :karix_whatsapp, only: [:index, :create]
-      resources :karix_whatsapp_templates, only: [:index]
+      resources :whatsapp_templates, only: [:index]
 
       get 'fast_answers_for_messenger', to: 'customers#fast_answers_for_messenger'
       get 'fast_answers_for_whatsapp', to: 'karix_whatsapp#fast_answers_for_whatsapp'

@@ -5,7 +5,7 @@ import {
   sendWhatsAppMessage,
   fetchWhatsAppMessages,
   sendWhatsAppImg,
-  setWhatsAppMessageAsReaded,
+  setWhatsAppMessageAsRead,
   fetchWhatsAppTemplates,
   changeCustomerAgent } from "../../actions/whatsapp_karix";
 import Modal from 'react-modal';
@@ -102,7 +102,7 @@ class ChatMessages extends Component {
       }
 
       if (karix_message.direction === 'inbound') {
-        this.props.setWhatsAppMessageAsReaded(currentCustomer, {message_id: karix_message.id}, csrfToken);
+        this.props.setWhatsAppMessageAsRead(currentCustomer, {message_id: karix_message.id}, csrfToken);
         this.state.can_write = true;
       }
     }
@@ -594,8 +594,8 @@ function mapDispatch(dispatch) {
     sendWhatsAppImg: (id, body, token) => {
       dispatch(sendWhatsAppImg(id, body, token));
     },
-    setWhatsAppMessageAsReaded: (id, body, token) => {
-      dispatch(setWhatsAppMessageAsReaded(id, body, token));
+    setWhatsAppMessageAsRead: (id, body, token) => {
+      dispatch(setWhatsAppMessageAsRead(id, body, token));
     },
     fetchWhatsAppTemplates: (page = 1, token) => {
       dispatch(fetchWhatsAppTemplates(page, token));

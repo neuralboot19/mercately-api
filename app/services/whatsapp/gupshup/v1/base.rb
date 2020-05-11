@@ -1,6 +1,6 @@
 class Whatsapp::Gupshup::V1::Base
   GUPSHUP_API_KEY = ENV['GUPSHUP_API_KEY']
-  GUPSHUP_BASE_URL = 'https://api.gupshup.io/sm/api/v1/users'
+  GUPSHUP_BASE_URL = 'https://api.gupshup.io/sm/api/v1'
 
   def initialize(retailer=nil, customer=nil)
     @retailer = retailer

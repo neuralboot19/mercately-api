@@ -8,26 +8,19 @@ module Whatsapp::Gupshup::V1::Helpers
       raise StandardError.new('Mensaje no especificado') unless @msg.present?
 
       serialized_message = JSON.parse(serialize_message)
-      serialized_customer = serialize_customer(@msg.customer)
 
       retailer = @msg.retailer
       agents = @msg.customer.agent.present? ? [@msg.customer.agent] : retailer.retailer_users.to_a
       retailer_users = agents | retailer.admins
 
       retailer_users.each do |ret_u|
-        notify_update!(ret_u, serialized_message, serialized_customer)
+        notify_update!(ret_u, serialized_message)
       end
     rescue StandardError => e
       Rails.logger.error(e)
     end
 
-    def self.notify_agent!(retailer, retailer_users, assigned_agent)
-      unless assigned_agent.present? &&
-             retailer_users.present? &&
-             retailer.present?
-        raise StandardError.new('Faltan datos')
-      end
-
+    def notify_agent!(retailer, retailer_users, assigned_agent)
       retailer_users = retailer_users | retailer.admins
 
       retailer_users.each do |ret_u|
@@ -47,19 +40,27 @@ module Whatsapp::Gupshup::V1::Helpers
     end
 
     def notify_messages!(retailer, retailer_users, customer, nomore=false)
-      unless retailer_users.present? &&
-             retailer.present?
-        raise StandardError.new('Faltan datos')
-      end
       serialized_message = JSON.parse(serialize_message)
-      serialized_customer = serialize_customer(customer)
-
       retailer_users = retailer_users | retailer.admins
 
       retailer_users.each do |ret_u|
-        notify_update!(ret_u, serialized_message, serialized_customer) unless nomore
+        notify_update!(ret_u, serialized_message) unless nomore
       end
+
       serialized_message['data'].pluck('attributes')
+    rescue StandardError => e
+      Rails.logger.error(e)
+    end
+
+    def notify_read!(retailer, retailer_users)
+      serialized_message = JSON.parse(serialize_message)
+      retailer_users = retailer_users | retailer.admins
+
+      retailer_users.each do |ret_u|
+        notify_new_counter(ret_u)
+      end
+
+      serialized_message['data']['attributes']
     rescue StandardError => e
       Rails.logger.error(e)
     end
@@ -82,7 +83,27 @@ module Whatsapp::Gupshup::V1::Helpers
         ).serialized_json
       end
 
-      def notify_update!(retailer_user, serialized_message, serialized_customer)
+      def notify_update!(retailer_user, serialized_message)
+        # TODO: Change the element name karix_whatsapp_message to something more
+        # standard like whatsapp_message, I decided to keep this name to not
+        # touch front-end at all
+        all_messages = if serialized_message['data'].is_a?(Array)
+                         serialized_message['data'].pluck('attributes')
+                       else
+                         serialized_message['data']['attributes']
+                       end
+        redis.publish 'message_chat',
+                      {
+                        karix_whatsapp_message: {
+                          karix_whatsapp_message: all_messages
+                        },
+                        room: retailer_user.id
+                      }.to_json
+
+        notify_new_counter(retailer_user)
+      end
+
+      def notify_new_counter(retailer_user)
         total = retailer_user.retailer.gupshup_unread_whatsapp_messages(retailer_user).size
 
         redis.publish 'new_message_counter',
@@ -92,22 +113,12 @@ module Whatsapp::Gupshup::V1::Helpers
                         room: retailer_user.id
                       }.to_json
 
-        # TODO: Change the element name karix_whatsapp_message to something more
-        # standard like whatsapp_message, I decided to keep this name to not
-        # touch front-end at all
-        all_messages = if serialized_message['data'].is_a?(Array)
-                        serialized_message['data'].pluck('attributes')
-                      else
-                        serialized_message['data']['attributes']
-                      end
-        redis.publish 'message_chat',
-                      {
-                        karix_whatsapp_message: {
-                          karix_whatsapp_message: all_messages
-                        },
-                        room: retailer_user.id
-                      }.to_json
-
+        customer = if @msg.is_a?(ActiveRecord::AssociationRelation)
+                     @msg.first.customer
+                   else
+                     @msg.customer
+                   end
+        serialized_customer = serialize_customer(customer)
         redis.publish 'customer_chat',
                       {
                         customer: serialized_customer,

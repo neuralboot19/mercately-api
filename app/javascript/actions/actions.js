@@ -155,7 +155,7 @@ export const sendImg = (id, body, token) => {
   };
 };
 
-export const setMessageAsReaded = (id, token) => {
+export const setMessageAsRead = (id, token) => {
   const endpoint = `/api/v1/messages/${id}/readed`;
   const csrf_token = token
   return dispatch => {

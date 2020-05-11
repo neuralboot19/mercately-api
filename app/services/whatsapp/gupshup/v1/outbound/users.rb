@@ -2,7 +2,7 @@ module Whatsapp::Gupshup::V1
   class Outbound::Users < Base
     # Bulk Upload OPT In Phones
     def upload_list(file)
-      url = "#{GUPSHUP_BASE_URL}/bulkUpload/#{@retailer.gupshup_src_name}"
+      url = "#{GUPSHUP_BASE_URL}/users/bulkUpload/#{@retailer.gupshup_src_name}"
       form_data = [['optinList', file]]
       response = post_form(url, form_data)
 
@@ -15,7 +15,7 @@ module Whatsapp::Gupshup::V1
 
     # Fetch Opt-In Users
     def fetch_optin_users
-      url = "#{GUPSHUP_BASE_URL}/#{@retailer.gupshup_src_name}"
+      url = "#{GUPSHUP_BASE_URL}/users/#{@retailer.gupshup_src_name}"
 
       response = get(url)
 

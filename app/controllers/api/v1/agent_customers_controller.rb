@@ -29,7 +29,7 @@ class Api::V1::AgentCustomersController < ApplicationController
         if current_retailer.karix_integrated?
           KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, @agent_customer)
         elsif current_retailer.gupshup_integrated?
-          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages
+          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
           gnhm.notify_agent!(
             current_retailer,
             agents,
@@ -40,7 +40,7 @@ class Api::V1::AgentCustomersController < ApplicationController
         if current_retailer.karix_integrated?
           KarixNotificationHelper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil, @agent_customer)
         elsif current_retailer.gupshup_integrated?
-          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages
+          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
           gnhm.notify_agent!(
             current_retailer,
             current_retailer.retailer_users.to_a,
