@@ -56,7 +56,7 @@ In order to use the WhatsApp integration in development mode with Karix, you nee
 - Sign up and download [ngrok](https://ngrok.com/download)
 - Exec `./ngrok http 3000`
 - Sign up on [Karix](https://www.karix.io/)
-- Copy to your `.env` file these variables: `KARIX_ACCOUNT_UID={your Karix ACCOUNT ID}`, and `KARIX_ACCOUNT_TOKEN={your Karix ACCOUNT TOKEN}`. These two values can be found in your Karix dashboard after signing up|in.
+- Set in the retailer that you use for testing these two attributes in the database: `karix_account_uid={your Karix ACCOUNT ID}`, and `karix_account_token={your Karix ACCOUNT TOKEN}`. These two values can be found in your Karix dashboard after signing up|in.
 - Edit your Retailer and update these two attributes: `whats_app_enabled` set to `true`, and `karix_whatsapp_phone` set to the sandbox phone number provided and specified in the Karix Dashboard, let's say `+13253077759`, for instance
 - In your Karix dashboard, put the following URL in the text input besides the button `Edit Webhook URL` and click it later, `https://[your ngrok subdomain].ngrok.io/api/v1/karix_whatsapp?account_id={your Retailer ID}`
 - Copy to your `.env` file the next variable: `KARIX_WEBHOOK={https://[your ngrok subdomain].ngrok.io/api/v1/karix_whatsapp}`

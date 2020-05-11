@@ -129,6 +129,8 @@ ActiveAdmin.register Retailer do
       attributes_table_for retailer do
         row :whats_app_enabled
         row :karix_whatsapp_phone
+        row :karix_account_uid
+        row :karix_account_token
         row 'Saldo' do |retailer|
           retailer.ws_balance
         end
@@ -171,6 +173,8 @@ ActiveAdmin.register Retailer do
       f.input :phone_number
       f.input :whats_app_enabled
       f.input :karix_whatsapp_phone
+      f.input :karix_account_uid
+      f.input :karix_account_token
       f.input :ws_balance
       f.input :ws_notification_cost
       f.input :ws_conversation_cost
