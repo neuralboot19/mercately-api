@@ -123,3 +123,7 @@ gem 'with_advisory_lock', '~> 4.6'
 gem 'country_select', '~> 4.0'
 gem 'phony', '~> 2.18.12'
 gem 'phonelib', '~> 0.6.43'
+
+# MongoDB
+gem 'mongoid', '~> 7.1', '>= 7.1.1'
+gem 'globalid', '~> 0.4.2'

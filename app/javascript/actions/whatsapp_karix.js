@@ -108,7 +108,7 @@ export const sendWhatsAppImg = (id, body, token) => {
   };
 };
 
-export const setWhatsAppMessageAsReaded = (id, body, token) => {
+export const setWhatsAppMessageAsRead = (id, body, token) => {
   const endpoint = `/api/v1/karix_whatsapp_update_message_read/${id}`;
   const csrf_token = token
   return dispatch => {
@@ -137,7 +137,7 @@ export const setWhatsAppMessageAsReaded = (id, body, token) => {
 };
 
 export const fetchWhatsAppTemplates = (page = 1) => {
-  const endpoint = `/api/v1/karix_whatsapp_templates?page=${page}`;
+  const endpoint = `/api/v1/whatsapp_templates?page=${page}`;
   return dispatch =>
     fetch(endpoint, {
       method: "GET",

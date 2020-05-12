@@ -5,7 +5,7 @@ set :application, 'mercately'
 set :repo_url, 'git@github.com:ThoughtCode/mercately.git' # Edit this to match your repository
 set :deploy_to, '/home/mercately/public_html'
 set :pty, true
-set :linked_files, %w{config/database.yml config/secrets.yml config/puma.rb}
+set :linked_files, %w{config/database.yml config/secrets.yml config/puma.rb config/mongoid.yml}
 set :linked_dirs, %w{log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/uploads}
 set :keep_releases, 5
 
@@ -51,7 +51,6 @@ namespace :deploy do
       execute :sudo, :systemctl, :restart, :nginx
     end
   end
- 
 
   after  :finishing,    :restart_mercately
   after  :finishing,    :restart_sidekiq

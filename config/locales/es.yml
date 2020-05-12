@@ -84,7 +84,7 @@ es:
       - vie
       - sáb
     abbr_month_names:
-      - 
+      -
       - ene
       - feb
       - mar
@@ -110,7 +110,7 @@ es:
       long: "%-d de %B de %Y"
       short: "%-d de %b"
     month_names:
-      - 
+      -
       - enero
       - febrero
       - marzo
@@ -299,3 +299,13 @@ es:
       long: "%-d de %B de %Y %H:%M"
       short: "%-d de %b %H:%M"
     pm: pm
+  mongoid:
+    errors:
+      messages:
+        message_title: 'Message'
+        summary_title: 'Summary'
+        resolution_title: 'Resolution'
+        no_client_config:
+          message: "No message config found"
+          summary: "No summary config found"
+          resolution: "No resolution config found"

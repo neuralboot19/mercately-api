@@ -26,9 +26,27 @@ class Api::V1::AgentCustomersController < ApplicationController
 
       # Se envian las notificaciones
       if former_agent
-        KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, @agent_customer)
+        if current_retailer.karix_integrated?
+          KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, @agent_customer)
+        elsif current_retailer.gupshup_integrated?
+          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
+          gnhm.notify_agent!(
+            current_retailer,
+            agents,
+            @agent_customer
+          )
+        end
       else
-        KarixNotificationHelper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil, @agent_customer)
+        if current_retailer.karix_integrated?
+          KarixNotificationHelper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil, @agent_customer)
+        elsif current_retailer.gupshup_integrated?
+          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
+          gnhm.notify_agent!(
+            current_retailer,
+            current_retailer.retailer_users.to_a,
+            @agent_customer
+          )
+        end
       end
 
       RetailerMailer.chat_assignment_notification(@agent_customer, current_retailer_user).deliver_now if
@@ -61,8 +79,21 @@ class Api::V1::AgentCustomersController < ApplicationController
         @agent_customer.destroy!
 
         # Se envian las notificaciones
-        KarixNotificationHelper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil,
-          @agent_customer)
+        if current_retailer.karix_integrated?
+          KarixNotificationHelper.broadcast_data(
+            current_retailer,
+            current_retailer.retailer_users.to_a,
+            nil,
+            @agent_customer
+          )
+        elsif current_retailer.gupshup_integrated?
+          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
+          gnhm.notify_agent!(
+            current_retailer,
+            current_retailer.retailer_users.to_a,
+            @agent_customer
+          )
+        end
 
         render status: 200, json: { message: 'Esta conversación no tiene agente asignado' }
         return true

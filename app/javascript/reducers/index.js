@@ -54,6 +54,7 @@ const reducer = (state = initialState, action) => {
         messages: action.data.messages,
         total_pages: action.data.total_pages,
         agents: action.data.agents,
+        handle_message_events: action.data.handle_message_events,
         errorSendMessageStatus: balance_error.status,
         errorSendMessageText: balance_error.message
       }

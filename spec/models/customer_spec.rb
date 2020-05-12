@@ -223,14 +223,35 @@ RSpec.describe Customer, type: :model do
     end
   end
 
-  describe '#recent_karix_message_date' do
-    let(:customer) { create(:customer) }
-    let!(:message1) { create(:karix_whatsapp_message, customer: customer, created_time: Time.now) }
-    let!(:message2) { create(:karix_whatsapp_message, customer: customer, created_time: Time.now) }
-    let!(:message3) { create(:karix_whatsapp_message, customer: customer, created_time: Time.now) }
+  describe '#recent_inbound_message_date' do
+    before do
+      travel_to Time.now
+    end
 
-    it 'returns the creation date of the last message' do
-      expect(customer.recent_karix_message_date).to eq(customer.karix_whatsapp_messages.last.created_time)
+    context 'when karix integrated' do
+      let(:customer) { create(:customer, :with_retailer_karix_integrated) }
+      let!(:message1) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
+      let!(:message2) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
+      let!(:message3) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
+
+      it 'returns the creation date of the last message' do
+        expect(customer.recent_inbound_message_date).to eq(message3.created_time)
+      end
+    end
+
+    context 'when gupshup integrated' do
+      let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+      let!(:message1) { create(:gupshup_whatsapp_message, :inbound, customer: customer, created_at: Time.now) }
+      let!(:message2) { create(:gupshup_whatsapp_message, :inbound, customer: customer, created_at: Time.now) }
+      let!(:message3) { create(:gupshup_whatsapp_message, :inbound, customer: customer, created_at: Time.now) }
+
+      it 'returns the creation date of the last message' do
+        expect(customer.recent_inbound_message_date).to eq(message3.created_at)
+      end
+    end
+
+    after do
+      travel_back
     end
   end
 

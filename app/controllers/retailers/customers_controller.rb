@@ -89,7 +89,8 @@ class Retailers::CustomersController < RetailersController
         :country_id,
         :first_name,
         :last_name,
-        :notes
+        :notes,
+        :send_for_opt_in
       )
     end
 

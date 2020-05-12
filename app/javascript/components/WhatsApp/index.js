@@ -19,7 +19,7 @@ class WhatsApp extends Component {
   }
 
   handleOpenChat = (customer_details) => {
-    customer_details["karix_unread_message?"] = false;
+    customer_details["unread_message?"] = false;
     this.setState({
       ...this.state,
       currentCustomer: customer_details.id,

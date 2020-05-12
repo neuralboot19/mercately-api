@@ -10,7 +10,7 @@ class Question < ApplicationRecord
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
   enum status: %i[ANSWERED UNANSWERED CLOSED_UNANSWERED UNDER_REVIEW BANNED DELETED]
-  enum answer_status: %i[ACTIVE DISABLED]
+  enum answer_status: %i[ACTIVE DISABLED BANNED DELETED], _prefix: true
   enum meli_question_type: %w[from_order from_product]
 
   delegate :retailer, to: :product

@@ -31,3 +31,13 @@
 
 en:
   hello: "Hello world"
+  mongoid:
+    errors:
+      messages:
+        message_title: 'Message'
+        summary_title: 'Summary'
+        resolution_title: 'Resolution'
+        no_client_config:
+          message: "No client config found"
+          summary: "No summary config found"
+          resolution: "No resolution config found"

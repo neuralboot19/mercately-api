@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_134140) do
+ActiveRecord::Schema.define(version: 2020_05_11_215825) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(version: 2020_05_11_134140) do
     t.string "psid"
     t.string "web_id"
     t.text "notes"
+    t.boolean "whatsapp_opt_in", default: false
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -135,6 +136,30 @@ ActiveRecord::Schema.define(version: 2020_05_11_134140) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
+  end
+
+  create_table "gupshup_whatsapp_messages", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.bigint "customer_id"
+    t.string "whatsapp_message_id"
+    t.string "gupshup_message_id"
+    t.integer "status", null: false
+    t.string "direction", null: false
+    t.json "message_payload"
+    t.string "source", null: false
+    t.string "destination", null: false
+    t.string "channel", null: false
+    t.datetime "sent_at"
+    t.datetime "delivered_at"
+    t.datetime "read_at"
+    t.boolean "error"
+    t.json "error_payload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
+    t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
+    t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
+    t.index ["whatsapp_message_id"], name: "index_gupshup_whatsapp_messages_on_whatsapp_message_id"
   end
 
   create_table "karix_whatsapp_messages", force: :cascade do |t|
@@ -169,15 +194,6 @@ ActiveRecord::Schema.define(version: 2020_05_11_134140) do
     t.index ["customer_id"], name: "index_karix_whatsapp_messages_on_customer_id"
     t.index ["retailer_id"], name: "index_karix_whatsapp_messages_on_retailer_id"
     t.index ["uid"], name: "index_karix_whatsapp_messages_on_uid", unique: true
-  end
-
-  create_table "karix_whatsapp_templates", force: :cascade do |t|
-    t.bigint "retailer_id"
-    t.string "text"
-    t.integer "status", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["retailer_id"], name: "index_karix_whatsapp_templates_on_retailer_id"
   end
 
   create_table "meli_customers", force: :cascade do |t|
@@ -435,9 +451,12 @@ ActiveRecord::Schema.define(version: 2020_05_11_134140) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.005
+    t.string "gupshup_phone_number"
+    t.string "gupshup_src_name"
     t.string "karix_account_uid"
     t.string "karix_account_token"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
+    t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
   end
 
@@ -463,12 +482,23 @@ ActiveRecord::Schema.define(version: 2020_05_11_134140) do
     t.index ["retailer_id"], name: "index_top_ups_on_retailer_id"
   end
 
+  create_table "whatsapp_templates", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "text"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_whatsapp_templates_on_retailer_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agent_customers", "customers"
   add_foreign_key "agent_customers", "retailer_users"
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
   add_foreign_key "facebook_retailers", "retailers"
+  add_foreign_key "gupshup_whatsapp_messages", "customers"
+  add_foreign_key "gupshup_whatsapp_messages", "retailers"
   add_foreign_key "karix_whatsapp_messages", "customers"
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"

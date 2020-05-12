@@ -1,5 +1,6 @@
 class Customer < ApplicationRecord
-  include CustomerModelConcern
+  include PhoneNumberConcern
+
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
   has_one :agent_customer
@@ -15,6 +16,7 @@ class Customer < ApplicationRecord
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
+  has_many :gupshup_whatsapp_messages, dependent: :destroy
 
   validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
@@ -23,10 +25,11 @@ class Customer < ApplicationRecord
   after_create :generate_web_id
   before_validation :strip_whitespace
   before_save :format_phone_number
+  after_save :verify_opt_in
 
   enum id_type: %i[cedula pasaporte ruc]
 
-  attr_accessor :ml_generated_phone
+  attr_accessor :ml_generated_phone, :send_for_opt_in
 
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
@@ -101,18 +104,23 @@ class Customer < ApplicationRecord
       .sum('order_items.quantity')
   end
 
-  def karix_unread_message?
-    last_message = karix_whatsapp_messages.where(direction: 'inbound').last
+  def unread_whatsapp_message?
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    last_message = self.send(messages).where(direction: 'inbound').last
     return false unless last_message.present?
 
     last_message.status != 'read'
   end
 
   def recent_inbound_message_date
-    last_message = karix_whatsapp_messages.where(direction: 'inbound').last
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    last_message = self.send(messages).where(direction: 'inbound').last
     return Time.now - 30.hours unless last_message.present?
 
-    last_message.created_time
+    return last_message.created_time if retailer.karix_integrated?
+    last_message.created_at
   end
 
   def bought_items
@@ -152,15 +160,27 @@ class Customer < ApplicationRecord
   end
 
   def last_whatsapp_message
-    karix_whatsapp_messages.last
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+    self.send(messages).last
   end
 
-  def recent_karix_message_date
-    karix_whatsapp_messages.last&.created_time
+  def recent_whatsapp_message_date
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    return self.send(messages).last&.created_time if retailer.karix_integrated?
+    self.send(messages).last&.created_at
   end
 
   def recent_facebook_message_date
     facebook_messages.last&.created_at
+  end
+
+  def whatsapp_messages
+    if retailer.karix_integrated?
+      karix_whatsapp_messages
+    elsif retailer.gupshup_integrated?
+      gupshup_whatsapp_messages
+    end
   end
 
   def emoji_flag
@@ -182,6 +202,10 @@ class Customer < ApplicationRecord
       Rails.logger.error(e)
       return
     end
+  end
+
+  def handle_message_events?
+    retailer.karix_integrated?
   end
 
   private
@@ -214,5 +238,26 @@ class Customer < ApplicationRecord
           self.phone = "+#{country.country_code}#{aux_phone}"
         end
       end
+    end
+
+    def verify_opt_in
+      return unless retailer.gupshup_integrated? && ActiveModel::Type::Boolean.new.cast(send_for_opt_in) == true &&
+        whatsapp_opt_in == false && phone.present?
+
+      number = self.phone_number(false)
+      CSV.open("#{Rails.public_path}/#{id}_opt_in.csv", 'wb') do |csv|
+        csv << [number]
+      end
+
+      info = gupshup_service.upload_list(File.open("#{Rails.public_path}/#{id}_opt_in.csv"))
+      File.delete("#{Rails.public_path}/#{id}_opt_in.csv")
+
+      return unless info.present? && info&.[](:code) == '200'
+
+      update(whatsapp_opt_in: true) if info&.[](:body)&.[]('status') == true
+    end
+
+    def gupshup_service
+      @gupshup_service ||= Whatsapp::Gupshup::V1::Outbound::Users.new(retailer)
     end
 end
