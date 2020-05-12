@@ -148,6 +148,17 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
     end
 
+    it 'responses with a 404 when no customers registered' do
+      retailer.customers.destroy_all
+
+      get api_v1_karix_customers_path
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:not_found)
+      expect(body['message']).to eq('Customers not found')
+      expect(body['customers']).to eq([])
+    end
+
     context 'when the retailer user is an agent' do
       let(:retailer_user_agent) { create(:retailer_user, :with_retailer, :agent, retailer: retailer) }
       let!(:agent_customer1) { create(:agent_customer, retailer_user: retailer_user, customer: customer1) }
