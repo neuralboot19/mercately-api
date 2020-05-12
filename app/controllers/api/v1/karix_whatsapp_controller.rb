@@ -18,8 +18,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
     @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
 
     # Se debe quitar primero el offset de Kaminari para que pueda tomar el del parametro
-    @customers = @customers.offset(false).offset(params[:offset])
-    total_pages = @customers.total_pages
+    @customers = @customers&.offset(false)&.offset(params[:offset])
+    total_pages = @customers&.total_pages
 
     if @customers.present?
       render status: 200, json: {
@@ -35,7 +35,10 @@ class Api::V1::KarixWhatsappController < ApplicationController
         total_customers: total_pages
       }
     else
-      render status: 404, json: { message: 'Customers not found' }
+      render status: 404, json: {
+        message: 'Customers not found',
+        customers: []
+      }
     end
   end
 
