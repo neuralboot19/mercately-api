@@ -10,19 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 2020_05_11_134140) do
-=======
-ActiveRecord::Schema.define(version: 2020_05_07_142550) do
->>>>>>> fd149e9... Gupshup Whatsapp Integrarion
-=======
-ActiveRecord::Schema.define(version: 2020_05_08_161528) do
->>>>>>> 69d8c83... Verified opt in for customers
-=======
 ActiveRecord::Schema.define(version: 2020_05_11_215825) do
->>>>>>> 7629f80... Gupshup Whatsapp Integration - Adding the Template feature
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -463,13 +451,10 @@ ActiveRecord::Schema.define(version: 2020_05_11_215825) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.005
-<<<<<<< HEAD
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
-=======
     t.string "gupshup_phone_number"
     t.string "gupshup_src_name"
->>>>>>> fd149e9... Gupshup Whatsapp Integrarion
+    t.string "karix_account_uid"
+    t.string "karix_account_token"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
