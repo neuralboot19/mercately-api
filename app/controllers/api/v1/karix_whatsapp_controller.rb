@@ -238,7 +238,9 @@ class Api::V1::KarixWhatsappController < ApplicationController
       agent_customer = assign_agent(customer)
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
-      gws.send_message(type: 'text', text: params[:message])
+      type = params[:template] ? 'template' : 'text'
+
+      gws.send_message(type: type, text: params[:message])
 
       message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new(gws)
 

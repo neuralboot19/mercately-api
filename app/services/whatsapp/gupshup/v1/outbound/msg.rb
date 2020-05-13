@@ -44,12 +44,12 @@ module Whatsapp::Gupshup::V1
 
       # Send Template Message
       def template
-        raise StandardError.new('Faltaron parámetros') unless @options[:template].present?
+        raise StandardError.new('Faltaron parámetros') unless @options[:text].present?
 
         message = {
           'isHSM':'true',
           'type': 'text',
-          'text': @options[:template]
+          'text': @options[:text]
         }.to_json
 
         bodyString = base_body

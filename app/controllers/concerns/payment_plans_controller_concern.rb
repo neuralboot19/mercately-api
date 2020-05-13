@@ -21,22 +21,9 @@ module PaymentPlansControllerConcern
     whatsapp_messages = current_retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
     messages = current_retailer.send(whatsapp_messages).range_between(@payment_plan.start_date, Time.now)
 
-    @conversations = if current_retailer.karix_integrated?
-                       messages.where(message_type: 'conversation').group_by_month(:created_at).count
-                     elsif current_retailer.gupshup_integrated?
-                       messages.where(direction: 'outbound')
-                               .where("message_payload->>'isHSM' = ?", 'false')
-                               .or(GupshupWhatsappMessage.where(direction: 'inbound'))
-                               .group_by_month(:created_at).count
-                     end
+    @conversations = messages.group_by_month(:created_at).conversation_messages.count
+    @notifications = messages.group_by_month(:created_at).notification_messages.count
 
-    @notifications = if current_retailer.karix_integrated?
-                       messages.where(message_type: 'notification').group_by_month(:created_at).count
-                     elsif current_retailer.gupshup_integrated?
-                      messages.where(direction: 'outbound')
-                              .where("message_payload->>'isHSM' = ?", 'true')
-                              .group_by_month(:created_at).count
-                     end
     keys = (@conversations.keys + @notifications.keys).uniq.sort
     @user_messages = []
 
