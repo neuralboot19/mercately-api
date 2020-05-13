@@ -9,6 +9,8 @@ ActiveAdmin.register Retailer do
                 :phone_number,
                 :whats_app_enabled,
                 :karix_whatsapp_phone,
+                :karix_account_uid,
+                :karix_account_token,
                 :ws_balance,
                 :ws_notification_cost,
                 :ws_conversation_cost,

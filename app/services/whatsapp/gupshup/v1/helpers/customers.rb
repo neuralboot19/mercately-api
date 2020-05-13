@@ -7,6 +7,8 @@ module Whatsapp::Gupshup::V1::Helpers
         parse_phone = Phonelib.parse(phone_to_find)
         phone = params[:payload][:sender][:dial_code]
         country = parse_phone&.country
+
+        whatsapp_name = params['payload']['sender']['name']
       else
         phone_to_find = "+#{params[:payload][:destination]}"
 
@@ -19,6 +21,7 @@ module Whatsapp::Gupshup::V1::Helpers
 
       customer.phone = phone if customer.present?
       customer = retailer.customers.find_or_initialize_by(phone: phone) unless customer
+      customer.whatsapp_name = whatsapp_name if whatsapp_name
 
       customer.country_id = country
       customer.send_for_opt_in = true if customer.whatsapp_opt_in == false

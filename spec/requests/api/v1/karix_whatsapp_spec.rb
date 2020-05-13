@@ -40,7 +40,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           'country' => 'EC',
           'created_time' => '2020-03-18T15:01:14.624018Z',
           'delivered_time' => nil,
-          'destination' => '+593998377063',
+          'destination' => '+593998999999',
           'direction' => 'outbound',
           'error' => nil,
           'redact' => false,
@@ -56,7 +56,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     }
   end
 
-  let(:karix_data) do
+  let(:karix_outbound_data_event) do
     {
       "account_id" => retailer.id,
       'data' => {
@@ -76,7 +76,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         'country' => 'EC',
         'created_time' => '2020-03-18T16:05:21.529993Z',
         'delivered_time' => nil,
-        'destination' => '+5939983770633',
+        'destination' => '+5939989999993',
         'direction' => 'outbound',
         'error' => {
           'code' => '1102',
@@ -194,58 +194,66 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'POST #create' do
-    subject { Whatsapp::Karix::Messages }
-
-    let(:message) { create(:karix_whatsapp_message) }
-
-    context 'when the message is sent without errors' do
-      it 'successfully, will response a 200 status' do
-        allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
-        allow_any_instance_of(subject).to receive(:assign_message).and_return(message)
-
-        post '/api/v1/karix_send_whatsapp_message',
-          params: {
-            customer_id: customer1.id,
-            message: 'New whatsapp message'
-          }
-
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('200')
-        expect(body['message']).to eq(karix_successful_response['objects'][0])
+    context 'when Gupshup integrated' do
+      context 'when the message is submitted' do
+        it 'will response a 200 status code and store a new gupshup whatsapp message'
       end
     end
 
-    context 'when the message is not sent' do
-      it 'fails and will response a 500 status' do
-        allow_any_instance_of(subject).to receive(:send_message).and_return({ 'error': { 'message':
-          'Connection rejected' }}.with_indifferent_access)
+    context 'when Karix integrated' do
+      subject { Whatsapp::Karix::Messages }
 
-        post '/api/v1/karix_send_whatsapp_message',
-          params: {
-            customer_id: customer1.id,
-            message: 'New whatsapp message'
-          }
+      let(:message) { create(:karix_whatsapp_message) }
 
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('500')
-        expect(body['message']).to eq('Connection rejected')
+      context 'when the message is sent without errors' do
+        it 'successfully, will response a 200 status' do
+          allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
+          allow_any_instance_of(subject).to receive(:assign_message).and_return(message)
+
+          post '/api/v1/karix_send_whatsapp_message',
+            params: {
+              customer_id: customer1.id,
+              message: 'New whatsapp message'
+            }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['message']).to eq(karix_successful_response['objects'][0])
+        end
       end
-    end
 
-    context 'because of the retailer has not enough balance' do
-      it 'fails and will response a 401 status' do
-        retailer.update_attributes(ws_balance: 0.0671)
+      context 'when the message is not sent' do
+        it 'fails and will response a 500 status' do
+          allow_any_instance_of(subject).to receive(:send_message).and_return({ 'error': { 'message':
+            'Connection rejected' }}.with_indifferent_access)
 
-        post '/api/v1/karix_send_whatsapp_message',
-          params: {
-            customer_id: customer1.id,
-            message: 'New whatsapp message'
-          }
+          post '/api/v1/karix_send_whatsapp_message',
+            params: {
+              customer_id: customer1.id,
+              message: 'New whatsapp message'
+            }
 
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('401')
-        expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
-                                      'por favor, contáctese con su agente de ventas para recargar su saldo')
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('500')
+          expect(body['message']).to eq('Connection rejected')
+        end
+      end
+
+      context 'because of the retailer has not enough balance' do
+        it 'fails and will response a 401 status' do
+          retailer.update_attributes(ws_balance: 0.0671)
+
+          post '/api/v1/karix_send_whatsapp_message',
+            params: {
+              customer_id: customer1.id,
+              message: 'New whatsapp message'
+            }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('401')
+          expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                        'por favor, contáctese con su agente de ventas para recargar su saldo')
+        end
       end
     end
   end
@@ -290,45 +298,145 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'POST #save_message' do
-    context 'when the response from Karix does not have errors' do
-      it 'successfully response a 200 status' do
-        post "/api/v1/karix_whatsapp",
-          params: karix_data
+    context 'outbound message events' do
+      context 'when the response from Karix does not have errors' do
+        it 'successfully response a 200 status' do
+          post "/api/v1/karix_whatsapp",
+            params: karix_outbound_data_event
+
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('200')
+          expect(body['message']).to eq('Succesful')
+        end
+      end
+
+      context 'when the response from Karix has errors' do
+        it 'fails, response a 500 status' do
+          post "/api/v1/karix_whatsapp",
+            params: {
+              error: {
+                message: 'Connection rejected'
+              }
+            }
+
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('500')
+          expect(body['message']).to eq('Connection rejected')
+        end
+      end
+
+      context 'when the retailer requested from Karix does not exist' do
+        it 'fails, response a 404 status' do
+          karix_outbound_data_event['account_id'] = nil
+
+          post "/api/v1/karix_whatsapp",
+            params: karix_outbound_data_event
+
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('404')
+          expect(body['message']).to eq('Account not found')
+        end
+      end
+    end
+
+    context 'inbound message' do
+      let(:karix_inbound_payload) do
+        {
+          'uid' => '50825099-97da-42ff-b74e-b6d1a725f77d',
+          'type' => 'message',
+          'api_version' => '2.0',
+          'data' => {
+            'uid' => '53de54c5-7c7a-4e39-9b20-6027ad529232',
+            'account_uid' => 'f93e9db6-bfbc-4e2b-9eb7-6a501162d0cc',
+            'total_cost' => '0.004',
+            'refund' => 'nil',
+            'source' => '+593998999999',
+            'destination' => '+13253077759',
+            'country' => 'US',
+            'content_type' => 'text',
+            'content' => {
+              'text' => 'Cool'
+            },
+            'created_time' => '2020-05-13T13:42:53Z',
+            'sent_time' => 'nil',
+            'delivered_time' => 'nil',
+            'updated_time' => 'nil',
+            'channel' => 'whatsapp',
+            'status' => 'received',
+            'direction' => 'inbound',
+            'error' => 'nil',
+            'request_uid' => '489f73bf-91c3-4594-841b-e8e46651af96',
+            'redact':false,
+            'channel_details' => {
+              'whatsapp' => {
+                'type' => 'conversation',
+                'platform_fee' => '0.004',
+                'whatsapp_fee' => '0',
+                'source_profile' => {
+                  'name' => 'bj'
+                }
+              }
+            },
+            'api_version' => '2.0'
+          },
+          'account_id' => retailer.id,
+          'karix_whatsapp' => {
+            'uid' => '50825099-97da-42ff-b74e-b6d1a725f77d',
+            'type' => 'message',
+            'api_version' => '2.0',
+            'data' => {
+              'uid' => '53de54c5-7c7a-4e39-9b20-6027ad529232',
+              'account_uid' => 'f93e9db6-bfbc-4e2b-9eb7-6a501162d0cc',
+              'total_cost' => '0.004',
+              'refund' => 'nil',
+              'source' => '+593998999999',
+              'destination' => '+13253077759',
+              'country' => 'US',
+              'content_type' => 'text',
+              'content' => {
+                'text' => 'Cool'
+              },
+              'created_time' => '2020-05-13T13:42:53Z',
+              'sent_time' => 'nil',
+              'delivered_time' => 'nil',
+              'updated_time' => 'nil',
+              'channel' => 'whatsapp',
+              'status' => 'received',
+              'direction' => 'inbound',
+              'error' => 'nil',
+              'request_uid' => '489f73bf-91c3-4594-841b-e8e46651af96',
+              'redact':false,
+              'channel_details' => {
+                'whatsapp' => {
+                  'type' => 'conversation',
+                  'platform_fee' => '0.004',
+                  'whatsapp_fee' => '0',
+                  'source_profile' => {
+                    'name' => 'bj'
+                  }
+                }
+              },
+              'api_version' => '2.0'
+            }
+          }
+        }
+      end
+
+      it 'stores the customer name' do
+        expect {
+          post '/api/v1/karix_whatsapp',
+            params: karix_inbound_payload
+        }.to change(Customer, :count).by(1)
 
         body = JSON.parse(response.body)
 
         expect(response.code).to eq('200')
         expect(body['message']).to eq('Succesful')
-      end
-    end
-
-    context 'when the response from Karix has errors' do
-      it 'fails, response a 500 status' do
-        post "/api/v1/karix_whatsapp",
-          params: {
-            error: {
-              message: 'Connection rejected'
-            }
-          }
-
-        body = JSON.parse(response.body)
-
-        expect(response.code).to eq('500')
-        expect(body['message']).to eq('Connection rejected')
-      end
-    end
-
-    context 'when the retailer requested from Karix does not exist' do
-      it 'fails, response a 404 status' do
-        karix_data['account_id'] = nil
-
-        post "/api/v1/karix_whatsapp",
-          params: karix_data
-
-        body = JSON.parse(response.body)
-
-        expect(response.code).to eq('404')
-        expect(body['message']).to eq('Account not found')
+        inbound_name = karix_inbound_payload['data']['channel_details']['whatsapp']['source_profile']['name']
+        expect(Customer.last.whatsapp_name).to eq(inbound_name)
       end
     end
   end
