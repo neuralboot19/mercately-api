@@ -11,7 +11,7 @@ class GupshupWhatsappController < ApplicationController
       Rails.logger.error(save_message_params[:payload])
       event_handler = Whatsapp::Gupshup::V1::EventHandler.new(retailer)
       event_handler.process_error!(save_message_params)
-      return
+      return render status: :ok, json: ''
     end
 
     # Get the retailer by its gupshup_src_name, which is the gupshup app name

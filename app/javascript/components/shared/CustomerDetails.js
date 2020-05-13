@@ -77,7 +77,7 @@ class CustomerDetails extends Component {
       <div className="customer_sidebar">
         <div className="customer_box">
           <p>
-            {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.phone}`}
+            {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.whatsapp_name ? customer.whatsapp_name : customer.phone}`}
             <a href={window.location.href.replace('whatsapp_chats', `customers/${customer.web_id}/edit`)} target="_blank">
               <i className="fs-18 mt-4 mr-4 f-right fas fa-external-link-alt"></i>
             </a>

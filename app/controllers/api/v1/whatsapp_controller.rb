@@ -4,5 +4,4 @@ class Api::V1::WhatsappController < ApplicationController
      Rails.logger.info(params)
      render status: 200, json: { message: 'succesful' }
    end
-
 end

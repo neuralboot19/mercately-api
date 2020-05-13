@@ -2,8 +2,15 @@ module Whatsapp
   module Karix
     class Customers
       def save_customer(retailer, ws_data)
-        phone = ws_data['direction'] == 'inbound' ? ws_data['source'] : ws_data['destination']
+        if ws_data['direction'] == 'inbound'
+          phone = ws_data['source']
+          source_profile = ws_data['channel_details']['whatsapp']['source_profile']
+        else
+          phone = ws_data['destination']
+        end
+
         customer = retailer.customers.find_or_initialize_by(phone: phone)
+        customer.whatsapp_name = source_profile['name'] if source_profile
 
         if customer.country_id.blank?
           parse_phone = Phonelib.parse(phone)
