@@ -74,7 +74,12 @@ class CustomerDetails extends Component {
   render() {
     let customer = this.state.customer
     return (
-      <div className="customer_sidebar">
+      <div className={this.props.onMobile ? "customer_sidebar no-border-left" : "customer_sidebar" }>
+        {this.props.onMobile && (
+          <div className="c-secondary fs-15 mt-12" onClick={() => this.props.backToChatMessages()}>
+            <i className="fas fa-chevron-left c-secondary"></i>&nbsp;&nbsp;volver
+          </div>
+        )}
         <div className="customer_box">
           <p>
             {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.whatsapp_name ? customer.whatsapp_name : customer.phone}`}

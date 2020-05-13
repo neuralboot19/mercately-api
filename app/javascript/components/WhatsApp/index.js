@@ -14,7 +14,12 @@ class WhatsApp extends Component {
       removedCustomerId: null,
       newAgentAssignedId: null,
       showFastAnswers: false,
-      fastAnswerText: null
+      fastAnswerText: null,
+      showChatList: true,
+      showChatMessagesSelect: true,
+      showChatMessages: true,
+      showCustomerDetails: true,
+      onMobile: false
     };
   }
 
@@ -29,6 +34,38 @@ class WhatsApp extends Component {
       newAgentAssignedId: null,
       showFastAnswers: false
     });
+
+    if (this.state.onMobile) {
+      this.setState({
+        showChatList: false,
+        showChatMessages: true
+      })
+    }
+  }
+
+  getScreenWidth = () => {
+    return window.innerWidth;
+  }
+
+  backToChatList = () => {
+    this.setState({
+      showChatList: true,
+      showChatMessages: false
+    })
+  }
+
+  backToChatMessages = () => {
+    this.setState({
+      showChatMessages: true,
+      showCustomerDetails: false
+    })
+  }
+
+  editCustomerDetails = () => {
+    this.setState({
+      showChatMessages: false,
+      showCustomerDetails: true
+    })
   }
 
   setRemovedCustomerInfo = (data) => {
@@ -43,12 +80,41 @@ class WhatsApp extends Component {
     this.setState({
       showFastAnswers: !this.state.showFastAnswers
     })
+
+    if (this.state.onMobile) {
+      this.setState({
+        showChatMessages: !this.state.showChatMessages,
+        showCustomerDetails: false
+      })
+    }
   }
 
   changeFastAnswerText = (text) => {
     this.setState({
       fastAnswerText: text
     })
+
+    if (this.state.onMobile) {
+      this.setState({
+        showFastAnswers: false,
+        showChatMessages: true
+      })
+    }
+  }
+
+  componentDidMount() {
+    var screenWidth = this.getScreenWidth();
+
+    if (screenWidth <= 767) {
+      this.setState({
+        showChatList: true,
+        showChatMessagesSelect: false,
+        showChatMessages: false,
+        showCustomerDetails: false,
+        showFastAnswers: false,
+        onMobile: true
+      })
+    }
   }
 
   render() {
@@ -56,50 +122,60 @@ class WhatsApp extends Component {
       <div>
         <div className="box">
           <div className="row">
-            <div className="col-sm-3 chat_list_holder">
-              <ChatList
-                handleOpenChat={this.handleOpenChat}
-                currentCustomer={this.state.currentCustomer}
-                chatType='whatsapp'
-                setRemovedCustomerInfo={this.setRemovedCustomerInfo}
-              />
-            </div>
-
-            {this.state.currentCustomer === 0 ? (
-              <div className="col-sm-9">
-                Selecciona un chat
+            {this.state.showChatList && (
+              <div className={this.state.onMobile ? "col-xs-12 col-sm-3 chat_list_holder no-border-right" : "col-xs-12 col-sm-3 chat_list_holder" }>
+                <ChatList
+                  handleOpenChat={this.handleOpenChat}
+                  currentCustomer={this.state.currentCustomer}
+                  chatType='whatsapp'
+                  setRemovedCustomerInfo={this.setRemovedCustomerInfo}
+                />
               </div>
-              ) : (
-                <div className="col-sm-6">
-                  <ChatMessages
-                    currentCustomer={this.state.currentCustomer}
-                    recentInboundMessageDate={this.state.currentCustomerDetails.recent_inbound_message_date}
-                    customerDetails={this.state.currentCustomerDetails}
-                    removedCustomer={this.state.removedCustomer}
-                    removedCustomerId={this.state.removedCustomerId}
-                    newAgentAssignedId={this.state.newAgentAssignedId}
-                    toggleFastAnswers={this.toggleFastAnswers}
-                    fastAnswerText={this.state.fastAnswerText}
-                    changeFastAnswerText={this.changeFastAnswerText}
-                  />
-                </div>
             )}
 
-            {this.state.currentCustomer != 0 && this.state.showFastAnswers == false &&
-              <div className="col-sm-3">
+            {this.state.currentCustomer === 0 && this.state.showChatMessagesSelect && (
+              <div className="col-xs-12 col-sm-9">
+                Selecciona un chat
+              </div>
+            )}
+
+            {this.state.currentCustomer != 0 && this.state.showChatMessages && (
+              <div className="col-xs-12 col-sm-6">
+                <ChatMessages
+                  currentCustomer={this.state.currentCustomer}
+                  recentInboundMessageDate={this.state.currentCustomerDetails.recent_inbound_message_date}
+                  customerDetails={this.state.currentCustomerDetails}
+                  removedCustomer={this.state.removedCustomer}
+                  removedCustomerId={this.state.removedCustomerId}
+                  newAgentAssignedId={this.state.newAgentAssignedId}
+                  toggleFastAnswers={this.toggleFastAnswers}
+                  fastAnswerText={this.state.fastAnswerText}
+                  changeFastAnswerText={this.changeFastAnswerText}
+                  onMobile={this.state.onMobile}
+                  backToChatList={this.backToChatList}
+                  editCustomerDetails={this.editCustomerDetails}
+                />
+              </div>
+            )}
+
+            {this.state.currentCustomer != 0 && this.state.showFastAnswers == false && this.state.showCustomerDetails &&
+              <div className="col-xs-12 col-sm-3">
                 <CustomerDetails
                   customerDetails={this.state.currentCustomerDetails}
                   chatType='whatsapp_chats'
+                  onMobile={this.state.onMobile}
+                  backToChatMessages={this.backToChatMessages}
                 />
               </div>
             }
 
             {this.state.currentCustomer != 0 && this.state.showFastAnswers &&
-              <div className="col-sm-3">
+              <div className="col-xs-12 col-sm-3">
                 <FastAnswers
                   chatType='whatsapp'
                   changeFastAnswerText={this.changeFastAnswerText}
                   toggleFastAnswers={this.toggleFastAnswers}
+                  onMobile={this.state.onMobile}
                 />
               </div>
             }
