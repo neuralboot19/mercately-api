@@ -119,8 +119,8 @@ class Customer < ApplicationRecord
     last_message = self.send(messages).where(direction: 'inbound').last
     return Time.now - 30.hours unless last_message.present?
 
-    return last_message.created_time if retailer.karix_integrated?
-    last_message.created_at
+    return last_message.created_time.localtime if retailer.karix_integrated?
+    last_message.created_at.localtime
   end
 
   def bought_items
