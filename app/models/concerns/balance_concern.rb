@@ -9,8 +9,12 @@ module BalanceConcern
     def substract_from_balance
       case self.class.name
       when 'KarixWhatsappMessage'
+        return unless status != 'failed'
+
         amount = retailer.send("ws_#{ message_type }_cost")
       when 'GupshupWhatsappMessage'
+        return unless status != 'error'
+
         if direction == 'outbound'
           if message_payload['type'] == 'text'
             cost_type_message = message_payload['isHSM'] == 'true' ? 'notification' : 'conversation'
