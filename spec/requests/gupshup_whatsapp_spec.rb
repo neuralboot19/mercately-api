@@ -95,6 +95,22 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
         expect(response.code).to eq('200')
       end
+
+      it 'returns a 500 if request payload is mal formed' do
+        gupshup_wrong_payload = {
+          '_json': 'None',
+          'action': 'save_message',
+          'controller': 'gupshup_whatsapp',
+          'gupshup_whatsapp': {
+            _json: 'None'
+          }
+        }
+
+        post '/gupshup/ws',
+          params: gupshup_wrong_payload
+
+        expect(response.code).to eq('500')
+      end
     end
   end
 end
