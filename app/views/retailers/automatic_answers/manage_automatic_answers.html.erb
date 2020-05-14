@@ -8,21 +8,24 @@
           </div>
         </div>
 
-        <% if (current_retailer.karix_integrated? || current_retailer.gupshup_integrated?) && current_retailer.facebook_retailer %>
-          <div class="col-xs-12 pl-0">
-            <div class="worm container-fluid">
-              <div class="row center-xs start-sm">
-                <div class="col-xs-12">
+        <div class="col-xs-12 pl-0">
+          <div class="worm container-fluid">
+            <div class="row center-xs start-sm">
+              <div class="col-xs-12 row">
+                <% if current_retailer.karix_integrated? || current_retailer.gupshup_integrated? %>
                   <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp')) %>">
-                    <%= link_to 'WhatsApp', retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp') %></div
-                  ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>">
-                    <%= link_to 'Messenger', retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger') %></div
-                  >
-                </div>
+                    <%= link_to 'WhatsApp', retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp') %>
+                  </div>
+                <% end %>
+                <% if current_retailer.facebook_retailer %>
+                  <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>">
+                    <%= link_to 'Messenger', retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger') %>
+                  </div>
+                <% end %>
               </div>
             </div>
           </div>
-        <% end %>
+        </div>
 
         <% if @message_new_customer %>
           <div class="col-xs-12">
