@@ -107,7 +107,7 @@ class FastAnswers extends Component {
 
   render() {
     return (
-      <div className="customer_sidebar fast_answer_selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
+      <div className={this.props.onMobile ? "customer_sidebar fast_answer_selector no-border-left" : "customer_sidebar fast_answer_selector" } onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
         <div className="customer_box">
           <p>
             Respuestas Rápidas
