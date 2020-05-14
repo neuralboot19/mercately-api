@@ -16,6 +16,7 @@ class Retailer < ApplicationRecord
   has_many :templates, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :gupshup_whatsapp_messages, dependent: :destroy
+  has_many :automatic_answers, dependent: :destroy
 
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
@@ -155,6 +156,22 @@ class Retailer < ApplicationRecord
     whats_app_enabled? &&
     gupshup_phone_number.present? &&
     gupshup_src_name.present?
+  end
+
+  def whatsapp_welcome_message
+    automatic_answers.find_by(platform: :whatsapp, message_type: :new_customer, status: :active)
+  end
+
+  def whatsapp_inactive_message
+    automatic_answers.find_by(platform: :whatsapp, message_type: :inactive_customer, status: :active)
+  end
+
+  def messenger_welcome_message
+    automatic_answers.find_by(platform: :messenger, message_type: :new_customer, status: :active)
+  end
+
+  def messenger_inactive_message
+    automatic_answers.find_by(platform: :messenger, message_type: :inactive_customer, status: :active)
   end
 
   private

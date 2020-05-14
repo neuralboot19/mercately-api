@@ -68,6 +68,10 @@ es:
           closed: Cerrado
           under_review: Pendiente revisión
           inactive: Inactivo
+      automatic_answer:
+        statuses:
+          active: Activo
+          inactive: Inactivo
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'

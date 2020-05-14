@@ -87,4 +87,172 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
       expect(message.type).to eq('document')
     end
   end
+
+  describe '#send_welcome_message' do
+    let(:set_gupshup_messages_service) { instance_double(Whatsapp::Gupshup::V1::Outbound::Msg) }
+
+    before do
+      allow(set_gupshup_messages_service).to receive(:send_message)
+        .and_return('Sent')
+      allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new)
+        .and_return(set_gupshup_messages_service)
+    end
+
+    context 'when the retailer does not have an active welcome message configured' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      it 'returns nil' do
+        expect(message.send(:send_welcome_message)).to be nil
+      end
+    end
+
+    context 'when the customer does not text for the first time' do
+      let!(:automatic_answer) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let!(:first_message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      it 'returns nil' do
+        expect(message.send(:send_welcome_message)).to be nil
+      end
+    end
+
+    context 'when the message is not inbound' do
+      let!(:automatic_answer) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :outbound, customer: customer)
+      end
+
+      it 'returns nil' do
+        expect(message.send(:send_welcome_message)).to be nil
+      end
+    end
+
+    context 'when all conditions are present' do
+      let!(:automatic_answer) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: customer.retailer)
+      end
+
+      it 'sends the message' do
+        expect(message.send(:send_welcome_message)).to eq('Sent')
+      end
+    end
+  end
+
+  describe '#send_inactive_message' do
+    let(:set_gupshup_messages_service) { instance_double(Whatsapp::Gupshup::V1::Outbound::Msg) }
+
+    before do
+      allow(set_gupshup_messages_service).to receive(:send_message)
+        .and_return('Sent')
+      allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new)
+        .and_return(set_gupshup_messages_service)
+    end
+
+    context 'when the retailer does not have an inactive message configured' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let!(:first_message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      it 'returns nil' do
+        expect(message.send(:send_inactive_message)).to be nil
+      end
+    end
+
+    context 'when the customer does not have a prior message sent' do
+      let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      it 'returns nil' do
+        expect(message.send(:send_inactive_message)).to be nil
+      end
+    end
+
+    context 'when the message is not inbound' do
+      let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let!(:first_message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :outbound, customer: customer)
+      end
+
+      it 'returns nil' do
+        expect(message.send(:send_inactive_message)).to be nil
+      end
+    end
+
+    context 'when the created time of the prior message is not passed yet' do
+      let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let!(:first_message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer, created_at:
+          Time.now - 11.hours)
+      end
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer)
+      end
+
+      it 'returns nil' do
+        expect(message.send(:send_inactive_message)).to be nil
+      end
+    end
+
+    context 'when all conditions are present' do
+      let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      let!(:first_message) do
+        create(:gupshup_whatsapp_message, :inbound, retailer: retailer, customer: customer, created_at:
+          Time.now - 13.hours)
+      end
+
+      let(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: customer.retailer)
+      end
+
+      it 'sends the message' do
+        expect(message.send(:send_inactive_message)).to eq('Sent')
+      end
+    end
+  end
 end

@@ -1,0 +1,99 @@
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row">
+        <div class="col-xs-12 mb-20">
+          <h1 class="d-inline index__title">Mensajes de Bienvenida</h1>
+          <div class="index__desc">
+          </div>
+        </div>
+
+        <% if (current_retailer.karix_integrated? || current_retailer.gupshup_integrated?) && current_retailer.facebook_retailer %>
+          <div class="col-xs-12 pl-0">
+            <div class="worm container-fluid">
+              <div class="row center-xs start-sm">
+                <div class="col-xs-12">
+                  <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp')) %>">
+                    <%= link_to 'WhatsApp', retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp') %></div
+                  ><div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>">
+                    <%= link_to 'Messenger', retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger') %></div
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% if @message_new_customer %>
+          <div class="col-xs-12">
+            <%= form_for @message_new_customer, url: retailers_save_automatic_answer_path, method: :post do |f| %>
+              <div class="box">
+                <div class="row">
+                  <fieldset class="col-xs-12 fieldset mt-16">
+                    <legend>Mensaje para clientes nuevos</legend>
+                    <% if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp')) %>
+                      <%= f.hidden_field :platform, value: :whatsapp %>
+                    <% elsif current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>
+                      <%= f.hidden_field :platform, value: :messenger %>
+                    <% end %>
+                    <%= f.hidden_field :message_type, value: :new_customer %>
+                    <div class="col-xs-12 col-sm-3 mb-8 my-16">
+                      <%= f.label :status, 'Estado' %><br/>
+                      <%= f.select :status, AutomaticAnswer.statuses.keys.collect { |c| [ AutomaticAnswer.enum_translation(:status, c), c ]}, {}, { class: 'input' } %>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 mb-8 my-16">
+                      <%= f.label :message, 'Texto' %>
+                      <%= f.text_area :message, placeholder: 'Texto del mensaje', class: 'input h-77' %>
+                      <i class="validation-msg"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-12">
+                  <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <% if @message_inactive_customer %>
+          <div class="col-xs-12 mt-20">
+            <%= form_for @message_inactive_customer, url: retailers_save_automatic_answer_path, method: :post do |f| %>
+              <div class="box">
+                <div class="row">
+                  <fieldset class="col-xs-12 fieldset mt-16">
+                    <% if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp')) %>
+                      <%= f.hidden_field :platform, value: :whatsapp %>
+                    <% elsif current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>
+                      <%= f.hidden_field :platform, value: :messenger %>
+                    <% end %>
+                    <%= f.hidden_field :message_type, value: :inactive_customer %>
+                    <legend>Mensaje para clientes inactivos</legend>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-3 mb-8 my-16">
+                        <%= f.label :status, 'Estado' %><br/>
+                        <%= f.select :status, AutomaticAnswer.statuses.keys.collect { |c| [ AutomaticAnswer.enum_translation(:status, c), c ]}, {}, { class: 'input' } %>
+                      </div>
+                      <div class="col-xs-12 col-sm-3 mb-8 my-16">
+                        <%= f.label :interval, 'Tiempo de inactividad' %><br/>
+                        <%= f.select :interval, AutomaticAnswer::INTERVALS, { class: 'input' } %>
+                      </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 mb-8 my-16">
+                      <%= f.label :message, 'Texto' %>
+                      <%= f.text_area :message, placeholder: 'Texto del mensaje', class: 'input h-77' %>
+                      <i class="validation-msg"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-xs-12">
+                  <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

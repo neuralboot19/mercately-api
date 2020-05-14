@@ -7,6 +7,8 @@ class FacebookMessage < ApplicationRecord
   after_create :sent_by_retailer?
   after_create :send_facebook_message
   after_create :broadcast_to_counter_channel
+  after_create :send_welcome_message
+  after_create :send_inactive_message
 
   scope :unreaded, -> { where(date_read: nil) }
 
@@ -31,5 +33,35 @@ class FacebookMessage < ApplicationRecord
       facebook_helper = FacebookNotificationHelper
       retailer = facebook_retailer.retailer
       facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a)
+    end
+
+    def send_welcome_message
+      retailer = facebook_retailer.retailer
+      welcome_message = retailer.messenger_welcome_message
+      total_messages = customer.total_messenger_messages
+      return unless total_messages == 1 && welcome_message && sent_by_retailer == false
+
+      send_messenger_notification(welcome_message.message)
+    end
+
+    def send_inactive_message
+      retailer = facebook_retailer.retailer
+      inactive_message = retailer.messenger_inactive_message
+      before_last_message = customer.before_last_messenger_message
+
+      return unless inactive_message && sent_by_retailer == false && before_last_message &&
+                    send_message?(before_last_message, inactive_message)
+
+      send_messenger_notification(inactive_message.message)
+    end
+
+    def send_messenger_notification(message)
+      Facebook::Messages.new(facebook_retailer).send_message(id_client, message)
+    end
+
+    def send_message?(before_last_message, inactive_message)
+      hours = ((created_at - before_last_message.created_at) / 3600).to_i
+
+      hours >= inactive_message.interval
     end
 end

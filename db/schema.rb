@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_184710) do
+ActiveRecord::Schema.define(version: 2020_05_14_161524) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,18 @@ ActiveRecord::Schema.define(version: 2020_05_13_184710) do
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_agent_customers_on_customer_id"
     t.index ["retailer_user_id"], name: "index_agent_customers_on_retailer_user_id"
+  end
+
+  create_table "automatic_answers", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "message"
+    t.integer "message_type"
+    t.integer "interval"
+    t.integer "status", default: 1
+    t.integer "platform"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_automatic_answers_on_retailer_id"
   end
 
   create_table "categories", force: :cascade do |t|
