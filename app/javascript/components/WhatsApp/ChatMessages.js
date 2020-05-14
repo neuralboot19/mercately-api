@@ -420,9 +420,29 @@ class ChatMessages extends Component {
 
     return (
       <div className="row bottom-xs">
+        {this.props.onMobile && (
+          <div className="col-xs-12 row">
+            <div className="col-xs-2 pl-0" onClick={() => this.props.backToChatList()}>
+              <i className="fas fa-arrow-left c-secondary fs-30 mt-12"></i>
+            </div>
+            <div className="col-xs-8 pl-0">
+              <div className="profile__name">
+                {`${this.props.customerDetails.first_name && this.props.customerDetails.last_name  ? `${this.props.customerDetails.first_name} ${this.props.customerDetails.last_name}` : this.props.customerDetails.whatsapp_name ? this.props.customerDetails.whatsapp_name : this.props.customerDetails.phone}`}
+              </div>
+              <div className={this.props.customerDetails["unread_whatsapp_message?"] ? 'fw-bold' : ''}>
+                <small>{moment(this.props.customerDetails.recent_message_date).locale('es').fromNow()}</small>
+              </div>
+            </div>
+            <div className="col-xs-2 pl-0" onClick={() => this.props.editCustomerDetails()}>
+              <div className="c-secondary mt-12">
+                Editar
+              </div>
+            </div>
+          </div>
+        )}
         { this.props.currentCustomer != 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
-          (<div className="top-chat-bar">
-            Asignado a:&nbsp;&nbsp;
+          (<div className="top-chat-bar pl-10">
+            <small>Asignado a:</small>&nbsp;&nbsp;
             <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={() => this.handleAgentAssignment()}>
               <option value="">No asignado</option>
               {this.props.agents.map((agent) => (
@@ -456,7 +476,7 @@ class ChatMessages extends Component {
                       <img src={message.content_media_url} className="msg__img"
                         onClick={(e) => this.toggleImgModal(e)}/>
                       {message.is_loading && (
-                        <div class="lds-dual-ring"></div>
+                        <div className="lds-dual-ring"></div>
                       )}
                     </div>)}
                 {message.content_type == 'media' && (message.content_media_type == 'voice' || message.content_media_type == 'audio') && (
@@ -520,9 +540,9 @@ class ChatMessages extends Component {
         }
 
         <Modal isOpen={this.state.isModalOpen} style={customStyles}>
-          <div className="row">
+          <div className={this.props.onMobile ? "row mt-50" : "row" }>
             <div className="col-md-10">
-              <p className="fs-30 mt-0">Plantillas</p>
+              <p className={this.props.onMobile ? "fs-20 mt-0" : "fs-30 mt-0" }>Plantillas</p>
             </div>
             <div className="col-md-2 t-right">
               <button onClick={(e) => this.toggleModal()}>Cerrar</button>
@@ -533,7 +553,7 @@ class ChatMessages extends Component {
               <div>
                 {this.props.templates.map((template) => (
                   <div className="row">
-                    <div className="col-md-10">
+                    <div className={this.props.onMobile ? "col-md-10 fs-10" : "col-md-10" }>
                       <p>{template.text}</p>
                     </div>
                     <div className="col-md-2">

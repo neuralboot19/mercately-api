@@ -25,7 +25,7 @@ class ChatListUser extends Component {
         <div className="profile__data row">
           <div className="img__profile col-xs-2 p-0">
             <div className="rounded-circle mw-100" >
-              <p>{`${customer.first_name && customer.last_name ? `${customer.first_name.charAt(0)} ${customer.last_name.charAt(0)}` : '' }`}  </p>
+              <p>{`${customer.first_name && customer.last_name ? `${customer.first_name.charAt(0)} ${customer.last_name.charAt(0)}` : customer.whatsapp_name ? customer.whatsapp_name.charAt(0) : '' }`}  </p>
             </div>
           </div>
           { this.props.chatType == 'facebook' && (
@@ -39,7 +39,7 @@ class ChatListUser extends Component {
           { this.props.chatType == 'whatsapp' && (
             <div className="col-xs-10">
               <div className="profile__name">
-                {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.phone}`}&nbsp;&nbsp;
+                {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.whatsapp_name ? customer.whatsapp_name : customer.phone }`}&nbsp;&nbsp;
                 { customer.last_whatsapp_message.direction === 'outbound' && customer['handle_message_events?'] === true &&
                   <i className={ `fas fa-${
                     customer.last_whatsapp_message.status === 'sent' ? 'check stroke' : (customer.last_whatsapp_message.status === 'delivered' ? 'check-double stroke' : ( customer.last_whatsapp_message.status === 'read' ? 'check-double black' : 'sync black'))

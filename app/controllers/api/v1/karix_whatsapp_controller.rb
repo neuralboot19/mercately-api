@@ -15,7 +15,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
     @customers = customer_list(customers)
 
-    @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
+    @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch] && @customers.present?
 
     # Se debe quitar primero el offset de Kaminari para que pueda tomar el del parametro
     @customers = @customers&.offset(false)&.offset(params[:offset])
@@ -238,7 +238,9 @@ class Api::V1::KarixWhatsappController < ApplicationController
       agent_customer = assign_agent(customer)
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
-      gws.send_message(type: 'text', text: params[:message])
+      type = params[:template] ? 'template' : 'text'
+
+      gws.send_message(type: type, text: params[:message])
 
       message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new(gws)
 

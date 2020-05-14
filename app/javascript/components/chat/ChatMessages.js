@@ -178,6 +178,26 @@ class ChatMessages extends Component {
   render() {
     return (
       <div className="row bottom-xs">
+        {this.props.onMobile && (
+          <div className="col-xs-12 row mb-15">
+            <div className="col-xs-2 pl-0" onClick={() => this.props.backToChatList()}>
+              <i className="fas fa-arrow-left c-secondary fs-30 mt-12"></i>
+            </div>
+            <div className="col-xs-8 pl-0">
+              <div className="profile__name">
+                {`${this.props.customerDetails.first_name && this.props.customerDetails.last_name  ? `${this.props.customerDetails.first_name} ${this.props.customerDetails.last_name}` : this.props.customerDetails.phone}`}
+              </div>
+              <div className={this.props.customerDetails["unread_message?"] ? 'fw-bold' : ''}>
+                <small>{moment(this.props.customerDetails.recent_message_date).locale('es').fromNow()}</small>
+              </div>
+            </div>
+            <div className="col-xs-2 pl-0" onClick={() => this.props.editCustomerDetails()}>
+              <div className="c-secondary mt-12">
+                Editar
+              </div>
+            </div>
+          </div>
+        )}
         {this.state.isModalOpen && (
           <div className="img_modal">
             <div className="img_modal__overlay" onClick={(e) => this.toggleImgModal(e)}>

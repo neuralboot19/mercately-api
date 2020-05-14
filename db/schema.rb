@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_11_215825) do
+ActiveRecord::Schema.define(version: 2020_05_13_184710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 2020_05_11_215825) do
     t.string "web_id"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
+    t.string "whatsapp_name"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -156,6 +157,7 @@ ActiveRecord::Schema.define(version: 2020_05_11_215825) do
     t.json "error_payload"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "message_type"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
     t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
