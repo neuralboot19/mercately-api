@@ -63,8 +63,8 @@ class ChatMessages extends Component {
     let id = this.props.currentCustomer;
     currentCustomer = id;
 
-    var rDate = moment(this.props.recentInboundMessageDate);
-    this.state.can_write = moment().diff(rDate, 'hours') < 24;
+    var rDate = moment(this.props.recentInboundMessageDate).local();
+    this.state.can_write = moment().local().diff(rDate, 'hours') < 24;
     this.setState({ messages: [],  page: 1, scrolable: true}, () => {
       this.props.fetchWhatsAppMessages(id);
       this.scrollToBottom();
@@ -134,8 +134,8 @@ class ChatMessages extends Component {
     if (currentCustomer !== id) {
       currentCustomer = id;
       total_pages = 0;
-      var rDate = moment(this.props.recentInboundMessageDate);
-      this.state.can_write = moment().diff(rDate, 'hours') < 24;
+      var rDate = moment(this.props.recentInboundMessageDate).local();
+      this.state.can_write = moment().local().diff(rDate, 'hours') < 24;
       this.scrollToBottom();
       this.setState({ messages: [],  page: 1, scrolable: true}, () => {
         this.props.fetchWhatsAppMessages(id);
