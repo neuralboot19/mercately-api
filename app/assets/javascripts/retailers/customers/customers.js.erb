@@ -52,7 +52,8 @@ function sendTemplate() {
   if (allFilled) {
     data = {
       message: auxTemplate.join(''),
-      customer_id: $('#karix-customer-id').val() || $('#customer_id_index').val()
+      customer_id: $('#karix-customer-id').val() || $('#customer_id_index').val(),
+      template: true
     }
 
     $.ajax({
