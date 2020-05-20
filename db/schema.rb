@@ -121,6 +121,16 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
+  create_table "facebook_catalogs", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "uid"
+    t.string "name"
+    t.string "business_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_facebook_catalogs_on_retailer_id"
+  end
+
   create_table "facebook_messages", force: :cascade do |t|
     t.string "sender_uid"
     t.string "id_client"
@@ -372,7 +382,14 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
     t.string "code"
     t.string "web_id"
     t.jsonb "meli_parent", default: []
+    t.string "facebook_product_id"
+    t.string "manufacturer_part_number"
+    t.string "gtin"
+    t.string "brand"
+    t.string "url"
+    t.boolean "connected_to_facebook", default: false
     t.index ["category_id"], name: "index_products_on_category_id"
+    t.index ["facebook_product_id"], name: "index_products_on_facebook_product_id", unique: true, where: "(facebook_product_id IS NOT NULL)"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
     t.index ["retailer_id", "code"], name: "index_products_on_retailer_id_and_code", unique: true
     t.index ["retailer_id"], name: "index_products_on_retailer_id"
@@ -506,6 +523,7 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "facebook_catalogs", "retailers"
   add_foreign_key "agent_customers", "customers"
   add_foreign_key "agent_customers", "retailer_users"
   add_foreign_key "facebook_messages", "customers"

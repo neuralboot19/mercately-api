@@ -15,6 +15,8 @@ ActiveAdmin.register Product do
                 :status,
                 :meli_status,
                 :code,
+                :brand,
+                :url,
                 ml_attributes: [],
                 images: []
 
@@ -61,6 +63,8 @@ ActiveAdmin.register Product do
       row :status
       row :meli_status
       row :code
+      row :brand
+      row :url
       row :main_picture_id
       row :ml_attributes
     end
