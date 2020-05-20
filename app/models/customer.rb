@@ -208,6 +208,26 @@ class Customer < ApplicationRecord
     retailer.karix_integrated?
   end
 
+  def total_whatsapp_messages
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    send(messages).count
+  end
+
+  def before_last_whatsapp_message
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    send(messages).where(direction: 'inbound').second_to_last
+  end
+
+  def total_messenger_messages
+    facebook_messages.count
+  end
+
+  def before_last_messenger_message
+    facebook_messages.where(sent_by_retailer: false).second_to_last
+  end
+
   private
 
     def update_valid_customer

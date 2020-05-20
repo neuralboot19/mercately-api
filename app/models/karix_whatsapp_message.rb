@@ -1,5 +1,6 @@
 class KarixWhatsappMessage < ApplicationRecord
   include BalanceConcern
+  include WhatsappAutomaticAnswerConcern
 
   belongs_to :retailer
   belongs_to :customer

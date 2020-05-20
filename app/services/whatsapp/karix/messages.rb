@@ -15,10 +15,10 @@ module Whatsapp
           ws_data['content']&.[]('media')&.[]('caption'), content_media_type:
           ws_data['content']&.[]('media')&.[]('type'), created_time: ws_data['created_time'], sent_time:
           ws_data['sent_time'], delivered_time: ws_data['delivered_time'], updated_time:
-          ws_data['updated_time'], status: ws_data['status'], direction: ws_data['direction'], channel:
-          ws_data['channel'], error_code: ws_data['error']&.[]('code'), error_message:
-          ws_data['error']&.[]('message'), message_type: ws_data['channel_details']&.[]('whatsapp')&.[]('type'),
-          customer_id: customer&.id }
+          ws_data['updated_time'], status: catch_status(message, ws_data['status']), direction:
+          ws_data['direction'], channel: ws_data['channel'], error_code: ws_data['error']&.[]('code'), error_message:
+          ws_data['error']&.[]('message'), message_type:
+          ws_data['channel_details']&.[]('whatsapp')&.[]('type'), customer_id: customer&.id }
 
         message
       end
@@ -48,10 +48,10 @@ module Whatsapp
 
       def prepare_message_body(retailer, customer, params, type)
         case type
-          when 'text'
-            ws_api.prepare_whatsapp_message_text(retailer, customer, params)
-          when 'file'
-            ws_api.prepare_whatsapp_message_file(retailer, customer, params)
+        when 'text'
+          ws_api.prepare_whatsapp_message_text(retailer, customer, params)
+        when 'file'
+          ws_api.prepare_whatsapp_message_file(retailer, customer, params)
         end
       end
 
@@ -61,6 +61,17 @@ module Whatsapp
         response = Connection.post_request(conn, ws_api.prepare_welcome_message_body(retailer))
         JSON.parse(response.body)
       end
+
+      private
+
+        def catch_status(message, status)
+          return status if message.status.blank?
+
+          statuses = %w[failed queued received sent rejected undelivered delivered read]
+          return status if statuses.index(status).blank?
+
+          statuses.index(status) > statuses.index(message.status) ? status : message.status
+        end
     end
   end
 end
