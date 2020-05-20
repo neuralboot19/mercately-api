@@ -77,6 +77,7 @@ class Retailers::ProductsController < RetailersController
     end
 
     if @product.update(product_params)
+      # Actualiza la imagen principal y maneja el borrado de las imagenes de ser necesario
       after_update_product
       update_meli_info
       update_facebook_product

@@ -44,9 +44,7 @@ RSpec.describe Product, type: :model do
   describe 'validations' do
     it { is_expected.to validate_presence_of(:title) }
     it { is_expected.to validate_presence_of(:price) }
-    # Comente este spec porque estaba causando un error que me ha sido imposible
-    # resolver hasta ahora. Luego sigo viendo que es.
-    # it { is_expected.to validate_uniqueness_of(:code).scoped_to(:retailer_id).with_message('Código ya está en uso.').allow_blank }
+    it { is_expected.to validate_uniqueness_of(:code).scoped_to(:retailer_id).with_message('Código ya está en uso.').allow_blank }
   end
 
   describe '#attach_image(url, filename, index = -1)' do
@@ -119,7 +117,7 @@ RSpec.describe Product, type: :model do
 
       before do
         allow(set_ml_products).to receive(:create)
-          .with(anything).and_return('Successfully uploaded')
+          .and_return('Successfully uploaded')
         allow(MercadoLibre::Products).to receive(:new).with(product.retailer)
           .and_return(set_ml_products)
       end
@@ -187,7 +185,7 @@ RSpec.describe Product, type: :model do
 
       before do
         allow(p_ml).to receive(:create_product_variations)
-          .with(anything).and_return('Successfully uploaded')
+          .and_return('Successfully uploaded')
         allow(MercadoLibre::ProductVariations).to receive(:new).with(product.retailer)
           .and_return(p_ml)
       end
@@ -511,7 +509,7 @@ RSpec.describe Product, type: :model do
 
       before do
         allow(set_fb_products).to receive(:create)
-          .with(anything).and_return('Successfully uploaded')
+          .and_return('Successfully uploaded')
         allow(Facebook::Products).to receive(:new).with(product.retailer)
           .and_return(set_fb_products)
       end
@@ -542,7 +540,7 @@ RSpec.describe Product, type: :model do
     context 'when the available quantity is positive' do
       it 'updates the product on facebook catalog' do
         allow(set_fb_products).to receive(:update_or_upload)
-          .with(anything).and_return('Successfully updated')
+          .and_return('Successfully updated')
         allow(Facebook::Products).to receive(:new).with(product.retailer)
           .and_return(set_fb_products)
 
@@ -554,7 +552,7 @@ RSpec.describe Product, type: :model do
     context 'when the available quantity is not positive' do
       it 'deletes the product on facebook catalog' do
         allow(set_fb_products).to receive(:delete)
-          .with(anything).and_return('Successfully deleted')
+          .and_return('Successfully deleted')
         allow(Facebook::Products).to receive(:new).with(product.retailer)
           .and_return(set_fb_products)
 
@@ -574,7 +572,7 @@ RSpec.describe Product, type: :model do
     context 'when the available quantity is positive' do
       it 'updates the product on facebook catalog' do
         allow(set_fb_products).to receive(:update_inventory)
-          .with(anything).and_return('Successfully updated')
+          .and_return('Successfully updated')
         allow(Facebook::Products).to receive(:new).with(product.retailer)
           .and_return(set_fb_products)
 
@@ -586,7 +584,7 @@ RSpec.describe Product, type: :model do
     context 'when the available quantity is not positive' do
       it 'deletes the product on facebook catalog' do
         allow(set_fb_products).to receive(:delete)
-          .with(anything).and_return('Successfully deleted')
+          .and_return('Successfully deleted')
         allow(Facebook::Products).to receive(:new).with(product.retailer)
           .and_return(set_fb_products)
 

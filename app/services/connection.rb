@@ -42,8 +42,6 @@ class Connection
   end
 
   def self.delete_request(connection)
-    delete_connection = connection.delete
-
-    delete_connection
+    connection.delete
   end
 end

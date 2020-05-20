@@ -16,19 +16,18 @@ module ProductControllerConcern
     @product.attributes = { upload_product: convert_to_boolean(params[:product][:upload_product]), incoming_images:
       params[:product][:images], incoming_variations: @variations, main_image: @main_image, ml_attributes:
       process_attributes(params[:product][:ml_attributes]), upload_to_facebook:
-      convert_to_boolean(params[:product][:upload_to_facebook]), avoid_update_inventory: true,
-      url: params[:product][:url] }
+      convert_to_boolean(params[:product][:upload_to_facebook]), avoid_update_inventory:
+      true, url: params[:product][:url] }
   end
 
   # Ejecuta la logica posterior al update del producto
   def update_meli_info
-    @fail_ml = false
     updated_info = @product.update_ml_info(@past_meli_status)
     uploaded_info = @product.upload_ml if @product.meli_product_id.blank? && @product.upload_product == true
     @product.upload_variations(action_name, @variations)
     @product.update_status_publishment
 
-    @fail_ml = true if updated_info&.[](:updated) == false || uploaded_info&.[](:uploaded) == false
+    failed_connections('MercadoLibre') if updated_info&.[](:updated) == false || uploaded_info&.[](:uploaded) == false
   end
 
   # procesa las imagenes a guardar para darles las dimensiones correctas
@@ -115,41 +114,33 @@ module ProductControllerConcern
   end
 
   def post_product_to_ml
-    @fail_ml = false
-
     uploaded_info = @product.upload_ml
     @product.upload_variations(action_name, @variations)
 
-    @fail_ml = true if uploaded_info&.[](:uploaded) == false
+    failed_connections('MercadoLibre') if uploaded_info&.[](:uploaded) == false
   end
 
   def post_product_to_facebook
-    @fail_fb = false
-
     uploaded_fb_info = @product.upload_facebook
 
-    @fail_fb = true if uploaded_fb_info&.[](:success) == false
+    failed_connections('Facebook') if uploaded_fb_info&.[](:success) == false
   end
 
   def notice_to_show
-    return 'Error: tu producto no pudo ser publicado en MercadoLibre y Facebook.' if @fail_ml && @fail_fb
-    return 'Error: tu producto no pudo ser publicado en Facebook.' if @fail_fb
-    return 'Error: tu producto no pudo ser publicado en MercadoLibre.' if @fail_ml
+    return "Error: tu producto no pudo ser publicado en #{@services.join(' y ')}" if @services.present?
+
     'Producto creado con éxito.'
   end
 
   def update_facebook_product
-    @fail_fb = false
-
     updated_fb_info = @product.update_facebook_product
 
-    @fail_fb = true if updated_fb_info&.[](:success) == false
+    failed_connections('Facebook') if updated_fb_info&.[](:success) == false
   end
 
   def notice_to_show_update
-    return 'Error: tu producto no pudo ser actualizado en MercadoLibre y Facebook.' if @fail_ml && @fail_fb
-    return 'Error: tu producto no pudo ser actualizado en Facebook.' if @fail_fb
-    return 'Error: tu producto no pudo ser actualizado en MercadoLibre.' if @fail_ml
+    return "Error: tu producto no pudo ser actualizado en #{@services.join(' y ')}" if @services.present?
+
     'Producto actualizado con éxito.'
   end
 
@@ -159,5 +150,10 @@ module ProductControllerConcern
     @product.delete_images(params[:product][:delete_images], @variations, @past_meli_status) if
     params[:product][:delete_images].present?
     @product.reload
+  end
+
+  def failed_connections(service_name)
+    @services ||= []
+    @services.push(service_name)
   end
 end

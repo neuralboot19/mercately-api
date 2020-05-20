@@ -7,21 +7,21 @@ class Retailers::FacebookCatalogsController < RetailersController
       return
     end
 
-    unless current_retailer.facebook_catalog.connected?
-      businesses = facebook_api.businesses
-      unless businesses&.[]('data')
-        redirect_to retailers_integrations_path(current_retailer), notice:
-          'Hubo un problema en la integración del Catálogo de Facebook.'
-        return
-      end
+    return if current_retailer.facebook_catalog.connected?
 
-      businesses['data'].each do |business|
-        catalogs = facebook_api.business_product_catalogs(business['id'])
-        business['catalogs'] = catalogs&.[]('data') || []
-      end
-
-      @businesses = businesses
+    businesses = facebook_api.businesses
+    unless businesses&.[]('data')
+      redirect_to retailers_integrations_path(current_retailer), notice:
+        'Hubo un problema en la integración del Catálogo de Facebook.'
+      return
     end
+
+    businesses['data'].each do |business|
+      catalogs = facebook_api.business_product_catalogs(business['id'])
+      business['catalogs'] = catalogs&.[]('data') || []
+    end
+
+    @businesses = businesses
   end
 
   def save_selected_catalog
@@ -37,7 +37,8 @@ class Retailers::FacebookCatalogsController < RetailersController
   private
 
     def facebook_api
-      @facebook_api = Facebook::Api.new(current_retailer.facebook_retailer, current_retailer.retailer_user_connected_to_fb)
+      @facebook_api = Facebook::Api.new(current_retailer.facebook_retailer,
+                                        current_retailer.retailer_user_connected_to_fb)
     end
 
     def set_facebook_catalog

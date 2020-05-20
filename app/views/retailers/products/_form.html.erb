@@ -128,11 +128,7 @@
           <% end %>
 
           <fieldset class="col-xs-12 fieldset">
-            <% if @retailer.meli_retailer %>
-              <legend>Características de Mercado Libre</legend>
-            <% else %>
-              <legend>Características</legend>
-            <% end %>
+            <legend>Características<%= ' de Mercado Libre' if @retailer.meli_retailer %></legend>
             <div class="box">
               <div id="attributes-container" class="row pl-0 col-xs-12 my-16"></div>
             </div>

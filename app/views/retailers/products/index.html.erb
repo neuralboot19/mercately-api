@@ -187,7 +187,7 @@
                         </div>
                         <% if product.meli_product_id.blank? && product.status != 'archived' && current_retailer.incomplete_meli_profile? == false %>
                           <div class="col-xs-6 col-sm-12 mt-10">
-                            <%= link_to retailers_upload_product_to_ml_path(current_retailer, product), method: :put, data: { confirm: 'Está seguro de publicar el producto?' }, class: 'btn btn--cta fs-10 p-5' do %>
+                            <%= link_to retailers_upload_product_to_ml_path(current_retailer, product), method: :put, data: { confirm: '¿Estás seguro de publicar el producto?' }, class: 'btn btn--cta fs-10 p-5' do %>
                               Publicar en MercadoLibre
                             <% end %>
                           </div>

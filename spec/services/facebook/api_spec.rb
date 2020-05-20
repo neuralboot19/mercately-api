@@ -165,14 +165,14 @@ RSpec.describe Facebook::Api do
     context 'when the connection is made to messenger' do
       context 'when all the permissions to manage messenger are granted' do
         it 'returns true' do
-          allow(Connection).to receive(:get_request).with(anything).and_return(permissions_granted)
+          allow(Connection).to receive(:get_request).and_return(permissions_granted)
           expect(described_class.validate_granted_permissions(oauth.credentials.token, 'messenger')[:granted_permissions]).to be true
         end
       end
 
       context 'when not all the permissions to manage messenger are granted' do
         it 'returns false' do
-          allow(Connection).to receive(:get_request).with(anything).and_return(permissions_msn_declined)
+          allow(Connection).to receive(:get_request).and_return(permissions_msn_declined)
           expect(described_class.validate_granted_permissions(oauth.credentials.token, 'messenger')[:granted_permissions]).to be false
         end
       end
@@ -181,14 +181,14 @@ RSpec.describe Facebook::Api do
     context 'when the connection is made to facebook catalog' do
       context 'when all the permissions to manage facebook catalog are granted' do
         it 'returns true' do
-          allow(Connection).to receive(:get_request).with(anything).and_return(permissions_granted)
+          allow(Connection).to receive(:get_request).and_return(permissions_granted)
           expect(described_class.validate_granted_permissions(oauth.credentials.token, 'catalog')[:granted_permissions]).to be true
         end
       end
 
       context 'when not all the permissions to manage facebook catalog are granted' do
         it 'returns false' do
-          allow(Connection).to receive(:get_request).with(anything).and_return(permissions_catalog_declined)
+          allow(Connection).to receive(:get_request).and_return(permissions_catalog_declined)
           expect(described_class.validate_granted_permissions(oauth.credentials.token, 'catalog')[:granted_permissions]).to be false
         end
       end
@@ -197,14 +197,14 @@ RSpec.describe Facebook::Api do
 
   describe '#businesses' do
     it 'returns a list of businesses selected on integration process' do
-      allow(Connection).to receive(:get_request).with(anything).and_return(business_response)
+      allow(Connection).to receive(:get_request).and_return(business_response)
       expect(service_api.businesses).to eq(business_response)
     end
   end
 
   describe '#business_product_catalogs' do
     it 'returns a list of businesses selected on integration process' do
-      allow(Connection).to receive(:get_request).with(anything).and_return(business_catalog_response)
+      allow(Connection).to receive(:get_request).and_return(business_catalog_response)
       expect(service_api.business_product_catalogs('12345')).to eq(business_catalog_response)
     end
   end

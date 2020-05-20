@@ -37,7 +37,6 @@ class RetailerUser < ApplicationRecord
 
     facebook_service = Facebook::Api.new(facebook_retailer, self)
     facebook_service.update_retailer_access_token
-    facebook_service.subscribe_page_to_webhooks
   end
 
   def handle_catalog_connection

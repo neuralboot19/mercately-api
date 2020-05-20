@@ -8,8 +8,7 @@ module ProductModelConcern
 
   # Chequea si las imagenes son requeridas o no en la creacion y edicion del producto
   def mandatory_images?
-    return false if (retailer.meli_retailer.blank? || upload_product == false) &&
-      (retailer.facebook_catalog.blank? || !retailer.facebook_catalog.connected? || upload_to_facebook == false)
+    return false if not_necessary_upload?
 
     if new_record?
       required_images_on_create?
@@ -25,9 +24,14 @@ module ProductModelConcern
 
   # Chequea si las imagenes son requeridas o no en la edicion del producto
   def required_images_on_update?
-    (incoming_images.blank? && main_image.blank?) && all_images_deleted? &&
-      ((meli_product_id.present? || upload_product == true) || (facebook_product_id.present? ||
-      upload_to_facebook == true || connected_to_facebook == true))
+    (incoming_images.blank? &&
+      main_image.blank?) &&
+      all_images_deleted? &&
+      ((meli_product_id.present? ||
+      upload_product == true) ||
+      (facebook_product_id.present? ||
+      upload_to_facebook == true ||
+      connected_to_facebook == true))
   end
 
   # Chequea si las variaciones son necesarias para la categoria seleccionada
@@ -102,5 +106,13 @@ module ProductModelConcern
   def range_total_earned(start_date, end_date)
     order_items.includes(:order).where(orders: { status: 'success', created_at:
       start_date..end_date }).sum('order_items.quantity * order_items.unit_price')
+  end
+
+  def not_necessary_upload?
+    (retailer&.meli_retailer.blank? ||
+      upload_product == false) &&
+      (retailer&.facebook_catalog.blank? ||
+      retailer.facebook_catalog.connected? == false ||
+      upload_to_facebook == false)
   end
 end

@@ -36,6 +36,7 @@ module Facebook
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       save_page_access_token(response) if response
+      subscribe_page_to_webhooks
     end
 
     def save_page_access_token(response)
@@ -48,13 +49,6 @@ module Facebook
       url = long_live_user_access_token_url
       conn = Connection.prepare_connection(url)
       Connection.get_request(conn)
-    end
-
-    def subscribe_page_to_webhooks
-      url = webhooks_susbcription_url
-      conn = Connection.prepare_connection(url)
-      response = Connection.post_request(conn, prepare_webhook_subscription)
-      JSON.parse(response.body)
     end
 
     def businesses
@@ -142,6 +136,13 @@ module Facebook
           access_token: @retailer_user.facebook_access_token
         }
         "https://graph.facebook.com/v5.0/#{business_id}/owned_product_catalogs?#{params.to_query}"
+      end
+
+      def subscribe_page_to_webhooks
+        url = webhooks_susbcription_url
+        conn = Connection.prepare_connection(url)
+        response = Connection.post_request(conn, prepare_webhook_subscription)
+        JSON.parse(response.body)
       end
   end
 end
