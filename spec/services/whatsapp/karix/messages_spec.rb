@@ -39,10 +39,47 @@ RSpec.describe Whatsapp::Karix::Messages do
   end
 
   describe '.assign_message' do
-    it 'assigns the message data' do
-      expect(message.account_uid).to be nil
-      aux_message = message_service.assign_message(message, retailer, karix_response)
-      expect(aux_message.account_uid).not_to be nil
+    context 'when the message has not status yet' do
+      let(:message) { create(:karix_whatsapp_message, status: nil) }
+
+      it 'updates the message with the status of the response' do
+        expect(message.status).to be nil
+        aux_message = message_service.assign_message(message, retailer, karix_response)
+        expect(aux_message.status).to eq('queued')
+      end
+    end
+
+    context 'when the status of the response is a not known status' do
+      let(:message) { create(:karix_whatsapp_message, status: 'queued') }
+
+      it 'updates the message with the status of the response' do
+        expect(message.status).to eq('queued')
+        karix_response['status'] = 'anything'
+        aux_message = message_service.assign_message(message, retailer, karix_response)
+        expect(aux_message.status).to eq('anything')
+      end
+    end
+
+    context 'when the status of the response is prior to the current message status' do
+      let(:message) { create(:karix_whatsapp_message, status: 'read') }
+
+      it 'does not update the message status' do
+        expect(message.status).to eq('read')
+        karix_response['status'] = 'sent'
+        aux_message = message_service.assign_message(message, retailer, karix_response)
+        expect(aux_message.status).to eq('read')
+      end
+    end
+
+    context 'when the status of the response is greater than the current message status' do
+      let(:message) { create(:karix_whatsapp_message, status: 'queued') }
+
+      it 'updates the message with the status of the response' do
+        expect(message.status).to eq('queued')
+        karix_response['status'] = 'sent'
+        aux_message = message_service.assign_message(message, retailer, karix_response)
+        expect(aux_message.status).to eq('sent')
+      end
     end
   end
 end

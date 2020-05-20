@@ -32,6 +32,11 @@ function validateEmailValue(email) {
   return re.test(String(email).toLowerCase());
 }
 
+function validateUrlValue(url) {
+  var re = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
+  return re.test(String(url).toLowerCase());
+}
+
 function validateEmail(el) {
   var $result = $(el).siblings('.validation-msg')
   var email = el.value;
@@ -45,6 +50,19 @@ function validateEmail(el) {
   }
 }
 
+function validateUrl(el) {
+  var $result = $(el).siblings('.validation-msg')
+  var url = el.value;
+
+  if (validateUrlValue(url) || url == '') {
+    return true;
+  } else {
+    el.classList.add('input--invalid');
+    $result.text('Debe ser una url válida');
+    return false;
+  }
+}
+
 // Valida si son necesarias las imagenes en el form de producto
 function validateImages(form) {
   if (form.id !== 'new_product' && form.id.indexOf('edit_product') === -1) {
@@ -53,6 +71,7 @@ function validateImages(form) {
 
   productId = document.getElementById('product_id');
   uploadProduct = document.getElementById('product_upload_product');
+  uploadToFacebook = document.getElementById('product_upload_to_facebook');
   uploadedImages = false;
   wrongFormat = false;
   message = document.getElementById('product_images_error');
@@ -67,7 +86,8 @@ function validateImages(form) {
     }
   });
 
-  if (!productId.value && (uploadProduct && uploadProduct.checked) && !uploadedImages) {
+  if (!productId.value && ((uploadProduct && uploadProduct.checked) || (uploadToFacebook && uploadToFacebook.checked)) &&
+    !uploadedImages) {
     $(message).text('Imágenes requeridas');
     return false;
   }
@@ -135,6 +155,10 @@ function validateForm(e, form) {
           checks.push(inputRequired(input));
           inputChecks.push(inputRequired(input));
         }
+      }
+      if (input.classList.contains('validate-url')) {
+        checks.push(validateUrl(input));
+        inputChecks.push(validateUrl(input));
       }
 
       if (!inputChecks.includes(false)) setInputValid(input);

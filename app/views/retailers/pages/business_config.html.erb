@@ -1,0 +1,26 @@
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 mb-20">
+          <h1 class="d-inline index__title">Configuración de negocio</h1>
+          <div class="index__desc">
+            Configura las características de tu negocio
+          </div>
+        </div>
+
+        <div class="col-xs-12 mt-30">
+          <% if current_retailer.karix_integrated? || current_retailer.gupshup_integrated? %>
+            <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'no-style' do %>
+              <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Mensaje de Bienvenida</span>
+            <% end %>
+          <% elsif current_retailer.facebook_retailer.present? %>
+            <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'no-style' do %>
+              <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Mensaje de Bienvenida</span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

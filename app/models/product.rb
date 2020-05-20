@@ -18,10 +18,12 @@ class Product < ApplicationRecord
   validate :check_variations
   validate :check_images
   validate :check_main_image
+  validate :url_format
 
   before_update :assign_main_picture
   before_save :nullify_code
   after_create :generate_web_id
+  after_save :update_facebook_inventory, if: :saved_change_to_available_quantity?
 
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]
@@ -30,7 +32,7 @@ class Product < ApplicationRecord
   enum from: %i[mercately mercadolibre], _prefix: true
 
   attr_accessor :upload_product, :incoming_images, :incoming_variations, :deleted_images, :main_image,
-                :changed_main_image, :parent_product
+                :changed_main_image, :parent_product, :upload_to_facebook, :avoid_update_inventory
 
   ransacker :sort_by_earned do
     Arel.sql('coalesce((select sum(quantity * unit_price) as total from order_items, orders where ' \
@@ -181,6 +183,22 @@ class Product < ApplicationRecord
     false
   end
 
+  def upload_facebook
+    return unless retailer.facebook_catalog&.connected? && upload_to_facebook == true
+
+    set_facebook_products.create(self)
+  end
+
+  def update_facebook_product
+    return unless facebook_product_id.present? || connected_to_facebook == true || upload_to_facebook == true
+
+    if available_quantity.positive?
+      set_facebook_products.update_or_upload(self)
+    elsif facebook_product_id.present?
+      set_facebook_products.delete(self)
+    end
+  end
+
   def to_param
     web_id
   end
@@ -236,6 +254,24 @@ class Product < ApplicationRecord
       errors.add(:base, 'Debe agregar una foto principal') if main_image_present?
     end
 
+    def url_format
+      return unless facebook_product_id.present? || connected_to_facebook == true || upload_to_facebook == true
+
+      errors.add(:base, 'Debe agregar una URL válida') unless
+        url =~ /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]
+          {1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/x
+    end
+
+    def update_facebook_inventory
+      return if avoid_update_inventory == true || facebook_product_id.blank?
+
+      if available_quantity.positive?
+        set_facebook_products.update_inventory(self)
+      else
+        set_facebook_products.delete(self)
+      end
+    end
+
     def set_ml_products
       @set_ml_products ||= MercadoLibre::Products.new(retailer)
     end
@@ -246,5 +282,9 @@ class Product < ApplicationRecord
 
     def generate_web_id
       update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
+    end
+
+    def set_facebook_products
+      @set_facebook_products ||= Facebook::Products.new(retailer)
     end
 end

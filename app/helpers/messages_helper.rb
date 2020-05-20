@@ -16,7 +16,7 @@ module MessagesHelper
   end
 
   def whatsapp_unread_messages
-    total = current_retailer.karix_unread_whatsapp_messages(current_retailer_user).size
-    total > 9 ? '9+' : total
+    integration_service = "#{current_retailer.karix_integrated? ? 'karix' : 'gupshup'}_unread_whatsapp_messages"
+    current_retailer.send(integration_service, current_retailer_user).size
   end
 end

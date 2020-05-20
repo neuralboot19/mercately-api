@@ -112,7 +112,7 @@
               <div class="col-sm-1">Imagen</div>
               <div class="col-sm-3">Producto</div>
               <div class="col-sm-1 hide-on-tablet-and-down">Categoría</div>
-              <div class="col-sm-3">Mercado Libre</div>
+              <div class="col-sm-3">Integraciones</div>
               <div class="col-sm-2">Finanzas</div>
               <div class="col-sm-1">Inventario</div>
               <div class="col-sm-1"></div>
@@ -157,49 +157,60 @@
                 <div class="col-xs-12 col-sm-1 t-center hide-on-tablet-and-down c-grey">
                   <%= product.category&.name %>
                 </div>
-                <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
-                  <div class="box">
-                    <div class="row">
-                      <div class="col-xs-4 col-sm-6 item__descriptor">Estado:</div>
-                      <div class="col-xs-2 col-sm-6 p-relative">
-                        <% if product.meli_product_id.present? %>
-                          <b class="cookie <%= cookie(product.meli_status) %>">
-                            <% if current_retailer.incomplete_meli_profile? == false && manual_statuses(product).size > 0 && product.status != 'archived' %>
-                              <a class="dropdown__button" tabindex="-1" href="#!"><%= Product.enum_translation(:meli_status, product.meli_status) %>  <i class="fas fa-caret-down"></i></a>
-                              <ul class="dropdown__menu">
-                                <% manual_statuses(product).each do |s| %>
-                                  <li>
-                                    <%= link_to update_meli_status_retailers_product_path(current_retailer, product, status: s[:status]), method: :put, class: 'c-black no-style', data: { confirm: '¿Estás seguro de cambiar el estado de la publicación en MercadoLibre?' } do %>
-                                      <i class="fas fa-angle-right mr-8"></i>
-                                      <%= s[:label] %>
-                                    <% end %>
-                                  </li>
-                                <% end %>
-                              </ul>
-                            <% else %>
-                              <%= Product.enum_translation(:meli_status, product.meli_status) %>
-                            <% end %>
-                          </b>
-                        <% else %>
-                          <b class="cookie <%= cookie('not_published') %>">No publicado</b>
-                        <% end %>
-                      </div>
-                      <% if product.meli_product_id.present? %>
-                        <div class="col-xs-4 col-sm-6 item__descriptor">Código:</div>
-                        <div class="col-xs-2 col-sm-6"><%= product.meli_product_id %></div>
-                        <div class="col-xs-4 col-sm-6 item__descriptor">Preguntas:</div>
-                        <div class="col-xs-2 col-sm-6"><%= product.questions.size %></div>
-                      <% elsif current_retailer.meli_retailer && product.status != 'archived' && current_retailer.incomplete_meli_profile? == false %>
-                        <div class="col-xs-6 col-sm-12 t-right mt-10">
-                          <%= link_to retailers_upload_product_to_ml_path(current_retailer, product), method: :put, data: { confirm: 'Está seguro de publicar el producto?' }, class: 'btn btn--cta fs-10 p-5' do %>
-                            Publicar en MercadoLibre
+                <div class="col-xs-12 col-sm-3 hide-on-sm-and-down t-center">
+                  <% if current_retailer.meli_retailer %>
+                    <div class="box mb-20">
+                      <div class="row">
+                        <div class="col-xs-2 col-sm-12 p-relative">
+                          <%= image_tag 'dashboard/ml_logo.png', class: 'h-15 w-20 mr-10' %>
+                          <% if product.meli_product_id.present? %>
+                            <b class="cookie <%= cookie(product.meli_status) %>">
+                              <% if current_retailer.incomplete_meli_profile? == false && manual_statuses(product).size > 0 && product.status != 'archived' %>
+                                <a class="dropdown__button" tabindex="-1" href="#!"><%= Product.enum_translation(:meli_status, product.meli_status) %>  <i class="fas fa-caret-down"></i></a>
+                                <ul class="dropdown__menu">
+                                  <% manual_statuses(product).each do |s| %>
+                                    <li class="t-left">
+                                      <%= link_to update_meli_status_retailers_product_path(current_retailer, product, status: s[:status]), method: :put, class: 'c-black no-style', data: { confirm: '¿Estás seguro de cambiar el estado de la publicación en MercadoLibre?' } do %>
+                                        <i class="fas fa-angle-right mr-8"></i>
+                                        <%= s[:label] %>
+                                      <% end %>
+                                    </li>
+                                  <% end %>
+                                </ul>
+                              <% else %>
+                                <%= Product.enum_translation(:meli_status, product.meli_status) %>
+                              <% end %>
+                            </b>
+                          <% else %>
+                            <b class="cookie <%= cookie('not_published') %>">No publicado</b>
                           <% end %>
                         </div>
-                      <% end %>
-                      <!--<div class="col-xs-4 col-sm-6 item__descriptor">Visitas:</div>
-                      <div class="col-xs-2 col-sm-6">100</div>-->
+                        <% if product.meli_product_id.blank? && product.status != 'archived' && current_retailer.incomplete_meli_profile? == false %>
+                          <div class="col-xs-6 col-sm-12 mt-10">
+                            <%= link_to retailers_upload_product_to_ml_path(current_retailer, product), method: :put, data: { confirm: '¿Estás seguro de publicar el producto?' }, class: 'btn btn--cta fs-10 p-5' do %>
+                              Publicar en MercadoLibre
+                            <% end %>
+                          </div>
+                        <% end %>
+                      </div>
                     </div>
-                  </div>
+                  <% end %>
+                  <% if current_retailer.facebook_catalog&.connected? %>
+                    <div class="box">
+                      <div class="row">
+                        <div class="col-xs-2 col-sm-12 p-relative">
+                          <i class="fab fa-facebook c-secondary fs-17 mr-10"></i>
+                          <% if product.facebook_product_id.present? %>
+                            <b class="cookie <%= cookie('active') %>">
+                              Disponible
+                            </b>
+                          <% else %>
+                            <b class="cookie <%= cookie('closed') %>">No disponible</b>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
                 </div>
                 <div class="col-xs-12 col-sm-2">
                   <div class="box">

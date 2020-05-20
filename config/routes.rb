@@ -16,6 +16,12 @@ Rails.application.routes.draw do
     post 'retailers/:slug/generate_api_key', to: 'retailers/settings#generate_api_key', as: :generate_api_key
   end
 
+  devise_scope :retailer_user do
+    get '/retailer_users/auth/facebook/messenger', to: 'retailer_users/omniauth_callbacks#messenger', as: :retailer_user_omniauth_messenger
+    get '/retailer_users/auth/facebook/catalog', to: 'retailer_users/omniauth_callbacks#catalog', as: :retailer_user_omniauth_catalog
+    get 'auth/facebook/setup', to: 'retailer_users/omniauth_callbacks#setup'
+  end
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
@@ -45,6 +51,7 @@ Rails.application.routes.draw do
 
     scope '/:slug' do
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
+      get 'business_config', to: 'pages#business_config', as: :business_config
       resources :products do
         member do
           put 'reactive', to: 'products#reactive_product', as: :reactivate_product
@@ -76,6 +83,10 @@ Rails.application.routes.draw do
       get 'questions_list', to: 'messages#questions_list'
       get 'pricing', to: 'payment_plans#index', as: :payment_plans
       post 'export_customers', to: 'customers#export', as: :export_customers
+      get 'manage_automatic_answers', to: 'automatic_answers#manage_automatic_answers', as: :manage_automatic_answers
+      post 'save_automatic_answer', to: 'automatic_answers#save_automatic_answer', as: :save_automatic_answer
+      get 'select_catalog', to: 'facebook_catalogs#select_catalog'
+      put 'save_selected_catalog', to: 'facebook_catalogs#save_selected_catalog', as: :save_selected_catalog
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

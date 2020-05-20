@@ -3,12 +3,46 @@ require 'rails_helper'
 RSpec.describe RetailerUser, type: :model do
   subject(:retailer_user) { build(:retailer_user, :with_retailer) }
 
+  let(:permissions) do
+    [
+      {
+        'permission': 'email',
+        'status': 'granted'
+      },
+      {
+        'permission': 'catalog_management',
+        'status': 'granted'
+      }.with_indifferent_access,
+      {
+        'permission': 'manage_pages',
+        'status': 'granted'
+      }.with_indifferent_access,
+      {
+        'permission': 'pages_show_list',
+        'status': 'granted'
+      },
+      {
+        'permission': 'business_management',
+        'status': 'granted'
+      },
+      {
+        'permission': 'pages_messaging',
+        'status': 'granted'
+      },
+      {
+        'permission': 'public_profile',
+        'status': 'granted'
+      }
+    ]
+  end
+
   describe 'associations' do
     it { is_expected.to have_many(:agent_customers) }
     it { is_expected.to have_many(:mobile_tokens) }
     it { is_expected.to belong_to(:retailer) }
     it { is_expected.to accept_nested_attributes_for(:retailer) }
   end
+
   describe 'validations' do
     it { is_expected.to validate_presence_of(:agree_terms) }
   end
@@ -124,6 +158,44 @@ RSpec.describe RetailerUser, type: :model do
 
     it 'returns the customers belonging to the retailer user or those not assigned' do
       expect(retailer_user_one.customers.count).to eq(2)
+    end
+  end
+
+  describe '.from_omniauth' do
+    subject(:retailer_user) { create(:retailer_user, :with_retailer) }
+
+    let(:set_fb_api) { instance_double(Facebook::Api) }
+
+    let(:oauth) do
+      OmniAuth::AuthHash.new({
+        uid: '12345',
+        provider: 'facebook',
+        credentials: OmniAuth::AuthHash.new({
+          token: '1234567890'
+        })
+      })
+    end
+
+    before do
+      allow(set_fb_api).to receive(:update_retailer_access_token).and_return('Example data')
+      allow(set_fb_api).to receive(:subscribe_page_to_webhooks).and_return('Example data')
+      allow(set_fb_api).to receive(:long_live_user_access_token).and_return('Example data')
+      allow(Facebook::Api).to receive(:new).with(anything, anything)
+        .and_return(set_fb_api)
+    end
+
+    context 'when the permissions for facebook pages is granted' do
+      it 'generates the facebook retailer information' do
+        expect { RetailerUser.from_omniauth(oauth, retailer_user, permissions) }.to change(FacebookRetailer, :count).by(1)
+        expect(RetailerUser.from_omniauth(oauth, retailer_user, permissions).uid).to eq(oauth.uid)
+      end
+    end
+
+    context 'when the permissions for facebook catalogs is granted' do
+      it 'generates the facebook catalog information' do
+        expect { RetailerUser.from_omniauth(oauth, retailer_user, permissions) }.to change(FacebookCatalog, :count).by(1)
+        expect(RetailerUser.from_omniauth(oauth, retailer_user, permissions).uid).to eq(oauth.uid)
+      end
     end
   end
 end

@@ -11,11 +11,13 @@ RSpec.describe Retailer, type: :model do
   describe 'associations' do
     it { is_expected.to have_one(:meli_retailer) }
     it { is_expected.to have_one(:retailer_user) }
+    it { is_expected.to have_one(:facebook_catalog) }
 
     it { is_expected.to have_many(:products) }
     it { is_expected.to have_many(:customers) }
     it { is_expected.to have_many(:retailer_users) }
     it { is_expected.to have_many(:templates) }
+    it { is_expected.to have_many(:automatic_answers) }
   end
 
   describe 'validations' do
@@ -198,6 +200,97 @@ RSpec.describe Retailer, type: :model do
       retailer.ws_balance = 0.05
       retailer.save
       expect(retailer.positive_balance?).to eq(false)
+    end
+  end
+
+  describe '#whatsapp_welcome_message' do
+    subject(:retailer) { create(:retailer) }
+
+    context 'when the retailer has a whatsapp active welcome message configured' do
+      let!(:welcome_message) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+
+      it 'returns it' do
+        expect(retailer.whatsapp_welcome_message).to be_an_instance_of(AutomaticAnswer)
+      end
+    end
+
+    context 'when the retailer does not have a whatsapp active welcome message configured' do
+      it 'returns nil' do
+        expect(retailer.whatsapp_welcome_message).to be nil
+      end
+    end
+  end
+
+  describe '#whatsapp_inactive_message' do
+    subject(:retailer) { create(:retailer) }
+
+    context 'when the retailer has a whatsapp inactive message configured' do
+      let!(:inactive_message) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+
+      it 'returns it' do
+        expect(retailer.whatsapp_inactive_message).to be_an_instance_of(AutomaticAnswer)
+      end
+    end
+
+    context 'when the retailer does not have a whatsapp inactive message configured' do
+      it 'returns nil' do
+        expect(retailer.whatsapp_inactive_message).to be nil
+      end
+    end
+  end
+
+  describe '#messenger_welcome_message' do
+    subject(:retailer) { create(:retailer) }
+
+    context 'when the retailer has a messenger active welcome message configured' do
+      let!(:welcome_message) { create(:automatic_answer, :welcome, :messenger, retailer: retailer) }
+
+      it 'returns it' do
+        expect(retailer.messenger_welcome_message).to be_an_instance_of(AutomaticAnswer)
+      end
+    end
+
+    context 'when the retailer does not have a messenger active welcome message configured' do
+      it 'returns nil' do
+        expect(retailer.messenger_welcome_message).to be nil
+      end
+    end
+  end
+
+  describe '#messenger_inactive_message' do
+    subject(:retailer) { create(:retailer) }
+
+    context 'when the retailer has a messenger inactive message configured' do
+      let!(:inactive_message) { create(:automatic_answer, :inactive, :messenger, retailer: retailer) }
+
+      it 'returns it' do
+        expect(retailer.messenger_inactive_message).to be_an_instance_of(AutomaticAnswer)
+      end
+    end
+
+    context 'when the retailer does not have a messenger inactive message configured' do
+      it 'returns nil' do
+        expect(retailer.messenger_inactive_message).to be nil
+      end
+    end
+  end
+
+  describe '#retailer_user_connected_to_fb' do
+    let(:retailer) { create(:retailer) }
+    let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
+
+    context 'when it is connected to facebook' do
+      let!(:retailer_user_fb) { create(:retailer_user, :from_fb, retailer: retailer) }
+
+      it 'returns the retailer user with the credentials' do
+        expect(retailer.retailer_user_connected_to_fb).to eq(retailer_user_fb)
+      end
+    end
+
+    context 'when it is not connected to facebook' do
+      it 'returns nil' do
+        expect(retailer.retailer_user_connected_to_fb).to be nil
+      end
     end
   end
 end

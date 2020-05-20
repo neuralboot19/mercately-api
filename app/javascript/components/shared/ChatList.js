@@ -157,7 +157,6 @@ class ChatList extends Component {
   componentDidUpdate() {
     if (this.state.shouldUpdate) {
       this.setState({
-        customers: this.props.customers,
         shouldUpdate: false
       })
     }
@@ -199,10 +198,9 @@ class ChatList extends Component {
                 onKeyPress={this.handleKeyPress}
               />
             </div>
-
-            {this.state.customers.map((customer) =>
+            {this.state.customers.map((customer, index) =>
             <ChatListUser
-              key={customer.id}
+              key={index}
               currentCustomer={this.props.currentCustomer}
               customer={customer}
               handleOpenChat={this.props.handleOpenChat}

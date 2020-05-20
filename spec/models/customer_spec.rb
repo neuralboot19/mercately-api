@@ -338,4 +338,108 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#total_whatsapp_messages' do
+    context 'when the retailer is integrated with Karix' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+      let(:customer_karix) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:karix_whatsapp_message, 2, customer: customer_karix)
+      end
+
+      it 'counts the messages on Karix Whatsapp Messages table' do
+        expect(customer_karix.total_whatsapp_messages).to eq(2)
+      end
+    end
+
+    context 'when the retailer is integrated with Gupshup' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer_gupshup) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:gupshup_whatsapp_message, 3, customer: customer_gupshup)
+      end
+
+      it 'counts the messages on Gupshup Whatsapp Messages table' do
+        expect(customer_gupshup.total_whatsapp_messages).to eq(3)
+      end
+    end
+  end
+
+  describe '#total_messenger_messages' do
+    let(:facebook_retailer) { create(:facebook_retailer) }
+    let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+
+    before do
+      create_list(:facebook_message, 5, customer: customer)
+    end
+
+    it 'counts the facebook messages of the customer' do
+      expect(customer.total_messenger_messages).to eq(5)
+    end
+  end
+
+  describe '#before_last_whatsapp_message' do
+    context 'when there are not at least two whatsapp messages' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+      let(:customer) { create(:customer, retailer: retailer) }
+      let!(:whatsapp_message) { create(:karix_whatsapp_message, :inbound, customer: customer) }
+
+      it 'returns nil' do
+        expect(customer.before_last_whatsapp_message). to be nil
+      end
+    end
+
+    context 'when retailer is Karix integrated' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+      let(:customer_karix) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:karix_whatsapp_message, 2, :inbound, customer: customer_karix)
+      end
+
+      it 'returns the message before the last one' do
+        expect(customer_karix.before_last_whatsapp_message).to eq(KarixWhatsappMessage.last(2).first)
+      end
+    end
+
+    context 'when retailer is Gupshup integrated' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer_gupshup) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:gupshup_whatsapp_message, 2, :inbound, customer: customer_gupshup)
+      end
+
+      it 'returns the message before the last one' do
+        expect(customer_gupshup.before_last_whatsapp_message).to eq(GupshupWhatsappMessage.last(2).first)
+      end
+    end
+  end
+
+  describe '#before_last_messenger_message' do
+    context 'when there are not at least two facebook messages' do
+      let(:facebook_retailer) { create(:facebook_retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let!(:facebook_message) { create(:facebook_message, customer: customer, sent_by_retailer: false) }
+
+      it 'returns nil' do
+        expect(customer.before_last_messenger_message). to be nil
+      end
+    end
+
+    context 'when there are at least two facebook messages' do
+      let(:facebook_retailer) { create(:facebook_retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+
+      before do
+        create_list(:facebook_message, 2, customer: customer, sent_by_retailer: false)
+      end
+
+      it 'returns the message before the last one' do
+        expect(customer.before_last_messenger_message).to eq(FacebookMessage.last(2).first)
+      end
+    end
+  end
 end

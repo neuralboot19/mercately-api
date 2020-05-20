@@ -21,9 +21,25 @@ class Retailers::ProductsController < RetailersController
 
   def new
     @product = Product.new
+    return unless current_retailer.facebook_catalog&.connected?
+
+    @show_phone_message = true
+
+    if current_retailer.retailer_number.present?
+      @product.url = "https://api.whatsapp.com/send?l=es&phone=#{current_retailer.retailer_number}"
+      @show_phone_message = false
+    end
   end
 
   def edit
+    return unless current_retailer.facebook_catalog&.connected?
+
+    @show_phone_message = true if current_retailer.retailer_number.blank? && @product.url.blank?
+
+    if current_retailer.retailer_number.present? && @product.url.blank?
+      @product.url = "https://api.whatsapp.com/send?l=es&phone=#{current_retailer.retailer_number}"
+      @show_phone_message = false
+    end
   end
 
   def create
@@ -41,7 +57,8 @@ class Retailers::ProductsController < RetailersController
       @product.update_main_picture
       @product.reload
       post_product_to_ml
-      redirect_to retailers_product_path(@retailer, @product), notice: @notice
+      post_product_to_facebook
+      redirect_to retailers_product_path(@retailer, @product), notice: notice_to_show
     else
       render :new
     end
@@ -60,8 +77,11 @@ class Retailers::ProductsController < RetailersController
     end
 
     if @product.update(product_params)
+      # Actualiza la imagen principal y maneja el borrado de las imagenes de ser necesario
+      after_update_product
       update_meli_info
-      redirect_to retailers_product_path(@retailer, @product), notice: @notice
+      update_facebook_product
+      redirect_to retailers_product_path(@retailer, @product), notice: notice_to_show_update
     else
       render :edit
     end
@@ -186,6 +206,8 @@ class Retailers::ProductsController < RetailersController
                                       :status,
                                       :meli_status,
                                       :code,
+                                      :brand,
+                                      :url,
                                       images: [],
                                       ml_attributes: [])
     end
