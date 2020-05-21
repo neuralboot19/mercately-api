@@ -81,27 +81,29 @@
                 <i class="fab fa-whatsapp fz-16 mr-5"></i>Conectar con WhatsApp</a>
           </div>
         </div>
-        <div class="col-xs-12 col-md-6 mt-15 p-relative">
-          <div class="col-xs-12 pt-20 t-center">
-            <div class="logo-integration-platform" id="facebook_catalog_logo"></div>
-            <div class="integration__desc">
-              Conecta Instagram Shopping y tu catálogo de Facebook con Mercately y accede a las siguientes funcionalidades:<br/>
-              <ul class="t-justify mx-12 pb-45">
-                <li>Mantén a tus clientes al tanto de toda tu oferta en tu tienda de Facebook.</li>
-                <li>Actualiza en tiempo real tu inventario local con tu inventario de Facebook e Instagram.</li>
-                <li>Recibe mensajes de tus clientes en Facebook o dirígelos a tu página web.</li>
-                <li>Etiqueta todos tus productos en Instagram y brinda más información a tu audiencia.</li>
-              </ul>
+        <% unless ENV['ENVIRONMENT'] == 'production' %>
+          <div class="col-xs-12 col-md-6 mt-15 p-relative">
+            <div class="col-xs-12 pt-20 t-center">
+              <div class="logo-integration-platform" id="facebook_catalog_logo"></div>
+              <div class="integration__desc">
+                Conecta Instagram Shopping y tu catálogo de Facebook con Mercately y accede a las siguientes funcionalidades:<br/>
+                <ul class="t-justify mx-12 pb-45">
+                  <li>Mantén a tus clientes al tanto de toda tu oferta en tu tienda de Facebook.</li>
+                  <li>Actualiza en tiempo real tu inventario local con tu inventario de Facebook e Instagram.</li>
+                  <li>Recibe mensajes de tus clientes en Facebook o dirígelos a tu página web.</li>
+                  <li>Etiqueta todos tus productos en Instagram y brinda más información a tu audiencia.</li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-xs-12 col-md-12 btn-box btn-aligned">
+              <% if current_retailer.facebook_catalog && current_retailer.facebook_catalog.uid %>
+                <%= link_to 'Configuración', retailers_select_catalog_path(current_retailer), class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
+              <% else %>
+                <%= link_to 'Conectar con Catálogo de Facebook', retailer_user_omniauth_catalog_path, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
+              <% end %>
             </div>
           </div>
-          <div class="col-xs-12 col-md-12 btn-box btn-aligned">
-            <% if current_retailer.facebook_catalog && current_retailer.facebook_catalog.uid %>
-              <%= link_to 'Configuración', retailers_select_catalog_path(current_retailer), class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
-            <% else %>
-              <%= link_to 'Conectar con Catálogo de Facebook', retailer_user_omniauth_catalog_path, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
-            <% end %>
-          </div>
-        </div>
+        <% end %>
       </div>
     </div>
   </div>
