@@ -15,6 +15,8 @@ class ChatList extends Component {
       searchString: '',
       shouldUpdate: true
     };
+
+    this.last_customers_offset = 0
   }
 
   findCustomerInArray = (arr, id) => (
@@ -24,7 +26,9 @@ class ChatList extends Component {
   )
 
   handleLoadMore = () => {
-    if (this.props.total_customers > this.state.page) {
+    if (this.props.total_customers > this.state.page  &&
+        this.state.customers.length != this.last_customers_offset
+       ) {
       let page = ++this.state.page;
       this.setState({ page: page })
 
@@ -34,6 +38,8 @@ class ChatList extends Component {
       if (this.props.chatType == "whatsapp"){
         this.props.fetchWhatsAppCustomers(page, this.state.searchString, this.state.customers.length);
       }
+
+      this.last_customers_offset = this.state.customers.length;
     }
   }
 
