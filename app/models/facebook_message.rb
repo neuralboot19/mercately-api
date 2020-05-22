@@ -10,29 +10,30 @@ class FacebookMessage < ApplicationRecord
   after_create :send_welcome_message
   after_create :send_inactive_message
 
-  scope :unreaded, -> { where(date_read: nil) }
+  scope :customer_unread, -> { where(date_read: nil, sent_by_retailer: false) }
+  scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
 
   private
 
     def sent_by_retailer?
-      update_columns(sent_by_retailer: true) if self.sender_uid == self.facebook_retailer.uid
+      update_columns(sent_by_retailer: true) if sender_uid == facebook_retailer.uid
     end
 
     def send_facebook_message
-      if sent_from_mercately
-        m = if text.present?
-              Facebook::Messages.new(facebook_retailer).send_message(id_client, text)
-            elsif file_data.present?
-              Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename)
-            end
-        update_column(:mid, m['message_id'])
-      end
+      return unless sent_from_mercately
+
+      m = if text.present?
+            Facebook::Messages.new(facebook_retailer).send_message(id_client, text)
+          elsif file_data.present?
+            Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename)
+          end
+      update_column(:mid, m['message_id'])
     end
 
     def broadcast_to_counter_channel
       facebook_helper = FacebookNotificationHelper
       retailer = facebook_retailer.retailer
-      facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a)
+      facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, self)
     end
 
     def send_welcome_message
@@ -56,7 +57,15 @@ class FacebookMessage < ApplicationRecord
     end
 
     def send_messenger_notification(message)
-      Facebook::Messages.new(facebook_retailer).send_message(id_client, message)
+      FacebookMessage.create(
+        customer: customer,
+        sender_uid: facebook_retailer.uid,
+        id_client: id_client,
+        facebook_retailer: facebook_retailer,
+        text: message,
+        sent_from_mercately: true,
+        sent_by_retailer: true
+      )
     end
 
     def send_message?(before_last_message, inactive_message)

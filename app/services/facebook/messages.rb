@@ -10,7 +10,7 @@ module Facebook
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
       url = message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
       file_name = File.basename(URI.parse(url)&.path) if url.present?
-      message = FacebookMessage.create_with(
+      FacebookMessage.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         sender_uid: message_data['sender']['id'],
@@ -21,11 +21,6 @@ module Facebook
         reply_to: message_data['message']&.[]('reply_to')&.[]('mid'),
         filename: file_name
       ).find_or_create_by(mid: message_data['message']['mid'])
-      if message.persisted?
-        facebook_helper = FacebookNotificationHelper
-        retailer = @facebook_retailer.retailer
-        facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, message)
-      end
     end
 
     def import_delivered(message_id, psid)
@@ -51,17 +46,13 @@ module Facebook
         text: response['message'],
         filename: file_name
       ).find_or_create_by(mid: response['id'])
-      if attachment_url && message.url.nil?
-        message.update(
-          url: attachment_url,
-          file_type: file_type,
-          filename: message.filename.presence || file_name
-        )
+      return unless attachment_url && message.url.nil?
 
-        facebook_helper = FacebookNotificationHelper
-        retailer = @facebook_retailer.retailer
-        facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, message)
-      end
+      message.update(
+        url: attachment_url,
+        file_type: file_type,
+        filename: message.filename.presence || file_name
+      )
     end
 
     def send_message(to, message)
@@ -80,6 +71,27 @@ module Facebook
       end
       response = Connection.post_form_request(conn, prepare_attachment(to, file_data, filename))
       JSON.parse(response.body)
+    end
+
+    def mark_read(psid)
+      customer = Customer.find_by(psid: psid)
+      messages = customer.facebook_messages.retailer_unread.order(:id)
+      last_message = messages.last
+      return unless last_message.present?
+
+      read_date = Time.now
+      messages.update_all(date_read: read_date)
+
+      facebook_helper = FacebookNotificationHelper
+      retailer = @facebook_retailer.retailer
+      last_message.date_read = read_date
+      facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, last_message)
+    end
+
+    def send_read_action(to, action)
+      url = send_message_url
+      conn = Connection.prepare_connection(url)
+      Connection.post_request(conn, prepare_action(to, action))
     end
 
     private
@@ -139,6 +151,15 @@ module Facebook
         return attachment&.[]('image_data')&.[]('url') if type == 'image'
 
         attachment&.[]('file_url')
+      end
+
+      def prepare_action(to, action)
+        {
+          'recipient': {
+            'id': to
+          },
+          'sender_action': action
+        }.to_json
       end
   end
 end

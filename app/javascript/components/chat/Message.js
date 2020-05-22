@@ -49,7 +49,10 @@ const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
             </p>
       break;
     default:
-      tag = <p>{message.text}</p>
+        tag = <p className={ message.sent_by_retailer == true && message.date_read ? 'read-message' : '' }>{message.text} {
+          message.sent_by_retailer == true && message.date_read && (
+              <i className="fas fa-check-double"></i>
+          )}</p>
   }
   return (tag)
 }

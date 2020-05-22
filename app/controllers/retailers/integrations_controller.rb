@@ -55,12 +55,11 @@ class Retailers::IntegrationsController < RetailersController
     end
 
     facebook_service = Facebook::Messages.new(facebook_retailer)
-    if message_data['message']&.[]('text') || message_data['message']&.[]('attachments')
-      facebook_service.save(message_data)
-    elsif message_data['delivery']&.[]('mids')
-      psid = message_data['sender']['id']
-      facebook_service.import_delivered(message_data['delivery']['mids'][0], psid)
-    end
+
+    save_facebook_message(facebook_service, message_data)
+    import_facebook_message(facebook_service, message_data)
+    read_facebook_message(facebook_service, message_data)
+
     render status: 200, json: {}
   end
 
@@ -85,5 +84,25 @@ class Retailers::IntegrationsController < RetailersController
 
     def set_ml
       @ml = MercadoLibre::Auth.new(@retailer)
+    end
+
+    def save_facebook_message(facebook_service, message_data)
+      return unless message_data['message']&.[]('text') || message_data['message']&.[]('attachments')
+
+      facebook_service.save(message_data)
+    end
+
+    def import_facebook_message(facebook_service, message_data)
+      return unless message_data['delivery']&.[]('mids')
+
+      psid = message_data['sender']['id']
+      facebook_service.import_delivered(message_data['delivery']['mids'][0], psid)
+    end
+
+    def read_facebook_message(facebook_service, message_data)
+      return unless message_data['read']&.[]('watermark')
+
+      psid = message_data['sender']['id']
+      facebook_service.mark_read(psid)
     end
 end

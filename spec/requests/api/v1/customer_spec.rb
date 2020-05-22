@@ -151,4 +151,42 @@ RSpec.describe 'Api::V1::Customers', type: :request do
       expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
     end
   end
+
+  describe 'GET #messages' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_read_action)
+        .and_return('Read')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'responses with the customer messages' do
+      get api_v1_customer_messages_path(customer1.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['messages'].count).to eq(6)
+    end
+  end
+
+  describe 'POST #set_message_as_read' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_read_action)
+        .and_return('Read')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'sets the message as read' do
+      post api_v1_set_message_as_read_path(customer1.facebook_messages.last.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['message']['date_read']).not_to be nil
+    end
+  end
 end

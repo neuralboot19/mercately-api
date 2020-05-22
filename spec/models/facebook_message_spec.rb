@@ -139,7 +139,7 @@ RSpec.describe FacebookMessage, type: :model do
       end
 
       it 'sends the message' do
-        expect(facebook_msg_sent.send(:send_welcome_message)).to eq('Sent')
+        expect { facebook_msg_sent.send(:send_welcome_message) }.to change(FacebookMessage, :count).by(2)
       end
     end
   end
@@ -251,7 +251,7 @@ RSpec.describe FacebookMessage, type: :model do
       end
 
       it 'sends the message' do
-        expect(facebook_msg_sent.send(:send_inactive_message)).to eq('Sent')
+        expect { facebook_msg_sent.send(:send_inactive_message) }.to change(FacebookMessage, :count).by(3)
       end
     end
   end

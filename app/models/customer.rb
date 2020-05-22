@@ -228,6 +228,10 @@ class Customer < ApplicationRecord
     facebook_messages.where(sent_by_retailer: false).second_to_last
   end
 
+  def last_messenger_message
+    facebook_messages.last
+  end
+
   private
 
     def update_valid_customer
