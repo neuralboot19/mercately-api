@@ -76,7 +76,9 @@ class Api::V1::KarixWhatsappController < ApplicationController
           messages: @messages,
           agents: current_retailer.team_agents,
           handle_message_events: @customer.handle_message_events?,
-          total_pages: total_pages
+          total_pages: total_pages,
+          recent_inbound_message_date: @customer.recent_inbound_message_date,
+          customer_id: @customer.id
         }
       else
         render status: 401, json: {
@@ -97,7 +99,6 @@ class Api::V1::KarixWhatsappController < ApplicationController
       return
     end
     retailer = Retailer.find_by_id(params['account_id'])
-
     if retailer
       message = retailer.karix_whatsapp_messages.find_or_initialize_by(uid: params['data']['uid'])
       karix_helper = KarixNotificationHelper
@@ -159,7 +160,10 @@ class Api::V1::KarixWhatsappController < ApplicationController
           agents
         )
       end
-      render status: 200, json: { message: @message }
+      render status: 200, json: {
+        message: @message,
+        recent_inbound_message_date: @customer.recent_inbound_message_date,
+      }
     else
       render status: 500, json: { message: 'Error al actualizar mensajes' }
     end
@@ -230,7 +234,10 @@ class Api::V1::KarixWhatsappController < ApplicationController
 
         agents = customer.agent.present? && has_agent ? [customer.agent] : current_retailer.retailer_users.to_a
         karix_helper.broadcast_data(current_retailer, agents, message, customer.agent_customer)
-        render status: 200, json: { message: response['objects'][0] }
+        render status: 200, json: {
+          message: response['objects'][0],
+          recent_inbound_message_date: customer.recent_inbound_message_date
+        }
       end
     end
 
@@ -247,7 +254,10 @@ class Api::V1::KarixWhatsappController < ApplicationController
       agents = current_retailer.retailer_users.to_a
       message_helper.notify_agent!(current_retailer, agents, agent_customer)
 
-      render status: 200, json: { message: 'Notificación enviada' }
+      render status: 200, json: {
+        message: 'Notificación enviada',
+        recent_inbound_message_date: customer.recent_inbound_message_date
+      }
     end
 
     def assign_agent(customer)

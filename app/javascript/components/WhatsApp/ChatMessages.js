@@ -63,9 +63,11 @@ class ChatMessages extends Component {
     let id = this.props.currentCustomer;
     currentCustomer = id;
 
-    var rDate = moment(this.props.recentInboundMessageDate).local();
-    this.state.can_write = moment().local().diff(rDate, 'hours') < 24;
-    this.setState({ messages: [],  page: 1, scrolable: true}, () => {
+    this.setState({
+      messages: [],
+      page: 1,
+      scrolable: true
+    }, () => {
       this.props.fetchWhatsAppMessages(id);
       this.scrollToBottom();
     });
@@ -110,10 +112,12 @@ class ChatMessages extends Component {
 
   componentWillReceiveProps(newProps){
     if (newProps.messages != this.props.messages && newProps.updated == this.props.updated) {
+      var rDate = moment(newProps.recentInboundMessageDate).local();
       this.setState({
         new_message: false,
         messages: newProps.messages.concat(this.state.messages),
         load_more: false,
+        can_write: moment().local().diff(rDate, 'hours') < 24
       })
     }
 
@@ -125,19 +129,23 @@ class ChatMessages extends Component {
 
   componentDidUpdate() {
     let id = this.props.currentCustomer;
+    var rDate = moment(this.props.recentInboundMessageDate).local();
     if (this.state.new_message) {
       this.setState({
-        new_message: false,
+        can_write: moment().local().diff(rDate, 'hours') < 24,
+        new_message: false
       })
     }
 
     if (currentCustomer !== id) {
       currentCustomer = id;
       total_pages = 0;
-      var rDate = moment(this.props.recentInboundMessageDate).local();
-      this.state.can_write = moment().local().diff(rDate, 'hours') < 24;
       this.scrollToBottom();
-      this.setState({ messages: [],  page: 1, scrolable: true}, () => {
+      this.setState({
+        messages: [],
+        page: 1,
+        scrolable: true
+      }, () => {
         this.props.fetchWhatsAppMessages(id);
       });
 
@@ -169,9 +177,16 @@ class ChatMessages extends Component {
   handleSubmit = (e) => {
     let text = this.state.messageText;
     if(text.trim() === '') return;
-    this.setState({ messageText: '' }, () => {
-      this.handleSubmitWhatsAppMessage(e, text)
-    });
+    var rDate = moment(this.props.recentInboundMessageDate).local();
+    this.setState({
+      can_write: moment().local().diff(rDate, 'hours') < 24
+    }, () => {
+      if (this.state.can_write) {
+        this.setState({ messageText: '' }, () => {
+          this.handleSubmitWhatsAppMessage(e, text)
+        });
+      }
+    })
   }
 
   handleSubmitWhatsAppMessage = (e, message) => {
@@ -342,7 +357,7 @@ class ChatMessages extends Component {
     let new_array = this.state.templateSelected.split('')
     return new_array.map((key, index) => {
       if (key == '*'){
-        return <input value='' onChange={ (e) => this.changeTemplateSelected(e, index)}   /> ;
+        return <input value='' onChange={ (e) => this.changeTemplateSelected(e, index)} /> ;
       } else {
         return key
       }
@@ -411,7 +426,6 @@ class ChatMessages extends Component {
   }
 
   render() {
-
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
     } else {
@@ -445,8 +459,8 @@ class ChatMessages extends Component {
             <small>Asignado a:</small>&nbsp;&nbsp;
             <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={() => this.handleAgentAssignment()}>
               <option value="">No asignado</option>
-              {this.props.agents.map((agent) => (
-                <option value={agent.id}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
+              {this.props.agents.map((agent, index) => (
+                <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
               ))}
             </select>
           </div>
@@ -459,8 +473,8 @@ class ChatMessages extends Component {
           </div>
         )}
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
-          {this.state.messages.map((message) => (
-            <div key={message.id} className="message">
+          {this.state.messages.map((message, index) => (
+            <div key={index} className="message">
               <div className={ message.direction == 'outbound' ? 'message-by-retailer f-right' : '' } >
                 {message.content_type == 'text' &&
                   <p className={message.status === 'read' && this.props.handleMessageEvents === true  ? 'read-message' : ''}>{message.content_text} {
@@ -552,7 +566,7 @@ class ChatMessages extends Component {
             (
               <div>
                 {this.props.templates.map((template) => (
-                  <div className="row">
+                  <div className="row" key={template.id}>
                     <div className={this.props.onMobile ? "col-md-10 fs-10" : "col-md-10" }>
                       <p>{template.text}</p>
                     </div>
@@ -598,6 +612,7 @@ function mapStateToProps(state) {
     total_template_pages: state.total_template_pages || 0,
     agents: state.agents || [],
     handleMessageEvents: state.handle_message_events || false,
+    recentInboundMessageDate: state.recentInboundMessageDate || null,
     errorSendMessageStatus: state.errorSendMessageStatus,
     errorSendMessageText: state.errorSendMessageText
   };

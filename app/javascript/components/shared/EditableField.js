@@ -9,7 +9,7 @@ class EditableField extends Component {
 
     press = evt => {
      if (evt.key == 'Enter'){
-       evt.preventDefault()      
+       evt.preventDefault()
        this.contentEditable.current.blur()
      }
    }
@@ -18,9 +18,9 @@ class EditableField extends Component {
       return (
        <ContentEditable
          innerRef={this.contentEditable}
-         html={this.props.content} 
+         html={this.props.content || ''}
          disabled={false}
-         onChange={e => this.props.handleInputChange(e, this.props.targetName)} 
+         onChange={e => this.props.handleInputChange(e, this.props.targetName)}
          tagName='div'
          className= {this.props.givenClass ? this.props.givenClass : "editable_field" }
          onBlur={this.props.handlesubmit}
