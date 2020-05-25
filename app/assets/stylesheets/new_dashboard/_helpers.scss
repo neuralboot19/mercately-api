@@ -454,6 +454,12 @@ label:hover, a:hover {
   .hide-on-xs {
     display: none;
   }
+
+  .message {
+    .video-audio, .message-video-audio-content {
+      max-width: 95%;
+    }
+  }
 }
 
 @media (min-width: 1024px) and (max-width: 1440px) {

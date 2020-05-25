@@ -301,6 +301,8 @@ class ChatMessages extends Component {
         return 'document';
     } else if (file_type.includes('audio/') || ['audio', 'voice'].includes(file_type)) {
       return 'audio';
+    } else if (file_type.includes('video/') || file_type == 'video') {
+      return 'video';
     }
   }
 
@@ -425,6 +427,12 @@ class ChatMessages extends Component {
     this.props.toggleFastAnswers();
   }
 
+  divClasses = (message) => {
+    var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : '';
+    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type)))  classes += 'video-audio';
+    return classes;
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -475,7 +483,7 @@ class ChatMessages extends Component {
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
           {this.state.messages.map((message, index) => (
             <div key={index} className="message">
-              <div className={ message.direction == 'outbound' ? 'message-by-retailer f-right' : '' } >
+              <div className={ this.divClasses(message) } >
                 {message.content_type == 'text' &&
                   <p className={message.status === 'read' && this.props.handleMessageEvents === true  ? 'read-message' : ''}>{message.content_text} {
                     message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
