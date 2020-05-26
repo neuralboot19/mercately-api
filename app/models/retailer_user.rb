@@ -17,6 +17,7 @@ class RetailerUser < ApplicationRecord
 
   def self.from_omniauth(auth, retailer_user, permissions)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
+    retailer_user.long_live_user_access_token
 
     retailer_user.handle_page_connection if
       permissions.any? { |p| p['permission'] == 'manage_pages' && p['status'] == 'granted' }
@@ -24,16 +25,13 @@ class RetailerUser < ApplicationRecord
     retailer_user.handle_catalog_connection if
       permissions.any? { |p| p['permission'] == 'catalog_management' && p['status'] == 'granted' }
 
-    retailer_user.long_live_user_access_token
     retailer_user
   end
 
   # TODO: mover a FacebookRetailer
   def handle_page_connection
-    facebook_retailer = FacebookRetailer.create_with(
-      uid: uid,
-      access_token: facebook_access_token
-    ).find_or_create_by(retailer_id: retailer.id)
+    facebook_retailer = FacebookRetailer.find_or_create_by(retailer_id: retailer.id)
+    facebook_retailer.update!(uid: uid, access_token: facebook_access_token)
 
     facebook_service = Facebook::Api.new(facebook_retailer, self)
     facebook_service.update_retailer_access_token

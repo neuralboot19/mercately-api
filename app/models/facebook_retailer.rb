@@ -10,4 +10,8 @@ class FacebookRetailer < ApplicationRecord
       customers: { retailer_id: retailer.id }
     )
   end
+
+  def connected?
+    uid.present? && access_token.present?
+  end
 end

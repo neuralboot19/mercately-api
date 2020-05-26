@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="col-xs-12 col-md-12 btn-box btn-aligned">
-            <% if current_retailer.facebook_retailer %>
+            <% if current_retailer.facebook_retailer && current_retailer.facebook_retailer.connected? %>
               <p class="c-green fs-18 fs-sm-and-down-12">Conectado con Messenger Exitosamente</p>
             <% else %>
               <%= link_to 'Conectar con Messenger', retailer_user_omniauth_messenger_path, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
@@ -95,7 +95,7 @@
             </div>
           </div>
           <div class="col-xs-12 col-md-12 btn-box btn-aligned">
-            <% if current_retailer.facebook_catalog && current_retailer.facebook_catalog.uid %>
+            <% if current_retailer.facebook_catalog && current_retailer.facebook_catalog.connected? %>
               <%= link_to 'Configuración', retailers_select_catalog_path(current_retailer), class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
             <% else %>
               <%= link_to 'Conectar con Catálogo de Facebook', retailer_user_omniauth_catalog_path, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
