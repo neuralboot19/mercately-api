@@ -48,6 +48,12 @@ class Retailers::IntegrationsController < RetailersController
     render(status: 200, json: params['hub.challenge']) && return if params['hub.challenge']
     message_data = params['entry'][0]['messaging'][0]
     facebook_retailer = FacebookRetailer.find_by(uid: message_data['recipient']['id'])
+
+    unless facebook_retailer.present?
+      render status: 200, json: {}
+      return
+    end
+
     facebook_service = Facebook::Messages.new(facebook_retailer)
     if message_data['message']&.[]('text') || message_data['message']&.[]('attachments')
       facebook_service.save(message_data)
