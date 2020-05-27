@@ -143,7 +143,6 @@ class WhatsApp extends Component {
               <div className="col-xs-12 col-sm-6">
                 <ChatMessages
                   currentCustomer={this.state.currentCustomer}
-                  recentInboundMessageDate={this.state.currentCustomerDetails.recent_inbound_message_date}
                   customerDetails={this.state.currentCustomerDetails}
                   removedCustomer={this.state.removedCustomer}
                   removedCustomerId={this.state.removedCustomerId}

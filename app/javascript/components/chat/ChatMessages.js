@@ -162,6 +162,8 @@ class ChatMessages extends Component {
         return 'file';
     } else if (file_type.includes('audio/') || file_type == 'audio') {
       return 'audio';
+    } else if (file_type.includes('video/') || file_type == 'video') {
+      return 'video';
     }
   }
 
@@ -173,6 +175,12 @@ class ChatMessages extends Component {
     this.setState({
       fastAnswerText: null
     })
+  }
+
+  divClasses = (message) => {
+    var classes = message.sent_by_retailer == true ? 'message-by-retailer f-right' : '';
+    if (['audio', 'video'].includes(this.fileType(message.file_type)))  classes += 'video-audio';
+    return classes;
   }
 
   render() {
@@ -208,7 +216,7 @@ class ChatMessages extends Component {
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
-              <div className={ message.sent_by_retailer == true ? 'message-by-retailer f-right' : '' }>
+              <div className={ this.divClasses(message) }>
                 <Message message={message} toggleImgModal={this.toggleImgModal} downloadFile={this.downloadFile} fileType={this.fileType}/>
               </div>
             </div>

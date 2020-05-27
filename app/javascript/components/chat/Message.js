@@ -13,7 +13,7 @@ const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
       </div>
         break;
     case 'audio':
-      tag = <div className="w-400">
+      tag = <div className="w-400 message-video-audio-content">
         <audio controls>
           <source src={message.url}/>
         </audio>
@@ -27,6 +27,16 @@ const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
         {message.is_loading && (
           <div class="lds-dual-ring"></div>
         )}
+        break;
+    case 'video':
+      tag = <div className="w-400 message-video-audio-content">
+        <video width="320" height="240" controls>
+          <source src={message.url}/>
+        </video>
+        {message.is_loading && (
+          <div class="lds-dual-ring"></div>
+        )}
+      </div>
         break;
     default:
       tag = <p>{message.text}</p>

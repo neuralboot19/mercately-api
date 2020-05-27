@@ -444,7 +444,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   describe 'POST #send_file' do
     subject { Whatsapp::Karix::Messages }
 
-    let(:message) { create(:karix_whatsapp_message) }
+    let(:message) { create(:karix_whatsapp_message, customer: customer1) }
 
     context 'when the message is sent without errors' do
       it 'successfully, will response a 200 status' do

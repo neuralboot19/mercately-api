@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 import moment from 'moment';
 
 class ChatListUser extends Component {
@@ -20,6 +22,7 @@ class ChatListUser extends Component {
 
   render() {
     let customer = this.props.customer
+
     return (
       <div className={`profile fs-14 box ${this.props.currentCustomer == customer.id ? 'border border--secondary' : 'border border--transparent'}`} onClick={() => this.props.handleOpenChat(this.props.customer)}>
         <div className="profile__data row">
@@ -61,4 +64,13 @@ class ChatListUser extends Component {
   }
 }
 
-export default ChatListUser;
+function mapState(state) {
+  return {
+    recentInboundMessageDate: state.recentInboundMessageDate || null,
+    customerId: state.customerId || null
+  };
+}
+
+export default connect(
+  mapState
+)(withRouter(ChatListUser));

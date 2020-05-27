@@ -35,7 +35,8 @@ const reducer = (state = initialState, action) => {
     case 'SET_SEND_MESSAGE':
       return {
         ...state,
-        message: action.data.message
+        message: action.data.message,
+        recentInboundMessageDate: action.data.recent_inbound_message_date
       }
     case 'SET_WHATSAPP_CUSTOMERS':
       return {
@@ -56,7 +57,9 @@ const reducer = (state = initialState, action) => {
         agents: action.data.agents,
         handle_message_events: action.data.handle_message_events,
         errorSendMessageStatus: balance_error.status,
-        errorSendMessageText: balance_error.message
+        errorSendMessageText: balance_error.message,
+        recentInboundMessageDate: action.data.recent_inbound_message_date,
+        customerId: action.data.customer_id
       }
     case 'SET_WHATSAPP_TEMPLATES':
       return {

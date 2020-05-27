@@ -14,7 +14,7 @@ module Whatsapp::Gupshup::V1::Helpers
       retailer_users = agents | retailer.admins
 
       retailer_users.each do |ret_u|
-        notify_update!(ret_u, serialized_message)
+        notify_update!(ret_u, serialized_message, @msg.customer)
       end
     rescue StandardError => e
       Rails.logger.error(e)
@@ -44,7 +44,7 @@ module Whatsapp::Gupshup::V1::Helpers
       retailer_users = retailer_users | retailer.admins
 
       retailer_users.each do |ret_u|
-        notify_update!(ret_u, serialized_message) unless nomore
+        notify_update!(ret_u, serialized_message, customer) unless nomore
       end
 
       serialized_message['data'].pluck('attributes')
@@ -83,7 +83,7 @@ module Whatsapp::Gupshup::V1::Helpers
         ).serialized_json
       end
 
-      def notify_update!(retailer_user, serialized_message)
+      def notify_update!(retailer_user, serialized_message, customer)
         # TODO: Change the element name karix_whatsapp_message to something more
         # standard like whatsapp_message, I decided to keep this name to not
         # touch front-end at all

@@ -26,14 +26,29 @@ module KarixNotificationHelper
                     }.to_json
 
       if message.present?
-        redis.publish 'message_chat', {karix_whatsapp_message: serialized_message, room: ret_u.id}.to_json
-        redis.publish 'customer_chat', {customer: serialized_customer, room: ret_u.id}.to_json
+        redis.publish 'message_chat',
+                      {
+                        karix_whatsapp_message: serialized_message,
+                        room: ret_u.id
+                      }.to_json
+        redis.publish 'customer_chat', {
+          customer: serialized_customer,
+          room: ret_u.id,
+          recent_inbound_message_date: message.customer.recent_inbound_message_date
+        }.to_json
       end
 
       if assigned_agent.present?
-        redis.publish 'customer_chat', {customer: serialized_agent_customer(assigned_agent.customer), remove_only:
-          (assigned_agent.persisted? && assigned_agent.retailer_user_id != ret_u.id &&
-          ret_u.retailer_admin == false), room: ret_u.id}.to_json
+        redis.publish 'customer_chat', {
+          customer: serialized_agent_customer(assigned_agent.customer),
+          remove_only: (
+            assigned_agent.persisted? &&
+            assigned_agent.retailer_user_id != ret_u.id &&
+            ret_u.retailer_admin == false
+          ),
+          room: ret_u.id,
+          recent_inbound_message_date: message&.customer&.recent_inbound_message_date
+        }.to_json
       end
     end
   end
