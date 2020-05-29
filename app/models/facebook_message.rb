@@ -1,6 +1,7 @@
 class FacebookMessage < ApplicationRecord
   belongs_to :facebook_retailer
   belongs_to :customer
+  belongs_to :retailer_user, required: false
 
   validates_uniqueness_of :mid, allow_blank: true
 

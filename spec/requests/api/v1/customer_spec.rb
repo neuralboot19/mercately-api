@@ -230,4 +230,45 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       expect(body['message']['date_read']).not_to be nil
     end
   end
+
+  describe 'POST #create_message' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_message)
+        .and_return('Sent')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'creates a new messenger text message' do
+      post api_v1_create_message_path(customer1.id), params: { message: 'Texto' }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['message']['id']).to eq(FacebookMessage.last.id)
+      expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+    end
+  end
+
+  describe 'POST #send_img' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_attachment)
+        .and_return('Sent')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'creates a new messenger file message' do
+      post api_v1_send_img_path(customer1.id), params: { file_data:
+        fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg') }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['message']['id']).to eq(FacebookMessage.last.id)
+      expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+    end
+  end
 end

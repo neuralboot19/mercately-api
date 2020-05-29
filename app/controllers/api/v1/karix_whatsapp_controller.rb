@@ -132,7 +132,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
                      .find_or_create_by(customer: @customer)
 
         message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
-        message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
+        message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0],
+                                                                 current_retailer_user)
         message.save
 
         unless has_agent
@@ -144,7 +145,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       end
     elsif current_retailer.gupshup_integrated?
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, @customer)
-      gws.send_message(type: 'file', params: params)
+      gws.send_message(type: 'file', params: params, retailer_user: current_retailer_user)
 
       render status: 200, json: { message: 'Notificación enviada' }
     end
@@ -316,7 +317,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
         assign_agent(customer)
 
         message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
-        message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
+        message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0],
+                                                                 current_retailer_user)
         message.save
 
         agents = customer.agent.present? && has_agent ? [customer.agent] : current_retailer.retailer_users.to_a
@@ -334,7 +336,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
       type = params[:template] ? 'template' : 'text'
 
-      gws.send_message(type: type, text: params[:message])
+      gws.send_message(type: type, text: params[:message], retailer_user: current_retailer_user)
 
       message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new(gws)
 

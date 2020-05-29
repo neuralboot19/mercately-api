@@ -3,9 +3,12 @@ require 'rails_helper'
 RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   let(:retailer) { create(:retailer, :karix_integrated) }
   let(:retailer_user) { create(:retailer_user, :admin, retailer: retailer) }
+  let(:retailer_gupshup) { create(:retailer, :gupshup_integrated) }
+  let(:retailer_user_gupshup) { create(:retailer_user, :admin, retailer: retailer_gupshup) }
 
   let(:customer1) { create(:customer, retailer: retailer) }
   let(:customer2) { create(:customer, retailer: retailer) }
+  let(:customer3) { create(:customer, retailer: retailer_gupshup) }
 
   before do
     # Whatsapp messages for customer1 and customer2
@@ -195,20 +198,40 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
   describe 'POST #create' do
     context 'when Gupshup integrated' do
+      before do
+        sign_out retailer_user
+        sign_in retailer_user_gupshup
+      end
+
+      let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
+      let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
+
       context 'when the message is submitted' do
-        it 'will response a 200 status code and store a new gupshup whatsapp message'
+        it 'will response a 200 status code and store a new gupshup whatsapp message' do
+          allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+            .and_return(message)
+          allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
+
+          post '/api/v1/karix_send_whatsapp_message',
+            params: {
+              customer_id: customer3.id,
+              message: 'New whatsapp message'
+            }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['message']).to eq('Notificación enviada')
+        end
       end
     end
 
     context 'when Karix integrated' do
-      subject { Whatsapp::Karix::Messages }
-
       let(:message) { create(:karix_whatsapp_message) }
 
       context 'when the message is sent without errors' do
         it 'successfully, will response a 200 status' do
-          allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
-          allow_any_instance_of(subject).to receive(:assign_message).and_return(message)
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return(karix_successful_response)
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
 
           post '/api/v1/karix_send_whatsapp_message',
             params: {
@@ -224,7 +247,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
       context 'when the message is not sent' do
         it 'fails and will response a 500 status' do
-          allow_any_instance_of(subject).to receive(:send_message).and_return({ 'error': { 'message':
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
             'Connection rejected' }}.with_indifferent_access)
 
           post '/api/v1/karix_send_whatsapp_message',
@@ -534,39 +557,67 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'POST #send_file' do
-    subject { Whatsapp::Karix::Messages }
+    context 'when the retailer is karix integrated' do
+      let(:message) { create(:karix_whatsapp_message, customer: customer1) }
 
-    let(:message) { create(:karix_whatsapp_message, customer: customer1) }
+      context 'when the message is sent without errors' do
+        it 'successfully, will response a 200 status' do
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+            .and_return(karix_successful_response)
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
 
-    context 'when the message is sent without errors' do
-      it 'successfully, will response a 200 status' do
-        allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
-        allow_any_instance_of(subject).to receive(:assign_message).and_return(message)
+          post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
+            params: {
+              file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+            }
 
-        post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
-          params: {
-            file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
-          }
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['message']).to eq(karix_successful_response['objects'][0])
+        end
+      end
 
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('200')
-        expect(body['message']).to eq(karix_successful_response['objects'][0])
+      context 'when the message is not sent' do
+        it 'fails, will response a 500 status' do
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
+            'Connection rejected' }}.with_indifferent_access)
+
+          post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
+            params: {
+              file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+            }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('500')
+          expect(body['message']).to eq('Connection rejected')
+        end
       end
     end
 
-    context 'when the message is not sent' do
-      it 'fails, will response a 500 status' do
-        allow_any_instance_of(subject).to receive(:send_message).and_return({ 'error': { 'message':
-          'Connection rejected' }}.with_indifferent_access)
+    context 'when the retailer is gupshup integrated' do
+      before do
+        sign_out retailer_user
+        sign_in retailer_user_gupshup
+      end
 
-        post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
-          params: {
-            file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
-          }
+      let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
+      let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
 
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('500')
-        expect(body['message']).to eq('Connection rejected')
+      context 'when the message is sent without errors' do
+        it 'successfully, will response a 200 status' do
+          allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+            .and_return(message)
+          allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
+
+          post "/api/v1/karix_whatsapp_send_file/#{customer3.id}",
+            params: {
+              file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+            }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['message']).to eq('Notificación enviada')
+        end
       end
     end
   end
