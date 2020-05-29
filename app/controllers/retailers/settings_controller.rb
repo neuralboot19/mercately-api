@@ -1,4 +1,7 @@
 class Retailers::SettingsController < RetailersController
+  before_action :set_user, only: [:set_admin_team_member, :set_agent_team_member,
+                                  :reinvite_team_member, :remove_team_member,
+                                  :reactive_team_member]
 
   def team
     unless current_retailer_user.retailer_admin
@@ -15,7 +18,7 @@ class Retailers::SettingsController < RetailersController
       first_name: invitation_params[:first_name],
       last_name: invitation_params[:last_name],
       email: invitation_params[:email],
-      retailer_admin: false,
+      retailer_admin: invitation_params[:retailer_admin],
       retailer: current_retailer) do |u|
       u.skip_invitation = true
     end
@@ -31,14 +34,33 @@ class Retailers::SettingsController < RetailersController
     end
   end
 
+  def set_admin_team_member
+    if @user.update_attribute(:retailer_admin, true)
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Usuario actualizado con éxito.'
+    else
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Error al actualizar usuario.'
+    end
+  end
+
+  def set_agent_team_member
+    if @user.update_attribute(:retailer_admin, false)
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Usuario actualizado con éxito.'
+    else
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Error al actualizar usuario.'
+    end
+  end
+
   def reinvite_team_member
-    user = RetailerUser.find(params['user'])
-    if user
-      user.invite! do |u|
+    if @user
+      @user.invite! do |u|
         u.skip_invitation = true
       end
 
-      user.update_column(:invitation_sent_at, Time.now.utc) if RetailerMailer.invitation(user).deliver_now
+      @user.update_column(:invitation_sent_at, Time.now.utc) if RetailerMailer.invitation(@user).deliver_now
 
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario invitado con éxito.'
@@ -49,8 +71,7 @@ class Retailers::SettingsController < RetailersController
   end
 
   def remove_team_member
-    user = RetailerUser.find(params['user'])
-    if user.update_column(:removed_from_team, true)
+    if @user.update_column(:removed_from_team, true)
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario removido con éxito.'
     else
@@ -60,8 +81,7 @@ class Retailers::SettingsController < RetailersController
   end
 
   def reactive_team_member
-    user = RetailerUser.find(params['user'])
-    if user.update_column(:removed_from_team, false)
+    if @user.update_column(:removed_from_team, false)
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario reactivado con éxito.'
     else
@@ -87,7 +107,11 @@ class Retailers::SettingsController < RetailersController
 
   private
 
+  def set_user
+    @user = RetailerUser.find_by_id(params['user'])
+  end
+
   def invitation_params
-    params.require(:retailer_user).permit(:email, :first_name, :last_name)
+    params.require(:retailer_user).permit(:email, :first_name, :last_name, :retailer_admin)
   end
 end
