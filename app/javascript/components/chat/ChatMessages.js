@@ -164,6 +164,8 @@ class ChatMessages extends Component {
       return 'audio';
     } else if (file_type.includes('video/') || file_type == 'video') {
       return 'video';
+    } else if (file_type.includes('location/') || file_type == 'location') {
+      return 'location';
     }
   }
 
