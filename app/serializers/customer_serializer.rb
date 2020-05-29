@@ -1,6 +1,6 @@
 class CustomerSerializer < ActiveModel::Serializer
   attributes :id, :first_name, :last_name, :psid, :email, :phone, :address, :city, :state, :zip_code, :id_number,
-             :unread_message?, :recent_message_date
+             :unread_message?, :recent_message_date, :last_messenger_message
 
   def unread_message?
     object.unread_message?
@@ -8,5 +8,9 @@ class CustomerSerializer < ActiveModel::Serializer
 
   def recent_message_date
     object.recent_facebook_message_date
+  end
+
+  def last_messenger_message
+    object.last_messenger_message
   end
 end

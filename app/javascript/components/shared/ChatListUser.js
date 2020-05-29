@@ -33,7 +33,11 @@ class ChatListUser extends Component {
           </div>
           { this.props.chatType == 'facebook' && (
             <div className="col-xs-10">
-              <div className="profile__name">{customer.first_name} {customer.last_name}</div>
+              <div className="profile__name">{customer.first_name} {customer.last_name}&nbsp;&nbsp;
+                { customer.last_messenger_message.sent_by_retailer === true && customer.last_messenger_message.date_read &&
+                  <i className="fas fa-check-double black"></i>
+                }
+              </div>
               <div className={customer["unread_message?"] ? 'fw-bold' : ''}>
                 {moment(customer.recent_message_date).locale('es').fromNow()}
               </div>
