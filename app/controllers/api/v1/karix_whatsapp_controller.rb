@@ -71,7 +71,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
         ).reverse
       end
 
-      if current_retailer.positive_balance?
+      if current_retailer.unlimited_account || current_retailer.positive_balance?
         render status: 200, json: {
           messages: @messages,
           agents: current_retailer.team_agents,
@@ -193,6 +193,9 @@ class Api::V1::KarixWhatsappController < ApplicationController
     end
 
     def validate_balance
+      is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
+
+      return if current_retailer.unlimited_account && is_template == false
       return if current_retailer.positive_balance?
 
       render status: 401, json: balance_error

@@ -98,6 +98,35 @@ RSpec.describe KarixWhatsappMessage, type: :model do
         }.to change { retailer.ws_next_notification_balance }.by(-0.5).and change { ActionMailer::Base.deliveries.size }.by(1)
       end
     end
+
+    context 'when the retailer has an unlimited account' do
+      let(:retailer) { create(:retailer, unlimited_account: true) }
+
+      context 'when it is a conversation message' do
+        it 'does not subtract the balance' do
+          expect {
+            create(:karix_whatsapp_message, retailer: retailer, customer: customer1, message_type: 'conversation')
+          }.to_not change { retailer.ws_balance }
+        end
+      end
+
+      context 'when it is a notification message' do
+        it 'subtracts the balance' do
+          former_retailer_balance = retailer.ws_balance
+
+          create(:karix_whatsapp_message, retailer: retailer, customer: customer1)
+          expect(retailer.ws_balance).to eq(former_retailer_balance - retailer.ws_notification_cost)
+        end
+      end
+
+      context 'when it is an inbound message' do
+        it 'does not subtract the balance' do
+          expect {
+            create(:karix_whatsapp_message, retailer: retailer, customer: customer1, direction: 'inbound')
+          }.to_not change { retailer.ws_balance }
+        end
+      end
+    end
   end
 
   describe '#send_welcome_message' do

@@ -293,4 +293,22 @@ RSpec.describe Retailer, type: :model do
       end
     end
   end
+
+  describe '#gupshup_src_name_to_nil' do
+    context 'when the gupshup src name is given' do
+      let(:retailer) { create(:retailer, gupshup_src_name: 'MercatelyTest') }
+
+      it 'saves the attribute as it comes' do
+        expect(retailer.gupshup_src_name).to eq('MercatelyTest')
+      end
+    end
+
+    context 'when the gupshup src name is blank' do
+      let(:retailer) { create(:retailer, gupshup_src_name: '') }
+
+      it 'saves the attribute as nil' do
+        expect(retailer.gupshup_src_name).to be nil
+      end
+    end
+  end
 end

@@ -99,27 +99,114 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
     context 'when Karix responses' do
       subject { Whatsapp::Karix::Messages }
 
-      it 'successfully, a 200 Ok will be responsed' do
-        # Stubbing the respose from Karix
-        allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
+      context 'when the retailer has positive balance' do
+        it 'successfully, a 200 Ok will be responsed' do
+          # Stubbing the respose from Karix
+          allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
 
-        # Making the request
-        post '/retailers/api/v1/whatsapp/send_notification',
-             params: {
-               phone_number: '+5939983770633',
-               message: 'My Message Text'
-             },
-             headers: {
-               'Slug': slug,
-               'Api-Key': api_key
-             }
-        expect(response.code).to eq('200')
+          # Making the request
+          post '/retailers/api/v1/whatsapp/send_notification',
+              params: {
+                phone_number: '+5939983770633',
+                message: 'My Message Text',
+                template: false
+              },
+              headers: {
+                'Slug': slug,
+                'Api-Key': api_key
+              }
+          expect(response.code).to eq('200')
 
-        # Once the response is 200 the message should be 'Ok' and the Karix status 'queued'
-        body = JSON.parse(response.body)
+          # Once the response is 200 the message should be 'Ok' and the Karix status 'queued'
+          body = JSON.parse(response.body)
 
-        expect(body['message']).to eq('Ok')
-        expect(body['info']['status']).to eq('queued')
+          expect(body['message']).to eq('Ok')
+          expect(body['info']['status']).to eq('queued')
+        end
+      end
+
+      context 'when the retailer has an unlimited account' do
+        before do
+          retailer.update!(unlimited_account: true)
+        end
+
+        context 'when is a HSM message' do
+          context 'when the retailer has a positive balance' do
+            it 'successfully, a 200 Ok will be responsed' do
+              # Stubbing the respose from Karix
+              allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
+
+              # Making the request
+              post '/retailers/api/v1/whatsapp/send_notification',
+                  params: {
+                    phone_number: '+5939983770633',
+                    message: 'My Message Text',
+                    template: true
+                  },
+                  headers: {
+                    'Slug': slug,
+                    'Api-Key': api_key
+                  }
+              expect(response.code).to eq('200')
+
+              # Once the response is 200 the message should be 'Ok' and the Karix status 'queued'
+              body = JSON.parse(response.body)
+
+              expect(body['message']).to eq('Ok')
+              expect(body['info']['status']).to eq('queued')
+            end
+          end
+
+          context 'when the retailer does not have a positive balance' do
+            it 'responses with a 401 Internal Server Error response' do
+              retailer.update_attributes(ws_balance: 0.0671)
+
+              # Making the request
+              post '/retailers/api/v1/whatsapp/send_notification',
+                  params: {
+                    phone_number: '+5939983770633',
+                    message: 'My Message Text',
+                    template: true
+                  },
+                  headers: {
+                    'Slug': slug,
+                    'Api-Key': api_key
+                  }
+              expect(response.code).to eq('401')
+
+              body = JSON.parse(response.body)
+              expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                            'por favor, contáctese con su agente de ventas para recargar su saldo')
+            end
+          end
+        end
+
+        context 'when is a conversation message' do
+          it 'successfully, a 200 Ok will be responsed' do
+            # Stubbing the respose from Karix
+            allow_any_instance_of(subject).to receive(:send_message).and_return(karix_successful_response)
+            retailer.update_attributes(ws_balance: 0.0)
+
+            # Making the request
+            post '/retailers/api/v1/whatsapp/send_notification',
+                params: {
+                  phone_number: '+5939983770633',
+                  message: 'My Message Text',
+                  template: false
+                },
+                headers: {
+                  'Slug': slug,
+                  'Api-Key': api_key
+                }
+            expect(response.code).to eq('200')
+
+            # Once the response is 200 the message should be 'Ok' and the Karix status 'queued'
+            body = JSON.parse(response.body)
+
+            expect(body['message']).to eq('Ok')
+            expect(body['info']['status']).to eq('queued')
+          end
+        end
       end
 
       it 'with an error, a 500 Internal Server Error will be responsed' do
@@ -131,7 +218,8 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
              params: {
                customer_id: customer.id,
                phone_number: '+5939983770633',
-               message: 'My Message Text'
+               message: 'My Message Text',
+               template: false
              },
              headers: {
                'Slug': slug,
@@ -160,7 +248,8 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         post '/retailers/api/v1/whatsapp/send_notification',
              params: {
                phone_number: '+5939983770633',
-               message: 'My Message Text'
+               message: 'My Message Text',
+               template: false
              },
              headers: {
                'Slug': slug,
@@ -177,7 +266,8 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       # Making the request
       post '/retailers/api/v1/whatsapp/send_notification',
            params: {
-             message: 'My Message Text'
+             message: 'My Message Text',
+             template: false
            },
            headers: {
              'Slug': slug,
@@ -186,7 +276,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       expect(response.code).to eq('500')
 
       body = JSON.parse(response.body)
-      expect(body['message']).to eq('Error: Missing phone number and/or message')
+      expect(body['message']).to eq('Error: Missing phone number and/or message and/or template')
     end
 
     it 'responses a 500 Internal Server Error response if message NOT present' do
@@ -202,7 +292,24 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       expect(response.code).to eq('500')
 
       body = JSON.parse(response.body)
-      expect(body['message']).to eq('Error: Missing phone number and/or message')
+      expect(body['message']).to eq('Error: Missing phone number and/or message and/or template')
+    end
+
+    it 'responses a 500 Internal Server Error response if template NOT present' do
+      # Making the request
+      post '/retailers/api/v1/whatsapp/send_notification',
+           params: {
+            phone_number: '+5939983770633',
+            message: 'My Message Text'
+           },
+           headers: {
+             'Slug': slug,
+             'Api-Key': api_key
+           }
+      expect(response.code).to eq('500')
+
+      body = JSON.parse(response.body)
+      expect(body['message']).to eq('Error: Missing phone number and/or message and/or template')
     end
 
     it 'responses with a 401 Internal Server Error response if retailer has not enough Whatsapp balance' do
@@ -212,7 +319,8 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       post '/retailers/api/v1/whatsapp/send_notification',
            params: {
              phone_number: '+5939983770633',
-             message: 'My Message Text'
+             message: 'My Message Text',
+             template: false
            },
            headers: {
              'Slug': slug,
@@ -232,7 +340,8 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
       post '/retailers/api/v1/whatsapp/send_notification',
            params: {
              phone_number: '+5939983770633',
-             message: 'My Message Text'
+             message: 'My Message Text',
+             template: false
            },
            headers: {
              'Slug': slug,

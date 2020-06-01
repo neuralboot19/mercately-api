@@ -256,19 +256,111 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         end
       end
     end
+
+    context 'when the retailer has an unlimited account' do
+      before do
+        retailer.update!(unlimited_account: true)
+      end
+
+      context 'when it is a HSM message' do
+        context 'when it is not a positive balance' do
+          it 'returns a 401 status' do
+            retailer.update!(ws_balance: 0.0671)
+
+            post '/api/v1/karix_send_whatsapp_message',
+                params: {
+                  customer_id: customer1.id,
+                  message: 'New whatsapp message',
+                  template: true
+                }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('401')
+            expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                          'por favor, contáctese con su agente de ventas para recargar su saldo')
+          end
+        end
+
+        context 'when it is a positive balance' do
+          let(:message) { create(:karix_whatsapp_message) }
+
+          before do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+              .and_return(karix_successful_response)
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+          end
+
+          it 'returns a 200 status' do
+            retailer.update!(ws_balance: 1.0)
+
+            post '/api/v1/karix_send_whatsapp_message',
+              params: {
+                customer_id: customer1.id,
+                message: 'New whatsapp message',
+                template: true
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq(karix_successful_response['objects'][0])
+          end
+        end
+      end
+
+      context 'when it is a conversation message' do
+        let(:message) { create(:karix_whatsapp_message) }
+
+        before do
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+            .and_return(karix_successful_response)
+          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+        end
+
+        it 'returns a 200 status' do
+          retailer.update!(ws_balance: 0.0)
+
+          post '/api/v1/karix_send_whatsapp_message',
+            params: {
+              customer_id: customer1.id,
+              message: 'New whatsapp message',
+              template: false
+            }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['message']).to eq(karix_successful_response['objects'][0])
+        end
+      end
+    end
   end
 
   describe 'GET #messages' do
     context 'when the customer selected has messages' do
-      it 'successfully response a 200 status' do
-        get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
-        body = JSON.parse(response.body)
+      context 'when the retailer has positive balance' do
+        it 'successfully response a 200 status' do
+          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+          body = JSON.parse(response.body)
 
-        expect(response.code).to eq('200')
-        expect(body['messages'].count).to eq(6)
+          expect(response.code).to eq('200')
+          expect(body['messages'].count).to eq(6)
+        end
       end
 
-      context 'but retailer has not enough balance' do
+      context 'when the retailer has an unlimited account' do
+        before do
+          retailer.update!(unlimited_account: true, ws_balance: 0.0)
+        end
+
+        it 'successfully response a 200 status' do
+          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('200')
+          expect(body['messages'].count).to eq(6)
+        end
+      end
+
+      context 'when the retailer has not enough balance' do
         it 'responses a 401 status' do
           retailer.update_attributes(ws_balance: 0.0671)
 
