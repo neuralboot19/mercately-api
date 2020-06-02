@@ -2,8 +2,8 @@
 export const fetchCustomers = (page = 1, params) => {
   let endpoint = `/api/v1/customers?page=${page}`;
 
-  if (params !== '' && params !== undefined) {
-    endpoint += `&customerSearch=${params}`
+  if (params !== null && params !== undefined) {
+    endpoint += `&${$.param(params)}`
   }
 
   return dispatch =>
@@ -156,7 +156,7 @@ export const sendImg = (id, body, token) => {
 };
 
 export const setMessageAsRead = (id, token) => {
-  const endpoint = `/api/v1/messages/${id}/readed`;
+  const endpoint = `/api/v1/messages/${id}/read`;
   const csrf_token = token
   return dispatch => {
     fetch(endpoint, {

@@ -7,7 +7,8 @@ import {
   sendWhatsAppImg,
   setWhatsAppMessageAsRead,
   fetchWhatsAppTemplates,
-  changeCustomerAgent } from "../../actions/whatsapp_karix";
+  changeCustomerAgent,
+  setNoRead } from "../../actions/whatsapp_karix";
 import Modal from 'react-modal';
 
 var currentCustomer = 0;
@@ -408,9 +409,9 @@ class ChatMessages extends Component {
     }
   }
 
-  handleAgentAssignment = () => {
-    var value = parseInt($('#agents').val());
-    var agent = this.props.agents.filter(agent => agent.id === value);
+  handleAgentAssignment = (e) => {
+    var value = parseInt(e.target.value);
+    var agent = this.props.agent_list.filter(agent => agent.id === value);
 
     var r = confirm("Estás seguro de asignar este chat a otro agente?");
     if (r == true) {
@@ -433,6 +434,11 @@ class ChatMessages extends Component {
     var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : '';
     if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type)))  classes += 'video-audio';
     return classes;
+  }
+
+  setNoRead = (e) => {
+    e.preventDefault();
+    this.props.setNoRead(this.props.currentCustomer, csrfToken);
   }
 
   render() {
@@ -466,13 +472,18 @@ class ChatMessages extends Component {
         )}
         { this.props.currentCustomer != 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
           (<div className="top-chat-bar pl-10">
-            <small>Asignado a:</small>&nbsp;&nbsp;
-            <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={() => this.handleAgentAssignment()}>
-              <option value="">No asignado</option>
-              {this.props.agents.map((agent, index) => (
-                <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
-              ))}
-            </select>
+            <div className='assigned-to'>
+              <small>Asignado a: </small>
+              <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={(e) => this.handleAgentAssignment(e)}>
+                <option value="">No asignado</option>
+                {this.props.agent_list.map((agent, index) => (
+                  <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
+                ))}
+              </select>
+            </div>
+            <div className='mark-no-read'>
+              <button onClick={(e) => this.setNoRead(e)} className='btn btn--cta btn-small right'>Marcar como no leído</button>
+            </div>
           </div>
           )}
         {this.state.isImgModalOpen && (
@@ -621,6 +632,7 @@ function mapStateToProps(state) {
     templates: state.templates || [],
     total_template_pages: state.total_template_pages || 0,
     agents: state.agents || [],
+    agent_list: state.agent_list || [],
     handleMessageEvents: state.handle_message_events || false,
     recentInboundMessageDate: state.recentInboundMessageDate || null,
     errorSendMessageStatus: state.errorSendMessageStatus,
@@ -647,6 +659,9 @@ function mapDispatch(dispatch) {
     },
     changeCustomerAgent: (id, body, token) => {
       dispatch(changeCustomerAgent(id, body, token));
+    },
+    setNoRead: (customer_id, token) => {
+      dispatch(setNoRead(customer_id, token));
     }
   };
 }

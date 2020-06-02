@@ -12,6 +12,7 @@ class FacebookMessage < ApplicationRecord
 
   scope :customer_unread, -> { where(date_read: nil, sent_by_retailer: false) }
   scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
+  scope :unread, -> { where(date_read: nil) }
 
   private
 

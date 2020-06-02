@@ -72,6 +72,10 @@ class RetailerUser < ApplicationRecord
       Customer.joins(:retailer).where.not(id: AgentCustomer.all.pluck(:customer_id)).where(retailer_id: retailer_id)
   end
 
+  def storage_id
+    "#{id}_#{retailer_id}_#{email}"
+  end
+
   def self.connect_messenger?(permissions, connection_type)
     permissions.any? { |p| p['permission'] == 'manage_pages' && p['status'] == 'granted' } &&
       connection_type == 'messenger'

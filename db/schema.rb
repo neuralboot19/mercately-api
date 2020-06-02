@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 2020_06_01_150949) do
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
+    t.boolean "unread_chat", default: false
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 

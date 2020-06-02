@@ -35,7 +35,10 @@ class Customer < ApplicationRecord
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :facebook_customers, -> { where.not(psid: nil) }
   scope :by_search_text, (lambda do |search_text|
-    where("CONCAT(REPLACE(lower(customers.first_name), '\s', ''), REPLACE(lower(customers.last_name), '\s', '')) ILIKE ?
+    where("CONCAT(REPLACE(lower(customers.first_name), '\s', ''),
+                  REPLACE(lower(customers.last_name), '\s', ''),
+                  REPLACE(lower(customers.whatsapp_name), '\s', '')
+                 ) ILIKE ?
           OR lower(customers.email) iLIKE ?
           OR lower(customers.phone) iLIKE ?",
           "%#{search_text.downcase.delete(' ')}%",
@@ -111,6 +114,11 @@ class Customer < ApplicationRecord
     return false unless last_message.present?
 
     last_message.status != 'read'
+  end
+
+  def unread_whatsapp_messages
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+    self.send(messages).unread.where(direction: 'inbound').count
   end
 
   def recent_inbound_message_date

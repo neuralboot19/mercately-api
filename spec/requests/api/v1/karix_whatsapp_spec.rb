@@ -104,7 +104,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     end
 
     it 'filters customers by first_name' do
-      get api_v1_karix_customers_path, params: { customerSearch: customer2.first_name }
+      get api_v1_karix_customers_path, params: { searchString: customer2.first_name }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -113,7 +113,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     end
 
     it 'filters customers by last_name' do
-      get api_v1_karix_customers_path, params: { customerSearch: customer2.last_name }
+      get api_v1_karix_customers_path, params: { searchString: customer2.last_name }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -122,7 +122,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     end
 
     it 'filters customers by first_name and last_name' do
-      get api_v1_karix_customers_path, params: { customerSearch: "#{customer2.first_name} #{customer2.last_name}" }
+      get api_v1_karix_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -131,7 +131,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     end
 
     it 'filters customers by email' do
-      get api_v1_karix_customers_path, params: { customerSearch: customer1.email }
+      get api_v1_karix_customers_path, params: { searchString: customer1.email }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -140,7 +140,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     end
 
     it 'filters customers by phone' do
-      get api_v1_karix_customers_path, params: { customerSearch: customer1.phone }
+      get api_v1_karix_customers_path, params: { searchString: customer1.phone }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -576,7 +576,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
     context 'when the message is updated without errors' do
       it 'successfully, will response a 200 status' do
-        put "/api/v1/karix_whatsapp_update_message_read/#{customer1.id}",
+        put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
           params: {
             message_id: message.id
           }
@@ -591,7 +591,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       it 'will response a 500 status' do
         allow_any_instance_of(KarixWhatsappMessage).to receive(:update_column).and_return(false)
 
-        put "/api/v1/karix_whatsapp_update_message_read/#{customer1.id}",
+        put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
           params: {
             message_id: message.id
           }

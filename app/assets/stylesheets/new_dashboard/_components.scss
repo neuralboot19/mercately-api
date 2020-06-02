@@ -634,12 +634,25 @@
 }
 
 // React
+// div.profile:nth-child(1) > div:nth-child(1) > div:nth-child(2)
 .profile {
   background-color: #F4F5F7;
   border: 1px solid #F4F5F7;
   border-radius: 5px;
   padding: 15px 10px;
-  margin-bottom: 10px;
+  margin-bottom: 3px;
+
+  &__data {
+    .profile__info {
+      @media only screen and (max-width: 1460px) {
+        padding-left: 2rem;
+      }
+
+      @media only screen and (max-width: 768px) {
+        padding-left: 1rem;
+      }
+    }
+  }
 
   &:hover {
     background-color: #eee;
@@ -647,6 +660,20 @@
 
   &:last-child {
     border-bottom: unset;
+  }
+
+  &__name {
+    font-size: .9em;
+
+    .fw-muted {
+      font-size: .7em;
+      color: #999;
+    }
+
+    .time-from {
+      display: inline;
+      margin-left: .8em;
+    }
   }
 }
 
@@ -658,9 +685,13 @@
     background-size: 225px;
   }
 
+  &__control {
+    padding: 0px 10px;
+  }
+
   &__selector {
     padding: 0px 10px;
-    height: 80vh;
+    height: 70vh;
     overflow-y: auto;
   }
 }
@@ -735,9 +766,11 @@
 }
 
 .img__profile .rounded-circle {
-  border: 1px solid #753581;
+  background-color: #ddd;
+  border: 1px solid transparent;
   border-radius: 50%;
-  width: 50px;
+  max-width: 50px;
+  min-width: 50px;
   height: 50px;
   text-align: center;
 }
