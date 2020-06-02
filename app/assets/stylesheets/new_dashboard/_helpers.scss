@@ -28,6 +28,30 @@ html, body {
   padding: 1.5rem;
   position: relative;
   width: 100%;
+
+  .mark-no-read, .assigned-to {
+    display: inline;
+    padding: 1em;
+
+    @media only screen and (max-width: 768px) {
+      display: grid;
+      padding: .2em;
+    }
+  }
+
+  .right {
+    float: right;
+  }
+
+  .btn.btn-small {
+    background-color: #fff;
+    padding: 0.2em 0.5em;
+    font-size: 0.7em;
+
+    &:hover {
+      background-color: #00B4FF;
+    }
+  }
 }
 
 ul, ol {
@@ -347,6 +371,11 @@ label:hover, a:hover {
 
   &--secondary {
     border-color: $secondary-color;
+
+    &.chat-selected {
+      border-color: transparent;
+      background-color: #dfdfdf;
+    }
   }
 
   &--transparent {

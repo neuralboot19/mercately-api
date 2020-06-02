@@ -11,7 +11,7 @@ class Api::V1::CustomersController < ApplicationController
       .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
       .joins(:facebook_messages).group('customers.id').order('recent_message_date desc').page(params[:page])
 
-    @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
+    @customers = @customers.by_search_text(params[:searchString]) if params[:searchString]
 
     render status: 200, json: {
       customers: @customers.as_json(methods:

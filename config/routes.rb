@@ -126,7 +126,7 @@ Rails.application.routes.draw do
       get 'customers/:id/messages', to: 'customers#messages', as: :customer_messages
       post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
       post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img
-      post 'messages/:id/readed', to: 'customers#set_message_as_read', as: :set_message_as_read
+      post 'messages/:id/read', to: 'customers#set_message_as_read', as: :set_message_as_read
       # For 360
       post 'whatsapp', to: 'whatsapp#create'
       # For Karix
@@ -135,7 +135,8 @@ Rails.application.routes.draw do
       get 'karix_whatsapp_customers', to: 'karix_whatsapp#index', as: :karix_customers
       get 'karix_whatsapp_customers/:id/messages', to: 'karix_whatsapp#messages', as: :karix_customer_messages
       post 'karix_whatsapp_send_file/:id', to: 'karix_whatsapp#send_file', as: :karix_send_file
-      put 'karix_whatsapp_update_message_read/:id', to: 'karix_whatsapp#message_read', as: :karix_message_read
+      put 'whatsapp_update_message_read/:id', to: 'karix_whatsapp#message_read', as: :karix_message_read
+      patch 'whatsapp_unread_chat/:id', to: 'karix_whatsapp#set_chat_as_unread', as: :set_chat_as_unread
 
       resources :karix_whatsapp, only: [:index, :create]
       resources :whatsapp_templates, only: [:index]

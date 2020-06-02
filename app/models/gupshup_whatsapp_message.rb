@@ -15,6 +15,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   scope :outbound_messages, -> { where(direction: 'outbound') }
   scope :notification_messages, -> { where(message_type: 'notification').where.not(status: 'error') }
   scope :conversation_messages, -> { where(message_type: 'conversation').where.not(status: 'error') }
+  scope :unread, -> { where.not(status: 5) }
 
   before_create :set_message_type
 
