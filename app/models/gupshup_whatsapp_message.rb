@@ -4,6 +4,7 @@ class GupshupWhatsappMessage < ApplicationRecord
 
   belongs_to :retailer
   belongs_to :customer
+  belongs_to :retailer_user, required: false
 
   validates_presence_of :retailer, :customer, :status,
                         :direction, :source, :destination, :channel

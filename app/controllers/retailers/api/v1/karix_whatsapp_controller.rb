@@ -24,7 +24,8 @@ module Retailers::Api::V1
       set_response(500, 'Error', response['objects'][0]['error'].to_json) && return if error
 
       message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
-      message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
+      message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0],
+                                                               current_retailer.retailer_user)
       message.save
 
       agents = message.customer.agent.present? ? [message.customer.agent] : current_retailer.retailer_users.to_a

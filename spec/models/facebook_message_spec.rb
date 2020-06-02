@@ -10,6 +10,7 @@ RSpec.describe FacebookMessage, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:facebook_retailer) }
     it { is_expected.to belong_to(:customer) }
+    it { is_expected.to belong_to(:retailer_user).required(false) }
   end
 
   describe 'validations' do
