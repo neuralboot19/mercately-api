@@ -25,6 +25,7 @@ class Retailer < ApplicationRecord
   validates :name, presence: true
   validates :slug, uniqueness: true
 
+  before_validation :gupshup_src_name_to_nil
   after_save :generate_slug, if: :saved_change_to_name?
   after_create :save_free_plan
   after_create :send_to_mailchimp
@@ -214,5 +215,9 @@ class Retailer < ApplicationRecord
 
     def ws_message_service
       @ws_message_service = Whatsapp::Karix::Messages.new
+    end
+
+    def gupshup_src_name_to_nil
+      self.gupshup_src_name = nil if gupshup_src_name.blank?
     end
 end

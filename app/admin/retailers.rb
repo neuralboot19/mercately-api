@@ -15,7 +15,9 @@ ActiveAdmin.register Retailer do
                 :ws_notification_cost,
                 :ws_conversation_cost,
                 :gupshup_phone_number,
-                :gupshup_src_name
+                :gupshup_src_name,
+                :unlimited_account
+
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -86,6 +88,7 @@ ActiveAdmin.register Retailer do
       row :zip_code
       row :phone_number
       row :phone_verified
+      row :unlimited_account
       row :created_at
       row :updated_at
     end
@@ -188,6 +191,7 @@ ActiveAdmin.register Retailer do
       f.input :state
       f.input :zip_code
       f.input :phone_number
+      f.input :unlimited_account
       f.input :whats_app_enabled
       f.input :karix_whatsapp_phone
       f.input :karix_account_uid

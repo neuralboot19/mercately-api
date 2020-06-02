@@ -183,18 +183,18 @@ class ChatMessages extends Component {
     }, () => {
       if (this.state.can_write) {
         this.setState({ messageText: '' }, () => {
-          this.handleSubmitWhatsAppMessage(e, text)
+          this.handleSubmitWhatsAppMessage(e, text, false)
         });
       }
     })
   }
 
-  handleSubmitWhatsAppMessage = (e, message) => {
+  handleSubmitWhatsAppMessage = (e, message, isTemplate) => {
     if (e) {
       e.preventDefault();
     }
 
-    let text = { message: message, customer_id: this.props.currentCustomer}
+    let text = { message: message, customer_id: this.props.currentCustomer, template: isTemplate }
     this.setState({ messages: this.state.messages.concat({
       content_type: 'text',
       content_text: message,
@@ -257,6 +257,7 @@ class ChatMessages extends Component {
 
     var data = new FormData();
     data.append('file_data', file);
+    data.append('template', false);
     this.handleSubmitImg(el, data);
   }
 
@@ -287,6 +288,7 @@ class ChatMessages extends Component {
 
     var data = new FormData();
     data.append('file_data', file);
+    data.append('template', false);
     this.handleSubmitImg(el, data);
   }
 
@@ -399,7 +401,7 @@ class ChatMessages extends Component {
     if (allFilled) {
       var message = this.state.auxTemplateSelected.join('');
 
-      this.handleSubmitWhatsAppMessage(null, message);
+      this.handleSubmitWhatsAppMessage(null, message, true);
       this.cancelTemplate();
     } else {
       alert('Debe llenar todos los campos editables');

@@ -14,8 +14,8 @@ module Retailers::Api::V1
     ].freeze
 
     def create
-      params_present = params[:phone_number].present? && params[:message].present?
-      set_response(500, 'Error: Missing phone number and/or message') && return unless params_present
+      params_present = params[:phone_number].present? && params[:message].present? && params[:template].present?
+      set_response(500, 'Error: Missing phone number and/or message and/or template') && return unless params_present
 
       karix_helper = KarixNotificationHelper
       response = karix_helper.ws_message_service.send_message(current_retailer, nil, params, 'text')
@@ -39,11 +39,14 @@ module Retailers::Api::V1
       end
 
       def validate_balance
-        unless current_retailer.positive_balance?
-          render status: 401, json: { message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
-                                               'por favor, contáctese con su agente de ventas para recargar su saldo' }
-          return
-        end
+        is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
+
+        return if current_retailer.unlimited_account && is_template == false
+        return if current_retailer.positive_balance?
+
+        render status: 401, json: { message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
+                                              'por favor, contáctese con su agente de ventas para recargar su saldo' }
+        return
       end
   end
 end
