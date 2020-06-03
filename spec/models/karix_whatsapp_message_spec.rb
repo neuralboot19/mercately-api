@@ -299,4 +299,28 @@ RSpec.describe KarixWhatsappMessage, type: :model do
       end
     end
   end
+
+  describe '#apply_cost' do
+    let(:retailer) { create(:retailer, :karix_integrated) }
+
+    context 'when the message status is failed' do
+      let(:message) { build(:karix_whatsapp_message, retailer: retailer, status: 'failed') }
+
+      it 'sets the message cost to zero' do
+        expect(message.cost).to be nil
+        message.save
+        expect(message.reload.cost).to eq(0)
+      end
+    end
+
+    context 'when the message status is not failed' do
+      let(:message) { build(:karix_whatsapp_message, retailer: retailer, status: 'queued') }
+
+      it 'assigns the retailer conversation/notification cost to the message' do
+        expect(message.cost).to be nil
+        message.save
+        expect(message.reload.cost).to eq(retailer.send("ws_#{message.message_type}_cost"))
+      end
+    end
+  end
 end

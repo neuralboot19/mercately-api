@@ -151,7 +151,8 @@ class Retailer < ApplicationRecord
   end
 
   def karix_integrated?
-    whats_app_enabled? && karix_whatsapp_phone.present?
+    whats_app_enabled? && karix_whatsapp_phone.present? &&
+      karix_account_uid.present? && karix_account_token.present?
   end
 
   def gupshup_integrated?
@@ -178,6 +179,10 @@ class Retailer < ApplicationRecord
 
   def retailer_user_connected_to_fb
     retailer_users.where.not(uid: nil, provider: nil, facebook_access_token: nil).first
+  end
+
+  def whatsapp_integrated?
+    karix_integrated? || gupshup_integrated?
   end
 
   private

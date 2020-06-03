@@ -29,7 +29,7 @@
             </ul>
           </div>
         </div>
-        <% if current_retailer.whats_app_enabled && @user_messages.present? %>
+        <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>
           <div class="row">
             <div class="col-xs-12">
               <h3>Consumo de WhatsApp</h3>
@@ -43,32 +43,33 @@
                 </tr>
                 <% total = 0 %>
                 <% @user_messages.each do |message| %>
-                  <% subtotal = 0 %>
                   <% totalM = 0 %>
                   <tr>
                     <td><%= message[:month] + ' ' + message[:year] %></td>
                     <td>
-                      <p>Conversación</p>
-                      <p>Notificación</p>
+                      <% message[:type].each do |type| %>
+                        <p><%= type %></p>
+                      <% end %>
                     </td>
                     <td class='right'>
-                      <p><%= '$ %05.4f' % @payment_plan.retailer.ws_conversation_cost %></p>
-                      <p><%= '$ %05.4f' % @payment_plan.retailer.ws_notification_cost %></p>
+                      <% message[:cost].each do |cost| %>
+                        <p><%= '$ %05.4f' % (cost || 0) %></p>
+                      <% end %>
                     </td>
                     <td class='right'>
-                      <p><%= message[:total_conversation] %></p>
-                      <p><%= message[:total_notification] %></p>
+                      <% message[:counter].each do |count| %>
+                        <p><%= count %></p>
+                      <% end %>
                     </td>
                     <td class='right'>
-                      <p><%= '$ %05.4f' % subtotalC = (@payment_plan.retailer.ws_conversation_cost * message[:total_conversation].to_int) %></p>
-                      <p><%= '$ %05.4f' % subtotalN =(@payment_plan.retailer.ws_notification_cost * message[:total_notification].to_int) %></p>
+                      <% message[:sub_total].each do |sub_total| %>
+                        <p><%= '$ %05.4f' % sub_total %></p>
+                      <% end %>
                     </td>
-                    <% '$ %05.4f' % subtotal = (subtotalC + subtotalN) %>
-                    <% totalM += subtotal %>
                   </tr>
                   <tr>
-                    <td colspan='6' class='right total'><h4>Total Mes: <%= '$ %05.4f' % totalM %></h4></td>
-                    <% total += totalM %>
+                    <td colspan='6' class='right total'><h4>Total Mes: <%= '$ %05.4f' % message[:total] %></h4></td>
+                    <% total += message[:total] %>
                   </tr>
                 <% end %>
                 <tr>
@@ -197,25 +198,24 @@
       </div>
     </div>
   </div>
-<% end %>
 
+  <script charset="utf-8">
+    document.addEventListener("DOMContentLoaded", function() {
+      var toggler = document.getElementById('modal--toggle');
+      toggler.checked = false;
+      document.querySelectorAll('.pricing__card label').forEach(function(el) {
+        el.onclick = function() {
+          toggler.checked = true;
+        }
+      })
 
-<script charset="utf-8">
-  document.addEventListener("DOMContentLoaded", function() {
-    var toggler = document.getElementById('modal--toggle');
-    toggler.checked = false;
-    document.querySelectorAll('.pricing__card label').forEach(function(el) {
-      el.onclick = function() {
-        toggler.checked = true;
-      }
-    })
-
-    document.getElementById('payment-form').addEventListener('keyup', function(event) {
-      // Number 13 is the "Enter" key on the keyboard
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        document.getElementById('').click();
-      }
+      document.getElementById('payment-form').addEventListener('keyup', function(event) {
+        // Number 13 is the "Enter" key on the keyboard
+        if (event.keyCode === 13) {
+          event.preventDefault();
+          document.getElementById('').click();
+        }
+      });
     });
-  });
-</script>
+  </script>
+<% end %>

@@ -10,4 +10,18 @@ class KarixWhatsappMessage < ApplicationRecord
   scope :notification_messages, -> { where(message_type: 'notification').where.not(status: 'failed') }
   scope :conversation_messages, -> { where(message_type: 'conversation').where.not(status: 'failed') }
   scope :unread, -> { where.not(status: 'read') }
+
+  after_create :apply_cost
+
+  private
+
+    def apply_cost
+      self.cost = if status == 'failed'
+                    0
+                  else
+                    retailer.send("ws_#{message_type}_cost")
+                  end
+
+      save
+    end
 end

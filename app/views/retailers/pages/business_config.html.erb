@@ -10,7 +10,7 @@
         </div>
 
         <div class="col-xs-12 mt-30">
-          <% if current_retailer.karix_integrated? || current_retailer.gupshup_integrated? %>
+          <% if current_retailer.whatsapp_integrated? %>
             <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'no-style' do %>
               <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Mensaje de Bienvenida</span>
             <% end %>

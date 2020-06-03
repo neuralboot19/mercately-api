@@ -311,4 +311,87 @@ RSpec.describe Retailer, type: :model do
       end
     end
   end
+
+  describe '#karix_integrated?' do
+    context 'when it does not have whatsapp enabled' do
+      let(:retailer) do
+        create(:retailer, whats_app_enabled: false, karix_whatsapp_phone: '+593123456789', karix_account_uid:
+          'MyKarixAccount', karix_account_token: 'MyKarixToken')
+      end
+
+      it 'returns false' do
+        expect(retailer.karix_integrated?).to be false
+      end
+    end
+
+    context 'when it does not have a whatsapp phone' do
+      let(:retailer) do
+        create(:retailer, whats_app_enabled: true, karix_whatsapp_phone: nil, karix_account_uid:
+          'MyKarixAccount', karix_account_token: 'MyKarixToken')
+      end
+
+      it 'returns false' do
+        expect(retailer.karix_integrated?).to be false
+      end
+    end
+
+    context 'when it does not have a karix account uid' do
+      let(:retailer) do
+        create(:retailer, whats_app_enabled: true, karix_whatsapp_phone: '+593123456789', karix_account_uid:
+          nil, karix_account_token: 'MyKarixToken')
+      end
+
+      it 'returns false' do
+        expect(retailer.karix_integrated?).to be false
+      end
+    end
+
+    context 'when it does not have a karix account token' do
+      let(:retailer) do
+        create(:retailer, whats_app_enabled: true, karix_whatsapp_phone: '+593123456789', karix_account_uid:
+          'MyKarixAccount', karix_account_token: nil)
+      end
+
+      it 'returns false' do
+        expect(retailer.karix_integrated?).to be false
+      end
+    end
+
+    context 'when it has all the required attributes' do
+      let(:retailer) do
+        create(:retailer, whats_app_enabled: true, karix_whatsapp_phone: '+593123456789', karix_account_uid:
+          'MyKarixAccount', karix_account_token: 'MyKarixToken')
+      end
+
+      it 'returns true' do
+        expect(retailer.karix_integrated?).to be true
+      end
+    end
+  end
+
+  describe '#whatsapp_integrated?' do
+    context 'when the retailer is not karix or gupshup integrated' do
+      let(:retailer) { create(:retailer) }
+
+      it 'returns false' do
+        expect(retailer.whatsapp_integrated?).to be false
+      end
+    end
+
+    context 'when the retailer is karix integrated' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+
+      it 'returns true' do
+        expect(retailer.whatsapp_integrated?).to be true
+      end
+    end
+
+    context 'when the retailer is gupshup integrated' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+
+      it 'returns true' do
+        expect(retailer.whatsapp_integrated?).to be true
+      end
+    end
+  end
 end

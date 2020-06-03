@@ -12,19 +12,16 @@ module Whatsapp::Gupshup::V1
     end
 
     def process_error!(params)
-      # Incoming event
-      event = @params['payload']['type']
-
       # Gupshup Message Id
-      event_id = @params['payload']['id']
+      event_id = params['payload']['id']
 
       # Find the message by its Whatsapp Message Id
-      gwm = GupshupWhatsappMessage.find_by_whatsapp_message_id(event_id)
+      gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(event_id)
       raise StandardError.new("El mensaje ID #{event_id} no fue encontrado") unless gwm.present?
 
       # Store the message as :failed
-      gwm.status = event
-      gwm.message_payload = @params
+      gwm.status = :error
+      gwm.message_payload = params
 
       gwm.with_advisory_lock(gwm.to_global_id.to_s) do
         gwm.save!
