@@ -1,7 +1,7 @@
 module Whatsapp
   module Karix
     class Messages
-      def assign_message(message, retailer, ws_data)
+      def assign_message(message, retailer, ws_data, retailer_user = nil)
         customer = ws_customer_service.save_customer(retailer, ws_data)
 
         message.attributes = { account_uid: ws_data['account_uid'], source: ws_data['source'], destination:
@@ -18,7 +18,8 @@ module Whatsapp
           ws_data['updated_time'], status: catch_status(message, ws_data['status']), direction:
           ws_data['direction'], channel: ws_data['channel'], error_code: ws_data['error']&.[]('code'), error_message:
           ws_data['error']&.[]('message'), message_type:
-          ws_data['channel_details']&.[]('whatsapp')&.[]('type'), customer_id: customer&.id }
+          ws_data['channel_details']&.[]('whatsapp')&.[]('type'), customer_id: customer&.id, retailer_user_id:
+          message.retailer_user&.id || retailer_user&.id }
 
         message
       end

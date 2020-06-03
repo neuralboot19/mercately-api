@@ -6,7 +6,10 @@ module BalanceConcern
   end
 
   private
+
     def substract_from_balance
+      return if retailer.unlimited_account && (direction == 'inbound' || message_type == 'conversation')
+
       case self.class.name
       when 'KarixWhatsappMessage'
         return unless status != 'failed'

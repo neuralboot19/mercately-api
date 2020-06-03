@@ -24,6 +24,8 @@ class Api::V1::AgentCustomersController < ApplicationController
         former_agent
       ].compact # <---Se eliminan los valores nulos si es que es un nuevo registro
 
+      @agent_customer.customer.update_attribute(:unread_chat, true)
+
       # Se envian las notificaciones
       if former_agent
         if current_retailer.karix_integrated?

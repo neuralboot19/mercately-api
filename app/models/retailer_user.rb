@@ -15,15 +15,12 @@ class RetailerUser < ApplicationRecord
 
   attr_reader :raw_invitation_token
 
-  def self.from_omniauth(auth, retailer_user, permissions)
+  def self.from_omniauth(auth, retailer_user, permissions, connection_type)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
     retailer_user.long_live_user_access_token
 
-    retailer_user.handle_page_connection if
-      permissions.any? { |p| p['permission'] == 'manage_pages' && p['status'] == 'granted' }
-
-    retailer_user.handle_catalog_connection if
-      permissions.any? { |p| p['permission'] == 'catalog_management' && p['status'] == 'granted' }
+    retailer_user.handle_page_connection if connect_messenger?(permissions, connection_type)
+    retailer_user.handle_catalog_connection if connect_catalog?(permissions, connection_type)
 
     retailer_user
   end
@@ -73,6 +70,20 @@ class RetailerUser < ApplicationRecord
   def customers
     Customer.joins(:agent_customer).where('retailer_user_id = ?', id) +
       Customer.joins(:retailer).where.not(id: AgentCustomer.all.pluck(:customer_id)).where(retailer_id: retailer_id)
+  end
+
+  def storage_id
+    "#{id}_#{retailer_id}_#{email}"
+  end
+
+  def self.connect_messenger?(permissions, connection_type)
+    permissions.any? { |p| p['permission'] == 'manage_pages' && p['status'] == 'granted' } &&
+      connection_type == 'messenger'
+  end
+
+  def self.connect_catalog?(permissions, connection_type)
+    permissions.any? { |p| p['permission'] == 'catalog_management' && p['status'] == 'granted' } &&
+      connection_type == 'catalog'
   end
 
   private

@@ -14,7 +14,7 @@ module Whatsapp::Gupshup::V1::Helpers
       retailer_users = agents | retailer.admins
 
       retailer_users.each do |ret_u|
-        notify_update!(ret_u, serialized_message, @msg.customer)
+        notify_update!(ret_u, serialized_message)
       end
     rescue StandardError => e
       Rails.logger.error(e)
@@ -24,27 +24,29 @@ module Whatsapp::Gupshup::V1::Helpers
       retailer_users = retailer_users | retailer.admins
 
       retailer_users.each do |ret_u|
-        remove_only = assigned_agent.persisted? &&
-                      assigned_agent.retailer_user_id != ret_u.id &&
-                      ret_u.retailer_admin == false
+        remove = assigned_agent.persisted? &&
+          assigned_agent.retailer_user_id != ret_u.id &&
+          ret_u.retailer_admin == false
 
         redis.publish 'customer_chat',
                       {
                         customer: serialize_customer(assigned_agent.customer),
-                        remove_only: remove_only,
+                        remove_only: remove,
                         room: ret_u.id
                       }.to_json
+
+        notify_new_counter(ret_u, assigned_agent.customer)
       end
     rescue StandardError => e
       Rails.logger.error(e)
     end
 
-    def notify_messages!(retailer, retailer_users, customer, nomore=false)
+    def notify_messages!(retailer, retailer_users)
       serialized_message = JSON.parse(serialize_message)
       retailer_users = retailer_users | retailer.admins
 
       retailer_users.each do |ret_u|
-        notify_update!(ret_u, serialized_message, customer) unless nomore
+        notify_update!(ret_u, serialized_message)
       end
 
       serialized_message['data'].pluck('attributes')
@@ -65,6 +67,40 @@ module Whatsapp::Gupshup::V1::Helpers
       Rails.logger.error(e)
     end
 
+    def notify_new_counter(*args)
+      # Set all local vars
+      retailer_user,
+      customer= args
+
+      total = retailer_user.retailer.gupshup_unread_whatsapp_messages(retailer_user).size
+
+      redis.publish 'new_message_counter',
+                    {
+                      identifier: '.item__cookie_whatsapp_messages',
+                      total: total,
+                      room: retailer_user.id
+                    }.to_json
+
+      customer ||= if @msg.is_a?(ActiveRecord::AssociationRelation)
+                     @msg.first.customer
+                   else
+                     @msg.customer
+                   end
+      serialized_customer = serialize_customer(customer)
+      remove = customer.agent.present? ? (
+        customer.persisted? &&
+        customer&.agent&.id != retailer_user.id &&
+        retailer_user.retailer_admin == false
+      ) : false
+      customer_chat_args = {
+        customer: serialized_customer,
+        remove_only: remove,
+        room: retailer_user.id
+      }
+
+      redis.publish 'customer_chat', customer_chat_args.to_json
+    end
+
     private
 
       def redis
@@ -83,7 +119,7 @@ module Whatsapp::Gupshup::V1::Helpers
         ).serialized_json
       end
 
-      def notify_update!(retailer_user, serialized_message, customer)
+      def notify_update!(retailer_user, serialized_message)
         # TODO: Change the element name karix_whatsapp_message to something more
         # standard like whatsapp_message, I decided to keep this name to not
         # touch front-end at all
@@ -101,29 +137,6 @@ module Whatsapp::Gupshup::V1::Helpers
                       }.to_json
 
         notify_new_counter(retailer_user)
-      end
-
-      def notify_new_counter(retailer_user)
-        total = retailer_user.retailer.gupshup_unread_whatsapp_messages(retailer_user).size
-
-        redis.publish 'new_message_counter',
-                      {
-                        identifier: '.item__cookie_whatsapp_messages',
-                        total: total,
-                        room: retailer_user.id
-                      }.to_json
-
-        customer = if @msg.is_a?(ActiveRecord::AssociationRelation)
-                     @msg.first.customer
-                   else
-                     @msg.customer
-                   end
-        serialized_customer = serialize_customer(customer)
-        redis.publish 'customer_chat',
-                      {
-                        customer: serialized_customer,
-                        room: retailer_user.id
-                      }.to_json
       end
   end
 end

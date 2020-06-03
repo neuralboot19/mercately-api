@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Api::V1::Customers', type: :request do
+RSpec.describe 'Api::V1::CustomersController', type: :request do
   let!(:retailer) { create(:retailer) }
   let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
   let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
@@ -26,7 +26,7 @@ RSpec.describe 'Api::V1::Customers', type: :request do
     end
 
     it 'filters customers by first_name' do
-      get api_v1_customers_path, params: { customerSearch: customer2.first_name }
+      get api_v1_customers_path, params: { searchString: customer2.first_name }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -35,7 +35,7 @@ RSpec.describe 'Api::V1::Customers', type: :request do
     end
 
     it 'filters customers by last_name' do
-      get api_v1_customers_path, params: { customerSearch: customer2.last_name }
+      get api_v1_customers_path, params: { searchString: customer2.last_name }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -44,7 +44,7 @@ RSpec.describe 'Api::V1::Customers', type: :request do
     end
 
     it 'filters customers by first_name and last_name' do
-      get api_v1_customers_path, params: { customerSearch: "#{customer2.first_name} #{customer2.last_name}" }
+      get api_v1_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -53,7 +53,7 @@ RSpec.describe 'Api::V1::Customers', type: :request do
     end
 
     it 'filters customers by email' do
-      get api_v1_customers_path, params: { customerSearch: customer1.email }
+      get api_v1_customers_path, params: { searchString: customer1.email }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
@@ -62,12 +62,22 @@ RSpec.describe 'Api::V1::Customers', type: :request do
     end
 
     it 'filters customers by phone' do
-      get api_v1_customers_path, params: { customerSearch: customer1.phone }
+      get api_v1_customers_path, params: { searchString: customer1.phone }
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
       expect(body['customers'].count).to eq(1)
       expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+    end
+  end
+
+  describe 'GET #show' do
+    it 'returns the customer data' do
+      get api_v1_customer_path(customer1.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['customer']).not_to be nil
     end
   end
 
@@ -107,13 +117,44 @@ RSpec.describe 'Api::V1::Customers', type: :request do
     end
   end
 
-  describe 'GET #show' do
-    it 'returns the customer data' do
-      get api_v1_customer_path(customer1.id)
+  describe 'GET #messages' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_read_action)
+        .and_return('Read')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'responses the customer messages' do
+      get api_v1_customer_messages_path(customer1.id)
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
-      expect(body['customer']).not_to be nil
+      expect(body['messages'].count).to eq(6)
+    end
+  end
+
+  # describe 'POST #create_message' do
+  # end
+
+  describe 'POST #set_message_as_read' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_read_action)
+        .and_return('Read')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'sets the message as read' do
+      post api_v1_set_message_as_read_path(customer1.facebook_messages.last.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['message']['date_read']).not_to be nil
     end
   end
 
@@ -149,6 +190,85 @@ RSpec.describe 'Api::V1::Customers', type: :request do
       expect(response).to have_http_status(:ok)
       expect(body['templates']['data'].count).to eq(1)
       expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+    end
+  end
+
+  describe 'GET #messages' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_read_action)
+        .and_return('Read')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'responses with the customer messages' do
+      get api_v1_customer_messages_path(customer1.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['messages'].count).to eq(6)
+    end
+  end
+
+  describe 'POST #set_message_as_read' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_read_action)
+        .and_return('Read')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'sets the message as read' do
+      post api_v1_set_message_as_read_path(customer1.facebook_messages.last.id)
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['message']['date_read']).not_to be nil
+    end
+  end
+
+  describe 'POST #create_message' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_message)
+        .and_return('Sent')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'creates a new messenger text message' do
+      post api_v1_create_message_path(customer1.id), params: { message: 'Texto' }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['message']['id']).to eq(FacebookMessage.last.id)
+      expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+    end
+  end
+
+  describe 'POST #send_img' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_attachment)
+        .and_return('Sent')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    it 'creates a new messenger file message' do
+      post api_v1_send_img_path(customer1.id), params: { file_data:
+        fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg') }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(body['message']['id']).to eq(FacebookMessage.last.id)
+      expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
     end
   end
 end

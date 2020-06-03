@@ -4,6 +4,7 @@ class GupshupWhatsappMessage < ApplicationRecord
 
   belongs_to :retailer
   belongs_to :customer
+  belongs_to :retailer_user, required: false
 
   validates_presence_of :retailer, :customer, :status,
                         :direction, :source, :destination, :channel
@@ -15,6 +16,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   scope :outbound_messages, -> { where(direction: 'outbound') }
   scope :notification_messages, -> { where(message_type: 'notification').where.not(status: 'error') }
   scope :conversation_messages, -> { where(message_type: 'conversation').where.not(status: 'error') }
+  scope :unread, -> { where.not(status: 5) }
 
   before_create :set_message_type
 

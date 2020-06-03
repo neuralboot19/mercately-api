@@ -10,6 +10,7 @@ RSpec.describe FacebookMessage, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:facebook_retailer) }
     it { is_expected.to belong_to(:customer) }
+    it { is_expected.to belong_to(:retailer_user).required(false) }
   end
 
   describe 'validations' do
@@ -139,7 +140,7 @@ RSpec.describe FacebookMessage, type: :model do
       end
 
       it 'sends the message' do
-        expect(facebook_msg_sent.send(:send_welcome_message)).to eq('Sent')
+        expect { facebook_msg_sent.send(:send_welcome_message) }.to change(FacebookMessage, :count).by(2)
       end
     end
   end
@@ -251,7 +252,7 @@ RSpec.describe FacebookMessage, type: :model do
       end
 
       it 'sends the message' do
-        expect(facebook_msg_sent.send(:send_inactive_message)).to eq('Sent')
+        expect { facebook_msg_sent.send(:send_inactive_message) }.to change(FacebookMessage, :count).by(3)
       end
     end
   end

@@ -4,17 +4,23 @@ class Api::V1::CustomersController < ApplicationController
   include ActionView::Helpers::TextHelper
   before_action :authenticate_retailer_user!
   before_action :sanitize_params, only: [:update]
-  before_action :set_customer, except: [:index, :set_message_as_readed, :fast_answers_for_messenger]
+  before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger]
 
   def index
     @customers = current_retailer.customers.facebook_customers.active
       .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
       .joins(:facebook_messages).group('customers.id').order('recent_message_date desc').page(params[:page])
 
-    @customers = @customers.by_search_text(params[:customerSearch]) if params[:customerSearch]
+    @customers = @customers.by_search_text(params[:searchString]) if params[:searchString]
 
-    render status: 200, json: { customers: @customers.as_json(methods: :unread_message?), total_customers:
-      @customers.total_pages }
+    render status: 200, json: {
+      customers: @customers.as_json(methods:
+        [
+          :unread_message?,
+          :last_messenger_message
+        ]),
+      total_customers: @customers.total_pages
+    }
   end
 
   def show
@@ -32,11 +38,11 @@ class Api::V1::CustomersController < ApplicationController
   def messages
     facebook_helper = FacebookNotificationHelper
     @messages = @customer.facebook_messages
-    @messages.unreaded.update_all(date_read: Time.now)
+    @messages.customer_unread.update_all(date_read: Time.now)
     @messages = @messages.order(created_at: :desc).page(params[:page])
+    facebook_service.send_read_action(@customer.psid, 'mark_seen')
 
-    retailer = @customer.retailer
-    facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a)
+    facebook_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a)
     render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
   end
 
@@ -48,7 +54,8 @@ class Api::V1::CustomersController < ApplicationController
       facebook_retailer: current_retailer.facebook_retailer,
       text: params[:message],
       sent_from_mercately: true,
-      sent_by_retailer: true
+      sent_by_retailer: true,
+      retailer_user: current_retailer_user
     )
     render status: 200, json: { message: message } if message.save
   end
@@ -62,18 +69,19 @@ class Api::V1::CustomersController < ApplicationController
       file_data: params[:file_data].tempfile.path,
       sent_from_mercately: true,
       sent_by_retailer: true,
-      filename: File.basename(params[:file_data].original_filename)
+      filename: File.basename(params[:file_data].original_filename),
+      retailer_user: current_retailer_user
     )
     render status: 200, json: { message: message } if message.save
   end
 
-  def set_message_as_readed
+  def set_message_as_read
     facebook_helper = FacebookNotificationHelper
     @message = FacebookMessage.find(params[:id])
     @message.update_column(:date_read, Time.now)
+    facebook_service.send_read_action(@message.customer.psid, 'mark_seen')
 
-    retailer = @message.customer.retailer
-    facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a)
+    facebook_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a)
     render status: 200, json: { message: @message }
   end
 
@@ -102,6 +110,10 @@ class Api::V1::CustomersController < ApplicationController
         params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish if
           params[:customer][param.first]
       end
+    end
+
+    def facebook_service
+      @facebook_service ||= Facebook::Messages.new(current_retailer.facebook_retailer)
     end
 
     def customer_params

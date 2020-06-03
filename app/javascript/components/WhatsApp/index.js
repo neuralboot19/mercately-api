@@ -129,6 +129,7 @@ class WhatsApp extends Component {
                   currentCustomer={this.state.currentCustomer}
                   chatType='whatsapp'
                   setRemovedCustomerInfo={this.setRemovedCustomerInfo}
+                  storageId={$('meta[name=user_storage]').attr("content")}
                 />
               </div>
             )}

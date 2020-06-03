@@ -42,7 +42,10 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         customers: action.data.customers,
-        total_customers: action.data.total_customers
+        total_customers: action.data.total_customers,
+        agents: action.data.agents,
+        storageId: action.data.storage_id,
+        agent_list: action.data.agent_list
       }
     case 'SET_WHATSAPP_MESSAGES':
       var balance_error = { status: null, message: null };
@@ -55,6 +58,8 @@ const reducer = (state = initialState, action) => {
         messages: action.data.messages,
         total_pages: action.data.total_pages,
         agents: action.data.agents,
+        storageId: action.data.storage_id,
+        agent_list: action.data.agent_list,
         handle_message_events: action.data.handle_message_events,
         errorSendMessageStatus: balance_error.status,
         errorSendMessageText: balance_error.message,

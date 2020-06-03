@@ -132,6 +132,43 @@
   }
 }
 
+.item {
+  &__icon {
+    color: $secondary-color;
+  }
+
+  &__checkbox { display: none; }
+
+  &__cookie {
+    float: right;
+    width: 22px;
+    height: 22px;
+    background-color: #F00;
+    color: #FFF;
+    border-radius: 7px;
+    text-align: center;
+    font-size: 14px;
+    margin-right: 8px;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    &.notification {
+      background-color: $notifications-color;
+      border-radius: 50%;
+      font-size: .7em;
+      font-weight: unset;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      vertical-align: middle;
+      width: 20px;
+      margin-top: -12px;
+      margin-right: -6px;
+    }
+  }
+}
+
 // Sidebar PC v3
 #sidebar--pc {
   position: fixed;
@@ -148,29 +185,6 @@
   &__logo {
     padding: 40px;
     text-align: center;
-  }
-
-  .item {
-    &__icon {
-      color: $secondary-color;
-    }
-
-    &__checkbox { display: none; }
-
-    &__cookie {
-      float: right;
-      width: 22px;
-      height: 22px;
-      background-color: #F00;
-      color: #FFF;
-      border-radius: 7px;
-      text-align: center;
-      font-size: 14px;
-      margin-right: 8px;
-      position: absolute;
-      top: 0;
-      right: 0;
-    }
   }
 
   .tooltiptext .item__cookie {

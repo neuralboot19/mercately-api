@@ -12,8 +12,17 @@ class ChatList extends Component {
     this.state = {
       page: 1,
       customers: [],
+      shouldUpdate: true,
       searchString: '',
-      shouldUpdate: true
+      order: 'received_desc',
+      agent: 'all',
+      type: 'all',
+      filter: {
+        searchString: '',
+        order: 'received_desc',
+        type: 'all',
+        agent: 'all'
+      }
     };
 
     this.last_customers_offset = 0
@@ -33,10 +42,10 @@ class ChatList extends Component {
       this.setState({ page: page })
 
       if (this.props.chatType == "facebook"){
-        this.props.fetchCustomers(page, this.state.searchString);
+        this.props.fetchCustomers(page, this.state.filter);
       }
       if (this.props.chatType == "whatsapp"){
-        this.props.fetchWhatsAppCustomers(page, this.state.searchString, this.state.customers.length);
+        this.props.fetchWhatsAppCustomers(page, this.state.filter, this.state.customers.length);
       }
 
       this.last_customers_offset = this.state.customers.length;
@@ -116,54 +125,127 @@ class ChatList extends Component {
 
   handleChatSearch = (e) => {
     let value;
+    let filter = this.state.filter;
+
     value = e.target.value;
+    filter['searchString'] = value;
     this.setState({
       searchString: value,
+      filter: filter
     });
   }
 
-  handleKeyPress = event => {
+  handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      this.setState({shouldUpdate: true}, () => {
+      this.setState({
+        shouldUpdate: true,
+      }, () => {
         this.applySearch();
       })
     }
-  };
+  }
+
+  handleChatOrdering = (event) => {
+    if (event.target.value !== this.state.order) {
+      let order = event.target.value;
+      let filter = this.state.filter;
+
+      filter['order'] = order;
+
+      this.setState({
+        order: order,
+        filter: filter
+      }, () => this.applySearch() );
+    }
+  }
+
+  handleAddOptionToFilter = (by) => {
+    let type = null, agent = null;
+    let filter = this.state.filter;
+
+    if (by === 'type')
+      type = event.target.value;
+    else if (by == 'agent')
+      agent = event.target.value;
+
+    type = type || this.state.type;
+    agent = agent || this.state.agent;
+
+    filter['type'] = type;
+    filter['agent'] = agent;
+
+    this.setState({
+      type: type,
+      agent: agent,
+      filter: filter
+    }, () => this.applySearch() );
+  }
 
   applySearch = () => {
-    this.setState({customers: [], page: 1}, () => {
+    this.setState({
+      customers: [],
+      filter: this.state.filter,
+      page: 1
+    }, () => {
+      localStorage.setItem(this.props.storageId + '_filter', JSON.stringify(this.state.filter));
       if (this.props.chatType == 'whatsapp'){
-        this.props.fetchWhatsAppCustomers(1, this.state.searchString, 0);
+        this.props.fetchWhatsAppCustomers(1, this.state.filter, 0);
       }
       if (this.props.chatType == 'facebook'){
-        this.props.fetchCustomers(1, this.state.searchString);
+        this.props.fetchCustomers(1, this.state.filter);
       }
     })
   }
 
   componentWillReceiveProps(newProps){
     if (newProps.customers != this.props.customers) {
+      let storedFilter = JSON.parse(localStorage.getItem(this.props.storageId + '_filter'));
       this.setState({
-        customers: this.state.customers.concat(newProps.customers)
+        customers: this.state.customers.concat(newProps.customers),
+        order: storedFilter ? storedFilter['order'] :  this.state.order,
+        agent: storedFilter ? storedFilter['agent'] :  this.state.agent,
+        type: storedFilter ? storedFilter['type'] : this.state.type
       })
     }
   }
 
   componentDidMount() {
+    let filter = {};
+    let storedFilter = JSON.parse(localStorage.getItem(this.props.storageId + '_filter'));
+    if (storedFilter) {
+      storedFilter['searchString'] = '';
+      filter = storedFilter;
+    } else {
+      filter = this.state.filter;
+    }
+
     if (this.props.chatType == "facebook"){
       this.props.fetchCustomers();
       socket.on("customer_facebook_chat", data => this.updateList(data));
     }
     if (this.props.chatType == "whatsapp"){
-      this.props.fetchWhatsAppCustomers(1, '', this.state.customers.length);
+      this.props.fetchWhatsAppCustomers(1, filter, this.state.customers.length);
       socket.on("customer_chat", data => this.updateList(data));
     }
   }
 
   componentDidUpdate() {
+    let filter = {};
+    let storedFilter = JSON.parse(localStorage.getItem(this.props.storageId + '_filter'));
+    if (storedFilter) {
+      storedFilter['searchString'] = this.state.searchString;
+      filter = storedFilter;
+    } else {
+      filter = this.state.filter;
+    }
+
     if (this.state.shouldUpdate) {
       this.setState({
-        shouldUpdate: false
+        shouldUpdate: false,
+        filter: filter,
+        order: storedFilter ? storedFilter['order'] :  this.state.order,
+        agent: storedFilter ? storedFilter['agent'] :  this.state.agent,
+        type: storedFilter ? storedFilter['type'] : this.state.type
       })
     }
   }
@@ -184,39 +266,116 @@ class ChatList extends Component {
         {this.state.shouldUpdate ?
           <div className="chat_loader"><img src={Loader} /></div>
         :
-          <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
-            <div >
+          <div>
+            <div className='chat__control'>
               <input
                 type="text"
                 value={this.state.searchString}
-                onChange={e =>
-                  this.handleChatSearch(e)
-                }
-                placeholder="Busqueda por email, nombre o número"
+                onChange={(e) => this.handleChatSearch(e)}
+                placeholder="Buscar"
                 style={{
-                  width: "100%",
+                  width: "95%",
                   borderRadius: "5px",
-                  marginBottom: "20px",
+                  marginBottom: "5px",
                   border: "1px solid #ddd",
-                  padding: "8px 0px",
+                  padding: "8px",
                 }}
                 className="form-control"
-                onKeyPress={this.handleKeyPress}
+                onKeyPress={(e) => this.handleKeyPress(e)}
               />
+
+              {this.props.chatType == "whatsapp" &&
+                <div
+                  style={{
+                    margin: "0",
+                  }}
+                >
+                  <p
+                    style={{
+                      display: "inline-block",
+                      margin: "0",
+                      marginBottom: "5px",
+                      width: "100%"
+                    }}
+                  >Filtrar por:&nbsp;&nbsp;
+                    <select
+                      style={{
+                        float: 'right',
+                        fontSize: '12px',
+                        maxWidth: "200px"
+                      }}
+                      id="type"
+                      value={this.state.type}
+                      onChange={(e) => this.handleAddOptionToFilter('type')}
+                    >
+                      <option value='all'>Todos</option>
+                      <option value='no_read'>No leídos</option>
+                      <option value='read'>Leídos</option>
+                    </select>
+                  </p>
+                  <p
+                    style={{
+                      display: "inline-block",
+                      margin: "0",
+                      marginBottom: "5px",
+                      width: "100%"
+                    }}
+                  >Agente:&nbsp;&nbsp;
+                    <select
+                      style={{
+                        float: 'right',
+                        fontSize: '12px',
+                        maxWidth: "200px"
+                      }}
+                      id="agents"
+                      value={this.state.agent}
+                      onChange={(e) => this.handleAddOptionToFilter('agent')}
+                    >
+                      <option value="all">Todos</option>
+                      <option value="not_assigned">No asignados</option>
+                      {this.props.agents.map((agent, index) => (
+                        <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
+                      ))}
+                    </select>
+                  </p>
+                  <p
+                    style={{
+                      display: "inline-block",
+                      margin: "0",
+                      marginBottom: "5px",
+                      width: "100%"
+                    }}
+                  >Ordenar por:&nbsp;&nbsp;
+                    <select
+                      style={{
+                        float: 'right',
+                        fontSize: '12px',
+                        maxWidth: "200px"
+                      }}
+                      id="order"
+                      value={this.state.order}
+                      onChange={(e) => this.handleChatOrdering(e)}
+                    >
+                      <option value='received_desc'>Reciente - Antíguo</option>
+                      <option value='received_asc'>Antíguo - Reciente</option>
+                    </select>
+                  </p>
+                </div>
+              }
             </div>
-            {this.state.customers.map((customer, index) =>
-            <ChatListUser
-              key={index}
-              currentCustomer={this.props.currentCustomer}
-              customer={customer}
-              handleOpenChat={this.props.handleOpenChat}
-              chatType={this.props.chatType}
-            />)}
+            <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
+              {this.state.customers.map((customer, index) =>
+              <ChatListUser
+                key={index}
+                currentCustomer={this.props.currentCustomer}
+                customer={customer}
+                handleOpenChat={this.props.handleOpenChat}
+                chatType={this.props.chatType}
+              />)}
+            </div>
           </div>
         }
       </div>
-
-
     );
   }
 }
@@ -225,6 +384,7 @@ function mapState(state) {
   return {
     customers: state.customers || [],
     total_customers: state.total_customers || 0,
+    agents: state.agents || []
   };
 }
 

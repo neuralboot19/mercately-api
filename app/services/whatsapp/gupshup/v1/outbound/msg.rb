@@ -16,7 +16,7 @@ module Whatsapp::Gupshup::V1
       response_body = JSON.parse(response.read_body)
 
       # Stores the Gupshup Whatsapp Meesage in our DB
-      save_message(response.code, response_body, request_body)
+      save_message(response.code, response_body, request_body, @options[:retailer_user])
 
       # Returns the Gupshup response
       {
@@ -162,13 +162,14 @@ module Whatsapp::Gupshup::V1
         [bodyString, message]
       end
 
-      def save_message(response_status, response_body, request_body)
+      def save_message(response_status, response_body, request_body, retailer_user)
         gwm = @retailer.gupshup_whatsapp_messages.new(
           customer: @customer,
           direction: 'outbound',
           source: @retailer.phone_number,
           destination: @phone_number,
-          channel: 'whatsapp'
+          channel: 'whatsapp',
+          retailer_user: retailer_user
         )
 
         if response_status.to_i == 200

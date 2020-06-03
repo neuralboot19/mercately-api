@@ -442,4 +442,17 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#last_messenger_message' do
+    let(:facebook_retailer) { create(:facebook_retailer) }
+    let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+
+    before do
+      create_list(:facebook_message, 2, customer: customer)
+    end
+
+    it 'returns the last messenger message' do
+      expect(customer.last_messenger_message).to eq(FacebookMessage.last)
+    end
+  end
 end

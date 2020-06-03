@@ -98,7 +98,7 @@ RSpec.describe RetailerUser, type: :model do
 
   describe '#full_name' do
     it 'returns a full name' do
-      retailer_user  = described_class.new(first_name: 'John', last_name: 'Wick')
+      retailer_user = described_class.new(first_name: 'John', last_name: 'Wick')
 
       expect(retailer_user.full_name).to eq('John Wick')
     end
@@ -167,13 +167,13 @@ RSpec.describe RetailerUser, type: :model do
     let(:set_fb_api) { instance_double(Facebook::Api) }
 
     let(:oauth) do
-      OmniAuth::AuthHash.new({
+      OmniAuth::AuthHash.new(
         uid: '12345',
         provider: 'facebook',
-        credentials: OmniAuth::AuthHash.new({
+        credentials: OmniAuth::AuthHash.new(
           token: '1234567890'
-        })
-      })
+        )
+      )
     end
 
     before do
@@ -186,15 +186,17 @@ RSpec.describe RetailerUser, type: :model do
 
     context 'when the permissions for facebook pages is granted' do
       it 'generates the facebook retailer information' do
-        expect { RetailerUser.from_omniauth(oauth, retailer_user, permissions) }.to change(FacebookRetailer, :count).by(1)
-        expect(RetailerUser.from_omniauth(oauth, retailer_user, permissions).uid).to eq(oauth.uid)
+        expect { RetailerUser.from_omniauth(oauth, retailer_user, permissions, 'messenger') }
+          .to change(FacebookRetailer, :count).by(1)
+        expect(RetailerUser.from_omniauth(oauth, retailer_user, permissions, 'messenger').uid).to eq(oauth.uid)
       end
     end
 
     context 'when the permissions for facebook catalogs is granted' do
       it 'generates the facebook catalog information' do
-        expect { RetailerUser.from_omniauth(oauth, retailer_user, permissions) }.to change(FacebookCatalog, :count).by(1)
-        expect(RetailerUser.from_omniauth(oauth, retailer_user, permissions).uid).to eq(oauth.uid)
+        expect { RetailerUser.from_omniauth(oauth, retailer_user, permissions, 'catalog') }
+          .to change(FacebookCatalog, :count).by(1)
+        expect(RetailerUser.from_omniauth(oauth, retailer_user, permissions, 'catalog').uid).to eq(oauth.uid)
       end
     end
   end

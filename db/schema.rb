@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_14_161524) do
+ActiveRecord::Schema.define(version: 2020_06_01_150949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
+    t.boolean "unread_chat", default: false
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -148,8 +149,10 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
     t.string "url"
     t.string "file_data"
     t.string "filename"
+    t.bigint "retailer_user_id"
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
+    t.index ["retailer_user_id"], name: "index_facebook_messages_on_retailer_user_id"
   end
 
   create_table "facebook_retailers", force: :cascade do |t|
@@ -180,9 +183,11 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "message_type"
+    t.bigint "retailer_user_id"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
     t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_gupshup_whatsapp_messages_on_retailer_user_id"
     t.index ["whatsapp_message_id"], name: "index_gupshup_whatsapp_messages_on_whatsapp_message_id"
   end
 
@@ -215,8 +220,10 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
     t.bigint "retailer_id"
     t.bigint "customer_id"
     t.string "message_type"
+    t.bigint "retailer_user_id"
     t.index ["customer_id"], name: "index_karix_whatsapp_messages_on_customer_id"
     t.index ["retailer_id"], name: "index_karix_whatsapp_messages_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_karix_whatsapp_messages_on_retailer_user_id"
     t.index ["uid"], name: "index_karix_whatsapp_messages_on_uid", unique: true
   end
 
@@ -486,6 +493,7 @@ ActiveRecord::Schema.define(version: 2020_05_14_161524) do
     t.string "gupshup_src_name"
     t.string "karix_account_uid"
     t.string "karix_account_token"
+    t.boolean "unlimited_account", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

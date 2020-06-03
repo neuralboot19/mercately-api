@@ -37,7 +37,7 @@ class ChatMessages extends Component {
   handleSubmitMessage = (e, message) => {
     e.preventDefault();
     let text = { message: message }
-    this.setState({ messages: this.state.messages.concat({text: message, sent_by_retailer: true}), new_message: true}, () => {
+    this.setState({ messages: this.state.messages.concat({text: message, sent_by_retailer: true, created_at: new Date() }), new_message: true}, () => {
       this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
       this.scrollToBottom();
     });
@@ -130,16 +130,41 @@ class ChatMessages extends Component {
     }
   }
 
+  findMessageInArray = (arr, id) => (
+    arr.findIndex((el) => (
+      el.id == id
+    ))
+  )
+
   updateChat = (data) =>{
     var facebook_message = data.facebook_message.facebook_message;
     if (currentCustomer == facebook_message.customer_id) {
-      if (!this.state.new_message && facebook_message.sent_by_retailer == false) {
-        this.setState({
-          messages: this.state.messages.concat(facebook_message),
-          new_message: false,
-        })
+      if (!this.state.new_message && facebook_message.sent_from_mercately == false) {
+        var index = this.findMessageInArray(this.state.messages, facebook_message.id);
+
+        if (index === -1) {
+          this.setState({
+            messages: this.state.messages.concat(facebook_message),
+            new_message: false,
+          })
+        } else {
+          this.state.messages[index] = facebook_message;
+        }
       }
-      this.props.setMessageAsRead(facebook_message.id, csrfToken);
+
+      if (facebook_message.sent_by_retailer == false) {
+        this.props.setMessageAsRead(facebook_message.id, csrfToken);
+      }
+
+      if (facebook_message.sent_by_retailer == true && facebook_message.date_read) {
+        this.state.messages.filter(obj => obj.sent_by_retailer == true)
+          .forEach(function(message) {
+            if (!message.date_read && moment(message.created_at) <= moment(facebook_message.created_at)) {
+              message.date_read = facebook_message.date_read
+            }
+        })
+        this.setState({ messages: this.state.messages });
+      }
     }
   }
 
@@ -164,6 +189,8 @@ class ChatMessages extends Component {
       return 'audio';
     } else if (file_type.includes('video/') || file_type == 'video') {
       return 'video';
+    } else if (file_type.includes('location/') || file_type == 'location') {
+      return 'location';
     }
   }
 

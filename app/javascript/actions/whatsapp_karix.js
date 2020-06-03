@@ -2,8 +2,8 @@
 export const fetchWhatsAppCustomers = (page = 1, params, offset) => {
   let endpoint = `/api/v1/karix_whatsapp_customers?page=${page}&offset=${offset}`;
 
-  if (params !== '' && params !== undefined) {
-    endpoint += `&customerSearch=${params}`
+  if (params !== null && params !== undefined) {
+    endpoint += `&${$.param(params)}`
   }
 
   return dispatch =>
@@ -109,7 +109,7 @@ export const sendWhatsAppImg = (id, body, token) => {
 };
 
 export const setWhatsAppMessageAsRead = (id, body, token) => {
-  const endpoint = `/api/v1/karix_whatsapp_update_message_read/${id}`;
+  const endpoint = `/api/v1/whatsapp_update_message_read/${id}`;
   const csrf_token = token
   return dispatch => {
     fetch(endpoint, {
@@ -214,3 +214,26 @@ export const getWhatsAppFastAnswers = (page = 1, params) => {
           alert("An unexpected error occurred.");
       });
 };
+
+export const setNoRead = (customer_id, token) => {
+  const endpoint = `/api/v1/whatsapp_unread_chat/${customer_id}`;
+  const csrf_token = token
+  return dispatch => {
+    fetch(endpoint, {
+      method: "PATCH",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrf_token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      }
+    }).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+  };
+};
+
