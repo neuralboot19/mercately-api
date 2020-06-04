@@ -8,7 +8,8 @@ module Facebook
 
     def save(message_data)
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
-      url = message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
+      file_type = message_data['message']&.[]('attachments')&.[](0)&.[]('type')
+      url = file_type_url(message_data, file_type)
       file_name = File.basename(URI.parse(url)&.path) if url.present?
       FacebookMessage.create_with(
         customer: customer,
@@ -16,7 +17,7 @@ module Facebook
         sender_uid: message_data['sender']['id'],
         id_client: message_data['sender']['id'],
         text: message_data['message']&.[]('text'),
-        file_type: message_data['message']&.[]('attachments')&.[](0)&.[]('type'),
+        file_type: file_type,
         url: url,
         reply_to: message_data['message']&.[]('reply_to')&.[]('mid'),
         filename: file_name
@@ -160,6 +161,17 @@ module Facebook
           },
           'sender_action': action
         }.to_json
+      end
+
+      def file_type_url(message_data, file_type)
+        return unless file_type
+
+        if file_type == 'location'
+          message_data['message']&.[]('attachments')&.[](0)&.[]('url') ||
+            message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
+        else
+          message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
+        end
       end
   end
 end
