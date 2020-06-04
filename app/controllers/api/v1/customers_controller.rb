@@ -94,6 +94,13 @@ class Api::V1::CustomersController < ApplicationController
     render status: 200, json: { templates: serialized, total_pages: templates.total_pages }
   end
 
+  def accept_opt_in
+    @customer.send_for_opt_in = true
+    return render status: 200, json: {} if @customer.accept_opt_in!
+
+    render status: 400, json: { error: 'Error al aceptar opt-in de este cliente, intente nuevamente' }
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
