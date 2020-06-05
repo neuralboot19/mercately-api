@@ -28,12 +28,14 @@ class Api::V1::KarixWhatsappController < ApplicationController
             :assigned_agent,
             :last_whatsapp_message,
             :handle_message_events?,
-            :unread_whatsapp_messages
+            :unread_whatsapp_messages,
+            :tags
           ]
         ),
         agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
         agent_list: current_retailer.team_agents,
         storage_id: current_retailer_user.storage_id,
+        filter_tags: current_retailer.tags,
         total_customers: total_pages
       }
     else
@@ -42,6 +44,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
         agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
         agent_list: current_retailer.team_agents,
         storage_id: current_retailer_user.storage_id,
+        filter_tags: current_retailer.tags,
         customers: []
       }
     end
@@ -79,7 +82,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
           handle_message_events: @customer.handle_message_events?,
           total_pages: total_pages,
           recent_inbound_message_date: @customer.recent_inbound_message_date,
-          customer_id: @customer.id
+          customer_id: @customer.id,
+          filter_tags: current_retailer.tags
         }
       else
         render status: 401, json: {
@@ -88,7 +92,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
           agent_list: current_retailer.team_agents,
           storage_id: current_retailer_user.storage_id,
           total_pages: total_pages,
-          balance_error_info: balance_error
+          balance_error_info: balance_error,
+          filter_tags: current_retailer.tags
         }
       end
     else
@@ -306,6 +311,16 @@ class Api::V1::KarixWhatsappController < ApplicationController
           customers = customers.where('customers.id NOT IN (?)', customer_ids)
         else
           customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).pluck(:customer_id)
+          customers = customers.where('customers.id IN (?)', customer_ids)
+        end
+      end
+
+      if params[:tag].present?
+        case params[:tag]
+        when 'all'
+          customers
+        else
+          customer_ids = CustomerTag.where(tag_id: params[:tag]).pluck(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
         end
       end

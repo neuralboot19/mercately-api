@@ -25,7 +25,8 @@ class Api::V1::CustomersController < ApplicationController
         [
           :unread_message?,
           :last_messenger_message,
-          :assigned_agent
+          :assigned_agent,
+          :tags
         ]
       ),
       total_customers: @customers.total_pages
@@ -33,14 +34,17 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def show
-    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag]) }
+    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+      current_retailer.available_customer_tags(@customer.id) }
   end
 
   def update
     if @customer.update(customer_params)
-      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag]) }
+      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+        current_retailer.available_customer_tags(@customer.id) }
     else
-      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag]), errors: @customer.errors }
+      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), errors:
+        @customer.errors, tags: current_retailer.available_customer_tags(@customer.id) }
     end
   end
 
@@ -121,6 +125,36 @@ class Api::V1::CustomersController < ApplicationController
     render status: 400, json: { error: 'Error al aceptar opt-in de este cliente, intente nuevamente' }
   end
 
+  def selectable_tags
+    tags = current_retailer.available_customer_tags(params[:id]) || []
+    render status: 200, json: { tags: tags }
+  end
+
+  def add_customer_tag
+    @customer.customer_tags.create(tag_id: params[:tag_id])
+    send_notification(params[:chat_service])
+
+    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+      current_retailer.available_customer_tags(@customer.id) }
+  end
+
+  def remove_customer_tag
+    @customer.customer_tags.find_by_tag_id(params[:tag_id])&.destroy
+    send_notification(params[:chat_service])
+
+    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+      current_retailer.available_customer_tags(@customer.id) }
+  end
+
+  def add_tag
+    tag = @customer.retailer.tags.create(tag: params[:tag])
+    @customer.customer_tags.create(tag_id: tag.id) if tag.present?
+    send_notification(params[:chat_service])
+
+    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+      current_retailer.available_customer_tags(@customer.id), filter_tags: current_retailer.tags }
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
@@ -137,6 +171,29 @@ class Api::V1::CustomersController < ApplicationController
 
     def facebook_service
       @facebook_service ||= Facebook::Messages.new(current_retailer.facebook_retailer)
+    end
+
+    def send_notification(chat_service)
+      agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.to_a
+      data = [
+        current_retailer,
+        agents,
+        nil,
+        nil,
+        @customer
+      ]
+
+      case chat_service
+      when 'facebook'
+        FacebookNotificationHelper.broadcast_data(*data)
+      when 'whatsapp'
+        if current_retailer.karix_integrated?
+          KarixNotificationHelper.broadcast_data(*data)
+        elsif current_retailer.gupshup_integrated?
+          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
+          gnhm.notify_customer_update!(*data.compact)
+        end
+      end
     end
 
     def customer_params

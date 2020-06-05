@@ -17,11 +17,13 @@ class ChatList extends Component {
       order: 'received_desc',
       agent: 'all',
       type: 'all',
+      tag: 'all',
       filter: {
         searchString: '',
         order: 'received_desc',
         type: 'all',
-        agent: 'all'
+        agent: 'all',
+        tag: 'all'
       }
     };
 
@@ -157,23 +159,28 @@ class ChatList extends Component {
   }
 
   handleAddOptionToFilter = (by) => {
-    let type = null, agent = null;
+    let type = null, agent = null, tag = null;
     let filter = this.state.filter;
 
     if (by === 'type')
       type = event.target.value;
     else if (by == 'agent')
       agent = event.target.value;
+    else if (by == 'tag')
+      tag = event.target.value;
 
     type = type || this.state.type;
     agent = agent || this.state.agent;
+    tag = tag || this.state.tag;
 
     filter['type'] = type;
     filter['agent'] = agent;
+    filter['tag'] = tag;
 
     this.setState({
       type: type,
       agent: agent,
+      tag: tag,
       filter: filter
     }, () => this.applySearch() );
   }
@@ -242,7 +249,8 @@ class ChatList extends Component {
         filter: filter,
         order: storedFilter ? storedFilter['order'] :  this.state.order,
         agent: storedFilter ? storedFilter['agent'] :  this.state.agent,
-        type: storedFilter ? storedFilter['type'] : this.state.type
+        type: storedFilter ? storedFilter['type'] : this.state.type,
+        tag: storedFilter ? storedFilter['tag'] : this.state.tag
       })
     }
   }
@@ -337,6 +345,30 @@ class ChatList extends Component {
                       marginBottom: "5px",
                       width: "100%"
                     }}
+                    >Etiquetas:&nbsp;&nbsp;
+                    <select
+                      style={{
+                        float: 'right',
+                        fontSize: '12px',
+                        maxWidth: "200px"
+                      }}
+                      id="tags"
+                      value={this.state.tag}
+                      onChange={(e) => this.handleAddOptionToFilter('tag')}
+                    >
+                      <option value="all">Todos</option>
+                      {this.props.filter_tags.map((tag, index) => (
+                        <option value={tag.id} key={index}>{tag.tag}</option>
+                      ))}
+                    </select>
+                  </p>
+                  <p
+                    style={{
+                      display: "inline-block",
+                      margin: "0",
+                      marginBottom: "5px",
+                      width: "100%"
+                    }}
                   >Ordenar por:&nbsp;&nbsp;
                     <select
                       style={{
@@ -376,7 +408,8 @@ function mapState(state) {
   return {
     customers: state.customers || [],
     total_customers: state.total_customers || 0,
-    agents: state.agents || []
+    agents: state.agents || [],
+    filter_tags: state.filter_tags || []
   };
 }
 

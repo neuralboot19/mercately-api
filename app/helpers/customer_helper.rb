@@ -18,4 +18,8 @@ module CustomerHelper
 
     retailer_user.retailer.karix_integrated? && customer.phone.present? && customer.phone[0] == '+'
   end
+
+  def retailer_selectable_tags(retailer)
+    retailer.tags.map { |tag| [tag.tag, tag.id] }
+  end
 end

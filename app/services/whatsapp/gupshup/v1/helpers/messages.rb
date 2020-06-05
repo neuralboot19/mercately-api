@@ -103,6 +103,18 @@ module Whatsapp::Gupshup::V1::Helpers
       redis.publish 'customer_chat', customer_chat_args.to_json
     end
 
+    def notify_customer_update!(*args)
+      retailer,
+      retailer_users,
+      customer = args
+
+      retailer_users = retailer_users | retailer.admins
+
+      retailer_users.each do |ru|
+        notify_new_counter(ru, customer)
+      end
+    end
+
     private
 
       def redis

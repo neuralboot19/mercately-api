@@ -80,6 +80,13 @@ class ChatListUser extends Component {
               </div>
             </div>
           )}
+          <div className="row mt-15 w-100 show-to-right">
+            {customer.tags && customer.tags.length > 0 && customer.tags.map((tag) =>
+              <div className="customer-tags-chats">
+                {tag.tag}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     )

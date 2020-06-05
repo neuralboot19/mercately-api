@@ -1,6 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { fetchCustomer, updateCustomer } from "../../actions/actions";
+import { fetchTags,
+         createCustomerTag,
+         removeCustomerTag,
+         createTag } from "../../actions/whatsapp_karix";
 import EditableField from '../shared/EditableField'
 import SelectableField from '../shared/SelectableField'
 
@@ -14,17 +18,21 @@ class CustomerDetails extends Component {
       currentCustomer: 0,
       updated: false,
       customer: {},
+      tags: [],
+      newTag: ''
     };
   }
 
   componentDidMount() {
     this.props.fetchCustomer(this.props.customerDetails.id)
+    this.props.fetchTags(this.props.customerDetails.id);
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.customerDetails.id !== this.props.customerDetails.id && !is_updated){
       is_updated = true
       this.props.fetchCustomer(this.props.customerDetails.id)
+      this.props.fetchTags(this.props.customerDetails.id);
     } else {
       if (this.state.customer.id !== this.props.customer.id || this.state.customer.phone !== this.props.customer.phone){
         this.setState({ customer: this.props.customer})
@@ -51,6 +59,49 @@ class CustomerDetails extends Component {
     this.setState({customer: current_customer}, () => {
       this.handlesubmit();
     })
+  }
+
+  handleSelectTagChange = (option) => {
+    var params = {
+      tag_id: option.value,
+      chat_service: this.props.chatType == 'facebook_chats' ? 'facebook' : 'whatsapp'
+    }
+
+    this.props.createCustomerTag(this.state.customer.id, params, csrfToken);
+  }
+
+  removeCustomerTag = (tag) => {
+    var params = {
+      tag_id: tag.id,
+      chat_service: this.props.chatType == 'facebook_chats' ? 'facebook' : 'whatsapp'
+    }
+
+    this.props.removeCustomerTag(this.state.customer.id, params, csrfToken);
+  }
+
+  onKeyPress = (e) => {
+    if(e.which === 13) {
+      e.preventDefault();
+      if (this.state.newTag.trim() === '') return;
+      
+      this.createTag();
+    }
+  }
+
+  handleNewTagChange = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value
+    })
+  }
+
+  createTag = () => {
+    var params = {
+      tag: this.state.newTag,
+      chat_service: this.props.chatType == 'facebook_chats' ? 'facebook' : 'whatsapp'
+    }
+
+    this.props.createTag(this.state.customer.id, params, csrfToken);
+    this.setState({newTag: ''});
   }
 
   getCustomerInfo = () => {
@@ -204,6 +255,34 @@ class CustomerDetails extends Component {
           </div>
 
           <div>
+            <div>
+              <i className="fs-18 mt-4 mr-4 fas fa-tags editable_name" />
+              <p className="label inline-block">Etiquetas:</p>
+            </div>
+
+            {!this.props.customer.tags || (this.props.customer.tags && this.props.customer.tags.length < 5) &&
+              <div>
+                <SelectableField 
+                  handleSelectTagChange={this.handleSelectTagChange}
+                  isTag={true}
+                  options={this.props.tags}
+                />
+                
+                <input className="input" type="text" name="newTag" value={this.state.newTag} placeholder="Nueva etiqueta" maxLength="20" onChange={this.handleNewTagChange} onKeyPress={this.onKeyPress} />
+              </div>
+            }
+
+            <div className="row bottom-xs">
+              {this.props.customer.tags && this.props.customer.tags.map((tag) => (
+                <div className="customer-saved-tags mt-10">
+                  {tag.tag}
+                  {<i className="fas fa-times f-right mt-2 cursor-pointer" onClick={() => this.removeCustomerTag(tag)}></i>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
             <EditableField 
               handleInputChange={this.handleInputChange}
               content={this.state.customer.notes}
@@ -240,7 +319,8 @@ function mapState(state) {
   return {
     customer: state.customer || {},
     updated: state.updated || false,
-    errors: state.errors || {}
+    errors: state.errors || {},
+    tags: state.tags || []
   };
 }
 
@@ -251,6 +331,18 @@ function mapDispatch(dispatch) {
     },
     updateCustomer: (id, body, token) => {
       dispatch(updateCustomer(id, body, token));
+    },
+    fetchTags: (id) => {
+      dispatch(fetchTags(id));
+    },
+    createCustomerTag: (id, params, token) => {
+      dispatch(createCustomerTag(id, params, token));
+    },
+    removeCustomerTag: (id, params, token) => {
+      dispatch(removeCustomerTag(id, params, token));
+    },
+    createTag: (id, params, token) => {
+      dispatch(createTag(id, params, token));
     }
   };
 }

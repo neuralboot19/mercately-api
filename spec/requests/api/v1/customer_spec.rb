@@ -133,12 +133,43 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
   end
 
   describe 'GET #show' do
+    let(:customer) { create(:customer, retailer: retailer) }
+    let(:tag) { create(:tag, retailer: retailer, tag: 'Prueba 1') }
+    let!(:tag2) { create(:tag, retailer: retailer, tag: 'Prueba 2') }
+    let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer) }
+
     it 'returns the customer data' do
-      get api_v1_customer_path(customer1.id)
+      get api_v1_customer_path(customer.id)
       body = JSON.parse(response.body)
 
       expect(response).to have_http_status(:ok)
       expect(body['customer']).not_to be nil
+    end
+
+    context 'when the customer has tags' do
+      it 'returns the tags assigned' do
+        get api_v1_customer_path(customer.id)
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customer']).not_to be nil
+        expect(body['customer']['tags'].size).to eq(1)
+        expect(body['customer']['tags'][0]['tag']).to eq('Prueba 1')
+      end
+    end
+
+    context 'when the retailer has tags created' do
+      it 'returns the tags that the customer does not have assigned yet' do
+        get api_v1_customer_path(customer.id)
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customer']).not_to be nil
+        expect(body['customer']['tags'].size).to eq(1)
+        expect(body['customer']['tags'][0]['tag']).to eq('Prueba 1')
+        expect(body['tags'].size).to eq(1)
+        expect(body['tags'][0]['tag']).to eq('Prueba 2')
+      end
     end
   end
 
@@ -162,6 +193,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         expect(response).to have_http_status(:ok)
         expect(body['customer']['email']).to eq(data[:email])
         expect(body['errors']).to be nil
+        expect(body['customer'].keys).to include('tags')
+        expect(body.keys).to include('tags')
       end
     end
 
@@ -174,6 +207,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         expect(response).to have_http_status(:bad_request)
         expect(body['errors']).not_to be nil
         expect(body['errors']['email']).to eq(['invalido'])
+        expect(body['customer'].keys).to include('tags')
+        expect(body.keys).to include('tags')
       end
     end
   end
@@ -367,7 +402,95 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         expect(response.code).to eq('400')
         expect(body['error']).to eq('Error al aceptar opt-in de este cliente, intente nuevamente')
       end
+    end
+  end
 
+  describe 'GET #selectable_tags' do
+    let(:customer) { create(:customer, retailer: retailer) }
+    let!(:tag) { create(:tag, retailer: retailer, tag: 'Prueba 1') }
+    let!(:tag2) { create(:tag, retailer: retailer, tag: 'Prueba 2') }
+
+    context 'when the customer has no tags assigned' do
+      it 'returns all the retailer tags' do
+        get api_v1_selectable_tags_path(customer.id)
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['tags'].size).to eq(2)
+      end
+    end
+
+    context 'when the customer has tags assigned' do
+      let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer) }
+
+      it 'returns all not assigned tags' do
+        get api_v1_selectable_tags_path(customer.id)
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['tags'].size).to eq(1)
+        expect(body['tags'][0]['tag']).to eq('Prueba 2')
+      end
+    end
+  end
+
+  describe 'POST #add_customer_tag' do
+    let(:customer) { create(:customer, retailer: retailer) }
+    let(:tag) { create(:tag, retailer: retailer, tag: 'Prueba 1') }
+    let!(:tag2) { create(:tag, retailer: retailer, tag: 'Prueba 2') }
+
+    it 'assigns a new tag to the customer' do
+      expect(customer.customer_tags.size).to eq(0)
+
+      post api_v1_add_customer_tag_path(customer.id), params: { tag_id: tag.id }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(customer.customer_tags.reload.size).to eq(1)
+      expect(body['customer']['tags'].size).to eq(1)
+      expect(body['customer']['tags'][0]['tag']).to eq('Prueba 1')
+      expect(body['tags'].size).to eq(1)
+      expect(body['tags'][0]['tag']).to eq('Prueba 2')
+    end
+  end
+
+  describe 'DELETE #remove_customer_tag' do
+    let(:customer) { create(:customer, retailer: retailer) }
+    let(:tag) { create(:tag, retailer: retailer, tag: 'Prueba 1') }
+    let!(:tag2) { create(:tag, retailer: retailer, tag: 'Prueba 2') }
+    let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer) }
+
+    it 'removes the tag from the customer' do
+      expect(customer.customer_tags.size).to eq(1)
+
+      delete api_v1_remove_customer_tag_path(customer.id), params: { tag_id: tag.id }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(customer.customer_tags.reload.size).to eq(0)
+      expect(body['customer']['tags'].size).to eq(0)
+      expect(body['tags'].size).to eq(2)
+    end
+  end
+
+  describe 'POST #add_tag' do
+    let(:customer) { create(:customer, retailer: retailer) }
+    let!(:tag) { create(:tag, retailer: retailer, tag: 'Prueba 1') }
+
+    it 'adds a new tag to the retailer and assigns it to the customer' do
+      expect(customer.customer_tags.size).to eq(0)
+      expect(retailer.tags.size).to eq(1)
+
+      post api_v1_add_tag_path(customer.id), params: { tag: 'Prueba 2' }
+      body = JSON.parse(response.body)
+
+      expect(response).to have_http_status(:ok)
+      expect(customer.customer_tags.reload.size).to eq(1)
+      expect(retailer.tags.reload.size).to eq(2)
+      expect(body['customer']['tags'].size).to eq(1)
+      expect(body['customer']['tags'][0]['tag']).to eq('Prueba 2')
+      expect(body['tags'].size).to eq(1)
+      expect(body['tags'][0]['tag']).to eq('Prueba 1')
     end
   end
 end
