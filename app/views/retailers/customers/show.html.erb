@@ -42,7 +42,12 @@
                   <div class="col-xs-12 col-sm-6">
                     <label class="c-grey fs-14">Teléfono:</label> <span class="c-secondary fs-14"><%= @customer.phone %></span><br />
                     <% if can_send_whatsapp_notification?(current_retailer_user, @customer) %>
-                      <label for="modal--toggle" class="request-demo-label fz-15 ws-contact d-none">
+                      <label
+                        for="modal--toggle"
+                        class="request-demo-label fz-15 ws-contact d-none"
+                        data-customer_id="<%= @customer.id %>"
+                        data-whatsapp_opt_in="<%= @customer.whatsapp_opt_in || false %>"
+                      >
                       <i class="fab fa-whatsapp fz-16 mr-5"></i>
                       Enviar Notificación
                     <% end %>

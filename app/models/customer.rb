@@ -240,6 +240,10 @@ class Customer < ApplicationRecord
     facebook_messages.last
   end
 
+  def accept_opt_in!
+    verify_opt_in
+  end
+
   private
 
     def update_valid_customer
@@ -274,7 +278,7 @@ class Customer < ApplicationRecord
 
     def verify_opt_in
       return unless retailer.gupshup_integrated? && ActiveModel::Type::Boolean.new.cast(send_for_opt_in) == true &&
-        whatsapp_opt_in == false && phone.present?
+        !whatsapp_opt_in.present? && phone.present?
 
       number = self.phone_number(false)
       CSV.open("#{Rails.public_path}/#{id}_opt_in.csv", 'wb') do |csv|

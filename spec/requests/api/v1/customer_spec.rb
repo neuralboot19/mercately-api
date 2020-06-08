@@ -271,4 +271,42 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
     end
   end
+
+  describe 'PATCH #accept_opt_in' do
+    context 'when Gupshup integrated' do
+      let(:retailer_gupshup) { create(:retailer, :gupshup_integrated) }
+      let(:retailer_user_gupshup) { create(:retailer_user, :admin, retailer: retailer_gupshup) }
+      let(:customer_optin_false) { create(:customer, retailer: retailer_gupshup, whatsapp_opt_in: false) }
+
+      let(:service_response) {
+        {:code=>"200", :body=>{"status"=>true}}
+      }
+
+      before do
+        allow(CSV).to receive(:open).and_return(true)
+        allow(File).to receive(:open).and_return(true)
+        allow(File).to receive(:delete).and_return(true)
+        allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:upload_list).and_return(service_response)
+
+        sign_out retailer_user
+        sign_in retailer_user_gupshup
+      end
+
+      it 'will response a 200 status code and updates whatsapp_opt_in to true' do
+        patch "/api/v1/accept_optin_for_whatsapp/#{customer_optin_false.id}"
+        expect(response.code).to eq('200')
+      end
+
+      it 'will response a 400 status code if opt-in not updated' do
+        allow_any_instance_of(Customer).to receive(:accept_opt_in!).and_return(false)
+        patch "/api/v1/accept_optin_for_whatsapp/#{customer_optin_false.id}"
+
+        body = JSON.parse(response.body)
+
+        expect(response.code).to eq('400')
+        expect(body['error']).to eq('Error al aceptar opt-in de este cliente, intente nuevamente')
+      end
+
+    end
+  end
 end
