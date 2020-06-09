@@ -27,7 +27,37 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
       end
 
       context 'when the response from Gupshup has errors' do
-        it 'fails, response a 500 status'
+        let!(:gupshup_message) do
+          create(:gupshup_whatsapp_message, retailer: retailer, gupshup_message_id:
+            'f7fd3d13-bc80-47e4-8697-2f2611a20b70')
+        end
+
+        let(:failed_response) do
+          {
+            'gupshup_whatsapp': {
+              'app': retailer.gupshup_src_name,
+              'timestamp': 159_127_605_500_0,
+              'version': 2,
+              'type': 'message-event',
+              'payload': {
+                'id': 'f7fd3d13-bc80-47e4-8697-2f2611a20b70',
+                'type': 'failed',
+                'destination': '584145223776',
+                'payload': {
+                  'code': 1005,
+                  'reason': 'Message sending failed as user is inactive for session message and template did not match'
+                }
+              }
+            }
+          }
+        end
+        it 'fails, updates the message and returns ok' do
+          post '/gupshup/ws', params: failed_response
+
+          expect(gupshup_message.status).to eq('submitted')
+          expect(response.code).to eq('200')
+          expect(gupshup_message.reload.status).to eq('error')
+        end
       end
 
       context 'when the appName requested from Gupshup does not exist' do

@@ -3,11 +3,12 @@ class Retailers::PaymentPlansController < RetailersController
 
   def index
     @payment_plan = PaymentPlan.find_by(retailer_id: current_retailer.id)
-    used_whatsapp_messages
+    used_whatsapp_messages if current_retailer.whatsapp_integrated?
   end
 
   def subscribe
-    redirect_to retailers_payment_plans_path(current_retailer), alert: 'Gracias por adquirir tu plan. Puedes continuar usando Mercately libremente.'
+    redirect_to retailers_payment_plans_path(current_retailer), alert: 'Gracias por adquirir tu plan. ' \
+      'Puedes continuar usando Mercately libremente.'
   end
 
   def unsubscribe

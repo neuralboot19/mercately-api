@@ -256,4 +256,52 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
       end
     end
   end
+
+  describe '#apply_cost' do
+    let(:retailer) { create(:retailer, :gupshup_integrated) }
+
+    context 'when the message status is not error' do
+      let(:message) { build(:gupshup_whatsapp_message, retailer: retailer) }
+
+      context 'when the message cost is zero' do
+        it 'assigns the retailer conversation/notification cost to the message' do
+          expect(message.cost).to be nil
+          message.save
+          expect(message.reload.cost).to eq(retailer.send("ws_#{message.message_type}_cost"))
+        end
+      end
+
+      context 'when the message cost is not zero' do
+        it 'does not change the message cost' do
+          expect(message.cost).to be nil
+          message.cost = 0.05
+          message.save
+          expect(message.reload.cost).to eq(0.05)
+        end
+      end
+    end
+
+    context 'when the message status is error' do
+      let(:message) do
+        build(:gupshup_whatsapp_message, retailer: retailer, status: 'error', cost: 0.05)
+      end
+
+      context 'when the message cost is not zero' do
+        it 'sets the message cost to zero' do
+          expect(message.cost).to eq(0.05)
+          message.save
+          expect(message.reload.cost).to eq(0)
+        end
+      end
+
+      context 'when the message cost is zero' do
+        it 'does not change the message cost' do
+          message.cost = 0
+          expect(message.cost).to eq(0)
+          message.save
+          expect(message.reload.cost).to eq(0)
+        end
+      end
+    end
+  end
 end

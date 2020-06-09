@@ -67,6 +67,8 @@ RSpec.describe CustomerHelper, type: :helper do
             agent_customer.customer.phone = '+593123456789'
             retailer_user_admin.retailer.whats_app_enabled = true
             retailer_user_admin.retailer.karix_whatsapp_phone = '593123456789'
+            retailer_user_admin.retailer.karix_account_uid = 'MyKarixUid'
+            retailer_user_admin.retailer.karix_account_token = 'MyKarixToken'
 
             expect(helper.can_send_whatsapp_notification?(retailer_user_admin,
               agent_customer.customer)).to be true
@@ -103,6 +105,8 @@ RSpec.describe CustomerHelper, type: :helper do
           agent_customer.customer.phone = '+593123456789'
           retailer_user_with_customer.retailer.whats_app_enabled = true
           retailer_user_with_customer.retailer.karix_whatsapp_phone = '+593123456789'
+          retailer_user_admin.retailer.karix_account_uid = 'MyKarixUid'
+          retailer_user_admin.retailer.karix_account_token = 'MyKarixToken'
 
           expect(helper.can_send_whatsapp_notification?(retailer_user_with_customer,
             agent_customer.customer)).to be true
