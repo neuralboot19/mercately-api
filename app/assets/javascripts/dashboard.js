@@ -10,7 +10,7 @@ $(document).ready(function(){
     if ($(this).data('whatsapp_opt_in') || ENV['INTEGRATION'] == '0')
       return true;
 
-    if (confirm('Tengo el permiso explicito de enviar mensajes a este número (opt-in)')) {
+    if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
 
       var id = $(this).data('customer_id');
       var token =  $('meta[name="csrf-token"]').attr('content');
