@@ -340,7 +340,7 @@ class ChatMessages extends Component {
       this.toggleModal();
     } else {
       if (this.opted_in == false) {
-        if (confirm('Tengo el permiso explicito de enviar mensajes a este número (opt-in)')) {
+        if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
           var id = this.props.currentCustomer;
 
           const requestOptions = {
