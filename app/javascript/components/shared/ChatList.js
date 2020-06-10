@@ -71,10 +71,7 @@ class ChatList extends Component {
       customerList = this.insertCustomer(customerList, customer, index);
     }
 
-    if (this.props.chatType == 'whatsapp') {
-      this.props.setRemovedCustomerInfo(data);
-    }
-
+    this.props.setRemovedCustomerInfo(data);
     this.setState({
       customers: customerList
     });
@@ -252,11 +249,6 @@ class ChatList extends Component {
 
   updateList = (data) => {
     var customer = data.customer.customer;
-    if (customer.id != this.props.currentCustomer) {
-      if (this.props.chatType == "facebook"){
-        customer["unread_message?"] = true;
-      }
-    }
     this.updateCustomerList(data);
   }
 

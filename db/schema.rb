@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_03_173256) do
+ActiveRecord::Schema.define(version: 2020_06_11_152058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,7 +118,8 @@ ActiveRecord::Schema.define(version: 2020_06_03_173256) do
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
-    t.boolean "unread_chat", default: false
+    t.boolean "unread_whatsapp_chat", default: false
+    t.boolean "unread_messenger_chat", default: false
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 

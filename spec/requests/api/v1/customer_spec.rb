@@ -17,57 +17,118 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
   end
 
   describe 'GET #index' do
-    it 'responses with all customers' do
-      get api_v1_customers_path
-      body = JSON.parse(response.body)
+    describe 'when the current retailer user is admin' do
+      it 'responses with all customers' do
+        get api_v1_customers_path
+        body = JSON.parse(response.body)
 
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(2)
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(2)
+      end
+
+      it 'filters customers by first_name' do
+        get api_v1_customers_path, params: { searchString: customer2.first_name }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by last_name' do
+        get api_v1_customers_path, params: { searchString: customer2.last_name }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by first_name and last_name' do
+        get api_v1_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by email' do
+        get api_v1_customers_path, params: { searchString: customer1.email }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by phone' do
+        get api_v1_customers_path, params: { searchString: customer1.phone }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
     end
 
-    it 'filters customers by first_name' do
-      get api_v1_customers_path, params: { searchString: customer2.first_name }
-      body = JSON.parse(response.body)
+    describe 'when current retailer user is agent' do
+      before do
+        retailer_user.update_attribute(:retailer_admin, false)
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
-    end
+      it 'responses with all customers' do
+        get api_v1_customers_path
+        body = JSON.parse(response.body)
 
-    it 'filters customers by last_name' do
-      get api_v1_customers_path, params: { searchString: customer2.last_name }
-      body = JSON.parse(response.body)
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(2)
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
-    end
+      it 'filters customers by first_name' do
+        get api_v1_customers_path, params: { searchString: customer2.first_name }
+        body = JSON.parse(response.body)
 
-    it 'filters customers by first_name and last_name' do
-      get api_v1_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
-      body = JSON.parse(response.body)
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
-    end
+      it 'filters customers by last_name' do
+        get api_v1_customers_path, params: { searchString: customer2.last_name }
+        body = JSON.parse(response.body)
 
-    it 'filters customers by email' do
-      get api_v1_customers_path, params: { searchString: customer1.email }
-      body = JSON.parse(response.body)
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
-    end
+      it 'filters customers by first_name and last_name' do
+        get api_v1_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
+        body = JSON.parse(response.body)
 
-    it 'filters customers by phone' do
-      get api_v1_customers_path, params: { searchString: customer1.phone }
-      body = JSON.parse(response.body)
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      it 'filters customers by email' do
+        get api_v1_customers_path, params: { searchString: customer1.email }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by phone' do
+        get api_v1_customers_path, params: { searchString: customer1.phone }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
     end
   end
 

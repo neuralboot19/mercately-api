@@ -454,7 +454,8 @@ class ChatMessages extends Component {
     if (r == true) {
       var params = {
         agent: {
-          retailer_user_id: agent[0] ? agent[0].id : null
+          retailer_user_id: agent[0] ? agent[0].id : null,
+          chat_service: 'whatsapp'
         }
       };
 

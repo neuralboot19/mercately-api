@@ -91,7 +91,7 @@ class Customer < ApplicationRecord
   end
 
   def unread_message?
-    facebook_messages.where(sent_from_mercately: false).last&.date_read.blank?
+    self.unread_messenger_chat || facebook_messages.where(sent_from_mercately: false).last&.date_read.blank?
   end
 
   def last_message_received_date

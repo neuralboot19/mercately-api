@@ -19,35 +19,40 @@ class Api::V1::AgentCustomersController < ApplicationController
     # Si no hay problemas al guardar
     if @agent_customer.save
       # Se preparan los agentes que van a ser notificados
-      agents = [
-        @agent_customer.retailer_user,
-        former_agent
-      ].compact # <---Se eliminan los valores nulos si es que es un nuevo registro
+      if former_agent.present?
+        agents = [
+          @agent_customer.retailer_user,
+          former_agent
+        ].compact # <---Se eliminan los valores nulos si es que es un nuevo registro
 
-      @agent_customer.customer.update_attribute(:unread_chat, true)
+        data = [
+          current_retailer,
+          agents,
+          nil,
+          @agent_customer
+        ]
+      else
+        data = [
+          current_retailer,
+          current_retailer.retailer_users.to_a,
+          nil,
+          @agent_customer
+        ]
+      end
 
       # Se envian las notificaciones
-      if former_agent
-        if current_retailer.karix_integrated?
-          KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, @agent_customer)
-        elsif current_retailer.gupshup_integrated?
+      case assign_agent_params.try(:[],:chat_service)
+      when 'facebook'
+        @agent_customer.customer.update_attribute(:unread_messenger_chat, true)
+        facebook_helper = FacebookNotificationHelper
+        facebook_helper.broadcast_data(*data)
+      when 'whatsapp'
+        @agent_customer.customer.update_attribute(:unread_whatsapp_chat, true)
+        if current_retailer.gupshup_integrated?
           gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
-          gnhm.notify_agent!(
-            current_retailer,
-            agents,
-            @agent_customer
-          )
-        end
-      else
-        if current_retailer.karix_integrated?
-          KarixNotificationHelper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil, @agent_customer)
-        elsif current_retailer.gupshup_integrated?
-          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
-          gnhm.notify_agent!(
-            current_retailer,
-            current_retailer.retailer_users.to_a,
-            @agent_customer
-          )
+          gnhm.notify_agent!(*data.compact)
+        elsif current_retailer.karix_integrated?
+          KarixNotificationHelper.broadcast_data(*data)
         end
       end
 
@@ -72,7 +77,7 @@ class Api::V1::AgentCustomersController < ApplicationController
     end
 
     def assign_agent_params
-      params.require(:agent).permit(:retailer_user_id)
+      params.require(:agent).permit(:retailer_user_id, :chat_service)
     end
 
     def will_be_destroyed?
@@ -80,21 +85,25 @@ class Api::V1::AgentCustomersController < ApplicationController
         # Se elimina el agente asignado si se recibe nil
         @agent_customer.destroy!
 
+        data = [
+          current_retailer,
+          current_retailer.retailer_users.to_a,
+          nil,
+          @agent_customer
+        ]
+
         # Se envian las notificaciones
-        if current_retailer.karix_integrated?
-          KarixNotificationHelper.broadcast_data(
-            current_retailer,
-            current_retailer.retailer_users.to_a,
-            nil,
-            @agent_customer
-          )
-        elsif current_retailer.gupshup_integrated?
-          gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
-          gnhm.notify_agent!(
-            current_retailer,
-            current_retailer.retailer_users.to_a,
-            @agent_customer
-          )
+        case assign_agent_params.try(:[],:chat_service)
+        when 'facebook'
+          facebook_helper = FacebookNotificationHelper
+          facebook_helper.broadcast_data(*data)
+        when 'whatsapp'
+          if current_retailer.karix_integrated?
+            KarixNotificationHelper.broadcast_data(*data)
+          elsif current_retailer.gupshup_integrated?
+            gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
+            gnhm.notify_agent!(*data.compact)
+          end
         end
 
         render status: 200, json: { message: 'Esta conversación no tiene agente asignado' }

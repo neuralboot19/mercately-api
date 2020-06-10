@@ -25,14 +25,21 @@ class ChatListUser extends Component {
     return (
       <div className={`profile fs-14 box ${this.props.currentCustomer == customer.id ? 'border border--secondary chat-selected' : 'border border--transparent'}`} onClick={() => this.props.handleOpenChat(this.props.customer)}>
         <div className="profile__data row">
-          {(customer.unread_chat === true || customer.unread_whatsapp_messages > 0 || customer["unread_whatsapp_message?"] === true) &&
-            <div className="tooltip">
-              <b className="item__cookie item__cookie_whatsapp_messages notification">
-                {customer.unread_whatsapp_messages > 0 &&
-                  customer.unread_whatsapp_messages
-                }
-              </b>
-            </div>
+          {this.props.chatType === 'facebook' ? (
+              customer['unread_message?'] === true &&
+                <div className="tooltip">
+                  <b className="item__cookie item__cookie_whatsapp_messages notification"></b>
+                </div>
+            ) : (
+              (customer.unread_whatsapp_chat === true || customer.unread_whatsapp_messages > 0 || customer["unread_whatsapp_message?"] === true) &&
+                <div className="tooltip">
+                  <b className="item__cookie item__cookie_whatsapp_messages notification">
+                    {customer.unread_whatsapp_messages > 0 &&
+                      customer.unread_whatsapp_messages
+                    }
+                  </b>
+                </div>
+            )
           }
           <div className="img__profile col-xs-2 p-0">
             <div className="rounded-circle mw-100" >
@@ -45,9 +52,12 @@ class ChatListUser extends Component {
                 { customer.last_messenger_message.sent_by_retailer === true && customer.last_messenger_message.date_read &&
                   <i className="fas fa-check-double black"></i>
                 }
+                <div className={`fw-muted time-from`}>
+                  {moment(customer.recent_message_date).locale('es').fromNow()}
+                </div>
               </div>
-              <div className={customer["unread_message?"] ? 'fw-bold' : ''}>
-                {moment(customer.recent_message_date).locale('es').fromNow()}
+              <div className={`${customer["unread_message?"] ? 'fw-bold' : ''}`}>
+                <small>{this.agentName(customer.assigned_agent)}</small>
               </div>
             </div>
           )}
