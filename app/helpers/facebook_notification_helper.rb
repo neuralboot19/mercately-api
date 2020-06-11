@@ -3,7 +3,8 @@ module FacebookNotificationHelper
     retailer,
     retailer_users,
     message,
-    assigned_agent = args
+    assigned_agent,
+    customer = args
 
     total = retailer.facebook_unread_messages.size
 
@@ -15,11 +16,10 @@ module FacebookNotificationHelper
 
     retailer_users = retailer_users | retailer.admins
 
-    customer = message&.customer || assigned_agent&.customer
+    customer = message&.customer || assigned_agent&.customer || customer
     serialized_customer = ActiveModelSerializers::Adapter::Json.new(
       CustomerSerializer.new(customer)
     ).serializable_hash if customer.present?
-
     retailer_users.each do |ret_u|
       redis.publish 'new_message_counter', {identifier: '.item__cookie_facebook_messages', total:
         total, room: ret_u.id}.to_json

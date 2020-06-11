@@ -193,6 +193,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
       admins = current_retailer.retailer_users.where(retailer_admin: true).to_a
       agents = [@customer.agent] | admins
     end
+
     case params.try(:[],:chat_service)
     when 'facebook'
       # Se setea el chat como unread
@@ -202,7 +203,8 @@ class Api::V1::KarixWhatsappController < ApplicationController
         current_retailer,
         agents,
         nil,
-        @customer.agent_customer
+        @customer.agent_customer,
+        @customer
       )
     when 'whatsapp'
       # Se setea el chat como unread
@@ -230,6 +232,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
               @customer.as_json(
                 methods: [
                   :unread_whatsapp_message?,
+                  :unread_message?,
                   :recent_inbound_message_date,
                   :assigned_agent,
                   :last_whatsapp_message,

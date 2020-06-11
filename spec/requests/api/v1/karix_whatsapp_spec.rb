@@ -688,4 +688,78 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
     end
   end
+
+  describe 'PUT #set_chat_as_unread' do
+    describe 'when chat service is facebook' do
+      before do
+        allow(FacebookNotificationHelper).to receive(:broadcast_data).and_return(true)
+      end
+
+      it 'sets the chat as unread' do
+        patch "/api/v1/whatsapp_unread_chat/#{customer1.id}",
+          params: {
+            chat_service: 'facebook'
+          }
+
+        expect(response.code).to eq('200')
+        expect(customer1.reload.unread_messenger_chat).to eq(true)
+      end
+    end
+
+    describe 'when chat service is whatsapp' do
+      describe 'when the retailer is karix integrated' do
+        before do
+          allow(KarixNotificationHelper).to receive(:broadcast_data).and_return(true)
+        end
+
+        it 'sets the chat as unread' do
+          patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
+            params: {
+              chat_service: 'whatsapp'
+            }
+
+          expect(response.code).to eq('200')
+          expect(customer2.reload.unread_whatsapp_chat).to eq(true)
+        end
+      end
+
+      describe 'when the retailer is gupshup integrated' do
+        before do
+          allow_any_instance_of(Whatsapp::Gupshup::V1::Helpers::Messages).to receive(:notify_new_counter).and_return(true)
+
+          sign_out retailer_user
+          sign_in retailer_user_gupshup
+        end
+
+        it 'sets the chat as unread' do
+          patch "/api/v1/whatsapp_unread_chat/#{customer3.id}",
+            params: {
+              chat_service: 'whatsapp'
+            }
+
+          expect(response.code).to eq('200')
+          expect(customer3.reload.unread_whatsapp_chat).to eq(true)
+        end
+      end
+
+      it 'includes assigned_agent if customer has an agent assigned' do
+        agent_retailer_user = create(:retailer_user, :agent, retailer: retailer)
+        AgentCustomer.create(retailer_user: agent_retailer_user, customer: customer2)
+
+        patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
+          params: {
+            chat_service: 'whatsapp'
+          }
+
+        body = JSON.parse(response.body)
+        expect(response.code).to eq('200')
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'].first['assigned_agent']).to eq({
+          "id" => customer2.agent.id,
+          "email" => customer2.agent.email,
+          "full_name" => customer2.agent.full_name
+        })
+      end
+    end
+  end
 end

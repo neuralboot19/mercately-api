@@ -9,7 +9,8 @@ import {
 } from "../../actions/actions";
 
 import {
-  changeCustomerAgent
+  changeCustomerAgent,
+  setNoRead
 } from "../../actions/whatsapp_karix";
 
 import MessageForm from './MessageForm';
@@ -238,6 +239,11 @@ class ChatMessages extends Component {
     }
   }
 
+  setNoRead = (e) => {
+    e.preventDefault();
+    this.props.setNoRead(this.props.currentCustomer, csrfToken, 'facebook');
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -271,6 +277,9 @@ class ChatMessages extends Component {
                   <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
                 ))}
               </select>
+            </div>
+            <div className='mark-no-read'>
+              <button onClick={(e) => this.setNoRead(e)} className='btn btn--cta btn-small right'>Marcar como no leído</button>
             </div>
           </div>
           )}
@@ -342,6 +351,9 @@ function mapDispatch(dispatch) {
     },
     changeCustomerAgent: (id, body, token) => {
       dispatch(changeCustomerAgent(id, body, token));
+    },
+    setNoRead: (customer_id, token, chatType) => {
+      dispatch(setNoRead(customer_id, token, chatType));
     }
   };
 }
