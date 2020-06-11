@@ -56,7 +56,8 @@ class Api::V1::CustomersController < ApplicationController
       current_retailer,
       current_retailer.retailer_users.to_a,
       nil,
-      @customer.agent_customer
+      @customer.agent_customer,
+      @customer
     )
     render status: 200, json: {
       messages: @messages.to_a.reverse,
