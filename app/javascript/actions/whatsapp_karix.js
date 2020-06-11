@@ -215,7 +215,7 @@ export const getWhatsAppFastAnswers = (page = 1, params) => {
       });
 };
 
-export const setNoRead = (customer_id, token) => {
+export const setNoRead = (customer_id, token, chatService='whatsapp') => {
   const endpoint = `/api/v1/whatsapp_unread_chat/${customer_id}`;
   const csrf_token = token
   return dispatch => {
@@ -227,7 +227,8 @@ export const setNoRead = (customer_id, token) => {
         'X-CSRF-Token': csrf_token,
         'Content-Type': 'application/json',
         'Accept': 'application/json, text/plain, */*',
-      }
+      },
+      body: JSON.stringify({chat_service: chatService})
     }).catch((error) => {
         if (error.response)
           alert(error.response);

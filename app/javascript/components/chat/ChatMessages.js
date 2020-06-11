@@ -1,7 +1,16 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { fetchMessages, sendMessage, sendImg, setMessageAsRead } from "../../actions/actions";
+import {
+  fetchMessages,
+  sendMessage,
+  sendImg,
+  setMessageAsRead
+} from "../../actions/actions";
+
+import {
+  changeCustomerAgent
+} from "../../actions/whatsapp_karix";
 
 import MessageForm from './MessageForm';
 import Message from './Message';
@@ -20,7 +29,8 @@ class ChatMessages extends Component {
       scrolable: false,
       isModalOpen: false,
       url: '',
-      fastAnswerText: null
+      fastAnswerText: null,
+      agents: [],
     };
     this.bottomRef = React.createRef();
   }
@@ -210,6 +220,24 @@ class ChatMessages extends Component {
     return classes;
   }
 
+  handleAgentAssignment = (e) => {
+    var value = parseInt(e.target.value);
+    var agent = this.props.agent_list.filter(agent => agent.id === value);
+
+    var r = confirm("Estás seguro de asignar este chat a otro agente?");
+    if (r == true) {
+      var params = {
+        agent: {
+          retailer_user_id: agent[0] ? agent[0].id : null,
+          chat_service: 'facebook'
+        }
+      };
+
+      this.props.customerDetails.assigned_agent.id = value;
+      this.props.changeCustomerAgent(this.props.currentCustomer, params, csrfToken);
+    }
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -233,6 +261,19 @@ class ChatMessages extends Component {
             </div>
           </div>
         )}
+        { this.props.currentCustomer != 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+          (<div className="top-chat-bar pl-10">
+            <div className='assigned-to'>
+              <small>Asignado a: </small>
+              <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={(e) => this.handleAgentAssignment(e)}>
+                <option value="">No asignado</option>
+                {this.props.agent_list.map((agent, index) => (
+                  <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          )}
         {this.state.isModalOpen && (
           <div className="img_modal">
             <div className="img_modal__overlay" onClick={(e) => this.toggleImgModal(e)}>
@@ -250,18 +291,24 @@ class ChatMessages extends Component {
           ))}
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
-
-        { currentCustomer != 0 &&
-        <div className="col-xs-12">
-          <MessageForm
-            currentCustomer={this.props.currentCustomer}
-            handleSubmitMessage={this.handleSubmitMessage}
-            handleSubmitImg={this.handleSubmitImg}
-            toggleFastAnswers={this.toggleFastAnswers}
-            fastAnswerText={this.state.fastAnswerText}
-            emptyFastAnswerText={this.emptyFastAnswerText}
-          />
-        </div>
+        { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId ?
+          (
+            <div className="col-xs-12">
+              <p>Esta conversación ya ha sido asignada a otro usuario.</p>
+            </div>
+            )
+          : (
+            <div className="col-xs-12">
+              <MessageForm
+                currentCustomer={this.props.currentCustomer}
+                handleSubmitMessage={this.handleSubmitMessage}
+                handleSubmitImg={this.handleSubmitImg}
+                toggleFastAnswers={this.toggleFastAnswers}
+                fastAnswerText={this.state.fastAnswerText}
+                emptyFastAnswerText={this.emptyFastAnswerText}
+              />
+            </div>
+          )
         }
       </div>
     )
@@ -272,7 +319,10 @@ function mapStateToProps(state) {
   return {
     messages: state.messages || [],
     message: state.message || [],
-    total_pages: state.total_pages || 0
+    total_pages: state.total_pages || 0,
+    agents: state.agents || [],
+    agent_list: state.agent_list || [],
+    customer: state.customer
   };
 }
 
@@ -289,6 +339,9 @@ function mapDispatch(dispatch) {
     },
     setMessageAsRead: (id, token) => {
       dispatch(setMessageAsRead(id, token))
+    },
+    changeCustomerAgent: (id, body, token) => {
+      dispatch(changeCustomerAgent(id, body, token));
     }
   };
 }

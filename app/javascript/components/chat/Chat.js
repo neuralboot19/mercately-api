@@ -17,7 +17,10 @@ class Chat extends Component {
       showChatMessagesSelect: true,
       showChatMessages: true,
       showCustomerDetails: true,
-      onMobile: false
+      onMobile: false,
+      removedCustomer: null,
+      removedCustomerId: null,
+      newAgentAssignedId: null
     };
   }
 
@@ -27,7 +30,10 @@ class Chat extends Component {
       ...this.state,
       currentCustomer: customer_details.id,
       currentCustomerDetails: customer_details,
-      showFastAnswers: false
+      showFastAnswers: false,
+      removedCustomer: null,
+      removedCustomerId: null,
+      newAgentAssignedId: null
     });
 
     if (this.state.onMobile) {
@@ -104,6 +110,14 @@ class Chat extends Component {
     }
   }
 
+  setRemovedCustomerInfo = (data) => {
+    this.setState({
+      removedCustomer: data.remove_only,
+      removedCustomerId: data.customer.customer.id,
+      newAgentAssignedId: this.state.currentCustomer == data.customer.customer.id ? data.customer.customer.assigned_agent.id : null
+    })
+  }
+
   render() {
     return (
       <div className="box">
@@ -114,6 +128,8 @@ class Chat extends Component {
                 handleOpenChat={this.handleOpenChat}
                 currentCustomer={this.state.currentCustomer}
                 chatType="facebook"
+                setRemovedCustomerInfo={this.setRemovedCustomerInfo}
+                storageId={$('meta[name=user_storage]').attr("content")}
               />
             </div>
           )}
@@ -135,6 +151,9 @@ class Chat extends Component {
                 backToChatList={this.backToChatList}
                 editCustomerDetails={this.editCustomerDetails}
                 customerDetails={this.state.currentCustomerDetails}
+                removedCustomer={this.state.removedCustomer}
+                removedCustomerId={this.state.removedCustomerId}
+                newAgentAssignedId={this.state.newAgentAssignedId}
               />
             </div>
           )}

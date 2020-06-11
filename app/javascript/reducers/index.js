@@ -30,6 +30,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         messages: action.data.messages,
+        agent_list: action.data.agent_list,
         total_pages: action.data.total_pages
       }
     case 'SET_SEND_MESSAGE':
