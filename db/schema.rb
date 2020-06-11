@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_01_150949) do
+ActiveRecord::Schema.define(version: 2020_06_11_152058) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,7 +118,8 @@ ActiveRecord::Schema.define(version: 2020_06_01_150949) do
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
-    t.boolean "unread_chat", default: false
+    t.boolean "unread_whatsapp_chat", default: false
+    t.boolean "unread_messenger_chat", default: false
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
 
@@ -184,6 +185,7 @@ ActiveRecord::Schema.define(version: 2020_06_01_150949) do
     t.datetime "updated_at", null: false
     t.string "message_type"
     t.bigint "retailer_user_id"
+    t.float "cost"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
     t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
@@ -221,6 +223,7 @@ ActiveRecord::Schema.define(version: 2020_06_01_150949) do
     t.bigint "customer_id"
     t.string "message_type"
     t.bigint "retailer_user_id"
+    t.float "cost"
     t.index ["customer_id"], name: "index_karix_whatsapp_messages_on_customer_id"
     t.index ["retailer_id"], name: "index_karix_whatsapp_messages_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_karix_whatsapp_messages_on_retailer_user_id"

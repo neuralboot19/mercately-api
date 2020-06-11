@@ -24,7 +24,6 @@ module Whatsapp::Gupshup::V1::Helpers
       customer.whatsapp_name = whatsapp_name if whatsapp_name
 
       customer.country_id = country
-      customer.send_for_opt_in = true if customer.whatsapp_opt_in == false
 
       customer.save!
       customer

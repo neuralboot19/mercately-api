@@ -8,13 +8,6 @@ class GupshupWhatsappController < ApplicationController
 
     event = save_message_params[:payload][:type]
 
-    if event == 'failed'
-      Rails.logger.error(save_message_params[:payload])
-      event_handler = Whatsapp::Gupshup::V1::EventHandler.new(retailer)
-      event_handler.process_error!(save_message_params)
-      return render status: :ok, json: ''
-    end
-
     # Get the retailer by its gupshup_src_name, which is the gupshup app name
     retailer = Retailer.find_by_gupshup_src_name(save_message_params[:app])
 
@@ -24,6 +17,13 @@ class GupshupWhatsappController < ApplicationController
 
       Rails.logger.error(message)
       return render status: 404, json: message
+    end
+
+    if event == 'failed'
+      Rails.logger.error(save_message_params[:payload])
+      event_handler = Whatsapp::Gupshup::V1::EventHandler.new(retailer)
+      event_handler.process_error!(save_message_params)
+      return render status: :ok, json: ''
     end
 
     event_handler = Whatsapp::Gupshup::V1::EventHandler.new(retailer)

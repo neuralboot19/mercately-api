@@ -49,6 +49,7 @@ class ChatMessages extends Component {
       updated: true
     };
     this.bottomRef = React.createRef();
+    this.opted_in = false;
   }
 
   handleLoadMore = () => {
@@ -62,6 +63,7 @@ class ChatMessages extends Component {
 
   componentDidMount() {
     let id = this.props.currentCustomer;
+    this.opted_in = this.props.customerDetails.whatsapp_opt_in;
     currentCustomer = id;
 
     this.setState({
@@ -119,6 +121,11 @@ class ChatMessages extends Component {
         messages: newProps.messages.concat(this.state.messages),
         load_more: false,
         can_write: moment().local().diff(rDate, 'hours') < 24
+      }, () => {
+        this.opted_in = false
+        if (this.props.customer !== undefined) {
+          this.opted_in = this.props.customer.whatsapp_opt_in || false
+        }
       })
     }
 
@@ -142,6 +149,7 @@ class ChatMessages extends Component {
       currentCustomer = id;
       total_pages = 0;
       this.scrollToBottom();
+      this.opted_in = this.props.customer.whatsapp_opt_in;
       this.setState({
         messages: [],
         page: 1,
@@ -327,6 +335,35 @@ class ChatMessages extends Component {
     });
   }
 
+  openModal = () => {
+    if (this.props.customer.whatsapp_opt_in || ENV['INTEGRATION'] == '0' || this.opted_in) {
+      this.toggleModal();
+    } else {
+      if (this.opted_in == false) {
+        if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
+          var id = this.props.currentCustomer;
+
+          const requestOptions = {
+              method: 'PATCH',
+              headers: { 'X-CSRF-Token': csrfToken }
+          };
+
+          fetch('/api/v1/accept_optin_for_whatsapp/' + id, requestOptions)
+          .then(async response => {
+              const data = await response.json();
+
+              if (response.ok) {
+                this.opted_in = true;
+                this.toggleModal();
+              } else {
+                const error = (data && data.message) || response.status;
+                return Promise.reject(error);
+              }
+          });
+        }
+      }
+    }
+  }
 
   toggleModal = () => {
     this.setState({
@@ -417,7 +454,8 @@ class ChatMessages extends Component {
     if (r == true) {
       var params = {
         agent: {
-          retailer_user_id: agent[0] ? agent[0].id : null
+          retailer_user_id: agent[0] ? agent[0].id : null,
+          chat_service: 'whatsapp'
         }
       };
 
@@ -555,7 +593,7 @@ class ChatMessages extends Component {
                 this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) ?
                   (
                     <div className="col-xs-12">
-                      <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={(e) => this.toggleModal() }   >plantilla</a>.</p>
+                      <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={() => this.openModal() }   >plantilla</a>.</p>
                     </div>
                   ) : (
                     this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
@@ -636,7 +674,8 @@ function mapStateToProps(state) {
     handleMessageEvents: state.handle_message_events || false,
     recentInboundMessageDate: state.recentInboundMessageDate || null,
     errorSendMessageStatus: state.errorSendMessageStatus,
-    errorSendMessageText: state.errorSendMessageText
+    errorSendMessageText: state.errorSendMessageText,
+    customer: state.customer
   };
 }
 

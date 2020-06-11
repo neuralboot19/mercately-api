@@ -14,7 +14,7 @@ module CustomerHelper
     agent_or_asigned = retailer_user.agent? && retailer_user.customers.select { |c| c.id == customer.id }.any?
     return false unless retailer_user.admin? || ( agent_or_asigned )
 
-    return true if retailer_user.retailer.gupshup_integrated? && customer.whatsapp_opt_in == true
+    return true if retailer_user.retailer.gupshup_integrated? && customer.phone.present?
 
     retailer_user.retailer.karix_integrated? && customer.phone.present? && customer.phone[0] == '+'
   end

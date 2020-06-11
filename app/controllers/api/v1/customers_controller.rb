@@ -7,7 +7,14 @@ class Api::V1::CustomersController < ApplicationController
   before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger]
 
   def index
-    @customers = current_retailer.customers.facebook_customers.active
+    customers = if current_retailer_user.admin?
+                  current_retailer.customers
+                elsif current_retailer_user.agent?
+                  filtered_customers = current_retailer_user.customers
+                  Customer.where(id: filtered_customers.pluck(:id))
+                end
+
+    @customers = customers.facebook_customers.active
       .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
       .joins(:facebook_messages).group('customers.id').order('recent_message_date desc').page(params[:page])
 
@@ -17,8 +24,10 @@ class Api::V1::CustomersController < ApplicationController
       customers: @customers.as_json(methods:
         [
           :unread_message?,
-          :last_messenger_message
-        ]),
+          :last_messenger_message,
+          :assigned_agent
+        ]
+      ),
       total_customers: @customers.total_pages
     }
   end
@@ -40,10 +49,21 @@ class Api::V1::CustomersController < ApplicationController
     @messages = @customer.facebook_messages
     @messages.customer_unread.update_all(date_read: Time.now)
     @messages = @messages.order(created_at: :desc).page(params[:page])
+    @customer.update_attribute(:unread_messenger_chat, false)
     facebook_service.send_read_action(@customer.psid, 'mark_seen')
 
-    facebook_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a)
-    render status: 200, json: { messages: @messages.to_a.reverse, total_pages: @messages.total_pages }
+    facebook_helper.broadcast_data(
+      current_retailer,
+      current_retailer.retailer_users.to_a,
+      nil,
+      @customer.agent_customer,
+      @customer
+    )
+    render status: 200, json: {
+      messages: @messages.to_a.reverse,
+      agent_list: current_retailer.team_agents,
+      total_pages: @messages.total_pages
+    }
   end
 
   def create_message
@@ -94,15 +114,18 @@ class Api::V1::CustomersController < ApplicationController
     render status: 200, json: { templates: serialized, total_pages: templates.total_pages }
   end
 
+  def accept_opt_in
+    @customer.send_for_opt_in = true
+    return render status: 200, json: {} if @customer.accept_opt_in!
+
+    render status: 400, json: { error: 'Error al aceptar opt-in de este cliente, intente nuevamente' }
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
     def set_customer
       @customer = Customer.find(params[:customer_id] || params[:id])
-    end
-
-    def message_params
-      params.require(:facebook_message).permit(:text)
     end
 
     def sanitize_params

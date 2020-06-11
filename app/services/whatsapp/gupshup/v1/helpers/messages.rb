@@ -20,7 +20,9 @@ module Whatsapp::Gupshup::V1::Helpers
       Rails.logger.error(e)
     end
 
-    def notify_agent!(retailer, retailer_users, assigned_agent)
+    def notify_agent!(*args)
+      retailer, retailer_users, assigned_agent = args
+
       retailer_users = retailer_users | retailer.admins
 
       retailer_users.each do |ret_u|

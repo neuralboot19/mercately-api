@@ -455,4 +455,25 @@ RSpec.describe Customer, type: :model do
       expect(customer.last_messenger_message).to eq(FacebookMessage.last)
     end
   end
+
+  describe '#accept_opt_in!' do
+    let(:retailer) { create(:retailer, :gupshup_integrated) }
+    let(:customer) { create(:customer, retailer: retailer, whatsapp_opt_in: false) }
+    let(:service_response) {
+      {:code=>"200", :body=>{"status"=>true}}
+    }
+
+    before do
+      allow(CSV).to receive(:open).and_return(true)
+      allow(File).to receive(:open).and_return(true)
+      allow(File).to receive(:delete).and_return(true)
+      allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:upload_list).and_return(service_response)
+    end
+
+    it 'updates whatsapp_opt_in for a gupshup integrated retailer' do
+      customer.send_for_opt_in = true
+      customer.accept_opt_in!
+      expect(customer.reload.whatsapp_opt_in).to be(true)
+    end
+  end
 end

@@ -19,6 +19,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   scope :unread, -> { where.not(status: 5) }
 
   before_create :set_message_type
+  after_save :apply_cost
 
   def type
     message_payload.try(:[], 'payload').try(:[], 'type') || message_payload['type']
@@ -30,5 +31,17 @@ class GupshupWhatsappMessage < ApplicationRecord
       return self.message_type = 'notification' if message_payload.try(:[], 'isHSM') == 'true'
 
       self.message_type = 'conversation'
+    end
+
+    def apply_cost
+      aux_cost = cost.present? ? cost : 0
+
+      new_cost = if status != 'error' && aux_cost.zero?
+                   retailer.send("ws_#{message_type}_cost")
+                 elsif status == 'error' && !aux_cost.zero?
+                   0
+                 end
+
+      update_column(:cost, new_cost) if new_cost.present?
     end
 end

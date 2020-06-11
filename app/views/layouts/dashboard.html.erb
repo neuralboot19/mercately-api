@@ -20,7 +20,8 @@
       var ENV = {
         ENVIRONMENT: "<%= ENV['ENVIRONMENT'] %>",
         PORT: "<%= ENV['PORT'] %>",
-        DOMAIN: "<%= ENV['DOMAIN'] %>"
+        DOMAIN: "<%= ENV['DOMAIN'] %>",
+        INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>"
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>

@@ -155,7 +155,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
     @message = @customer.whatsapp_messages.find(params[:message_id])
 
     if @message.update_column(:status, 'read')
-      @message.customer.update_attribute(:unread_chat, false)
+      @message.customer.update_attribute(:unread_whatsapp_chat, false)
       agents = @message.customer.agent.present? ? [@message.customer.agent] : current_retailer.retailer_users.to_a
       if current_retailer.karix_integrated?
         KarixNotificationHelper.broadcast_data(current_retailer, agents)
@@ -184,9 +184,6 @@ class Api::V1::KarixWhatsappController < ApplicationController
   end
 
   def set_chat_as_unread
-    # Se setea el chat como unread
-    @customer.update_attribute(:unread_chat, true)
-
     # Si el chat no está signado, se le notifican a todos
     agents = current_retailer.retailer_users.to_a
 
@@ -197,13 +194,35 @@ class Api::V1::KarixWhatsappController < ApplicationController
       agents = [@customer.agent] | admins
     end
 
-    if current_retailer.karix_integrated?
-      karix_helper = KarixNotificationHelper
-      karix_helper.broadcast_data(current_retailer, agents, nil, nil, @customer)
-    else
-      message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new()
-      agents.each do |ru|
-        message_helper.notify_new_counter(ru, @customer)
+    case params.try(:[],:chat_service)
+    when 'facebook'
+      # Se setea el chat como unread
+      @customer.update_attribute(:unread_messenger_chat, true)
+      facebook_helper = FacebookNotificationHelper
+      facebook_helper.broadcast_data(
+        current_retailer,
+        agents,
+        nil,
+        @customer.agent_customer,
+        @customer
+      )
+    when 'whatsapp'
+      # Se setea el chat como unread
+      @customer.update_attribute(:unread_whatsapp_chat, true)
+      if current_retailer.karix_integrated?
+        karix_helper = KarixNotificationHelper
+        karix_helper.broadcast_data(
+          current_retailer,
+          agents,
+          nil,
+          nil,
+          @customer
+        )
+      else
+        message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new()
+        agents.each do |ru|
+          message_helper.notify_new_counter(ru, @customer)
+        end
       end
     end
 
@@ -213,6 +232,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
               @customer.as_json(
                 methods: [
                   :unread_whatsapp_message?,
+                  :unread_message?,
                   :recent_inbound_message_date,
                   :assigned_agent,
                   :last_whatsapp_message,
@@ -265,11 +285,11 @@ class Api::V1::KarixWhatsappController < ApplicationController
         customers = case params[:type]
                     when 'no_read'
                       customers.where("(#{integration}.status != ? AND #{integration}.direction = 'inbound')
-                                       OR customers.unread_chat = true", current_retailer.karix_integrated? ? 'read' : 5)
+                                       OR customers.unread_whatsapp_chat = true", current_retailer.karix_integrated? ? 'read' : 5)
                     when 'read'
                       customers.where(
                         "(#{integration}.status = ? AND #{integration}.direction = 'inbound')
-                        AND customers.unread_chat = false",
+                        AND customers.unread_whatsapp_chat = false",
                         current_retailer.karix_integrated? ? 'read' : 5
                       )
                     when 'all'
@@ -356,7 +376,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
     end
 
     def customer_messages
-      @customer.update_attribute(:unread_chat, false)
+      @customer.update_attribute(:unread_whatsapp_chat, false)
       if current_retailer.karix_integrated?
         # Aca se buscan todos los mensajes asociados al customer, tanto inbound como outbound
         messages = @customer.karix_whatsapp_messages

@@ -50,15 +50,11 @@ class Retailers::AutomaticAnswersController < RetailersController
 
     def guess_platform
       platforms = []
-      platforms << 'whatsapp' if whatsapp_integrated?
+      platforms << 'whatsapp' if current_retailer.whatsapp_integrated?
       platforms << 'messenger' if current_retailer.facebook_retailer
 
       platform = params[:platform] || params[:automatic_answer][:platform]
 
       return platform if platform.present? && platforms.include?(platform)
-    end
-
-    def whatsapp_integrated?
-      current_retailer.karix_integrated? || current_retailer.gupshup_integrated?
     end
 end

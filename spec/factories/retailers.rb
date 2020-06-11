@@ -26,6 +26,8 @@ FactoryBot.define do
     trait :karix_integrated do
       whats_app_enabled { true }
       karix_whatsapp_phone { Faker::PhoneNumber.cell_phone_with_country_code }
+      karix_account_uid { 'MyAccountUid' }
+      karix_account_token { 'MyAccountToken' }
     end
 
     trait :gupshup_integrated do

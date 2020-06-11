@@ -112,7 +112,9 @@
                   <% if can_send_whatsapp_notification?(current_retailer_user, customer) %>
                     <div class="t-center"><label for="modal--toggle-index" class="request-demo-label ws-contact d-none"
                       data-customer_full_names="<%= customer.full_names %>"
-                      data-customer_id="<%= customer.id %>">
+                      data-customer_id="<%= customer.id %>"
+                      data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>"
+                      >
                     <i class="fab fa-whatsapp fz-16 mr-5"></i>
                     Enviar Notificación</label></div>
                   <% end %>
