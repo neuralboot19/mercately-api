@@ -90,7 +90,7 @@ class Retailers::CustomersController < RetailersController
         :first_name,
         :last_name,
         :notes,
-        :send_for_opt_in
+        :whatsapp_opt_in
       )
     end
 
