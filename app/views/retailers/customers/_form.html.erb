@@ -32,11 +32,11 @@
               <%= f.text_field :phone, class: 'input validate-any-required', onkeypress: 'onlyNumber(event)' %>
             </div>
           </div>
-          <% if current_retailer.gupshup_integrated? && (@customer.new_record? || @customer.whatsapp_opt_in == false) %>
+          <% if current_retailer.gupshup_integrated? %>
             <div class="row">
               <div class="my-16 col-xs-12 col-md-6">
-                <%= f.check_box :send_for_opt_in %>
-                <%= f.label :send_for_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)' %><br/>
+                <%= f.check_box :whatsapp_opt_in %>
+                <%= f.label :whatsapp_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)' %><br/>
               </div>
             </div>
           <% end %>
