@@ -68,6 +68,12 @@
               <%= f.text_field :zip_code, class: 'input' %>
             </div>
           </div>
+          <div class="row w-100">
+            <div class="my-16 col-xs-12">
+              <%= f.label :notes, 'Notas' %>
+              <%= f.text_area :notes, class: 'input h-40' %>
+            </div>
+          </div>
         </fieldset>
         <div class="btn-box col-xs-12">
           <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>

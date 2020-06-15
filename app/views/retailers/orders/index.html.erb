@@ -42,8 +42,9 @@
               <div class="col-sm-1"></div>
               <div class="col-sm-3">Estado</div>
               <div class="col-sm-2">Cliente</div>
-              <div class="col-sm-2">Total de compra</div>
-              <div class="col-sm-3">Fecha de compra</div>
+              <div class="col-sm-1">Total $</div>
+              <div class="col-sm-2">Fecha de compra</div>
+              <div class="col-sm-2">Notas</div>
               <div class="col-sm-1"></div>
             </div>
             <%= render partial: "sale", collection: @orders, as: :order %>
@@ -64,3 +65,50 @@
     <i class="fas fa-plus"></i>
   <% end %>
 </div>
+
+<input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" />
+<div class="modal">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal__background" for="modal--toggle"></label>
+        <div class="modal__window box p-16">
+          <div class="row middle-xs">
+            <div class="col-xs-8 col-sm-8">
+              <h1 id="customer_name" class="d-inline name"></h1>
+            </div>
+            <div class="col-xs-4 col-sm-4">
+              <div class="index__ctas f-right">
+                <label class="btn btn--no-border c-red" for="modal--toggle">
+                  <i class="fas fa-times mr-5"></i>
+                  Cerrar
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div>Notas</div>
+            </div>
+            <div class="col-xs-12">
+              <p class="c-gray-label" id="order_notes"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script charset="utf-8">
+  document.getElementById('modal--toggle').checked = false;
+
+  document.querySelectorAll('.modal__toggler').forEach(function(mt) {
+    mt.onclick = function(e) {
+      document.getElementById('customer_name').innerHTML = mt.dataset.customer_full_names;
+      document.getElementById('order_notes').innerHTML = mt.dataset.order_notes;
+    }
+  });
+</script>

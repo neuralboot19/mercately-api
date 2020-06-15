@@ -24,10 +24,14 @@
                 <td class="table_order_details__descriptor">Fecha de compra</td>
                 <td class="table_order_details__value"><%= show_date(@order.created_at) %></td>
               </tr>
-                <tr>
-                  <td class="table_order_details__descriptor">Estado</td>
-                  <td class="table_order_details__value"><b class="cookie <%= cookie(@order.status) %>"><%= Order.enum_translation(:status, @order.status) %></b></td>
-                </tr>
+              <tr>
+                <td class="table_order_details__descriptor">Estado</td>
+                <td class="table_order_details__value"><b class="cookie <%= cookie(@order.status) %>"><%= Order.enum_translation(:status, @order.status) %></b></td>
+              </tr>
+              <tr>
+                <td class="table_order_details__descriptor">Notas</td>
+                <td class="table_order_details__value"><%= @order.notes %></td>
+              </tr>
             </table>
           </div>
           <div class="col-xs-12 col-sm-7 hide-on-tablet-and-down show-order-buttons-class hide-on-print">
