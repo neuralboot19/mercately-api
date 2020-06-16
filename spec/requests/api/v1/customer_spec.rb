@@ -501,14 +501,28 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         .and_return(set_facebook_messages_service)
     end
 
-    it 'creates a new messenger file message' do
-      post api_v1_send_img_path(customer1.id), params: { file_data:
-        fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg') }
-      body = JSON.parse(response.body)
+    context 'when file is an argument' do
+      it 'creates a new messenger file message' do
+        post api_v1_send_img_path(customer1.id), params: { file_data:
+          fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg') }
+        body = JSON.parse(response.body)
 
-      expect(response).to have_http_status(:ok)
-      expect(body['message']['id']).to eq(FacebookMessage.last.id)
-      expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+        expect(response).to have_http_status(:ok)
+        expect(body['message']['id']).to eq(FacebookMessage.last.id)
+        expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+      end
+    end
+
+    context 'when url is an argument' do
+      it 'creates a new messenger file message' do
+        post api_v1_send_img_path(customer1.id), params: { url:
+          'https://www.images.com/image.jpg', type: 'image' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['message']['id']).to eq(FacebookMessage.last.id)
+        expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+      end
     end
   end
 

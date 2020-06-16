@@ -85,6 +85,13 @@ RSpec.describe Facebook::Messages, vcr: true do
     }.with_indifferent_access
   end
 
+  let(:send_attachment_response) do
+    {
+      'recipient_id': '1008372609250235',
+      'message_id': 'm_AG5Hz2Uq7tuwNEhXfYYKj8mJEM_QPpz5jdCK48PnKAjSdjfipqxqMvK8ma6AC8fplwlqLP_5cgXIbu7I3rBN0P'
+    }
+  end
+
   describe '#save' do
     let(:customers_service) { Facebook::Customers.new(facebook_retailer) }
 
@@ -129,11 +136,27 @@ RSpec.describe Facebook::Messages, vcr: true do
   end
 
   describe '#send_attachment' do
-    it 'sends an attachment to Messenger' do
-      file = fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+    context 'when file_data is present' do
+      it 'sends an attachment to Messenger' do
+        file = fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
 
-      VCR.use_cassette('facebook/messages/send_attachment') do
-        response = messages_service.send_attachment(customer.psid, file.path, 'profile.jpg')
+        VCR.use_cassette('facebook/messages/send_attachment') do
+          response = messages_service.send_attachment(customer.psid, file.path, 'profile.jpg')
+          expect(response['message_id']).not_to be_nil
+        end
+      end
+    end
+
+    context 'when url is present' do
+      before do
+        allow(Connection).to receive(:post_form_request).and_return(double("response", status: 200, body:
+          send_attachment_response.to_json))
+      end
+
+      it 'sends an attachment to Messenger' do
+        response = messages_service.send_attachment(customer.psid, nil, nil, 'https://www.images.com/image.jpg',
+          'image')
+
         expect(response['message_id']).not_to be_nil
       end
     end

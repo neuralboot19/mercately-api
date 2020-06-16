@@ -15,6 +15,8 @@ class FacebookMessage < ApplicationRecord
   scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
   scope :unread, -> { where(date_read: nil) }
 
+  attr_accessor :file_url
+
   private
 
     def sent_by_retailer?
@@ -26,8 +28,8 @@ class FacebookMessage < ApplicationRecord
 
       m = if text.present?
             Facebook::Messages.new(facebook_retailer).send_message(id_client, text)
-          elsif file_data.present?
-            Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename)
+          elsif file_data.present? || file_url.present?
+            Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename, file_url, file_type)
           end
       update_column(:mid, m['message_id'])
     end

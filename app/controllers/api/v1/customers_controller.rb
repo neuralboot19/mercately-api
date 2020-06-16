@@ -92,16 +92,23 @@ class Api::V1::CustomersController < ApplicationController
   end
 
   def send_img
+    if params[:file_data].present?
+      file_data = params[:file_data].tempfile.path
+      filename = File.basename(params[:file_data].original_filename)
+    end
+
     message = FacebookMessage.new(
       customer: @customer,
       sender_uid: current_retailer_user.uid,
       id_client: @customer.psid,
       facebook_retailer: current_retailer.facebook_retailer,
-      file_data: params[:file_data].tempfile.path,
+      file_data: file_data,
       sent_from_mercately: true,
       sent_by_retailer: true,
-      filename: File.basename(params[:file_data].original_filename),
-      retailer_user: current_retailer_user
+      filename: filename,
+      retailer_user: current_retailer_user,
+      file_url: params[:url],
+      file_type: params[:type]
     )
     render status: 200, json: { message: message } if message.save
   end

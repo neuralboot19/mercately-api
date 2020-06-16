@@ -40,9 +40,15 @@ RSpec.describe FacebookMessage, type: :model do
     let(:facebook_msg_sent) do
       create(:facebook_message, facebook_retailer: facebook_retailer, sent_from_mercately: true, text: 'Testing')
     end
+
     let(:facebook_file_sent) do
       create(:facebook_message, facebook_retailer: facebook_retailer, sent_from_mercately: true, file_data:
         '/tmp/file.pdf')
+    end
+
+    let(:facebook_url_sent) do
+      create(:facebook_message, facebook_retailer: facebook_retailer, sent_from_mercately: true, file_url:
+        'https://www.images.com/image.jpg', file_type: 'image')
     end
 
     before do
@@ -64,6 +70,12 @@ RSpec.describe FacebookMessage, type: :model do
       context 'when the message contains an attachment' do
         it 'calls the service to Facebok Message to send an attachment message' do
           expect(facebook_file_sent.send(:send_facebook_message)).to be true
+        end
+      end
+
+      context 'when the message contains an url' do
+        it 'calls the service to Facebok Message to send an attachment message' do
+          expect(facebook_url_sent.send(:send_facebook_message)).to be true
         end
       end
     end
