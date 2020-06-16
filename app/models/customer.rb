@@ -17,6 +17,8 @@ class Customer < ApplicationRecord
   has_many :facebook_messages, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :gupshup_whatsapp_messages, dependent: :destroy
+  has_many :customer_tags, dependent: :destroy
+  has_many :tags, through: :customer_tags
 
   validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true

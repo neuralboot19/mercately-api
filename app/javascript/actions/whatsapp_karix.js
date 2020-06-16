@@ -238,3 +238,110 @@ export const setNoRead = (customer_id, token, chatService='whatsapp') => {
   };
 };
 
+export const fetchTags = (id) => {
+  let endpoint = `/api/v1/customers/${id}/selectable_tags`;
+
+  return dispatch =>
+    fetch(endpoint, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(
+        data => dispatch({ type: "SET_TAGS", data }),
+        err => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+};
+
+export const createCustomerTag = (id, body, token) => {
+  const endpoint = `/api/v1/customers/${id}/add_customer_tag`;
+  const csrf_token = token;
+  return dispatch => {
+    fetch(endpoint, {
+      method: "POST",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrf_token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(body),
+    })
+    .then(res => res.json())
+    .then(
+      data => dispatch({ type: 'SET_CREATE_CUSTOMER_TAG', data }),
+      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+    ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+  };
+};
+
+export const removeCustomerTag = (id, body, token) => {
+  const endpoint = `/api/v1/customers/${id}/remove_customer_tag`;
+  const csrf_token = token;
+  return dispatch => {
+    fetch(endpoint, {
+      method: "DELETE",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrf_token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(body),
+    })
+    .then(res => res.json())
+    .then(
+      data => dispatch({ type: 'SET_REMOVE_CUSTOMER_TAG', data }),
+      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+    ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+  };
+};
+
+export const createTag = (id, body, token) => {
+  const endpoint = `/api/v1/customers/${id}/add_tag`;
+  const csrf_token = token;
+  return dispatch => {
+    fetch(endpoint, {
+      method: "POST",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrf_token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify(body),
+    })
+    .then(res => res.json())
+    .then(
+      data => dispatch({ type: 'SET_CREATE_TAG', data }),
+      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+    ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+  };
+};

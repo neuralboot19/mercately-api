@@ -194,6 +194,34 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         expect(body['message']).to eq('Customers not found')
       end
     end
+
+    context 'when the tag filter is present' do
+      context 'when the tag filter is "all"' do
+        let!(:tag) { create(:tag, retailer: retailer) }
+        let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+        it 'responses the customers with (any tag assigned/without tags assigned)' do
+          get api_v1_karix_customers_path, params: { tag: 'all' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(2)
+        end
+      end
+
+      context 'when the tag filter is not "all"' do
+        let(:tag) { create(:tag, retailer: retailer) }
+        let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+        it 'responses only the customers with the tag assigned' do
+          get api_v1_karix_customers_path, params: { tag: tag.id }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+      end
+    end
   end
 
   describe 'POST #create' do

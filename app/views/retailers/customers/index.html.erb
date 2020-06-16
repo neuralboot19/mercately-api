@@ -50,6 +50,13 @@
                     </ul>
                   </label>
                 </div>
+                <div class="col-xs-12 col-sm-2"></div>
+                <div class="col-xs-12 col-sm-1 px-0 fs-14 no-style-filter">
+                  Etiquetas:
+                </div>
+                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter">
+                  <%= f.select :customer_tags_tag_id_in, retailer_selectable_tags(current_retailer), { include_blank: true }, class: 'input', multiple: true %>
+                </div>
               </div>
               <div class="row">
                 <div class="col-xs-12 px-0 mt-15">

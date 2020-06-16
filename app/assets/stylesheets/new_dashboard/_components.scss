@@ -1145,3 +1145,17 @@ i {
   height: 85vh;
   overflow-y: auto;
 }
+
+.show-to-right {
+  display: flex;
+  justify-content: flex-end;
+
+  .customer-tags-chats {
+    font-size: 10px;
+    background-color: #FFF;
+    border-radius: 15px;
+    padding: 5px 10px;
+    margin-right: 5px;
+    margin-top: 5px;
+  }
+}

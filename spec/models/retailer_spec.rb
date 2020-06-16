@@ -18,6 +18,7 @@ RSpec.describe Retailer, type: :model do
     it { is_expected.to have_many(:retailer_users) }
     it { is_expected.to have_many(:templates) }
     it { is_expected.to have_many(:automatic_answers) }
+    it { is_expected.to have_many(:tags).dependent(:destroy) }
   end
 
   describe 'validations' do
@@ -391,6 +392,29 @@ RSpec.describe Retailer, type: :model do
 
       it 'returns true' do
         expect(retailer.whatsapp_integrated?).to be true
+      end
+    end
+  end
+
+  describe '#available_customer_tags' do
+    context 'when customer_id is an argument' do
+      let(:customer) { create(:customer, retailer: retailer) }
+      let(:tag) { create(:tag, retailer: retailer, tag: 'Prueba 1') }
+      let!(:tag2) { create(:tag, retailer: retailer, tag: 'Prueba 2') }
+      let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer) }
+
+      it 'returns the retailer tags except the ones already assigned to the customer' do
+        expect(retailer.available_customer_tags(customer.id).size).to eq(1)
+        expect(retailer.available_customer_tags(customer.id).first.tag).to eq('Prueba 2')
+      end
+    end
+
+    context 'when customer_id is not an argument' do
+      let!(:tag) { create(:tag, retailer: retailer) }
+      let!(:tag2) { create(:tag, retailer: retailer) }
+
+      it 'returns all the retailer tags' do
+        expect(retailer.available_customer_tags.size).to eq(2)
       end
     end
   end

@@ -1,5 +1,6 @@
 class Retailer < ApplicationRecord
   include PhoneNumberConcern
+  include TaggableConcern
 
   attr_encrypted :api_key,
                  mode: :per_attribute_iv_and_salt,
@@ -21,6 +22,7 @@ class Retailer < ApplicationRecord
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
   has_one :facebook_catalog, dependent: :destroy
+  has_many :tags, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, uniqueness: true

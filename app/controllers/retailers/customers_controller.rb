@@ -4,6 +4,8 @@ class Retailers::CustomersController < RetailersController
   include CustomerControllerConcern
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
+  before_action :load_tags, only: [:new, :edit, :create, :update]
+  before_action :save_new_tags, only: [:create, :update]
 
   def index
     cus = Customer.eager_load(:orders_success).active.where(retailer_id: current_retailer.id)
@@ -90,11 +92,35 @@ class Retailers::CustomersController < RetailersController
         :first_name,
         :last_name,
         :notes,
-        :whatsapp_opt_in
+        :whatsapp_opt_in,
+        tag_ids: []
       )
     end
 
     def export_params
       params.permit('q' => %w[first_name_or_last_name_or_phone_or_email_cont s])
+    end
+
+    def load_tags
+      @tags = current_retailer.available_customer_tags(@customer&.id) || []
+    end
+
+    def save_new_tags
+      return unless params[:customer][:tag_ids].present?
+
+      new_tag_ids = []
+      params[:customer][:tag_ids].each do |tag|
+        next unless tag.present?
+
+        unless tag.to_i.zero?
+          new_tag_ids << tag
+          next
+        end
+
+        new_tag = current_retailer.tags.create(tag: tag)
+        new_tag_ids << new_tag&.id
+      end
+
+      params[:customer][:tag_ids] = new_tag_ids.compact
     end
 end

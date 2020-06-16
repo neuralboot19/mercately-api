@@ -10,6 +10,8 @@ RSpec.describe Customer, type: :model do
     it { is_expected.to have_many(:orders).dependent(:destroy) }
     it { is_expected.to have_many(:questions).dependent(:destroy) }
     it { is_expected.to have_many(:messages).dependent(:destroy) }
+    it { is_expected.to have_many(:customer_tags).dependent(:destroy) }
+    it { is_expected.to have_many(:tags).through(:customer_tags) }
   end
 
   describe 'enums' do

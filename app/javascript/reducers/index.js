@@ -18,7 +18,8 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         customer: action.data.customer,
-        errors: action.data.errors
+        errors: action.data.errors,
+        tags: action.data.tags
       }
     case 'SET_CUSTOMERS':
       return {
@@ -46,7 +47,8 @@ const reducer = (state = initialState, action) => {
         total_customers: action.data.total_customers,
         agents: action.data.agents,
         storageId: action.data.storage_id,
-        agent_list: action.data.agent_list
+        agent_list: action.data.agent_list,
+        filter_tags: action.data.filter_tags
       }
     case 'SET_WHATSAPP_MESSAGES':
       var balance_error = { status: null, message: null };
@@ -65,7 +67,8 @@ const reducer = (state = initialState, action) => {
         errorSendMessageStatus: balance_error.status,
         errorSendMessageText: balance_error.message,
         recentInboundMessageDate: action.data.recent_inbound_message_date,
-        customerId: action.data.customer_id
+        customerId: action.data.customer_id,
+        filter_tags: action.data.filter_tags
       }
     case 'SET_WHATSAPP_TEMPLATES':
       return {
@@ -96,6 +99,30 @@ const reducer = (state = initialState, action) => {
         ...state,
         fast_answers: action.data.templates.data,
         total_pages: action.data.total_pages
+      }
+    case 'SET_TAGS':
+      return {
+        ...state,
+        tags: action.data.tags
+      }
+    case 'SET_CREATE_CUSTOMER_TAG':
+      return {
+        ...state,
+        customer: action.data.customer,
+        tags: action.data.tags
+      }
+    case 'SET_REMOVE_CUSTOMER_TAG':
+      return {
+        ...state,
+        customer: action.data.customer,
+        tags: action.data.tags
+      }
+    case 'SET_CREATE_TAG':
+      return {
+        ...state,
+        customer: action.data.customer,
+        tags: action.data.tags,
+        filter_tags: action.data.filter_tags
       }
     default:
       return state;

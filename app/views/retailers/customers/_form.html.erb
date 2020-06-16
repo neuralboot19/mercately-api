@@ -1,6 +1,7 @@
 <div class="box">
   <div class="row">
     <%= form_for [:retailers, @customer], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
+      <input type="hidden" id="cust-total-tags" value="<%= @customer.new_record? ? 0 : @customer.customer_tags.size %>" />
       <div class="box">
         <fieldset class="fieldset mt-16 row">
           <legend>Información básica de cliente</legend>
@@ -22,7 +23,18 @@
             <%= f.text_field :email, class: 'input validate-email validate-any-required' %>
             <i class="validation-msg"></i>
           </div>
-          <div class="row">
+          <div class="row w-100">
+            <div id="customer-tags-fields" class="my-16 col-xs-12">
+              <%= f.label 'Etiquetas' %><br />
+              <% unless @customer.tags.present? %>
+                <a href="javascript:;" onclick="showSelectingTags(this)">Añadir etiqueta</a>
+              <% end %>
+              <div id="add-customer-tags-container" class="<%= 'd-none' unless @customer.tags.present? %>">
+                <%= f.select :tag_ids, retailer_selectable_tags(current_retailer), { selected: @customer.tags.ids }, class: 'input', multiple: true %>
+              </div>
+            </div>
+          </div>
+          <div class="row w-100">
             <div class="my-16 col-xs-12 col-md-6">
               <%= f.label :country_id, 'País' %>
               <%= f.country_select("country_id", { format: :with_country_code, include_blank: true }, { class: 'input' }) %>
@@ -33,14 +45,14 @@
             </div>
           </div>
           <% if current_retailer.gupshup_integrated? %>
-            <div class="row">
+            <div class="row w-100">
               <div class="my-16 col-xs-12 col-md-6">
                 <%= f.check_box :whatsapp_opt_in %>
                 <%= f.label :whatsapp_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)' %><br/>
               </div>
             </div>
           <% end %>
-          <div class="row">
+          <div class="row w-100">
             <div class="my-16 col-xs-12 col-md-6">
               <%= f.label :id_type, 'Tipo de identificación' %>
               <%= f.select :id_type, Customer.id_types.keys, class: 'input' %>
@@ -50,7 +62,7 @@
               <%= f.text_field :id_number, class: 'input' %>
             </div>
           </div>
-          <div class="row">
+          <div class="row w-100">
             <div class="my-16 col-xs-12 col-md-3">
               <%= f.label :address, 'Dirección' %>
               <%= f.text_field :address, class: 'input' %>
@@ -82,3 +94,5 @@
     <% end %>
   </div>
 </div>
+
+<script src="<%= asset_path 'retailers/customers/customers.js' %>" charset="utf-8"></script>

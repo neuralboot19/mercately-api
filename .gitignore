@@ -1,6 +1,6 @@
 *.rbc
 *.png~
-tags
+/tags
 capybara-*.html
 /log
 /tmp
