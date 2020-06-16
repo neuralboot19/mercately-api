@@ -215,7 +215,7 @@ class Customer < ApplicationRecord
   end
 
   def handle_message_events?
-    retailer.karix_integrated?
+    retailer.whatsapp_integrated?
   end
 
   def total_whatsapp_messages

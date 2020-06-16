@@ -369,6 +369,34 @@ RSpec.describe Customer, type: :model do
     end
   end
 
+  describe '#whatsapp_messages' do
+    context 'when the retailer is Karix integrated' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+      let(:customer_karix) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:karix_whatsapp_message, 2, customer: customer_karix)
+      end
+
+      it 'counts the messages on Karix Whatsapp Messages table' do
+        expect(customer_karix.whatsapp_messages.count).to eq(2)
+      end
+    end
+
+    context 'when the retailer is Gupshup integrated' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer_gupshup) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:gupshup_whatsapp_message, 3, customer: customer_gupshup)
+      end
+
+      it 'counts the messages on Gupshup Whatsapp Messages table' do
+        expect(customer_gupshup.whatsapp_messages.count).to eq(3)
+      end
+    end
+  end
+
   describe '#total_messenger_messages' do
     let(:facebook_retailer) { create(:facebook_retailer) }
     let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
@@ -476,6 +504,32 @@ RSpec.describe Customer, type: :model do
       customer.send_for_opt_in = true
       customer.accept_opt_in!
       expect(customer.reload.whatsapp_opt_in).to be(true)
+    end
+  end
+
+  describe '#handle_message_events?' do
+    describe 'when karix integrated' do
+      let(:customer) { create(:customer, :with_retailer_karix_integrated) }
+
+      it 'returns true' do
+        expect(customer.handle_message_events?).to eq(true)
+      end
+    end
+
+    describe 'when gupshup integrated' do
+      let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+
+      it 'returns true' do
+        expect(customer.handle_message_events?).to eq(true)
+      end
+    end
+
+    describe 'when not integrated with any whatsapp provider' do
+      let(:customer) { create(:customer) }
+
+      it 'returns false' do
+        expect(customer.handle_message_events?).to eq(false)
+      end
     end
   end
 end
