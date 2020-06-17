@@ -23,11 +23,12 @@ class Customer < ApplicationRecord
   validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
 
-  before_save :update_valid_customer
-  after_create :generate_web_id
   before_validation :strip_whitespace
+  before_save :update_valid_customer
   before_save :format_phone_number
+  before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
+  after_create :generate_web_id
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -278,6 +279,13 @@ class Customer < ApplicationRecord
       end
     end
 
+    def verify_new_phone
+      return true if retailer.karix_integrated?
+
+      self.send_for_opt_in = true
+      self.whatsapp_opt_in = false
+    end
+
     def verify_opt_in
       return unless retailer.gupshup_integrated? && ActiveModel::Type::Boolean.new.cast(send_for_opt_in) == true &&
         !whatsapp_opt_in.present? && phone.present?
@@ -286,12 +294,12 @@ class Customer < ApplicationRecord
       CSV.open("#{Rails.public_path}/#{id}_opt_in.csv", 'wb') do |csv|
         csv << [number]
       end
-
       info = gupshup_service.upload_list(File.open("#{Rails.public_path}/#{id}_opt_in.csv"))
       File.delete("#{Rails.public_path}/#{id}_opt_in.csv")
 
       return unless info.present? && info&.[](:code) == '200'
 
+      self.send_for_opt_in = false
       update(whatsapp_opt_in: true) if info&.[](:body)&.[]('status') == true
     end
 

@@ -507,6 +507,60 @@ RSpec.describe Customer, type: :model do
     end
   end
 
+  describe '#verify_new_phone' do
+    describe 'when karix integrated' do
+      let(:customer) { create(:customer, :with_retailer_karix_integrated, whatsapp_opt_in: nil) }
+
+      describe 'when NOT updates the phone' do
+        it 'not changes whatsapp_opt_in' do
+          former_ws_opt_in = customer.whatsapp_opt_in
+
+          customer.first_name = 'Firstname'
+          customer.save!
+
+          expect(customer.reload.whatsapp_opt_in).to eq(former_ws_opt_in)
+        end
+      end
+
+      describe 'when updates the phone' do
+        it 'not changes whatsapp_opt_in' do
+          former_ws_opt_in = customer.whatsapp_opt_in
+
+          customer.phone = '+5939898989898'
+          customer.save!
+
+          expect(customer.reload.whatsapp_opt_in).to eq(former_ws_opt_in)
+        end
+      end
+    end
+
+    describe 'when gupshup integrated' do
+      let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+
+      context 'and NOT updates the phone' do
+        it 'does not change send_for_opt_in' do
+          customer.update(first_name: 'Firstname')
+
+          expect(customer.reload.send_for_opt_in).to eq(nil)
+        end
+      end
+
+      context 'and updates the phone' do
+        before do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+        end
+
+        it 'sets send_for_opt_in to true and whatsapp_opt_in to false' do
+          # So it can be opt-in verified in the verify_opt_in method
+          customer.update(phone: '+5939898989898')
+
+          expect(customer.reload.send_for_opt_in).to eq(true)
+          expect(customer.reload.whatsapp_opt_in).to eq(false)
+        end
+      end
+    end
+  end
+
   describe '#handle_message_events?' do
     describe 'when karix integrated' do
       let(:customer) { create(:customer, :with_retailer_karix_integrated) }
