@@ -105,15 +105,15 @@ module Whatsapp::Gupshup::V1
             broadcast(gwm.reload)
           end
         else
-          wm_id = @params['payload']['id']
-          gwm = GupshupWhatsappMessage.find_by_whatsapp_message_id(wm_id)
+          gs_id = @params['payload']['gsId']
+          gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(gs_id)
 
           if gwm
             if number_status_by_sym(gwm.status.to_sym) < number_status_by_sym(new_event.to_sym)
               gwm.status = new_event
               gwm["#{gwm.status.to_s}_at"] = @params['timestamp'].to_i unless new_event == 'submitted'
 
-              temp_events = GupshupTemporalMessageState.where(whatsapp_message_id: wm_id)
+              temp_events = GupshupTemporalMessageState.where(gupshup_message_id: gs_id)
                                                        .order(event: :desc)
               if new_event == 'read'
                 # Destroy all temporal events stored  if event is read
@@ -126,10 +126,12 @@ module Whatsapp::Gupshup::V1
               end
             end
           else
+            wm_id = @params['payload']['id']
             GupshupWhatsappMessage.with_advisory_lock(
               "#{@retailer.to_global_id}_#{wm_id}"
             ) do
               GupshupTemporalMessageState.create(
+                gupshup_message_id: gs_id,
                 whatsapp_message_id: wm_id,
                 event: number_status_by_sym(new_event.to_sym),
                 retailer_id: @retailer.id,
@@ -146,7 +148,7 @@ module Whatsapp::Gupshup::V1
       end
 
       def number_status_by_sym(event)
-        {submitted: 2, sent: 3, delivered: 4, read: 5}[event]
+        {enqueued: 2, sent: 3, delivered: 4, read: 5}[event]
       end
 
       def save_customer

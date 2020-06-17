@@ -89,6 +89,8 @@ Rails.application.routes.draw do
       post 'save_automatic_answer', to: 'automatic_answers#save_automatic_answer', as: :save_automatic_answer
       get 'select_catalog', to: 'facebook_catalogs#select_catalog'
       put 'save_selected_catalog', to: 'facebook_catalogs#save_selected_catalog', as: :save_selected_catalog
+
+      resources :tags
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
@@ -144,6 +146,11 @@ Rails.application.routes.draw do
       get 'fast_answers_for_messenger', to: 'customers#fast_answers_for_messenger'
       patch 'accept_optin_for_whatsapp/:id', to: 'customers#accept_opt_in',  as: :accept_optin_for_whatsapp
       get 'fast_answers_for_whatsapp', to: 'karix_whatsapp#fast_answers_for_whatsapp'
+
+      get 'customers/:id/selectable_tags', to: 'customers#selectable_tags', as: :selectable_tags
+      post 'customers/:id/add_customer_tag', to: 'customers#add_customer_tag', as: :add_customer_tag
+      delete 'customers/:id/remove_customer_tag', to: 'customers#remove_customer_tag', as: :remove_customer_tag
+      post 'customers/:id/add_tag', to: 'customers#add_tag', as: :add_tag
     end
   end
 

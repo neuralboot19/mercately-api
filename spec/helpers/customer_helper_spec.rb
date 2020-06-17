@@ -120,4 +120,16 @@ RSpec.describe CustomerHelper, type: :helper do
       end
     end
   end
+
+  describe '#retailer_selectable_tags' do
+    let(:retailer) { create(:retailer) }
+
+    before do
+      create_list(:tag, 3, retailer: retailer)
+    end
+
+    it 'returns the retailer tags' do
+      expect(helper.retailer_selectable_tags(retailer).size).to eq(3)
+    end
+  end
 end

@@ -10,6 +10,8 @@ RSpec.describe Customer, type: :model do
     it { is_expected.to have_many(:orders).dependent(:destroy) }
     it { is_expected.to have_many(:questions).dependent(:destroy) }
     it { is_expected.to have_many(:messages).dependent(:destroy) }
+    it { is_expected.to have_many(:customer_tags).dependent(:destroy) }
+    it { is_expected.to have_many(:tags).through(:customer_tags) }
   end
 
   describe 'enums' do
@@ -367,6 +369,34 @@ RSpec.describe Customer, type: :model do
     end
   end
 
+  describe '#whatsapp_messages' do
+    context 'when the retailer is Karix integrated' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+      let(:customer_karix) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:karix_whatsapp_message, 2, customer: customer_karix)
+      end
+
+      it 'counts the messages on Karix Whatsapp Messages table' do
+        expect(customer_karix.whatsapp_messages.count).to eq(2)
+      end
+    end
+
+    context 'when the retailer is Gupshup integrated' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:customer_gupshup) { create(:customer, retailer: retailer) }
+
+      before do
+        create_list(:gupshup_whatsapp_message, 3, customer: customer_gupshup)
+      end
+
+      it 'counts the messages on Gupshup Whatsapp Messages table' do
+        expect(customer_gupshup.whatsapp_messages.count).to eq(3)
+      end
+    end
+  end
+
   describe '#total_messenger_messages' do
     let(:facebook_retailer) { create(:facebook_retailer) }
     let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
@@ -474,6 +504,86 @@ RSpec.describe Customer, type: :model do
       customer.send_for_opt_in = true
       customer.accept_opt_in!
       expect(customer.reload.whatsapp_opt_in).to be(true)
+    end
+  end
+
+  describe '#verify_new_phone' do
+    describe 'when karix integrated' do
+      let(:customer) { create(:customer, :with_retailer_karix_integrated, whatsapp_opt_in: nil) }
+
+      describe 'when NOT updates the phone' do
+        it 'not changes whatsapp_opt_in' do
+          former_ws_opt_in = customer.whatsapp_opt_in
+
+          customer.first_name = 'Firstname'
+          customer.save!
+
+          expect(customer.reload.whatsapp_opt_in).to eq(former_ws_opt_in)
+        end
+      end
+
+      describe 'when updates the phone' do
+        it 'not changes whatsapp_opt_in' do
+          former_ws_opt_in = customer.whatsapp_opt_in
+
+          customer.phone = '+5939898989898'
+          customer.save!
+
+          expect(customer.reload.whatsapp_opt_in).to eq(former_ws_opt_in)
+        end
+      end
+    end
+
+    describe 'when gupshup integrated' do
+      let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+
+      context 'and NOT updates the phone' do
+        it 'does not change send_for_opt_in' do
+          customer.update(first_name: 'Firstname')
+
+          expect(customer.reload.send_for_opt_in).to eq(nil)
+        end
+      end
+
+      context 'and updates the phone' do
+        before do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+        end
+
+        it 'sets send_for_opt_in to true and whatsapp_opt_in to false' do
+          # So it can be opt-in verified in the verify_opt_in method
+          customer.update(phone: '+5939898989898')
+
+          expect(customer.reload.send_for_opt_in).to eq(true)
+          expect(customer.reload.whatsapp_opt_in).to eq(false)
+        end
+      end
+    end
+  end
+
+  describe '#handle_message_events?' do
+    describe 'when karix integrated' do
+      let(:customer) { create(:customer, :with_retailer_karix_integrated) }
+
+      it 'returns true' do
+        expect(customer.handle_message_events?).to eq(true)
+      end
+    end
+
+    describe 'when gupshup integrated' do
+      let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+
+      it 'returns true' do
+        expect(customer.handle_message_events?).to eq(true)
+      end
+    end
+
+    describe 'when not integrated with any whatsapp provider' do
+      let(:customer) { create(:customer) }
+
+      it 'returns false' do
+        expect(customer.handle_message_events?).to eq(false)
+      end
     end
   end
 end

@@ -37,11 +37,19 @@
       <%= order.customer.full_names %>
     </div>
   </div>
-  <div class="col-xs-4 col-sm-2 t-center money">
+  <div class="col-xs-4 col-sm-1 t-center money">
     $<%= order.total %>
   </div>
-  <div class="col-xs-4 col-sm-3 t-center">
+  <div class="col-xs-4 col-sm-2 t-center">
     <%= show_date(order.created_at) %>
+  </div>
+  <div class="col-xs-4 col-sm-2 c-grey t-center">
+    <div class="t-center truncate"><%= order.notes %></div>
+    <% if order.notes.present? %>
+      <label for="modal--toggle" class="c-secondary modal__toggler"
+        data-customer_full_names="<%= order.customer.full_names %>"
+        data-order_notes="<%= order.notes %>">Ver más</label>
+    <% end %>
   </div>
   <div class="col-xs-12 hide-on-1080-and-down orders__actions col-sm-1 t-center">
     <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>

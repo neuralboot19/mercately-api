@@ -68,3 +68,31 @@ function sendTemplate() {
     alert('Debe llenar todos los campos editables');
   }
 }
+
+function showSelectingTags(input) {
+  $('#add-customer-tags-container').show();
+  $(input).hide();
+
+  $('#customer_tag_ids').select2({
+    placeholder: "Crea, selecciona o elimina etiquetas",
+    language: "es-ES",
+    tags: true,
+    maximumSelectionLength: 5,
+    maximumInputLength: 20
+  });
+}
+
+$(document).ready(function() {
+  $('#q_customer_tags_tag_id_in').select2({
+    placeholder: "Selecciona una o más opciones",
+    language: "es-ES"
+  });
+
+  $('#customer_tag_ids').select2({
+    placeholder: "Crea, selecciona o elimina etiquetas",
+    language: "es-ES",
+    tags: true,
+    maximumSelectionLength: 5,
+    maximumInputLength: 20
+  });
+})

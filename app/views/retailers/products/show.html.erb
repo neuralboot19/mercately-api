@@ -14,7 +14,7 @@
         Editar
       <% end %>
       <% if @product.status != 'archived' %>
-        <%= link_to retailers_archive_product_path(current_retailer, @product), method: :put, data: { confirm: 'Está seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
+        <%= link_to retailers_archive_product_path(current_retailer, @product), method: :put, data: { confirm: 'Estás seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
           <i class="far fa-trash-alt mr-5"></i>
           Archivar
         <% end %>

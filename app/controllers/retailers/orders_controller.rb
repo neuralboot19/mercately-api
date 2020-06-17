@@ -89,6 +89,7 @@ class Retailers::OrdersController < RetailersController
         :feedback_reason,
         :feedback_rating,
         :feedback_message,
+        :notes,
         order_items_attributes: [
           :id,
           :product_id,

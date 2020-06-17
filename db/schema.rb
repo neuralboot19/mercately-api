@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_11_152058) do
+ActiveRecord::Schema.define(version: 2020_06_09_193909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -93,6 +93,15 @@ ActiveRecord::Schema.define(version: 2020_06_11_152058) do
     t.integer "status", default: 0
     t.index ["ancestry"], name: "index_categories_on_ancestry"
     t.index ["meli_id"], name: "index_categories_on_meli_id", unique: true, where: "(meli_id IS NOT NULL)"
+  end
+
+  create_table "customer_tags", force: :cascade do |t|
+    t.bigint "tag_id"
+    t.bigint "customer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_customer_tags_on_customer_id"
+    t.index ["tag_id"], name: "index_customer_tags_on_tag_id"
   end
 
   create_table "customers", force: :cascade do |t|
@@ -332,6 +341,7 @@ ActiveRecord::Schema.define(version: 2020_06_11_152058) do
     t.integer "feedback_rating"
     t.string "web_id"
     t.string "pack_id"
+    t.text "notes"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
   end
@@ -500,6 +510,15 @@ ActiveRecord::Schema.define(version: 2020_06_11_152058) do
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
+  end
+
+  create_table "tags", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "tag"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "web_id"
+    t.index ["retailer_id"], name: "index_tags_on_retailer_id"
   end
 
   create_table "templates", force: :cascade do |t|
