@@ -280,7 +280,7 @@ class Customer < ApplicationRecord
     end
 
     def verify_new_phone
-      return true if retailer.karix_integrated?
+      return true if retailer.karix_integrated? || whatsapp_opt_in == false
 
       self.send_for_opt_in = true
       self.whatsapp_opt_in = false
@@ -288,7 +288,7 @@ class Customer < ApplicationRecord
 
     def verify_opt_in
       return unless retailer.gupshup_integrated? && ActiveModel::Type::Boolean.new.cast(send_for_opt_in) == true &&
-        !whatsapp_opt_in.present? && phone.present?
+        whatsapp_opt_in == false && phone.present?
 
       number = self.phone_number(false)
       CSV.open("#{Rails.public_path}/#{id}_opt_in.csv", 'wb') do |csv|

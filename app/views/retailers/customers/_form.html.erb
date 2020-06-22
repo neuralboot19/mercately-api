@@ -1,7 +1,6 @@
 <div class="box">
   <div class="row">
     <%= form_for [:retailers, @customer], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
-      <input type="hidden" id="cust-total-tags" value="<%= @customer.new_record? ? 0 : @customer.customer_tags.size %>" />
       <div class="box">
         <fieldset class="fieldset mt-16 row">
           <legend>Información básica de cliente</legend>
@@ -44,11 +43,11 @@
               <%= f.text_field :phone, class: 'input validate-any-required', onkeypress: 'onlyNumber(event)' %>
             </div>
           </div>
-          <% if current_retailer.gupshup_integrated? %>
+          <% if current_retailer.gupshup_integrated? && @customer.whatsapp_opt_in == false %>
             <div class="row w-100">
               <div class="my-16 col-xs-12 col-md-6">
-                <%= f.check_box :whatsapp_opt_in %>
-                <%= f.label :whatsapp_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)' %><br/>
+                <%= f.check_box :send_for_opt_in %>
+                <%= f.label :send_for_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)' %><br/>
               </div>
             </div>
           <% end %>

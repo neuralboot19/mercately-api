@@ -545,6 +545,17 @@ RSpec.describe Customer, type: :model do
         end
       end
 
+      context 'when the previous phone was not verified' do
+        context 'and send_for_opt_in is not checked' do
+          it 'does not proceed with the verification' do
+            customer.update(phone: '+5939898989898')
+
+            expect(customer.reload.send_for_opt_in).to be nil
+            expect(customer.reload.whatsapp_opt_in).to be false
+          end
+        end
+      end
+
       context 'and updates the phone' do
         before do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
@@ -552,7 +563,7 @@ RSpec.describe Customer, type: :model do
 
         it 'sets send_for_opt_in to true and whatsapp_opt_in to false' do
           # So it can be opt-in verified in the verify_opt_in method
-          customer.update(phone: '+5939898989898')
+          customer.update(phone: '+5939898989898', whatsapp_opt_in: true)
 
           expect(customer.reload.send_for_opt_in).to eq(true)
           expect(customer.reload.whatsapp_opt_in).to eq(false)
