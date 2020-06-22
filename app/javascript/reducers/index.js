@@ -25,14 +25,30 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         customers: action.data.customers,
-        total_customers: action.data.total_customers
+        total_customers: action.data.total_customers,
+        agents: action.data.agents,
+        storageId: action.data.storage_id,
+        agent_list: action.data.agent_list,
+        filter_tags: action.data.filter_tags
       }
     case 'SET_MESSAGES':
+      var balance_error = { status: null, message: null };
+
+      if (action.data.balance_error_info)
+        balance_error = action.data.balance_error_info
+
       return {
         ...state,
         messages: action.data.messages,
         agent_list: action.data.agent_list,
-        total_pages: action.data.total_pages
+        total_pages: action.data.total_pages,
+        agents: action.data.agents,
+        storageId: action.data.storage_id,
+        errorSendMessageStatus: balance_error.status,
+        errorSendMessageText: balance_error.message,
+        recentInboundMessageDate: action.data.recent_inbound_message_date,
+        customerId: action.data.customer_id,
+        filter_tags: action.data.filter_tags
       }
     case 'SET_SEND_MESSAGE':
       return {

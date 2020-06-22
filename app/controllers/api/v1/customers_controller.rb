@@ -14,11 +14,9 @@ class Api::V1::CustomersController < ApplicationController
                   Customer.where(id: filtered_customers.pluck(:id))
                 end
 
-    @customers = customers.facebook_customers.active
-      .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
-      .joins(:facebook_messages).group('customers.id').order('recent_message_date desc').page(params[:page])
-
-    @customers = @customers.by_search_text(params[:searchString]) if params[:searchString]
+    @customers = customer_list(customers)
+    @customers = @customers&.offset(false)&.offset(params[:offset])
+    total_pages = @customers&.total_pages
 
     render status: 200, json: {
       customers: @customers.as_json(methods:
@@ -29,7 +27,11 @@ class Api::V1::CustomersController < ApplicationController
           :tags
         ]
       ),
-      total_customers: @customers.total_pages
+      agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+      agent_list: current_retailer.team_agents,
+      storage_id: current_retailer_user.storage_id,
+      filter_tags: current_retailer.tags,
+      total_customers: total_pages
     }
   end
 
@@ -65,8 +67,13 @@ class Api::V1::CustomersController < ApplicationController
     )
     render status: 200, json: {
       messages: @messages.to_a.reverse,
+      agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+      storage_id: current_retailer_user.storage_id,
       agent_list: current_retailer.team_agents,
-      total_pages: @messages.total_pages
+      total_pages: @messages.total_pages,
+      customer_id: @customer.id,
+      recent_inbound_message_date: @customer.recent_facebook_message_date,
+      filter_tags: current_retailer.tags
     }
   end
 
@@ -171,6 +178,64 @@ class Api::V1::CustomersController < ApplicationController
 
     def facebook_service
       @facebook_service ||= Facebook::Messages.new(current_retailer.facebook_retailer)
+    end
+
+    def customer_list(customers)
+      return nil unless customers.present?
+
+      customers = customers.facebook_customers
+                  .active
+                  .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
+                  .joins(:facebook_messages)
+
+      if params[:type].present?
+        customers = if ['no_read', 'read'].include?(params[:type])
+                      customers.where(
+                        "facebook_messages.date_read IS
+                        #{params[:type] == 'read' ? 'NOT ' : ''}NULL
+                        OR customers.unread_messenger_chat = true"
+                      )
+                    else
+                      customers
+                    end
+      end
+
+      if params[:agent].present?
+        case params[:agent]
+        when 'all'
+          customers
+        when 'not_assigned'
+          customer_ids = AgentCustomer.all.pluck(:customer_id)
+          customers = customers.where('customers.id NOT IN (?)', customer_ids)
+        else
+          customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).pluck(:customer_id)
+          customers = customers.where('customers.id IN (?)', customer_ids)
+        end
+      end
+
+      if params[:tag].present?
+        case params[:tag]
+        when 'all'
+          customers
+        else
+          customer_ids = CustomerTag.where(tag_id: params[:tag]).pluck(:customer_id)
+          customers = customers.where('customers.id IN (?)', customer_ids)
+        end
+      end
+
+      customers = customers.by_search_text(params[:searchString]) if params[:searchString]
+      order = 'recent_message_date desc'
+      if params[:order].present?
+        case params[:order]
+        when 'received_asc'
+          order = 'recent_message_date asc'
+        end
+      end
+
+      customers = customers.group('customers.id')
+                           .order(order)
+                           .page(params[:page])
+      customers
     end
 
     def send_notification(chat_service)
