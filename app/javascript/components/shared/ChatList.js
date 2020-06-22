@@ -44,7 +44,7 @@ class ChatList extends Component {
       this.setState({ page: page })
 
       if (this.props.chatType == "facebook"){
-        this.props.fetchCustomers(page, this.state.filter);
+        this.props.fetchCustomers(page, this.state.filter, this.state.customers.length);
       }
       if (this.props.chatType == "whatsapp"){
         this.props.fetchWhatsAppCustomers(page, this.state.filter, this.state.customers.length);
@@ -196,7 +196,7 @@ class ChatList extends Component {
         this.props.fetchWhatsAppCustomers(1, this.state.filter, 0);
       }
       if (this.props.chatType == 'facebook'){
-        this.props.fetchCustomers(1, this.state.filter);
+        this.props.fetchCustomers(1, this.state.filter, 0);
       }
     })
   }
@@ -224,7 +224,7 @@ class ChatList extends Component {
     }
 
     if (this.props.chatType == "facebook"){
-      this.props.fetchCustomers();
+      this.props.fetchCustomers(1, filter, this.state.customers.length);
       socket.on("customer_facebook_chat", data => this.updateList(data));
     }
     if (this.props.chatType == "whatsapp"){
@@ -284,108 +284,106 @@ class ChatList extends Component {
                 onKeyPress={(e) => this.handleKeyPress(e)}
               />
 
-              {this.props.chatType == "whatsapp" &&
-                <div
+              <div
+                style={{
+                  margin: "0",
+                }}
+              >
+                <p
                   style={{
+                    display: "inline-block",
                     margin: "0",
+                    marginBottom: "5px",
+                    width: "100%"
                   }}
-                >
-                  <p
+                >Filtrar por:&nbsp;&nbsp;
+                  <select
                     style={{
-                      display: "inline-block",
-                      margin: "0",
-                      marginBottom: "5px",
-                      width: "100%"
+                      float: 'right',
+                      fontSize: '12px',
+                      maxWidth: "200px"
                     }}
-                  >Filtrar por:&nbsp;&nbsp;
-                    <select
-                      style={{
-                        float: 'right',
-                        fontSize: '12px',
-                        maxWidth: "200px"
-                      }}
-                      id="type"
-                      value={this.state.type}
-                      onChange={(e) => this.handleAddOptionToFilter('type')}
-                    >
-                      <option value='all'>Todos</option>
-                      <option value='no_read'>No leídos</option>
-                      <option value='read'>Leídos</option>
-                    </select>
-                  </p>
-                  <p
+                    id="type"
+                    value={this.state.type}
+                    onChange={(e) => this.handleAddOptionToFilter('type')}
+                  >
+                    <option value='all'>Todos</option>
+                    <option value='no_read'>No leídos</option>
+                    <option value='read'>Leídos</option>
+                  </select>
+                </p>
+                <p
+                  style={{
+                    display: "inline-block",
+                    margin: "0",
+                    marginBottom: "5px",
+                    width: "100%"
+                  }}
+                >Agente:&nbsp;&nbsp;
+                  <select
                     style={{
-                      display: "inline-block",
-                      margin: "0",
-                      marginBottom: "5px",
-                      width: "100%"
+                      float: 'right',
+                      fontSize: '12px',
+                      maxWidth: "200px"
                     }}
-                  >Agente:&nbsp;&nbsp;
-                    <select
-                      style={{
-                        float: 'right',
-                        fontSize: '12px',
-                        maxWidth: "200px"
-                      }}
-                      id="agents"
-                      value={this.state.agent}
-                      onChange={(e) => this.handleAddOptionToFilter('agent')}
-                    >
-                      <option value="all">Todos</option>
-                      <option value="not_assigned">No asignados</option>
-                      {this.props.agents.map((agent, index) => (
-                        <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
-                      ))}
-                    </select>
-                  </p>
-                  <p
+                    id="agents"
+                    value={this.state.agent}
+                    onChange={(e) => this.handleAddOptionToFilter('agent')}
+                  >
+                    <option value="all">Todos</option>
+                    <option value="not_assigned">No asignados</option>
+                    {this.props.agents.map((agent, index) => (
+                      <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
+                    ))}
+                  </select>
+                </p>
+                <p
+                  style={{
+                    display: "inline-block",
+                    margin: "0",
+                    marginBottom: "5px",
+                    width: "100%"
+                  }}
+                  >Etiquetas:&nbsp;&nbsp;
+                  <select
                     style={{
-                      display: "inline-block",
-                      margin: "0",
-                      marginBottom: "5px",
-                      width: "100%"
+                      float: 'right',
+                      fontSize: '12px',
+                      maxWidth: "200px"
                     }}
-                    >Etiquetas:&nbsp;&nbsp;
-                    <select
-                      style={{
-                        float: 'right',
-                        fontSize: '12px',
-                        maxWidth: "200px"
-                      }}
-                      id="tags"
-                      value={this.state.tag}
-                      onChange={(e) => this.handleAddOptionToFilter('tag')}
-                    >
-                      <option value="all">Todos</option>
-                      {this.props.filter_tags.map((tag, index) => (
-                        <option value={tag.id} key={index}>{tag.tag}</option>
-                      ))}
-                    </select>
-                  </p>
-                  <p
+                    id="tags"
+                    value={this.state.tag}
+                    onChange={(e) => this.handleAddOptionToFilter('tag')}
+                  >
+                    <option value="all">Todos</option>
+                    {this.props.filter_tags.map((tag, index) => (
+                      <option value={tag.id} key={index}>{tag.tag}</option>
+                    ))}
+                  </select>
+                </p>
+                <p
+                  style={{
+                    display: "inline-block",
+                    margin: "0",
+                    marginBottom: "5px",
+                    width: "100%"
+                  }}
+                >Ordenar por:&nbsp;&nbsp;
+                  <select
                     style={{
-                      display: "inline-block",
-                      margin: "0",
-                      marginBottom: "5px",
-                      width: "100%"
+                      float: 'right',
+                      fontSize: '12px',
+                      maxWidth: "200px"
                     }}
-                  >Ordenar por:&nbsp;&nbsp;
-                    <select
-                      style={{
-                        float: 'right',
-                        fontSize: '12px',
-                        maxWidth: "200px"
-                      }}
-                      id="order"
-                      value={this.state.order}
-                      onChange={(e) => this.handleChatOrdering(e)}
-                    >
-                      <option value='received_desc'>Reciente - Antíguo</option>
-                      <option value='received_asc'>Antíguo - Reciente</option>
-                    </select>
-                  </p>
-                </div>
-              }
+                    id="order"
+                    value={this.state.order}
+                    onChange={(e) => this.handleChatOrdering(e)}
+                  >
+                    <option value='received_desc'>Reciente - Antíguo</option>
+                    <option value='received_asc'>Antíguo - Reciente</option>
+                  </select>
+                </p>
+              </div>
             </div>
             <div className="chat__selector" onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
               {this.state.customers.map((customer, index) =>
@@ -415,8 +413,8 @@ function mapState(state) {
 
 function mapDispatch(dispatch) {
   return {
-    fetchCustomers: (page = 1, params) => {
-      dispatch(fetchCustomers(page, params));
+    fetchCustomers: (page = 1, params, offset) => {
+      dispatch(fetchCustomers(page, params, offset));
     },
     fetchWhatsAppCustomers: (page = 1, params, offset) => {
       dispatch(fetchWhatsAppCustomers(page, params, offset));

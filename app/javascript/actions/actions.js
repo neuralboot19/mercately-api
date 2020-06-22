@@ -1,6 +1,6 @@
 /* Customers */
-export const fetchCustomers = (page = 1, params) => {
-  let endpoint = `/api/v1/customers?page=${page}`;
+export const fetchCustomers = (page = 1, params, offset) => {
+  let endpoint = `/api/v1/customers?page=${page}&offset=${offset}`;
 
   if (params !== null && params !== undefined) {
     endpoint += `&${$.param(params)}`
