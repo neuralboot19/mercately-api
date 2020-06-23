@@ -140,6 +140,12 @@ const reducer = (state = initialState, action) => {
         tags: action.data.tags,
         filter_tags: action.data.filter_tags
       }
+    case 'SET_PRODUCTS':
+      return {
+        ...state,
+        products: action.data.products.data,
+        total_pages: action.data.total_pages
+      }
     default:
       return state;
   }

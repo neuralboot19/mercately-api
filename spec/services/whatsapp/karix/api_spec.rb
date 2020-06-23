@@ -56,23 +56,37 @@ RSpec.describe Whatsapp::Karix::Api do
   end
 
   describe '#prepare_whatsapp_message_file' do
-    context 'when the file is an image' do
-      it 'uploads the file to Cloudinary and prepares the message body to send the file to Karix' do
-        allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_image_response)
-        resp = JSON.parse(described_class.new.prepare_whatsapp_message_file(retailer, customer, params))
-          .with_indifferent_access
+    context 'when file_data is present' do
+      context 'when the file is an image' do
+        it 'uploads the file to Cloudinary and prepares the message body to send the file to Karix' do
+          allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_image_response)
+          resp = JSON.parse(described_class.new.prepare_whatsapp_message_file(retailer, customer, params))
+            .with_indifferent_access
 
-        expect(resp[:content][:media][:url]).to eq(cloudinary_image_response[:secure_url])
+          expect(resp[:content][:media][:url]).to eq(cloudinary_image_response[:secure_url])
+        end
+      end
+
+      context 'when the file is Word or PDF' do
+        it 'uploads the file to Cloudinary and prepares the message body to send the file to Karix' do
+          allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_raw_response)
+          resp = JSON.parse(described_class.new.prepare_whatsapp_message_file(retailer, customer, raw_params))
+            .with_indifferent_access
+
+          expect(resp[:content][:media][:url]).to eq(cloudinary_raw_response[:secure_url])
+        end
       end
     end
 
-    context 'when the file is Word or PDF' do
-      it 'uploads the file to Cloudinary and prepares the message body to send the file to Karix' do
-        allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_raw_response)
-        resp = JSON.parse(described_class.new.prepare_whatsapp_message_file(retailer, customer, raw_params))
+    context 'when url is present' do
+      let(:params) { { url: 'https://www.images.com/image.jpg', type: 'image', caption: 'Example message' } }
+
+      it 'prepares the message body to send to Karix' do
+        resp = JSON.parse(described_class.new.prepare_whatsapp_message_file(retailer, customer, params))
           .with_indifferent_access
 
-        expect(resp[:content][:media][:url]).to eq(cloudinary_raw_response[:secure_url])
+        expect(resp[:content][:media][:url]).to eq(params[:url])
+        expect(resp[:content][:media][:caption]).to eq(params[:caption])
       end
     end
   end

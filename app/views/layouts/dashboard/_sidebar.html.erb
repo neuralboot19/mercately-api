@@ -24,7 +24,7 @@
       </li>
       <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer || current_retailer.meli_retailer %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_templates_path(current_retailer)) %>">
-          <i class="item__icon fas fa-paper-plane"></i>
+          <i class="item__icon fas fa-bolt"></i>
           <%= link_to 'Respuestas Rápidas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
         </li>
       <% end %>
@@ -115,7 +115,7 @@
           <li class="menu__item">
             <div class="tooltip">
               <%= link_to retailers_templates_path(current_retailer), class: 'item__name no-style' do %>
-                <i class="fas fa-paper-plane c-secondary fs-25 mb-10"></i>
+                <i class="fas fa-bolt c-secondary fs-25 mb-10"></i>
               <% end %>
               <div class="tooltiptext positioned">Respuestas Rápidas</div>
             </div>

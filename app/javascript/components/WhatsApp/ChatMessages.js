@@ -46,7 +46,8 @@ class ChatMessages extends Component {
       templatePage: 1,
       auxTemplateSelected: [],
       agents: [],
-      updated: true
+      updated: true,
+      selectedProduct: null
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -69,7 +70,9 @@ class ChatMessages extends Component {
     this.setState({
       messages: [],
       page: 1,
-      scrolable: true
+      scrolable: true,
+      messageText: '',
+      selectedProduct: null
     }, () => {
       this.props.fetchWhatsAppMessages(id);
       this.scrollToBottom();
@@ -133,6 +136,17 @@ class ChatMessages extends Component {
       this.state.messageText = newProps.fastAnswerText;
       this.props.changeFastAnswerText(null);
     }
+
+    if (newProps.selectedProduct) {
+      this.state.selectedProduct = newProps.selectedProduct;
+      var productString = '';
+      productString += (this.state.selectedProduct.attributes.title + '\n');
+      productString += ('Precio $' + this.state.selectedProduct.attributes.price + '\n');
+      productString += (this.state.selectedProduct.attributes.description + '\n');
+      productString += (this.state.selectedProduct.attributes.url ? this.state.selectedProduct.attributes.url : '');
+      this.state.messageText = productString;
+      this.props.selectProduct(null);
+    }
   }
 
   componentDidUpdate() {
@@ -153,7 +167,9 @@ class ChatMessages extends Component {
       this.setState({
         messages: [],
         page: 1,
-        scrolable: true
+        scrolable: true,
+        messageText: '',
+        selectedProduct: null
       }, () => {
         this.props.fetchWhatsAppMessages(id);
       });
@@ -184,6 +200,11 @@ class ChatMessages extends Component {
   }
 
   handleSubmit = (e) => {
+    if (this.state.selectedProduct && this.state.selectedProduct.attributes.image) {
+      this.handleSubmitImg();
+      return;
+    }
+
     let text = this.state.messageText;
     if(text.trim() === '') return;
     var rDate = moment(this.props.recentInboundMessageDate).local();
@@ -191,7 +212,7 @@ class ChatMessages extends Component {
       can_write: moment().local().diff(rDate, 'hours') < 24
     }, () => {
       if (this.state.can_write) {
-        this.setState({ messageText: '' }, () => {
+        this.setState({ messageText: '', selectedProduct: null }, () => {
           this.handleSubmitWhatsAppMessage(e, text, false)
         });
       }
@@ -271,11 +292,31 @@ class ChatMessages extends Component {
   }
 
   handleSubmitImg = (el, file_data) => {
-    var url = URL.createObjectURL(el.files[0]);
-    var type = this.fileType(el.files[0].type);
-    var caption = type == 'document' ? el.files[0].name : null;
-    this.setState({ messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption}), new_message: true}, () => {
-      this.props.sendWhatsAppImg(this.props.currentCustomer, file_data, csrfToken);
+    var url, type, caption;
+
+    if (this.state.selectedProduct) {
+      url = this.state.selectedProduct.attributes.image;
+      type = 'image';
+      caption = this.state.messageText;
+
+      var data = new FormData();
+      data.append('template', false);
+      data.append('url', url);
+      data.append('type', 'file');
+      data.append('caption', caption);
+    } else {
+      url = URL.createObjectURL(el.files[0]);
+      type = this.fileType(el.files[0].type);
+      caption = type == 'document' ? el.files[0].name : null;
+    }
+
+    this.setState({
+      messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption}),
+      new_message: true,
+      messageText: '',
+      selectedProduct: null
+    }, () => {
+      this.props.sendWhatsAppImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
       this.scrollToBottom();
     });
   }
@@ -468,6 +509,14 @@ class ChatMessages extends Component {
     this.props.toggleFastAnswers();
   }
 
+  toggleProducts = () => {
+    this.props.toggleProducts();
+  }
+
+  removeSelectedProduct = () => {
+    this.setState({selectedProduct: null});
+  }
+
   divClasses = (message) => {
     var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : '';
     if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type)))  classes += 'video-audio';
@@ -597,14 +646,50 @@ class ChatMessages extends Component {
                     </div>
                   ) : (
                     this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
-                      <div className="col-xs-12">
+                      <div className="col-xs-12 chat-input">
                         <div className="text-input">
-                          <textarea name="messageText" placeholder="Mensajes" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
-                          <input id="attach" className="d-none" type="file" name="messageImg" accept="image/jpg, image/jpeg, image/png" onChange={(e) => this.handleImgSubmit(e)}/>
-                          <i className="fas fa-camera fs-24 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
-                          <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
-                          <i className="fas fa-file-alt fs-24 ml-5 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
-                          <i className="fas fa-paper-plane fs-22 ml-5 cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
+                          <textarea name="messageText" placeholder="Escribe un mensaje aquí" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+                          {this.state.selectedProduct && this.state.selectedProduct.attributes.image &&
+                            <div className="selected-product-image-container">
+                              <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedProduct()}></i>
+                              <img src={this.state.selectedProduct.attributes.image} />
+                            </div>
+                          }
+                          <div className="t-right mr-15">
+                            <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
+                            <div className="tooltip-top">
+                              <i className="fas fa-paperclip fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Archivos</div>
+                              }
+                            </div>
+                            <input id="attach" className="d-none" type="file" name="messageImg" accept="image/jpg, image/jpeg, image/png" onChange={(e) => this.handleImgSubmit(e)}/>
+                            <div className="tooltip-top">
+                              <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Imágenes</div>
+                              }
+                            </div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-bolt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Respuestas Rápidas</div>
+                              }
+                            </div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-shopping-bag fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.props.toggleProducts()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Productos</div>
+                              }
+                            </div>
+                            <div className="tooltip-top ml-15"></div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-paper-plane fs-22 mr-5 c-secondary cursor-pointer" onClick={(e) => this.handleSubmit(e)}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Enviar</div>
+                              }
+                            </div>
+                          </div>
                         </div>
                       </div>
                   )

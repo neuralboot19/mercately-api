@@ -82,7 +82,7 @@ module Whatsapp::Gupshup::V1
           'type': 'image',
           'originalUrl': data[:file_url],
           'previewUrl': data[:file_url],
-          'caption': ''
+          'caption': data[:file_caption] || ''
         }.to_json
 
         bodyString = base_body
@@ -193,18 +193,27 @@ module Whatsapp::Gupshup::V1
       end
 
       def file
-        resource_type = get_resource_type(@options[:params][:file_data])
-        response = Whatsapp::Karix::Api.new().upload_file_to_cloudinary(
-          @options[:params][:file_data],
-          resource_type
-        )
+        if @options[:params][:file_data].present?
+          resource_type = get_resource_type(@options[:params][:file_data])
+          response = Whatsapp::Karix::Api.new().upload_file_to_cloudinary(
+            @options[:params][:file_data],
+            resource_type
+          )
 
-        file_name = resource_type == 'document' ? response['original_filename'] : ''
-        file_url = response['secure_url'] || response['url']
+          file_name = resource_type == 'document' ? response['original_filename'] : ''
+          file_url = response['secure_url'] || response['url']
+          file_caption = ''
+        elsif @options[:params][:url].present?
+          resource_type = 'image'
+          file_name = ''
+          file_url = @options[:params][:url]
+          file_caption = @options[:params][:caption] || ''
+        end
 
         self.send(resource_type, {
           file_name: file_name,
-          file_url: file_url
+          file_url: file_url,
+          file_caption: file_caption
         })
       end
 
