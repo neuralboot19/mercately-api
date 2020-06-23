@@ -15,7 +15,7 @@ module Whatsapp::Gupshup::V1
       # Gupshup Message Id
       event_id = params['payload']['id']
 
-      # Find the message by its Whatsapp Message Id
+      # Find the message by its GupShup Message Id
       gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(event_id)
       raise StandardError.new("El mensaje ID #{event_id} no fue encontrado") unless gwm.present?
 

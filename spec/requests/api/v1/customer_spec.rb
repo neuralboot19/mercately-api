@@ -10,8 +10,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
 
   before do
     # Facebook messages for customer1 and customer2
-    create_list(:facebook_message, 6, facebook_retailer: facebook_retailer, customer: customer1)
-    create_list(:facebook_message, 6, facebook_retailer: facebook_retailer, customer: customer2)
+    create_list(:facebook_message, 6, facebook_retailer: facebook_retailer, customer: customer1, date_read: Date.today)
+    create_list(:facebook_message, 6, facebook_retailer: facebook_retailer, customer: customer2, date_read: Date.today)
 
     sign_in retailer_user
   end
@@ -128,6 +128,150 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         expect(response).to have_http_status(:ok)
         expect(body['customers'].count).to eq(1)
         expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
+    end
+
+    context 'when the tag filter is present' do
+      context 'when the tag filter is "all"' do
+        let!(:tag) { create(:tag, retailer: retailer) }
+        let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+        it 'responses the customers with (any tag assigned/without tags assigned)' do
+          get api_v1_customers_path, params: { tag: 'all' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(2)
+        end
+      end
+
+      context 'when the tag filter is not "all"' do
+        let(:tag) { create(:tag, retailer: retailer) }
+        let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+        it 'responses only the customers with the tag assigned' do
+          get api_v1_customers_path, params: { tag: tag.id }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+      end
+    end
+
+    context 'when the agent filter is present' do
+      context 'when the agent filter is "all"' do
+        it 'responses with all customers' do
+          get api_v1_customers_path, params: { agent: 'all' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(2)
+        end
+      end
+
+      context 'when the agent filter is not "all"' do
+        let(:agent) { create(:retailer_user, :agent, retailer: retailer) }
+        let!(:agent_customer) do
+          create(:agent_customer, retailer_user: agent, customer: customer1)
+        end
+
+        it 'responses only the customers with the agent assigned' do
+          get api_v1_customers_path, params: { agent: agent.id }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+      end
+    end
+
+    context 'when the type filter is present' do
+      context 'when is "all"' do
+        it 'responses with all customers' do
+          get api_v1_customers_path, params: { type: 'all' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(2)
+        end
+      end
+
+      context 'when is "no_read"' do
+        it 'responses only the customers with no read messages' do
+          customer1.facebook_messages.first.update(date_read: nil)
+          get api_v1_customers_path, params: { type: 'no_read' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+
+        it 'responses only the customers with chat set as no read' do
+          customer1.update(unread_messenger_chat: true)
+          get api_v1_customers_path, params: { type: 'no_read' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+      end
+
+      context 'when is "read"' do
+        it 'responses only the customers with read messages' do
+          customer1.facebook_messages.update_all(date_read: nil)
+          get api_v1_customers_path, params: { type: 'read' }
+
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+          expect(body['customers'].first['id']).to eq(customer2.id)
+        end
+
+        it 'responses only the customers with no read messenger chat' do
+          customer2.update(unread_messenger_chat: true)
+
+          get api_v1_customers_path, params: { type: 'no_read' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+          expect(body['customers'].first['id']).to eq(customer2.id)
+        end
+      end
+    end
+
+    context 'when param order is present' do
+      before do
+        FacebookMessage.all.each_with_index do |m, index|
+          m.created_at = Time.now - (5 * index).seconds
+          m.save
+        end
+      end
+
+      context 'when is received in ascending order' do
+        it 'responses customers ordered by facebook_messages.created_at in ascending order' do
+          get api_v1_customers_path, params: { order: 'received_asc' }
+
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(2)
+          expect(body['customers'].first['id']).to eq(customer2.id)
+        end
+      end
+
+      context 'when is received in descending order' do
+        it 'responses customers ordered by facebook_messages.created_at in descending order' do
+          get api_v1_customers_path, params: { order: 'received_desc' }
+
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(2)
+          expect(body['customers'].first['id']).to eq(customer1.id)
+        end
       end
     end
   end
@@ -357,14 +501,28 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         .and_return(set_facebook_messages_service)
     end
 
-    it 'creates a new messenger file message' do
-      post api_v1_send_img_path(customer1.id), params: { file_data:
-        fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg') }
-      body = JSON.parse(response.body)
+    context 'when file is an argument' do
+      it 'creates a new messenger file message' do
+        post api_v1_send_img_path(customer1.id), params: { file_data:
+          fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg') }
+        body = JSON.parse(response.body)
 
-      expect(response).to have_http_status(:ok)
-      expect(body['message']['id']).to eq(FacebookMessage.last.id)
-      expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+        expect(response).to have_http_status(:ok)
+        expect(body['message']['id']).to eq(FacebookMessage.last.id)
+        expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+      end
+    end
+
+    context 'when url is an argument' do
+      it 'creates a new messenger file message' do
+        post api_v1_send_img_path(customer1.id), params: { url:
+          'https://www.images.com/image.jpg', type: 'image' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['message']['id']).to eq(FacebookMessage.last.id)
+        expect(body['message']['retailer_user_id']).to eq(retailer_user.id)
+      end
     end
   end
 

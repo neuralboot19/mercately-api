@@ -3,6 +3,7 @@ import ChatList from '../shared/ChatList';
 import ChatMessages from '../WhatsApp/ChatMessages';
 import CustomerDetails from './../shared/CustomerDetails';
 import FastAnswers from './../shared/FastAnswers';
+import Products from './../shared/Products';
 
 class WhatsApp extends Component {
   constructor(props) {
@@ -19,7 +20,9 @@ class WhatsApp extends Component {
       showChatMessagesSelect: true,
       showChatMessages: true,
       showCustomerDetails: true,
-      onMobile: false
+      onMobile: false,
+      showProducts: false,
+      selectedProduct: null
     };
   }
 
@@ -32,7 +35,8 @@ class WhatsApp extends Component {
       removedCustomer: null,
       removedCustomerId: null,
       newAgentAssignedId: null,
-      showFastAnswers: false
+      showFastAnswers: false,
+      showProducts: false
     });
 
     if (this.state.onMobile) {
@@ -78,13 +82,15 @@ class WhatsApp extends Component {
 
   toggleFastAnswers = () => {
     this.setState({
-      showFastAnswers: !this.state.showFastAnswers
+      showFastAnswers: !this.state.showFastAnswers,
+      showProducts: false
     })
 
     if (this.state.onMobile) {
       this.setState({
         showChatMessages: !this.state.showChatMessages,
-        showCustomerDetails: false
+        showCustomerDetails: false,
+        showProducts: false
       })
     }
   }
@@ -102,6 +108,34 @@ class WhatsApp extends Component {
     }
   }
 
+  toggleProducts = () => {
+    this.setState({
+      showProducts: !this.state.showProducts,
+      showFastAnswers: false
+    })
+
+    if (this.state.onMobile) {
+      this.setState({
+        showChatMessages: !this.state.showChatMessages,
+        showCustomerDetails: false,
+        showFastAnswers: false
+      })
+    }
+  }
+
+  selectProduct = (product) => {
+    this.setState({
+      selectedProduct: product
+    })
+
+    if (this.state.onMobile) {
+      this.setState({
+        showProducts: false,
+        showChatMessages: true
+      })
+    }
+  }
+
   componentDidMount() {
     var screenWidth = this.getScreenWidth();
 
@@ -112,6 +146,7 @@ class WhatsApp extends Component {
         showChatMessages: false,
         showCustomerDetails: false,
         showFastAnswers: false,
+        showProducts: false,
         onMobile: true
       })
     }
@@ -154,11 +189,14 @@ class WhatsApp extends Component {
                   onMobile={this.state.onMobile}
                   backToChatList={this.backToChatList}
                   editCustomerDetails={this.editCustomerDetails}
+                  toggleProducts={this.toggleProducts}
+                  selectProduct={this.selectProduct}
+                  selectedProduct={this.state.selectedProduct}
                 />
               </div>
             )}
 
-            {this.state.currentCustomer != 0 && this.state.showFastAnswers == false && this.state.showCustomerDetails &&
+            {this.state.currentCustomer != 0 && this.state.showFastAnswers == false && this.state.showProducts == false && this.state.showCustomerDetails &&
               <div className="col-xs-12 col-sm-3">
                 <CustomerDetails
                   customerDetails={this.state.currentCustomerDetails}
@@ -176,6 +214,16 @@ class WhatsApp extends Component {
                   changeFastAnswerText={this.changeFastAnswerText}
                   toggleFastAnswers={this.toggleFastAnswers}
                   onMobile={this.state.onMobile}
+                />
+              </div>
+            }
+
+            {this.state.currentCustomer != 0 && this.state.showProducts &&
+              <div className="col-xs-12 col-sm-3">
+                <Products
+                  onMobile={this.state.onMobile}
+                  toggleProducts={this.toggleProducts}
+                  selectProduct={this.selectProduct}
                 />
               </div>
             }

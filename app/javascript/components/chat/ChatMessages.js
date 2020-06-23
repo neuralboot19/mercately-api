@@ -32,6 +32,7 @@ class ChatMessages extends Component {
       url: '',
       fastAnswerText: null,
       agents: [],
+      selectedProduct: null
     };
     this.bottomRef = React.createRef();
   }
@@ -51,13 +52,32 @@ class ChatMessages extends Component {
     this.setState({ messages: this.state.messages.concat({text: message, sent_by_retailer: true, created_at: new Date() }), new_message: true}, () => {
       this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
       this.scrollToBottom();
+
+      if (this.state.selectedProduct && this.state.selectedProduct.attributes.image) {
+        this.handleSubmitImg();
+      } else {
+        this.setState({ selectedProduct: null });
+      }
     });
   }
 
   handleSubmitImg = (el, file_data) => {
-    var url = URL.createObjectURL(el.files[0]);
-    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true, file_type: this.fileType(el.files[0].type), filename: el.files[0].name}), new_message: true}, () => {
-      this.props.sendImg(this.props.currentCustomer, file_data, csrfToken);
+    var url, type;
+
+    if (this.state.selectedProduct) {
+      url = this.state.selectedProduct.attributes.image;
+      type = 'image';
+
+      var data = new FormData();
+      data.append('url', url);
+      data.append('type', 'image');
+    } else {
+      url = URL.createObjectURL(el.files[0]);
+      type = this.fileType(el.files[0].type);
+    }
+
+    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true, file_type: type, filename: el ? el.files[0].name : null}), new_message: true, selectedProduct: null}, () => {
+      this.props.sendImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
       this.scrollToBottom();
     });
   }
@@ -106,13 +126,18 @@ class ChatMessages extends Component {
       })
       this.props.changeFastAnswerText(null);
     }
+
+    if (newProps.selectedProduct) {
+      this.state.selectedProduct = newProps.selectedProduct;
+      this.props.selectProduct(null);
+    }
   }
 
   componentDidMount() {
     let id = this.props.currentCustomer;
     currentCustomer = id;
 
-    this.setState({ messages: [],  page: 1, scrolable: true}, () => {
+    this.setState({ messages: [], page: 1, scrolable: true, selectedProduct: null }, () => {
       this.props.fetchMessages(id);
       this.scrollToBottom();
     });
@@ -131,7 +156,7 @@ class ChatMessages extends Component {
     if (currentCustomer !== id) {
       currentCustomer = id;
       this.scrollToBottom();
-      this.setState({ messages: [],  page: 1, scrolable: true}, () => {
+      this.setState({ messages: [], page: 1, scrolable: true, selectedProduct: null }, () => {
         this.props.fetchMessages(id);
       });
     }
@@ -207,6 +232,14 @@ class ChatMessages extends Component {
 
   toggleFastAnswers = () => {
     this.props.toggleFastAnswers();
+  }
+
+  toggleProducts = () => {
+    this.props.toggleProducts();
+  }
+
+  removeSelectedProduct = () => {
+    this.setState({selectedProduct: null});
   }
 
   emptyFastAnswerText = () => {
@@ -307,7 +340,7 @@ class ChatMessages extends Component {
             </div>
             )
           : (
-            <div className="col-xs-12">
+            <div className="col-xs-12 chat-input">
               <MessageForm
                 currentCustomer={this.props.currentCustomer}
                 handleSubmitMessage={this.handleSubmitMessage}
@@ -315,6 +348,10 @@ class ChatMessages extends Component {
                 toggleFastAnswers={this.toggleFastAnswers}
                 fastAnswerText={this.state.fastAnswerText}
                 emptyFastAnswerText={this.emptyFastAnswerText}
+                toggleProducts={this.toggleProducts}
+                selectedProduct={this.state.selectedProduct}
+                removeSelectedProduct={this.removeSelectedProduct}
+                onMobile={this.props.onMobile}
               />
             </div>
           )

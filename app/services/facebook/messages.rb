@@ -63,14 +63,14 @@ module Facebook
       JSON.parse(response.body)
     end
 
-    def send_attachment(to, file_data, filename)
+    def send_attachment(to, file_data, filename, url = nil, file_type = nil)
       conn = Faraday.new(send_message_url) do |f|
         f.request :multipart
         f.request :url_encoded
         f.adapter :net_http
         f.response :logger, Logger.new(STDOUT), bodies: true
       end
-      response = Connection.post_form_request(conn, prepare_attachment(to, file_data, filename))
+      response = Connection.post_form_request(conn, prepare_attachment(to, file_data, filename, url, file_type))
       JSON.parse(response.body)
     end
 
@@ -108,18 +108,36 @@ module Facebook
         }.to_json
       end
 
-      def prepare_attachment(to, file_path, filename)
-        content_type = MIME::Types.type_for(file_path).first.content_type
-        type = check_content_type(content_type)
+      def prepare_attachment(to, file_path, filename, url = nil, file_type = nil)
+        if file_path.present?
+          content_type = MIME::Types.type_for(file_path).first.content_type
+          type = check_content_type(content_type)
 
-        {
-          "recipient": JSON.dump(id: to),
-          "message": JSON.dump(attachment: {
-            "type": type,
-            "payload": {}
-          }),
-          "filedata": Faraday::UploadIO.new(file_path, content_type, filename)
-        }
+          body = {
+            "recipient": JSON.dump(id: to),
+            "message": JSON.dump(attachment: {
+              "type": type,
+              "payload": {}
+            }),
+            "filedata": Faraday::UploadIO.new(file_path, content_type, filename)
+          }
+        else
+          body = {
+            'recipient': {
+              'id': to
+            },
+            'message': {
+              'attachment': {
+                'type': file_type,
+                'payload': {
+                  'url': url
+                }
+              }
+            }
+          }
+        end
+
+        body
       end
 
       def send_message_url

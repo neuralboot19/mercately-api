@@ -13,6 +13,7 @@ FactoryBot.define do
     country_id { 'EC' }
     zip_code { '170207' }
     meli_customer { nil }
+    unread_messenger_chat { false }
 
     trait :from_ml do
       meli_nickname { meli_customer.nickname }

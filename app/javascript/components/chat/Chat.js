@@ -4,6 +4,7 @@ import ChatMessages from '../chat/ChatMessages';
 import ChatList from '../shared/ChatList';
 import CustomerDetails from './../shared/CustomerDetails';
 import FastAnswers from './../shared/FastAnswers';
+import Products from './../shared/Products';
 
 class Chat extends Component {
   constructor(props) {
@@ -20,7 +21,9 @@ class Chat extends Component {
       onMobile: false,
       removedCustomer: null,
       removedCustomerId: null,
-      newAgentAssignedId: null
+      newAgentAssignedId: null,
+      showProducts: false,
+      selectedProduct: null
     };
   }
 
@@ -33,7 +36,8 @@ class Chat extends Component {
       showFastAnswers: false,
       removedCustomer: null,
       removedCustomerId: null,
-      newAgentAssignedId: null
+      newAgentAssignedId: null,
+      showProducts: false
     });
 
     if (this.state.onMobile) {
@@ -71,13 +75,15 @@ class Chat extends Component {
 
   toggleFastAnswers = () => {
     this.setState({
-      showFastAnswers: !this.state.showFastAnswers
+      showFastAnswers: !this.state.showFastAnswers,
+      showProducts: false
     })
 
     if (this.state.onMobile) {
       this.setState({
         showChatMessages: !this.state.showChatMessages,
-        showCustomerDetails: false
+        showCustomerDetails: false,
+        showProducts: false
       })
     }
   }
@@ -95,6 +101,34 @@ class Chat extends Component {
     }
   }
 
+  toggleProducts = () => {
+    this.setState({
+      showProducts: !this.state.showProducts,
+      showFastAnswers: false
+    })
+
+    if (this.state.onMobile) {
+      this.setState({
+        showChatMessages: !this.state.showChatMessages,
+        showCustomerDetails: false,
+        showFastAnswers: false
+      })
+    }
+  }
+
+  selectProduct = (product) => {
+    this.setState({
+      selectedProduct: product
+    })
+
+    if (this.state.onMobile) {
+      this.setState({
+        showProducts: false,
+        showChatMessages: true
+      })
+    }
+  }
+
   componentDidMount() {
     var screenWidth = this.getScreenWidth();
 
@@ -105,6 +139,7 @@ class Chat extends Component {
         showChatMessages: false,
         showCustomerDetails: false,
         showFastAnswers: false,
+        showProducts: false,
         onMobile: true
       })
     }
@@ -154,11 +189,14 @@ class Chat extends Component {
                 removedCustomer={this.state.removedCustomer}
                 removedCustomerId={this.state.removedCustomerId}
                 newAgentAssignedId={this.state.newAgentAssignedId}
+                toggleProducts={this.toggleProducts}
+                selectProduct={this.selectProduct}
+                selectedProduct={this.state.selectedProduct}
               />
             </div>
           )}
 
-          {this.state.currentCustomer != 0 && this.state.showFastAnswers == false && this.state.showCustomerDetails &&
+          {this.state.currentCustomer != 0 && this.state.showFastAnswers == false && this.state.showProducts == false && this.state.showCustomerDetails &&
             <div className="col-xs-12 col-sm-3">
               <CustomerDetails
                 customerDetails={this.state.currentCustomerDetails}
@@ -176,6 +214,16 @@ class Chat extends Component {
                 changeFastAnswerText={this.changeFastAnswerText}
                 toggleFastAnswers={this.toggleFastAnswers}
                 onMobile={this.state.onMobile}
+              />
+            </div>
+          }
+
+          {this.state.currentCustomer != 0 && this.state.showProducts &&
+            <div className="col-xs-12 col-sm-3">
+              <Products
+                toggleProducts={this.toggleProducts}
+                onMobile={this.state.onMobile}
+                selectProduct={this.selectProduct}
               />
             </div>
           }

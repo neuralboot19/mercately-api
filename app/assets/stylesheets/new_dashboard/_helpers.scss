@@ -477,6 +477,14 @@ label:hover, a:hover {
   .show-on-sm-and-down {
     display: block;
   }
+
+  .chat-input {
+    .text-input {
+      textarea {
+        width: 90%;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 480px) {

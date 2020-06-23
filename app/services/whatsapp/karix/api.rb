@@ -22,9 +22,17 @@ module Whatsapp
       end
 
       def prepare_whatsapp_message_file(retailer, customer, params)
-        resource_type = get_resource_type(params[:file_data])
-        response = upload_file_to_cloudinary(params[:file_data], resource_type)
-        filename = response['original_filename'] if resource_type == 'document'
+        if params[:file_data].present?
+          resource_type = get_resource_type(params[:file_data])
+          response = upload_file_to_cloudinary(params[:file_data], resource_type)
+          filename = response['original_filename'] if resource_type == 'document'
+
+          url = response['secure_url'] || response['url']
+          caption = params[:caption] || filename
+        elsif params[:url].present?
+          url = params[:url]
+          caption = params[:caption] || ''
+        end
 
         {
           channel: 'whatsapp',
@@ -34,8 +42,8 @@ module Whatsapp
           ],
           content: {
             media: {
-              url: response['secure_url'] || response['url'],
-              caption: params[:caption] || filename
+              url: url,
+              caption: caption
             }
           },
           events_url: "#{ENV['KARIX_WEBHOOK']}?account_id=#{retailer.id}"

@@ -1,6 +1,6 @@
 /* Customers */
-export const fetchCustomers = (page = 1, params) => {
-  let endpoint = `/api/v1/customers?page=${page}`;
+export const fetchCustomers = (page = 1, params, offset) => {
+  let endpoint = `/api/v1/customers?page=${page}&offset=${offset}`;
 
   if (params !== null && params !== undefined) {
     endpoint += `&${$.param(params)}`
@@ -202,6 +202,34 @@ export const getMessengerFastAnswers = (page = 1, params) => {
       .then(res => res.json())
       .then(
         data => dispatch({ type: "SET_MESSENGER_FAST_ANSWERS", data }),
+        err => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+};
+
+export const getProducts = (page = 1, params) => {
+  let endpoint = `/api/v1/products?page=${page}`;
+
+  if (params !== '' && params !== undefined) {
+    endpoint += `&search=${params}`
+  }
+
+  return dispatch =>
+    fetch(endpoint, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(
+        data => dispatch({ type: "SET_PRODUCTS", data }),
         err => dispatch({ type: "LOAD_DATA_FAILURE", err })
       ).catch((error) => {
         if (error.response)

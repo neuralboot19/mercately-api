@@ -143,7 +143,7 @@
                 </div>
                 <div class="col-xs-4 col-sm-2 c-grey t-center">
                   <div class="t-center truncate"><%= customer.notes %></div>
-                  <% if customer.notes %>
+                  <% if customer.notes.present? %>
                     <label for="modal--toggle" class="c-secondary modal__toggler"
                       data-customer_full_names="<%= customer.full_names %>"
                       data-customer_notes="<%= customer.notes %>">Ver más</label>
