@@ -26,6 +26,7 @@ RSpec.describe Order, type: :model do
 
   describe 'associations' do
     it { is_expected.to belong_to(:customer) }
+    it { is_expected.to belong_to(:retailer_user).required(false) }
     it { is_expected.to have_many(:order_items).inverse_of(:order).dependent(:destroy) }
     it { is_expected.to have_many(:products).through(:order_items) }
     it { is_expected.to have_many(:messages) }

@@ -342,8 +342,10 @@ ActiveRecord::Schema.define(version: 2020_06_09_193909) do
     t.string "web_id"
     t.string "pack_id"
     t.text "notes"
+    t.bigint "retailer_user_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
+    t.index ["retailer_user_id"], name: "index_orders_on_retailer_user_id"
   end
 
   create_table "payment_plans", force: :cascade do |t|

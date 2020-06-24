@@ -6,7 +6,7 @@
       <i class="fas fa-caret-down"></i>
     </label>
   </div>
-  <div class="col-xs-5 col-sm-3 t-center">
+  <div class="col-xs-5 col-sm-1 t-center">
     <b class="cookie <%= cookie(order.status) %>"><%= Order.enum_translation(:status, order.status)  %></b>
   </div>
   <div class="col-xs-3 table__action-dots p-0 hide-on-md-and-up">
@@ -35,6 +35,11 @@
   <div class="col-xs-4 col-sm-2 t-center c-grey">
     <div class="truncate">
       <%= order.customer.full_names %>
+    </div>
+  </div>
+  <div class="col-xs-4 col-sm-2 t-center c-grey">
+    <div class="truncate">
+      <%= order.retailer_user&.full_name.presence || order.retailer_user&.email %>
     </div>
   </div>
   <div class="col-xs-4 col-sm-1 t-center money">

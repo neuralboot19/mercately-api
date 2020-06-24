@@ -151,6 +151,15 @@ $(document).ready(function() {
   $('#order_feedback_reason').prop('disabled', true);
   $('#order_feedback_rating').prop('disabled', true);
   $('#order_feedback_message').prop('disabled', true);
+
+  setTimeout(function() {
+    $('#order_retailer_user_id').select2({
+      placeholder: 'Selecciona una opción',
+      allowClear: true
+    }).on("select2:unselecting", function (e) {
+      $(this).one('select2:opening', function(ev) { ev.preventDefault(); });
+    });
+  }, 500)
 });
 
 function editClient() {

@@ -18,6 +18,7 @@ class Retailers::OrdersController < RetailersController
 
     if params[:customer_id].present?
       @order.customer_id = params[:customer_id]
+      @order.retailer_user_id = current_retailer_user.id
       customer = Customer.find(params[:customer_id])
       @hide_client_form = false unless customer.valid_customer?
     elsif params[:first_name].present?
@@ -26,6 +27,7 @@ class Retailers::OrdersController < RetailersController
       @order.customer.last_name = params[:last_name]
       @order.customer.email = params[:email]
       @order.customer.phone = params[:phone]
+      @order.retailer_user_id = current_retailer_user.id
       @hide_client_form = false
     end
   end
@@ -90,6 +92,7 @@ class Retailers::OrdersController < RetailersController
         :feedback_rating,
         :feedback_message,
         :notes,
+        :retailer_user_id,
         order_items_attributes: [
           :id,
           :product_id,
