@@ -95,7 +95,7 @@ class ChatMessages extends Component {
 
           if (index === -1) {
             this.setState({
-              messages: this.state.messages.concat(karix_message).sort((a, b) => (a.id > b.id) ? 1 : -1),
+              messages: this.state.messages.concat(karix_message).sort(this.sortMessages()),
               new_message: false,
               updated: false
             }, () => this.setState({ updated: true}))
@@ -112,6 +112,20 @@ class ChatMessages extends Component {
       if (karix_message.direction === 'inbound') {
         this.props.setWhatsAppMessageAsRead(currentCustomer, {message_id: karix_message.id}, csrfToken);
         this.state.can_write = true;
+      }
+    }
+  }
+
+  sortMessages = () => {
+    return function(a, b) {
+      if (moment(a.created_time) == moment(b.created_time)) {
+        return 0;
+      }
+      if (moment(a.created_time) > moment(b.created_time)) {
+        return 1;
+      }
+      if (moment(a.created_time) < moment(b.created_time)) {
+        return -1;
       }
     }
   }
@@ -229,7 +243,8 @@ class ChatMessages extends Component {
       content_type: 'text',
       content_text: message,
       direction: 'outbound',
-      status: 'enqueued'
+      status: 'enqueued',
+      created_time: new Date()
     }), new_message: true}, () => {
       this.props.sendWhatsAppMessage(text, csrfToken);
       this.scrollToBottom();
@@ -311,7 +326,7 @@ class ChatMessages extends Component {
     }
 
     this.setState({
-      messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption}),
+      messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption, created_time: new Date()}),
       new_message: true,
       messageText: '',
       selectedProduct: null

@@ -4,7 +4,7 @@ class GupshupWhatsappMessageSerializer
   set_type :gupshup_whatsapp_message
   set_id :id
 
-  attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :uid
+  attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :uid, :created_time
 
   attribute :content_type do |object|
     message = object.message_payload
@@ -94,6 +94,10 @@ class GupshupWhatsappMessageSerializer
 
   attribute :message_type do |object|
     'conversation'
+  end
+
+  attribute :created_time do |object|
+    object.created_at
   end
 
   attribute :contacts_information do |object|

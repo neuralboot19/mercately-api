@@ -128,7 +128,10 @@ class Api::V1::KarixWhatsappController < ApplicationController
       response = karix_helper.ws_message_service.send_message(current_retailer, @customer, params, 'file')
 
       if response['error'].present?
-        render status: 500, json: { message: response['error']['message'] }
+        render status: 500, json: {
+          message: response['error']['message'],
+          recent_inbound_message_date: @customer.recent_inbound_message_date
+        }
       else
         karix_helper = KarixNotificationHelper
         has_agent = @customer.agent_customer.present?
@@ -146,13 +149,19 @@ class Api::V1::KarixWhatsappController < ApplicationController
             @customer.agent_customer)
         end
 
-        render status: 200, json: { message: response['objects'][0] }
+        render status: 200, json: {
+          message: response['objects'][0],
+          recent_inbound_message_date: @customer.recent_inbound_message_date
+        }
       end
     elsif current_retailer.gupshup_integrated?
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, @customer)
       gws.send_message(type: 'file', params: params, retailer_user: current_retailer_user)
 
-      render status: 200, json: { message: 'Notificación enviada' }
+      render status: 200, json: {
+        message: 'Notificación enviada',
+        recent_inbound_message_date: @customer.recent_inbound_message_date
+      }
     end
   end
 
