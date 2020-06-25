@@ -16,7 +16,8 @@ ActiveAdmin.register Retailer do
                 :ws_conversation_cost,
                 :gupshup_phone_number,
                 :gupshup_src_name,
-                :unlimited_account
+                :unlimited_account,
+                :only_ec_charges
 
   filter :name
   filter :slug
@@ -89,6 +90,7 @@ ActiveAdmin.register Retailer do
       row :phone_number
       row :phone_verified
       row :unlimited_account
+      row :only_ec_charges
       row :created_at
       row :updated_at
     end
@@ -170,6 +172,11 @@ ActiveAdmin.register Retailer do
     end
 
     panel 'Plan' do
+      attributes_table_for retailer do
+        row 'Este retailer sólo hace pagos en Ecuador' do
+          retailer.only_ec_charges
+        end
+      end
       plan = retailer.payment_plan
       attributes_table_for plan do
         row :price
@@ -201,6 +208,7 @@ ActiveAdmin.register Retailer do
       f.input :ws_conversation_cost
       f.input :gupshup_phone_number
       f.input :gupshup_src_name
+      f.input :only_ec_charges, label: 'Este retailer sólo hace pagos en Ecuador'
     end
     f.actions
   end
