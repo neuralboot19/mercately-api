@@ -127,3 +127,6 @@ gem 'phonelib', '~> 0.6.43'
 # MongoDB
 gem 'mongoid', '~> 7.1', '>= 7.1.1'
 gem 'globalid', '~> 0.4.2'
+
+# Notifications
+gem 'slack-notifier', '~> 2.3', '>= 2.3.2'
