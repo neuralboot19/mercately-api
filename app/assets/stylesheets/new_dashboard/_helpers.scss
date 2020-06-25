@@ -485,6 +485,10 @@ label:hover, a:hover {
       }
     }
   }
+
+  .message div .contact-card {
+    max-width: 100%;
+  }
 }
 
 @media screen and (max-width: 480px) {

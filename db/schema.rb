@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_09_193909) do
+ActiveRecord::Schema.define(version: 2020_06_24_170639) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -342,8 +342,10 @@ ActiveRecord::Schema.define(version: 2020_06_09_193909) do
     t.string "web_id"
     t.string "pack_id"
     t.text "notes"
+    t.bigint "retailer_user_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
+    t.index ["retailer_user_id"], name: "index_orders_on_retailer_user_id"
   end
 
   create_table "payment_plans", force: :cascade do |t|
@@ -507,6 +509,7 @@ ActiveRecord::Schema.define(version: 2020_06_09_193909) do
     t.string "karix_account_uid"
     t.string "karix_account_token"
     t.boolean "unlimited_account", default: false
+    t.boolean "only_ec_charges", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

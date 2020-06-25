@@ -117,7 +117,7 @@ class Products extends Component {
               <div className="d-inline-flex">
                 <div className="products__img">
                   {product.attributes.image ?
-                    <img src={product.attributes.image} /> : <i class="fas fa-camera-retro fs-40 c-grey"></i>
+                    <img src={product.attributes.image} /> : <i className="fas fa-camera-retro fs-40 c-grey"></i>
                   }
                 </div>
                 <div className="info-container truncate ml-10">

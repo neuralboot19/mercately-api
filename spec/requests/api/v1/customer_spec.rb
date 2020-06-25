@@ -258,7 +258,9 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
 
           expect(response).to have_http_status(:ok)
           expect(body['customers'].count).to eq(2)
-          expect(body['customers'].first['id']).to eq(customer2.id)
+
+          message = FacebookMessage.order('created_at ASC').first
+          expect(body['customers'].first['id']).to eq(message.customer_id)
         end
       end
 
@@ -270,7 +272,9 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
 
           expect(response).to have_http_status(:ok)
           expect(body['customers'].count).to eq(2)
-          expect(body['customers'].first['id']).to eq(customer1.id)
+
+          message = FacebookMessage.order('created_at DESC').first
+          expect(body['customers'].first['id']).to eq(message.customer_id)
         end
       end
     end

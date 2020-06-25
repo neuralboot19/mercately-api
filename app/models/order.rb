@@ -2,6 +2,7 @@
 
 class Order < ApplicationRecord
   belongs_to :customer
+  belongs_to :retailer_user, required: false
   has_many :order_items, inverse_of: :order, dependent: :destroy
   has_many :products, through: :order_items
   has_many :messages

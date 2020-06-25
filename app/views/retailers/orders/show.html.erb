@@ -29,6 +29,10 @@
                 <td class="table_order_details__value"><b class="cookie <%= cookie(@order.status) %>"><%= Order.enum_translation(:status, @order.status) %></b></td>
               </tr>
               <tr>
+                <td class="table_order_details__descriptor">Vendedor</td>
+                <td class="table_order_details__value"><%= @order.retailer_user&.full_name.presence || @order.retailer_user&.email %></td>
+              </tr>
+              <tr>
                 <td class="table_order_details__descriptor">Notas</td>
                 <td class="table_order_details__value"><%= @order.notes %></td>
               </tr>

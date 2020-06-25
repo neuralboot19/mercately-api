@@ -95,13 +95,13 @@ class ChatMessages extends Component {
 
           if (index === -1) {
             this.setState({
-              messages: this.state.messages.concat(karix_message).sort((a, b) => (a.id > b.id) ? 1 : -1),
+              messages: this.state.messages.concat(karix_message).sort(this.sortMessages()),
               new_message: false,
               updated: false
             }, () => this.setState({ updated: true}))
           }
         }
-      } else if ((['image', 'voice', 'audio', 'video', 'document'].includes(karix_message.content_media_type) || karix_message.content_type == 'location') &&
+      } else if ((['image', 'voice', 'audio', 'video', 'document'].includes(karix_message.content_media_type) || ['location', 'contact'].includes(karix_message.content_type)) &&
         karix_message.direction === 'inbound') {
         this.setState({
           messages: this.state.messages.concat(karix_message),
@@ -112,6 +112,20 @@ class ChatMessages extends Component {
       if (karix_message.direction === 'inbound') {
         this.props.setWhatsAppMessageAsRead(currentCustomer, {message_id: karix_message.id}, csrfToken);
         this.state.can_write = true;
+      }
+    }
+  }
+
+  sortMessages = () => {
+    return function(a, b) {
+      if (moment(a.created_time) == moment(b.created_time)) {
+        return 0;
+      }
+      if (moment(a.created_time) > moment(b.created_time)) {
+        return 1;
+      }
+      if (moment(a.created_time) < moment(b.created_time)) {
+        return -1;
       }
     }
   }
@@ -229,7 +243,8 @@ class ChatMessages extends Component {
       content_type: 'text',
       content_text: message,
       direction: 'outbound',
-      status: 'enqueued'
+      status: 'enqueued',
+      created_time: new Date()
     }), new_message: true}, () => {
       this.props.sendWhatsAppMessage(text, csrfToken);
       this.scrollToBottom();
@@ -311,7 +326,7 @@ class ChatMessages extends Component {
     }
 
     this.setState({
-      messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption}),
+      messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption, created_time: new Date()}),
       new_message: true,
       messageText: '',
       selectedProduct: null
@@ -519,7 +534,7 @@ class ChatMessages extends Component {
 
   divClasses = (message) => {
     var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : '';
-    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type)))  classes += 'video-audio';
+    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) classes += 'video-audio';
     return classes;
   }
 
@@ -613,12 +628,31 @@ class ChatMessages extends Component {
                 )}
                 {message.content_type == 'location' &&
                     (<p className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
-                      <i className="fas fa-globe-europe mr-8"></i>Ver ubicación</a></p>)}
+                      <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></p>)}
                 {message.content_type == 'media' && message.content_media_type == 'document' && (
                   <p className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></p>
                 )}
                 {message.content_media_caption && message.content_media_type !== 'document' &&
                   (<p>{message.content_media_caption}</p>)}
+                {message.content_type == 'contact' &&
+                  message.contacts_information.map(contact =>
+                    <div className="contact-card w-100 mb-10">
+                      <i className="fas fa-user mr-8"></i><div className="w-100 mb-10">{contact.names.formatted_name}</div>
+                      {contact.phones.map(ph =>
+                        <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
+                      )}
+                      {contact.emails.map(em =>
+                        <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i><div>{em.email}</div></div>
+                      )}
+                      {contact.addresses.map(addrr =>
+                        <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
+                      )}
+                      {contact.org && contact.org.company &&
+                        <div className="w-100 fs-14"><i className="fas fa-building mr-8"></i>{contact.org.company}</div>
+                      }
+                    </div>
+                  )
+                }
               </div>
             </div>
           ))}
