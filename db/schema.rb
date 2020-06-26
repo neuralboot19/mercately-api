@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_24_170639) do
+ActiveRecord::Schema.define(version: 2020_06_26_135255) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -343,9 +343,11 @@ ActiveRecord::Schema.define(version: 2020_06_24_170639) do
     t.string "pack_id"
     t.text "notes"
     t.bigint "retailer_user_id"
+    t.bigint "sales_channel_id"
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
     t.index ["retailer_user_id"], name: "index_orders_on_retailer_user_id"
+    t.index ["sales_channel_id"], name: "index_orders_on_sales_channel_id"
   end
 
   create_table "payment_plans", force: :cascade do |t|
@@ -513,6 +515,16 @@ ActiveRecord::Schema.define(version: 2020_06_24_170639) do
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
+  end
+
+  create_table "sales_channels", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "title"
+    t.string "web_id"
+    t.integer "channel_type", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_sales_channels_on_retailer_id"
   end
 
   create_table "tags", force: :cascade do |t|

@@ -91,6 +91,7 @@ Rails.application.routes.draw do
       put 'save_selected_catalog', to: 'facebook_catalogs#save_selected_catalog', as: :save_selected_catalog
 
       resources :tags
+      resources :sales_channels
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

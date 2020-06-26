@@ -159,6 +159,13 @@ $(document).ready(function() {
     }).on("select2:unselecting", function (e) {
       $(this).one('select2:opening', function(ev) { ev.preventDefault(); });
     });
+
+    $('#order_sales_channel_id').select2({
+      placeholder: 'Selecciona una opción',
+      allowClear: true
+    }).on("select2:unselecting", function (e) {
+      $(this).one('select2:opening', function(ev) { ev.preventDefault(); });
+    });
   }, 500)
 });
 

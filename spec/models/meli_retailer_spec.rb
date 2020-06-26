@@ -54,4 +54,28 @@ RSpec.describe MeliRetailer, type: :model do
       end
     end
   end
+
+  describe '#add_sales_channel' do
+    let(:retailer) { create(:retailer) }
+    let(:ml_retailer) { instance_double(MercadoLibre::Retailer) }
+
+    before do
+      allow(ml_retailer).to receive(:update_retailer_info)
+        .and_return('Successfully updated')
+      allow(MercadoLibre::Retailer).to receive(:new)
+        .and_return(ml_retailer)
+    end
+
+    context 'when a meli retailer is created' do
+      it 'creates a mercadolibre sales channel' do
+        expect(retailer.sales_channels.size).to eq(0)
+
+        MeliRetailer.create(retailer: retailer)
+
+        retailer.reload
+        expect(retailer.sales_channels.size).to eq(1)
+        expect(retailer.sales_channels.first.channel_type).to eq('mercadolibre')
+      end
+    end
+  end
 end

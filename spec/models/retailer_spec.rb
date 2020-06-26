@@ -19,6 +19,7 @@ RSpec.describe Retailer, type: :model do
     it { is_expected.to have_many(:templates) }
     it { is_expected.to have_many(:automatic_answers) }
     it { is_expected.to have_many(:tags).dependent(:destroy) }
+    it { is_expected.to have_many(:sales_channels).dependent(:destroy) }
   end
 
   describe 'validations' do
@@ -415,6 +416,49 @@ RSpec.describe Retailer, type: :model do
 
       it 'returns all the retailer tags' do
         expect(retailer.available_customer_tags.size).to eq(2)
+      end
+    end
+  end
+
+  describe '#add_sales_channel' do
+    context 'when a retailer is created/updated' do
+      context 'when it is not whatsapp integrated' do
+        let(:retailer_not_integrated) { build(:retailer) }
+
+        it 'does not create a whatsapp sales channel' do
+          retailer_not_integrated.save
+
+          retailer_not_integrated.reload
+          expect(retailer_not_integrated.sales_channels.size).to eq(0)
+        end
+      end
+
+      context 'when it is whatsapp integrated' do
+        context 'when does not exist the sales channel yet' do
+          let(:retailer_integrated) { build(:retailer, :karix_integrated) }
+
+          it 'creates a whatsapp sales channel' do
+            retailer_integrated.save
+
+            retailer_integrated.reload
+            expect(retailer_integrated.sales_channels.size).to eq(1)
+            expect(retailer_integrated.sales_channels.first.channel_type).to eq('whatsapp')
+          end
+        end
+
+        context 'when the sales channel already exists' do
+          let(:retailer_integrated) { create(:retailer, :karix_integrated) }
+
+          it 'does not create a whatsapp sales channel' do
+            expect(retailer_integrated.sales_channels.size).to eq(1)
+            expect(retailer_integrated.sales_channels.first.channel_type).to eq('whatsapp')
+
+            retailer_integrated.update(name: 'Test')
+
+            retailer_integrated.reload
+            expect(retailer_integrated.sales_channels.size).to eq(1)
+          end
+        end
       end
     end
   end

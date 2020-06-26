@@ -33,6 +33,7 @@ RSpec.describe Order, type: :model do
 
     it { is_expected.to accept_nested_attributes_for(:order_items).allow_destroy(true) }
     it { is_expected.to accept_nested_attributes_for(:customer).allow_destroy(false) }
+    it { is_expected.to belong_to(:sales_channel).required(false) }
   end
 
   describe 'validations' do

@@ -30,6 +30,12 @@ class Retailers::OrdersController < RetailersController
       @order.retailer_user_id = current_retailer_user.id
       @hide_client_form = false
     end
+
+    if params[:from] == 'facebook_chats'
+      @order.sales_channel_id = current_retailer.sales_channels.find_by_channel_type('messenger')&.id
+    elsif params[:from] == 'whatsapp_chats'
+      @order.sales_channel_id = current_retailer.sales_channels.find_by_channel_type('whatsapp')&.id
+    end
   end
 
   def edit
@@ -93,6 +99,7 @@ class Retailers::OrdersController < RetailersController
         :feedback_message,
         :notes,
         :retailer_user_id,
+        :sales_channel_id,
         order_items_attributes: [
           :id,
           :product_id,
