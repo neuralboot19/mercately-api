@@ -8,7 +8,8 @@ import {
   setWhatsAppMessageAsRead,
   fetchWhatsAppTemplates,
   changeCustomerAgent,
-  setNoRead } from "../../actions/whatsapp_karix";
+  setNoRead,
+  toggleChatBot } from "../../actions/whatsapp_karix";
 import Modal from 'react-modal';
 
 var currentCustomer = 0;
@@ -543,6 +544,11 @@ class ChatMessages extends Component {
     this.props.setNoRead(this.props.currentCustomer, csrfToken);
   }
 
+  toggleChatBot = (e) => {
+    e.preventDefault();
+    this.props.toggleChatBot(this.props.currentCustomer, csrfToken);
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -583,8 +589,20 @@ class ChatMessages extends Component {
                 ))}
               </select>
             </div>
+            {this.props.activeChatBot && this.props.onMobile == false &&
+              <div className="tooltip-top chat-bot-icon">
+                <i className="fas fa-robot c-secondary fs-15"></i>
+                <div className="tooltiptext">ChatBot Activo</div>
+              </div>
+            }
             <div className='mark-no-read'>
               <button onClick={(e) => this.setNoRead(e)} className='btn btn--cta btn-small right'>Marcar como no leído</button>
+              <button onClick={(e) => this.toggleChatBot(e)} className='btn btn--cta btn-small right'>
+                {this.props.activeChatBot || (this.props.customer && this.props.customer.allow_start_bots) ?
+                  <span>Desactivar Bot</span>
+                : <span>Activar Bot</span>
+                }
+              </button>
             </div>
           </div>
           )}
@@ -820,6 +838,9 @@ function mapDispatch(dispatch) {
     },
     setNoRead: (customer_id, token) => {
       dispatch(setNoRead(customer_id, token));
+    },
+    toggleChatBot: (customer_id, token) => {
+      dispatch(toggleChatBot(customer_id, token));
     }
   };
 }

@@ -92,7 +92,13 @@ Rails.application.routes.draw do
       post 'payment_methods/create-setup-intent', to: 'payment_methods#create_setup_intent', as: :payment_create_setup_intent
       resources :payment_methods, only: [:create, :destroy]
       resources :tags
+
       resources :sales_channels
+      resources :chat_bots, except: [:destroy] do
+        get 'list_chat_bot_options', to: 'chat_bots#list_chat_bot_options', as: :list_chat_bot_options
+        get 'new_chat_bot_option', to: 'chat_bots#new_chat_bot_option', as: :new_chat_bot_option
+        get 'edit_chat_bot_option', to: 'chat_bots#edit_chat_bot_option', as: :edit_chat_bot_option
+      end
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
@@ -104,6 +110,8 @@ Rails.application.routes.draw do
     get 'templates/templates_for_questions', to: 'templates#templates_for_questions'
     get 'templates/templates_for_chats', to: 'templates#templates_for_chats'
     post 'plan_subscribe', to: 'payment_plans#subscribe', as: :plan_subscribe
+    get 'chat_bots/:id/tree_options', to: 'chat_bots#tree_options', as: :chat_bot_tree_options
+    get 'chat_bots/:id/path_option', to: 'chat_bots#path_option', as: :chat_bot_path_option
   end
 
   put 'retailer_user/onboarding_status', to: 'retailer_users#update_onboarding_info', as: :update_onboarding_info
@@ -157,6 +165,7 @@ Rails.application.routes.draw do
       post 'customers/:id/add_customer_tag', to: 'customers#add_customer_tag', as: :add_customer_tag
       delete 'customers/:id/remove_customer_tag', to: 'customers#remove_customer_tag', as: :remove_customer_tag
       post 'customers/:id/add_tag', to: 'customers#add_tag', as: :add_tag
+      put 'customers/:id/toggle_chat_bot', to: 'customers#toggle_chat_bot', as: :toggle_chat_bot
     end
   end
 

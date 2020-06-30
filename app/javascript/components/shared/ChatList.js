@@ -70,6 +70,7 @@ class ChatList extends Component {
     }
 
     if (!data.remove_only) {
+      this.props.setActiveChatBot(customer);
       customerList = this.insertCustomer(customerList, customer, index);
     }
 
@@ -225,11 +226,11 @@ class ChatList extends Component {
 
     if (this.props.chatType == "facebook"){
       this.props.fetchCustomers(1, filter, this.state.customers.length);
-      socket.on("customer_facebook_chat", data => this.updateList(data));
+      socket.on("customer_facebook_chat", data => this.updateCustomerList(data));
     }
     if (this.props.chatType == "whatsapp"){
       this.props.fetchWhatsAppCustomers(1, filter, this.state.customers.length);
-      socket.on("customer_chat", data => this.updateList(data));
+      socket.on("customer_chat", data => this.updateCustomerList(data));
     }
   }
 
@@ -253,11 +254,6 @@ class ChatList extends Component {
         tag: storedFilter ? storedFilter['tag'] : this.state.tag
       })
     }
-  }
-
-  updateList = (data) => {
-    var customer = data.customer.customer;
-    this.updateCustomerList(data);
   }
 
   render() {

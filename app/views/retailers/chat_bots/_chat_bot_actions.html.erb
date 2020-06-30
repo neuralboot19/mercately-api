@@ -1,0 +1,17 @@
+<fieldset class="col-xs-12 fieldset pt-16 row">
+<legend>Acciones de la opción</legend>
+  <div id="validate-unique-error" class="d-none">
+    <i class="validation-msg">Debes agregar máximo una acción de cada tipo</i><br />
+  </div>
+  <div id="chat_bot_actions" class="w-100">
+    <%= f.fields_for :chat_bot_actions do |cba| %>
+      <%= render "chat_bot_actions_fields", f: cba %>
+    <% end %>
+    <div class="mt-16 mb-24">
+      <%= link_to_add_association f, :chat_bot_actions, partial: 'new_chat_bot_actions_fields', id: 'add_chat_bot_actions', class: 'btn btn--cta' do %>
+        <i class="fas fa-plus mr-5"></i>
+        Agregar Acción
+      <% end %>
+    </div>
+  </div>
+</fieldset>

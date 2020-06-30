@@ -22,7 +22,8 @@ class WhatsApp extends Component {
       showCustomerDetails: true,
       onMobile: false,
       showProducts: false,
-      selectedProduct: null
+      selectedProduct: null,
+      activeChatBot: false
     };
   }
 
@@ -136,6 +137,12 @@ class WhatsApp extends Component {
     }
   }
 
+  setActiveChatBot = (customer) => {
+    if (this.state.currentCustomer == customer.id) {
+      this.setState({ activeChatBot: customer.active_bot });
+    }
+  }
+
   componentDidMount() {
     var screenWidth = this.getScreenWidth();
 
@@ -165,6 +172,7 @@ class WhatsApp extends Component {
                   chatType='whatsapp'
                   setRemovedCustomerInfo={this.setRemovedCustomerInfo}
                   storageId={$('meta[name=user_storage]').attr("content")}
+                  setActiveChatBot={this.setActiveChatBot}
                 />
               </div>
             )}
@@ -192,6 +200,7 @@ class WhatsApp extends Component {
                   toggleProducts={this.toggleProducts}
                   selectProduct={this.selectProduct}
                   selectedProduct={this.state.selectedProduct}
+                  activeChatBot={this.state.activeChatBot}
                 />
               </div>
             )}

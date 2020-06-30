@@ -27,5 +27,6 @@ Rails.application.config.assets.precompile += %w(
   dashboard.js
   catalog.js
   catalog.css
+  retailers/chat_bots/chat_bots.js
 )
 Rails.application.config.assets.css_compressor = :sass

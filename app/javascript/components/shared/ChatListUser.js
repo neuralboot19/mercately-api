@@ -20,6 +20,14 @@ class ChatListUser extends Component {
     }
   }
 
+  addBotPosition = () => {
+    if (this.props.customer.unread_whatsapp_chat === true || this.props.customer.unread_whatsapp_messages > 0 || this.props.customer["unread_whatsapp_message?"] === true) {
+      return 'bot-position';
+    }
+
+    return '';
+  }
+
   render() {
     let customer = this.props.customer;
     return (
@@ -40,6 +48,11 @@ class ChatListUser extends Component {
                   </b>
                 </div>
             )
+          }
+          {this.props.customer.active_bot &&
+            <div className="bot-icon-container">
+              <i className={`fas fa-robot c-secondary fs-12 ${this.addBotPosition()}`}></i>
+            </div>
           }
           <div className="img__profile col-xs-2 p-0">
             <div className="rounded-circle mw-100" >

@@ -17,7 +17,8 @@ ActiveAdmin.register Retailer do
                 :gupshup_phone_number,
                 :gupshup_src_name,
                 :unlimited_account,
-                :only_ec_charges
+                :only_ec_charges,
+                :allow_bots
 
   filter :name
   filter :slug
@@ -91,6 +92,7 @@ ActiveAdmin.register Retailer do
       row :phone_verified
       row :unlimited_account
       row :only_ec_charges
+      row :allow_bots
       row :created_at
       row :updated_at
     end
@@ -209,6 +211,7 @@ ActiveAdmin.register Retailer do
       f.input :gupshup_phone_number
       f.input :gupshup_src_name
       f.input :only_ec_charges, label: 'Este retailer sólo hace pagos en Ecuador'
+      f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'
     end
     f.actions
   end

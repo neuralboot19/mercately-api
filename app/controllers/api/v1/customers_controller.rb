@@ -169,6 +169,17 @@ class Api::V1::CustomersController < ApplicationController
       current_retailer.available_customer_tags(@customer.id), filter_tags: current_retailer.tags }
   end
 
+  def toggle_chat_bot
+    if @customer.active_bot
+      @customer.update(active_bot: false, chat_bot_option_id: nil, failed_bot_attempts: 0, allow_start_bots: false)
+    else
+      @customer.update(allow_start_bots: !@customer.allow_start_bots)
+    end
+    send_notification('whatsapp')
+
+    render status: 200, json: { customer: @customer }
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
