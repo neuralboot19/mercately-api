@@ -18,6 +18,7 @@ RSpec.describe Retailer, type: :model do
     it { is_expected.to have_many(:retailer_users) }
     it { is_expected.to have_many(:templates) }
     it { is_expected.to have_many(:automatic_answers) }
+    it { is_expected.to have_many(:payment_methods) }
     it { is_expected.to have_many(:tags).dependent(:destroy) }
     it { is_expected.to have_many(:sales_channels).dependent(:destroy) }
   end

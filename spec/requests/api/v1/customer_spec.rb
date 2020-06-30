@@ -260,7 +260,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
           expect(body['customers'].count).to eq(2)
 
           message = FacebookMessage.where(customer_id: retailer.customers.ids).order('created_at ASC').first
-          expect(body['customers'].first['id']).to eq(message.customer_id)
+          expect(body['customers'].pluck('id')).to include(message.customer_id)
         end
       end
 

@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="row" style="flex-wrap: wrap;">
-          <div class="col-xs-12">
+          <div class="col-xs-12 col-md-6">
             Datos del plan
             <ul>
               <li>Nombre del plan: <%= @payment_plan.plan.capitalize %></li>
@@ -27,6 +27,9 @@
                 <li> Saldo WhatsApp: <strong><%= '$ %05.4f' % @payment_plan.retailer.ws_balance.round(4) %></strong></li>
               <% end %>
             </ul>
+          </div>
+          <div class="col-xs-12 col-md-6">
+            <%= render partial: 'payment_method', locals: { pm: @pm } %>
           </div>
         </div>
         <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>

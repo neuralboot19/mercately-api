@@ -21,7 +21,8 @@
         ENVIRONMENT: "<%= ENV['ENVIRONMENT'] %>",
         PORT: "<%= ENV['PORT'] %>",
         DOMAIN: "<%= ENV['DOMAIN'] %>",
-        INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>"
+        INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>",
+        SLUG: "<%= current_retailer.slug %>"
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>
@@ -95,6 +96,15 @@
     </script>
     <% if ENV['ENVIRONMENT'] == 'production' %>
       <script src="//assets.pcrl.co/js/jstracker.min.js"></script>
+    <% end %>
+    <% if ENV.fetch('STRIPE_PUBLISHABLE') && ENV.fetch('STRIPE_SECRET') %>
+      <% if controller_path == 'retailers/payment_plans' && action_name == 'index' %>
+       <%= javascript_tag do %>
+        ENV['STRIPE_PUBLISHABLE'] = "<%= ENV['STRIPE_PUBLISHABLE'] %>"
+       <% end %>
+        <script src="https://js.stripe.com/v3/"></script>
+        <%= javascript_include_tag 'retailers/stripe/stripe' %>
+      <% end %>
     <% end %>
   </body>
 </html>

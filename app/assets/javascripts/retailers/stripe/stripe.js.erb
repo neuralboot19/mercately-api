@@ -1,0 +1,109 @@
+var token = $('meta[name="csrf-token"]').attr('content');
+
+var stripeElements = function(publicKey, setupIntent, token) {
+  var stripe = Stripe(publicKey);
+  var elements = stripe.elements();
+
+  var card = elements.create('card');
+
+  card.mount('#card-element');
+
+  function changeLoadingState(show = false) {
+    var spinner = document.getElementById('btn_spinner');
+    var credit_card = document.getElementById('btn_cc');
+
+    if (show === false) {
+      spinner.classList.add('hidden');
+      credit_card.classList.remove('hidden');
+      return true;
+    }
+
+    spinner.classList.remove('hidden');
+    credit_card.classList.add('hidden');
+  }
+
+  var button = document.getElementById('submit');
+  button.addEventListener('click', function(event) {
+    event.preventDefault();
+    changeLoadingState(true);
+
+    stripe
+      .confirmCardSetup(setupIntent.client_secret, {
+        payment_method: {
+          card: card
+        }
+      })
+      .then(function(result) {
+        if (result.error) {
+          changeLoadingState(false);
+          var displayError = document.getElementById('card-errors');
+          displayError.textContent = result.error.message;
+        } else {
+          // The PaymentMethod was successfully set up
+          savePaymentMethod(stripe, setupIntent.client_secret, token);
+        }
+      });
+  });
+};
+
+var getSetupIntent = function(publicKey, token) {
+  return fetch('/retailers/' + ENV['SLUG'] + '/payment_methods/create-setup-intent', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': token
+    }
+  })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(setupIntent) {
+      stripeElements(publicKey, setupIntent.data, token);
+    });
+};
+
+var getPublicKey = function(token) {
+  getSetupIntent(ENV['STRIPE_PUBLISHABLE'], token);
+};
+
+var changeLoadingState = function(isLoading) {
+  var spinner = document.getElementById('btn_spinner');
+  var credit_card = document.getElementById('btn_cc');
+
+  if (isLoading) {
+    spinner.classList.remove('hidden');
+    credit_card.classList.add('hidden');
+    document.querySelector('button').disabled = true;
+    return true;
+  }
+
+  document.querySelector('button').disabled = false;
+  spinner.classList.add('hidden');
+  credit_card.classList.remove('hidden');
+};
+
+savePaymentMethod = function(stripe, clientSecret, token) {
+  stripe.retrieveSetupIntent(clientSecret).then(function(result) {
+    var setupIntent = result.setupIntent;
+    var setupIntentJson = JSON.stringify(setupIntent, null, 2);
+
+    fetch('/retailers/' + ENV['SLUG'] + '/payment_methods', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': token
+      },
+      body: setupIntentJson
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(paymentMethodResponse) {
+        location.reload();
+      });
+
+    changeLoadingState(false);
+  });
+};
+
+getPublicKey(token);

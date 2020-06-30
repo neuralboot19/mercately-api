@@ -8,6 +8,44 @@
 @import 'new_dashboard/payment_plans';
 @import 'devise';
 
+.fas {
+  &.fa-spinner {
+    font-size: 1.2em;
+    animation-name: spin;
+    animation-duration: 5000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+
+  &.hidden {
+    display: none;
+  }
+}
+
+.submit-card {
+  font-size: .7em;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  margin-top: auto;
+
+  @media screen and (max-width: 1024px) {
+    font-size: .8em;
+    margin-top: 1em;
+    margin-left: 0px;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform:rotate(0deg);
+  }
+  to {
+    transform:rotate(360deg);
+  }
+}
+
+
 .select2-container--default .select2-selection--single {
   border-color: #ddd;
 }

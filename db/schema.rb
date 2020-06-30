@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_26_135255) do
+ActiveRecord::Schema.define(version: 2020_06_29_212559) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -350,6 +350,16 @@ ActiveRecord::Schema.define(version: 2020_06_26_135255) do
     t.index ["sales_channel_id"], name: "index_orders_on_sales_channel_id"
   end
 
+  create_table "payment_methods", force: :cascade do |t|
+    t.string "stripe_pm_id", null: false
+    t.bigint "retailer_id"
+    t.string "payment_type", null: false
+    t.json "payment_payload", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_payment_methods_on_retailer_id"
+  end
+
   create_table "payment_plans", force: :cascade do |t|
     t.bigint "retailer_id"
     t.decimal "price", default: "0.0"
@@ -457,10 +467,6 @@ ActiveRecord::Schema.define(version: 2020_06_26_135255) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -471,6 +477,10 @@ ActiveRecord::Schema.define(version: 2020_06_26_135255) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
@@ -506,10 +516,10 @@ ActiveRecord::Schema.define(version: 2020_06_26_135255) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.005
-    t.string "gupshup_phone_number"
-    t.string "gupshup_src_name"
     t.string "karix_account_uid"
     t.string "karix_account_token"
+    t.string "gupshup_phone_number"
+    t.string "gupshup_src_name"
     t.boolean "unlimited_account", default: false
     t.boolean "only_ec_charges", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
@@ -568,9 +578,9 @@ ActiveRecord::Schema.define(version: 2020_06_26_135255) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "facebook_catalogs", "retailers"
   add_foreign_key "agent_customers", "customers"
   add_foreign_key "agent_customers", "retailer_users"
+  add_foreign_key "facebook_catalogs", "retailers"
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
   add_foreign_key "facebook_retailers", "retailers"
@@ -580,6 +590,7 @@ ActiveRecord::Schema.define(version: 2020_06_26_135255) do
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"
   add_foreign_key "mobile_tokens", "retailer_users"
+  add_foreign_key "payment_methods", "retailers"
   add_foreign_key "payment_plans", "retailers"
   add_foreign_key "questions", "products"
 end

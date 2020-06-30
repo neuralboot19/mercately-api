@@ -130,3 +130,7 @@ gem 'globalid', '~> 0.4.2'
 
 # Notifications
 gem 'slack-notifier', '~> 2.3', '>= 2.3.2'
+
+# Payments
+gem 'stripe', '~> 5.22'
+

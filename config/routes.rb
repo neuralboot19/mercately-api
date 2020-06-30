@@ -89,7 +89,8 @@ Rails.application.routes.draw do
       post 'save_automatic_answer', to: 'automatic_answers#save_automatic_answer', as: :save_automatic_answer
       get 'select_catalog', to: 'facebook_catalogs#select_catalog'
       put 'save_selected_catalog', to: 'facebook_catalogs#save_selected_catalog', as: :save_selected_catalog
-
+      post 'payment_methods/create-setup-intent', to: 'payment_methods#create_setup_intent', as: :payment_create_setup_intent
+      resources :payment_methods, only: [:create, :destroy]
       resources :tags
       resources :sales_channels
     end
@@ -118,6 +119,9 @@ Rails.application.routes.draw do
 
   # Gupshup callback
   post 'gupshup/ws', to: 'gupshup_whatsapp#save_message'
+
+  # Stripe callback
+  post 'stripe/webhook', to: 'stripe#webhook'
 
   # REACT
   namespace :api do
