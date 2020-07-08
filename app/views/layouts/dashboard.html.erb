@@ -91,6 +91,7 @@
       document.addEventListener("DOMContentLoaded", function() {
         <% if notice %>
           showtoast("<%= notice %>")
+          <% flash[:notice] = nil %>
         <% end %>
       });
     </script>

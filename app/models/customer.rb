@@ -22,6 +22,7 @@ class Customer < ApplicationRecord
 
   validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validate :phone_uniqueness
 
   before_validation :strip_whitespace
   before_save :update_valid_customer
@@ -276,6 +277,16 @@ class Customer < ApplicationRecord
         else
           self.phone = "+#{country.country_code}#{aux_phone}"
         end
+      end
+    end
+
+    def phone_uniqueness
+      format_phone_number
+
+      return unless retailer.present?
+      return if email.present? && phone.blank?
+      if retailer.customers.where(phone: self.phone).where.not(id: self.id || nil).present?
+        errors.add(:base, 'Ya tienes un cliente registrado con este número de teléfono.')
       end
     end
 
