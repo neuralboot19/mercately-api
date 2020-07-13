@@ -91,6 +91,7 @@ class Api::V1::KarixWhatsappController < ApplicationController
           agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
           agent_list: current_retailer.team_agents,
           storage_id: current_retailer_user.storage_id,
+          handle_message_events: @customer.handle_message_events?,
           total_pages: total_pages,
           balance_error_info: balance_error,
           filter_tags: current_retailer.tags
