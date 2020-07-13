@@ -8,6 +8,15 @@
 @import 'new_dashboard/payment_plans';
 @import 'devise';
 
+#stripe-error {
+  color: #fb0545;
+  font-size: .7em;
+
+  &.hidden {
+    display: none;
+  }
+}
+
 .fas {
   &.fa-spinner {
     font-size: 1.2em;
@@ -28,6 +37,12 @@
   width: 100%;
   background-color: white;
   margin-top: auto;
+
+  &:disabled {
+    background-color: #ddd;
+    border-color: #ddd;
+    color: #999;
+  }
 
   @media screen and (max-width: 1024px) {
     font-size: .8em;

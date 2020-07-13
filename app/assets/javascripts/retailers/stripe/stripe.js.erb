@@ -23,26 +23,59 @@ var stripeElements = function(publicKey, setupIntent, token) {
   }
 
   var button = document.getElementById('submit');
+  var card_name = document.getElementById('card_name');
+  card_name.addEventListener('keyup', function(){
+    event.preventDefault();
+
+    if (card_name.value.replace(/\s/g,"") != ""){
+      button.disabled = false;
+    } else {
+      button.disabled = true;
+    }
+  });
+
   button.addEventListener('click', function(event) {
     event.preventDefault();
     changeLoadingState(true);
 
-    stripe
-      .confirmCardSetup(setupIntent.client_secret, {
-        payment_method: {
-          card: card
-        }
-      })
-      .then(function(result) {
-        if (result.error) {
-          changeLoadingState(false);
-          var displayError = document.getElementById('card-errors');
-          displayError.textContent = result.error.message;
-        } else {
-          // The PaymentMethod was successfully set up
-          savePaymentMethod(stripe, setupIntent.client_secret, token);
-        }
-      });
+    var displayError = document.getElementById('stripe-error');
+
+    if (card_name.value.replace(/\s/g,"") == ""){
+      displayError.textContent = "El nombre no puede estar vacío";
+      displayError.classList.remove("hidden");
+      setTimeout(function() {
+        displayError.classList.add("hidden");
+      }, 5000);
+      changeLoadingState(false);
+    } else {
+      stripe
+        .confirmCardSetup(setupIntent.client_secret, {
+          payment_method: {
+            card: card,
+            billing_details: {
+              name: card_name.value,
+            }
+          }
+        })
+        .then(function(result) {
+          if (result.error) {
+            changeLoadingState(false);
+            if (card_name.replace(/\s/g,"") == ""){
+              displayError.textContent = "El nombre no puede estar vacío";
+            } else {
+              displayError.textContent = "El nombre no puede estar vacío";
+            }
+            displayError.classList.remove("hidden");
+            setTimeout(function() {
+              displayError.classList.add("hidden");
+            }, 5000);
+          } else {
+            // The PaymentMethod was successfully set up
+            savePaymentMethod(stripe, setupIntent.client_secret, token);
+          }
+        });
+    }
+
   });
 };
 
