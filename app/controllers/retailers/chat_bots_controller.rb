@@ -70,6 +70,7 @@ class Retailers::ChatBotsController < RetailersController
         :any_interaction,
         :enabled,
         :error_message,
+        :repeat_menu_on_failure,
         chat_bot_options_attributes: [
           :id,
           :text,

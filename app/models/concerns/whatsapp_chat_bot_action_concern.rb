@@ -23,18 +23,13 @@ module WhatsappChatBotActionConcern
     end
 
     def manage_chat_bot
+      text = @text.strip
       if customer.active_bot
-        text = @text.strip.to_i
-        positions = customer.chat_bot_option.children.pluck(:position)
-        unless positions.include?(text)
-          manage_failed_attempts
-          return
-        end
+        selected = match_option(text)
+        return unless selected
 
-        selected = customer.chat_bot_option.children.find_by_position(text)
         save_customer_option(selected)
       else
-        text = @text.strip
         chat_bot = chat_bot_selection(text)
         return unless chat_bot.present?
 
@@ -66,14 +61,15 @@ module WhatsappChatBotActionConcern
     end
 
     def manage_failed_attempts
-      if customer.failed_bot_attempts + 1 >= customer.chat_bot_option.chat_bot.failed_attempts
-        chat_bot_option = customer.chat_bot_option
+      chat_bot_option = customer.chat_bot_option
+      if customer.failed_bot_attempts + 1 >= chat_bot_option.chat_bot.failed_attempts
         customer.update(active_bot: false, chat_bot_option_id: nil, failed_bot_attempts: 0, allow_start_bots: false)
         send_answer(chat_bot_option, false, true)
         return
       end
 
       customer.update(failed_bot_attempts: customer.failed_bot_attempts + 1)
+      send_answer(chat_bot_option) && return if chat_bot_option.chat_bot.repeat_menu_on_failure
     end
 
     def update_customer_flow(selected)
@@ -94,25 +90,48 @@ module WhatsappChatBotActionConcern
     def chat_bot_selection(text)
       chat_bots = retailer.chat_bots.enabled_ones
       chat_bot = chat_bots.select { |cb| cb.trigger.strip.downcase == text.downcase }&.first.presence ||
-        chat_bots.find_by_any_interaction(true)
+                 chat_bots.find_by_any_interaction(true)
 
       check_chat_bot_history(chat_bot) ? chat_bot : nil
     end
 
     def check_chat_bot_history(chat_bot)
       return false unless chat_bot.present?
+      return customer.allow_start_bots if customer.chat_bot_customers.where(chat_bot_id: chat_bot.id).exists?
 
-      if customer.chat_bot_customers.where(chat_bot_id: chat_bot.id).exists?
-        return customer.allow_start_bots
-      else
-        customer.chat_bot_customers.create(chat_bot_id: chat_bot.id)
-      end
-
+      customer.chat_bot_customers.create(chat_bot_id: chat_bot.id)
       true
     end
 
     def save_customer_option(selected)
       customer.customer_bot_options.create(chat_bot_option_id: selected.id)
+    end
+
+    def match_option(text)
+      text_to_i = text.to_i
+      options = customer.chat_bot_option.children
+
+      option = options.find_by_position(text_to_i)
+      return option unless option.blank?
+
+      option = options.where('lower(text) = ?', text.downcase).first
+      return option unless option.blank?
+
+      splitted = text.split
+      split_words = splitted.map { |t| "%#{t}%" }
+      candidates = options.where('text ILIKE ANY (array[?])', split_words)
+      return candidates.first if candidates.present? && candidates.size == 1
+
+      count_hash = {}
+      regex = /#{splitted.join('|')}/i
+      candidates.map { |c| count_hash[c.position] = c.text.scan(regex).size }
+      count_hash = count_hash.sort_by { |k, v| [-v, k] }
+
+      option = options.find_by_position(count_hash.first[0]) if count_hash.present? &&
+                                                                count_hash.first[1] != count_hash.second&.[](1)
+      return option unless option.blank?
+
+      manage_failed_attempts
     end
 
     def execute_actions(chat_bot_option)
