@@ -286,11 +286,13 @@ class Customer < ApplicationRecord
     end
 
     def phone_uniqueness
+      former_phone_number = self.phone
       format_phone_number
 
       return unless retailer.present?
       return if email.present? && phone.blank?
       if retailer.customers.where(phone: self.phone).where.not(id: self.id || nil).present?
+        self.phone = former_phone_number
         errors.add(:base, 'Ya tienes un cliente registrado con este número de teléfono.')
       end
     end
