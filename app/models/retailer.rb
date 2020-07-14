@@ -1,6 +1,7 @@
 class Retailer < ApplicationRecord
   include PhoneNumberConcern
   include TaggableConcern
+  include AddSalesChannelConcern
 
   attr_encrypted :api_key,
                  mode: :per_attribute_iv_and_salt,
@@ -18,17 +19,21 @@ class Retailer < ApplicationRecord
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :gupshup_whatsapp_messages, dependent: :destroy
   has_many :automatic_answers, dependent: :destroy
+  has_many :payment_methods, dependent: :destroy
 
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
   has_one :facebook_catalog, dependent: :destroy
   has_many :tags, dependent: :destroy
+  has_many :sales_channels, dependent: :destroy
+  has_many :chat_bots, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, uniqueness: true
 
   before_validation :gupshup_src_name_to_nil
   after_save :generate_slug, if: :saved_change_to_name?
+  after_save :add_sales_channel
   after_create :save_free_plan
   after_create :send_to_mailchimp
   before_create :format_phone_number

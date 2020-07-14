@@ -3,6 +3,7 @@ class Retailers::PaymentPlansController < RetailersController
 
   def index
     @payment_plan = PaymentPlan.find_by(retailer_id: current_retailer.id)
+    @pm = current_retailer.payment_methods
     used_whatsapp_messages if current_retailer.whatsapp_integrated?
   end
 

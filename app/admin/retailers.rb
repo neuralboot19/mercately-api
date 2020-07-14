@@ -17,7 +17,9 @@ ActiveAdmin.register Retailer do
                 :gupshup_phone_number,
                 :gupshup_src_name,
                 :unlimited_account,
-                :only_ec_charges
+                :ecu_charges,
+                :int_charges,
+                :allow_bots
 
   filter :name
   filter :slug
@@ -90,7 +92,9 @@ ActiveAdmin.register Retailer do
       row :phone_number
       row :phone_verified
       row :unlimited_account
-      row :only_ec_charges
+      row :ecu_charges
+      row :int_charges
+      row :allow_bots
       row :created_at
       row :updated_at
     end
@@ -173,8 +177,11 @@ ActiveAdmin.register Retailer do
 
     panel 'Plan' do
       attributes_table_for retailer do
-        row 'Este retailer sólo hace pagos en Ecuador' do
-          retailer.only_ec_charges
+        row 'Hace pagos en Ecuador' do
+          retailer.ecu_charges
+        end
+        row 'Hace pagos internacionales' do
+          retailer.int_charges
         end
       end
       plan = retailer.payment_plan
@@ -208,7 +215,9 @@ ActiveAdmin.register Retailer do
       f.input :ws_conversation_cost
       f.input :gupshup_phone_number
       f.input :gupshup_src_name
-      f.input :only_ec_charges, label: 'Este retailer sólo hace pagos en Ecuador'
+      f.input :ecu_charges, label: 'Hace pagos en Ecuador'
+      f.input :int_charges, label: 'Hace pagos Internacionales'
+      f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'
     end
     f.actions
   end

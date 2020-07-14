@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-xs-12 mb-10 stripe-element">
+    <input id="card_name" class="pt-10 pb-10" placeholder="Juan Nieves" />
+  </div>
+  <div class="col-xs-12 p-10 stripe-element">
+    <div class="card-element" id="card-element"></div>
+  </div>
+  <div class="col-xs-12 p-10 hidden" id="stripe-error"></div>
+  <div class="col-xs-12 p-10">
+    <button class="btn btn--cta btn-small submit-card" id="submit" disabled="disabled">
+      <i class="fas fa-credit-card mr-7" id="btn_cc"></i>
+      <i class="fas fa-spinner hidden" id="btn_spinner"></i>
+      <span>Agregar tarjeta</span>
+    </button>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-12 mb-20">
+    <h3 style="text-align: center">Tarjetas registradas</h3>
+    <div class="table box">
+      <div class="table__header row hide-on-tablet-and-down center-sm">
+        <div class="col-xs-3">Últimos 4 digitos</div>
+        <div class="col-xs-2">Marca</div>
+        <div class="col-xs-2">Fecha de expiración</div>
+        <div class="col-xs-2">Tipo</div>
+        <div class="col-xs-3"></div>
+      </div>
+
+      <% pm.each do |pm| %>
+        <% pm = JSON.parse(pm.payment_payload) %>
+        <div class="divider"></div>
+        <div class="table__item row middle-xs">
+          <div class="col-xs-3">
+            <div class="t-center"><%= pm['card']['last4'] %></div>
+          </div>
+          <div class="col-xs-2 c-grey">
+            <div class="t-center"><%= pm['card']['brand'] %></div>
+          </div>
+          <div class="col-xs-2 c-grey">
+            <div class="t-center"><%= "#{pm['card']['exp_month']}/#{pm['card']['exp_year']}" %></div>
+          </div>
+          <div class="col-xs-2 c-grey">
+            <div class="t-center"><%= pm['card']['funding'] == 'credit' ? 'crédito' : 'débito' %></div>
+          </div>
+          <div class="col-xs-3">
+            <%= link_to retailers_payment_method_path(slug: current_retailer, id: pm['id']), method: :delete, data: { confirm: 'Estás seguro de eliminar esta tarjeta?' }, class: 'btn btn--cta btn-small delete-card' do %>
+              <i class="far fa-trash-alt"></i>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -72,6 +72,13 @@ es:
         statuses:
           active: Activo
           inactive: Inactivo
+      chat_bot_action:
+        action_types:
+          add_tag: Agregar Etiqueta
+          assign_agent: Asignar Agente
+          get_out_bot: Salir del ChatBot
+          go_back_bot: Ir atrás
+          go_init_bot: Ir al menú principal
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'

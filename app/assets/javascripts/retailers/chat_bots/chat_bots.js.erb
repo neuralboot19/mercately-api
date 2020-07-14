@@ -1,0 +1,126 @@
+function searchOptions() {
+  getAjax(`${window.location.origin}/retailers/chat_bots/${$('#cb-web-id').val()}/tree_options`, function(data) {
+    var json = JSON.parse(data);
+    var options = json['options'];
+    buildTree(options[0]);
+  });
+}
+
+function buildTree(option, parent) {
+  if (!parent) {
+    var listContainer = $('#options-tree');
+  } else {
+    var listContainer = $(`#options-li-tree-${parent.id}`);
+  }
+
+  listContainer.append(
+    `<ul id="options-ul-tree-${option.id}" class="chat-bot-option-ul ${!parent ? 'pl-12' : ''}">
+    <li id="options-li-tree-${option.id}" class="chat-bot-option-li">
+    <div class="li-content">
+    <i class="fas fa-chevron-right fs-12 c-secondary mr-8"></i>
+    <span class="fs-14 fw-bold">${option.position}.</span> <span class="fs-14 c-gray-label">${option.text}</span>
+    <span class="tree-options-links">
+    <a class="ml-10 fs-12" href="${window.location.origin}/retailers/${$('#slug-id').val()}/chat_bots/${$('#cb-web-id').val()}/new_chat_bot_option?parent_id=${option.id}">Agregar opción</a>
+    <a class="ml-10 fs-12" href="${window.location.origin}/retailers/${$('#slug-id').val()}/chat_bots/${$('#cb-web-id').val()}/edit_chat_bot_option?option_id=${option.id}">Editar</a>
+    <a class="ml-10 fs-12" href="javascript:;" onclick="buildConversation(${option.id})">Vista previa</a>
+    </span></div></li>
+    </ul>`
+  )
+
+  if (option.children.length > 0) {
+    for (child in option.children) {
+      buildTree(option.children[child], option);
+    }
+  }
+}
+
+function buildConversation(option_id) {
+  getAjax(`${window.location.origin}/retailers/chat_bots/${$('#cb-web-id').val()}/path_option?option_id=${option_id}`, function(data) {
+    var json = JSON.parse(data);
+    var path = json['option'].data;
+
+    var target = $('#chat-preview');
+    target.html('');
+
+    for (node in path) {
+      var str = `<div class="w-100 row mt-10">
+        <div class="sent-message-preview">
+        <span>${path[node].attributes.answer}</span><br /><br />`
+
+      if (path[node].attributes.children && path[node].attributes.children.length > 0) {
+        for (child in path[node].attributes.children) {
+          str += `<span><b>${path[node].attributes.children[child].position}.</b> ${path[node].attributes.children[child].text}</span><br />`
+        }
+      }
+
+      str += '</div></div>'
+
+      target.append(str)
+
+      node_aux = parseInt(node);
+
+      if ((path.length - 1) >= (node_aux + 1)) {
+        target.append(
+          `<div class="">
+          <div class="my-10 received-message-preview">
+          <span>${path[node_aux + 1].attributes.position}</span>
+          </div></div>`
+        )
+      }
+    }
+  });
+}
+
+function showActionSelection(input) {
+  value = input.value;
+  id = input.id.replace("_action_type", "");
+  root = $(input).parent().parent().parent();
+  root.find('.hide-on-selection').hide();
+  root.find('.deactivate-on-selection').attr('disabled', true);
+
+  switch (value) {
+    case 'add_tag':
+      hideId = id + "_retailer_user_id";
+      showId = id + "_tag_ids";
+      showHideSelectFields(value, hideId, showId);
+      break;
+    case 'assign_agent':
+      hideId = id + "_tag_ids";
+      showId = id + "_retailer_user_id";
+      showHideSelectFields(value, hideId, showId);
+      break;
+    case 'get_out_bot':
+      root.find('.show-on-out-bot').show();
+      break;
+    case 'go_back_bot':
+      root.find('.show-on-back-bot').show();
+      break;
+    case 'go_init_bot':
+      root.find('.show-on-init-bot').show();
+      break;
+  }
+}
+
+function showHideSelectFields(action, hideId, showId) {
+  hideInput = $(`#${hideId}`);
+  hideInput.parent().parent().hide();
+  hideInput.attr('disabled', true);
+
+  showInput = $(`#${showId}`);
+  showInput.parent().parent().show();
+  showInput.attr('disabled', false);
+
+  if (action === 'add_tag') {
+    $(`#${showId}`).select2({
+      placeholder: "Selecciona o elimina etiquetas",
+      language: "es-ES",
+      maximumSelectionLength: 5
+    });
+  }
+}
+
+$(document).ready(function() {
+  $('#chat_bot_actions').on('cocoon:after-remove', function(e, removedItem) {
+    $(removedItem).find('.validate-unique').removeClass('validate-unique');
+  });
+});

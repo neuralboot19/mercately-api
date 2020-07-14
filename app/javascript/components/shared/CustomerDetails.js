@@ -298,13 +298,13 @@ class CustomerDetails extends Component {
 
         <div className="t-center mt-20">
           {this.state.customer.id &&
-            <a href={window.location.href.replace(`${this.props.chatType}`, `orders/new?customer_id=${this.state.customer.id}`)} target="_blank" className="btn btn--cta">
+            <a href={window.location.href.replace(`${this.props.chatType}`, `orders/new?customer_id=${this.state.customer.id}&from=${this.props.chatType}`)} target="_blank" className="btn btn--cta">
               Generar Venta
             </a>
           }
 
           {!this.state.customer.id &&
-            <a href={window.location.href.replace(`${this.props.chatType}`, `orders/new?first_name=${this.state.customer.first_name}&last_name=${this.state.customer.last_name}&email=${this.state.customer.email}&phone=${this.state.customer.phone}`)} target="_blank" className="btn btn--cta">
+            <a href={window.location.href.replace(`${this.props.chatType}`, `orders/new?first_name=${this.state.customer.first_name}&last_name=${this.state.customer.last_name}&email=${this.state.customer.email}&phone=${this.state.customer.phone}&from=${this.props.chatType}`)} target="_blank" className="btn btn--cta">
               Generar Venta
             </a>
           }

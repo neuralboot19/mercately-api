@@ -1,6 +1,9 @@
 class MeliRetailer < ApplicationRecord
+  include AddSalesChannelConcern
+
   belongs_to :retailer
   after_save :update_information
+  after_create :add_sales_channel
 
   def self.check_unique_meli_user_id(meli_user_id)
     MeliRetailer.exists?(meli_user_id: meli_user_id.to_s)

@@ -25,3 +25,16 @@
 .whats_app_table td{
   padding: 15px 5px;
 }
+
+.stripe-element {
+  border: thin solid #ddd;
+  border-radius: .4em;
+
+  input#card_name {
+    outline: none;
+    border: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+}

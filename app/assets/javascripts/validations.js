@@ -123,6 +123,32 @@ function validateAnyRequired(form) {
   }
 }
 
+function validateUniqueness(form) {
+  var message = document.getElementById('validate-unique-error');
+  var selectedOptions = [];
+
+  document.querySelectorAll(`#${form.id} .validate-unique`).forEach(function(input) {
+    if (input.value && input.value !== "") {
+      selectedOptions.push(input.value);
+    }
+  });
+
+  var initCount = selectedOptions.length;
+  var unique = selectedOptions.filter(onlyUnique);
+
+  if (initCount === unique.length) {
+    $(message).hide();
+    return true;
+  } else {
+    $(message).show();
+    return false;
+  }
+}
+
+function onlyUnique(value, index, self) { 
+  return self.indexOf(value) === index;
+}
+
 // Subscripcion del formulario a validaciones
 function validateForm(e, form) {
   e.preventDefault();
@@ -177,6 +203,7 @@ function validateForm(e, form) {
 
   checks.push(validateImages(form));
   checks.push(validateAnyRequired(form));
+  checks.push(validateUniqueness(form));
 
   if (!checks.includes(false)) form.submit();
 }

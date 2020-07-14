@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Customer, type: :model do
-  subject(:customer) { create(:customer) }
+  let!(:retailer) { create(:retailer) }
+  subject(:customer) { create(:customer, retailer: retailer) }
 
   describe 'associations' do
     it { is_expected.to have_one(:agent_customer) }
@@ -314,6 +315,29 @@ RSpec.describe Customer, type: :model do
       customer.country_id = 'EC'
       customer.phone = '123456789'
       expect(customer.send(:format_phone_number)).to eq('+593123456789')
+    end
+  end
+
+  describe '#phone_uniqueness' do
+    let(:customer) { create(:customer, country_id: nil, phone: '+593664-269-163', retailer: retailer) }
+
+    it 'returns nil if retailer not present' do
+      expect(customer.send(:phone_uniqueness)).to be nil
+    end
+
+    it 'returns nil if email present and phone blank' do
+      customer.phone = ''
+      customer.email = 'someemail.com'
+      customer.save
+
+      expect(customer.send(:phone_uniqueness)).to be nil
+    end
+
+    it 'not valid if retailer has another client with the same phone' do
+      customer
+      customer2 = build(:customer, phone: '+593664-269-163', retailer: retailer)
+      expect(customer2.valid?).to eq(false)
+      expect(customer2.errors[:base]).to include('Ya tienes un cliente registrado con este número de teléfono.')
     end
   end
 

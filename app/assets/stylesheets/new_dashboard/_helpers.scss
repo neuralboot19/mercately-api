@@ -36,6 +36,10 @@ html, body {
     @media only screen and (max-width: 768px) {
       display: grid;
       padding: .2em;
+
+      .btn {
+        margin-bottom: 10px;
+      }
     }
   }
 
@@ -51,6 +55,11 @@ html, body {
     &:hover {
       background-color: #00B4FF;
     }
+  }
+
+  .chat-bot-icon {
+    display: inline;
+    padding: unset;
   }
 }
 

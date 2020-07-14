@@ -47,6 +47,7 @@ class Retailers::CustomersController < RetailersController
     if @customer.save
       redirect_to retailers_customers_path(@retailer), notice: 'Cliente creado con éxito.'
     else
+      flash[:notice] = @customer.errors.full_messages.join(', ')
       render :new
     end
   end
@@ -55,6 +56,7 @@ class Retailers::CustomersController < RetailersController
     if @customer.update(customer_params)
       redirect_to retailers_customers_path(@retailer), notice: 'Cliente actualizado con éxito.'
     else
+      flash[:notice] = @customer.errors.full_messages.join(', ')
       render :edit
     end
   end

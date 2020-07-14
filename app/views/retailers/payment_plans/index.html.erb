@@ -15,7 +15,7 @@
           </div>
         </div>
         <div class="row" style="flex-wrap: wrap;">
-          <div class="col-xs-12">
+          <div class="col-xs-12 col-md-6">
             Datos del plan
             <ul>
               <li>Nombre del plan: <%= @payment_plan.plan.capitalize %></li>
@@ -28,6 +28,11 @@
               <% end %>
             </ul>
           </div>
+          <% if current_retailer.int_charges %>
+          <div class="col-xs-12 col-md-6">
+            <%= render partial: 'payment_method', locals: { pm: @pm } %>
+          </div>
+          <% end %>
         </div>
         <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>
           <div class="row">

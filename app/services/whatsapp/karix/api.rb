@@ -94,6 +94,24 @@ module Whatsapp
           events_url: "#{ENV['KARIX_WEBHOOK']}?account_id=#{sender.id}"
         }.to_json
       end
+
+      def prepare_chat_bot_message(chat_bot_option, get_out = false, error_exit = false)
+        return unless chat_bot_option.present?
+
+        if get_out == false && error_exit == false
+          message = chat_bot_option.answer + "\n\n"
+
+          if chat_bot_option.children.present?
+            chat_bot_option.children.order(:position).each do |child|
+              message += (child.position.to_s + '. ' + child.text + "\n")
+            end
+          end
+        else
+          message = get_out ? chat_bot_option.chat_bot.goodbye_message : chat_bot_option.chat_bot.error_message
+        end
+
+        message
+      end
     end
   end
 end

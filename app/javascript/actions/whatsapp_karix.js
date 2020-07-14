@@ -345,3 +345,30 @@ export const createTag = (id, body, token) => {
       });
   };
 };
+
+export const toggleChatBot = (id, token) => {
+  const endpoint = `/api/v1/customers/${id}/toggle_chat_bot`;
+  const csrf_token = token
+  return dispatch => {
+    fetch(endpoint, {
+      method: "PUT",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrf_token,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+      }
+    })
+    .then(res => res.json())
+    .then(
+      data => dispatch({ type: 'SET_CHAT_BOT', data }),
+      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+    ).catch((error) => {
+        if (error.response)
+          alert(error.response);
+        else
+          alert("An unexpected error occurred.");
+      });
+  };
+};

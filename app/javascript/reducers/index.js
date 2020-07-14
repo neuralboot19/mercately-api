@@ -146,6 +146,11 @@ const reducer = (state = initialState, action) => {
         products: action.data.products.data,
         total_pages: action.data.total_pages
       }
+    case 'SET_CHAT_BOT':
+      return {
+        ...state,
+        customer: action.data.customer
+      }
     default:
       return state;
   }

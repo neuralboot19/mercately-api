@@ -26,7 +26,8 @@ module MercadoLibre
 
       order.update_attributes!(customer: customer, total_amount: order_info['total_amount'], currency_id:
         order_info['currency_id'], merc_status: order_info['status'], created_at: order_info['date_created'],
-        pack_id: order_info['pack_id'])
+        pack_id: order_info['pack_id'], sales_channel_id:
+        @retailer.sales_channels.find_by_channel_type('mercadolibre')&.id)
 
       order_info['order_items'].each do |order_item|
         product_exist = @retailer.products.exists?(meli_product_id: order_item['item']['id'])
