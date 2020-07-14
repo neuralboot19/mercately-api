@@ -98,13 +98,15 @@
     <% if ENV['ENVIRONMENT'] == 'production' %>
       <script src="//assets.pcrl.co/js/jstracker.min.js"></script>
     <% end %>
-    <% if ENV.fetch('STRIPE_PUBLISHABLE') && ENV.fetch('STRIPE_SECRET') %>
-      <% if controller_path == 'retailers/payment_plans' && action_name == 'index' %>
+    <% if controller_path == 'retailers/payment_plans' && action_name == 'index' && current_retailer.int_charges %>
+      <% if ENV.fetch('STRIPE_PUBLISHABLE') && ENV.fetch('STRIPE_SECRET') %>
+
        <%= javascript_tag do %>
         ENV['STRIPE_PUBLISHABLE'] = "<%= ENV['STRIPE_PUBLISHABLE'] %>"
        <% end %>
         <script src="https://js.stripe.com/v3/"></script>
         <%= javascript_include_tag 'retailers/stripe/stripe' %>
+
       <% end %>
     <% end %>
   </body>
