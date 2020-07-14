@@ -286,6 +286,8 @@ class Customer < ApplicationRecord
     end
 
     def phone_uniqueness
+      return true if meli_nickname.present? || meli_customer_id.present?
+
       former_phone_number = self.phone
       format_phone_number
 
