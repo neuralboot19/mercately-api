@@ -28,9 +28,11 @@
               <% end %>
             </ul>
           </div>
+          <% if current_retailer.int_charges %>
           <div class="col-xs-12 col-md-6">
             <%= render partial: 'payment_method', locals: { pm: @pm } %>
           </div>
+          <% end %>
         </div>
         <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>
           <div class="row">
