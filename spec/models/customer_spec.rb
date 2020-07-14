@@ -339,6 +339,26 @@ RSpec.describe Customer, type: :model do
       expect(customer2.valid?).to eq(false)
       expect(customer2.errors[:base]).to include('Ya tienes un cliente registrado con este número de teléfono.')
     end
+
+    it 'returns true if is a ML customer' do
+      customer2 = build(:customer,
+                        phone: customer.phone,
+                        retailer: retailer,
+                        meli_customer_id: 42141421423,
+                        meli_nickname: 'awesomw_NiCKnaMe'
+                       )
+
+      expect(customer2.valid?).to eq(true)
+    end
+
+    it 'returns false if is not a ML customer' do
+      customer2 = build(:customer,
+                        phone: customer.phone,
+                        retailer: retailer
+                       )
+
+      expect(customer2.valid?).to eq(false)
+    end
   end
 
   describe '#split_phone' do
