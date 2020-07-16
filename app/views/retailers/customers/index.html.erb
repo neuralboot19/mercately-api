@@ -117,7 +117,7 @@
                 <div class="col-xs-4 col-sm-2 c-grey">
                   <div class="t-center truncate"><%= customer.phone %></div>
                   <% if can_send_whatsapp_notification?(current_retailer_user, customer) %>
-                    <div class="t-center"><label for="modal--toggle-index" class="request-demo-label ws-contact d-none"
+                    <div class="t-center"><label for="modal--toggle-index" class="request-demo-label ws-contact"
                       data-customer_full_names="<%= customer.full_names %>"
                       data-customer_id="<%= customer.id %>"
                       data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>"

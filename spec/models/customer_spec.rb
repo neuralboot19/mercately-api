@@ -534,7 +534,7 @@ RSpec.describe Customer, type: :model do
     let(:retailer) { create(:retailer, :gupshup_integrated) }
     let(:customer) { create(:customer, retailer: retailer, whatsapp_opt_in: false) }
     let(:service_response) {
-      {:code=>"200", :body=>{"status"=>true}}
+      {:code=>"200", :body=>{"status"=>"success"}}
     }
 
     before do

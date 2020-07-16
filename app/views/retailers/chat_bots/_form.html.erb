@@ -29,6 +29,10 @@
           </div>
           <div class="row w-100">
             <div class="col-xs-12 col-md-6 mb-8 my-16">
+              <%= f.label :repeat_menu_on_failure, 'Reenviar opciones del menú en intento fallido?' %><br/>
+              <%= f.check_box :repeat_menu_on_failure %>
+            </div>
+            <div class="col-xs-12 col-md-6 mb-8 my-16">
               <%= f.label :goodbye_message, 'Mensaje de despedida' %><br/>
               <%= f.text_area :goodbye_message, class: 'input validate-required' %>
               <i class="validation-msg"></i>
