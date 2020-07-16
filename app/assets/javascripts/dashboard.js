@@ -1,7 +1,7 @@
 //= require notifications
 
 $(document).ready(function(){
-  $('#modal--toggle').attr('checked', false);
+  $('#modal--toggle-index').attr('checked', false);
 
   // This will check for opt in permissions wherever
   // the Whatsapp button is located in the dashboard,
@@ -11,7 +11,6 @@ $(document).ready(function(){
       return true;
 
     if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
-
       var id = $(this).data('customer_id');
       var token =  $('meta[name="csrf-token"]').attr('content');
 
@@ -23,13 +22,13 @@ $(document).ready(function(){
           xhr.setRequestHeader('X-CSRF-Token', token)
         },
         statusCode: {
-          200: function() {
-            $('.ws-contact').data('whatsapp_opt_in', true);
-            $('#modal--toggle').attr('checked', true);
+          200: function(data) {
+            $(`[data-customer_id="${data.customer_id}"]`).data('whatsapp_opt_in', true)
+            $('#modal--toggle-index').attr('checked', true);
             return true;
           },
           400: function(e) {
-            $('#modal--toggle').attr('checked', false);
+            $('#modal--toggle-index').attr('checked', false);
             alert(e.responseJSON['error']);
             return false;
           }

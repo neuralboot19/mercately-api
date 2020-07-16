@@ -134,7 +134,7 @@ class Api::V1::CustomersController < ApplicationController
 
   def accept_opt_in
     @customer.send_for_opt_in = true
-    return render status: 200, json: {} if @customer.accept_opt_in!
+    return render status: 200, json: { customer_id: @customer.id} if @customer.accept_opt_in!
 
     render status: 400, json: { error: 'Error al aceptar opt-in de este cliente, intente nuevamente' }
   end

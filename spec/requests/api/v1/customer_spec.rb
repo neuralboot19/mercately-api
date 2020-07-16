@@ -537,7 +537,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       let(:customer_optin_false) { create(:customer, retailer: retailer_gupshup, whatsapp_opt_in: false) }
 
       let(:service_response) {
-        {:code=>"200", :body=>{"status"=>true}}
+        {:code=>"200", :body=>{"status"=>"success"}}
       }
 
       before do

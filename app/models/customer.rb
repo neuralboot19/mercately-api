@@ -320,7 +320,7 @@ class Customer < ApplicationRecord
       return unless info.present? && info&.[](:code) == '200'
 
       self.send_for_opt_in = false
-      update(whatsapp_opt_in: true) if info&.[](:body)&.[]('status') == true
+      update(whatsapp_opt_in: true) if info&.[](:body)&.[]('status') == 'success'
     end
 
     def gupshup_service
