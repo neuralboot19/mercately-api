@@ -119,7 +119,8 @@ class Api::V1::CustomersController < ApplicationController
     @message.update_column(:date_read, Time.now)
     facebook_service.send_read_action(@message.customer.psid, 'mark_seen')
 
-    facebook_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a)
+    facebook_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil, nil,
+      @message.customer)
     render status: 200, json: { message: @message }
   end
 
