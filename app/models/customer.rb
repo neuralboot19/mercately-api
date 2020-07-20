@@ -317,6 +317,10 @@ class Customer < ApplicationRecord
       info = gupshup_service.upload_list(File.open("#{Rails.public_path}/#{id}_opt_in.csv"))
       File.delete("#{Rails.public_path}/#{id}_opt_in.csv")
 
+      Rails.logger.info('*'*100)
+      Rails.logger.info(info)
+      Rails.logger.info('*'*100)
+
       return unless info.present? && info&.[](:code) == '200'
 
       self.send_for_opt_in = false
