@@ -4,7 +4,8 @@ class GupshupWhatsappMessageSerializer
   set_type :gupshup_whatsapp_message
   set_id :id
 
-  attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :uid, :created_time
+  attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :uid, :created_time,
+             :replied_message
 
   attribute :content_type do |object|
     message = object.message_payload
@@ -119,5 +120,20 @@ class GupshupWhatsappMessageSerializer
     end
 
     info
+  end
+
+  attribute :replied_message do |object|
+    message = object.message_payload
+    id = message.try(:[], 'payload').try(:[], 'context').try(:[], 'id')
+    next unless id.present?
+
+    replied = GupshupWhatsappMessage.find_by_whatsapp_message_id(id)
+    next unless replied
+
+    JSON.parse(
+      GupshupWhatsappMessageSerializer.new(
+        replied
+      ).serialized_json
+    )
   end
 end
