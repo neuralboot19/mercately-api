@@ -70,7 +70,9 @@ class ChatList extends Component {
     }
 
     if (!data.remove_only) {
-      this.props.setActiveChatBot(customer);
+      if (this.props.chatType == 'whatsapp') {
+        this.props.setActiveChatBot(customer);
+      }
       customerList = this.insertCustomer(customerList, customer, index);
     }
 
