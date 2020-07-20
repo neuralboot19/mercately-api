@@ -76,6 +76,8 @@ module Facebook
 
     def mark_read(psid)
       customer = Customer.find_by(psid: psid)
+      return unless customer.present?
+
       messages = customer.facebook_messages.retailer_unread.order(:id)
       last_message = messages.last
       return unless last_message.present?

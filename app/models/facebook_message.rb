@@ -7,7 +7,7 @@ class FacebookMessage < ApplicationRecord
 
   after_create :sent_by_retailer?
   after_create :send_facebook_message
-  after_create :broadcast_to_counter_channel
+  after_save :broadcast_to_counter_channel
   after_create :send_welcome_message
   after_create :send_inactive_message
 
