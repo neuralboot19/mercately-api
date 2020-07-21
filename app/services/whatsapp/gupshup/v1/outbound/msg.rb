@@ -27,6 +27,21 @@ module Whatsapp::Gupshup::V1
       Rails.logger.error(e)
     end
 
+    def send_bulk_files(options)
+      @phone_number = @customer.phone_number(false)
+      @options = options
+
+      @options[:params][:file_data]&.each_with_index do |file, index|
+        @index = index
+        request_body = self.send(@options[:type])
+        response = send_message_request(request_body[0])
+        response_body = JSON.parse(response.read_body)
+        save_message(response.code, response_body, request_body, @options[:retailer_user])
+      end
+    rescue StandardError => e
+      Rails.logger.error(e)
+    end
+
     private
 
       def base_body
@@ -194,9 +209,10 @@ module Whatsapp::Gupshup::V1
 
       def file
         if @options[:params][:file_data].present?
-          resource_type = get_resource_type(@options[:params][:file_data])
+          file = @index ? @options[:params][:file_data][@index] : @options[:params][:file_data]
+          resource_type = get_resource_type(file)
           response = Whatsapp::Karix::Api.new().upload_file_to_cloudinary(
-            @options[:params][:file_data],
+            file,
             resource_type
           )
 

@@ -1398,3 +1398,37 @@ i {
     background-color: unset;
   }
 }
+
+.selector-container {
+  height: 220px;
+  border: 2px dashed $secondary-color;
+  border-radius: 5px;
+  text-align: center;
+  cursor: pointer;
+
+  .indicators {
+    margin-top: 70px;
+  }
+}
+
+.preview-container {
+  .div-image {
+    position: relative;
+
+    .image-selected {
+      width: 150px;
+      height: 150px;
+    }
+
+    i {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: #AAA;
+
+      &:hover {
+        color: $secondary-color;
+      }
+    }
+  }
+}

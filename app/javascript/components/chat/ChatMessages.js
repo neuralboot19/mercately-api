@@ -5,7 +5,8 @@ import {
   fetchMessages,
   sendMessage,
   sendImg,
-  setMessageAsRead
+  setMessageAsRead,
+  sendBulkFiles
 } from "../../actions/actions";
 
 import {
@@ -15,6 +16,7 @@ import {
 
 import MessageForm from './MessageForm';
 import Message from './Message';
+import ImagesSelector from './../shared/ImagesSelector';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -32,7 +34,9 @@ class ChatMessages extends Component {
       url: '',
       fastAnswerText: null,
       agents: [],
-      selectedProduct: null
+      selectedProduct: null,
+      showLoadImages: false,
+      loadedImages: []
     };
     this.bottomRef = React.createRef();
   }
@@ -277,6 +281,74 @@ class ChatMessages extends Component {
     this.props.setNoRead(this.props.currentCustomer, csrfToken, 'facebook');
   }
 
+  onDrop = (files) => {
+    if (this.state.loadedImages.length >= 5) {
+      alert('Error: Máximo 5 imágenes permitidas');
+      return;
+    }
+
+    var showError = false;
+    for (var x in files) {
+      if (this.validateImages(files[x])) {
+        if (this.state.loadedImages.length >= 5) {
+          alert('Error: Máximo 5 imágenes permitidas');
+          return;
+        }
+
+        this.setState({ loadedImages: this.state.loadedImages.concat(files[x]) });
+      } else {
+        showError = true;
+      }
+    }
+
+    if (showError || !files || files.length == 0) {
+      alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
+    }
+  }
+
+  validateImages = (file) => {
+    if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type) || file.size > 8*1024*1024) {
+      return false;
+    }
+
+    return true;
+  }
+
+  toggleLoadImages = () => {
+    this.setState({
+      showLoadImages: !this.state.showLoadImages,
+      loadedImages: []
+    });
+  }
+
+  removeImage = (index) => {
+    this.state.loadedImages.splice(index, 1);
+    this.setState({ loadedImages: this.state.loadedImages });
+  }
+
+  sendImages = () => {
+    var insertedMessages = [];
+    var data = new FormData();
+    this.state.loadedImages.map((image) => {
+      data.append('file_data[]', image);
+
+      var url = URL.createObjectURL(image);
+      var type = this.fileType(image.type);
+
+      insertedMessages.push({url: url, sent_by_retailer: true, file_type: type})
+    });
+
+    this.setState({
+      messages: this.state.messages.concat(insertedMessages),
+      new_message: true,
+      selectedProduct: null
+    });
+
+    this.props.sendBulkFiles(this.props.currentCustomer, data, csrfToken);
+    this.scrollToBottom();
+    this.toggleLoadImages();
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -352,10 +424,21 @@ class ChatMessages extends Component {
                 selectedProduct={this.state.selectedProduct}
                 removeSelectedProduct={this.removeSelectedProduct}
                 onMobile={this.props.onMobile}
+                toggleLoadImages={this.toggleLoadImages}
               />
             </div>
           )
         }
+
+        <ImagesSelector
+          showLoadImages={this.state.showLoadImages}
+          loadedImages={this.state.loadedImages}
+          toggleLoadImages={this.toggleLoadImages}
+          onDrop={this.onDrop}
+          removeImage={this.removeImage}
+          sendImages={this.sendImages}
+          onMobile={this.props.onMobile}
+        />
       </div>
     )
   }
@@ -391,6 +474,9 @@ function mapDispatch(dispatch) {
     },
     setNoRead: (customer_id, token, chatType) => {
       dispatch(setNoRead(customer_id, token, chatType));
+    },
+    sendBulkFiles: (id, body, token) => {
+      dispatch(sendBulkFiles(id, body, token));
     }
   };
 }

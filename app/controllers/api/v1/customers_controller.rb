@@ -181,6 +181,12 @@ class Api::V1::CustomersController < ApplicationController
     render status: 200, json: { customer: @customer }
   end
 
+  def send_bulk_files
+    facebook_service.send_bulk_files(@customer, current_retailer_user, params)
+
+    render status: 200, json: { message: 'Mensaje enviado' }
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
