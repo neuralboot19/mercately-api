@@ -617,6 +617,52 @@ class ChatMessages extends Component {
           {this.state.messages.map((message, index) => (
             <div key={index} className="message">
               <div className={ this.divClasses(message) } >
+                {message.replied_message &&
+                  <div className="replied-message">
+                    {message.replied_message.data.attributes.content_type == 'text' &&
+                      <span className="text">{message.replied_message.data.attributes.content_text}</span>
+                    }
+                    {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'image' &&
+                      <img src={message.replied_message.data.attributes.content_media_url} className="image"
+                        onClick={(e) => this.toggleImgModal(e)}/>
+                    }
+                    {message.replied_message.data.attributes.content_type == 'media' && (message.replied_message.data.attributes.content_media_type == 'voice' || message.replied_message.data.attributes.content_media_type == 'audio') && (
+                      <audio controls>
+                        <source src={message.replied_message.data.attributes.content_media_url}/>
+                      </audio>
+                    )}
+                    {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'video' && (
+                      <video width="120" height="80" controls>
+                        <source src={message.replied_message.data.attributes.content_media_url}/>
+                      </video>
+                    )}
+                    {message.replied_message.data.attributes.content_type == 'location' &&
+                        (<p className="fs-15 no-back-color"><a href={`https://www.google.com/maps/place/${message.replied_message.data.attributes.content_location_latitude},${message.replied_message.data.attributes.content_location_longitude}`} target="_blank">
+                          <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></p>)}
+                    {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'document' && (
+                      <p className="fs-15 no-back-color"><a href="" onClick={(e) => this.downloadFile(e, message.replied_message.data.attributes.content_media_url, message.replied_message.data.attributes.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.replied_message.data.attributes.content_media_caption || 'Descargar archivo'}</a></p>
+                    )}
+                    {message.replied_message.data.attributes.content_type == 'contact' &&
+                      message.replied_message.data.attributes.contacts_information.map(contact =>
+                        <div className="contact-card w-100 mb-10 no-back-color">
+                          <i className="fas fa-user mr-8"></i><div className="w-100 mb-10">{contact.names.formatted_name}</div>
+                          {contact.phones.map(ph =>
+                            <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
+                          )}
+                          {contact.emails.map(em =>
+                            <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i><div>{em.email}</div></div>
+                          )}
+                          {contact.addresses.map(addrr =>
+                            <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
+                          )}
+                          {contact.org && contact.org.company &&
+                            <div className="w-100 fs-14"><i className="fas fa-building mr-8"></i>{contact.org.company}</div>
+                          }
+                        </div>
+                      )
+                    }
+                  </div>
+                }
                 {message.content_type == 'text' &&
                   <p className={message.status === 'read' && this.props.handleMessageEvents === true  ? 'read-message' : ''}>{message.content_text} {
                     message.direction == 'outbound' && this.props.handleMessageEvents === true  &&

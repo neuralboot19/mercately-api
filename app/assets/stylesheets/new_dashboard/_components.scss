@@ -1374,3 +1374,27 @@ i {
     }
   }
 }
+
+.replied-message {
+  background-color: #A9A9A9;
+  border-radius: 20px;
+  padding: 6px 14px 6px 14px;
+
+  .text {
+    font-size: 12px;
+  }
+
+  .image {
+    max-width: 100px;
+    max-height: 100px;
+    margin-top: 5px;
+  }
+
+  audio, video, .contact-card {
+    margin-top: 5px;
+  }
+
+  .no-back-color {
+    background-color: unset;
+  }
+}
