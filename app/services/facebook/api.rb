@@ -85,6 +85,16 @@ module Facebook
       "https://graph.facebook.com/v5.0/#{product.facebook_product_id}?#{params.to_query}"
     end
 
+    def send_bulk_files(customer, params)
+      return unless params[:file_data]
+
+      params[:file_data].each do |file|
+        file_data = file.tempfile.path
+        filename = File.basename(file.original_filename)
+        save_message(customer, file_data, filename, params)
+      end
+    end
+
     private
 
       def pages_url
@@ -143,6 +153,21 @@ module Facebook
         conn = Connection.prepare_connection(url)
         response = Connection.post_request(conn, prepare_webhook_subscription)
         JSON.parse(response.body)
+      end
+
+      def save_message(customer, file_data, filename, params)
+        FacebookMessage.create(
+          customer: customer,
+          sender_uid: @retailer_user.uid,
+          id_client: customer.psid,
+          facebook_retailer: @facebook_retailer,
+          file_data: file_data,
+          sent_from_mercately: true,
+          sent_by_retailer: true,
+          filename: filename,
+          retailer_user: @retailer_user,
+          file_type: params[:type]
+        )
       end
   end
 end

@@ -24,25 +24,6 @@ class MessageForm extends Component {
     });
   }
 
-  handleImgSubmit = (e) => {
-    var el = e.target;
-    var file = el.files[0];
-    if(!file.type.includes('image/')) {
-      alert('Error: El archivo debe ser una imagen');
-      return;
-    }
-
-    // Max 8 Mb allowed
-    if(file.size > 8*1024*1024) {
-      alert('Error: Maximo permitido 8MB');
-      return;
-    }
-
-    var data = new FormData();
-    data.append('file_data', file);
-    this.props.handleSubmitImg(el, data);
-  }
-
   handleFileSubmit = (e) => {
     var el = e.target;
     var file = el.files[0];
@@ -106,9 +87,8 @@ class MessageForm extends Component {
               <div className="tooltiptext">Archivos</div>
             }
           </div>
-          <input id="attach" className="d-none" type="file" name="messageImg" accept="image/*" onChange={(e) => this.handleImgSubmit(e)}/>
           <div className="tooltip-top">
-            <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
+            <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.props.toggleLoadImages()}></i>
             {this.props.onMobile == false &&
               <div className="tooltiptext">Imágenes</div>
             }

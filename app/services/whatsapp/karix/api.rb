@@ -21,10 +21,11 @@ module Whatsapp
         }.to_json
       end
 
-      def prepare_whatsapp_message_file(retailer, customer, params)
+      def prepare_whatsapp_message_file(retailer, customer, params, index = nil)
         if params[:file_data].present?
-          resource_type = get_resource_type(params[:file_data])
-          response = upload_file_to_cloudinary(params[:file_data], resource_type)
+          file = index ? params[:file_data][index] : params[:file_data]
+          resource_type = get_resource_type(file)
+          response = upload_file_to_cloudinary(file, resource_type)
           filename = response['original_filename'] if resource_type == 'document'
 
           url = response['secure_url'] || response['url']

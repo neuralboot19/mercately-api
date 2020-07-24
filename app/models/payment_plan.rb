@@ -21,11 +21,11 @@ class PaymentPlan < ApplicationRecord
 
     # We must convert the next pay date to a timestamp to shedule the job
     # since self.next_pay_date is type Date instead of type Time
-    next_notification_in = Time.parse(npd.to_s).to_i
+    next_notification_at = Time.parse(npd.to_s).to_i
 
     # Schedule the next alert
-    Retailers::RetailerChargeAlertJob.perform_in(
-      next_notification_in,
+    Retailers::RetailerChargeAlertJob.perform_at(
+      next_notification_at,
       id
     ) unless Rails.env == 'test'
   end

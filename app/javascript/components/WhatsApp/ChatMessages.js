@@ -9,8 +9,10 @@ import {
   fetchWhatsAppTemplates,
   changeCustomerAgent,
   setNoRead,
-  toggleChatBot } from "../../actions/whatsapp_karix";
+  toggleChatBot,
+  sendWhatsAppBulkFiles } from "../../actions/whatsapp_karix";
 import Modal from 'react-modal';
+import ImagesSelector from './../shared/ImagesSelector';
 
 var currentCustomer = 0;
 var total_pages = 0;
@@ -48,7 +50,9 @@ class ChatMessages extends Component {
       auxTemplateSelected: [],
       agents: [],
       updated: true,
-      selectedProduct: null
+      selectedProduct: null,
+      showLoadImages: false,
+      loadedImages: []
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -287,17 +291,70 @@ class ChatMessages extends Component {
     }
   }
 
-  handleImgSubmit = (e) => {
-    var el = e.target;
-    var file = el.files[0];
-    if(!file.type.includes('image/jpg') && !file.type.includes('image/jpeg') && !file.type.includes('image/png')) {
-      alert('Error: El archivo debe ser una imagen JPG/JPEG o PNG');
+  onDrop = (files) => {
+    if (this.state.loadedImages.length >= 5) {
+      alert('Error: Máximo 5 imágenes permitidas');
       return;
     }
 
-    // Max 8 Mb allowed
-    if(file.size > 8*1024*1024) {
-      alert('Error: Maximo permitido 8MB');
+    var showError = false;
+    for (var x in files) {
+      if (this.validateImages(files[x])) {
+        if (this.state.loadedImages.length >= 5) {
+          alert('Error: Máximo 5 imágenes permitidas');
+          return;
+        }
+
+        this.setState({ loadedImages: this.state.loadedImages.concat(files[x]) });
+      } else {
+        showError = true;
+      }
+    }
+
+    if (showError || !files || files.length == 0) {
+      alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
+    }
+  }
+
+  validateImages = (file) => {
+    if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type) || file.size > 5*1024*1024) {
+      return false;
+    }
+
+    return true;
+  }
+
+  sendImages = () => {
+    var insertedMessages = [];
+    var data = new FormData();
+    data.append('template', false);
+    this.state.loadedImages.map((image) => {
+      data.append('file_data[]', image);
+
+      var url = URL.createObjectURL(image);
+      var type = this.fileType(image.type);
+      var caption = type == 'document' ? image.name : null;
+
+      insertedMessages.push({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption, created_time: new Date()})
+    });
+
+    this.setState({
+      messages: this.state.messages.concat(insertedMessages),
+      new_message: true,
+      messageText: '',
+      selectedProduct: null
+    });
+
+    this.props.sendWhatsAppBulkFiles(this.props.currentCustomer, data, csrfToken);
+    this.scrollToBottom();
+    this.toggleLoadImages();
+  }
+
+  handleImgSubmit = (e) => {
+    var el = e.target;
+    var file = el.files[0];
+    if (!this.validateImages(file)) {
+      alert('Error: El archivo debe ser una imagen JPG/JPEG o PNG, de máximo 5MB');
       return;
     }
 
@@ -549,6 +606,18 @@ class ChatMessages extends Component {
     this.props.toggleChatBot(this.props.currentCustomer, csrfToken);
   }
 
+  toggleLoadImages = () => {
+    this.setState({
+      showLoadImages: !this.state.showLoadImages,
+      loadedImages: []
+    });
+  }
+
+  removeImage = (index) => {
+    this.state.loadedImages.splice(index, 1);
+    this.setState({ loadedImages: this.state.loadedImages });
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -761,9 +830,8 @@ class ChatMessages extends Component {
                                 <div className="tooltiptext">Archivos</div>
                               }
                             </div>
-                            <input id="attach" className="d-none" type="file" name="messageImg" accept="image/jpg, image/jpeg, image/png" onChange={(e) => this.handleImgSubmit(e)}/>
                             <div className="tooltip-top">
-                              <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach').click()}></i>
+                              <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleLoadImages()}></i>
                               {this.props.onMobile == false &&
                                 <div className="tooltiptext">Imágenes</div>
                               }
@@ -838,6 +906,16 @@ class ChatMessages extends Component {
             )
           }
         </Modal>
+
+        <ImagesSelector
+          showLoadImages={this.state.showLoadImages}
+          loadedImages={this.state.loadedImages}
+          toggleLoadImages={this.toggleLoadImages}
+          onDrop={this.onDrop}
+          removeImage={this.removeImage}
+          sendImages={this.sendImages}
+          onMobile={this.props.onMobile}
+        />
       </div>
     )
   }
@@ -887,6 +965,9 @@ function mapDispatch(dispatch) {
     },
     toggleChatBot: (customer_id, token) => {
       dispatch(toggleChatBot(customer_id, token));
+    },
+    sendWhatsAppBulkFiles: (id, body, token) => {
+      dispatch(sendWhatsAppBulkFiles(id, body, token));
     }
   };
 }

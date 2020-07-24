@@ -27,7 +27,8 @@ module Whatsapp
       def send_message(retailer, customer, params, type)
         url = ws_api.prepare_send_whatsapp_message_url
         conn = prepare_connection(retailer, url)
-        response = Connection.post_request(conn, prepare_message_body(retailer, customer, params, type))
+        response = Connection.post_request(conn, prepare_message_body(retailer: retailer, customer: customer,
+          params: params, type: type))
         JSON.parse(response.body)
       end
 
@@ -47,12 +48,12 @@ module Whatsapp
         conn
       end
 
-      def prepare_message_body(retailer, customer, params, type)
-        case type
+      def prepare_message_body(args)
+        case args[:type]
         when 'text'
-          ws_api.prepare_whatsapp_message_text(retailer, customer, params)
+          ws_api.prepare_whatsapp_message_text(args[:retailer], args[:customer], args[:params])
         when 'file'
-          ws_api.prepare_whatsapp_message_file(retailer, customer, params)
+          ws_api.prepare_whatsapp_message_file(args[:retailer], args[:customer], args[:params], args[:index])
         end
       end
 
@@ -61,6 +62,22 @@ module Whatsapp
         conn = prepare_connection(retailer, url)
         response = Connection.post_request(conn, ws_api.prepare_welcome_message_body(retailer))
         JSON.parse(response.body)
+      end
+
+      def send_bulk_files(args)
+        return unless prepare_send_files(args)
+
+        has_agent = args[:customer].agent_customer.present?
+        return if has_agent
+
+        # Si el customer no tiene un agente asignado aun, se le asigna
+        # al que envia el primer mensaje
+        AgentCustomer.create_with(retailer_user: args[:retailer_user])
+                    .find_or_create_by(customer: args[:customer])
+
+        karix_helper = KarixNotificationHelper
+        karix_helper.broadcast_data(args[:retailer], args[:retailer].retailer_users.to_a, nil,
+                                    args[:customer].agent_customer)
       end
 
       private
@@ -72,6 +89,28 @@ module Whatsapp
           return status if statuses.index(status).blank?
 
           statuses.index(status) > statuses.index(message.status) ? status : message.status
+        end
+
+        def prepare_send_files(args)
+          url = ws_api.prepare_send_whatsapp_message_url
+          conn = prepare_connection(args[:retailer], url)
+          karix_helper = KarixNotificationHelper
+          sent = false
+
+          args[:params][:file_data]&.each_with_index do |file, index|
+            response = Connection.post_request(conn, prepare_message_body(retailer: args[:retailer], customer:
+              args[:customer], params: args[:params], type: args[:type], index: index))
+            response = JSON.parse(response.body)
+            next if response['error'].present?
+
+            message = args[:retailer].karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
+            message = karix_helper.ws_message_service.assign_message(message, args[:retailer], response['objects'][0],
+                                                                    args[:retailer_user])
+            message.save
+            sent = true
+          end
+
+          sent
         end
     end
   end

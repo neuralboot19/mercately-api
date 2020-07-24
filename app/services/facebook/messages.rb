@@ -97,6 +97,10 @@ module Facebook
       Connection.post_request(conn, prepare_action(to, action))
     end
 
+    def send_bulk_files(customer, retailer_user, params)
+      Facebook::Api.new(@facebook_retailer, retailer_user).send_bulk_files(customer, params)
+    end
+
     private
 
       def prepare_message(to, message)
@@ -160,8 +164,7 @@ module Facebook
       def check_content_type(content_type)
         return unless content_type.present?
         return 'image' if content_type.include?('image/')
-        return 'file' if ['application/pdf', 'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
+        'file' if right_file_format?(content_type)
       end
 
       def grab_url(response, content_type)
@@ -192,6 +195,14 @@ module Facebook
         else
           message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
         end
+      end
+
+      def right_file_format?(content_type)
+        [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        ].include?(content_type)
       end
   end
 end
