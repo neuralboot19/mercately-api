@@ -902,15 +902,14 @@ i {
   background-size: 225px;
 
   .text-input {
-    align-items: center;
-    text-align: center;
-    margin-top: 15px;
     background-color: #FFF;
     border: 1px solid #cccccc;
     border-radius: 5px;
+    padding-left: 10px;
     -webkit-box-shadow: 0px 0px 5px .8px #cccccc;
     -moz-box-shadow: 0px 0px 5px .8px #cccccc;
     box-shadow: 0px 0px 5px .8px #cccccc;
+    margin-top: 15px;
 
     textarea {
       width: 95%;
@@ -949,6 +948,23 @@ i {
       &:hover {
         color: $secondary-color;
       }
+    }
+
+    .message-input {
+      display: inline-block;
+      width: 95%;
+      border: 0;
+      padding: 8px;
+      outline: 0;
+      height: 53px;
+      margin-bottom: 4px;
+      overflow-y: auto;
+      border-bottom: 1px solid $secondary-color;
+      white-space: pre-wrap;
+    }
+
+    [contentEditable=true]:empty::before {
+      content:attr(placeholder-text)
     }
   }
 }
@@ -1405,6 +1421,7 @@ i {
   border-radius: 5px;
   text-align: center;
   cursor: pointer;
+  outline: 0px solid transparent;
 
   .indicators {
     margin-top: 70px;

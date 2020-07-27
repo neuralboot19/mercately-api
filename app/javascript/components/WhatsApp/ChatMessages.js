@@ -35,7 +35,6 @@ class ChatMessages extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      messageText: '',
       messages: [],
       new_message: false,
       page: 1,
@@ -76,7 +75,6 @@ class ChatMessages extends Component {
       messages: [],
       page: 1,
       scrolable: true,
-      messageText: '',
       selectedProduct: null
     }, () => {
       this.props.fetchWhatsAppMessages(id);
@@ -85,6 +83,8 @@ class ChatMessages extends Component {
 
     this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
     socket.on("message_chat", data => this.updateChat(data));
+
+    this.setFocus();
   }
 
   updateChat = (data) => {
@@ -152,7 +152,7 @@ class ChatMessages extends Component {
     }
 
     if (newProps.fastAnswerText) {
-      this.state.messageText = newProps.fastAnswerText;
+      $('#divMessage').html(newProps.fastAnswerText);
       this.props.changeFastAnswerText(null);
     }
 
@@ -163,7 +163,7 @@ class ChatMessages extends Component {
       productString += ('Precio $' + this.state.selectedProduct.attributes.price + '\n');
       productString += (this.state.selectedProduct.attributes.description + '\n');
       productString += (this.state.selectedProduct.attributes.url ? this.state.selectedProduct.attributes.url : '');
-      this.state.messageText = productString;
+      $('#divMessage').html(productString);
       this.props.selectProduct(null);
     }
   }
@@ -187,7 +187,6 @@ class ChatMessages extends Component {
         messages: [],
         page: 1,
         scrolable: true,
-        messageText: '',
         selectedProduct: null
       }, () => {
         this.props.fetchWhatsAppMessages(id);
@@ -224,18 +223,24 @@ class ChatMessages extends Component {
       return;
     }
 
-    let text = this.state.messageText;
+    let input = $('#divMessage');
+    let text = input.text();
     if(text.trim() === '') return;
+
+    let txt = this.getText();
     var rDate = moment(this.props.recentInboundMessageDate).local();
     this.setState({
       can_write: moment().local().diff(rDate, 'hours') < 24
     }, () => {
       if (this.state.can_write) {
-        this.setState({ messageText: '', selectedProduct: null }, () => {
-          this.handleSubmitWhatsAppMessage(e, text, false)
+        this.setState({ selectedProduct: null }, () => {
+          this.handleSubmitWhatsAppMessage(e, txt, false)
+          input.html(null);
         });
       }
     })
+
+    this.setFocus();
   }
 
   handleSubmitWhatsAppMessage = (e, message, isTemplate) => {
@@ -341,7 +346,6 @@ class ChatMessages extends Component {
     this.setState({
       messages: this.state.messages.concat(insertedMessages),
       new_message: true,
-      messageText: '',
       selectedProduct: null
     });
 
@@ -366,11 +370,12 @@ class ChatMessages extends Component {
 
   handleSubmitImg = (el, file_data) => {
     var url, type, caption;
+    var input = $('#divMessage');
 
     if (this.state.selectedProduct) {
       url = this.state.selectedProduct.attributes.image;
       type = 'image';
-      caption = this.state.messageText;
+      caption = this.getText();
 
       var data = new FormData();
       data.append('template', false);
@@ -386,10 +391,10 @@ class ChatMessages extends Component {
     this.setState({
       messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption, created_time: new Date()}),
       new_message: true,
-      messageText: '',
       selectedProduct: null
     }, () => {
       this.props.sendWhatsAppImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
+      input.html(null);
       this.scrollToBottom();
     });
   }
@@ -618,6 +623,53 @@ class ChatMessages extends Component {
     this.setState({ loadedImages: this.state.loadedImages });
   }
 
+  pasteImages = (e, fromSelector) => {
+    e.preventDefault();
+
+    if (e.clipboardData || e.originalEvent.clipboardData) {
+      var clipboard = e.clipboardData || e.originalEvent.clipboardData;
+      var pos = clipboard.types.indexOf('Files');
+
+      if (pos !== -1) {
+        if (clipboard.items) {
+          var file = clipboard.items[pos].getAsFile();
+        } else if (clipboard.files) {
+          var file = clipboard.files[0];
+        }
+
+        if (file) {
+          if (!this.validateImages(file)) {
+            alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
+            return;
+          }
+
+          this.setState({
+            loadedImages: this.state.loadedImages.concat(file),
+            showLoadImages: true
+          })
+        } else {
+          alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
+        }
+      } else {
+        if (!fromSelector) {
+          var text = clipboard.getData('text/plain');
+          document.execCommand('insertText', false, text);
+        }
+      }
+    }
+  }
+
+  setFocus = () => {
+    document.getElementById("divMessage").focus();
+  }
+
+  getText = () => {
+    let input = $('#divMessage');
+    let txt = input.html();
+
+    return txt.replace(/<br>/g, "\n");
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -815,7 +867,8 @@ class ChatMessages extends Component {
                     this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
                       <div className="col-xs-12 chat-input">
                         <div className="text-input">
-                          <textarea name="messageText" placeholder="Escribe un mensaje aquí" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+                          <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} tabIndex="0">
+                          </div>
                           {this.state.selectedProduct && this.state.selectedProduct.attributes.image &&
                             <div className="selected-product-image-container">
                               <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedProduct()}></i>
@@ -915,6 +968,7 @@ class ChatMessages extends Component {
           removeImage={this.removeImage}
           sendImages={this.sendImages}
           onMobile={this.props.onMobile}
+          pasteImages={this.pasteImages}
         />
       </div>
     )
