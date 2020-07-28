@@ -19,7 +19,8 @@ ActiveAdmin.register Retailer do
                 :unlimited_account,
                 :ecu_charges,
                 :int_charges,
-                :allow_bots
+                :allow_bots,
+                :gupshup_api_key
 
   filter :name
   filter :slug
@@ -148,6 +149,7 @@ ActiveAdmin.register Retailer do
         row :karix_account_token
         row :gupshup_src_name
         row :gupshup_phone_number
+        row :gupshup_api_key
         row 'Saldo' do |retailer|
           retailer.ws_balance
         end
@@ -215,6 +217,7 @@ ActiveAdmin.register Retailer do
       f.input :ws_conversation_cost
       f.input :gupshup_phone_number
       f.input :gupshup_src_name
+      f.input :gupshup_api_key
       f.input :ecu_charges, label: 'Hace pagos en Ecuador'
       f.input :int_charges, label: 'Hace pagos Internacionales'
       f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'
