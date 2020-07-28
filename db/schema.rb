@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_15_125749) do
+ActiveRecord::Schema.define(version: 2020_07_28_182620) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -594,6 +594,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_125749) do
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
     t.boolean "int_charges", default: false
+    t.string "gupshup_api_key"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
