@@ -4,7 +4,7 @@ class Whatsapp::Gupshup::V1::Base
   def initialize(retailer=nil, customer=nil)
     @retailer = retailer
     @customer = customer
-    @gupshup_api_key = @retailer.gupshup_api_key
+    @gupshup_api_key = @retailer&.gupshup_api_key
   end
 
   def get(url)
