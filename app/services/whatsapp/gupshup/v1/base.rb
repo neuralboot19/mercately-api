@@ -1,10 +1,10 @@
 class Whatsapp::Gupshup::V1::Base
-  GUPSHUP_API_KEY = ENV['GUPSHUP_API_KEY']
   GUPSHUP_BASE_URL = 'https://api.gupshup.io/sm/api/v1'
 
   def initialize(retailer=nil, customer=nil)
     @retailer = retailer
     @customer = customer
+    @gupshup_api_key = @retailer.gupshup_api_key
   end
 
   def get(url)
@@ -14,7 +14,7 @@ class Whatsapp::Gupshup::V1::Base
     https.use_ssl = true
 
     request = Net::HTTP::Get.new(url)
-    request['apikey'] = GUPSHUP_API_KEY
+    request['apikey'] = @gupshup_api_key
 
     https.request(request)
   end
@@ -26,7 +26,7 @@ class Whatsapp::Gupshup::V1::Base
     https.use_ssl = true
 
     request = Net::HTTP::Post.new(url)
-    request['apikey'] = GUPSHUP_API_KEY
+    request['apikey'] = @gupshup_api_key
     request["Content-Type"] = "application/x-www-form-urlencoded"
     request.body = body
 
@@ -40,7 +40,7 @@ class Whatsapp::Gupshup::V1::Base
     https.use_ssl = true
 
     request = Net::HTTP::Post.new(url)
-    request['apikey'] = GUPSHUP_API_KEY
+    request['apikey'] = @gupshup_api_key
     request.set_form form_data, 'multipart/form-data'
 
     https.request(request)
