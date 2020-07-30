@@ -1,27 +1,18 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
 
 class MessageForm extends Component {
   constructor(props) {
     super(props)
-    this.state = {
-      messageText: ''
-    };
-  }
-
-  handleInputChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
   }
 
   handleSubmit = (e) => {
-    let text = this.state.messageText;
-    if(text.trim() === '') return;
-    this.setState({ messageText: '' }, () => {
-      this.props.handleSubmitMessage(e, text)
-    });
+    let input = $('#divMessage');
+    let text = input.text();
+    if (text.trim() === '') return;
+
+    let txt = this.getText();
+    this.props.handleSubmitMessage(e, txt)
+    input.html(null);
   }
 
   handleFileSubmit = (e) => {
@@ -53,9 +44,7 @@ class MessageForm extends Component {
 
   componentWillReceiveProps(newProps){
     if (newProps.fastAnswerText) {
-      this.setState({
-        messageText: newProps.fastAnswerText
-      })
+      $('#divMessage').html(newProps.fastAnswerText);
       this.props.emptyFastAnswerText();
     }
 
@@ -65,14 +54,22 @@ class MessageForm extends Component {
       productString += ('Precio $' + newProps.selectedProduct.attributes.price + '\n');
       productString += (newProps.selectedProduct.attributes.description + '\n');
       productString += (newProps.selectedProduct.attributes.url ? newProps.selectedProduct.attributes.url : '');
-      this.state.messageText = productString;
+      $('#divMessage').html(productString);
     }
+  }
+
+  getText = () => {
+    let input = $('#divMessage');
+    let txt = input.html();
+
+    return txt.replace(/<br>/g, "\n");
   }
 
   render() {
     return (
       <div className="text-input">
-        <textarea name="messageText" placeholder="Escribe un mensaje aquí" autoFocus value={this.state.messageText} onChange={this.handleInputChange} onKeyPress={this.onKeyPress}></textarea>
+        <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.props.pasteImages(e)} onKeyPress={this.onKeyPress} tabIndex="0">
+        </div>
         {this.props.selectedProduct && this.props.selectedProduct.attributes.image &&
           <div className="selected-product-image-container">
             <i className="fas fa-times-circle cursor-pointer" onClick={() => this.props.removeSelectedProduct()}></i>
@@ -118,19 +115,4 @@ class MessageForm extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    messageText: state.messageText || [],
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-
-  };
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withRouter(MessageForm));
+export default MessageForm;

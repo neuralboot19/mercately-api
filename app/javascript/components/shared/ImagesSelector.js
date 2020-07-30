@@ -20,6 +20,16 @@ class ImagesSelector extends Component {
     super(props)
   }
 
+  preventKey = (e) => {
+    e.preventDefault();
+    return;
+  }
+
+  callPasteImages = (e) => {
+    e.preventDefault();
+    this.props.pasteImages(e, true);
+  }
+
   render() {
     return (
       <Modal isOpen={this.props.showLoadImages} style={customStyles}>
@@ -36,11 +46,11 @@ class ImagesSelector extends Component {
             <Dropzone onDrop={this.props.onDrop} accept="image/jpg, image/jpeg, image/png">
               {({getRootProps, getInputProps}) => (
                 <section>
-                  <div {...getRootProps()} className="selector-container">
+                  <div {...getRootProps()} className="selector-container" contentEditable="true" onKeyDown={(e) => this.preventKey(e)} onPaste={(e) => this.callPasteImages(e)}>
                     <input {...getInputProps()} />
                     <div className="indicators">
                       <i className="far fa-arrow-alt-circle-down fs-35 c-grey"></i>
-                      <p className="c-grey">Selecciona o arrastra máximo 5 imágenes</p>
+                      <p className="c-grey">Selecciona, pega o arrastra máximo 5 imágenes</p>
                     </div>
                   </div>
                 </section>
