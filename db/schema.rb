@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_28_182620) do
+ActiveRecord::Schema.define(version: 2020_07_49_222636) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -643,7 +643,7 @@ ActiveRecord::Schema.define(version: 2020_07_28_182620) do
 
   create_table "whatsapp_templates", force: :cascade do |t|
     t.bigint "retailer_id"
-    t.string "text"
+    t.text "text", default: ""
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
