@@ -1,6 +1,8 @@
 class Template < ApplicationRecord
   belongs_to :retailer
-  validates :title, :answer, presence: true
+  validates :title, presence: true
+
+  has_one_attached :image
 
   after_create :generate_web_id
 

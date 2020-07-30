@@ -51,7 +51,8 @@ class ChatMessages extends Component {
       updated: true,
       selectedProduct: null,
       showLoadImages: false,
-      loadedImages: []
+      loadedImages: [],
+      selectedFastAnswer: null
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -75,7 +76,8 @@ class ChatMessages extends Component {
       messages: [],
       page: 1,
       scrolable: true,
-      selectedProduct: null
+      selectedProduct: null,
+      selectedFastAnswer: null
     }, () => {
       this.props.fetchWhatsAppMessages(id);
       this.scrollToBottom();
@@ -151,9 +153,11 @@ class ChatMessages extends Component {
       })
     }
 
-    if (newProps.fastAnswerText) {
-      $('#divMessage').html(newProps.fastAnswerText);
-      this.props.changeFastAnswerText(null);
+    if (newProps.selectedFastAnswer) {
+      this.state.selectedFastAnswer = newProps.selectedFastAnswer;
+      $('#divMessage').html(this.state.selectedFastAnswer.attributes.answer);
+      this.props.changeFastAnswer(null);
+      this.removeSelectedProduct();
     }
 
     if (newProps.selectedProduct) {
@@ -165,6 +169,7 @@ class ChatMessages extends Component {
       productString += (this.state.selectedProduct.attributes.url ? this.state.selectedProduct.attributes.url : '');
       $('#divMessage').html(productString);
       this.props.selectProduct(null);
+      this.removeSelectedFastAnswer();
     }
   }
 
@@ -187,7 +192,8 @@ class ChatMessages extends Component {
         messages: [],
         page: 1,
         scrolable: true,
-        selectedProduct: null
+        selectedProduct: null,
+        selectedFastAnswer: null
       }, () => {
         this.props.fetchWhatsAppMessages(id);
       });
@@ -218,7 +224,8 @@ class ChatMessages extends Component {
   }
 
   handleSubmit = (e) => {
-    if (this.state.selectedProduct && this.state.selectedProduct.attributes.image) {
+    if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
+      (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
       this.handleSubmitImg();
       return;
     }
@@ -233,7 +240,7 @@ class ChatMessages extends Component {
       can_write: moment().local().diff(rDate, 'hours') < 24
     }, () => {
       if (this.state.can_write) {
-        this.setState({ selectedProduct: null }, () => {
+        this.setState({ selectedProduct: null, selectedFastAnswer: null }, () => {
           this.handleSubmitWhatsAppMessage(e, txt, false)
           input.html(null);
         });
@@ -346,7 +353,8 @@ class ChatMessages extends Component {
     this.setState({
       messages: this.state.messages.concat(insertedMessages),
       new_message: true,
-      selectedProduct: null
+      selectedProduct: null,
+      selectedFastAnswer: null
     });
 
     this.props.sendWhatsAppBulkFiles(this.props.currentCustomer, data, csrfToken);
@@ -372,8 +380,8 @@ class ChatMessages extends Component {
     var url, type, caption;
     var input = $('#divMessage');
 
-    if (this.state.selectedProduct) {
-      url = this.state.selectedProduct.attributes.image;
+    if (this.state.selectedProduct || this.state.selectedFastAnswer) {
+      url = this.state.selectedProduct ? this.state.selectedProduct.attributes.image : this.state.selectedFastAnswer.attributes.image_url;
       type = 'image';
       caption = this.getText();
 
@@ -391,7 +399,8 @@ class ChatMessages extends Component {
     this.setState({
       messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption, created_time: new Date()}),
       new_message: true,
-      selectedProduct: null
+      selectedProduct: null,
+      selectedFastAnswer: null
     }, () => {
       this.props.sendWhatsAppImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
       input.html(null);
@@ -593,6 +602,10 @@ class ChatMessages extends Component {
 
   removeSelectedProduct = () => {
     this.setState({selectedProduct: null});
+  }
+
+  removeSelectedFastAnswer = () => {
+    this.setState({selectedFastAnswer: null});
   }
 
   divClasses = (message) => {
@@ -873,6 +886,12 @@ class ChatMessages extends Component {
                             <div className="selected-product-image-container">
                               <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedProduct()}></i>
                               <img src={this.state.selectedProduct.attributes.image} />
+                            </div>
+                          }
+                          {this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url &&
+                            <div className="selected-product-image-container">
+                              <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedFastAnswer()}></i>
+                              <img src={this.state.selectedFastAnswer.attributes.image_url} />
                             </div>
                           }
                           <div className="t-right mr-15">

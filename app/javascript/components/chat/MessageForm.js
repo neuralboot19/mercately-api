@@ -8,7 +8,7 @@ class MessageForm extends Component {
   handleSubmit = (e) => {
     let input = $('#divMessage');
     let text = input.text();
-    if (text.trim() === '') return;
+    if (text.trim() === '' && this.selectionPresent() === false) return;
 
     let txt = this.getText();
     this.props.handleSubmitMessage(e, txt)
@@ -43,9 +43,8 @@ class MessageForm extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    if (newProps.fastAnswerText) {
-      $('#divMessage').html(newProps.fastAnswerText);
-      this.props.emptyFastAnswerText();
+    if (newProps.selectedFastAnswer) {
+      $('#divMessage').html(newProps.selectedFastAnswer.attributes.answer);
     }
 
     if (newProps.selectedProduct) {
@@ -65,6 +64,15 @@ class MessageForm extends Component {
     return txt.replace(/<br>/g, "\n");
   }
 
+  selectionPresent = () => {
+    if ((this.props.selectedFastAnswer && this.props.selectedFastAnswer.attributes.image_url) ||
+      (this.props.selectedProduct && this.props.selectedProduct.attributes.image)) {
+        return true;
+      } else {
+        return false;
+      }
+  }
+
   render() {
     return (
       <div className="text-input">
@@ -74,6 +82,12 @@ class MessageForm extends Component {
           <div className="selected-product-image-container">
             <i className="fas fa-times-circle cursor-pointer" onClick={() => this.props.removeSelectedProduct()}></i>
             <img src={this.props.selectedProduct.attributes.image} />
+          </div>
+        }
+        {this.props.selectedFastAnswer && this.props.selectedFastAnswer.attributes.image_url &&
+          <div className="selected-product-image-container">
+            <i className="fas fa-times-circle cursor-pointer" onClick={() => this.props.removeSelectedFastAnswer()}></i>
+            <img src={this.props.selectedFastAnswer.attributes.image_url} />
           </div>
         }
         <div className="t-right mr-15">

@@ -44,8 +44,8 @@ class FastAnswers extends Component {
     }
   }
 
-  changeFastAnswerText = (answer) => {
-    this.props.changeFastAnswerText(answer.attributes.answer);
+  changeFastAnswer = (answer) => {
+    this.props.changeFastAnswer(answer);
   }
 
   handleChatSearch = (e) => {
@@ -137,10 +137,15 @@ class FastAnswers extends Component {
           {this.state.fastAnswers.map((answer) => (
             <div className="fast_answer_content">
               <div className="pb-10 t-right c-secondary">
-                <small className="select_answer" onClick={() => this.changeFastAnswerText(answer)}>Seleccionar</small>
+                <small className="select_answer" onClick={() => this.changeFastAnswer(answer)}>Seleccionar</small>
               </div>
               <small className="fs-15">{answer.attributes.title}</small>
               <div className="divider"></div>
+              <div>
+                {answer.attributes.image_url &&
+                  <img src={answer.attributes.image_url} />
+                }
+              </div>
               <small>{answer.attributes.answer}</small>
             </div>
           ))}

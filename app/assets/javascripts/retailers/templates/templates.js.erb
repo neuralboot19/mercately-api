@@ -50,3 +50,22 @@ function buildChatList(item) {
 
   $('#templates-container').append(string);
 }
+
+function previewImage(input) {
+  if (input.files && input.files[0]) {
+    var reader = new FileReader();
+
+    reader.onload = function(e) {
+      $('#preview-template-image').attr('src', e.target.result);
+      $('#preview-container-image').show();
+      $('#current-template-image').hide();
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeImage() {
+  $('#template_image').val(null);
+  $('#preview-container-image').hide();
+  $('#current-template-image').show();
+}
