@@ -63,6 +63,8 @@ class ChatMessages extends Component {
         this.setState({ selectedProduct: null });
       }
     });
+
+    this.setFocus();
   }
 
   handleSubmitImg = (el, file_data) => {
@@ -147,6 +149,8 @@ class ChatMessages extends Component {
     });
 
     socket.on("message_facebook_chat", data => this.updateChat(data));
+
+    this.setFocus();
   }
 
   componentDidUpdate() {
@@ -349,6 +353,46 @@ class ChatMessages extends Component {
     this.toggleLoadImages();
   }
 
+  pasteImages = (e, fromSelector) => {
+    e.preventDefault();
+
+    if (e.clipboardData || e.originalEvent.clipboardData) {
+      var clipboard = e.clipboardData || e.originalEvent.clipboardData;
+      var pos = clipboard.types.indexOf('Files');
+
+      if (pos !== -1) {
+        if (clipboard.items) {
+          var file = clipboard.items[pos].getAsFile();  
+        } else if (clipboard.files) {
+          var file = clipboard.files[0];
+        }
+
+        if (file) {
+          if (!this.validateImages(file)) {
+            alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
+            return;
+          }
+
+          this.setState({
+            loadedImages: this.state.loadedImages.concat(file),
+            showLoadImages: true
+          })
+        } else {
+          alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
+        }
+      } else {
+        if (!fromSelector) {
+          var text = clipboard.getData('text/plain');
+          document.execCommand('insertText', false, text);
+        }
+      }
+    }
+  }
+
+  setFocus = () => {
+    document.getElementById("divMessage").focus();
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -425,6 +469,7 @@ class ChatMessages extends Component {
                 removeSelectedProduct={this.removeSelectedProduct}
                 onMobile={this.props.onMobile}
                 toggleLoadImages={this.toggleLoadImages}
+                pasteImages={this.pasteImages}
               />
             </div>
           )
@@ -438,6 +483,7 @@ class ChatMessages extends Component {
           removeImage={this.removeImage}
           sendImages={this.sendImages}
           onMobile={this.props.onMobile}
+          pasteImages={this.pasteImages}
         />
       </div>
     )

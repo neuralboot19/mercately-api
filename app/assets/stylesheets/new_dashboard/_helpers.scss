@@ -416,6 +416,14 @@ label:hover, a:hover {
   .hide-on-2k {
     display: none;
   }
+
+  .chat-input {
+    .text-input {
+      .message-input {
+        width: 97%;
+      }
+    }
+  }
 }
 
 @media screen and (min-width: 1366px) {
@@ -490,6 +498,10 @@ label:hover, a:hover {
   .chat-input {
     .text-input {
       textarea {
+        width: 90%;
+      }
+
+      .message-input {
         width: 90%;
       }
     }
