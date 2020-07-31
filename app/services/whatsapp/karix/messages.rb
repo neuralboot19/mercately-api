@@ -54,6 +54,8 @@ module Whatsapp
           ws_api.prepare_whatsapp_message_text(args[:retailer], args[:customer], args[:params])
         when 'file'
           ws_api.prepare_whatsapp_message_file(args[:retailer], args[:customer], args[:params], args[:index])
+        when 'location'
+          ws_api.prepare_whatsapp_message_location(args[:retailer], args[:customer], args[:params])
         end
       end
 

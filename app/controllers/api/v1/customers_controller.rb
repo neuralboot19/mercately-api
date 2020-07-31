@@ -66,7 +66,7 @@ class Api::V1::CustomersController < ApplicationController
       @customer
     )
     render status: 200, json: {
-      messages: @messages.to_a.reverse,
+      messages: serialize_facebook_messages.to_a.reverse,
       agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
       storage_id: current_retailer_user.storage_id,
       agent_list: current_retailer.team_agents,
@@ -86,7 +86,8 @@ class Api::V1::CustomersController < ApplicationController
       text: params[:message],
       sent_from_mercately: true,
       sent_by_retailer: true,
-      retailer_user: current_retailer_user
+      retailer_user: current_retailer_user,
+      file_type: params[:type]
     )
     render status: 200, json: { message: message } if message.save
   end
@@ -284,6 +285,13 @@ class Api::V1::CustomersController < ApplicationController
           gnhm.notify_customer_update!(*data.compact)
         end
       end
+    end
+
+    def serialize_facebook_messages
+      ActiveModelSerializers::SerializableResource.new(
+        @messages,
+        each_serializer: FacebookMessageSerializer
+      ).as_json
     end
 
     def customer_params

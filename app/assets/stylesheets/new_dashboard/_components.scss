@@ -837,7 +837,7 @@ i {
     background-color: #00A652 !important;
   }
 
-  i {
+  i.checks-mark {
     font-size: 0.7em;
 
     &.stroke {
@@ -1451,4 +1451,10 @@ i {
       }
     }
   }
+}
+
+.google-map {
+  position: relative;
+  width: 100%;
+  height: 530px;
 }

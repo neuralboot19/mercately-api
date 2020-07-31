@@ -23,7 +23,8 @@
         DOMAIN: "<%= ENV['DOMAIN'] %>",
         INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>",
         SLUG: "<%= current_retailer.slug %>",
-        CURRENT_RETAILER_ID: "<%= current_retailer.id %>"
+        CURRENT_RETAILER_ID: "<%= current_retailer.id %>",
+        GOOGLE_API_KEY: "<%= ENV['GOOGLE_API_KEY'] %>"
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>
