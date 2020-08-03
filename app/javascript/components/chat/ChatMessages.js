@@ -64,8 +64,7 @@ class ChatMessages extends Component {
         }
         this.scrollToBottom();
 
-        if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
-        (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
+        if (this.objectPresence()) {
           this.handleSubmitImg();
         } else {
           this.setState({ selectedProduct: null, selectedFastAnswer: null });
@@ -404,6 +403,15 @@ class ChatMessages extends Component {
     document.getElementById("divMessage").focus();
   }
 
+  objectPresence = () => {
+    if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
+      (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
+        return true;
+      }
+
+    return false;
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -481,6 +489,7 @@ class ChatMessages extends Component {
                 toggleLoadImages={this.toggleLoadImages}
                 pasteImages={this.pasteImages}
                 removeSelectedFastAnswer={this.removeSelectedFastAnswer}
+                objectPresence={this.objectPresence}
               />
             </div>
           )

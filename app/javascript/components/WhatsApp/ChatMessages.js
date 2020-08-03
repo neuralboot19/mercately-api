@@ -224,8 +224,7 @@ class ChatMessages extends Component {
   }
 
   handleSubmit = (e) => {
-    if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
-      (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
+    if (this.objectPresence()) {
       this.handleSubmitImg();
       return;
     }
@@ -681,6 +680,15 @@ class ChatMessages extends Component {
     let txt = input.html();
 
     return txt.replace(/<br>/g, "\n");
+  }
+
+  objectPresence = () => {
+    if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
+      (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
+        return true;
+      }
+
+    return false;
   }
 
   render() {

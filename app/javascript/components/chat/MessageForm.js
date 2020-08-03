@@ -65,8 +65,7 @@ class MessageForm extends Component {
   }
 
   selectionPresent = () => {
-    if ((this.props.selectedFastAnswer && this.props.selectedFastAnswer.attributes.image_url) ||
-      (this.props.selectedProduct && this.props.selectedProduct.attributes.image)) {
+    if (this.props.objectPresence()) {
         return true;
       } else {
         return false;

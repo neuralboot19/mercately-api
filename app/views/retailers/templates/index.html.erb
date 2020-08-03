@@ -25,7 +25,8 @@
           <div class="table box">
             <div class="table__header row hide-on-tablet-and-down center-sm">
               <div class="col-sm-3">Título</div>
-              <div class="col-sm-6">Contenido</div>
+              <div class="col-sm-2">Tipo</div>
+              <div class="col-sm-4">Contenido</div>
               <div class="col-sm-2">Plataformas</div>
               <div class="col-sm-1"></div>
             </div>
@@ -65,7 +66,16 @@
                     </ul>
                   </label>
                 </div>
-                <div class="col-xs-10 col-sm-6 c-grey">
+                <div class="col-xs-10 col-sm-2 c-grey t-center">
+                  <% if template.answer.present? && template.image.attached? %>
+                    Imagen con caption
+                  <% elsif template.answer.present? %>
+                    Texto
+                  <% elsif template.image.attached? %>
+                    Imagen
+                  <% end %>
+                </div>
+                <div class="col-xs-10 col-sm-4 c-grey">
                   <br class="hide-on-md-and-up"/>
                   <div class="t-center"><%= template.answer %></div>
                 </div>
