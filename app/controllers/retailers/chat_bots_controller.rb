@@ -1,5 +1,5 @@
 class Retailers::ChatBotsController < RetailersController
-  before_action :check_bots_access
+  before_action :check_bots_access, except: :index
   before_action :check_ownership, except: [:index, :new, :create]
   before_action :set_chat_bot, except: [:index, :new, :create]
 
