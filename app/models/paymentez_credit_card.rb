@@ -21,7 +21,7 @@ class PaymentezCreditCard < ApplicationRecord
   end
 
   def create_transaction_with_amount(amount)
-    return false unless amount.present? || amount < 25.0
+    return false unless amount.present?  # || amount < 25.0
 
     response = transaction.debit_with_token(self, amount)
     return false unless response[:status] == 200
