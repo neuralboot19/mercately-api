@@ -52,6 +52,12 @@
                     <% end %>
                   </p>
                 </div>
+                <div class="col-xs-12">
+                  <label class="c-grey fs-14">Imagen:</label><br /><br />
+                  <% if @template.image.attached? %>
+                    <%= cl_image_tag("#{@template.image.key}", width: 200, height: 200) %>
+                  <% end %>
+                </div>
               </div>
             </div>
           </fieldset>

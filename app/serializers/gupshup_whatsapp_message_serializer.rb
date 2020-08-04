@@ -55,28 +55,32 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_location_longitude do |object|
     message = object.message_payload
-    type = message.try(:[], 'payload').try(:[], 'type') || message['type']
+    type = (object.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
+      message['type']
     next '' unless type == 'location'
-    message['payload']['payload']['longitude']
+    object.direction == 'inbound' ? message['payload']['payload']['longitude'] : message['longitude']
   end
 
   attribute :content_location_latitude do |object|
     message = object.message_payload
-    type = message.try(:[], 'payload').try(:[], 'type') || message['type']
+    type = (object.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
+      message['type']
     next '' unless type == 'location'
-    message['payload']['payload']['latitude']
+    object.direction == 'inbound' ? message['payload']['payload']['latitude'] : message['latitude']
   end
 
   attribute :content_location_label do |object|
     message = object.message_payload
-    type = message.try(:[], 'payload').try(:[], 'type') || message['type']
+    type = (object.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
+      message['type']
     next '' unless type == 'location'
     message['name']
   end
 
   attribute :content_location_address do |object|
     message = object.message_payload
-    type = message.try(:[], 'payload').try(:[], 'type') || message['type']
+    type = (object.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
+      message['type']
     next '' unless type == 'location'
     message['address']
   end

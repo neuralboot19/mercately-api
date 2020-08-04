@@ -956,6 +956,17 @@
   }
 }
 
+.delete-icon-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #AAA;
+
+  &:hover {
+    color: $secondary-color;
+  }
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {

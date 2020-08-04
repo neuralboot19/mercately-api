@@ -32,11 +32,11 @@ class ChatMessages extends Component {
       scrolable: false,
       isModalOpen: false,
       url: '',
-      fastAnswerText: null,
       agents: [],
       selectedProduct: null,
       showLoadImages: false,
-      loadedImages: []
+      loadedImages: [],
+      selectedFastAnswer: null
     };
     this.bottomRef = React.createRef();
   }
@@ -53,16 +53,25 @@ class ChatMessages extends Component {
   handleSubmitMessage = (e, message) => {
     e.preventDefault();
     let text = { message: message }
-    this.setState({ messages: this.state.messages.concat({text: message, sent_by_retailer: true, created_at: new Date() }), new_message: true}, () => {
-      this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
-      this.scrollToBottom();
+    let isText = message && message.trim() !== '';
+    this.setState(
+      {
+        messages: isText ? this.state.messages.concat({text: message, sent_by_retailer: true, created_at: new Date() }) : this.state.messages,
+        new_message: true
+      }, () => {
+        if (isText) {
+          this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
+        }
+        this.scrollToBottom();
 
-      if (this.state.selectedProduct && this.state.selectedProduct.attributes.image) {
-        this.handleSubmitImg();
-      } else {
-        this.setState({ selectedProduct: null });
+        if (this.objectPresence()) {
+          this.handleSubmitImg();
+        } else {
+          this.setState({ selectedProduct: null, selectedFastAnswer: null });
+          $('#divMessage').html(null);
+        }
       }
-    });
+    );
 
     this.setFocus();
   }
@@ -70,8 +79,8 @@ class ChatMessages extends Component {
   handleSubmitImg = (el, file_data) => {
     var url, type;
 
-    if (this.state.selectedProduct) {
-      url = this.state.selectedProduct.attributes.image;
+    if (this.state.selectedProduct || this.state.selectedFastAnswer) {
+      url = this.state.selectedProduct ? this.state.selectedProduct.attributes.image : this.state.selectedFastAnswer.attributes.image_url;
       type = 'image';
 
       var data = new FormData();
@@ -82,10 +91,12 @@ class ChatMessages extends Component {
       type = this.fileType(el.files[0].type);
     }
 
-    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true, file_type: type, filename: el ? el.files[0].name : null}), new_message: true, selectedProduct: null}, () => {
+    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true, file_type: type, filename: el ? el.files[0].name : null}), new_message: true, selectedProduct: null, selectedFastAnswer: null}, () => {
       this.props.sendImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
       this.scrollToBottom();
     });
+
+    $('#divMessage').html(null);
   }
 
   scrollToBottom = () => {
@@ -126,16 +137,16 @@ class ChatMessages extends Component {
       })
     }
 
-    if (newProps.fastAnswerText) {
-      this.setState({
-        fastAnswerText: newProps.fastAnswerText
-      })
-      this.props.changeFastAnswerText(null);
+    if (newProps.selectedFastAnswer) {
+      this.state.selectedFastAnswer = newProps.selectedFastAnswer;
+      this.props.changeFastAnswer(null);
+      this.removeSelectedProduct();
     }
 
     if (newProps.selectedProduct) {
       this.state.selectedProduct = newProps.selectedProduct;
       this.props.selectProduct(null);
+      this.removeSelectedFastAnswer();
     }
   }
 
@@ -143,7 +154,7 @@ class ChatMessages extends Component {
     let id = this.props.currentCustomer;
     currentCustomer = id;
 
-    this.setState({ messages: [], page: 1, scrolable: true, selectedProduct: null }, () => {
+    this.setState({ messages: [], page: 1, scrolable: true, selectedProduct: null, selectedFastAnswer: null }, () => {
       this.props.fetchMessages(id);
       this.scrollToBottom();
     });
@@ -164,7 +175,7 @@ class ChatMessages extends Component {
     if (currentCustomer !== id) {
       currentCustomer = id;
       this.scrollToBottom();
-      this.setState({ messages: [], page: 1, scrolable: true, selectedProduct: null }, () => {
+      this.setState({ messages: [], page: 1, scrolable: true, selectedProduct: null, selectedFastAnswer: null }, () => {
         this.props.fetchMessages(id);
       });
     }
@@ -250,10 +261,8 @@ class ChatMessages extends Component {
     this.setState({selectedProduct: null});
   }
 
-  emptyFastAnswerText = () => {
-    this.setState({
-      fastAnswerText: null
-    })
+  removeSelectedFastAnswer = () => {
+    this.setState({selectedFastAnswer: null});
   }
 
   divClasses = (message) => {
@@ -345,7 +354,8 @@ class ChatMessages extends Component {
     this.setState({
       messages: this.state.messages.concat(insertedMessages),
       new_message: true,
-      selectedProduct: null
+      selectedProduct: null,
+      selectedFastAnswer: null
     });
 
     this.props.sendBulkFiles(this.props.currentCustomer, data, csrfToken);
@@ -391,6 +401,15 @@ class ChatMessages extends Component {
 
   setFocus = () => {
     document.getElementById("divMessage").focus();
+  }
+
+  objectPresence = () => {
+    if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
+      (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
+        return true;
+      }
+
+    return false;
   }
 
   render() {
@@ -462,14 +481,15 @@ class ChatMessages extends Component {
                 handleSubmitMessage={this.handleSubmitMessage}
                 handleSubmitImg={this.handleSubmitImg}
                 toggleFastAnswers={this.toggleFastAnswers}
-                fastAnswerText={this.state.fastAnswerText}
-                emptyFastAnswerText={this.emptyFastAnswerText}
+                selectedFastAnswer={this.state.selectedFastAnswer}
                 toggleProducts={this.toggleProducts}
                 selectedProduct={this.state.selectedProduct}
                 removeSelectedProduct={this.removeSelectedProduct}
                 onMobile={this.props.onMobile}
                 toggleLoadImages={this.toggleLoadImages}
                 pasteImages={this.pasteImages}
+                removeSelectedFastAnswer={this.removeSelectedFastAnswer}
+                objectPresence={this.objectPresence}
               />
             </div>
           )

@@ -22,7 +22,8 @@
         PORT: "<%= ENV['PORT'] %>",
         DOMAIN: "<%= ENV['DOMAIN'] %>",
         INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>",
-        SLUG: "<%= current_retailer.slug %>"
+        SLUG: "<%= current_retailer.slug %>",
+        CURRENT_RETAILER_ID: "<%= current_retailer.id %>"
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>
@@ -98,15 +99,24 @@
     <% if ENV['ENVIRONMENT'] == 'production' %>
       <script src="//assets.pcrl.co/js/jstracker.min.js"></script>
     <% end %>
-    <% if controller_path == 'retailers/payment_plans' && action_name == 'index' && current_retailer.int_charges %>
-      <% if ENV.fetch('STRIPE_PUBLISHABLE') && ENV.fetch('STRIPE_SECRET') %>
-
-       <%= javascript_tag do %>
-        ENV['STRIPE_PUBLISHABLE'] = "<%= ENV['STRIPE_PUBLISHABLE'] %>"
-       <% end %>
-        <script src="https://js.stripe.com/v3/"></script>
-        <%= javascript_include_tag 'retailers/stripe/stripe' %>
-
+    <% if controller_path == 'retailers/payment_plans' && action_name == 'index' %>
+      <% if current_retailer.ecu_charges %>
+        <%= javascript_tag do %>
+          ENV['PAYMENTEZ_CODE_CLIENT'] = "<%= ENV['PAYMENTEZ_CODE_CLIENT'] %>"
+          ENV['PAYMENTEZ_SECRET_CLIENT'] = "<%= ENV['PAYMENTEZ_SECRET_CLIENT'] %>"
+          ENV['CURRENT_RETAILER_ADMIN_EMAIL'] = "<%= current_retailer.admins.first.email %>"
+        <% end %>
+        <link href="https://cdn.paymentez.com/ccapi/sdk/payment_stable.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.paymentez.com/ccapi/sdk/payment_stable.min.js" charset="UTF-8"></script>
+        <%= javascript_include_tag 'retailers/paymentez/paymentez' %>
+      <% elsif current_retailer.int_charges %>
+        <% if ENV.fetch('STRIPE_PUBLISHABLE') && ENV.fetch('STRIPE_SECRET') %>
+          <%= javascript_tag do %>
+            ENV['STRIPE_PUBLISHABLE'] = "<%= ENV['STRIPE_PUBLISHABLE'] %>"
+          <% end %>
+          <script src="https://js.stripe.com/v3/"></script>
+          <%= javascript_include_tag 'retailers/stripe/stripe' %>
+        <% end %>
       <% end %>
     <% end %>
   </body>

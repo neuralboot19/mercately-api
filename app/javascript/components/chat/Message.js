@@ -43,7 +43,7 @@ const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
       break;
     case 'location':
       tag = <p className="fs-15">
-              <a href={message.url} target="_blank">
+              <a href={message.url || message.text} target="_blank">
                 <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación
               </a>
             </p>

@@ -1,0 +1,30 @@
+<% unless purchase_plan %>
+  <% if pm.present? %>
+    <h2 class="m-0 mb-10 c-secondary">Tarjeta de crédito</h2>
+  <% end %>
+  <% pm.each do |pm| %>
+    <h2 class="m-0 container-payment-plan_text">Nombre en la tarjeta<span class="ml-110"><%= pm.name %></span></h2>
+    <h2 class="m-0 container-payment-plan_text">Número de tarjeta<span class="ml-136">XXXX XXXX XXXX <%= pm['number'] %></span></h2>
+    <h2 class="m-0 container-payment-plan_text">Fecha de expiración
+      <span class="ml-110">
+        <%= "#{pm['expiry_month']}/#{pm['expiry_year']}" %>
+        <%= link_to retailers_paymentez_path(slug: current_retailer, id: pm['id']), method: :delete, data: { confirm: 'Estás seguro de eliminar esta tarjeta?' }, class: 'btn btn--cta btn-small delete-card' do %>
+          <i class="far fa-trash-alt"></i>
+        <% end %>
+      </span>
+    </h2>
+    <hr class="my-30">
+  <% end %>
+<% end %>
+<div class="<%= is_modal ? "container-payment-plan_add_card_modal" : "container-payment-plan_add_card" %>">
+  <h3 class="m-0 mb-10 container-payment-plan_add_card_sub-title">Agregar Tarjeta</h3>
+  <form id="add-card-form" class="p-10 container-payment-plan_form">
+    <div class="payment-form" id="my-card" data-capture-name="true"></div>
+    <button class="btn btn--cta btn-small submit-card m-0" id="submit" type="submit" <%= 'disabled="disabled"' if purchase_plan %>>
+      <i class="fas fa-credit-card mr-7" id="btn_cc"></i>
+      <i class="fas fa-spinner hidden" id="btn_spinner"></i>
+      <span>Agregar tarjeta <%= 'y comprar' if purchase_plan %></span>
+    </button>
+    <div id="messages"></div>
+  </form>
+</div>
