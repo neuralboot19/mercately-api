@@ -84,7 +84,8 @@ class Retailers::TemplatesController < RetailersController
         :enable_for_questions,
         :enable_for_chats,
         :enable_for_messenger,
-        :enable_for_whatsapp
+        :enable_for_whatsapp,
+        :image
       )
     end
 end

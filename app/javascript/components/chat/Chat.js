@@ -13,7 +13,6 @@ class Chat extends Component {
       currentCustomer: 0,
       currentCustomerDetails: {},
       showFastAnswers: false,
-      fastAnswerText: null,
       showChatList: true,
       showChatMessagesSelect: true,
       showChatMessages: true,
@@ -23,7 +22,8 @@ class Chat extends Component {
       removedCustomerId: null,
       newAgentAssignedId: null,
       showProducts: false,
-      selectedProduct: null
+      selectedProduct: null,
+      selectedFastAnswer: null
     };
   }
 
@@ -88,9 +88,10 @@ class Chat extends Component {
     }
   }
 
-  changeFastAnswerText = (text) => {
+  changeFastAnswer = (answer) => {
     this.setState({
-      fastAnswerText: text
+      selectedFastAnswer: answer,
+      selectedProduct: null
     })
 
     if (this.state.onMobile) {
@@ -118,7 +119,8 @@ class Chat extends Component {
 
   selectProduct = (product) => {
     this.setState({
-      selectedProduct: product
+      selectedProduct: product,
+      selectedFastAnswer: null
     })
 
     if (this.state.onMobile) {
@@ -180,8 +182,8 @@ class Chat extends Component {
               <ChatMessages
                 currentCustomer={this.state.currentCustomer}
                 toggleFastAnswers={this.toggleFastAnswers}
-                fastAnswerText={this.state.fastAnswerText}
-                changeFastAnswerText={this.changeFastAnswerText}
+                selectedFastAnswer={this.state.selectedFastAnswer}
+                changeFastAnswer={this.changeFastAnswer}
                 onMobile={this.state.onMobile}
                 backToChatList={this.backToChatList}
                 editCustomerDetails={this.editCustomerDetails}
@@ -211,7 +213,7 @@ class Chat extends Component {
             <div className="col-xs-12 col-sm-3">
               <FastAnswers
                 chatType='facebook'
-                changeFastAnswerText={this.changeFastAnswerText}
+                changeFastAnswer={this.changeFastAnswer}
                 toggleFastAnswers={this.toggleFastAnswers}
                 onMobile={this.state.onMobile}
               />
