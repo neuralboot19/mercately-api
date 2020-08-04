@@ -2,7 +2,7 @@ var userid = ENV["CURRENT_RETAILER_ID"];
 var useremail = ENV["CURRENT_RETAILER_ADMIN_EMAIL"];
 var clientcode = ENV["PAYMENTEZ_CODE_CLIENT"];
 var clientkey = ENV["PAYMENTEZ_SECRET_CLIENT"];
-var env = 'stg';
+var env = ENV["ENVIRONMENT"] === 'production' ? 'prod' : 'stg';
 var holder_name = '';
 
 $(function() {
