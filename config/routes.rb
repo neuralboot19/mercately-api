@@ -1,5 +1,13 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   root to: 'pages#index'
+
+  constraints lambda { |request|
+    request.env['warden'].authenticate!({ scope: :admin_user })
+  } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
 
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
@@ -91,6 +99,12 @@ Rails.application.routes.draw do
       put 'save_selected_catalog', to: 'facebook_catalogs#save_selected_catalog', as: :save_selected_catalog
       post 'payment_methods/create-setup-intent', to: 'payment_methods#create_setup_intent', as: :payment_create_setup_intent
       resources :payment_methods, only: [:create, :destroy]
+      resources :paymentez, only: [:create, :destroy] do
+        collection do
+          post :add_balance
+          post :purchase_plan
+        end
+      end
       resources :tags
 
       resources :sales_channels

@@ -444,6 +444,44 @@ ActiveRecord::Schema.define(version: 2020_07_49_222636) do
     t.index ["retailer_id"], name: "index_payment_plans_on_retailer_id"
   end
 
+  create_table "paymentez_credit_cards", force: :cascade do |t|
+    t.string "card_type"
+    t.string "number"
+    t.string "name"
+    t.bigint "retailer_id"
+    t.string "token"
+    t.string "status"
+    t.string "expiry_month"
+    t.string "expiry_year"
+    t.boolean "deleted", default: false
+    t.boolean "main", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_paymentez_credit_cards_on_retailer_id"
+  end
+
+  create_table "paymentez_transactions", force: :cascade do |t|
+    t.string "status"
+    t.string "payment_date"
+    t.decimal "amount"
+    t.string "authorization_code"
+    t.integer "installments"
+    t.string "dev_reference"
+    t.string "message"
+    t.string "carrier_code"
+    t.string "pt_id"
+    t.integer "status_detail"
+    t.string "transaction_reference"
+    t.bigint "retailer_id"
+    t.bigint "payment_plan_id"
+    t.bigint "paymentez_credit_card_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_plan_id"], name: "index_paymentez_transactions_on_payment_plan_id"
+    t.index ["paymentez_credit_card_id"], name: "index_paymentez_transactions_on_paymentez_credit_card_id"
+    t.index ["retailer_id"], name: "index_paymentez_transactions_on_retailer_id"
+  end
+
   create_table "product_variations", force: :cascade do |t|
     t.bigint "product_id"
     t.bigint "variation_meli_id"
@@ -665,5 +703,8 @@ ActiveRecord::Schema.define(version: 2020_07_49_222636) do
   add_foreign_key "mobile_tokens", "retailer_users"
   add_foreign_key "payment_methods", "retailers"
   add_foreign_key "payment_plans", "retailers"
+  add_foreign_key "paymentez_transactions", "payment_plans"
+  add_foreign_key "paymentez_transactions", "paymentez_credit_cards"
+  add_foreign_key "paymentez_transactions", "retailers"
   add_foreign_key "questions", "products"
 end

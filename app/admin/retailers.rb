@@ -195,6 +195,85 @@ ActiveAdmin.register Retailer do
         row :plan
       end
     end
+
+    panel 'Métodos de Pago' do
+      if retailer.ecu_charges
+        table_for retailer.paymentez_credit_cards do
+          column 'card_type' do |pcc|
+            PaymentezCardHelper.brand(pcc.card_type)
+          end
+          column :name
+          column :number
+          column :token
+          column 'Expiration Date' do |pcc|
+            "#{pcc['expiry_month']}/#{pcc['expiry_year']}"
+          end
+          column :main
+        end
+      elsif retailer.int_charges
+        table_for retailer.payment_methods do
+          column 'payment_type' do |pm|
+            pm.payment_type
+          end
+          column 'number' do |pm|
+            card = JSON.parse(pm.payment_payload)['card']
+            card['last4']
+          end
+          column 'token' do |pm|
+            pm.stripe_pm_id
+          end
+          column 'Expiration Date' do |pm|
+            card = JSON.parse(pm.payment_payload)['card']
+            "#{card['exp_month']}/#{card['exp_year']}"
+          end
+          column 'Card\'s holder name' do |pm|
+            billing_details = JSON.parse(pm.payment_payload)['billing_details']
+            billing_details['name']
+          end
+        end
+      end
+    end
+
+    panel 'Transacciones' do
+      if retailer.ecu_charges
+        table_for retailer.paymentez_transactions.order(id: :desc) do
+          column :status
+          column :payment_date
+          column :amount
+          column :authorization_code
+          column :installments
+          column :dev_reference
+          column :message
+          column :carrier_code
+          column 'REF #' do |pt|
+            pt.pt_id
+          end
+          column :status_detail
+          column :transaction_reference
+          column 'Payment Plan' do |pt|
+            pt.retailer.payment_plan.plan
+          end
+          column :paymentez_credit_card_id
+          column 'Credit Card' do |pt|
+            card = PaymentezCreditCard.unscoped.find(pt.paymentez_credit_card_id)
+            type = PaymentezCardHelper.brand(card.card_type)
+
+            "ID: #{card.id}, #{type},
+             #####{card.number},
+             #{card.expiry_month}/#{card.expiry_year}"
+          end
+          column 'Refund Transaction' do |pt|
+            if pt.status == 'refund'
+              ''
+            else
+              link_to 'Refund Transaction',
+                      refund_paymentez_transaction_admin_retailer_path(pt.retailer, pt_id: pt),
+                      class: 'member_link edit_link'
+            end
+          end
+        end
+      end
+    end
   end
 
   form do |f|
@@ -248,6 +327,12 @@ ActiveAdmin.register Retailer do
       session.delete(:old_retailer_id)
       sign_in(:retailer_user, retailer_user)
     end
+    redirect_to admin_retailers_path
+  end
+
+  member_action :refund_paymentez_transaction do
+    pt = PaymentezTransaction.find(params[:pt_id]).refund
+    flash[:alert] = pt[:message]
     redirect_to admin_retailers_path
   end
 end

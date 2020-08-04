@@ -1,226 +1,287 @@
-<style type="text/css" media="screen">
-.pricing__card {
-  height: 90%;
-}
-</style>
-<% if @payment_plan.is_active? %>
-  <div class="container-fluid reduced-container-padding mb-16">
-    <div class="card">
-      <div class="container-fluid index">
-        <div class="row">
-          <div class="col-xs-12 col-md-6 mb-20">
-            <h1 class="d-inline index__title">Planes de pago</h1>
-            <div class="index__desc">
-            </div>
-          </div>
-        </div>
-        <div class="row" style="flex-wrap: wrap;">
-          <div class="col-xs-12 col-md-6">
-            Datos del plan
-            <ul>
-              <li>Nombre del plan: <%= @payment_plan.plan.capitalize %></li>
-              <li>Precio mensual: <%= '$ %05.2f' % @payment_plan.price.to_f %></li>
-              <% if @payment_plan.plan != 0 %>
-                <li>Fecha de próximo pago: <%= @payment_plan.next_pay_date&.strftime("%d/%m/%Y") %></li>
-              <% end %>
-              <% if current_retailer.whats_app_enabled  %>
-                <li> Saldo WhatsApp: <strong><%= '$ %05.4f' % @payment_plan.retailer.ws_balance.round(4) %></strong></li>
-              <% end %>
-            </ul>
-          </div>
-          <% if current_retailer.int_charges %>
-          <div class="col-xs-12 col-md-6">
-            <%= render partial: 'payment_method', locals: { pm: @pm } %>
-          </div>
+<div class="container-payment-plan">
+  <h1 class="d-inline container-payment-plan_title">Plan de pagos</h1>
+  <div class="container-payment-plan_sub">Planes con Mercately, pagos y facturación</div>
+  <% if @payment_plan.is_active? %>
+    <div class="card mt-14 pl-40 pr-40 pt-35 container-payment-plan_card">
+      <h2 class="m-0 mb-10 container-payment-plan_sub-title">Plan</h2>
+      <h2 class="m-0 c-secondary"><%= @payment_plan.plan.capitalize %></h2>
+      <h2 class="m-0 container-payment-plan_text">Precio mensual<span class="ml-138"><%= '$%05.2f' % @payment_plan.price.to_f %></span></h2>
+      <h2 class="m-0 container-payment-plan_text">Fecha de próximo pago
+        <span class="ml-40">
+          <% if @payment_plan.plan != 0 %>
+            <%= @payment_plan.next_pay_date&.strftime("%d/%m/%Y") %>
           <% end %>
-        </div>
-        <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>
-          <div class="row">
-            <div class="col-xs-12">
-              <h3>Consumo de WhatsApp</h3>
-              <table class="whats_app_table w-100">
-                <tr>
-                  <th>Mes</th>
-                  <th>Tipo de Mensaje</th>
-                  <th class='right'>Costo</th>
-                  <th class='right'>Cantidad</th>
-                  <th class='right'>Subtotal</th>
-                </tr>
-                <% total = 0 %>
-                <% @user_messages.each do |message| %>
-                  <% totalM = 0 %>
-                  <tr>
-                    <td><%= message[:month] + ' ' + message[:year] %></td>
-                    <td>
-                      <% message[:type].each do |type| %>
-                        <p><%= type %></p>
-                      <% end %>
-                    </td>
-                    <td class='right'>
-                      <% message[:cost].each do |cost| %>
-                        <p><%= '$ %05.4f' % (cost || 0) %></p>
-                      <% end %>
-                    </td>
-                    <td class='right'>
-                      <% message[:counter].each do |count| %>
-                        <p><%= count %></p>
-                      <% end %>
-                    </td>
-                    <td class='right'>
-                      <% message[:sub_total].each do |sub_total| %>
-                        <p><%= '$ %05.4f' % sub_total %></p>
-                      <% end %>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colspan='6' class='right total'><h4>Total Mes: <%= '$ %05.4f' % message[:total] %></h4></td>
-                    <% total += message[:total] %>
-                  </tr>
-                <% end %>
-                <tr>
-                  <td colspan='6' class='right total'><h3>Total General: <%= '$ %05.4f' % total %></h3></td>
-                </tr>
-              </table>
-            </div>
-          </div>
+        </span>
+      </h2>
+      <% if current_retailer.whatsapp_integrated? %>
+        <h2 class="m-0 container-payment-plan_text">Saldo de WhatsApp
+          <span class="ml-86">
+            <% if current_retailer.whats_app_enabled  %>
+              <strong><%= '$%05.4f' % @payment_plan.retailer.ws_balance.round(4) %></strong>
+              <% if (current_retailer.ecu_charges || current_retailer.int_charges) && @pm.present? %>
+                <label for="add_balance" class="pricing__start fz-16" id="add_balance">AGREGAR SALDO</label>
+              <% end %>
+            <% end %>
+          </span>
+        </h2>
+      <% end %>
+      <hr class="my-30">
+      <div class="my-20 t-center"><button class="container-payment-plan_button">Actualizar a PREMIUM</button></div>
+    </div>
+    <% if current_retailer.ecu_charges || current_retailer.int_charges %>
+      <div class="card mt-60 pl-40 pr-40 pt-35 pb-35 container-payment-plan_card">
+        <h2 class="m-0 mb-10 container-payment-plan_sub-title">Método de Pago</h2>
+        <% if current_retailer.ecu_charges %>
+          <%= render partial: 'paymentez_credit_card', locals: { pm: @pm, purchase_plan: false, is_modal: false } %>
+        <% elsif current_retailer.int_charges %>
+          <%= render partial: 'payment_method', locals: { pm: @pm, purchase_plan: false, is_modal: false } %>
         <% end %>
       </div>
-    </div>
-  </div>
-<% else %>
-  <div class="container-fluid reduced-container-padding mb-16">
-    <div class="card">
-      <div class="container-fluid index">
+    <% end %>
+    <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
+    <div class="modal">
+      <div class="container">
         <div class="row">
-          <div class="col-xs-12 col-md-6 mb-20">
-            <h1 class="d-inline index__title">Planes de pago</h1>
-            <div class="index__desc">
-            </div>
-          </div>
-        </div>
-        <div class="row" style="flex-wrap: wrap;">
-          <div class="col-xs-12 col-sm-3">
-            <div class="pricing__card t-center fz-16">
-              <h2 class="c-primary fz-24">BÁSICO</h2>
-              <b class="fz-16">$29.99</b> al mes<br/>
-              Ideal para negocios que estan empezando<br/>
-              <p class="fz-16">
-                Manejo de inventario<br/>
-                Facturación electronica<br/>
-                Múltiples usuarios<br/>
-                Múltiples locaciones
-              </p>
-              <br/>
-              <label for="basic" class="pricing__start fz-16">COMPRAR</label>
-            </div>
-          </div>
-          <div class="col-xs-12 col-sm-3">
-            <div class="pricing__card t-center fz-16">
-              <h2 class="c-primary fz-24">PROFESIONAL</h2>
-              <b class="fz-16">$39.99</b> al mes<br/>
-              Capitalizate y eleva tus ventas<br/>
-              <p class="fz-16">
-                Beneficios del plan Básico<br/>
-                Mercado Libre<br/>
-                Facebook Shops
-              </p>
-              <br/>
-              <br/>
-              <label for="professional" class="pricing__start fz-16">COMPRAR</label>
-            </div>
-          </div>
-          <div class="col-xs-12 col-sm-3">
-            <div class="pricing__card t-center fz-16">
-              <h2 class="c-primary fz-24">AVANZADO</h2>
-              <b class="fz-16">$109.99</b> al mes<br/>
-              Aumenta tus ingrasos como nunca antes<br/>
-              <p class="fz-16">
-                Beneficios del plan Profesional<br/>
-                Instagram<br/>
-                Facebook Messenger<br/>
-                WhatsApp
-              </p>
-
-              <br/>
-              <label for="advanced" class="pricing__start fz-16">COMPRAR</label>
-            </div>
-          </div>
-          <div class="col-xs-12 col-sm-3">
-            <div class="pricing__card t-center fz-16">
-              <h2 class="c-primary fz-24">Enterprise</h2>
-              <b class="fz-16">$229.99</b> al mes<br/>
-              Conviertete en nuestro socio<br/>
-              <p class="fz-16">
-                Todo lo anterior<br/>
-                API de desarrollo
-              </p>
-
-              <br/>
-              <br/>
-              <br/>
-              <label for="enterprise" class="pricing__start fz-16">COMPRAR</label>
+          <div class="col-md-2"></div>
+          <div class="col-xs-12 col-md-8 middle">
+            <label class="modal__background" for="modal--toggle"></label>
+            <div class="modal__window box p-16">
+              <div class="row middle-xs">
+                <div class="col-xs-12 col-sm-8">
+                  <div class="index__ctas f-right">
+                    <label class="skip modal__close" for="modal--toggle">
+                      <i class="far fa-times-circle"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <p>Agregar Saldo</p>
+                </div>
+                <fieldset class="fieldset mt-16 row credit_card">
+                  <div class="my-16 col-xs-12 col-md-6">
+                    <legend>Monto</legend>
+                    <input type="number" class="input" min="25" name="amount" id="amount" value="25">
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="my-16 col-xs-12 col-md-6">
+                    <legend>Seleccionar Tarjeta</legend>
+                    <div class="col-xs-12">
+                      <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
+                    </div>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="btn-box col-xs-12">
+                    <button class="btn btn--cta btn-small submit-card" id="submit_add_balance">
+                      <i class="fas fa-dollar-sign" id="btn_cc"></i>
+                      <i class="fas fa-spinner hidden" id="btn_spinner"></i>
+                      <span>Agregar saldo</span>
+                    </button>
+                  </div>
+                </fieldset>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+    <% if current_retailer.paymentez_transactions.present? %>
+      <div class="card mt-60 pl-40 pr-40 pt-35 pb-40 container-payment-plan_card">
+        <h2 class="m-0 mb-10 container-payment-plan_sub-title">Historial de facturación</h2>
+          <table class="w-100 t-center">
+            <thead class="c-secondary">
+              <tr>
+                <th class="t-justify p-5">Año</th>
+                <th class="t-justify p-5">Mes</th>
+                <th class="p-5">Costo mensual</th>
+                <th class="t-justify p-5">Estado</th>
+                <th class="p-5">Código de Autorización</th>
+                <th class="p-5">Referencia de transacción</th>
+                <th class="p-5">Tarjeta</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% current_retailer.paymentez_transactions.order(id: :desc).each do |t| %>
+                <tr>
+                  <td class="t-justify py-18 pl-5"><%= Date.parse(t.payment_date).strftime("%Y") %></td>
+                  <td class="t-justify pl-5"><%= FormatHelper.date_month(Date.parse(t.payment_date).strftime("%m").to_i) %></td>
+                  <td><%= '$%05.2f' % t.amount %></td>
+                  <td class="t-justify pl-5 <%= t.status != 'success' ? 'c-secondary' : ''%>"><%= t.status == 'success' ? 'Pagado' : 'Devuelto' %></td>
+                  <td><%= t.authorization_code %></td>
+                  <td><%= t.transaction_reference %></td>
+                  <td><%= PaymentezCardHelper.credit_card(t.paymentez_credit_card_id).first %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+      </div>
+    <% end %>
+    <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>
+      <div class="card mt-60 pl-40 pr-40 pt-35 pb-40 container-payment-plan_card">
+        <h2 class="m-0 mb-10 container-payment-plan_sub-title">Consumo de WhatsApp</h2>
+          <table class="w-100 t-center">
+            <thead class="c-secondary">
+              <tr>
+                <th class="t-justify p-5">Año</th>
+                <th class="t-justify p-5">Mes</th>
+                <th class="p-5">Costo mensual</th>
+                <th class="p-5">Tipo de Mensaje</th>
+                <th class="p-5">Costo Consumo</th>
+                <th class="p-5">Mensajes</th>
+                <th class="p-5">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% total = 0 %>
+              <% @user_messages.each do |message| %>
+                <% totalM = 0 %>
+                <tr>
+                  <td class="t-justify py-18 p-5"><%= message[:year] %></td>
+                  <td class="t-justify p-5"><%= message[:month] %></td>
+                  <td class="p-5"><%= '$%05.4f' % message[:total] %></td>
+                  <% total += message[:total] %>
+                  <td class="p-5">
+                    <% message[:type].each do |type| %>
+                      <p class="m-0"><%= type %></p>
+                    <% end %>
+                  </td>
+                  <td class="p-5">
+                    <% message[:cost].each do |cost| %>
+                      <p class="m-0"><%= '$ %05.4f' % (cost || 0) %></p>
+                    <% end %>
+                  </td>
+                  <td class="p-5">
+                    <% message[:counter].each do |count| %>
+                      <p class="m-0"><%= count %></p>
+                    <% end %>
+                  </td>
+                  <td class="t-right p-5 pr-70">
+                    <% message[:sub_total].each do |sub_total| %>
+                      <p class="m-0"><%= '$ %05.4f' % sub_total %></p>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="card t-center mt-14 pl-40 pr-40 pt-35 pb-35 container-payment-plan_card index">
+      <div class="pricing__card pb-50 m-0 mr-5 container-payment-plan_pricing">
+        <h2 class="c-secondary">BÁSICO</h2>
+        <h2 class="m-0"><b class="c-secondary">$29.99</b> al mes</h2>
+        <h4 class="m-0 container-payment-plan_pricing_text">Para negocios que estan empezando</h4>
+        <p class="container-payment-plan_sub">
+          Manejo de inventario<br/>
+          Facturación electronica<br/>
+          Múltiples usuarios<br/>
+          Múltiples locaciones
+        </p>
+        <br class="my-20"/>
+        <label data-plan="basic" data-plan_name="Básico" data-plan_price="29.99" for="basic" class="container-payment-plan_button">COMPRAR</label>
+      </div>
+      <div class="pricing__card pb-50 m-0 mr-5 container-payment-plan_pricing">
+        <h2 class="c-secondary">PROFESIONAL</h2>
+        <h2 class="m-0"><b class="c-secondary">$49.99</b> al mes</h2>
+        <h4 class="m-0 container-payment-plan_pricing_text">Capitalizate y eleva tus ventas</h4>
+        <p class="container-payment-plan_sub">
+          Beneficios del plan Básico<br/>
+          Mercado Libre<br/>
+          Facebook Shops
+        </p>
+        <br class="my-34"/>
+        <label data-plan="professional" data-plan_name="Professional" data-plan_price="49.99" for="professional" class="container-payment-plan_button">COMPRAR</label>
+      </div>
+      <div class="pricing__card pb-50 m-0 mr-5 container-payment-plan_pricing">
+        <h2 class="c-secondary">AVANZADO</h2>
+        <h2 class="m-0"><b class="c-secondary">$109.99</b> al mes</h2>
+        <h4 class="m-0 container-payment-plan_pricing_text">Aumenta tus ingresos como nunca antes</h4>
+        <p class="container-payment-plan_sub">
+          Beneficios del plan Profesional<br/>
+          Instagram<br/>
+          Facebook Messenger<br/>
+          WhatsApp
+        </p>
+        <br class="my-20"/>
+        <label data-plan="advanced" data-plan_name="Avanzado" data-plan_price="109.99" for="advanced" class="container-payment-plan_button">COMPRAR</label>
+      </div>
+      <div class="pricing__card pb-50 m-0 mr-5 container-payment-plan_pricing">
+        <h2 class="c-secondary">ENTERPRISE</h2>
+        <h2 class="m-0"><b class="c-secondary">$199.99</b> al mes</h2>
+        <h4 class="m-0 container-payment-plan_pricing_text">Conviertete en nuestro socio</h4>
+        <p class="container-payment-plan_sub">
+          Todo lo anterior<br/>
+          API de desarrollo
+        </p>
+        <br class="my-49"/>
+        <label data-plan="enterprise" data-plan_name="Enterprise" data-plan_price="199.99" for="enterprise" class="container-payment-plan_button">COMPRAR</label>
+      </div>
+    </div>
 
-  <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
+    <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
 
-  <div class="modal">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-xs-12 col-md-8 middle">
-          <label class="modal__background" for="modal--toggle"></label>
-          <div class="modal__window box p-16">
-            <div class="row middle-xs">
-              <div class="col-xs-12 col-sm-8">
-                <div class="index__ctas f-right">
-                  <label class="skip modal__close" for="modal--toggle">
-                    <i class="far fa-times-circle"></i>
-                  </label>
+    <div class="modal">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-2"></div>
+          <div class="col-xs-12 col-md-8 middle">
+            <label class="modal__background" for="modal--toggle"></label>
+            <div class="modal__window box p-16">
+              <div class="row middle-xs">
+                <div class="col-xs-12 col-sm-8">
+                  <div class="index__ctas f-right">
+                    <label class="skip modal__close" for="modal--toggle">
+                      <i class="far fa-times-circle"></i>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 p-10">
+                  <legend>Plan:</legend>
+                  <h2 id="selected_plan_name" class="mt-10"></h2>
+                  <h2 id="selected_plan_price" class="mt-10"></h2>
+                  <input type="hidden" name="selected_plan" id="selected_plan">
+                  <%= check_box_tag :agree_terms, true, false, class: 'f-left w-auto', style: 'width: auto;' %>
+                  <%= label_tag :agree_terms, 'He leído y acepto los', class: 'p-static' %>
+                  <%= link_to 'términos y condiciones', terms_path, target: :_blank, class: 'link-register-terms' %>
+                </div>
+
+                <div class="col-xs-12 pb-10">
+                  <legend>Agregar Tarjeta</legend>
+                  <% if current_retailer.ecu_charges %>
+                    <%= render partial: 'paymentez_credit_card', locals: { pm: @pm, purchase_plan: true, is_modal: true } %>
+                  <% elsif current_retailer.int_charges %>
+                    <%= render partial: 'payment_method', locals: { pm: @pm, purchase_plan: true, is_modal: true } %>
+                  <% end %>
+
+                  <% if current_retailer.paymentez_credit_cards.any? %>
+                        <div class="my-16 col-xs-12">
+                          <legend>Seleccione una de sus tarjetas</legend>
+                          <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
+                          <i class="validation-msg"></i>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12">
+                      <div class="row btn-box">
+                        <button class="btn btn--cta btn-small submit-card" id="submit_purchase_plan" disabled="disabled">
+                          <i class="fas fa-dollar-sign" id="btn_cc"></i>
+                          <i class="fas fa-spinner hidden" id="btn_spinner"></i>
+                          <span>Comprar</span>
+                        </button>
+                      </div>
+                  <% end %>
                 </div>
               </div>
             </div>
-            <div class="row">
-              <div class="col-xs-12">
-                <p>Agregar Targeta</p>
-
-                <%= form_for :plan, url: retailers_plan_subscribe_path do |f| %>
-
-                  <%= f.check_box :agree_terms, class: 'f-left w-auto', style: 'width: auto;' %>
-                  <%= f.label :agree_terms, 'He leído y acepto los', class: 'p-static' %>
-                  <%= link_to 'términos y condiciones', terms_path, target: :_blank, class: 'link-register-terms' %>
-                  <br />
-                  <%= f.submit 'Comprar' %>
-                <% end %>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
+</div>
 
-  <script charset="utf-8">
-    document.addEventListener("DOMContentLoaded", function() {
-      var toggler = document.getElementById('modal--toggle');
-      toggler.checked = false;
-      document.querySelectorAll('.pricing__card label').forEach(function(el) {
-        el.onclick = function() {
-          toggler.checked = true;
-        }
-      })
-
-      document.getElementById('payment-form').addEventListener('keyup', function(event) {
-        // Number 13 is the "Enter" key on the keyboard
-        if (event.keyCode === 13) {
-          event.preventDefault();
-          document.getElementById('').click();
-        }
-      });
-    });
-  </script>
-<% end %>
+<%= javascript_include_tag 'retailers/payment_plans/payment_plans' %>

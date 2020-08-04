@@ -20,6 +20,8 @@ class Retailer < ApplicationRecord
   has_many :gupshup_whatsapp_messages, dependent: :destroy
   has_many :automatic_answers, dependent: :destroy
   has_many :payment_methods, dependent: :destroy
+  has_many :paymentez_credit_cards, dependent: :destroy
+  has_many :paymentez_transactions
 
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
@@ -190,6 +192,10 @@ class Retailer < ApplicationRecord
 
   def whatsapp_integrated?
     karix_integrated? || gupshup_integrated?
+  end
+
+  def main_paymentez_credit_card
+    self.paymentez_credit_cards.find_by_main(true)
   end
 
   private
