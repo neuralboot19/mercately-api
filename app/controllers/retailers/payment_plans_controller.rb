@@ -3,7 +3,8 @@ class Retailers::PaymentPlansController < RetailersController
 
   def index
     @payment_plan = PaymentPlan.find_by(retailer_id: current_retailer.id)
-    @pm = current_retailer.payment_methods
+    @pm = payment_methods
+
     used_whatsapp_messages if current_retailer.whatsapp_integrated?
   end
 
@@ -16,4 +17,11 @@ class Retailers::PaymentPlansController < RetailersController
     current_retailer.payment_plan.status_cancelled!
     redirect_to retailers_payment_plans_path(current_retailer), alert: 'Plan cancelado'
   end
+
+  private
+    def payment_methods
+      current_retailer.ecu_charges ?
+        current_retailer.paymentez_credit_cards :
+        current_retailer.payment_methods
+    end
 end

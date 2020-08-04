@@ -1,0 +1,76 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color">Hola <%= @admin.full_name %></p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 t-color lg-18">
+        ID de Transacción: <%= @transaction.authorization_code %> <br>
+        ID de Referencia: <%= @transaction.transaction_reference %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 t-color lg-14">
+        Detalles de la devolución:
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-15 t-color">
+        Fecha: <%= @transaction.payment_date %>
+      </p>
+      <p class="fs-15 t-color">
+        Monto: <%= @transaction.amount %>
+      </p>
+      <p class="fs-15 t-color">
+        Mensaje: <%= @transaction.message %>
+      </p>
+      <p class="fs-15 t-color">
+        Concepto: <%= @transaction.retailer.payment_plan.plan %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-15 t-color">
+        Detalles de la tarjeta:
+      </p>
+      <p class="fs-15 t-color">
+        Marca: <%= PaymentezCardHelper.brand(@transaction.paymentez_credit_card.card_type) %>
+      </p>
+      <p class="fs-15 t-color">
+        Últimos 4 dígitos: <%= @transaction.paymentez_credit_card.number %>
+      </p>
+      <p class="fs-15 t-color">
+        Fecha de expiración: <%= "#{@transaction.paymentez_credit_card.expiry_month}/#{@transaction.paymentez_credit_card.expiry_year}" %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        Gracias,
+      </p>
+      <p class="fs-16 p-color lg-18">
+        Equipo Mercately
+      </p>
+    </div>
+
+    <div class="sign-container">
+      <p class="fs-16 p-color fw-bold">
+        <%= Date.current.year %> MERCATELY
+      </p>
+    </div>
+
+    <div id="social-media" class="social-media-container">
+      <%= image_tag 'facebook-logo.png', class:"social-media-icons" %>
+      <%= image_tag 'twitter.png', class:"social-media-icons" %>
+      <%= image_tag 'instagram.png', class:"social-media-icons" %>
+    </div>
+  </div>
+</div>

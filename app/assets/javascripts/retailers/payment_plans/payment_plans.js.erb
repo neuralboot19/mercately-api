@@ -1,0 +1,98 @@
+document.addEventListener("DOMContentLoaded", function() {
+  var token =  $('meta[name="csrf-token"]').attr('content');
+
+  var submit_purchase_plan = $('#submit_purchase_plan');
+  submit_purchase_plan.attr('disabled', true);
+
+  var submit_card = $('.submit-card');
+
+  var toggler = document.getElementById('modal--toggle');
+  toggler.checked = false;
+  document.querySelectorAll('.pricing__card label, #add_balance').forEach(function(el) {
+    el.onclick = function() {
+      $('#selected_plan_name').text(el.dataset.plan_name);
+      $('#selected_plan_price').text(el.dataset.plan_price);
+      $('#selected_plan').val(el.dataset.plan);
+      toggler.checked = true;
+    }
+  })
+
+  var agree_terms = $('#agree_terms');
+
+  if (agree_terms.val() === 'true') {
+    agree_terms.attr('checked', false);
+    submit_card.attr('disabled', true);
+
+    agree_terms.click(function () {
+      if (submit_purchase_plan.attr('disabled')) {
+        submit_purchase_plan.attr('disabled', false);
+      } else {
+        submit_purchase_plan.attr('disabled', true);
+      }
+
+      if (submit_card.attr('disabled')) {
+        submit_card.attr('disabled', false);
+      } else {
+        submit_card.attr('disabled', true);
+      }
+    });
+  }
+
+  if (submit_purchase_plan) {
+    submit_purchase_plan.click(function(){
+      $(this).attr('disabled', true);
+      $(this).find('#btn_cc').addClass('hidden');
+      $(this).find('#btn_spinner').removeClass('hidden');
+
+      body = {
+        card: {
+          amount: $('#selected_plan_price').text(),
+          cc_id: $('#paymentez_credit_card').val(),
+          plan: $('#selected_plan').val(),
+          terms: $('#agree_terms').prop('checked')
+        }
+      };
+
+      // Send the request to purchase a plan
+      make_request(body, '/paymentez/purchase_plan')
+    });
+  }
+
+  var submit_add_balance = $('#submit_add_balance');
+  if (submit_add_balance) {
+    submit_add_balance.click(function(){
+      $(this).attr('disabled', true);
+      $(this).find('#btn_cc').addClass('hidden');
+      $(this).find('#btn_spinner').removeClass('hidden');
+
+      body = {
+        card: {
+          amount: $('#amount').val(),
+          cc_id: $('#paymentez_credit_card').val()
+        }
+      };
+
+      // Send the request to add balance
+      make_request(body, '/paymentez/add_balance')
+    });
+  }
+
+  function make_request(body, url) {
+    $.ajax({
+      url: "/retailers/" + ENV['SLUG'] + url,
+      type: 'POST',
+      beforeSend: function(xhr) {
+        xhr.setRequestHeader('X-CSRF-Token', token)
+      },
+      data: body,
+      statusCode: {
+        200: function() {
+          location.reload();
+        },
+        500: function() {
+          location.reload();
+        }
+      }
+    });
+  }
+});

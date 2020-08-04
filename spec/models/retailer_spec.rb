@@ -21,6 +21,8 @@ RSpec.describe Retailer, type: :model do
     it { is_expected.to have_many(:payment_methods) }
     it { is_expected.to have_many(:tags).dependent(:destroy) }
     it { is_expected.to have_many(:sales_channels).dependent(:destroy) }
+    it { is_expected.to have_many(:paymentez_transactions) }
+    it { is_expected.to have_many(:paymentez_credit_cards).dependent(:destroy) }
   end
 
   describe 'validations' do
@@ -395,6 +397,22 @@ RSpec.describe Retailer, type: :model do
       it 'returns true' do
         expect(retailer.whatsapp_integrated?).to be true
       end
+    end
+  end
+
+  describe '#main_paymentez_credit_card' do
+    it 'returns the main credit card' do
+      create_list(:paymentez_credit_card, 2, retailer: retailer)
+
+      main_card = retailer.paymentez_credit_cards.first
+      expect(retailer.main_paymentez_credit_card).to eq(main_card)
+    end
+
+    it 'returns the nil if no main credit card is set' do
+      create_list(:paymentez_credit_card, 2, retailer: retailer)
+      retailer.paymentez_credit_cards.first.update(main: false)
+
+      expect(retailer.main_paymentez_credit_card).to eq(nil)
     end
   end
 

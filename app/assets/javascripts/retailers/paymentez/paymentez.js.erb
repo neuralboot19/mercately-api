@@ -1,0 +1,85 @@
+var userid = ENV["CURRENT_RETAILER_ID"];
+var useremail = ENV["CURRENT_RETAILER_ADMIN_EMAIL"];
+var clientcode = ENV["PAYMENTEZ_CODE_CLIENT"];
+var clientkey = ENV["PAYMENTEZ_SECRET_CLIENT"];
+var env = 'stg';
+var holder_name = '';
+
+$(function() {
+  Payment.init(env,clientcode, clientkey);
+
+  var form              = $("#add-card-form");
+  var submitButton      = form.find("button");
+  var submitInitialText = submitButton.text();
+
+  $("#add-card-form").submit(function(e){
+    var myCard = $('#my-card');
+    $('#messages').text("");
+
+    var cardToSave = myCard.PaymentForm('card');
+    holder_name = cardToSave['card']['holder_name'];
+
+    if(cardToSave == null){
+      $('#messages').html("COMPRA Invalida");
+    }else{
+      submitButton.attr("disabled", "disabled").text("Agregando Tarjeta...");
+      Payment.addCard(userid, useremail, cardToSave, successHandler, errorHandler);
+    }
+
+    e.preventDefault();
+  });
+
+  var successHandler = function(cardResponse) {
+    if(cardResponse.card.status === 'valid'){
+      var selected_plan = $('#selected_plan').val();
+
+      if (selected_plan) {
+        data = {
+          cardToken: cardResponse.card,
+          holder_name: holder_name,
+          card: {
+            amount: $('#selected_plan_price').text(),
+            plan: $('#selected_plan').val(),
+            terms: $('#agree_terms').val()
+          }
+        };
+      } else {
+        data = {
+          cardToken : cardResponse.card,
+          holder_name: holder_name
+        }
+      }
+
+      var request = $.ajax({
+        url: "/retailers/" + ENV["SLUG"] + "/paymentez",
+        beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+        method: "POST",
+        data: data,
+        dataType: "json"
+      });
+
+      request.done(function( msg ) {
+        $('#messages').html('Tarjeta creada exitosamente');
+        location.reload();
+      });
+
+      request.fail(function( jqXHR, textStatus ) {
+        alert( "Error al agregar tarjeta: " + textStatus );
+      });
+
+    } else if(cardResponse.card.status === 'review'){
+      $('#messages').html('La tarjeta está siendo revisada');
+    } else {
+      $('#messages').html('Se produjo un error, por favor intente más tarde o cambie su tarjeta');
+    }
+    submitButton.removeAttr("disabled");
+    submitButton.text(submitInitialText);
+  };
+
+  var errorHandler = function(err) {
+    $('#messages').html(err.error.type);
+    submitButton.removeAttr("disabled");
+    submitButton.text(submitInitialText);
+  };
+
+});
