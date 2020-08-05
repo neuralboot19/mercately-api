@@ -1,23 +1,23 @@
 <% unless purchase_plan %>
   <% if pm.present? %>
-    <h2 class="m-0 mb-10 c-secondary">Tarjeta de crédito</h2>
-  <% end %>
-  <% pm.each do |pm| %>
-    <h2 class="m-0 container-payment-plan_text">Nombre en la tarjeta<span class="ml-110"><%= pm.name %></span></h2>
-    <h2 class="m-0 container-payment-plan_text">Número de tarjeta<span class="ml-136">XXXX XXXX XXXX <%= pm['number'] %></span></h2>
-    <h2 class="m-0 container-payment-plan_text">Fecha de expiración
-      <span class="ml-110">
-        <%= "#{pm['expiry_month']}/#{pm['expiry_year']}" %>
-        <%= link_to retailers_paymentez_path(slug: current_retailer, id: pm['id']), method: :delete, data: { confirm: 'Estás seguro de eliminar esta tarjeta?' }, class: 'btn btn--cta btn-small delete-card' do %>
-          <i class="far fa-trash-alt"></i>
-        <% end %>
-      </span>
-    </h2>
-    <hr class="my-30">
+    <p class="m-0 mb-10 container-payment-plan_sub-text c-secondary">Tarjeta de crédito</p>
+    <% pm.each do |payment_method| %>
+      <p class="m-0 container-payment-plan_text">Nombre en la tarjeta<span class="ml-110 container-payment-plan_mobile"><%= payment_method.name %></span></p>
+      <p class="m-0 container-payment-plan_text">Número de tarjeta<span class="ml-128 container-payment-plan_mobile">XXXX XXXX XXXX <%= payment_method['number'] %></span></p>
+      <p class="m-0 container-payment-plan_text">Fecha de expiración
+        <span class="ml-110 container-payment-plan_mobile">
+          <%= "#{payment_method['expiry_month']}/#{payment_method['expiry_year']}" %>
+          <%= link_to retailers_paymentez_path(slug: current_retailer, id: payment_method['id']), method: :delete, data: { confirm: 'Estás seguro de eliminar esta tarjeta?' }, class: 'btn btn--cta btn-small delete-card' do %>
+            <i class="far fa-trash-alt"></i>
+          <% end %>
+        </span>
+      </p>
+      <hr class="my-30">
+    <% end %>
   <% end %>
 <% end %>
 <div class="<%= is_modal ? "container-payment-plan_add_card_modal" : "container-payment-plan_add_card" %>">
-  <h3 class="m-0 mb-10 container-payment-plan_add_card_sub-title">Agregar Tarjeta</h3>
+  <p class="<%= pm.present? ? "m-0 mb-10 container-payment-plan_add_card_sub-text" : "m-0 mb-10 c-secondary container-payment-plan_add_card_sub-text" %> ">Agregar Tarjeta</p>
   <form id="add-card-form" class="p-10 container-payment-plan_form">
     <div class="payment-form" id="my-card" data-capture-name="true"></div>
     <button class="btn btn--cta btn-small submit-card m-0" id="submit" type="submit" <%= 'disabled="disabled"' if purchase_plan %>>
