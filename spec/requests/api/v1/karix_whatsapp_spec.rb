@@ -98,232 +98,369 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'GET #index' do
-    it 'responses with all customers' do
-      get api_v1_karix_customers_path
-      body = JSON.parse(response.body)
-
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(2)
-    end
-
-    it 'filters customers by first_name' do
-      get api_v1_karix_customers_path, params: { searchString: customer2.first_name }
-      body = JSON.parse(response.body)
-
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
-    end
-
-    it 'filters customers by last_name' do
-      get api_v1_karix_customers_path, params: { searchString: customer2.last_name }
-      body = JSON.parse(response.body)
-
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
-    end
-
-    it 'filters customers by first_name and last_name' do
-      get api_v1_karix_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
-      body = JSON.parse(response.body)
-
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
-    end
-
-    it 'filters customers by email' do
-      get api_v1_karix_customers_path, params: { searchString: customer1.email }
-      body = JSON.parse(response.body)
-
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
-    end
-
-    it 'filters customers by phone' do
-      get api_v1_karix_customers_path, params: { searchString: customer1.phone }
-      body = JSON.parse(response.body)
-
-      expect(response).to have_http_status(:ok)
-      expect(body['customers'].count).to eq(1)
-      expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
-    end
-
-    it 'responses with a 404 when no customers registered' do
-      retailer.customers.destroy_all
-
-      get api_v1_karix_customers_path
-      body = JSON.parse(response.body)
-
-      expect(response).to have_http_status(:not_found)
-      expect(body['message']).to eq('Customers not found')
-      expect(body['customers']).to eq([])
-    end
-
-    context 'when the retailer user is an agent' do
-      let(:retailer_user_agent) { create(:retailer_user, :with_retailer, :agent, retailer: retailer) }
-      let!(:agent_customer1) { create(:agent_customer, retailer_user: retailer_user, customer: customer1) }
-      let!(:agent_customer2) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer2) }
-
-      before do
-        sign_out retailer_user
-        sign_in retailer_user_agent
-      end
-
-      it 'returns only the customers assigned to it or those not assigned' do
+    context 'when local request' do
+      it 'responses with all customers' do
         get api_v1_karix_customers_path
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(2)
+      end
+
+      it 'filters customers by first_name' do
+        get api_v1_karix_customers_path, params: { searchString: customer2.first_name }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
         expect(body['customers'].count).to eq(1)
-      end
-    end
-
-    context 'when the retailer user does not have customers' do
-      before do
-        retailer.karix_whatsapp_messages.delete_all
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
       end
 
-      it 'fails, a 404 Error will be responsed' do
+      it 'filters customers by last_name' do
+        get api_v1_karix_customers_path, params: { searchString: customer2.last_name }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by first_name and last_name' do
+        get api_v1_karix_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by email' do
+        get api_v1_karix_customers_path, params: { searchString: customer1.email }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by phone' do
+        get api_v1_karix_customers_path, params: { searchString: customer1.phone }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'responses with a 404 when no customers registered' do
+        retailer.customers.destroy_all
+
         get api_v1_karix_customers_path
         body = JSON.parse(response.body)
 
-        expect(response.code).to eq('404')
+        expect(response).to have_http_status(:not_found)
         expect(body['message']).to eq('Customers not found')
+        expect(body['customers']).to eq([])
       end
-    end
 
-    context 'when the tag filter is present' do
-      context 'when the tag filter is "all"' do
-        let!(:tag) { create(:tag, retailer: retailer) }
-        let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+      context 'when the retailer user is an agent' do
+        let(:retailer_user_agent) { create(:retailer_user, :with_retailer, :agent, retailer: retailer) }
+        let!(:agent_customer1) { create(:agent_customer, retailer_user: retailer_user, customer: customer1) }
+        let!(:agent_customer2) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer2) }
 
-        it 'responses the customers with (any tag assigned/without tags assigned)' do
-          get api_v1_karix_customers_path, params: { tag: 'all' }
-          body = JSON.parse(response.body)
-
-          expect(response).to have_http_status(:ok)
-          expect(body['customers'].count).to eq(2)
+        before do
+          sign_out retailer_user
+          sign_in retailer_user_agent
         end
-      end
 
-      context 'when the tag filter is not "all"' do
-        let(:tag) { create(:tag, retailer: retailer) }
-        let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
-
-        it 'responses only the customers with the tag assigned' do
-          get api_v1_karix_customers_path, params: { tag: tag.id }
+        it 'returns only the customers assigned to it or those not assigned' do
+          get api_v1_karix_customers_path
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
           expect(body['customers'].count).to eq(1)
         end
       end
+
+      context 'when the retailer user does not have customers' do
+        before do
+          retailer.karix_whatsapp_messages.delete_all
+        end
+
+        it 'fails, a 404 Error will be responsed' do
+          get api_v1_karix_customers_path
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('404')
+          expect(body['message']).to eq('Customers not found')
+        end
+      end
+
+      context 'when the tag filter is present' do
+        context 'when the tag filter is "all"' do
+          let!(:tag) { create(:tag, retailer: retailer) }
+          let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+          it 'responses the customers with (any tag assigned/without tags assigned)' do
+            get api_v1_karix_customers_path, params: { tag: 'all' }
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['customers'].count).to eq(2)
+          end
+        end
+
+        context 'when the tag filter is not "all"' do
+          let(:tag) { create(:tag, retailer: retailer) }
+          let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+          it 'responses only the customers with the tag assigned' do
+            get api_v1_karix_customers_path, params: { tag: tag.id }
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['customers'].count).to eq(1)
+          end
+        end
+      end
+    end
+
+    context 'when mobile request' do
+      before do
+        sign_out retailer_user
+      end
+
+      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
+
+      let(:header_email) { retailer_user.email }
+      let(:header_device) { mobile_token.device }
+      let(:header_token) { mobile_token.generate! }
+
+      it 'responses with all customers' do
+        get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(2)
+      end
+
+      it 'filters customers by first_name' do
+        get api_v1_karix_customers_path,
+            params: { searchString: customer2.first_name },
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by last_name' do
+        get api_v1_karix_customers_path,
+            params: { searchString: customer2.last_name },
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by first_name and last_name' do
+        get api_v1_karix_customers_path,
+            params: { searchString: "#{customer2.first_name} #{customer2.last_name}" },
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer2.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by email' do
+        get api_v1_karix_customers_path,
+            params: { searchString: customer1.email },
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'filters customers by phone' do
+        get api_v1_karix_customers_path,
+            params: { searchString: customer1.phone },
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['customers'].count).to eq(1)
+        expect(body['customers'][0]).to include(customer1.slice(:id, :email, :first_name, :last_name))
+      end
+
+      it 'responses with a 404 when no customers registered' do
+        retailer.customers.destroy_all
+
+        get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:not_found)
+        expect(body['message']).to eq('Customers not found')
+        expect(body['customers']).to eq([])
+      end
+
+      context 'when the retailer user is an agent' do
+        let(:retailer_user_agent) { create(:retailer_user, :with_retailer, :agent, retailer: retailer) }
+        let!(:agent_customer1) { create(:agent_customer, retailer_user: retailer_user, customer: customer1) }
+        let!(:agent_customer2) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer2) }
+
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_agent) }
+
+        let(:header_email) { retailer_user_agent.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        it 'returns only the customers assigned to it or those not assigned' do
+          get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+      end
+
+      context 'when the retailer user does not have customers' do
+        before do
+          retailer.karix_whatsapp_messages.delete_all
+        end
+
+        it 'fails, a 404 Error will be responsed' do
+          get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('404')
+          expect(body['message']).to eq('Customers not found')
+        end
+      end
+
+      context 'when the tag filter is present' do
+        context 'when the tag filter is "all"' do
+          let!(:tag) { create(:tag, retailer: retailer) }
+          let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+          it 'responses the customers with (any tag assigned/without tags assigned)' do
+            get api_v1_karix_customers_path,
+                params: { tag: 'all' },
+                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['customers'].count).to eq(2)
+          end
+        end
+
+        context 'when the tag filter is not "all"' do
+          let(:tag) { create(:tag, retailer: retailer) }
+          let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
+
+          it 'responses only the customers with the tag assigned' do
+            get api_v1_karix_customers_path,
+                params: { tag: tag.id },
+                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['customers'].count).to eq(1)
+          end
+        end
+      end
     end
   end
 
   describe 'POST #create' do
-    context 'when Gupshup integrated' do
-      before do
-        sign_out retailer_user
-        sign_in retailer_user_gupshup
-      end
-
-      let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
-      let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
-
-      context 'when the message is submitted' do
-        it 'will response a 200 status code and store a new gupshup whatsapp message' do
-          allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
-            .and_return(message)
-          allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
-
-          post '/api/v1/karix_send_whatsapp_message',
-            params: {
-              customer_id: customer3.id,
-              message: 'New whatsapp message'
-            }
-
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['message']).to eq('Notificación enviada')
+    context 'when local request' do
+      context 'when Gupshup integrated' do
+        before do
+          sign_out retailer_user
+          sign_in retailer_user_gupshup
         end
-      end
-    end
 
-    context 'when Karix integrated' do
-      let(:message) { create(:karix_whatsapp_message) }
+        let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
+        let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
 
-      context 'when the message is sent without errors' do
-        it 'successfully, will response a 200 status' do
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return(karix_successful_response)
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
-
-          post '/api/v1/karix_send_whatsapp_message',
-            params: {
-              customer_id: customer1.id,
-              message: 'New whatsapp message'
-            }
-
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['message']).to eq(karix_successful_response['objects'][0])
-        end
-      end
-
-      context 'when the message is not sent' do
-        it 'fails and will response a 500 status' do
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
-            'Connection rejected' }}.with_indifferent_access)
-
-          post '/api/v1/karix_send_whatsapp_message',
-            params: {
-              customer_id: customer1.id,
-              message: 'New whatsapp message'
-            }
-
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('500')
-          expect(body['message']).to eq('Connection rejected')
-        end
-      end
-
-      context 'because of the retailer has not enough balance' do
-        it 'fails and will response a 401 status' do
-          retailer.update_attributes(ws_balance: 0.0671)
-
-          post '/api/v1/karix_send_whatsapp_message',
-            params: {
-              customer_id: customer1.id,
-              message: 'New whatsapp message'
-            }
-
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('401')
-          expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
-                                        'por favor, contáctese con su agente de ventas para recargar su saldo')
-        end
-      end
-    end
-
-    context 'when the retailer has an unlimited account' do
-      before do
-        retailer.update!(unlimited_account: true)
-      end
-
-      context 'when it is a HSM message' do
-        context 'when it is not a positive balance' do
-          it 'returns a 401 status' do
-            retailer.update!(ws_balance: 0.0671)
+        context 'when the message is submitted' do
+          it 'will response a 200 status code and store a new gupshup whatsapp message' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+              .and_return(message)
+            allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
 
             post '/api/v1/karix_send_whatsapp_message',
-                params: {
-                  customer_id: customer1.id,
-                  message: 'New whatsapp message',
-                  template: true
-                }
+              params: {
+                customer_id: customer3.id,
+                message: 'New whatsapp message'
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq('Notificación enviada')
+          end
+        end
+      end
+
+      context 'when Karix integrated' do
+        let(:message) { create(:karix_whatsapp_message) }
+
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return(karix_successful_response)
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+
+            post '/api/v1/karix_send_whatsapp_message',
+              params: {
+                customer_id: customer1.id,
+                message: 'New whatsapp message'
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq(karix_successful_response['objects'][0])
+          end
+        end
+
+        context 'when the message is not sent' do
+          it 'fails and will response a 500 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
+              'Connection rejected' }}.with_indifferent_access)
+
+            post '/api/v1/karix_send_whatsapp_message',
+              params: {
+                customer_id: customer1.id,
+                message: 'New whatsapp message'
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('500')
+            expect(body['message']).to eq('Connection rejected')
+          end
+        end
+
+        context 'because of the retailer has not enough balance' do
+          it 'fails and will response a 401 status' do
+            retailer.update_attributes(ws_balance: 0.0671)
+
+            post '/api/v1/karix_send_whatsapp_message',
+              params: {
+                customer_id: customer1.id,
+                message: 'New whatsapp message'
+              }
 
             body = JSON.parse(response.body)
             expect(response.code).to eq('401')
@@ -331,8 +468,59 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
                                           'por favor, contáctese con su agente de ventas para recargar su saldo')
           end
         end
+      end
 
-        context 'when it is a positive balance' do
+      context 'when the retailer has an unlimited account' do
+        before do
+          retailer.update!(unlimited_account: true)
+        end
+
+        context 'when it is a HSM message' do
+          context 'when it is not a positive balance' do
+            it 'returns a 401 status' do
+              retailer.update!(ws_balance: 0.0671)
+
+              post '/api/v1/karix_send_whatsapp_message',
+                  params: {
+                    customer_id: customer1.id,
+                    message: 'New whatsapp message',
+                    template: true
+                  }
+
+              body = JSON.parse(response.body)
+              expect(response.code).to eq('401')
+              expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                            'por favor, contáctese con su agente de ventas para recargar su saldo')
+            end
+          end
+
+          context 'when it is a positive balance' do
+            let(:message) { create(:karix_whatsapp_message) }
+
+            before do
+              allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+                .and_return(karix_successful_response)
+              allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+            end
+
+            it 'returns a 200 status' do
+              retailer.update!(ws_balance: 1.0)
+
+              post '/api/v1/karix_send_whatsapp_message',
+                params: {
+                  customer_id: customer1.id,
+                  message: 'New whatsapp message',
+                  template: true
+                }
+
+              body = JSON.parse(response.body)
+              expect(response.code).to eq('200')
+              expect(body['message']).to eq(karix_successful_response['objects'][0])
+            end
+          end
+        end
+
+        context 'when it is a conversation message' do
           let(:message) { create(:karix_whatsapp_message) }
 
           before do
@@ -342,13 +530,13 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           end
 
           it 'returns a 200 status' do
-            retailer.update!(ws_balance: 1.0)
+            retailer.update!(ws_balance: 0.0)
 
             post '/api/v1/karix_send_whatsapp_message',
               params: {
                 customer_id: customer1.id,
                 message: 'New whatsapp message',
-                template: true
+                template: false
               }
 
             body = JSON.parse(response.body)
@@ -357,85 +545,319 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           end
         end
       end
+    end
 
-      context 'when it is a conversation message' do
+    context 'when mobile request' do
+      before do
+        sign_out retailer_user
+      end
+
+      context 'when Gupshup integrated' do
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
+
+        let(:header_email) { retailer_user_gupshup.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
+        let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
+
+        context 'when the message is submitted' do
+          it 'will response a 200 status code and store a new gupshup whatsapp message' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+              .and_return(message)
+            allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
+
+            post '/api/v1/karix_send_whatsapp_message',
+              params: {
+                customer_id: customer3.id,
+                message: 'New whatsapp message'
+              },
+              headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq('Notificación enviada')
+          end
+        end
+      end
+
+      context 'when Karix integrated' do
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
+
+        let(:header_email) { retailer_user.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
         let(:message) { create(:karix_whatsapp_message) }
 
-        before do
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
-            .and_return(karix_successful_response)
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return(karix_successful_response)
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+
+            post '/api/v1/karix_send_whatsapp_message',
+                 params: {
+                   customer_id: customer1.id,
+                   message: 'New whatsapp message'
+                 },
+                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq(karix_successful_response['objects'][0])
+          end
         end
 
-        it 'returns a 200 status' do
-          retailer.update!(ws_balance: 0.0)
+        context 'when the message is not sent' do
+          it 'fails and will response a 500 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
+              'Connection rejected' }}.with_indifferent_access)
 
-          post '/api/v1/karix_send_whatsapp_message',
-            params: {
-              customer_id: customer1.id,
-              message: 'New whatsapp message',
-              template: false
-            }
+            post '/api/v1/karix_send_whatsapp_message',
+                 params: {
+                   customer_id: customer1.id,
+                   message: 'New whatsapp message'
+                 },
+                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['message']).to eq(karix_successful_response['objects'][0])
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('500')
+            expect(body['message']).to eq('Connection rejected')
+          end
+        end
+
+        context 'because of the retailer has not enough balance' do
+          it 'fails and will response a 401 status' do
+            retailer.update_attributes(ws_balance: 0.0671)
+
+            post '/api/v1/karix_send_whatsapp_message',
+                 params: {
+                   customer_id: customer1.id,
+                   message: 'New whatsapp message'
+                 },
+                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('401')
+            expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                          'por favor, contáctese con su agente de ventas para recargar su saldo')
+          end
+        end
+      end
+
+      context 'when the retailer has an unlimited account' do
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
+
+        let(:header_email) { retailer_user.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        before do
+          retailer.update!(unlimited_account: true)
+        end
+
+        context 'when it is a HSM message' do
+          context 'when it is not a positive balance' do
+            it 'returns a 401 status' do
+              retailer.update!(ws_balance: 0.0671)
+
+              post '/api/v1/karix_send_whatsapp_message',
+                   params: {
+                     customer_id: customer1.id,
+                     message: 'New whatsapp message',
+                     template: true
+                   },
+                   headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              body = JSON.parse(response.body)
+              expect(response.code).to eq('401')
+              expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                            'por favor, contáctese con su agente de ventas para recargar su saldo')
+            end
+          end
+
+          context 'when it is a positive balance' do
+            let(:message) { create(:karix_whatsapp_message) }
+
+            before do
+              allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+                .and_return(karix_successful_response)
+              allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+            end
+
+            it 'returns a 200 status' do
+              retailer.update!(ws_balance: 1.0)
+
+              post '/api/v1/karix_send_whatsapp_message',
+                   params: {
+                     customer_id: customer1.id,
+                     message: 'New whatsapp message',
+                     template: true
+                   },
+                   headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              body = JSON.parse(response.body)
+              expect(response.code).to eq('200')
+              expect(body['message']).to eq(karix_successful_response['objects'][0])
+            end
+          end
+        end
+
+        context 'when it is a conversation message' do
+          let(:message) { create(:karix_whatsapp_message) }
+
+          before do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+              .and_return(karix_successful_response)
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+          end
+
+          it 'returns a 200 status' do
+            retailer.update!(ws_balance: 0.0)
+
+            post '/api/v1/karix_send_whatsapp_message',
+                 params: {
+                   customer_id: customer1.id,
+                   message: 'New whatsapp message',
+                   template: false
+                 },
+                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq(karix_successful_response['objects'][0])
+          end
         end
       end
     end
   end
 
   describe 'GET #messages' do
-    context 'when the customer selected has messages' do
-      context 'when the retailer has positive balance' do
-        it 'successfully response a 200 status' do
-          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
-          body = JSON.parse(response.body)
+    context 'when local request' do
+      context 'when the customer selected has messages' do
+        context 'when the retailer has positive balance' do
+          it 'successfully response a 200 status' do
+            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+            body = JSON.parse(response.body)
 
-          expect(response.code).to eq('200')
-          expect(body['messages'].count).to eq(6)
+            expect(response.code).to eq('200')
+            expect(body['messages'].count).to eq(6)
+          end
+        end
+
+        context 'when the retailer has an unlimited account' do
+          before do
+            retailer.update!(unlimited_account: true, ws_balance: 0.0)
+          end
+
+          it 'successfully response a 200 status' do
+            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+            body = JSON.parse(response.body)
+
+            expect(response.code).to eq('200')
+            expect(body['messages'].count).to eq(6)
+          end
+        end
+
+        context 'when the retailer has not enough balance' do
+          it 'responses a 401 status' do
+            retailer.update_attributes(ws_balance: 0.0671)
+
+            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+            body = JSON.parse(response.body)
+
+            expect(response.code).to eq('401')
+            expect(body['messages'].count).to eq(6)
+            expect(body['balance_error_info']['status']).to eq(401)
+            expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                                                'por favor, contáctese con su agente de ventas para recargar su saldo')
+          end
         end
       end
 
-      context 'when the retailer has an unlimited account' do
-        before do
-          retailer.update!(unlimited_account: true, ws_balance: 0.0)
-        end
+      context 'when the customer selected does not have messages' do
+        let(:customer3) { create(:customer) }
 
-        it 'successfully response a 200 status' do
-          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+        it 'fails, response a 404 status' do
+          get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages"
           body = JSON.parse(response.body)
 
-          expect(response.code).to eq('200')
-          expect(body['messages'].count).to eq(6)
-        end
-      end
-
-      context 'when the retailer has not enough balance' do
-        it 'responses a 401 status' do
-          retailer.update_attributes(ws_balance: 0.0671)
-
-          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
-          body = JSON.parse(response.body)
-
-          expect(response.code).to eq('401')
-          expect(body['messages'].count).to eq(6)
-          expect(body['balance_error_info']['status']).to eq(401)
-          expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
-                                                              'por favor, contáctese con su agente de ventas para recargar su saldo')
+          expect(response.code).to eq('404')
+          expect(body['message']).to eq('Messages not found')
         end
       end
     end
 
-    context 'when the customer selected does not have messages' do
-      let(:customer3) { create(:customer) }
+    context 'when mobile request' do
+      before do
+        sign_out retailer_user
+      end
 
-      it 'fails, response a 404 status' do
-        get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages"
-        body = JSON.parse(response.body)
+      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
-        expect(response.code).to eq('404')
-        expect(body['message']).to eq('Messages not found')
+      let(:header_email) { retailer_user.email }
+      let(:header_device) { mobile_token.device }
+      let(:header_token) { mobile_token.generate! }
+
+      context 'when the customer selected has messages' do
+        context 'when the retailer has positive balance' do
+          it 'successfully response a 200 status' do
+            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
+                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+            body = JSON.parse(response.body)
+
+            expect(response.code).to eq('200')
+            expect(body['messages'].count).to eq(6)
+          end
+        end
+
+        context 'when the retailer has an unlimited account' do
+          before do
+            retailer.update!(unlimited_account: true, ws_balance: 0.0)
+          end
+
+          it 'successfully response a 200 status' do
+            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
+                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+
+            expect(response.code).to eq('200')
+            expect(body['messages'].count).to eq(6)
+          end
+        end
+
+        context 'when the retailer has not enough balance' do
+          it 'responses a 401 status' do
+            retailer.update_attributes(ws_balance: 0.0671)
+
+            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
+                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+
+            expect(response.code).to eq('401')
+            expect(body['messages'].count).to eq(6)
+            expect(body['balance_error_info']['status']).to eq(401)
+            expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                                                'por favor, contáctese con su agente de ventas para recargar su saldo')
+          end
+        end
+      end
+
+      context 'when the customer selected does not have messages' do
+        let(:customer3) { create(:customer) }
+
+        it 'fails, response a 404 status' do
+          get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages",
+              headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+          body = JSON.parse(response.body)
+
+          expect(response.code).to eq('404')
+          expect(body['message']).to eq('Messages not found')
+        end
       end
     end
   end
@@ -585,66 +1007,148 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'POST #send_file' do
-    context 'when the retailer is karix integrated' do
-      let(:message) { create(:karix_whatsapp_message, customer: customer1) }
+    context 'when local request' do
+      context 'when the retailer is karix integrated' do
+        let(:message) { create(:karix_whatsapp_message, customer: customer1) }
 
-      context 'when the message is sent without errors' do
-        it 'successfully, will response a 200 status' do
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
-            .and_return(karix_successful_response)
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+              .and_return(karix_successful_response)
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
 
-          post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
-            params: {
-              file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
-            }
+            post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
+              params: {
+                file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+              }
 
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['message']).to eq(karix_successful_response['objects'][0])
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq(karix_successful_response['objects'][0])
+          end
+        end
+
+        context 'when the message is not sent' do
+          it 'fails, will response a 500 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
+              'Connection rejected' }}.with_indifferent_access)
+
+            post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
+              params: {
+                file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('500')
+            expect(body['message']).to eq('Connection rejected')
+          end
         end
       end
 
-      context 'when the message is not sent' do
-        it 'fails, will response a 500 status' do
-          allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
-            'Connection rejected' }}.with_indifferent_access)
+      context 'when the retailer is gupshup integrated' do
+        before do
+          sign_out retailer_user
+          sign_in retailer_user_gupshup
+        end
 
-          post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
-            params: {
-              file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
-            }
+        let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
+        let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
 
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('500')
-          expect(body['message']).to eq('Connection rejected')
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+              .and_return(message)
+            allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
+
+            post "/api/v1/karix_whatsapp_send_file/#{customer3.id}",
+              params: {
+                file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq('Notificación enviada')
+          end
         end
       end
     end
 
-    context 'when the retailer is gupshup integrated' do
+    context 'when mobile request' do
       before do
         sign_out retailer_user
-        sign_in retailer_user_gupshup
       end
 
-      let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
-      let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
+      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
-      context 'when the message is sent without errors' do
-        it 'successfully, will response a 200 status' do
-          allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
-            .and_return(message)
-          allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
+      let(:header_email) { retailer_user.email }
+      let(:header_device) { mobile_token.device }
+      let(:header_token) { mobile_token.generate! }
 
-          post "/api/v1/karix_whatsapp_send_file/#{customer3.id}",
-            params: {
-              file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
-            }
+      context 'when the retailer is karix integrated' do
+        let(:message) { create(:karix_whatsapp_message, customer: customer1) }
 
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['message']).to eq('Notificación enviada')
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message)
+              .and_return(karix_successful_response)
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:assign_message).and_return(message)
+
+            post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
+                 params: {
+                   file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+                 },
+                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq(karix_successful_response['objects'][0])
+          end
+        end
+
+        context 'when the message is not sent' do
+          it 'fails, will response a 500 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_message).and_return({ 'error': { 'message':
+              'Connection rejected' }}.with_indifferent_access)
+
+            post "/api/v1/karix_whatsapp_send_file/#{customer1.id}",
+                 params: {
+                   file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+                 },
+                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('500')
+            expect(body['message']).to eq('Connection rejected')
+          end
+        end
+      end
+
+      context 'when the retailer is gupshup integrated' do
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
+
+        let(:header_email) { retailer_user_gupshup.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
+        let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
+
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+              .and_return(message)
+            allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
+
+            post "/api/v1/karix_whatsapp_send_file/#{customer3.id}",
+                 params: {
+                   file_data: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+                 },
+                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq('Notificación enviada')
+          end
         end
       end
     end
@@ -653,31 +1157,75 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   describe 'PUT #message_read' do
     let(:message) { create(:karix_whatsapp_message, customer: customer1, status: 'delivered') }
 
-    context 'when the message is updated without errors' do
-      it 'successfully, will response a 200 status' do
-        put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
-          params: {
-            message_id: message.id
-          }
+    context 'when local request' do
+      context 'when the message is updated without errors' do
+        it 'successfully, will response a 200 status' do
+          put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
+            params: {
+              message_id: message.id
+            }
 
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('200')
-        expect(body['message']['status']).to eq('read')
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['message']['status']).to eq('read')
+        end
+      end
+
+      context 'when the message is not updated because of errors' do
+        it 'will response a 500 status' do
+          allow_any_instance_of(KarixWhatsappMessage).to receive(:update_column).and_return(false)
+
+          put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
+            params: {
+              message_id: message.id
+            }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('500')
+          expect(body['message']).to eq('Error al actualizar mensajes')
+        end
       end
     end
 
-    context 'when the message is not updated because of errors' do
-      it 'will response a 500 status' do
-        allow_any_instance_of(KarixWhatsappMessage).to receive(:update_column).and_return(false)
+    context 'when mobile request' do
+      before do
+        sign_out retailer_user
+      end
 
-        put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
-          params: {
-            message_id: message.id
-          }
+      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('500')
-        expect(body['message']).to eq('Error al actualizar mensajes')
+      let(:header_email) { retailer_user.email }
+      let(:header_device) { mobile_token.device }
+      let(:header_token) { mobile_token.generate! }
+
+      context 'when the message is updated without errors' do
+        it 'successfully, will response a 200 status' do
+          put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
+              params: {
+                message_id: message.id
+              },
+              headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['message']['status']).to eq('read')
+        end
+      end
+
+      context 'when the message is not updated because of errors' do
+        it 'will response a 500 status' do
+          allow_any_instance_of(KarixWhatsappMessage).to receive(:update_column).and_return(false)
+
+          put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
+              params: {
+                message_id: message.id
+              },
+              headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('500')
+          expect(body['message']).to eq('Error al actualizar mensajes')
+        end
       end
     end
   end
@@ -690,30 +1238,76 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       create(:template, :for_whatsapp, retailer: retailer, answer: 'Contenido de prueba')
     end
 
-    it 'returns a whatsapp fast answers list' do
-      get api_v1_fast_answers_for_whatsapp_path
-      body = JSON.parse(response.body)
+    context 'when local request' do
+      it 'returns a whatsapp fast answers list' do
+        get api_v1_fast_answers_for_whatsapp_path
+        body = JSON.parse(response.body)
 
-      expect(response).to have_http_status(:ok)
-      expect(body['templates']['data'].count).to eq(6)
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(6)
+      end
+
+      it 'filters by title' do
+        get api_v1_fast_answers_for_whatsapp_path, params: { search: 'texto' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(2)
+        expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+      end
+
+      it 'filters by content' do
+        get api_v1_fast_answers_for_whatsapp_path, params: { search: 'contenido' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(1)
+        expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+      end
     end
 
-    it 'filters by title' do
-      get api_v1_fast_answers_for_whatsapp_path, params: { search: 'texto' }
-      body = JSON.parse(response.body)
+    context 'when mobile request' do
+      before do
+        sign_out retailer_user
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['templates']['data'].count).to eq(2)
-      expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
-    end
+      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
-    it 'filters by content' do
-      get api_v1_fast_answers_for_whatsapp_path, params: { search: 'contenido' }
-      body = JSON.parse(response.body)
+      let(:header_email) { retailer_user.email }
+      let(:header_device) { mobile_token.device }
+      let(:header_token) { mobile_token.generate! }
 
-      expect(response).to have_http_status(:ok)
-      expect(body['templates']['data'].count).to eq(1)
-      expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+      it 'returns a whatsapp fast answers list' do
+        get api_v1_fast_answers_for_whatsapp_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(6)
+      end
+
+      it 'filters by title' do
+        get api_v1_fast_answers_for_whatsapp_path,
+            params: { search: 'texto' },
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(2)
+        expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+      end
+
+      it 'filters by content' do
+        get api_v1_fast_answers_for_whatsapp_path,
+            params: { search: 'contenido' },
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(1)
+        expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+      end
     end
   end
 
@@ -735,58 +1329,126 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     end
 
     describe 'when chat service is whatsapp' do
-      describe 'when the retailer is karix integrated' do
-        before do
-          allow(KarixNotificationHelper).to receive(:broadcast_data).and_return(true)
+      context 'when local request' do
+        describe 'when the retailer is karix integrated' do
+          before do
+            allow(KarixNotificationHelper).to receive(:broadcast_data).and_return(true)
+          end
+
+          it 'sets the chat as unread' do
+            patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
+              params: {
+                chat_service: 'whatsapp'
+              }
+
+            expect(response.code).to eq('200')
+            expect(customer2.reload.unread_whatsapp_chat).to eq(true)
+          end
         end
 
-        it 'sets the chat as unread' do
+        describe 'when the retailer is gupshup integrated' do
+          before do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Helpers::Messages).to receive(:notify_new_counter).and_return(true)
+
+            sign_out retailer_user
+            sign_in retailer_user_gupshup
+          end
+
+          it 'sets the chat as unread' do
+            patch "/api/v1/whatsapp_unread_chat/#{customer3.id}",
+              params: {
+                chat_service: 'whatsapp'
+              }
+
+            expect(response.code).to eq('200')
+            expect(customer3.reload.unread_whatsapp_chat).to eq(true)
+          end
+        end
+
+        it 'includes assigned_agent if customer has an agent assigned' do
+          agent_retailer_user = create(:retailer_user, :agent, retailer: retailer)
+          AgentCustomer.create(retailer_user: agent_retailer_user, customer: customer2)
+
           patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
             params: {
               chat_service: 'whatsapp'
             }
 
+          body = JSON.parse(response.body)
           expect(response.code).to eq('200')
-          expect(customer2.reload.unread_whatsapp_chat).to eq(true)
+          expect(body['customers'].count).to eq(1)
+          expect(body['customers'].first['assigned_agent']).to eq({
+            "id" => customer2.agent.id,
+            "email" => customer2.agent.email,
+            "full_name" => customer2.agent.full_name
+          })
         end
       end
 
-      describe 'when the retailer is gupshup integrated' do
+      context 'when mobile request' do
         before do
-          allow_any_instance_of(Whatsapp::Gupshup::V1::Helpers::Messages).to receive(:notify_new_counter).and_return(true)
-
           sign_out retailer_user
-          sign_in retailer_user_gupshup
         end
 
-        it 'sets the chat as unread' do
-          patch "/api/v1/whatsapp_unread_chat/#{customer3.id}",
-            params: {
-              chat_service: 'whatsapp'
-            }
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
+        let(:header_email) { retailer_user.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        describe 'when the retailer is karix integrated' do
+          before do
+            allow(KarixNotificationHelper).to receive(:broadcast_data).and_return(true)
+          end
+
+          it 'sets the chat as unread' do
+            patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
+                  params: {
+                    chat_service: 'whatsapp'
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            expect(response.code).to eq('200')
+            expect(customer2.reload.unread_whatsapp_chat).to eq(true)
+          end
+        end
+
+        describe 'when the retailer is gupshup integrated' do
+          before do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Helpers::Messages).to receive(:notify_new_counter).and_return(true)
+          end
+
+          it 'sets the chat as unread' do
+            patch "/api/v1/whatsapp_unread_chat/#{customer3.id}",
+                  params: {
+                    chat_service: 'whatsapp'
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            expect(response.code).to eq('200')
+            expect(customer3.reload.unread_whatsapp_chat).to eq(true)
+          end
+        end
+
+        it 'includes assigned_agent if customer has an agent assigned' do
+          agent_retailer_user = create(:retailer_user, :agent, retailer: retailer)
+          AgentCustomer.create(retailer_user: agent_retailer_user, customer: customer2)
+
+          patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
+                params: {
+                  chat_service: 'whatsapp'
+                },
+                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+          body = JSON.parse(response.body)
           expect(response.code).to eq('200')
-          expect(customer3.reload.unread_whatsapp_chat).to eq(true)
+          expect(body['customers'].count).to eq(1)
+          expect(body['customers'].first['assigned_agent']).to eq({
+            "id" => customer2.agent.id,
+            "email" => customer2.agent.email,
+            "full_name" => customer2.agent.full_name
+          })
         end
-      end
-
-      it 'includes assigned_agent if customer has an agent assigned' do
-        agent_retailer_user = create(:retailer_user, :agent, retailer: retailer)
-        AgentCustomer.create(retailer_user: agent_retailer_user, customer: customer2)
-
-        patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
-          params: {
-            chat_service: 'whatsapp'
-          }
-
-        body = JSON.parse(response.body)
-        expect(response.code).to eq('200')
-        expect(body['customers'].count).to eq(1)
-        expect(body['customers'].first['assigned_agent']).to eq({
-          "id" => customer2.agent.id,
-          "email" => customer2.agent.email,
-          "full_name" => customer2.agent.full_name
-        })
       end
     end
   end

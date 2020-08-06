@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
+RSpec.describe 'Api::V1::Welcome', type: :request do
   describe 'GET #ping' do
     let(:mobile_token) { create(:mobile_token) }
 
@@ -11,7 +11,7 @@ RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
       token = mobile_token.generate!
 
       # Making the request
-      get '/mobile/api/v1/ping', headers: { 'email': email, 'device': device, 'token': token }
+      get '/api/v1/ping', headers: { 'email': email, 'device': device, 'token': token }
       expect(response.code).to eq('200')
 
       # Once the response is 200 the message should be 'Ok'
@@ -25,7 +25,7 @@ RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
       token = mobile_token.generate!
 
       # Making the request
-      get '/mobile/api/v1/ping', headers: { 'email': email, 'device': 'WR0NGD3V1C3', 'token': token }
+      get '/api/v1/ping', headers: { 'email': email, 'device': 'WR0NGD3V1C3', 'token': token }
       expect(response.code).to eq('404')
 
       body = JSON.parse(response.body)
@@ -39,7 +39,7 @@ RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
       device = mobile_token.device
 
       # Making the request
-      get '/mobile/api/v1/ping', headers: { 'email': email, 'device': device, 'token': 'wR0n670k3N' }
+      get '/api/v1/ping', headers: { 'email': email, 'device': device, 'token': 'wR0n670k3N' }
       expect(response.code).to eq('401')
 
       body = JSON.parse(response.body)
@@ -54,7 +54,7 @@ RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
       device = expired.device
 
       # Making the request
-      get '/mobile/api/v1/ping', headers: { 'email': email, 'device': device, 'token': expired.token }
+      get '/api/v1/ping', headers: { 'email': email, 'device': device, 'token': expired.token }
       expect(response.code).to eq('401')
 
       # The response will return the right message
@@ -68,7 +68,7 @@ RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
 
     it 'responses a forbidden response if header email not present' do
       # Making the request
-      get '/mobile/api/v1/ping', headers: { 'device': 'device', 'token': 'token' }
+      get '/api/v1/ping', headers: { 'device': 'device', 'token': 'token' }
       expect(response.code).to eq('403')
 
       # The response will return the right message
@@ -78,7 +78,7 @@ RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
 
     it 'responses a forbidden response if header device not present' do
       # Making the request
-      get '/mobile/api/v1/ping', headers: { 'email': 'email', 'token': 'token' }
+      get '/api/v1/ping', headers: { 'email': 'email', 'token': 'token' }
       expect(response.code).to eq('403')
 
       # The response will return the right message
@@ -88,7 +88,7 @@ RSpec.describe 'Mobile::Api::V1::Welcome', type: :request do
 
     it 'responses a unauthorized response if header token not present' do
       # Making the request
-      get '/mobile/api/v1/ping', headers: { email: 'email', 'device': 'device' }
+      get '/api/v1/ping', headers: { email: 'email', 'device': 'device' }
       expect(response.code).to eq('401')
 
       # The response will return the right message

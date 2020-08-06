@@ -41,16 +41,6 @@ Rails.application.routes.draw do
   get '/precios', to: 'pages#price', as: :pricing
   get '/crm', to: 'pages#crm', as: :crm
 
-  namespace :mobile do
-    namespace :api, defaults: { format: :json } do
-      namespace :v1 do
-        get 'ping', to: 'welcome#ping', as: :ping
-        post 'sign_in', to: 'sessions#create', as: :sign_in
-        delete 'log_out', to: 'sessions#delete', as: :log_out
-      end
-    end
-  end
-
   namespace :retailers do
     namespace :api, defaults: { format: :json } do
       namespace :v1 do
@@ -159,6 +149,12 @@ Rails.application.routes.draw do
       post 'customers/:id/messages/send_bulk_files', to: 'customers#send_bulk_files', as: :send_bulk_files
       # For 360
       post 'whatsapp', to: 'whatsapp#create'
+
+      # App Mobile
+      get 'ping', to: 'welcome#ping', as: :ping
+      post 'sign_in', to: 'sessions#create', as: :sign_in
+      delete 'log_out', to: 'sessions#delete', as: :log_out
+
       # For Karix
       post 'karix_whatsapp', to: 'karix_whatsapp#save_message'
       post 'karix_send_whatsapp_message', to: 'karix_whatsapp#create'

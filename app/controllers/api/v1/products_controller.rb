@@ -1,6 +1,5 @@
-class Api::V1::ProductsController < ApplicationController
+class Api::V1::ProductsController < Api::ApiController
   include CurrentRetailer
-  before_action :authenticate_retailer_user!
 
   def index
     products = current_retailer.products.where('title ILIKE ? OR description ILIKE ?',

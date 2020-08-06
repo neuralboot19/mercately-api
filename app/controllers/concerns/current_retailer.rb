@@ -13,6 +13,8 @@ module CurrentRetailer
   protected
 
     def set_retailer
+      @retailer = @current_retailer and return if @current_retailer
+
       unless session[:current_retailer]
         @retailer = if params[:slug].present?
           Retailer.find_by(slug: params[:slug])
