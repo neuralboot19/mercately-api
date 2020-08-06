@@ -10,132 +10,290 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
 
   describe 'PUT #update' do
     describe 'when chat service is NOT Facebook' do
-      describe 'when karix_integrated' do
-        let(:customer) { create(:customer, :with_retailer_karix_integrated) }
-        let(:message) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
+      context 'when local request' do
+        describe 'when karix_integrated' do
+          let(:customer) { create(:customer, :with_retailer_karix_integrated) }
+          let(:message) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
 
-        context 'when the agent customer is a new record' do
-          it 'successfully, a 200 Ok will be responsed' do
-            put "/api/v1/customers/#{customer.id}/assign_agent",
-              params: {
-                agent: {
-                  retailer_user_id: retailer_user_agent.id
+          context 'when the agent customer is a new record' do
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                params: {
+                  agent: {
+                    retailer_user_id: retailer_user_agent.id
+                  }
                 }
-              }
 
-            expect(response.code).to eq('200')
-            expect(retailer_user_agent.agent_customers.count).to eq(1)
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(1)
+            end
+          end
+
+          context 'when the agent customer is updated' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                params: {
+                  agent: {
+                    retailer_user_id: retailer_user.id
+                  }
+                }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user.agent_customers.count).to eq(1)
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer is destroyed' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                params: {
+                  agent: {
+                    retailer_user_id: nil
+                  }
+                }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer can not be save' do
+            it 'fails, a 500 Error will be responsed' do
+              put '/api/v1/customers/nil/assign_agent',
+                params: {
+                  agent: {
+                    retailer_user_id: retailer_user.id
+                  }
+                }
+
+              expect(response.code).to eq('500')
+            end
           end
         end
 
-        context 'when the agent customer is updated' do
-          let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+        describe 'when gupshup_integrated' do
+          let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+          let(:message) { create(:gupshup_whatsapp_message, :inbound, customer: customer) }
 
-          it 'successfully, a 200 Ok will be responsed' do
-            put "/api/v1/customers/#{customer.id}/assign_agent",
-              params: {
-                agent: {
-                  retailer_user_id: retailer_user.id
+          context 'when the agent customer is a new record' do
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                params: {
+                  agent: {
+                    retailer_user_id: retailer_user_agent.id
+                  }
                 }
-              }
 
-            expect(response.code).to eq('200')
-            expect(retailer_user.agent_customers.count).to eq(1)
-            expect(retailer_user_agent.agent_customers.count).to eq(0)
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(1)
+            end
           end
-        end
 
-        context 'when the agent customer is destroyed' do
-          let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+          context 'when the agent customer is updated' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
 
-          it 'successfully, a 200 Ok will be responsed' do
-            put "/api/v1/customers/#{customer.id}/assign_agent",
-              params: {
-                agent: {
-                  retailer_user_id: nil
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                params: {
+                  agent: {
+                    retailer_user_id: retailer_user.id
+                  }
                 }
-              }
 
-            expect(response.code).to eq('200')
-            expect(retailer_user_agent.agent_customers.count).to eq(0)
+              expect(response.code).to eq('200')
+              expect(retailer_user.agent_customers.count).to eq(1)
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
           end
-        end
 
-        context 'when the agent customer can not be save' do
-          it 'fails, a 500 Error will be responsed' do
-            put '/api/v1/customers/nil/assign_agent',
-              params: {
-                agent: {
-                  retailer_user_id: retailer_user.id
+          context 'when the agent customer is destroyed' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                params: {
+                  agent: {
+                    retailer_user_id: nil
+                  }
                 }
-              }
 
-            expect(response.code).to eq('500')
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer can not be save' do
+            it 'fails, a 500 Error will be responsed' do
+              put '/api/v1/customers/nil/assign_agent',
+                params: {
+                  agent: {
+                    retailer_user_id: retailer_user.id
+                  }
+                }
+
+              expect(response.code).to eq('500')
+            end
           end
         end
       end
 
-      describe 'when gupshup_integrated' do
-        let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
-        let(:message) { create(:gupshup_whatsapp_message, :inbound, customer: customer) }
+      context 'when mobile request' do
+        before do
+          sign_out retailer_user
+        end
 
-        context 'when the agent customer is a new record' do
-          it 'successfully, a 200 Ok will be responsed' do
-            put "/api/v1/customers/#{customer.id}/assign_agent",
-              params: {
-                agent: {
-                  retailer_user_id: retailer_user_agent.id
-                }
-              }
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
-            expect(response.code).to eq('200')
-            expect(retailer_user_agent.agent_customers.count).to eq(1)
+        let(:header_email) { retailer_user.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        describe 'when karix_integrated' do
+          let(:customer) { create(:customer, :with_retailer_karix_integrated) }
+          let(:message) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
+
+          context 'when the agent customer is a new record' do
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user_agent.id
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(1)
+            end
+          end
+
+          context 'when the agent customer is updated' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user.agent_customers.count).to eq(1)
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer is destroyed' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: nil
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer can not be save' do
+            it 'fails, a 500 Error will be responsed' do
+              put '/api/v1/customers/nil/assign_agent',
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              expect(response.code).to eq('500')
+            end
           end
         end
 
-        context 'when the agent customer is updated' do
-          let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+        describe 'when gupshup_integrated' do
+          let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+          let(:message) { create(:gupshup_whatsapp_message, :inbound, customer: customer) }
 
-          it 'successfully, a 200 Ok will be responsed' do
-            put "/api/v1/customers/#{customer.id}/assign_agent",
-              params: {
-                agent: {
-                  retailer_user_id: retailer_user.id
-                }
-              }
+          let(:mobile_token) { create(:mobile_token, retailer_user: customer.retailer.retailer_users.first) }
 
-            expect(response.code).to eq('200')
-            expect(retailer_user.agent_customers.count).to eq(1)
-            expect(retailer_user_agent.agent_customers.count).to eq(0)
+          let(:header_email) { customer.retailer.retailer_users.first.email }
+          let(:header_device) { mobile_token.device }
+          let(:header_token) { mobile_token.generate! }
+
+          context 'when the agent customer is a new record' do
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user_agent.id
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(1)
+            end
           end
-        end
 
-        context 'when the agent customer is destroyed' do
-          let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+          context 'when the agent customer is updated' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
 
-          it 'successfully, a 200 Ok will be responsed' do
-            put "/api/v1/customers/#{customer.id}/assign_agent",
-              params: {
-                agent: {
-                  retailer_user_id: nil
-                }
-              }
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
-            expect(response.code).to eq('200')
-            expect(retailer_user_agent.agent_customers.count).to eq(0)
+              expect(response.code).to eq('200')
+              expect(retailer_user.agent_customers.count).to eq(1)
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
           end
-        end
 
-        context 'when the agent customer can not be save' do
-          it 'fails, a 500 Error will be responsed' do
-            put '/api/v1/customers/nil/assign_agent',
-              params: {
-                agent: {
-                  retailer_user_id: retailer_user.id
-                }
-              }
+          context 'when the agent customer is destroyed' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
 
-            expect(response.code).to eq('500')
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: nil
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer can not be save' do
+            it 'fails, a 500 Error will be responsed' do
+              put '/api/v1/customers/nil/assign_agent',
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id
+                    }
+                  },
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              expect(response.code).to eq('500')
+            end
           end
         end
       end

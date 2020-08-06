@@ -34,23 +34,23 @@ module Retailers::Api::V1
       def render_internal_server_error(exception)
         Rails.logger.error("API call EXCEPTION: #{exception.message}")
         Rails.logger.error(exception.backtrace.join("\n"))
-        set_response(500, exception.message) && return
+        set_response(500, exception.message) and return
       end
 
       def render_unauthorized
-        set_response(401, 'Unauthorized') && return
+        set_response(401, 'Unauthorized') and return
       end
 
       def render_forbidden
-        set_response(403, 'Forbidden') && return
+        set_response(403, 'Forbidden') and return
       end
 
       def record_not_found
-        set_response(404, 'Resource not found') && return
+        set_response(404, 'Resource not found') and return
       end
 
       def active_model_errors(exception)
-        set_response(400, exception.record.errors.full_messages) && return
+        set_response(400, exception.record.errors.full_messages) and return
       end
     end
 end

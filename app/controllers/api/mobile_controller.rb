@@ -1,5 +1,9 @@
-module Mobile::Api
-  class ApiController < Retailers::Api::V1::ApiController
+module Api
+  class MobileController < Retailers::Api::V1::ApiController
+    def check_access
+      disable_access_by_authorization
+    end
+
     private
 
       def disable_access_by_authorization
@@ -28,13 +32,13 @@ module Mobile::Api
           {
             token: token
           }.to_json
-        ) && return
+        ) and return
       end
 
       def validate_headers
         return render_forbidden unless request.get_header('HTTP_EMAIL').present?
         return render_forbidden unless request.get_header('HTTP_DEVICE').present?
-        return render_unauthorized unless request.get_header('HTTP_TOKEN').present?
+        render_unauthorized unless request.get_header('HTTP_TOKEN').present?
       end
 
       def validate_token

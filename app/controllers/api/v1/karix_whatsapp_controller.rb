@@ -1,6 +1,8 @@
-class Api::V1::KarixWhatsappController < ApplicationController
-  include CurrentRetailer
+class Api::V1::KarixWhatsappController < Api::ApiController
   before_action :authenticate_retailer_user!, except: :save_message
+
+  include CurrentRetailer
+
   before_action :validate_balance, only: [:create, :send_file, :send_bulk_files]
   before_action :set_customer, only: [:messages, :send_file, :message_read, :set_chat_as_unread, :send_bulk_files]
   protect_from_forgery only: [:save_message]

@@ -1,8 +1,7 @@
-class Api::V1::CustomersController < ApplicationController
+class Api::V1::CustomersController < Api::ApiController
   # TODO: RENAME TO FACEBOOKCHATSCONTROLLER
   include CurrentRetailer
   include ActionView::Helpers::TextHelper
-  before_action :authenticate_retailer_user!
   before_action :sanitize_params, only: [:update]
   before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger]
 
