@@ -10,6 +10,7 @@ class GupshupWhatsappMessageSerializer
   attribute :content_type do |object|
     message = object.message_payload
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
+    type = message.try(:[], 'type') if type.blank?
     next 'text' if type == 'text'
     next 'media' if %[image audio video file].include?(type)
     next 'location' if type == 'location'
@@ -28,10 +29,11 @@ class GupshupWhatsappMessageSerializer
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless %[image audio video file].include?(type)
 
-    message.try(:[], 'originalUrl') ||
-    message.try(:[], 'payload').try(:[], 'payload').try(:[],'url') ||
-    message.try(:[], 'url') ||
-    ''
+    url = message.try(:[], 'originalUrl') ||
+      message.try(:[], 'payload').try(:[], 'payload').try(:[],'url') ||
+      message.try(:[], 'url') || ''
+
+    url.gsub('http:', 'https:')
   end
 
   attribute :content_media_caption do |object|

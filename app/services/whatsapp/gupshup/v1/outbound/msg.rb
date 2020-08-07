@@ -59,12 +59,12 @@ module Whatsapp::Gupshup::V1
 
       # Send Template Message
       def template
-        raise StandardError.new('Faltaron parámetros') unless @options[:text].present?
+        raise StandardError.new('Faltaron parámetros') unless @options[:params]&.[](:message).present?
 
         message = {
-          'isHSM':'true',
+          'isHSM': 'true',
           'type': 'text',
-          'text': @options[:text]
+          'text': @options[:params][:message]
         }.to_json
 
         bodyString = base_body
@@ -75,12 +75,12 @@ module Whatsapp::Gupshup::V1
 
       # Send Text
       def text
-        raise StandardError.new('Faltaron parámetros') unless @options[:text].present?
+        raise StandardError.new('Faltaron parámetros') unless @options[:params]&.[](:message).present?
 
         message = {
           'isHSM': 'false',
           'type': 'text',
-          'text': @options[:text]
+          'text': @options[:params][:message]
         }.to_json
 
         bodyString = base_body
@@ -156,19 +156,15 @@ module Whatsapp::Gupshup::V1
 
       # Send Location
       def location
-        unless @options[:lon].present? &&
-               @options[:lat].present? &&
-               @options[:name].present? &&
-               @options[:addr].present?
+        unless @options[:params]&.[](:longitude).present? &&
+               @options[:params]&.[](:latitude).present?
           raise StandardError.new('Faltaron parámetros')
         end
 
         message = {
           'type': 'location',
-          'longitude': @options[:lon].to_f.round(2),
-          'latitude': @options[:lat].to_f.round(2),
-          'name': @options[:name],
-          'address': @options[:addr]
+          'longitude': @options[:params][:longitude],
+          'latitude': @options[:params][:latitude]
         }.to_json
 
         bodyString = base_body

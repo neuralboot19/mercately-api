@@ -51,6 +51,24 @@ module Whatsapp
         }.to_json
       end
 
+      def prepare_whatsapp_message_location(retailer, customer, params)
+        {
+          channel: 'whatsapp',
+          source: retailer.karix_whatsapp_phone,
+          destination: [
+            customer.phone
+          ],
+          content: {
+            location: {
+              longitude: params[:longitude].round(7).to_s,
+              latitude: params[:latitude].round(7).to_s,
+              label: ''
+            }
+          },
+          events_url: "#{ENV['KARIX_WEBHOOK']}?account_id=#{retailer.id}"
+        }.to_json
+      end
+
       def upload_file_to_cloudinary(file, resource_type)
         timestamp = Time.now.to_i
 

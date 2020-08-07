@@ -55,7 +55,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   def create
     customer = current_retailer.customers.find(params[:customer_id])
     integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
-    return self.send("send_#{integration}_notification", customer, params, 'text')
+    return self.send("send_#{integration}_notification", customer, params, params[:type])
   end
 
   def messages
@@ -67,7 +67,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       total_pages = @messages.total_pages
       if current_retailer.karix_integrated?
         KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, nil, @customer)
-        @messages = @messages.to_a.reverse
+        @messages = serialize_karix_messages.to_a.reverse
       elsif current_retailer.gupshup_integrated?
         @messages = Whatsapp::Gupshup::V1::Helpers::Messages.new(@messages).notify_messages!(
           current_retailer,
@@ -396,9 +396,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       agent_customer = assign_agent(customer)
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
-      type = params[:template] ? 'template' : 'text'
+      type = 'template' if params[:template]
 
-      gws.send_message(type: type, text: params[:message], retailer_user: current_retailer_user)
+      gws.send_message(type: type, params: params, retailer_user: current_retailer_user)
 
       message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new(gws)
 
@@ -437,5 +437,12 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         return messages
       end
       nil
+    end
+
+    def serialize_karix_messages
+      ActiveModelSerializers::SerializableResource.new(
+        @messages,
+        each_serializer: KarixWhatsappMessageSerializer
+      ).as_json
     end
 end

@@ -45,7 +45,7 @@ module WhatsappChatBotActionConcern
       return unless params[:message].present?
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(retailer, customer)
-      gws.send_message(type: 'text', text: params[:message])
+      gws.send_message(type: 'text', params: params)
     end
 
     def send_karix_notification(params)

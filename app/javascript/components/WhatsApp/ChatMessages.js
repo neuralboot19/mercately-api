@@ -13,6 +13,7 @@ import {
   sendWhatsAppBulkFiles } from "../../actions/whatsapp_karix";
 import Modal from 'react-modal';
 import ImagesSelector from './../shared/ImagesSelector';
+import GoogleMap from './../shared/Map';
 
 var currentCustomer = 0;
 var total_pages = 0;
@@ -52,7 +53,9 @@ class ChatMessages extends Component {
       selectedProduct: null,
       showLoadImages: false,
       loadedImages: [],
-      selectedFastAnswer: null
+      selectedFastAnswer: null,
+      showMap: false,
+      zoomLevel: 17
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -254,7 +257,7 @@ class ChatMessages extends Component {
       e.preventDefault();
     }
 
-    let text = { message: message, customer_id: this.props.currentCustomer, template: isTemplate }
+    let text = { message: message, customer_id: this.props.currentCustomer, template: isTemplate, type: 'text' }
     this.setState({ messages: this.state.messages.concat({
       content_type: 'text',
       content_text: message,
@@ -691,6 +694,44 @@ class ChatMessages extends Component {
     return false;
   }
 
+  getLocation = () => {
+    if (navigator.geolocation) {
+      this.setState({
+        showMap: true
+      });
+    } else {
+      alert('La geolocalización no está soportada en este navegador');
+    }
+  }
+
+  sendLocation = (position) => {
+    let params = {
+      longitude: position.lng,
+      latitude: position.lat,
+      customer_id: this.props.currentCustomer,
+      template: false,
+      type: 'location'
+    }
+
+    this.setState({ messages: this.state.messages.concat({
+      content_type: 'location',
+      content_location_latitude: params.latitude,
+      content_location_longitude: params.longitude,
+      direction: 'outbound',
+      status: 'enqueued',
+      created_time: new Date()
+    }), new_message: true, showMap: false}, () => {
+      this.props.sendWhatsAppMessage(params, csrfToken);
+      this.scrollToBottom();
+    });
+  }
+
+  toggleMap = () => {
+    this.setState({
+      showMap: !this.state.showMap
+    });
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -808,7 +849,7 @@ class ChatMessages extends Component {
                 {message.content_type == 'text' &&
                   <p className={message.status === 'read' && this.props.handleMessageEvents === true  ? 'read-message' : ''}>{message.content_text} {
                     message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
-                      <i className={ `fas fa-${
+                      <i className={ `checks-mark fas fa-${
                         message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double' : 'sync'))
                       }`
                       }></i>
@@ -928,6 +969,12 @@ class ChatMessages extends Component {
                                 <div className="tooltiptext">Productos</div>
                               }
                             </div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-map-marker-alt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.getLocation()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Ubicación</div>
+                              }
+                            </div>
                             <div className="tooltip-top ml-15"></div>
                             <div className="tooltip-top">
                               <i className="fas fa-paper-plane fs-22 mr-5 c-secondary cursor-pointer" onClick={(e) => this.handleSubmit(e)}></i>
@@ -996,6 +1043,14 @@ class ChatMessages extends Component {
           sendImages={this.sendImages}
           onMobile={this.props.onMobile}
           pasteImages={this.pasteImages}
+        />
+
+        <GoogleMap
+          showMap={this.state.showMap}
+          toggleMap={this.toggleMap}
+          onMobile={this.props.onMobile}
+          zoomLevel={this.state.zoomLevel}
+          sendLocation={this.sendLocation}
         />
       </div>
     )
