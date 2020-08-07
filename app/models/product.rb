@@ -2,6 +2,8 @@
 
 class Product < ApplicationRecord
   include ProductModelConcern
+  include WebIdGenerateableConcern
+
   paginates_per 50
 
   belongs_to :retailer
@@ -278,10 +280,6 @@ class Product < ApplicationRecord
 
     def set_ml_product_publish
       @set_ml_product_publish ||= MercadoLibre::ProductPublish.new(retailer)
-    end
-
-    def generate_web_id
-      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 
     def set_facebook_products

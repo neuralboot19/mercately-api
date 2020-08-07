@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Order < ApplicationRecord
+  include WebIdGenerateableConcern
+
   belongs_to :customer
   belongs_to :retailer_user, required: false
   belongs_to :sales_channel, required: false
@@ -146,9 +148,5 @@ class Order < ApplicationRecord
 
     def set_old_status
       @status_was = status_was
-    end
-
-    def generate_web_id
-      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end

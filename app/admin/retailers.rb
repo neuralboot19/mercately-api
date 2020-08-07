@@ -20,7 +20,8 @@ ActiveAdmin.register Retailer do
                 :ecu_charges,
                 :int_charges,
                 :allow_bots,
-                :gupshup_api_key
+                :gupshup_api_key,
+                :manage_team_assignment
 
   filter :name
   filter :slug
@@ -96,6 +97,7 @@ ActiveAdmin.register Retailer do
       row :ecu_charges
       row :int_charges
       row :allow_bots
+      row :manage_team_assignment
       row :created_at
       row :updated_at
     end
@@ -300,6 +302,7 @@ ActiveAdmin.register Retailer do
       f.input :ecu_charges, label: 'Hace pagos en Ecuador'
       f.input :int_charges, label: 'Hace pagos Internacionales'
       f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'
+      f.input :manage_team_assignment, label: 'Activar Asignación Automática'
     end
     f.actions
   end

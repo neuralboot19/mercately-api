@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Whatsapp::Karix::Messages do
   subject(:message_service) { described_class.new }
 
-  let(:retailer) { create(:retailer) }
+  let(:retailer) { create(:retailer, :karix_integrated) }
   let(:retailer_user) { create(:retailer_user, retailer: retailer) }
   let(:message) { create(:karix_whatsapp_message, account_uid: nil) }
 
@@ -84,7 +84,7 @@ RSpec.describe Whatsapp::Karix::Messages do
     end
 
     context 'when it is an outbound message' do
-      let(:message) { create(:karix_whatsapp_message, status: 'queued', direction: 'outbound') }
+      let(:message) { create(:karix_whatsapp_message, status: 'queued', direction: 'outbound', retailer: retailer) }
 
       it 'assigns the retailer user to the message' do
         aux_message = message_service.assign_message(message, retailer, karix_response, retailer_user)

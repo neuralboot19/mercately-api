@@ -1,4 +1,6 @@
 class Message < ApplicationRecord
+  include WebIdGenerateableConcern
+
   self.table_name = 'questions'
   default_scope -> { where('questions.order_id IS NOT NULL') }
 
@@ -15,10 +17,4 @@ class Message < ApplicationRecord
   def to_param
     web_id
   end
-
-  private
-
-    def generate_web_id
-      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
-    end
 end

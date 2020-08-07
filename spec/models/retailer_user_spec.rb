@@ -41,6 +41,8 @@ RSpec.describe RetailerUser, type: :model do
     it { is_expected.to have_many(:mobile_tokens) }
     it { is_expected.to belong_to(:retailer) }
     it { is_expected.to accept_nested_attributes_for(:retailer) }
+    it { is_expected.to have_many(:agent_teams).dependent(:destroy) }
+    it { is_expected.to have_many(:team_assignments) }
   end
 
   describe 'validations' do

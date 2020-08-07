@@ -181,7 +181,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
       let(:customer) { create(:customer, retailer: retailer) }
 
       let(:message) do
-        create(:karix_whatsapp_message, :outbound, customer: customer)
+        create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer)
       end
 
       it 'returns nil' do
@@ -252,11 +252,11 @@ RSpec.describe KarixWhatsappMessage, type: :model do
       let(:customer) { create(:customer, retailer: retailer) }
 
       let!(:first_message) do
-        create(:karix_whatsapp_message, :inbound, customer: customer)
+        create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
       end
 
       let(:message) do
-        create(:karix_whatsapp_message, :outbound, customer: customer)
+        create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer)
       end
 
       it 'returns nil' do
@@ -339,6 +339,215 @@ RSpec.describe KarixWhatsappMessage, type: :model do
       expect {
         create(:karix_whatsapp_message, :inbound, customer: customer)
       }.to have_enqueued_job(Retailers::MobilePushNotificationJob)
+    end
+  end
+
+  describe '#assign_agent' do
+    context 'when the retailer has assignment teams permission' do
+      let(:retailer) { create(:retailer, :karix_integrated, :with_team_assignment) }
+      let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+      let(:another_retailer_user) { create(:retailer_user, retailer: retailer) }
+      let(:customer) { create(:customer, retailer: retailer) }
+      let(:customer2) { create(:customer, retailer: retailer) }
+
+      let(:message) do
+        create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+      end
+
+      context 'when the message is inbound' do
+        context 'with an agent already assigned' do
+          let!(:agent_customer) { create(:agent_customer, customer: customer, retailer_user: retailer_user) }
+
+          it 'returns nil' do
+            expect(message.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'with the chat already answered by agent' do
+          let!(:outbound_message) do
+            create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+              retailer_user)
+          end
+
+          it 'returns nil' do
+            expect(message.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'when the retailer does not have a default team assignment created' do
+          it 'returns nil' do
+            expect(message.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'when the retailer does not have a default team assignment activated' do
+          let!(:default_team) { create(:team_assignment, retailer: retailer, active_assignment: false) }
+
+          it 'returns nil' do
+            expect(message.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'when there is not any agent with free spots to assign' do
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let!(:agent_team1) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
+              max_assignments: 2, assigned_amount: 2)
+          end
+
+          let!(:agent_team2) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: another_retailer_user,
+              max_assignments: 4, assigned_amount: 4)
+          end
+
+          it 'does not assign an agent to the customer' do
+            expect {
+              create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+            }.to change(AgentCustomer, :count).by(0)
+          end
+        end
+
+        context 'when there is at least one agent with free spots to assign' do
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let!(:agent_team1) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
+              max_assignments: 2, assigned_amount: 2)
+          end
+
+          let!(:agent_team2) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: another_retailer_user,
+              max_assignments: 4, assigned_amount: 3)
+          end
+
+          it 'assigns an agent to the customer' do
+            expect {
+              create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+            }.to change(AgentCustomer, :count).by(1)
+          end
+        end
+
+        context 'when there is more than one agent with free spots to assign' do
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let(:agent_team1) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
+              max_assignments: 2, assigned_amount: 0)
+          end
+
+          let(:agent_team2) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: another_retailer_user,
+              max_assignments: 4, assigned_amount: 0)
+          end
+
+          it 'assigns the agent with less assignments to the customer and so on' do
+            agent_team1
+            agent_team2
+
+            expect {
+              create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+            }.to change(AgentCustomer, :count).by(1)
+
+            last = AgentCustomer.last
+            expect(agent_team1.retailer_user_id).to eq(last.retailer_user_id)
+            expect(last.team_assignment_id).to eq(default_team.id)
+            expect(agent_team1.reload.assigned_amount).to eq(1)
+
+            expect {
+              create(:karix_whatsapp_message, :inbound, customer: customer2, retailer: retailer)
+            }.to change(AgentCustomer, :count).by(1)
+
+            last = AgentCustomer.last
+            expect(agent_team2.retailer_user_id).to eq(last.retailer_user_id)
+            expect(last.team_assignment_id).to eq(default_team.id)
+            expect(agent_team2.reload.assigned_amount).to eq(1)
+          end
+        end
+      end
+
+      context 'when the message is outbound' do
+        let!(:inbound_message) do
+          create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+        end
+
+        let(:outbound_message) do
+          create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+            retailer_user)
+        end
+
+        context 'when the message does not come from an agent' do
+          let(:not_from_agent) do
+            create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer)
+          end
+
+          it 'returns nil' do
+            expect(not_from_agent.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'when the customer does not have an agent assigned' do
+          it 'returns nil' do
+            expect(outbound_message.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'when the agent assigned to the customer is not from a team' do
+          let!(:agent_customer) { create(:agent_customer, customer: customer, retailer_user: retailer_user) }
+
+          it 'returns nil' do
+            expect(outbound_message.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'when the message is not the first one sent to the customer' do
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let!(:agent_team) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
+              max_assignments: 2, assigned_amount: 0)
+          end
+
+          let!(:agent_customer) do
+            create(:agent_customer, customer: customer, retailer_user: retailer_user, team_assignment: default_team)
+          end
+
+          let!(:other_outbound) do
+            create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+              retailer_user)
+          end
+
+          it 'returns nil' do
+            expect(outbound_message.send(:assign_agent)).to be_nil
+          end
+        end
+
+        context 'when the message is the first one sent to the customer' do
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let!(:agent_team) do
+            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
+              max_assignments: 2, assigned_amount: 1)
+          end
+
+          let!(:agent_customer) do
+            create(:agent_customer, customer: customer, retailer_user: retailer_user, team_assignment: default_team)
+          end
+
+          it 'decreases by one the assigned amount of the agent team' do
+            expect(agent_team.assigned_amount).to eq(1)
+
+            create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+              retailer_user)
+
+            expect(agent_team.reload.assigned_amount).to eq(0)
+          end
+        end
+      end
+    end
+
+    context 'when the retailer does not have assignment teams permission' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+      let(:message) { create(:karix_whatsapp_message, retailer: retailer) }
+
+      it 'returns nil' do
+        expect(message.send(:assign_agent)).to be_nil
+      end
     end
   end
 end

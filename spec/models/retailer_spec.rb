@@ -23,6 +23,7 @@ RSpec.describe Retailer, type: :model do
     it { is_expected.to have_many(:sales_channels).dependent(:destroy) }
     it { is_expected.to have_many(:paymentez_transactions) }
     it { is_expected.to have_many(:paymentez_credit_cards).dependent(:destroy) }
+    it { is_expected.to have_many(:team_assignments).dependent(:destroy) }
   end
 
   describe 'validations' do

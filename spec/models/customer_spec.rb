@@ -642,4 +642,230 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#whatsapp_answered_by_agent?' do
+    let(:retailer) { create(:retailer, :gupshup_integrated) }
+    let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+    let(:customer) { create(:customer, retailer: retailer) }
+    let!(:inbound_message) do
+      create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+    end
+
+    context 'when there is at least an outbound message from agent' do
+      let!(:outbound_message) do
+        create(:gupshup_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+          retailer_user)
+      end
+
+      it 'returns true' do
+        expect(customer.whatsapp_answered_by_agent?).to be true
+      end
+    end
+
+    context 'when there is at least an outbound message but not from agent' do
+      let!(:outbound_message) do
+        create(:gupshup_whatsapp_message, :outbound, customer: customer, retailer: retailer)
+      end
+
+      it 'returns true' do
+        expect(customer.whatsapp_answered_by_agent?).to be false
+      end
+    end
+
+    context 'when there is not any outbound message' do
+      it 'returns true' do
+        expect(customer.whatsapp_answered_by_agent?).to be false
+      end
+    end
+  end
+
+  describe '#first_whatsapp_answer_by_agent?' do
+    describe 'GupShup integrated' do
+      let(:retailer) { create(:retailer, :gupshup_integrated) }
+      let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+      let(:customer) { create(:customer, retailer: retailer) }
+      let!(:inbound_message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+      end
+
+      let(:outbound_message) do
+        create(:gupshup_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+          retailer_user)
+      end
+
+      context 'when there are more than one message sent to the customer' do
+        let!(:other_outbound_message) do
+          create(:gupshup_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+            retailer_user)
+        end
+
+        it 'returns false' do
+          expect(customer.first_whatsapp_answer_by_agent?(outbound_message.gupshup_message_id)).to be false
+        end
+      end
+
+      context 'when there is one outbound message from agent' do
+        context 'with the message id equal to the passed in parameters' do
+          it 'returns true' do
+            expect(customer.first_whatsapp_answer_by_agent?(outbound_message.gupshup_message_id)).to be true
+          end
+        end
+
+        context 'with the message id not equal to the passed in parameters' do
+          it 'returns false' do
+            outbound_message
+            expect(customer.first_whatsapp_answer_by_agent?('Anything')).to be false
+          end
+        end
+      end
+
+      context 'when there are not messages sent from agent' do
+        let(:not_agent_message) do
+          create(:gupshup_whatsapp_message, :outbound, customer: customer, retailer: retailer)
+        end
+
+        it 'returns true' do
+          expect(customer.first_whatsapp_answer_by_agent?(not_agent_message.gupshup_message_id)).to be true
+        end
+      end
+    end
+
+    describe 'Karix integrated' do
+      let(:retailer) { create(:retailer, :karix_integrated) }
+      let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+      let(:customer) { create(:customer, retailer: retailer) }
+      let!(:inbound_message) do
+        create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+      end
+
+      let(:outbound_message) do
+        create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+          retailer_user)
+      end
+
+      context 'when there are more than one message sent to the customer' do
+        let!(:other_outbound_message) do
+          create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
+            retailer_user)
+        end
+
+        it 'returns false' do
+          expect(customer.first_whatsapp_answer_by_agent?(outbound_message.uid)).to be false
+        end
+      end
+
+      context 'when there is one outbound message from agent' do
+        context 'with the message id equal to the passed in parameters' do
+          it 'returns true' do
+            expect(customer.first_whatsapp_answer_by_agent?(outbound_message.uid)).to be true
+          end
+        end
+
+        context 'with the message id not equal to the passed in parameters' do
+          it 'returns false' do
+            outbound_message
+            expect(customer.first_whatsapp_answer_by_agent?('Anything')).to be false
+          end
+        end
+      end
+
+      context 'when there are not messages sent from agent' do
+        let(:not_agent_message) do
+          create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer)
+        end
+
+        it 'returns true' do
+          expect(customer.first_whatsapp_answer_by_agent?(not_agent_message.uid)).to be true
+        end
+      end
+    end
+  end
+
+  describe '#messenger_answered_by_agent?' do
+    let(:retailer) { create(:retailer) }
+    let(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
+    let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+    let(:customer) { create(:customer, retailer: retailer) }
+    let!(:inbound_message) do
+      create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
+    end
+
+    context 'when there is at least an outbound message from agent' do
+      let!(:outbound_message) do
+        create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer,
+          retailer_user: retailer_user)
+      end
+
+      it 'returns true' do
+        expect(customer.messenger_answered_by_agent?).to be true
+      end
+    end
+
+    context 'when there is at least an outbound message but not from agent' do
+      let!(:outbound_message) do
+        create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer)
+      end
+
+      it 'returns true' do
+        expect(customer.messenger_answered_by_agent?).to be false
+      end
+    end
+
+    context 'when there is not any outbound message' do
+      it 'returns true' do
+        expect(customer.messenger_answered_by_agent?).to be false
+      end
+    end
+  end
+
+  describe '#first_messenger_answer_by_agent?' do
+    let(:retailer) { create(:retailer) }
+    let(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
+    let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+    let(:customer) { create(:customer, retailer: retailer) }
+    let!(:inbound_message) do
+      create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
+    end
+
+    let(:outbound_message) do
+      create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer,
+        retailer_user: retailer_user)
+    end
+
+    context 'when there are more than one message sent to the customer' do
+      let!(:other_outbound_message) do
+        create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer,
+          retailer_user: retailer_user)
+      end
+
+      it 'returns false' do
+        expect(customer.first_messenger_answer_by_agent?(outbound_message.mid)).to be false
+      end
+    end
+
+    context 'when there is one outbound message from agent' do
+      context 'with the message id equal to the passed in parameters' do
+        it 'returns true' do
+          expect(customer.first_messenger_answer_by_agent?(outbound_message.mid)).to be true
+        end
+      end
+
+      context 'with the message id not equal to the passed in parameters' do
+        it 'returns false' do
+          outbound_message
+          expect(customer.first_messenger_answer_by_agent?('Anything')).to be false
+        end
+      end
+    end
+
+    context 'when there are not messages sent from agent' do
+      let(:not_agent_message) do
+        create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer)
+      end
+
+      it 'returns true' do
+        expect(customer.first_messenger_answer_by_agent?(not_agent_message.mid)).to be true
+      end
+    end
+  end
 end

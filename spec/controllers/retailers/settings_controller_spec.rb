@@ -147,6 +147,18 @@ RSpec.describe Retailers::SettingsController, type: :controller do
       expect(flash[:notice]).to be_present
       expect(flash[:notice]).to match(/Error al remover usuario..*/)
     end
+
+    context 'when the agent belongs to an assignment team' do
+      let!(:agent_team) { create(:agent_team, :activated, retailer_user: member, team_assignment: team_assignment) }
+      let(:member) { create(:retailer_user, retailer: retailer_user.retailer) }
+      let(:team_assignment) { create(:team_assignment, retailer: retailer_user.retailer) }
+
+      it 'disables the agent from the team' do
+        expect(agent_team.active).to be true
+        post :remove_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+        expect(agent_team.reload.active).to be false
+      end
+    end
   end
 
   describe '#reactive_team_member' do

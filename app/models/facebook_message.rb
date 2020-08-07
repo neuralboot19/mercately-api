@@ -1,4 +1,5 @@
 class FacebookMessage < ApplicationRecord
+  include AgentMessengerAssignmentConcern
   belongs_to :facebook_retailer
   belongs_to :customer
   belongs_to :retailer_user, required: false
@@ -7,6 +8,7 @@ class FacebookMessage < ApplicationRecord
 
   after_create :sent_by_retailer?
   after_create :send_facebook_message
+  after_create :assign_agent
   after_save :broadcast_to_counter_channel
   after_create :send_welcome_message
   after_create :send_inactive_message
@@ -37,7 +39,8 @@ class FacebookMessage < ApplicationRecord
     def broadcast_to_counter_channel
       facebook_helper = FacebookNotificationHelper
       retailer = facebook_retailer.retailer
-      facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, self)
+      agents = customer.agent.present? ? [customer.agent] : retailer.retailer_users.to_a
+      facebook_helper.broadcast_data(retailer, agents, self)
     end
 
     def send_welcome_message
