@@ -66,10 +66,18 @@ class MessageForm extends Component {
 
   selectionPresent = () => {
     if (this.props.objectPresence()) {
-        return true;
-      } else {
-        return false;
-      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getLocation = () => {
+    if (navigator.geolocation) {
+      this.props.toggleMap();
+    } else {
+      alert('La geolocalización no está soportada en este navegador');
+    }
   }
 
   render() {
@@ -113,6 +121,12 @@ class MessageForm extends Component {
             <i className="fas fa-shopping-bag fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.props.toggleProducts()}></i>
             {this.props.onMobile == false &&
               <div className="tooltiptext">Productos</div>
+            }
+          </div>
+          <div className="tooltip-top">
+            <i className="fas fa-map-marker-alt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.getLocation()}></i>
+            {this.props.onMobile == false &&
+              <div className="tooltiptext">Ubicación</div>
             }
           </div>
           <div className="tooltip-top ml-15"></div>

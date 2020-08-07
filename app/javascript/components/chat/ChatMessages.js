@@ -17,6 +17,7 @@ import {
 import MessageForm from './MessageForm';
 import Message from './Message';
 import ImagesSelector from './../shared/ImagesSelector';
+import GoogleMap from './../shared/Map';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -36,7 +37,9 @@ class ChatMessages extends Component {
       selectedProduct: null,
       showLoadImages: false,
       loadedImages: [],
-      selectedFastAnswer: null
+      selectedFastAnswer: null,
+      showMap: false,
+      zoomLevel: 17
     };
     this.bottomRef = React.createRef();
   }
@@ -412,6 +415,30 @@ class ChatMessages extends Component {
     return false;
   }
 
+  sendLocation = (position) => {
+    let text = {
+      message: `https://www.google.com/maps/place/${position.lat},${position.lng}`,
+      type: 'location'
+    }
+
+    this.setState({ messages: this.state.messages.concat(
+      {
+        url: text.message,
+        sent_by_retailer: true,
+        file_type: 'location'
+      }
+    ), new_message: true, showMap: false}, () => {
+      this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
+      this.scrollToBottom();
+    });
+  }
+
+  toggleMap = () => {
+    this.setState({
+      showMap: !this.state.showMap
+    });
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -490,6 +517,7 @@ class ChatMessages extends Component {
                 pasteImages={this.pasteImages}
                 removeSelectedFastAnswer={this.removeSelectedFastAnswer}
                 objectPresence={this.objectPresence}
+                toggleMap={this.toggleMap}
               />
             </div>
           )
@@ -504,6 +532,14 @@ class ChatMessages extends Component {
           sendImages={this.sendImages}
           onMobile={this.props.onMobile}
           pasteImages={this.pasteImages}
+        />
+
+        <GoogleMap
+          showMap={this.state.showMap}
+          toggleMap={this.toggleMap}
+          onMobile={this.props.onMobile}
+          zoomLevel={this.state.zoomLevel}
+          sendLocation={this.sendLocation}
         />
       </div>
     )

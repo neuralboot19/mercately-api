@@ -42,7 +42,7 @@ class ImagesSelector extends Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-md-12 col-xs-12">
             <Dropzone onDrop={this.props.onDrop} accept="image/jpg, image/jpeg, image/png">
               {({getRootProps, getInputProps}) => (
                 <section>

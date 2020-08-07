@@ -1,6 +1,5 @@
-class Api::V1::AgentCustomersController < ApplicationController
+class Api::V1::AgentCustomersController < Api::ApiController
   include CurrentRetailer
-  before_action :authenticate_retailer_user!
   before_action :set_agent_customer, only: [:update]
 
   def update

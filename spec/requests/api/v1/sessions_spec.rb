@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Mobile::Api::V1::Sessions', type: :request do
+RSpec.describe 'Api::V1::Sessions', type: :request do
   let(:mobile_token) { create(:mobile_token) }
 
   describe 'POST /sign_in' do
@@ -10,12 +10,12 @@ RSpec.describe 'Mobile::Api::V1::Sessions', type: :request do
       password = 'test1234'
 
       expect {
-        post '/mobile/api/v1/sign_in', params: { retailer_user: { 'email': email, 'password': password } }
+        post '/api/v1/sign_in', params: { retailer_user: { 'email': email, 'password': password } }
       }.to change(MobileToken, :count).by(1)
 
       expect(response.code).to eq('200')
 
-      expected_response = JSON.parse(Mobile::Api::V1::RetailerUserSerializer.new(
+      expected_response = JSON.parse(Api::V1::RetailerUserSerializer.new(
         retailer_user,
         {
           include: [
@@ -36,7 +36,7 @@ RSpec.describe 'Mobile::Api::V1::Sessions', type: :request do
       token = mobile_token.generate!
 
       expect {
-        delete '/mobile/api/v1/log_out', headers: { 'email': email, 'device': device, 'token': token }
+        delete '/api/v1/log_out', headers: { 'email': email, 'device': device, 'token': token }
       }.to change(MobileToken, :count).by(-1)
 
       expect(response.code).to eq('200')

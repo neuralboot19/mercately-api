@@ -1,4 +1,4 @@
-module Mobile::Api::V1
+module Api::V1
   class RetailerUserSerializer
     include FastJsonapi::ObjectSerializer
 
