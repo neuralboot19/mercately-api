@@ -100,7 +100,7 @@ class Retailers::CustomersController < RetailersController
     end
 
     def export_params
-      params.permit('q' => %w[first_name_or_last_name_or_phone_or_email_cont s])
+      params.permit(q: [:first_name_or_last_name_or_phone_or_email_cont, :s, customer_tags_tag_id_in: []])
     end
 
     def load_tags
