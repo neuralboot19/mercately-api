@@ -396,7 +396,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       agent_customer = assign_agent(customer)
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
-      type = 'template' if to_b(params[:template])
+      type = 'template' if true?(params[:template])
 
       gws.send_message(type: type, params: params, retailer_user: current_retailer_user)
 
@@ -446,7 +446,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       ).as_json
     end
 
-    def to_b(text)
-      ActiveModel::Type::Boolean.new.cast(text)
+    def true?(text)
+      return true if text === 'true' || text === true
+      false
     end
 end
