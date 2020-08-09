@@ -396,7 +396,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       agent_customer = assign_agent(customer)
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
-      type = to_b(params[:template]) ? 'template' : 'text'
+      type = 'template' if to_b(params[:template])
 
       gws.send_message(type: type, params: params, retailer_user: current_retailer_user)
 
