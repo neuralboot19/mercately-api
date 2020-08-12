@@ -1,0 +1,44 @@
+<div class="container">
+
+  <div class="post-entries-container">
+    <div class="row">
+
+      <% @documents.each do |doc| %>
+        <div class="col-md-4 blog_grid_post_style">
+          <div class="post-entry-wrapper">
+            <div class="entry-image-post-thumb">
+              <%= link_to blog_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
+                <img src="<%= doc['blogentry.blog_index_image']&.url %>" class="post-entry-img" alt="">
+                <div class="background_over_image"></div>
+              <% end %>
+              <span class="post-entry-category">
+                <a class="category-link" style="background:#36c942" href="#">
+                  Sports
+                </a>
+              </span>
+            </div>
+            <div class="post-entry-content">                                        
+              <h3 class="post-entry-title">
+                <%= link_to blog_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
+                  <%=  doc['blogentry.blog_title']&.as_text() %>
+                <% end %>
+              </h3>
+              <div class="" >
+                <span class="post-entry-date"><i class="far fa-clock"></i><%= doc['blogentry.publish_date'].value.to_date %></span>
+              </div>                                        
+              <div class="content-post-entry-grid">
+                <%= doc['blogentry.blog_previos_content']&.as_html(link_resolver())&.html_safe %>
+              </div>
+                                                      
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+   
+
+    </div>
+  </div>
+</div>
+
+<%= render 'footer'  %>

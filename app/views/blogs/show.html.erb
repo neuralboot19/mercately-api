@@ -1,0 +1,36 @@
+<div class="inner-blog">  
+  <div class="inner-blog-landing-wrapper">
+  	<div class="inner-blog-landing" style="background-image: url(<%= @document['blogentry.blog_main_image'].url %>)">
+  	</div>
+
+  	<div class="single_post_entry_content">
+      <span class="meta-category-small">
+      	<a class="single-post-entry-category" href="#">
+      		Sports
+      	</a>
+      </span>
+      <h1 class="single-post-title-main">
+        <%= @document['blogentry.blog_title'].as_text() %> 
+      </h1>
+      <span class="single-post-meta-wrapper">
+      		<span class="single-post-date">
+      			<i class="far fa-clock"></i><%= @document['blogentry.publish_date'].value.to_date %>
+      		</span>
+      	</span>
+      </span>        
+    </div>
+  </div>
+</div>
+
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="entry-blog-content-wrapper">
+				<%=  @document['blogentry.blog_content'].as_html(link_resolver()).html_safe %>	
+			</div>
+		</div>
+	</div>
+</div>
+
+<%= render 'footer'  %>

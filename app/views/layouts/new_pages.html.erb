@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <title>Optimiza tu negocio y vende más en Mercado Libre | Mercately</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'pages', media: 'all' %>
+    <%= javascript_include_tag 'pages' %>
+
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;800&display=swap" rel="stylesheet"> 
+
+    <%= render "layouts/head" %>
+  </head>
+
+  <body>
+    <%= render 'layouts/pages_new/header' %>
+    <%= yield %>
+
+  </body>
+</html>

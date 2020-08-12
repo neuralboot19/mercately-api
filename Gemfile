@@ -134,3 +134,5 @@ gem 'slack-notifier', '~> 2.3', '>= 2.3.2'
 # Payments
 gem 'stripe', '~> 5.22'
 
+#Primic for Blog
+gem 'prismic.io', require: 'prismic'
