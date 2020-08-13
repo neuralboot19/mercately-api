@@ -1,16 +1,14 @@
 module Whatsapp::Gupshup::V1
   class Outbound::Users < Base
-    # Bulk Upload OPT In Phones
-    def upload_list(file)
-      url = "#{GUPSHUP_BASE_URL}/users/bulkUpload/#{@retailer.gupshup_src_name}"
-      form_data = [['optinList', file]]
-      response = post_form(url, form_data)
+    # User OPT In Phone
+    def opt_in(phone)
+      url = "#{GUPSHUP_BASE_URL}/app/opt/in/#{@retailer.gupshup_src_name}"
 
-      # Returns the Gupshup response
-      {
-        code: response.code,
-        body: JSON.parse(response.read_body)
-      }
+      body = "user=#{phone}"
+      response = post(url, body)
+
+      # The opt in response only returns a 202 code if success
+      { code: response.code }
     end
 
     # Fetch Opt-In Users

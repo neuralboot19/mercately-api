@@ -311,20 +311,16 @@ class Customer < ApplicationRecord
         whatsapp_opt_in == false && phone.present?
 
       number = self.phone_number(false)
-      CSV.open("#{Rails.public_path}/#{id}_opt_in.csv", 'wb') do |csv|
-        csv << [number]
-      end
-      info = gupshup_service.upload_list(File.open("#{Rails.public_path}/#{id}_opt_in.csv"))
-      File.delete("#{Rails.public_path}/#{id}_opt_in.csv")
+      response = gupshup_service.opt_in(number)
 
       Rails.logger.info('*'*100)
-      Rails.logger.info(info)
+      Rails.logger.info(response)
       Rails.logger.info('*'*100)
 
-      return unless info.present? && info&.[](:code) == '200'
+      return unless response.present? && response[:code] == '202'
 
       self.send_for_opt_in = false
-      update(whatsapp_opt_in: true) if info&.[](:body)&.[]('status') == 'success'
+      update(whatsapp_opt_in: true)
     end
 
     def gupshup_service
