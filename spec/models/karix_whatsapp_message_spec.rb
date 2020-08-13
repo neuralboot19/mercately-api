@@ -43,6 +43,10 @@ RSpec.describe KarixWhatsappMessage, type: :model do
     }.with_indifferent_access
   end
 
+  before do
+    allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
+  end
+
   describe 'associations' do
     it { is_expected.to belong_to(:retailer) }
     it { is_expected.to belong_to(:customer) }
@@ -321,6 +325,20 @@ RSpec.describe KarixWhatsappMessage, type: :model do
         message.save
         expect(message.reload.cost).to eq(retailer.send("ws_#{message.message_type}_cost"))
       end
+    end
+  end
+
+  describe '#send_push_notifications' do
+    let(:mobile_token) { create(:mobile_token) }
+    let(:retailer) { mobile_token.retailer_user.retailer }
+    let(:customer) { create(:customer, retailer: retailer) }
+
+    it 'will send push notifications' do
+      ActiveJob::Base.queue_adapter = :test
+
+      expect {
+        create(:karix_whatsapp_message, :inbound, customer: customer)
+      }.to have_enqueued_job(Retailers::MobilePushNotificationJob)
     end
   end
 end

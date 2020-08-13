@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_49_222636) do
+ActiveRecord::Schema.define(version: 2020_08_06_150823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -378,6 +378,7 @@ ActiveRecord::Schema.define(version: 2020_07_49_222636) do
     t.datetime "expiration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "mobile_push_token"
     t.index ["device", "retailer_user_id"], name: "index_mobile_tokens_on_device_and_retailer_user_id", unique: true
     t.index ["retailer_user_id"], name: "index_mobile_tokens_on_retailer_user_id"
   end

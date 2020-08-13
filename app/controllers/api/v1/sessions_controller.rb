@@ -4,8 +4,9 @@ module Api::V1
     before_action :set_retailer, only: :create
 
     def create
-      @user.mobile_tokens.destroy_all
-      mobile_token = @user.mobile_tokens.build
+      mobile_token = @user.mobile_tokens.build(
+        mobile_push_token: create_params[:mobile_push_token]
+      )
 
       if mobile_token.save!
         token = mobile_token.generate!
@@ -24,12 +25,14 @@ module Api::V1
     private
 
       def create_params
-        params.require(:retailer_user).permit(:email, :password)
+        params.require(:retailer_user).permit(:email, :password, :mobile_push_token)
       end
 
       def set_retailer
+        return render_unauthorized unless create_params[:mobile_push_token].present?
+
         @user = RetailerUser.find_by_email(create_params[:email])
-        return record_not_found unless @user.present?
+        return record_not_found unless @user
         return render_unauthorized unless @user.valid_password?(create_params[:password])
 
         @user

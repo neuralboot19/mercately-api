@@ -30,6 +30,18 @@ RSpec.describe MobileToken, type: :model do
     end
   end
 
+  describe '#clean_expired' do
+    it 'will destroy all expired' do
+      # stubbing the Rails.env to production
+      allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new("production"))
+
+      create(:mobile_token)
+      create(:mobile_token, :expired)
+
+      expect(MobileToken.count).to eq(1)
+    end
+  end
+
   describe '#generate!' do
     it 'will generate a token and store update the record' do
       mobile_token = create(:mobile_token)

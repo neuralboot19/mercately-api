@@ -10,7 +10,13 @@ RSpec.describe 'Api::V1::Sessions', type: :request do
       password = 'test1234'
 
       expect {
-        post '/api/v1/sign_in', params: { retailer_user: { 'email': email, 'password': password } }
+        post '/api/v1/sign_in', params: {
+          retailer_user: {
+            'email': email,
+            'password': password,
+            'mobile_push_token': 'mYM081L3pu5h7ok3n'
+          }
+        }
       }.to change(MobileToken, :count).by(1)
 
       expect(response.code).to eq('200')

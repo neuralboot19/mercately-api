@@ -105,6 +105,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
       end
 
       it 'stores a new gupshup message' do
+        allow_any_instance_of(GupshupWhatsappMessage).to receive(:send_push_notifications).and_return(true)
         allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
 
         expect {
