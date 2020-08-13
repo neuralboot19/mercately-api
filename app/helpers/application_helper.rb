@@ -18,9 +18,8 @@ module ApplicationHelper
   end
 
   def link_resolver()
-    
     @link_resolver ||= Prismic::LinkResolver.new(nil) {|link|
-      # URL for the category type    
+      # URL for the category type
       if link.type == "category"
         "/category/" + link.uid
       # URL for the product type
