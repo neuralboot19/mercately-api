@@ -203,6 +203,7 @@ GEM
       actionpack (>= 4.1)
       activesupport (>= 4.1)
     hashdiff (1.0.0)
+    hashery (2.1.2)
     hashie (3.6.0)
     htmlentities (4.3.4)
     http-cookie (1.0.3)
@@ -306,6 +307,8 @@ GEM
     premailer-rails (1.10.2)
       actionmailer (>= 3, < 6)
       premailer (~> 1.7, >= 1.7.9)
+    prismic.io (1.8.0)
+      hashery (~> 2.1.1)
     public_suffix (3.1.1)
     puma (3.12.1)
     rack (2.0.7)
@@ -544,6 +547,7 @@ DEPENDENCIES
   phonelib (~> 0.6.43)
   phony (~> 2.18.12)
   premailer-rails
+  prismic.io
   puma (~> 3.11)
   rack-cors (~> 1.1, >= 1.1.1)
   rack-reverse-proxy
