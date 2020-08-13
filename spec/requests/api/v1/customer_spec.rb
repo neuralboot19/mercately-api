@@ -537,14 +537,11 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       let(:customer_optin_false) { create(:customer, retailer: retailer_gupshup, whatsapp_opt_in: false) }
 
       let(:service_response) {
-        {:code=>"200", :body=>{"status"=>"success"}}
+        { :code=>"202" }
       }
 
       before do
-        allow(CSV).to receive(:open).and_return(true)
-        allow(File).to receive(:open).and_return(true)
-        allow(File).to receive(:delete).and_return(true)
-        allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:upload_list).and_return(service_response)
+        allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in).and_return(service_response)
 
         sign_out retailer_user
         sign_in retailer_user_gupshup

@@ -35,11 +35,11 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
-  get '/blog' => redirect("https://www.mercately.com/blog/")
   get '/privacidad', to: 'pages#privacy', as: :privacy
   get '/terminos', to: 'pages#terms', as: :terms
   get '/precios', to: 'pages#price', as: :pricing
   get '/crm', to: 'pages#crm', as: :crm
+  get '/whatsapp_crm', to: 'pages#whatsapp_crm', as: :whatsapp_crm
 
   namespace :retailers do
     namespace :api, defaults: { format: :json } do
@@ -181,6 +181,8 @@ Rails.application.routes.draw do
     end
   end
 
+  get '/blog', to: 'blogs#index', as: :blog
+  get '/blog/:id', to: 'blogs#show', as: :blog_content
   get '/:slug/:web_id', to: 'pages#product', as: :product_catalog
   get '/:slug', to: 'pages#catalog', as: :catalog
 end

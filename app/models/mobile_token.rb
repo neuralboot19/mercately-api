@@ -7,10 +7,11 @@ class MobileToken < ApplicationRecord
 
   validates :retailer_user, presence: true
 
-  scope :expired, -> { where('expiration > ?', Time.now) }
-  scope :active, -> { where('expiration < ?', Time.now) }
+  scope :expired, -> { where('expiration < ?', Time.now) }
+  scope :active, -> { where('expiration > ?', Time.now) }
 
   before_create :set_device
+  after_create :clean_expired
 
   def generate!
     new_token = SecureRandom.hex
@@ -23,5 +24,9 @@ class MobileToken < ApplicationRecord
 
     def set_device
       self.device = SecureRandom.hex(3)
+    end
+
+    def clean_expired
+      MobileToken.expired.destroy_all unless Rails.env == 'test'
     end
 end

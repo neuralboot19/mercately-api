@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CustomerHelper, type: :helper do
+  before do
+    allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
+  end
+
   describe '#customer_ordering_options' do
     it 'returns a list of options to filter' do
       expect(helper.customer_ordering_options.size).to eq(13)

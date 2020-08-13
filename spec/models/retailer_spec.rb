@@ -147,6 +147,8 @@ RSpec.describe Retailer, type: :model do
     end
 
     before do
+      allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
+
       create_list(:karix_whatsapp_message, 3, retailer: retailer, customer: customer_one, status:
         'delivered', direction: 'inbound')
       create_list(:karix_whatsapp_message, 2, retailer: retailer, customer: customer_two, status:

@@ -11,6 +11,7 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
+
 Rails.application.config.assets.precompile += %w(
   .svg
   flexboxgrid.css
@@ -30,5 +31,9 @@ Rails.application.config.assets.precompile += %w(
   catalog.js
   catalog.css
   retailers/chat_bots/chat_bots.js
+  blogs.css
+  blogs
+  pages.css
+  pages.js
 )
 Rails.application.config.assets.css_compressor = :sass
