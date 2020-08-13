@@ -3,3 +3,4 @@ queues:
   - default
   - low
   - mailers
+  - mobile_push_notifications

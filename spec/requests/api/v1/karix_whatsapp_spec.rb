@@ -991,6 +991,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'stores the customer name' do
+        allow_any_instance_of(KarixWhatsappMessage).to receive(:send_push_notifications).and_return(true)
+
         expect {
           post '/api/v1/karix_whatsapp',
             params: karix_inbound_payload

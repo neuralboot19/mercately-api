@@ -4,6 +4,10 @@ RSpec.describe Customer, type: :model do
   let!(:retailer) { create(:retailer) }
   subject(:customer) { create(:customer, retailer: retailer) }
 
+  before do
+    allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
+  end
+
   describe 'associations' do
     it { is_expected.to have_one(:agent_customer) }
     it { is_expected.to belong_to(:retailer) }
