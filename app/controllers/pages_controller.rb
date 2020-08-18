@@ -20,6 +20,7 @@ class PagesController < ApplicationController
   end
 
   def whatsapp_crm
+    @show_checkbox_recaptcha = true
   end
 
   def catalog
@@ -38,10 +39,20 @@ class PagesController < ApplicationController
                       end
     if recaptcha_valid
       RequestDemoMailer.demo_requested(params.to_unsafe_h).deliver_now
-      redirect_to root_path, notice: 'Gracias! Nuestro equipo se contactará pronto.'
+
+      if params['from-ws-crm'].present?
+        redirect_to whatsapp_crm_path, notice: 'Gracias! Nuestro equipo se contactará pronto.'
+      else
+        redirect_to root_path, notice: 'Gracias! Nuestro equipo se contactará pronto.'
+      end
     else
       @show_checkbox_recaptcha = true
-      render :index, notice: 'El reCAPTCHA ha fallado, por favor intenta de nuevo'
+
+      if params['from-ws-crm'].present?
+        render :whatsapp_crm, layout: 'new_pages', notice: 'El reCAPTCHA ha fallado, por favor intenta de nuevo'
+      else
+        render :index, notice: 'El reCAPTCHA ha fallado, por favor intenta de nuevo'
+      end
     end
   end
 
