@@ -35,5 +35,9 @@ FactoryBot.define do
       gupshup_src_name { 'MySrCName' }
       gupshup_phone_number { Faker::PhoneNumber.cell_phone_with_country_code }
     end
+
+    trait :with_team_assignment do
+      manage_team_assignment { true }
+    end
   end
 end

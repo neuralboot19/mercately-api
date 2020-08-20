@@ -1,0 +1,32 @@
+<div class="nested-fields box">
+  <div class="my-16 bottom-xs pb-16">
+    <div class="row">
+      <div class="col-xs-12 col-sm-6">
+        <label>Agente</label>
+        <div class="input">
+          <%= f.hidden_field :retailer_user_id, class: 'validate-unique' %>
+          <%= f.object.retailer_user.full_name.presence || f.object.retailer_user.email %>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-2">
+        <%= f.label :max_assignments, 'Asignaciones máximas' %>
+        <%= f.text_field :max_assignments, class: 'input validate-required', onkeypress: 'onlyNumber(event)' %>
+        <i class="validation-msg">&nbsp;</i>
+      </div>
+      <div class="col-xs-12 col-sm-2">
+        <%= f.label :active, 'Agente activo?' %><br/>
+        <%= f.check_box :active %>
+      </div>
+      <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mb-24">
+        <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
+          <i class="fas fa-times mr-5"></i>
+          Remover miembro
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-xs-12 pr-0">
+      <div class="divider mt-15"></div>
+    </div>
+  </div>
+</div>

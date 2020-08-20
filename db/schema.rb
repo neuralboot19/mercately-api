@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_06_150823) do
+ActiveRecord::Schema.define(version: 2020_08_13_161835) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,8 +76,22 @@ ActiveRecord::Schema.define(version: 2020_08_06_150823) do
     t.bigint "customer_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "team_assignment_id"
     t.index ["customer_id"], name: "index_agent_customers_on_customer_id"
     t.index ["retailer_user_id"], name: "index_agent_customers_on_retailer_user_id"
+    t.index ["team_assignment_id"], name: "index_agent_customers_on_team_assignment_id"
+  end
+
+  create_table "agent_teams", force: :cascade do |t|
+    t.bigint "team_assignment_id"
+    t.bigint "retailer_user_id"
+    t.integer "max_assignments", default: 0
+    t.integer "assigned_amount", default: 0
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_user_id"], name: "index_agent_teams_on_retailer_user_id"
+    t.index ["team_assignment_id"], name: "index_agent_teams_on_team_assignment_id"
   end
 
   create_table "automatic_answers", force: :cascade do |t|
@@ -634,6 +648,7 @@ ActiveRecord::Schema.define(version: 2020_08_06_150823) do
     t.boolean "allow_bots", default: false
     t.boolean "int_charges", default: false
     t.string "gupshup_api_key"
+    t.boolean "manage_team_assignment", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -656,6 +671,17 @@ ActiveRecord::Schema.define(version: 2020_08_06_150823) do
     t.datetime "updated_at", null: false
     t.string "web_id"
     t.index ["retailer_id"], name: "index_tags_on_retailer_id"
+  end
+
+  create_table "team_assignments", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "name"
+    t.boolean "active_assignment", default: false
+    t.boolean "default_assignment", default: false
+    t.string "web_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_team_assignments_on_retailer_id"
   end
 
   create_table "templates", force: :cascade do |t|

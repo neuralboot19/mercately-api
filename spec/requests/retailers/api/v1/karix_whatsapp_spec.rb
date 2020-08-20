@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
   describe 'POST #create' do
-    let(:retailer) { create(:retailer) }
+    let(:retailer) { create(:retailer, :karix_integrated) }
     let(:retailer_user) { create(:retailer_user, retailer: retailer, email: 'retailer@example.com') }
     let!(:customer) { create(:customer, retailer: retailer) }
 

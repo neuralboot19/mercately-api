@@ -1,4 +1,6 @@
 class ChatBot < ApplicationRecord
+  include WebIdGenerateableConcern
+
   belongs_to :retailer
   has_many :chat_bot_options, dependent: :destroy
   has_many :chat_bot_customers, dependent: :destroy
@@ -18,10 +20,6 @@ class ChatBot < ApplicationRecord
   end
 
   private
-
-    def generate_web_id
-      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
-    end
 
     def any_interaction_unique
       return unless any_interaction == true

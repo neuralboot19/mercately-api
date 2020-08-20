@@ -35,5 +35,6 @@ Rails.application.config.assets.precompile += %w(
   blogs
   pages.css
   pages.js
+  retailers/team_assignments/team_assignments.js
 )
 Rails.application.config.assets.css_compressor = :sass
