@@ -115,7 +115,12 @@
                   </label>
                 </div>
                 <div class="col-xs-4 col-sm-2 c-grey">
-                  <div class="t-center truncate"><%= customer.phone %></div>
+                  <div class="t-center truncate">
+                    <% if customer.country_id.present? && customer.phone.present? %>
+                      <span class="mr-5"><%= customer.emoji_flag %></span>
+                    <% end %>
+                    <%= customer.phone %>
+                  </div>
                   <% if can_send_whatsapp_notification?(current_retailer_user, customer) %>
                     <div class="t-center"><label for="modal--toggle-index" class="request-demo-label ws-contact"
                       data-customer_full_names="<%= customer.full_names %>"
