@@ -15,4 +15,12 @@
     <%= render 'layouts/pages_new/header' %>
     <%= yield %>
   </body>
+
+  <% if notice %>
+    <script charset="utf-8">
+      document.addEventListener("DOMContentLoaded", function() {
+        showtoast("<%= notice %>")
+      });
+    </script>
+  <% end %>
 </html>

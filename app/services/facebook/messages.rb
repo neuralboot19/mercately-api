@@ -88,7 +88,8 @@ module Facebook
       facebook_helper = FacebookNotificationHelper
       retailer = @facebook_retailer.retailer
       last_message.date_read = read_date
-      facebook_helper.broadcast_data(retailer, retailer.retailer_users.to_a, last_message)
+      agents = customer.agent.present? ? [customer.agent] : retailer.retailer_users.to_a
+      facebook_helper.broadcast_data(retailer, agents, last_message)
     end
 
     def send_read_action(to, action)

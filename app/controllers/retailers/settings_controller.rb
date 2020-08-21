@@ -72,6 +72,7 @@ class Retailers::SettingsController < RetailersController
 
   def remove_team_member
     if @user.update_column(:removed_from_team, true)
+      @user.agent_teams.update_all(active: false)
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario removido con éxito.'
     else

@@ -39,7 +39,7 @@ Rails.application.routes.draw do
   get '/terminos', to: 'pages#terms', as: :terms
   get '/precios', to: 'pages#price', as: :pricing
   get '/crm', to: 'pages#crm', as: :crm
-  get '/whatsapp_crm', to: 'pages#whatsapp_crm', as: :whatsapp_crm
+  get '/whatsapp-crm', to: 'pages#whatsapp_crm', as: :whatsapp_crm
 
   namespace :retailers do
     namespace :api, defaults: { format: :json } do
@@ -103,6 +103,7 @@ Rails.application.routes.draw do
         get 'new_chat_bot_option', to: 'chat_bots#new_chat_bot_option', as: :new_chat_bot_option
         get 'edit_chat_bot_option', to: 'chat_bots#edit_chat_bot_option', as: :edit_chat_bot_option
       end
+      resources :team_assignments
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

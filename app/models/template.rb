@@ -1,4 +1,6 @@
 class Template < ApplicationRecord
+  include WebIdGenerateableConcern
+
   belongs_to :retailer
   validates :title, presence: true
 
@@ -14,10 +16,4 @@ class Template < ApplicationRecord
   def to_param
     web_id
   end
-
-  private
-
-    def generate_web_id
-      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
-    end
 end

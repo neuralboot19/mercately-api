@@ -1,4 +1,6 @@
 class Question < ApplicationRecord
+  include WebIdGenerateableConcern
+
   default_scope -> { where('questions.product_id IS NOT NULL') }
   belongs_to :product
   belongs_to :customer
@@ -31,9 +33,5 @@ class Question < ApplicationRecord
 
     def set_answered
       self.answered = true if answer.present?
-    end
-
-    def generate_web_id
-      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 end

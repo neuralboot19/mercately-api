@@ -1,4 +1,5 @@
 class Customer < ApplicationRecord
+  include WebIdGenerateableConcern
   include PhoneNumberConcern
 
   belongs_to :retailer
@@ -253,16 +254,40 @@ class Customer < ApplicationRecord
     verify_opt_in
   end
 
+  def whatsapp_answered_by_agent?
+    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+
+    send(messages).where(direction: 'outbound').where.not(retailer_user_id: nil).exists?
+  end
+
+  def first_whatsapp_answer_by_agent?(message_uid)
+    if retailer.karix_integrated?
+      messages = 'karix_whatsapp_messages'
+      attribute = 'uid'
+    else
+      messages = 'gupshup_whatsapp_messages'
+      attribute = 'gupshup_message_id'
+    end
+
+    answers = send(messages).where(direction: 'outbound').where.not(retailer_user_id: nil)
+    eval_answers(answers, attribute, message_uid)
+  end
+
+  def messenger_answered_by_agent?
+    facebook_messages.where(sent_by_retailer: true).where.not(retailer_user_id: nil).exists?
+  end
+
+  def first_messenger_answer_by_agent?(message_uid)
+    answers = facebook_messages.where(sent_by_retailer: true).where.not(retailer_user_id: nil)
+    eval_answers(answers, 'mid', message_uid)
+  end
+
   private
 
     def update_valid_customer
       return if valid_customer?
 
       self.valid_customer = first_name.present? || last_name.present? || email.present?
-    end
-
-    def generate_web_id
-      update web_id: retailer.id.to_s + ('a'..'z').to_a.sample(5).join + id.to_s
     end
 
     def strip_whitespace
@@ -325,5 +350,13 @@ class Customer < ApplicationRecord
 
     def gupshup_service
       @gupshup_service ||= Whatsapp::Gupshup::V1::Outbound::Users.new(retailer)
+    end
+
+    def eval_answers(answers, attribute, message_uid)
+      return true if answers.size.zero?
+      return false if answers.size > 1
+      return true if answers.first.send(attribute) == message_uid
+
+      false
     end
 end
