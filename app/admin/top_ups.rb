@@ -40,10 +40,6 @@ ActiveAdmin.register TopUp do
 
     f.actions do
       f.actions
-
-      if params[:retailer_id].present?
-        render partial: 'back_to_retailers'
-      end
     end
   end
 end
