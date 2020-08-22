@@ -40,7 +40,11 @@
                     <label class="c-grey fs-14">Email:</label> <span class="c-secondary fs-14"><%= @customer.email %></span>
                   </div>
                   <div class="col-xs-12 col-sm-6">
-                    <label class="c-grey fs-14">Teléfono:</label> <span class="c-secondary fs-14"><%= @customer.phone %></span><br />
+                    <label class="c-grey fs-14">Teléfono:</label>
+                    <% if @customer.country_id.present? && @customer.phone.present? %>
+                      <span class="mr-5"><%= @customer.emoji_flag %></span>
+                    <% end %>
+                    <span class="c-secondary fs-14"><%= @customer.phone %></span><br />
                     <% if can_send_whatsapp_notification?(current_retailer_user, @customer) %>
                       <label
                         for="modal--toggle"

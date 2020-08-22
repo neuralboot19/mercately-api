@@ -1,97 +1,102 @@
-<div class="box">
-  <div class="row">
-    <%= form_for [:retailers, @customer], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
-      <div class="box">
-        <fieldset class="fieldset mt-16 row">
-          <legend>Información básica de cliente</legend>
-          <div class="my-16 col-xs-12">
-            <%= f.label :first_name, 'Nombre' %>
-            <%= f.text_field :first_name, class: 'input validate-required' %>
-            <i class="validation-msg"></i>
-          </div>
-          <div class="my-16 col-xs-12">
-            <%= f.label :last_name, 'Apellido' %>
-            <%= f.text_field :last_name, class: 'input validate-required' %>
-            <i class="validation-msg"></i>
-          </div>
-          <div class="my-16 col-xs-12">
-            <div id="validate-any-error" class="d-none">
-              <i class="validation-msg">Debes llenar alguno de los campos Email o Teléfono</i><br />
-            </div>
+<div class="box p-relative card mt-14 pl-40 pr-40 pt-35 form-container_card">
+  <%= form_for [:retailers, @customer], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
+    <div class="box">
+      <fieldset class="fieldset-to-replace row">
+        <h3 class="form-container_sub-title mt-0 ml-8">Información básica</h3>
+        <div class="my-16 col-xs-12">
+          <%= f.label :first_name, 'Nombres' %>
+          <%= f.text_field :first_name, class: 'input validate-required' %>
+          <i class="validation-msg"></i>
+        </div>
+        <div class="my-16 col-xs-12">
+          <%= f.label :last_name, 'Apellidos' %>
+          <%= f.text_field :last_name, class: 'input validate-required' %>
+          <i class="validation-msg"></i>
+        </div>
+        <div id="validate-any-error" class="d-none ml-10">
+          <i class="validation-msg">Debes llenar alguno de los campos Email o Teléfono</i><br />
+        </div>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12 col-md-6">
             <%= f.label :email %>
             <%= f.text_field :email, class: 'input validate-email validate-any-required' %>
             <i class="validation-msg"></i>
           </div>
-          <div class="row w-100">
-            <div id="customer-tags-fields" class="my-16 col-xs-12">
-              <%= f.label 'Etiquetas' %><br />
-              <% unless @customer.tags.present? %>
-                <a href="javascript:;" onclick="showSelectingTags(this)">Añadir etiqueta</a>
-              <% end %>
-              <div id="add-customer-tags-container" class="<%= 'd-none' unless @customer.tags.present? %>">
-                <%= f.select :tag_ids, retailer_selectable_tags(current_retailer), { selected: @customer.tags.ids }, class: 'input', multiple: true %>
-              </div>
-            </div>
+          <div class="my-16 col-xs-12 col-md-2">
+            <%= f.label :country_id, 'País' %>
+            <%= f.country_select("country_id", { format: :with_country_code, include_blank: true }, { class: 'input' }) %>
           </div>
-          <div class="row w-100">
-            <div class="my-16 col-xs-12 col-md-6">
-              <%= f.label :country_id, 'País' %>
-              <%= f.country_select("country_id", { format: :with_country_code, include_blank: true }, { class: 'input' }) %>
-            </div>
-            <div class="my-16 col-xs-12 col-md-6">
-              <%= f.label :phone, 'Teléfono' %>
-              <%= f.text_field :phone, class: 'input validate-any-required', onkeypress: 'onlyNumber(event)' %>
-            </div>
+          <div class="my-16 col-xs-12 col-md-4">
+            <%= f.label :phone, 'Teléfono' %>
+            <%= f.text_field :phone, class: 'input validate-any-required', onkeypress: 'onlyNumber(event)' %>
           </div>
-          <% if current_retailer.gupshup_integrated? && @customer.whatsapp_opt_in == false %>
-            <div class="row w-100">
-              <div class="my-16 col-xs-12 col-md-6">
-                <%= f.check_box :send_for_opt_in %>
-                <%= f.label :send_for_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)' %><br/>
-              </div>
-            </div>
-          <% end %>
-          <div class="row w-100">
-            <div class="my-16 col-xs-12 col-md-6">
-              <%= f.label :id_type, 'Tipo de identificación' %>
-              <%= f.select :id_type, Customer.id_types.keys, class: 'input' %>
-            </div>
-            <div class="my-16 col-xs-12 col-md-6">
-              <%= f.label :id_number, 'Identificación' %>
-              <%= f.text_field :id_number, class: 'input' %>
-            </div>
-          </div>
-          <div class="row w-100">
-            <div class="my-16 col-xs-12 col-md-3">
-              <%= f.label :address, 'Dirección' %>
-              <%= f.text_field :address, class: 'input' %>
-            </div>
-            <div class="my-16 col-xs-12 col-md-3">
-              <%= f.label :city, 'Ciudad' %>
-              <%= f.text_field :city, class: 'input' %>
-            </div>
-            <div class="my-16 col-xs-12 col-md-3">
-              <%= f.label :state, 'Estado (Provincia)' %>
-              <%= f.text_field :state, class: 'input' %>
-            </div>
-            <div class="my-16 col-xs-12 col-md-3">
-              <%= f.label :zip_code, 'Zip' %>
-              <%= f.text_field :zip_code, class: 'input' %>
-            </div>
-          </div>
+        </div>
+        <% if current_retailer.gupshup_integrated? && @customer.whatsapp_opt_in == false %>
           <div class="row w-100">
             <div class="my-16 col-xs-12">
-              <%= f.label :notes, 'Notas' %>
-              <%= f.text_area :notes, class: 'input h-40' %>
+              <%= f.check_box :send_for_opt_in %>
+              <%= f.label :send_for_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)', class: 'fs-12' %><br/>
             </div>
           </div>
-        </fieldset>
-        <div class="btn-box col-xs-12">
-          <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+        <% end %>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :id_type, 'Tipo de identificación' %>
+            <%= f.select :id_type, Customer.id_types.keys, class: 'input' %>
+          </div>
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :id_number, 'Identificación' %>
+            <%= f.text_field :id_number, class: 'input' %>
+          </div>
         </div>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :city, 'Ciudad' %>
+            <%= f.text_field :city, class: 'input' %>
+          </div>
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :state, 'Estado (Provincia)' %>
+            <%= f.text_field :state, class: 'input' %>
+          </div>
+        </div>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :address, 'Dirección' %>
+            <%= f.text_field :address, class: 'input' %>
+          </div>
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :zip_code, 'Zip' %>
+            <%= f.text_field :zip_code, class: 'input' %>
+          </div>
+        </div>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12">
+            <%= f.label :notes, 'Notas' %>
+            <%= f.text_area :notes, class: 'input h-100' %>
+          </div>
+        </div>
+        <div class="row w-100">
+          <div id="customer-tags-fields" class="my-16 col-xs-12">
+            <%= f.label 'Etiquetas' %><br />
+            <% unless @customer.tags.present? %>
+              <a href="javascript:;" onclick="showSelectingTags(this)">Añadir etiqueta</a>
+            <% end %>
+            <div id="add-customer-tags-container" class="<%= 'd-none' unless @customer.tags.present? %>">
+              <%= f.select :tag_ids, retailer_selectable_tags(current_retailer), { selected: @customer.tags.ids }, class: 'input', multiple: true %>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <div class="my-16 t-right hide-on-xs">
+        <%= link_to 'Cancelar', retailers_customers_path(q: { 's': 'created_at desc' }), class: 'cancel-link mr-30' %>
+        <%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
       </div>
-    <% end %>
-  </div>
+      <div class="hide-on-xs-and-up t-center my-16">
+        <div><%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %></div>
+        <div class="mt-20"><%= link_to 'Cancelar', retailers_customers_path(q: { 's': 'created_at desc' }), class: 'cancel-link' %></div>
+      </div>
+    </div>
+  <% end %>
 </div>
 
 <script src="<%= asset_path 'retailers/customers/customers.js' %>" charset="utf-8"></script>

@@ -1458,3 +1458,120 @@ i {
   width: 100%;
   height: 530px;
 }
+
+.card-to-replace {
+  min-height: 80vh;
+  background-color: #ECEFF4;
+
+  .container {
+    padding: 0 4px;
+    &-fluid {
+      padding: 0;
+    }
+  }
+}
+
+.form-container {
+  &_header-title, &_sub-title {
+    font-family: 'Poppins-SemiBold';
+  }
+
+  &_sub {
+    color: #AAA;
+    font-size: 16px;
+    margin-top: 0;
+  }
+
+  &_card {
+    min-height: auto !important;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .fieldset-to-replace {
+    border: 0;
+    padding: 0;
+
+    label {
+      font-family: 'Poppins-SemiBold';
+      color: #020202;
+    }
+
+    .input {
+      color: #888888;
+      font-size: 13px;
+      font-weight: 300;
+      height: 36px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      box-shadow: none;
+      box-sizing: border-box;
+      padding: 0;
+      -webkit-transition: border-color .15s linear,box-shadow .15s linear;
+      -moz-transition: border-color .15s linear,box-shadow .15s linear;
+      -ms-transition: border-color .15s linear,box-shadow .15s linear;
+      -o-transition: border-color .15s linear,box-shadow .15s linear;
+      transition: border-color .15s linear,box-shadow .15s linear;
+      padding: 8px;
+      width: 100%;
+
+      &--invalid {
+        border: 1px solid #d9d9d9;
+        -webkit-box-shadow: 0px 0px 5px .1px #f00;
+        -moz-box-shadow: 0px 0px 5px .1px #f00;
+        box-shadow: 0px 0px 5px .1px #f00;
+      }
+    }
+  }
+}
+
+.back-link {
+  font-family: 'Poppins-SemiBold';
+  text-decoration: none;
+  color: #AAA;
+  font-size: 18px;
+}
+
+.cancel-link {
+  text-decoration: none;
+  color: #020202;
+  font-size: 18px;
+}
+
+.btn-btn {
+  &.btn-primary-style {
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    text-transform: unset;
+    padding-left: 30px;
+    padding-right: 30px;
+    font-weight: bolder;
+    font-size: 15px;
+  }
+}
+
+.form-main-buttons {
+  position: absolute;
+  top: -60px;
+  right: 0px;
+}
+
+#add-customer-tags-container {
+  .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #00B4FF;
+    border: none;
+    border-radius: 13px;
+    padding-left: 15px;
+    padding-right: 25px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    color: #FFF;
+    float: left;
+    position: relative;
+  }
+
+  .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #FFF;
+    right: 5px;
+    position: absolute;
+  }
+}
