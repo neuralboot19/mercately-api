@@ -352,7 +352,7 @@ label:hover, a:hover {
 
 @for $size from 0 through 100 {
   .h-#{$size} {
-    height: #{$size}px;
+    height: #{$size}px !important;
   }
 }
 
@@ -450,8 +450,8 @@ label:hover, a:hover {
   }
 }
 
-@media screen and (min-width: 480px) {
-  .hide-on-sm-and-up {
+@media screen and (min-width: 481px) {
+  .hide-on-xs-and-up {
     display: none;
   }
 }
