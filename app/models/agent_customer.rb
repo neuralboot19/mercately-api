@@ -23,7 +23,7 @@ class AgentCustomer < ApplicationRecord
       return true if tokens.blank?
 
       body = "Nuevo chat asignado - #{customer_name}"
-      Retailers::MobilePushNotificationJob.perform_later(tokens, body)
+      Retailers::MobilePushNotificationJob.perform_later(tokens, body, self.customer.id)
     end
 
     def customer_name

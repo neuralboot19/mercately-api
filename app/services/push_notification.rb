@@ -1,7 +1,8 @@
 class PushNotification
-  def initialize(tokens, body)
-    @tokens = tokens.uniq
+  def initialize(tokens, body, customer_id)
+    @tokens = tokens
     @body = body
+    @customer_id = customer_id
   end
 
   def send_messages
@@ -10,7 +11,10 @@ class PushNotification
       message = {
         to: token,
         sound: 'default',
-        body: @body
+        body: @body,
+        data: {
+          customer_id: @customer_id,
+        },
       }
       mobile_client.send_messages message
     rescue

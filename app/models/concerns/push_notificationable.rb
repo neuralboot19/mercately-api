@@ -17,7 +17,7 @@ module PushNotificationable
       return true if tokens.blank?
 
       body = "Nuevo mensaje de #{customer_name}"
-      Retailers::MobilePushNotificationJob.perform_later(tokens, body)
+      Retailers::MobilePushNotificationJob.perform_later(tokens, body, customer_id)
     end
 
     def customer_name
