@@ -109,7 +109,7 @@ module WhatsappChatBotActionConcern
 
     def match_option(text)
       text_to_i = text.to_i
-      options = customer.chat_bot_option.children
+      options = customer.chat_bot_option.children.active
 
       option = options.find_by_position(text_to_i)
       return option unless option.blank?

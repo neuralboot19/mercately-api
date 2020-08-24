@@ -7,6 +7,6 @@ class ChatBotOptionSerializer
   attributes :id, :text, :position, :answer, :children
 
   attribute :children do |option|
-    option.children.order(:position)
+    option.children.active.order(:position)
   end
 end
