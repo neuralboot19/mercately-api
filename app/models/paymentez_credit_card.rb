@@ -16,7 +16,10 @@ class PaymentezCreditCard < ApplicationRecord
     response = transaction.debit_with_token(self)
     plan.update(status: :inactive) and return false if response[:status] != 200
 
-    schedule_payment(plan.next_pay_date.end_of_day) unless Rails.env == 'test'
+    next_pay_date = plan.next_pay_date ? plan.next_pay_date : Date.today + 30.days
+    plan.update(next_pay_date: next_pay_date) if plan.next_pay_date != Date.today
+
+    schedule_payment(next_pay_date.end_of_day) unless Rails.env == 'test'
     true
   end
 
