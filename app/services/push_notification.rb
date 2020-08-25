@@ -1,20 +1,21 @@
 class PushNotification
   def initialize(tokens, body)
-    @tokens = tokens
+    @tokens = tokens.uniq
     @body = body
   end
 
   def send_messages
-    messages = []
     mobile_client = Exponent::Push::Client.new
     @tokens.each do |token|
-      messages.push(
+      message = {
         to: token,
         sound: 'default',
         body: @body
-      )
+      }
+      mobile_client.send_messages message
+    rescue
+      MobileToken.find_by_mobile_push_token(token)&.destroy
+      next
     end
-
-    mobile_client.send_messages messages
   end
 end
