@@ -12,5 +12,9 @@ module Api::V1
     end
 
     belongs_to :retailer
+
+    attribute :retailer_integration do |ru|
+      ru.retailer.karix_integrated? ? '0' : '1'
+    end
   end
 end

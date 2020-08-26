@@ -141,7 +141,7 @@ class ChatMessages extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    if (newProps.messages != this.props.messages && newProps.updated == this.props.updated) {
+    if (newProps.messages != this.props.messages) {
       var rDate = moment(newProps.recentInboundMessageDate).local();
       this.setState({
         new_message: false,
