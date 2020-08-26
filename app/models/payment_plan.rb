@@ -13,21 +13,10 @@ class PaymentPlan < ApplicationRecord
       "Monto: #{price}",
       "Status del mes pasado: #{status}"
     ].join("\n"))
+
     # Updates the next notification date
     npd = (next_pay_date || Date.today) + 1.month
-    update(
-      next_pay_date: npd
-    )
-
-    # We must convert the next pay date to a timestamp to shedule the job
-    # since self.next_pay_date is type Date instead of type Time
-    next_notification_at = Time.parse(npd.to_s).to_i
-
-    # Schedule the next alert
-    Retailers::RetailerChargeAlertJob.perform_at(
-      next_notification_at,
-      id
-    ) unless Rails.env == 'test'
+    update(next_pay_date: npd)
   end
 
   def is_active?
