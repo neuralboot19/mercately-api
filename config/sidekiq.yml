@@ -1,6 +1,7 @@
-queues:
+:queues:
   - critical
   - default
   - low
   - mailers
   - mobile_push_notifications
+:max_retries: 3
