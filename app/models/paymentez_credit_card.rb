@@ -19,7 +19,9 @@ class PaymentezCreditCard < ApplicationRecord
     next_pay_date = plan.next_pay_date ? plan.next_pay_date : Date.today + 30.days
     plan.update(next_pay_date: next_pay_date) if plan.next_pay_date != Date.today
 
-    schedule_payment(next_pay_date.end_of_day) unless Rails.env == 'test'
+    # Subscription payments will be disabled temporally
+    # as @henry2992 requirement
+    # schedule_payment(next_pay_date.end_of_day) unless Rails.env == 'test'
     true
   end
 

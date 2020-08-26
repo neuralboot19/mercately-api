@@ -20,8 +20,8 @@ module Retailers
       puts '*' * 80
     rescue StandardError => e
       puts '*' * 80
-      puts " Error Auto charging plan #RetailerChargeAlertJob_#{paymentez_cc_id} "
-      puts " Retailer ID: #{paymentez_cc_id} "
+      puts " Error Auto charging plan #RetailerChargePlanJob_#{paymentez_cc_id} "
+      puts " Credit Card ID: #{paymentez_cc_id} "
       puts " Error: #{e} "
       puts '*' * 80
       Raven.capture_exception "Error Auto charging plan for

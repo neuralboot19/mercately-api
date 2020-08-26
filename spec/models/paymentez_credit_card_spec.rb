@@ -65,16 +65,6 @@ RSpec.describe PaymentezCreditCard, type: :model do
         }.to change{ payment_plan.next_pay_date }.to(Date.today + 30.days)
       end
 
-      it 'schedules the next payment' do
-        ActiveJob::Base.queue_adapter = :test
-        # stubbing the Rails.env to production
-        allow(Rails).to receive(:env).and_return(ActiveSupport::StringInquirer.new('production'))
-
-        expect {
-          subject.create_transaction
-        }.to have_enqueued_job.at(payment_plan.reload.next_pay_date)
-      end
-
       it 'returns true' do
         expect(subject.create_transaction).to eq(true)
       end
