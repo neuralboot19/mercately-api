@@ -269,8 +269,12 @@ class ChatMessages extends Component {
   }
 
   divClasses = (message) => {
-    var classes = message.sent_by_retailer == true ? 'message-by-retailer f-right' : '';
-    if (['audio', 'video'].includes(this.fileType(message.file_type)))  classes += 'video-audio';
+    var classes = message.sent_by_retailer == true ? 'message-by-retailer f-right' : 'message-by-customer';
+    classes += ' main-message-container';
+    if (message.sent_by_retailer == true && message.date_read && message.text && !message.file_type)
+      classes += ' read-message';
+    if (['voice', 'audio', 'video'].includes(this.fileType(message.file_type))) classes += ' video-audio no-background';
+    if (this.fileType(message.file_type) === 'image') classes += ' no-background';
     return classes;
   }
 
@@ -439,6 +443,12 @@ class ChatMessages extends Component {
     });
   }
 
+  timeMessage = (message) => {
+    return (
+      <span className={message.sent_by_retailer == false ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_at).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
+    )
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -489,7 +499,13 @@ class ChatMessages extends Component {
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ this.divClasses(message) }>
-                <Message message={message} toggleImgModal={this.toggleImgModal} downloadFile={this.downloadFile} fileType={this.fileType}/>
+                <Message
+                  message={message}
+                  toggleImgModal={this.toggleImgModal}
+                  downloadFile={this.downloadFile}
+                  fileType={this.fileType}
+                  timeMessage={this.timeMessage}
+                  />
               </div>
             </div>
           ))}

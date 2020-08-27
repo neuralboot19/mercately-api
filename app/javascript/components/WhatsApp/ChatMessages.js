@@ -611,8 +611,12 @@ class ChatMessages extends Component {
   }
 
   divClasses = (message) => {
-    var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : '';
-    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) classes += 'video-audio';
+    var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : 'message-by-customer';
+    classes += ' main-message-container';
+    if (message.status == 'read' && message.content_type == 'text' && this.props.handleMessageEvents === true)
+      classes += ' read-message';
+    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) classes += ' video-audio no-background';
+    if (this.fileType(message.content_media_type) === 'image') classes += ' no-background';
     return classes;
   }
 
@@ -732,6 +736,12 @@ class ChatMessages extends Component {
     });
   }
 
+  timeMessage = (message) => {
+    return (
+      <span className={message.direction == 'inbound' ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_time).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
+    )
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -801,7 +811,7 @@ class ChatMessages extends Component {
             <div key={index} className="message">
               <div className={ this.divClasses(message) } >
                 {message.replied_message &&
-                  <div className="replied-message">
+                  <div className="replied-message mb-10">
                     {message.replied_message.data.attributes.content_type == 'text' &&
                       <span className="text">{message.replied_message.data.attributes.content_text}</span>
                     }
@@ -820,20 +830,20 @@ class ChatMessages extends Component {
                       </video>
                     )}
                     {message.replied_message.data.attributes.content_type == 'location' &&
-                        (<p className="fs-15 no-back-color"><a href={`https://www.google.com/maps/place/${message.replied_message.data.attributes.content_location_latitude},${message.replied_message.data.attributes.content_location_longitude}`} target="_blank">
-                          <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></p>)}
+                        (<div className="fs-15 no-back-color"><a href={`https://www.google.com/maps/place/${message.replied_message.data.attributes.content_location_latitude},${message.replied_message.data.attributes.content_location_longitude}`} target="_blank">
+                          <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></div>)}
                     {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'document' && (
-                      <p className="fs-15 no-back-color"><a href="" onClick={(e) => this.downloadFile(e, message.replied_message.data.attributes.content_media_url, message.replied_message.data.attributes.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.replied_message.data.attributes.content_media_caption || 'Descargar archivo'}</a></p>
+                      <div className="fs-15 no-back-color"><a href="" onClick={(e) => this.downloadFile(e, message.replied_message.data.attributes.content_media_url, message.replied_message.data.attributes.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.replied_message.data.attributes.content_media_caption || 'Descargar archivo'}</a></div>
                     )}
                     {message.replied_message.data.attributes.content_type == 'contact' &&
                       message.replied_message.data.attributes.contacts_information.map(contact =>
                         <div className="contact-card w-100 mb-10 no-back-color">
-                          <i className="fas fa-user mr-8"></i><div className="w-100 mb-10">{contact.names.formatted_name}</div>
+                          <div className="w-100 mb-10"><i className="fas fa-user mr-8"></i>{contact.names.formatted_name}</div>
                           {contact.phones.map(ph =>
                             <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
                           )}
                           {contact.emails.map(em =>
-                            <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i><div>{em.email}</div></div>
+                            <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i>{em.email}</div>
                           )}
                           {contact.addresses.map(addrr =>
                             <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
@@ -847,13 +857,19 @@ class ChatMessages extends Component {
                   </div>
                 }
                 {message.content_type == 'text' &&
-                  <p className={message.status === 'read' && this.props.handleMessageEvents === true  ? 'read-message' : ''}>{message.content_text} {
-                    message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
-                      <i className={ `checks-mark fas fa-${
-                        message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double' : 'sync'))
-                      }`
-                      }></i>
-                  }</p>
+                  <div>
+                    {message.content_text}
+                    <br />
+                    <div className="f-right">
+                      {this.timeMessage(message)}
+                      {message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
+                        <i className={ `checks-mark ml-7 fas fa-${
+                          message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double read' : 'sync'))
+                        }`
+                        }></i>
+                      }
+                    </div>
+                  </div>
                 }
                 {message.content_type == 'media' && message.content_media_type == 'image' &&
                     (<div className="img-holder">
@@ -874,22 +890,22 @@ class ChatMessages extends Component {
                   </video>
                 )}
                 {message.content_type == 'location' &&
-                    (<p className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
-                      <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></p>)}
+                    (<div className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
+                      <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></div>)}
                 {message.content_type == 'media' && message.content_media_type == 'document' && (
-                  <p className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></p>
+                  <div className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></div>
                 )}
                 {message.content_media_caption && message.content_media_type !== 'document' &&
-                  (<p>{message.content_media_caption}</p>)}
+                  (<div className="caption">{message.content_media_caption}</div>)}
                 {message.content_type == 'contact' &&
                   message.contacts_information.map(contact =>
                     <div className="contact-card w-100 mb-10">
-                      <i className="fas fa-user mr-8"></i><div className="w-100 mb-10">{contact.names.formatted_name}</div>
+                      <div className="w-100 mb-10"><i className="fas fa-user mr-8"></i>{contact.names.formatted_name}</div>
                       {contact.phones.map(ph =>
                         <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
                       )}
                       {contact.emails.map(em =>
-                        <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i><div>{em.email}</div></div>
+                        <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i>{em.email}</div>
                       )}
                       {contact.addresses.map(addrr =>
                         <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
