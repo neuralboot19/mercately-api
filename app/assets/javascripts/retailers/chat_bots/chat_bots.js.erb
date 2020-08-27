@@ -22,6 +22,7 @@ function buildTree(option, parent) {
     <span class="tree-options-links">
     <a class="ml-10 fs-12" href="${window.location.origin}/retailers/${$('#slug-id').val()}/chat_bots/${$('#cb-web-id').val()}/new_chat_bot_option?parent_id=${option.id}">Agregar opción</a>
     <a class="ml-10 fs-12" href="${window.location.origin}/retailers/${$('#slug-id').val()}/chat_bots/${$('#cb-web-id').val()}/edit_chat_bot_option?option_id=${option.id}">Editar</a>
+    <a class="ml-10 fs-12 delete" href="javascript:;" onclick="deleteOption(${option.id})">Eliminar</a>
     <a class="ml-10 fs-12" href="javascript:;" onclick="buildConversation(${option.id})">Vista previa</a>
     </span></div></li>
     </ul>`
@@ -115,6 +116,31 @@ function showHideSelectFields(action, hideId, showId) {
       placeholder: "Selecciona o elimina etiquetas",
       language: "es-ES",
       maximumSelectionLength: 5
+    });
+  }
+}
+
+function deleteOption(id) {
+  if (confirm('¿Estás seguro de eliminar la opción?') == true) {
+    var request = $.ajax({
+      url: '/retailers/' + ENV['SLUG'] + '/chat_bots/' + $('#cb-web-id').val() + '/delete_chat_bot_option',
+      beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+      method: "POST",
+      data: { option_id: id },
+      dataType: "json"
+    });
+
+    request.done(function(msg) {
+      if (msg.status == 200) {
+        $('#options-tree').html(null);
+        $('#chat-preview').html(null);
+        searchOptions();
+      }
+      showtoast(msg.message);
+    });
+
+    request.fail(function(jqXHR, textStatus) {
+      showtoast(textStatus);
     });
   }
 }

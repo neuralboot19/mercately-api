@@ -11,13 +11,17 @@ module Retailers
       no_pending_payments and return true unless payment_plans.any?
 
       payment_plans.each(&:notify_slack)
+      schedule_next_alert
     end
 
     private
 
     def no_pending_payments
       slack_client.ping('No hay cuentas pendientes por cobrar')
+      schedule_next_alert
+    end
 
+    def schedule_next_alert
       npd = (Date.today + 1.day).middle_of_day
 
       # We must convert the next pay date to a timestamp to shedule the job

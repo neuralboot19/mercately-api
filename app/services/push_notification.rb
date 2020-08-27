@@ -1,6 +1,6 @@
 class PushNotification
   def initialize(tokens, body, customer_id)
-    @tokens = tokens
+    @tokens = tokens.compact
     @body = body
     @customer_id = customer_id
   end

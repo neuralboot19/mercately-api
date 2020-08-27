@@ -102,6 +102,7 @@ Rails.application.routes.draw do
         get 'list_chat_bot_options', to: 'chat_bots#list_chat_bot_options', as: :list_chat_bot_options
         get 'new_chat_bot_option', to: 'chat_bots#new_chat_bot_option', as: :new_chat_bot_option
         get 'edit_chat_bot_option', to: 'chat_bots#edit_chat_bot_option', as: :edit_chat_bot_option
+        post 'delete_chat_bot_option', to: 'chat_bots#delete_chat_bot_option', as: :delete_chat_bot_option
       end
       resources :team_assignments
     end

@@ -39,5 +39,9 @@ FactoryBot.define do
     trait :with_team_assignment do
       manage_team_assignment { true }
     end
+
+    trait :with_chat_bots do
+      allow_bots { true }
+    end
   end
 end
