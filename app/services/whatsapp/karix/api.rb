@@ -120,8 +120,9 @@ module Whatsapp
         if get_out == false && error_exit == false
           message = chat_bot_option.answer + "\n\n"
 
-          if chat_bot_option.children.present?
-            chat_bot_option.children.order(:position).each do |child|
+          children = chat_bot_option.children.active
+          if children.present?
+            children.order(:position).each do |child|
               message += (child.position.to_s + '. ' + child.text + "\n")
             end
           end

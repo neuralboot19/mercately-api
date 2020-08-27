@@ -47,7 +47,7 @@ class Retailers::ChatBotsController < RetailersController
 
   def tree_options
     option = @chat_bot.chat_bot_options.first
-    options = option.subtree.order(:position).arrange_serializable if option.present?
+    options = option.subtree.active.order(:position).arrange_serializable if option.present?
 
     render status: 200, json: { options: options }
   end
@@ -57,6 +57,17 @@ class Retailers::ChatBotsController < RetailersController
     serialized = ChatBotOptionSerializer.new(option.path)
 
     render status: 200, json: { option: serialized }
+  end
+
+  def delete_chat_bot_option
+    option = @chat_bot.chat_bot_options.find_by_id(params[:option_id])
+    response_to_delete(500, 'No puedes eliminar esta opción.') and return if option&.is_root?
+
+    if option&.update(option_deleted: true)
+      response_to_delete(200, 'Opción eliminada con éxito.')
+    else
+      response_to_delete(500, 'Error al eliminar la opción.')
+    end
   end
 
   private
@@ -98,5 +109,16 @@ class Retailers::ChatBotsController < RetailersController
 
     def check_bots_access
       redirect_to retailers_dashboard_path(current_retailer) unless current_retailer.allow_bots
+    end
+
+    def response_to_delete(status, message)
+      respond_to do |format|
+        format.html {
+          redirect_to retailers_chat_bot_list_chat_bot_options_path(current_retailer, @chat_bot), notice: message
+        }
+        format.json {
+          render json: { status: status, message: message }
+        }
+      end
     end
 end
