@@ -16,12 +16,20 @@ socket.on('connect', function() {
 });
 
 socket.on('new_message_counter', function(data) {
+  var playAlert = false;
+  var total = $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).html();
+
+  if (parseInt(total) < parseInt(data['total'])) {
+    playAlert = true;
+  }
+
   $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).html(data['total']);
 
   if (data['identifier'] === '#item__cookie_message' || data['identifier'] === '#item__cookie_question') {
     var currentTotal = $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').html();
 
     if (data['action'] === 'add') {
+      playAlert = true;
       currentTotal = parseInt(currentTotal) + 1;
     } else {
       currentTotal = parseInt(currentTotal) - parseInt(data['q']);
@@ -29,4 +37,33 @@ socket.on('new_message_counter', function(data) {
 
     $('#sidebar .item__cookie_total, #sidebar--pc .item__cookie_total').html(currentTotal);
   }
+
+  play(playAlert);
+});
+
+function play(playAlert) {
+  if (playAlert === true) {
+    var audio = new Audio('../../notification_tune.mp3');
+    audio.play();
+  }
+
+  var totalWs = $('#sidebar .item__cookie_whatsapp_messages, #sidebar--pc .item__cookie_whatsapp_messages').html();
+  var totalMsn = $('#sidebar .item__cookie_facebook_messages, #sidebar--pc .item__cookie_facebook_messages').html();
+  var totalMl = $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').html();
+
+  totalWs = totalWs ? totalWs : 0;
+  totalMsn = totalMsn ? totalMsn : 0;
+  totalMl = totalMl ? totalMl : 0;
+
+  var total = parseInt(totalWs) + parseInt(totalMsn) + parseInt(totalMl);
+
+  if (total > 0) {
+    document.title = `(${total}) Mercately`;
+  } else {
+    document.title = 'Mercately';
+  }
+}
+
+$(document).on('ready page:load', function() {
+  play();
 });

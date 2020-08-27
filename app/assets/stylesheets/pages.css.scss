@@ -161,10 +161,11 @@ $secondary-color: #00B4FF;
   margin-top: 25px;
 }
 
-/* Features*/
 .main-title {
   text-align: center;
 }
+
+/* Features*/
 
 .feature-img-holder {
   vertical-align: bottom;
@@ -173,6 +174,10 @@ $secondary-color: #00B4FF;
 
 .section-features {
   padding: 50px 0;
+}
+
+.section-features .main-title {
+  margin-bottom: 35px;
 }
 
 .feature-text-holder .title {

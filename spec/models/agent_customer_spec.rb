@@ -51,7 +51,8 @@ RSpec.describe AgentCustomer, type: :model do
           expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
             .with(
               [mobile_token.mobile_push_token],
-              "Nuevo chat asignado - #{customer.full_names}"
+              "Nuevo chat asignado - #{customer.full_names}",
+              customer.id
             )
 
           agent_customer.update(retailer_user_id: retailer_user2.id)
@@ -65,7 +66,8 @@ RSpec.describe AgentCustomer, type: :model do
           expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
             .with(
               [mobile_token.mobile_push_token],
-              "Nuevo chat asignado - #{customer.phone}"
+              "Nuevo chat asignado - #{customer.phone}",
+              customer.id
             )
 
           agent_customer.update(retailer_user_id: retailer_user2.id)
