@@ -1,5 +1,7 @@
 module MercadoLibreNotificationHelper
-  def self.broadcast_data(retailer, retailer_users, type, action, quantity)
+  def self.broadcast_data(*args)
+    retailer, retailer_users, type, action, quantity, object = args
+
     if type == 'questions'
       identifier = '#item__cookie_question'
       total = retailer.unread_questions.size
@@ -8,9 +10,22 @@ module MercadoLibreNotificationHelper
       total = retailer.unread_messages.size
     end
 
+    customer = object&.customer
     retailer_users.each do |ret_u|
-      redis.publish 'new_message_counter', {identifier: identifier, action: action, q: quantity, total:
-        total, room: ret_u.id}.to_json
+      redis.publish 'new_message_counter',
+        {
+          identifier: identifier,
+          action: action,
+          q: quantity,
+          total: total,
+          from: 'MercadoLibre',
+          message_text: object&.question,
+          customer_info: customer&.full_names.presence || customer&.meli_nickname,
+          execute_alert: action == 'add',
+          update_counter: false,
+          type: type == 'messages' ? 'chats' : type,
+          room: ret_u.id
+        }.to_json
     end
   end
 

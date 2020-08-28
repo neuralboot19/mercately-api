@@ -21,8 +21,16 @@ module FacebookNotificationHelper
       CustomerSerializer.new(customer)
     ).serializable_hash if customer.present?
     retailer_users.each do |ret_u|
-      redis.publish 'new_message_counter', {identifier: '.item__cookie_facebook_messages', total:
-        total, room: ret_u.id}.to_json
+      redis.publish 'new_message_counter', {
+        identifier: '.item__cookie_facebook_messages',
+        total: total,
+        from: 'Messenger',
+        message_text: message_info(message),
+        customer_info: customer&.full_names.presence || '',
+        execute_alert: message.present? ? !message.sent_from_mercately : false,
+        update_counter: message.blank? || message.sent_from_mercately == false,
+        room: ret_u.id
+      }.to_json
 
       if message.present?
         redis.publish 'message_facebook_chat', {facebook_message: serialized_message, room: ret_u.id}.to_json
@@ -53,5 +61,16 @@ module FacebookNotificationHelper
 
   def self.redis
     @redis ||= Redis.new()
+  end
+
+  def self.message_info(message)
+    return '' unless message.present?
+
+    return 'Archivo' if message.file_type == 'file'
+    return 'Imagen' if message.file_type == 'image'
+    return 'Video' if message.file_type == 'video'
+    return 'Audio' if ['audio', 'voice'].include?(message.file_type)
+    return 'Ubicación' if message.file_type == 'location'
+    message.text
   end
 end

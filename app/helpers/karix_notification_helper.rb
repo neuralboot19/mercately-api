@@ -31,6 +31,11 @@ module KarixNotificationHelper
                     {
                       identifier: '.item__cookie_whatsapp_messages',
                       total: total,
+                      from: 'WhatsApp',
+                      message_text: message_info(message),
+                      customer_info: customer&.notification_info,
+                      execute_alert: message.present? ? message.direction == 'inbound' : false,
+                      update_counter: message.blank? || message.direction == 'inbound',
                       room: ret_u.id
                     }.to_json
 
@@ -80,5 +85,17 @@ module KarixNotificationHelper
 
   def self.redis
     @redis ||= Redis.new()
+  end
+
+  def self.message_info(message)
+    return '' unless message.present?
+
+    return 'Archivo' if message.content_media_type == 'document'
+    return 'Imagen' if message.content_media_type == 'image'
+    return 'Video' if message.content_media_type == 'video'
+    return 'Audio' if ['audio', 'voice'].include?(message.content_media_type)
+    return 'Ubicación' if message.content_type == 'location'
+    return 'Contacto' if message.content_type == 'contact'
+    message.content_text
   end
 end

@@ -282,6 +282,13 @@ class Customer < ApplicationRecord
     eval_answers(answers, 'mid', message_uid)
   end
 
+  def notification_info
+    return full_names if full_names.present?
+    return whatsapp_name if whatsapp_name.present?
+
+    phone
+  end
+
   private
 
     def update_valid_customer
