@@ -41,9 +41,10 @@ class GupshupWhatsappMessageSerializer
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless %[image audio video file].include?(type)
 
-    message.try(:[], 'caption') ||
-    message.try(:[], 'filename') ||
-    message.try(:[], 'url') ||
+    next message.try(:[], 'caption') ||
+         message.try(:[], 'payload').try(:[], 'payload').try(:[],'caption') if %[image audio video].include?(type)
+    next message.try(:[], 'filename') ||
+         message.try(:[], 'payload').try(:[], 'payload').try(:[],'filename') if type == 'file'
     ''
   end
 
