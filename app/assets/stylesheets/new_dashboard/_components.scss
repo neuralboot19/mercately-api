@@ -1593,3 +1593,30 @@ i {
     position: absolute;
   }
 }
+
+.general-new-container {
+  padding-right: 2rem;
+  padding-left: 2rem;
+
+  &_card {
+    min-height: auto !important;
+    box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3) !important;
+    overflow: hidden;
+  }
+
+  &_header-title, &_sub-title {
+    font-family: 'Poppins-SemiBold';
+  }
+
+  &_sub {
+    color: #AAA;
+    font-size: 16px;
+    margin-top: 0;
+  }
+}
+
+.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
