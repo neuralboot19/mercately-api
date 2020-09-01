@@ -50,6 +50,7 @@ module PushNotificationable
 
     # Creado para aprovechar el eager loading
     def gather_admins(customer_retailer)
-       customer_retailer.retailer_users.select { |ru| ru.retailer_admin }
+       customer_retailer.retailer_users.select { |ru| ru.retailer_admin } |
+       customer_retailer.retailer_users.select { |ru| ru.retailer_supervisor }
     end
 end

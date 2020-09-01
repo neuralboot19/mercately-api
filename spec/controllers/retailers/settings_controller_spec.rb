@@ -38,7 +38,7 @@ RSpec.describe Retailers::SettingsController, type: :controller do
       expect {
         post :invite_team_member, params: { slug: retailer_user.retailer.slug, retailer_user: agent_invited }
       }.to change { RetailerUser.count }.by(1)
-      expect(RetailerUser.find_by_email('test@email.com').retailer_admin).to be(nil)
+      expect(RetailerUser.find_by_email('test@email.com').retailer_admin).to be(false)
     end
 
     it 'creates a new retailer user as admin with first name and last name' do
@@ -46,13 +46,29 @@ RSpec.describe Retailers::SettingsController, type: :controller do
         email: 'test@email.com',
         first_name: 'John',
         last_name: 'Wick',
-        retailer_admin: true
+        role: 'retailer_admin'
       }
 
       expect {
         post :invite_team_member, params: { slug: retailer_user.retailer.slug, retailer_user: admin_invited }
       }.to change { RetailerUser.count }.by(1)
       expect(RetailerUser.find_by_email('test@email.com').retailer_admin).to be(true)
+      expect(RetailerUser.find_by_email('test@email.com').retailer_supervisor).to be(false)
+    end
+
+    it 'creates a new retailer user as supervisor with first name and last name' do
+      admin_invited = {
+        email: 'test@email.com',
+        first_name: 'John',
+        last_name: 'Wick',
+        role: 'retailer_supervisor'
+      }
+
+      expect {
+        post :invite_team_member, params: { slug: retailer_user.retailer.slug, retailer_user: admin_invited }
+      }.to change { RetailerUser.count }.by(1)
+      expect(RetailerUser.find_by_email('test@email.com').retailer_supervisor).to be(true)
+      expect(RetailerUser.find_by_email('test@email.com').retailer_admin).to be(false)
     end
 
     it 'shows a notice with error if an exception occurs' do
@@ -73,14 +89,22 @@ RSpec.describe Retailers::SettingsController, type: :controller do
 
   describe '#set_admin_team_member' do
     it 'set the member as admin' do
-      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false )
+      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false, retailer_supervisor: false )
 
       post :set_admin_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
       expect(member.reload.retailer_admin).to eq(true)
     end
 
+    it 'set the supervisor as admin' do
+      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_supervisor: true )
+
+      post :set_admin_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+      expect(member.reload.retailer_admin).to eq(true)
+      expect(member.reload.retailer_supervisor).to eq(false)
+    end
+
     it 'redirects to dashboard if an exception occurs' do
-      allow_any_instance_of(RetailerUser).to receive(:update_attribute).and_return(false)
+      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
       member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false )
 
       post :set_admin_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
@@ -97,11 +121,49 @@ RSpec.describe Retailers::SettingsController, type: :controller do
 
       post :set_agent_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
       expect(member.reload.retailer_admin).to eq(false)
+      expect(member.reload.retailer_supervisor).to eq(false)
+    end
+
+    it 'set the supervisor as agent' do
+      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_supervisor: true )
+
+      post :set_agent_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+      expect(member.reload.retailer_admin).to eq(false)
+      expect(member.reload.retailer_supervisor).to eq(false)
     end
 
     it 'redirects to dashboard if an exception occurs' do
       member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: true )
-      allow_any_instance_of(RetailerUser).to receive(:update_attribute).and_return(false)
+      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
+
+      post :set_agent_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+
+      expect(response).to redirect_to(retailers_dashboard_path(retailer_user.retailer.slug))
+      expect(flash[:notice]).to be_present
+      expect(flash[:notice]).to match(/Error al actualizar usuario..*/)
+    end
+  end
+
+  describe '#set_supervisor_team_member' do
+    it 'set the admin as supervisor' do
+      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: true )
+
+      post :set_supervisor_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+      expect(member.reload.retailer_admin).to eq(false)
+      expect(member.reload.retailer_supervisor).to eq(true)
+    end
+
+    it 'set the agent as supervisor' do
+      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false, retailer_supervisor: false )
+
+      post :set_supervisor_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+      expect(member.reload.retailer_admin).to eq(false)
+      expect(member.reload.retailer_supervisor).to eq(true)
+    end
+
+    it 'redirects to dashboard if an exception occurs' do
+      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: true )
+      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
 
       post :set_agent_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
 

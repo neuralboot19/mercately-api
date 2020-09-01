@@ -124,6 +124,24 @@ RSpec.describe RetailerUser, type: :model do
     end
   end
 
+  describe '#supervisor?' do
+    subject(:retailer_user) { create(:retailer_user, :with_retailer, :supervisor) }
+
+    let(:retailer_user_agent) { create(:retailer_user, :with_retailer, :agent) }
+
+    context 'when the retailer user is a supervisor' do
+      it 'returns true' do
+        expect(retailer_user.supervisor?).to be true
+      end
+    end
+
+    context 'when the retailer user is not a supervisor' do
+      it 'returns false' do
+        expect(retailer_user_agent.supervisor?).to be false
+      end
+    end
+  end
+
   describe '#agent?' do
     subject(:retailer_user) { create(:retailer_user, :with_retailer, :admin) }
 

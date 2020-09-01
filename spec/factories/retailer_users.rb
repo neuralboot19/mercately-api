@@ -12,10 +12,17 @@ FactoryBot.define do
     end
 
     trait :admin do
+      retailer_supervisor { false }
       retailer_admin { true }
     end
 
+    trait :supervisor do
+      retailer_admin { false }
+      retailer_supervisor { true }
+    end
+
     trait :agent do
+      retailer_supervisor { false }
       retailer_admin { false }
     end
 

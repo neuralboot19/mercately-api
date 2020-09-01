@@ -379,7 +379,7 @@ class ChatMessages extends Component {
 
       if (pos !== -1) {
         if (clipboard.items) {
-          var file = clipboard.items[pos].getAsFile();  
+          var file = clipboard.items[pos].getAsFile();
         } else if (clipboard.files) {
           var file = clipboard.files[0];
         }
@@ -406,7 +406,17 @@ class ChatMessages extends Component {
     }
   }
 
+  overwriteStyle = () => {
+    return ENV['CURRENT_AGENT_ROLE'] === 'Supervisor' ? { height: '80vh'} : {}
+  }
+
+  canSendMessages = () => {
+    return ENV['CURRENT_AGENT_ROLE'] !== 'Supervisor';
+  }
+
   setFocus = () => {
+    if (!this.canSendMessages())
+      return true;
     document.getElementById("divMessage").focus();
   }
 
@@ -495,7 +505,7 @@ class ChatMessages extends Component {
             <img src={this.state.url} />
           </div>
         )}
-        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
+        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ this.divClasses(message) }>
@@ -518,24 +528,25 @@ class ChatMessages extends Component {
             </div>
             )
           : (
-            <div className="col-xs-12 chat-input">
-              <MessageForm
-                currentCustomer={this.props.currentCustomer}
-                handleSubmitMessage={this.handleSubmitMessage}
-                handleSubmitImg={this.handleSubmitImg}
-                toggleFastAnswers={this.toggleFastAnswers}
-                selectedFastAnswer={this.state.selectedFastAnswer}
-                toggleProducts={this.toggleProducts}
-                selectedProduct={this.state.selectedProduct}
-                removeSelectedProduct={this.removeSelectedProduct}
-                onMobile={this.props.onMobile}
-                toggleLoadImages={this.toggleLoadImages}
-                pasteImages={this.pasteImages}
-                removeSelectedFastAnswer={this.removeSelectedFastAnswer}
-                objectPresence={this.objectPresence}
-                toggleMap={this.toggleMap}
-              />
-            </div>
+            this.canSendMessages() &&
+              <div className="col-xs-12 chat-input">
+                <MessageForm
+                  currentCustomer={this.props.currentCustomer}
+                  handleSubmitMessage={this.handleSubmitMessage}
+                  handleSubmitImg={this.handleSubmitImg}
+                  toggleFastAnswers={this.toggleFastAnswers}
+                  selectedFastAnswer={this.state.selectedFastAnswer}
+                  toggleProducts={this.toggleProducts}
+                  selectedProduct={this.state.selectedProduct}
+                  removeSelectedProduct={this.removeSelectedProduct}
+                  onMobile={this.props.onMobile}
+                  toggleLoadImages={this.toggleLoadImages}
+                  pasteImages={this.pasteImages}
+                  removeSelectedFastAnswer={this.removeSelectedFastAnswer}
+                  objectPresence={this.objectPresence}
+                  toggleMap={this.toggleMap}
+                />
+              </div>
           )
         }
 
