@@ -1,0 +1,4 @@
+User-agent: Googlebot-Image
+Disallow: /
+
+Sitemap: http://www.mercately.com/sitemap.xml
