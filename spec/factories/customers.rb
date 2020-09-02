@@ -31,5 +31,9 @@ FactoryBot.define do
     trait :with_retailer_gupshup_integrated do
       association :retailer, factory: [:retailer, :gupshup_integrated]
     end
+
+    trait :able_to_start_bots do
+      allow_start_bots {true}
+    end
   end
 end

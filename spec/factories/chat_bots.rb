@@ -15,5 +15,9 @@ FactoryBot.define do
     trait :bot_enabled do
       enabled { true }
     end
+
+    trait :with_accented_trigger do
+      trigger { 'Hóla TÉST' }
+    end
   end
 end

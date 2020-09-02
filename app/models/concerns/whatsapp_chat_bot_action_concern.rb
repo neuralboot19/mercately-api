@@ -89,7 +89,7 @@ module WhatsappChatBotActionConcern
 
     def chat_bot_selection(text)
       chat_bots = retailer.chat_bots.enabled_ones
-      chat_bot = chat_bots.select { |cb| cb.trigger.strip.downcase == text.downcase }&.first.presence ||
+      chat_bot = chat_bots.select { |cb| I18n.transliterate(cb.trigger.strip.downcase) == I18n.transliterate(text.downcase) }&.first.presence ||
                  chat_bots.find_by_any_interaction(true)
 
       check_chat_bot_history(chat_bot) ? chat_bot : nil
@@ -114,17 +114,17 @@ module WhatsappChatBotActionConcern
       option = options.find_by_position(text_to_i)
       return option unless option.blank?
 
-      option = options.where('lower(text) = ?', text.downcase).first
+      option = options.select {|option| I18n.transliterate(option.text.downcase) == I18n.transliterate(text.downcase) }.first
       return option unless option.blank?
 
       splitted = text.split
-      split_words = splitted.map { |t| "%#{t}%" }
-      candidates = options.where('text ILIKE ANY (array[?])', split_words)
+      split_words = splitted.map { |t| I18n.transliterate(t.downcase) }
+      regex = Regexp.union(split_words)
+      candidates = options.select {|option| I18n.transliterate(option.text.downcase).match? regex }
       return candidates.first if candidates.present? && candidates.size == 1
 
       count_hash = {}
-      regex = /#{splitted.join('|')}/i
-      candidates.map { |c| count_hash[c.position] = c.text.scan(regex).size }
+      candidates.map { |c| count_hash[c.position] = I18n.transliterate(c.text.downcase).scan(regex).size }
       count_hash = count_hash.sort_by { |k, v| [-v, k] }
 
       option = options.find_by_position(count_hash.first[0]) if count_hash.present? &&

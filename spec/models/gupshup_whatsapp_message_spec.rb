@@ -59,6 +59,50 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
     end
   end
 
+  context 'bots execution' do
+    let(:chat_bot_option) {create(:chat_bot_option)}
+    let(:chat_bot_option_a) {create(:chat_bot_option, parent: chat_bot_option, position: 1, text: 'Cuentame más')}
+    let(:chat_bot_option_b) {create(:chat_bot_option, parent: chat_bot_option, position: 2, text: 'Quiero Volver atrás')}
+    let(:chat_bot_option_c) {create(:chat_bot_option, parent: chat_bot_option, position: 3, text: 'Volver volver atrás')}
+    let(:chat_bot) { create(:chat_bot, :bot_enabled, :with_accented_trigger, chat_bot_options: [chat_bot_option, chat_bot_option_a, chat_bot_option_b, chat_bot_option_c]) }
+    let(:retailer) { create(:retailer, :with_chat_bots, chat_bots: [chat_bot]) }
+    let(:customer) { create(:customer, :able_to_start_bots, retailer: retailer) }
+    let(:message) {
+      build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+    }
+    let(:answer_message) {
+      build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+    }
+
+    it 'triggers a chat bot ignoring accent marks' do
+      message.save!
+      expect(customer.active_bot).to eq(true)
+      expect(customer.chat_bot_option_id).to eq(chat_bot_option.id)
+    end
+
+    it 'selects an option by matching whole sentence ignoring accent marks' do
+      message.save!
+      answer_message.message_payload = {'type': 'text', 'text': 'quiero volver atras' }
+      answer_message.save!
+      expect(customer.chat_bot_option_id).to eq(chat_bot_option_b.id)
+    end
+
+    it 'rejects selection and stays in last valid option if more than one option has the same ranking' do
+      message.save!
+      answer_message.message_payload = {'type': 'text', 'text': 'atras' }
+      answer_message.save!
+      expect(customer.chat_bot_option_id).to be nil
+    end
+
+    it 'selects an option by matches count ranking' do
+      message.save!
+      answer_message.message_payload = {'type': 'text', 'text': 'atras volver' }
+      answer_message.save!
+      expect(customer.chat_bot_option_id).to eq(chat_bot_option_c.id)
+    end
+
+  end
+
   context 'set message type' do
     let(:message) { build(:gupshup_whatsapp_message) }
 
