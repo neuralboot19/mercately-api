@@ -41,7 +41,7 @@ module MercadoLibre
         message.update(question: message_info['text']['plain'])
       end
 
-      insert_notification(is_an_answer, action, total_unread)
+      insert_notification(is_an_answer, action, total_unread, message)
     end
 
     def answer_message(message)
@@ -67,11 +67,11 @@ module MercadoLibre
           (is_an_answer == false && order.customer.id != customer.id)
       end
 
-      def insert_notification(is_an_answer, action, total_unread)
+      def insert_notification(is_an_answer, action, total_unread, message)
         return if is_an_answer
 
         ml_helper = MercadoLibreNotificationHelper
-        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'messages', action, total_unread)
+        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'messages', action, total_unread, message)
       end
 
       def prepare_message_answer(message)

@@ -76,18 +76,28 @@ module Whatsapp::Gupshup::V1::Helpers
 
       total = retailer_user.retailer.gupshup_unread_whatsapp_messages(retailer_user).size
 
+      if @msg.is_a?(ActiveRecord::AssociationRelation)
+        customer ||= @msg.first.customer
+        message = @msg.first
+        execute = false
+      else
+        customer ||= @msg.customer
+        message = @msg
+        execute = true
+      end
+
       redis.publish 'new_message_counter',
                     {
                       identifier: '.item__cookie_whatsapp_messages',
                       total: total,
+                      from: 'WhatsApp',
+                      message_text: message_info(message),
+                      customer_info: customer&.notification_info,
+                      execute_alert: execute && message&.direction == 'inbound',
+                      update_counter: execute == false || message&.direction == 'inbound',
                       room: retailer_user.id
                     }.to_json
 
-      customer ||= if @msg.is_a?(ActiveRecord::AssociationRelation)
-                     @msg.first.customer
-                   else
-                     @msg.customer
-                   end
       serialized_customer = serialize_customer(customer)
       remove = customer.agent.present? ? (
         customer.persisted? &&
@@ -151,6 +161,18 @@ module Whatsapp::Gupshup::V1::Helpers
                       }.to_json
 
         notify_new_counter(retailer_user)
+      end
+
+      def message_info(message)
+        return '' unless message.present?
+
+        return 'Archivo' if message.type == 'file'
+        return 'Imagen' if message.type == 'image'
+        return 'Video' if message.type == 'video'
+        return 'Audio' if ['audio', 'voice'].include?(message.type)
+        return 'Ubicación' if message.type == 'location'
+        return 'Contacto' if message.type == 'contact'
+        message.message_payload['payload'].try(:[], 'payload').try(:[], 'text') || message.message_payload['text']
       end
   end
 end

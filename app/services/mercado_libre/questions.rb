@@ -38,7 +38,7 @@ module MercadoLibre
 
       if new_question
         ml_helper = MercadoLibreNotificationHelper
-        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'questions', 'add', 1)
+        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'questions', 'add', 1, question)
       end
     end
 

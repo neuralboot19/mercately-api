@@ -95,6 +95,21 @@
           showtoast("<%= notice %>")
           <% flash[:notice] = nil %>
         <% end %>
+
+        if ("Notification" in window) {
+          if (Notification.permission === 'default') {
+            Notification.requestPermission(function (permission) {
+              if (permission === 'granted') {
+                let options = {
+                  icon: '../../logo.png',
+                  silent: true
+                }
+
+                new Notification('Notificaciones activadas!', options);
+              }
+            });
+          }
+        }
       });
     </script>
     <% if ENV['ENVIRONMENT'] == 'production' %>
