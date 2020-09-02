@@ -140,4 +140,172 @@ RSpec.describe 'ChatBotsController', type: :request do
       end
     end
   end
+
+  describe 'POST #create' do
+    before do
+      sign_in retailer_user
+    end
+
+    context 'when chat-bot option has an attachment' do
+      context 'when creating a chat-bot' do
+        it 'creates a new chatbot with image option' do
+          chat_bot = {
+              name: Faker::Lorem.word,
+              trigger: Faker::Lorem.word,
+              failed_attempts: 0,
+              goodbye_message: Faker::Lorem.sentence,
+              any_interaction: false,
+              enabled: true,
+              chat_bot_options_attributes: {"0": {
+                  text: Faker::Lorem.sentence,
+                  answer: Faker::Lorem.sentence,
+                  file: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')
+              }
+              }
+          }
+          expect {
+            post retailers_chat_bots_path(retailer),
+                 params: {chat_bot: chat_bot}
+          }.to change(ChatBotOption, :count).by(1)
+          expect(flash[:notice]).to match('ChatBot creado con éxito.')
+          expect(ChatBotOption.last.file.attached?).to be(true)
+          expect(ChatBotOption.last.file.content_type).to eq('image/jpeg')
+          expect(response).to redirect_to("/retailers/#{retailer.slug}/chat_bots")
+        end
+
+        it 'creates a new chatbot with pdf option' do
+          chat_bot = {
+              name: Faker::Lorem.word,
+              trigger: Faker::Lorem.word,
+              failed_attempts: 0,
+              goodbye_message: Faker::Lorem.sentence,
+              any_interaction: false,
+              enabled: true,
+              chat_bot_options_attributes: {"0": {
+                  text: Faker::Lorem.sentence,
+                  answer: Faker::Lorem.sentence,
+                  file: fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')
+              }
+              }
+          }
+          expect {
+            post retailers_chat_bots_path(retailer),
+                 params: {chat_bot: chat_bot}
+          }.to change(ChatBotOption, :count).by(1)
+          expect(flash[:notice]).to match('ChatBot creado con éxito.')
+          expect(ChatBotOption.last.file.attached?).to be(true)
+          expect(ChatBotOption.last.file.content_type).to eq('application/pdf')
+          expect(response).to redirect_to("/retailers/#{retailer.slug}/chat_bots")
+        end
+      end
+
+      context 'chat-bot update' do
+        context 'chat-bot option creation' do
+          let(:chat_bot) { create(:chat_bot, retailer: retailer) }
+
+          it 'creates a new chat-bot option with image' do
+            chat_bot_params = {
+              chat_bot_options_attributes: {"0": {
+                text: Faker::Lorem.sentence,
+                answer: Faker::Lorem.sentence,
+                file: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')}
+              }
+            }
+            patch retailers_chat_bot_path(retailer, chat_bot), params: {chat_bot: chat_bot_params}
+
+            expect(flash[:notice]).to match('ChatBot actualizado con éxito.')
+
+            expect(ChatBotOption.active.last.file.attached?).to be(true)
+            expect(ChatBotOption.active.last.file.content_type).to eq('image/jpeg')
+          end
+
+          it 'creates a new chat-bot option with pdf' do
+            chat_bot_params = {
+              chat_bot_options_attributes: {"0": {
+                text: Faker::Lorem.sentence,
+                answer: Faker::Lorem.sentence,
+                file: fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')}
+              }
+            }
+            patch retailers_chat_bot_path(retailer, chat_bot), params: {chat_bot: chat_bot_params}
+
+            expect(flash[:notice]).to match('ChatBot actualizado con éxito.')
+
+            expect(ChatBotOption.last.file.attached?).to be(true)
+            expect(ChatBotOption.last.file.content_type).to eq('application/pdf')
+          end
+
+        end
+
+        context 'chat-bot option update' do
+          let(:chat_bot) { create(:chat_bot, retailer: retailer) }
+          let(:root_option) { create(:chat_bot_option, chat_bot: chat_bot, text: 'Root node') }
+
+          it 'updates a chat-bot option with image' do
+            chat_bot_params = {
+              chat_bot_options_attributes: {"0": {
+                id: root_option.id,
+                file: fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')}
+              }
+            }
+            patch retailers_chat_bot_path(retailer, chat_bot), params: {chat_bot: chat_bot_params}
+
+            expect(flash[:notice]).to match('ChatBot actualizado con éxito.')
+            expect(ChatBotOption.last.file.attached?).to be(true)
+            expect(ChatBotOption.last.file.content_type).to eq('image/jpeg')
+          end
+
+          it 'updates chat-bot option with pdf' do
+            chat_bot_params = {
+              chat_bot_options_attributes: {"0": {
+                id: root_option.id,
+                file: fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')}
+              }
+            }
+            patch retailers_chat_bot_path(retailer, chat_bot), params: {chat_bot: chat_bot_params}
+
+            expect(flash[:notice]).to match('ChatBot actualizado con éxito.')
+
+            expect(ChatBotOption.active.last.file.attached?).to be(true)
+            expect(ChatBotOption.active.last.file.content_type).to eq('application/pdf')
+          end
+          context 'chat-bot option media replacement' do
+            let(:chat_bot) { create(:chat_bot, retailer: retailer) }
+            let(:root_option) { create(:chat_bot_option, :with_image_file, chat_bot: chat_bot, text: 'Root node') }
+
+            it 'replaces a chat-bot option file' do
+              chat_bot_params = {
+                  chat_bot_options_attributes: {"0": {
+                      id: root_option.id,
+                      file: fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')
+                  }
+                  }
+              }
+              patch retailers_chat_bot_path(retailer, chat_bot),
+                    params: {chat_bot: chat_bot_params}
+
+              expect(flash[:notice]).to match('ChatBot actualizado con éxito.')
+
+              expect(ChatBotOption.active.last.file.attached?).to be(true)
+              expect(ChatBotOption.active.last.file.content_type).to eq('application/pdf')
+            end
+
+            it 'deletes a chat-bot option file' do
+              chat_bot_params = {
+                chat_bot_options_attributes: {"0": {
+                  id: root_option.id,
+                  file_deleted: true
+                  }
+                }
+              }
+              patch retailers_chat_bot_path(retailer, chat_bot), params: {chat_bot: chat_bot_params}
+
+              expect(flash[:notice]).to match('ChatBot actualizado con éxito.')
+              expect(ChatBotOption.active.last.file.attached?).to be(false)
+            end
+          end
+        end
+      end
+    end
+  end
 end
