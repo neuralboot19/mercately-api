@@ -24,7 +24,8 @@
         INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>",
         SLUG: "<%= current_retailer.slug %>",
         CURRENT_RETAILER_ID: "<%= current_retailer.id %>",
-        GOOGLE_API_KEY: "<%= ENV['GOOGLE_API_KEY'] %>"
+        GOOGLE_API_KEY: "<%= ENV['GOOGLE_API_KEY'] %>",
+        CURRENT_AGENT_ROLE: "<%= current_retailer_user.admin? ? 'Admin' : current_retailer_user.supervisor? ? 'Supervisor' : 'agent' %>"
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>

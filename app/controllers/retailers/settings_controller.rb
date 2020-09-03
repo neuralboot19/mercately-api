@@ -1,10 +1,10 @@
 class Retailers::SettingsController < RetailersController
   before_action :set_user, only: [:set_admin_team_member, :set_agent_team_member,
-                                  :reinvite_team_member, :remove_team_member,
-                                  :reactive_team_member]
+                                  :set_supervisor_team_member, :reinvite_team_member,
+                                  :remove_team_member, :reactive_team_member]
 
   def team
-    unless current_retailer_user.retailer_admin
+    unless current_retailer_user.admin? || current_retailer_user.supervisor?
       redirect_to root_path
       return
     end
@@ -18,7 +18,8 @@ class Retailers::SettingsController < RetailersController
       first_name: invitation_params[:first_name],
       last_name: invitation_params[:last_name],
       email: invitation_params[:email],
-      retailer_admin: invitation_params[:retailer_admin],
+      retailer_admin: invitation_params[:retailer_admin] || false,
+      retailer_supervisor: invitation_params[:retailer_supervisor] || false,
       retailer: current_retailer) do |u|
       u.skip_invitation = true
     end
@@ -35,7 +36,10 @@ class Retailers::SettingsController < RetailersController
   end
 
   def set_admin_team_member
-    if @user.update_attribute(:retailer_admin, true)
+    if @user.update_attributes(
+      retailer_admin: true,
+      retailer_supervisor: false,
+    )
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario actualizado con éxito.'
     else
@@ -45,7 +49,23 @@ class Retailers::SettingsController < RetailersController
   end
 
   def set_agent_team_member
-    if @user.update_attribute(:retailer_admin, false)
+    if @user.update_attributes(
+      retailer_admin: false,
+      retailer_supervisor: false
+    )
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Usuario actualizado con éxito.'
+    else
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Error al actualizar usuario.'
+    end
+  end
+
+  def set_supervisor_team_member
+    if @user.update_attributes(
+      retailer_admin: false,
+      retailer_supervisor: true
+    )
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario actualizado con éxito.'
     else
@@ -113,6 +133,17 @@ class Retailers::SettingsController < RetailersController
   end
 
   def invitation_params
-    params.require(:retailer_user).permit(:email, :first_name, :last_name, :retailer_admin)
+    params.require(:retailer_user)
+          .permit(
+            :email,
+            :first_name,
+            :last_name,
+            :role
+          ).tap do |param|
+            if param[:role].present?
+              role = param.delete(:role)
+              param[role.to_sym] = true
+            end
+          end
   end
 end

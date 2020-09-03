@@ -11,6 +11,10 @@ module Api::V1
       ru.admin?
     end
 
+    attribute :supervisor do |ru|
+      ru.supervisor?
+    end
+
     belongs_to :retailer
 
     attribute :retailer_integration do |ru|

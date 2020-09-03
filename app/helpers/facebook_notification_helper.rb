@@ -14,7 +14,7 @@ module FacebookNotificationHelper
       ).serializable_hash
     end
 
-    retailer_users = retailer_users | retailer.admins
+    retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
     customer = message&.customer || assigned_agent&.customer || customer
     serialized_customer = ActiveModelSerializers::Adapter::Json.new(
@@ -50,7 +50,8 @@ module FacebookNotificationHelper
           remove_only: (
             assigned_agent.persisted? &&
             assigned_agent.retailer_user_id != ret_u.id &&
-            ret_u.retailer_admin == false
+            ret_u.admin? == false &&
+            ret_u.supervisor? == false
           )
         })
       end

@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     post 'retailers/:slug/remove_team_member', to: 'retailers/settings#remove_team_member', as: :remove_team_member
     post 'retailers/:slug/set_admin_team_member', to: 'retailers/settings#set_admin_team_member', as: :set_admin_team_member
     post 'retailers/:slug/set_agent_team_member', to: 'retailers/settings#set_agent_team_member', as: :set_agent_team_member
+    post 'retailers/:slug/set_supervisor_team_member', to: 'retailers/settings#set_supervisor_team_member', as: :set_supervisor_team_member
     put 'retailers/:slug/reactive_team_member', to: 'retailers/settings#reactive_team_member', as: :reactive_team_member
     get 'retailers/:slug/api_key', to: 'retailers/settings#api_key', as: :api_key
     post 'retailers/:slug/generate_api_key', to: 'retailers/settings#generate_api_key', as: :generate_api_key

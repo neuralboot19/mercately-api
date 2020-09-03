@@ -8,7 +8,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   protect_from_forgery only: [:save_message]
 
   def index
-    customers = if current_retailer_user.admin?
+    customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
                   current_retailer.customers
                 elsif current_retailer_user.agent?
                   filtered_customers = current_retailer_user.customers
@@ -34,7 +34,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
             :tags
           ]
         ),
-        agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+        agents: agents,
         agent_list: current_retailer.team_agents,
         storage_id: current_retailer_user.storage_id,
         filter_tags: current_retailer.tags,
@@ -44,7 +44,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     else
       render status: 404, json: {
         message: 'Customers not found',
-        agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+        agents: agents,
         agent_list: current_retailer.team_agents,
         storage_id: current_retailer_user.storage_id,
         filter_tags: current_retailer.tags,
@@ -80,7 +80,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       if current_retailer.unlimited_account || current_retailer.positive_balance?
         render status: 200, json: {
           messages: @messages,
-          agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+          agents: agents,
           agent_list: current_retailer.team_agents,
           storage_id: current_retailer_user.storage_id,
           handle_message_events: @customer.handle_message_events?,
@@ -93,7 +93,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       else
         render status: 401, json: {
           messages: @messages,
-          agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+          agents: agents,
           agent_list: current_retailer.team_agents,
           storage_id: current_retailer_user.storage_id,
           handle_message_events: @customer.handle_message_events?,
@@ -214,7 +214,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     # y al agente asignado
     if @customer.agent.present?
       admins = current_retailer.retailer_users.where(retailer_admin: true).to_a
-      agents = [@customer.agent] | admins
+      supervisors = current_retailer.retailer_users.where(retailer_supervisor: true).to_a
+      agents = [@customer.agent] | admins | supervisors
     end
 
     case params.try(:[],:chat_service)
@@ -431,7 +432,14 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         messages = @customer.karix_whatsapp_messages
         # Aca se colocan en status read los mensajes inbound que no se hayan leido hasta el momento
         # pertenecientes al customer en cuestion
-        messages.where(direction: 'inbound').where.not(status: 'read').update_all(status: 'read')
+        messages.where(direction: 'inbound')
+                .where.not(status: 'read')
+
+        # for some reason if this filter is attached to the previous
+        # query is not working
+        messages = messages.where.not(status: 'failed')
+
+        messages.update_all(status: 'read')
         messages = messages.order(created_time: :desc).page(params[:page])
         return messages
       elsif current_retailer.gupshup_integrated?
@@ -439,7 +447,14 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         messages = @customer.gupshup_whatsapp_messages
         # Aca se colocan en status read los mensajes inbound que no se hayan leido hasta el momento
         # pertenecientes al customer en cuestion
-        messages.where(direction: 'inbound').where.not(status: :read).update_all(status: :read)
+        messages.where(direction: 'inbound')
+                .where.not(status: 'read')
+
+        # for some reason if this filter is attached to the previous
+        # query is not working
+        messages = messages.where.not(status: 'error')
+
+        messages.update_all(status: 'read')
         messages = messages.order(created_at: :desc).page(params[:page])
         return messages
       end
@@ -456,5 +471,12 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     def true?(text)
       return true if text === 'true' || text === true
       false
+    end
+
+    def agents
+      current_retailer_user.admin? ||
+      current_retailer_user.supervisor? ?
+        current_retailer.team_agents :
+        [current_retailer_user]
     end
 end

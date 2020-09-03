@@ -22,7 +22,7 @@ module KarixNotificationHelper
       KarixCustomerSerializer.new(customer)
     ).serializable_hash if customer
 
-    retailer_users = retailer_users | retailer.admins
+    retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
     retailer_users.each do |ret_u|
       total = retailer.karix_unread_whatsapp_messages(ret_u).size
@@ -51,7 +51,8 @@ module KarixNotificationHelper
         remove = customer.agent.present? ? (
           customer.persisted? &&
           customer&.agent&.id != ret_u.id &&
-          ret_u.retailer_admin == false
+          ret_u.admin? == false &&
+          ret_u.supervisor? == false
         ) : false
         customer_chat_args = {
           customer: serialized_customer,
@@ -66,7 +67,8 @@ module KarixNotificationHelper
           remove_only: (
             assigned_agent.persisted? &&
             assigned_agent.retailer_user_id != ret_u.id &&
-            ret_u.retailer_admin == false
+            ret_u.admin? == false &&
+            ret_u.supervisor? == false
           ),
           room: ret_u.id,
           recent_inbound_message_date: message&.customer&.recent_inbound_message_date

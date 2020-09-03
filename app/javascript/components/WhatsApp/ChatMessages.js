@@ -679,6 +679,8 @@ class ChatMessages extends Component {
   }
 
   setFocus = () => {
+    if (ENV['CURRENT_AGENT_ROLE'] === 'Supervisor')
+      return true;
     document.getElementById("divMessage").focus();
   }
 
@@ -742,6 +744,45 @@ class ChatMessages extends Component {
     )
   }
 
+  overwriteStyle = () => {
+    return ENV['CURRENT_AGENT_ROLE'] === 'Supervisor' ? { height: '80vh'} : {}
+  }
+
+  customerRemoved = () => {
+    return (
+      !this.props.removedCustomer ||
+      (
+        this.props.removedCustomer &&
+        this.props.currentCustomer !== this.props.removedCustomerId
+      )
+    );
+  }
+
+  canSendMessages = () => {
+    return (
+      this.props.currentCustomer != 0 &&
+      this.state.can_write &&
+      this.customerRemoved() &&
+      ENV['CURRENT_AGENT_ROLE'] !== 'Supervisor'
+    );
+  }
+
+  isChatClosed = () => {
+    return (
+      this.props.currentCustomer != 0 &&
+      !this.state.can_write &&
+      this.customerRemoved()
+    );
+  }
+
+  chatAlreadyAssigned = () => {
+    return (
+      this.props.currentCustomer != 0 &&
+      this.props.removedCustomer &&
+      this.props.currentCustomer == this.props.removedCustomerId
+    );
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -771,7 +812,7 @@ class ChatMessages extends Component {
             </div>
           </div>
         )}
-        { this.props.currentCustomer != 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+        { this.props.currentCustomer != 0 && this.customerRemoved() &&
           (<div className="top-chat-bar pl-10">
             <div className='assigned-to'>
               <small>Asignado a: </small>
@@ -806,7 +847,7 @@ class ChatMessages extends Component {
             <img src={this.state.url} />
           </div>
         )}
-        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
+        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
           {this.state.messages.map((message, index) => (
             <div key={index} className="message">
               <div className={ this.divClasses(message) } >
@@ -922,7 +963,7 @@ class ChatMessages extends Component {
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
 
-        { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId ?
+        { this.chatAlreadyAssigned() ?
           (
             <div className="col-xs-12">
               <p>Esta conversación ya ha sido asignada a otro usuario.</p>
@@ -936,13 +977,13 @@ class ChatMessages extends Component {
                 </div>
               )
               : (
-                this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) ?
+                this.isChatClosed() ?
                   (
                     <div className="col-xs-12">
                       <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={() => this.openModal() }   >plantilla</a>.</p>
                     </div>
                   ) : (
-                    this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+                    this.canSendMessages() &&
                       <div className="col-xs-12 chat-input">
                         <div className="text-input">
                           <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} tabIndex="0">
