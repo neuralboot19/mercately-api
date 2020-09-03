@@ -16,7 +16,7 @@ class PushNotification
           customer_id: @customer_id,
         },
       }
-      mobile_client.send_messages message
+      mobile_client.send_messages [message]
     rescue
       MobileToken.find_by_mobile_push_token(token)&.destroy
       next

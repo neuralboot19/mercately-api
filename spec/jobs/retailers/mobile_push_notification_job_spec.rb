@@ -22,7 +22,7 @@ RSpec.describe Retailers::MobilePushNotificationJob, type: :job do
   describe '#perform_now' do
     it 'sends a push notification' do
       expect_any_instance_of(Exponent::Push::Client).to receive(:send_messages).
-        with({body: body, sound: 'default', to: mobile_token.mobile_push_token, data: {customer_id: customer.id}})
+        with([{body: body, sound: 'default', to: mobile_token.mobile_push_token, data: {customer_id: customer.id}}])
 
       Retailers::MobilePushNotificationJob.perform_now(
         [mobile_token.mobile_push_token], body, customer.id
