@@ -1,6 +1,6 @@
 import React from "react";
 
-const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
+const ChatMessage = ({message, toggleImgModal, downloadFile, fileType, timeMessage}) => {
   var tag;
   switch (fileType(message.file_type)) {
     case 'image':
@@ -22,11 +22,11 @@ const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
             </div>
       break;
     case 'file':
-        tag = <p className="fs-15">
+        tag = <div className="fs-15">
                 <a href="" onClick={(e) => downloadFile(e, message.url, message.filename)}>
                   <i className="fas fa-file-download mr-8"></i>{message.filename || 'Descargar archivo'}
                 </a>
-              </p>
+              </div>
               {message.is_loading && (
                 <div class="lds-dual-ring"></div>
               )}
@@ -42,17 +42,24 @@ const ChatMessage = ({message, toggleImgModal, downloadFile, fileType}) => {
             </div>
       break;
     case 'location':
-      tag = <p className="fs-15">
+      tag = <div className="fs-15">
               <a href={message.url || message.text} target="_blank">
                 <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación
               </a>
-            </p>
+            </div>
       break;
     default:
-        tag = <p className={ message.sent_by_retailer == true && message.date_read ? 'read-message' : '' }>{message.text} {
-          message.sent_by_retailer == true && message.date_read && (
-              <i className="fas fa-check-double checks-mark"></i>
-          )}</p>
+        tag = <div>
+                {message.text}
+                <br />
+                <div className="f-right">
+                  {timeMessage(message)}
+                  {
+                  message.sent_by_retailer == true && message.date_read && (
+                    <i className="ml-7 fas fa-check-double checks-mark"></i>
+                  )}
+                </div>
+              </div>
   }
   return (tag)
 }

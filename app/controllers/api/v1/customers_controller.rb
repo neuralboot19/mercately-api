@@ -6,7 +6,7 @@ class Api::V1::CustomersController < Api::ApiController
   before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger]
 
   def index
-    customers = if current_retailer_user.admin?
+    customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
                   current_retailer.customers
                 elsif current_retailer_user.agent?
                   filtered_customers = current_retailer_user.customers
@@ -26,7 +26,7 @@ class Api::V1::CustomersController < Api::ApiController
           :tags
         ]
       ),
-      agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+      agents: agents,
       agent_list: current_retailer.team_agents,
       storage_id: current_retailer_user.storage_id,
       filter_tags: current_retailer.tags,
@@ -66,7 +66,7 @@ class Api::V1::CustomersController < Api::ApiController
     )
     render status: 200, json: {
       messages: serialize_facebook_messages.to_a.reverse,
-      agents: current_retailer_user.retailer_admin ? current_retailer.team_agents : [current_retailer_user],
+      agents: agents,
       storage_id: current_retailer_user.storage_id,
       agent_list: current_retailer.team_agents,
       total_pages: @messages.total_pages,
@@ -308,5 +308,12 @@ class Api::V1::CustomersController < Api::ApiController
         :country_id,
         :notes
       )
+    end
+
+    def agents
+      current_retailer_user.admin? ||
+      current_retailer_user.supervisor? ?
+        current_retailer.team_agents :
+        [current_retailer_user]
     end
 end

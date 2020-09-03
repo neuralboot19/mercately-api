@@ -82,7 +82,7 @@ class Retailer < ApplicationRecord
   def karix_unread_whatsapp_messages(retailer_user)
     messages = karix_whatsapp_messages.includes(:customer).where.not(status: 'read', account_uid: nil)
       .where(direction: 'inbound', customers: { retailer_id: id })
-    return messages if retailer_user.admin?
+    return messages if retailer_user.admin? || retailer_user.supervisor?
 
     customer_ids = messages.pluck(:customer_id).compact
     remove_customer_ids = AgentCustomer.where(customer_id: customer_ids).where.not(retailer_user_id: retailer_user.id)
@@ -95,7 +95,7 @@ class Retailer < ApplicationRecord
   def gupshup_unread_whatsapp_messages(retailer_user)
     messages = gupshup_whatsapp_messages.includes(:customer).where.not(status: 'read', whatsapp_message_id: nil)
       .where(direction: 'inbound', customers: { retailer_id: id })
-    return messages if retailer_user.admin?
+    return messages if retailer_user.admin? || retailer_user.supervisor?
     customer_ids = messages.pluck(:customer_id).compact
     remove_customer_ids = AgentCustomer.where(customer_id: customer_ids)
                                        .where.not(retailer_user_id: retailer_user.id)
@@ -131,11 +131,16 @@ class Retailer < ApplicationRecord
 
   def team_agents
     retailer_users.where(removed_from_team: false).where.not(invitation_accepted_at: nil) |
-      retailer_users.where(retailer_admin: true, invitation_token: nil)
+      retailer_users.where(retailer_admin: true, invitation_token: nil) |
+      retailer_users.where(retailer_supervisor: true, invitation_token: nil)
   end
 
   def admins
     retailer_users.where(retailer_admin: true)
+  end
+
+  def supervisors
+    retailer_users.where(retailer_supervisor: true)
   end
 
   def positive_balance?

@@ -22,7 +22,7 @@ module KarixNotificationHelper
       KarixCustomerSerializer.new(customer)
     ).serializable_hash if customer
 
-    retailer_users = retailer_users | retailer.admins
+    retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
     retailer_users.each do |ret_u|
       total = retailer.karix_unread_whatsapp_messages(ret_u).size
@@ -31,6 +31,11 @@ module KarixNotificationHelper
                     {
                       identifier: '.item__cookie_whatsapp_messages',
                       total: total,
+                      from: 'WhatsApp',
+                      message_text: message_info(message),
+                      customer_info: customer&.notification_info,
+                      execute_alert: message.present? ? message.direction == 'inbound' : false,
+                      update_counter: message.blank? || message.direction == 'inbound',
                       room: ret_u.id
                     }.to_json
 
@@ -46,7 +51,8 @@ module KarixNotificationHelper
         remove = customer.agent.present? ? (
           customer.persisted? &&
           customer&.agent&.id != ret_u.id &&
-          ret_u.retailer_admin == false
+          ret_u.admin? == false &&
+          ret_u.supervisor? == false
         ) : false
         customer_chat_args = {
           customer: serialized_customer,
@@ -61,7 +67,8 @@ module KarixNotificationHelper
           remove_only: (
             assigned_agent.persisted? &&
             assigned_agent.retailer_user_id != ret_u.id &&
-            ret_u.retailer_admin == false
+            ret_u.admin? == false &&
+            ret_u.supervisor? == false
           ),
           room: ret_u.id,
           recent_inbound_message_date: message&.customer&.recent_inbound_message_date
@@ -80,5 +87,17 @@ module KarixNotificationHelper
 
   def self.redis
     @redis ||= Redis.new()
+  end
+
+  def self.message_info(message)
+    return '' unless message.present?
+
+    return 'Archivo' if message.content_media_type == 'document'
+    return 'Imagen' if message.content_media_type == 'image'
+    return 'Video' if message.content_media_type == 'video'
+    return 'Audio' if ['audio', 'voice'].include?(message.content_media_type)
+    return 'Ubicación' if message.content_type == 'location'
+    return 'Contacto' if message.content_type == 'contact'
+    message.content_text
   end
 end

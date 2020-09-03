@@ -784,19 +784,20 @@
   padding: 5px 15px 5px 0;
 }
 
-.message div {
+.message .main-message-container {
   display: inline-block;
   vertical-align: top;
   max-width: 75%;
-}
-
-.message div p {
   background: #F1F0F0;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 400;
   margin: 0;
   padding: 6px 14px 6px 14px;
+
+  &.no-background {
+    background: unset !important;
+  }
 }
 
 i {
@@ -829,7 +830,7 @@ i {
   }
 }
 
-.message-by-retailer p {
+.message-by-retailer {
   background: #3d8bfc !important;
   color: #FFF;
 
@@ -858,6 +859,26 @@ i {
   a {
     color: #FFF;
   }
+
+  .caption {
+    background: #3d8bfc !important;
+    border-radius: 20px;
+    padding: 6px 14px 6px 14px;
+  }
+}
+
+.message-by-customer {
+  min-width: 35%;
+
+  .caption {
+    background: #F1F0F0;
+    border-radius: 20px;
+    padding: 6px 14px 6px 14px;
+  }
+
+  .img-holder {
+    text-align: left;
+  }
 }
 
 #bottomRef {
@@ -865,7 +886,7 @@ i {
 }
 
 .img-holder {
-  min-height: 200px;
+  text-align: right;
 
   .msg__img {
     max-height: 200px;
@@ -1295,13 +1316,6 @@ i {
 }
 
 .contact-card {
-  background-color: #F1F0F0;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 400;
-  margin: 0;
-  padding: 6px 14px 6px 14px;
-
   i {
     color: #3a71f1;
   }

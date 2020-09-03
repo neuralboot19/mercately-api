@@ -11,7 +11,7 @@ module Whatsapp::Gupshup::V1::Helpers
 
       retailer = @msg.retailer
       agents = @msg.customer.agent.present? ? [@msg.customer.agent] : retailer.retailer_users.to_a
-      retailer_users = agents | retailer.admins
+      retailer_users = agents | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ret_u|
         notify_update!(ret_u, serialized_message)
@@ -23,12 +23,13 @@ module Whatsapp::Gupshup::V1::Helpers
     def notify_agent!(*args)
       retailer, retailer_users, assigned_agent = args
 
-      retailer_users = retailer_users | retailer.admins
+      retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ret_u|
         remove = assigned_agent.persisted? &&
           assigned_agent.retailer_user_id != ret_u.id &&
-          ret_u.retailer_admin == false
+          ret_u.admin? == false &&
+          ret_u.supervisor? == false
 
         redis.publish 'customer_chat',
                       {
@@ -45,7 +46,7 @@ module Whatsapp::Gupshup::V1::Helpers
 
     def notify_messages!(retailer, retailer_users)
       serialized_message = JSON.parse(serialize_message)
-      retailer_users = retailer_users | retailer.admins
+      retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ret_u|
         notify_update!(ret_u, serialized_message)
@@ -58,7 +59,7 @@ module Whatsapp::Gupshup::V1::Helpers
 
     def notify_read!(retailer, retailer_users)
       serialized_message = JSON.parse(serialize_message)
-      retailer_users = retailer_users | retailer.admins
+      retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ret_u|
         notify_new_counter(ret_u)
@@ -76,23 +77,34 @@ module Whatsapp::Gupshup::V1::Helpers
 
       total = retailer_user.retailer.gupshup_unread_whatsapp_messages(retailer_user).size
 
+      if @msg.is_a?(ActiveRecord::AssociationRelation)
+        customer ||= @msg.first.customer
+        message = @msg.first
+        execute = false
+      else
+        customer ||= @msg.customer
+        message = @msg
+        execute = true
+      end
+
       redis.publish 'new_message_counter',
                     {
                       identifier: '.item__cookie_whatsapp_messages',
                       total: total,
+                      from: 'WhatsApp',
+                      message_text: message_info(message),
+                      customer_info: customer&.notification_info,
+                      execute_alert: execute && message&.direction == 'inbound',
+                      update_counter: execute == false || message&.direction == 'inbound',
                       room: retailer_user.id
                     }.to_json
 
-      customer ||= if @msg.is_a?(ActiveRecord::AssociationRelation)
-                     @msg.first.customer
-                   else
-                     @msg.customer
-                   end
       serialized_customer = serialize_customer(customer)
       remove = customer.agent.present? ? (
         customer.persisted? &&
         customer&.agent&.id != retailer_user.id &&
-        retailer_user.retailer_admin == false
+        retailer_user.admin? == false &&
+        retailer_user.supervisor? == false
       ) : false
       customer_chat_args = {
         customer: serialized_customer,
@@ -108,7 +120,7 @@ module Whatsapp::Gupshup::V1::Helpers
       retailer_users,
       customer = args
 
-      retailer_users = retailer_users | retailer.admins
+      retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ru|
         notify_new_counter(ru, customer)
@@ -151,6 +163,18 @@ module Whatsapp::Gupshup::V1::Helpers
                       }.to_json
 
         notify_new_counter(retailer_user)
+      end
+
+      def message_info(message)
+        return '' unless message.present?
+
+        return 'Archivo' if message.type == 'file'
+        return 'Imagen' if message.type == 'image'
+        return 'Video' if message.type == 'video'
+        return 'Audio' if ['audio', 'voice'].include?(message.type)
+        return 'Ubicación' if message.type == 'location'
+        return 'Contacto' if message.type == 'contact'
+        message.message_payload['payload'].try(:[], 'payload').try(:[], 'text') || message.message_payload['text']
       end
   end
 end

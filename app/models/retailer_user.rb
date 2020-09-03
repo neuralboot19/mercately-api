@@ -61,12 +61,16 @@ class RetailerUser < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def supervisor?
+    retailer_supervisor || false
+  end
+
   def admin?
-    retailer_admin
+    retailer_admin || false
   end
 
   def agent?
-    !retailer_admin
+    !retailer_admin && !retailer_supervisor
   end
 
   def customers

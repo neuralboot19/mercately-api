@@ -868,4 +868,30 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#notification_info' do
+    context 'when it has first name and/or last name' do
+      let(:customer) { create(:customer, first_name: 'Test', last_name: 'Test') }
+
+      it 'returns the full name' do
+        expect(customer.notification_info).to eq('Test Test')
+      end
+    end
+
+    context 'when it has whatsapp name' do
+      let(:customer) { create(:customer, first_name: nil, last_name: nil, whatsapp_name: 'Nickname') }
+
+      it 'returns the whatsapp name' do
+        expect(customer.notification_info).to eq('Nickname')
+      end
+    end
+
+    context 'when it only has phone number' do
+      let(:customer) { create(:customer, first_name: nil, last_name: nil, whatsapp_name: nil, phone: '+593987654321') }
+
+      it 'returns the phone number' do
+        expect(customer.notification_info).to eq(customer.phone)
+      end
+    end
+  end
 end

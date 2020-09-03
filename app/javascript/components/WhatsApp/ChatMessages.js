@@ -611,8 +611,12 @@ class ChatMessages extends Component {
   }
 
   divClasses = (message) => {
-    var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : '';
-    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) classes += 'video-audio';
+    var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : 'message-by-customer';
+    classes += ' main-message-container';
+    if (message.status == 'read' && message.content_type == 'text' && this.props.handleMessageEvents === true)
+      classes += ' read-message';
+    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) classes += ' video-audio no-background';
+    if (this.fileType(message.content_media_type) === 'image') classes += ' no-background';
     return classes;
   }
 
@@ -675,6 +679,8 @@ class ChatMessages extends Component {
   }
 
   setFocus = () => {
+    if (ENV['CURRENT_AGENT_ROLE'] === 'Supervisor')
+      return true;
     document.getElementById("divMessage").focus();
   }
 
@@ -732,6 +738,51 @@ class ChatMessages extends Component {
     });
   }
 
+  timeMessage = (message) => {
+    return (
+      <span className={message.direction == 'inbound' ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_time).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
+    )
+  }
+
+  overwriteStyle = () => {
+    return ENV['CURRENT_AGENT_ROLE'] === 'Supervisor' ? { height: '80vh'} : {}
+  }
+
+  customerRemoved = () => {
+    return (
+      !this.props.removedCustomer ||
+      (
+        this.props.removedCustomer &&
+        this.props.currentCustomer !== this.props.removedCustomerId
+      )
+    );
+  }
+
+  canSendMessages = () => {
+    return (
+      this.props.currentCustomer != 0 &&
+      this.state.can_write &&
+      this.customerRemoved() &&
+      ENV['CURRENT_AGENT_ROLE'] !== 'Supervisor'
+    );
+  }
+
+  isChatClosed = () => {
+    return (
+      this.props.currentCustomer != 0 &&
+      !this.state.can_write &&
+      this.customerRemoved()
+    );
+  }
+
+  chatAlreadyAssigned = () => {
+    return (
+      this.props.currentCustomer != 0 &&
+      this.props.removedCustomer &&
+      this.props.currentCustomer == this.props.removedCustomerId
+    );
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -761,7 +812,7 @@ class ChatMessages extends Component {
             </div>
           </div>
         )}
-        { this.props.currentCustomer != 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+        { this.props.currentCustomer != 0 && this.customerRemoved() &&
           (<div className="top-chat-bar pl-10">
             <div className='assigned-to'>
               <small>Asignado a: </small>
@@ -796,12 +847,12 @@ class ChatMessages extends Component {
             <img src={this.state.url} />
           </div>
         )}
-        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)}>
+        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
           {this.state.messages.map((message, index) => (
             <div key={index} className="message">
               <div className={ this.divClasses(message) } >
                 {message.replied_message &&
-                  <div className="replied-message">
+                  <div className="replied-message mb-10">
                     {message.replied_message.data.attributes.content_type == 'text' &&
                       <span className="text">{message.replied_message.data.attributes.content_text}</span>
                     }
@@ -820,20 +871,20 @@ class ChatMessages extends Component {
                       </video>
                     )}
                     {message.replied_message.data.attributes.content_type == 'location' &&
-                        (<p className="fs-15 no-back-color"><a href={`https://www.google.com/maps/place/${message.replied_message.data.attributes.content_location_latitude},${message.replied_message.data.attributes.content_location_longitude}`} target="_blank">
-                          <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></p>)}
+                        (<div className="fs-15 no-back-color"><a href={`https://www.google.com/maps/place/${message.replied_message.data.attributes.content_location_latitude},${message.replied_message.data.attributes.content_location_longitude}`} target="_blank">
+                          <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></div>)}
                     {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'document' && (
-                      <p className="fs-15 no-back-color"><a href="" onClick={(e) => this.downloadFile(e, message.replied_message.data.attributes.content_media_url, message.replied_message.data.attributes.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.replied_message.data.attributes.content_media_caption || 'Descargar archivo'}</a></p>
+                      <div className="fs-15 no-back-color"><a href="" onClick={(e) => this.downloadFile(e, message.replied_message.data.attributes.content_media_url, message.replied_message.data.attributes.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.replied_message.data.attributes.content_media_caption || 'Descargar archivo'}</a></div>
                     )}
                     {message.replied_message.data.attributes.content_type == 'contact' &&
                       message.replied_message.data.attributes.contacts_information.map(contact =>
                         <div className="contact-card w-100 mb-10 no-back-color">
-                          <i className="fas fa-user mr-8"></i><div className="w-100 mb-10">{contact.names.formatted_name}</div>
+                          <div className="w-100 mb-10"><i className="fas fa-user mr-8"></i>{contact.names.formatted_name}</div>
                           {contact.phones.map(ph =>
                             <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
                           )}
                           {contact.emails.map(em =>
-                            <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i><div>{em.email}</div></div>
+                            <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i>{em.email}</div>
                           )}
                           {contact.addresses.map(addrr =>
                             <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
@@ -847,13 +898,19 @@ class ChatMessages extends Component {
                   </div>
                 }
                 {message.content_type == 'text' &&
-                  <p className={message.status === 'read' && this.props.handleMessageEvents === true  ? 'read-message' : ''}>{message.content_text} {
-                    message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
-                      <i className={ `checks-mark fas fa-${
-                        message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double' : 'sync'))
-                      }`
-                      }></i>
-                  }</p>
+                  <div>
+                    {message.content_text}
+                    <br />
+                    <div className="f-right">
+                      {this.timeMessage(message)}
+                      {message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
+                        <i className={ `checks-mark ml-7 fas fa-${
+                          message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double read' : 'sync'))
+                        }`
+                        }></i>
+                      }
+                    </div>
+                  </div>
                 }
                 {message.content_type == 'media' && message.content_media_type == 'image' &&
                     (<div className="img-holder">
@@ -874,22 +931,22 @@ class ChatMessages extends Component {
                   </video>
                 )}
                 {message.content_type == 'location' &&
-                    (<p className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
-                      <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></p>)}
+                    (<div className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
+                      <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></div>)}
                 {message.content_type == 'media' && message.content_media_type == 'document' && (
-                  <p className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></p>
+                  <div className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></div>
                 )}
                 {message.content_media_caption && message.content_media_type !== 'document' &&
-                  (<p>{message.content_media_caption}</p>)}
+                  (<div className="caption">{message.content_media_caption}</div>)}
                 {message.content_type == 'contact' &&
                   message.contacts_information.map(contact =>
                     <div className="contact-card w-100 mb-10">
-                      <i className="fas fa-user mr-8"></i><div className="w-100 mb-10">{contact.names.formatted_name}</div>
+                      <div className="w-100 mb-10"><i className="fas fa-user mr-8"></i>{contact.names.formatted_name}</div>
                       {contact.phones.map(ph =>
                         <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
                       )}
                       {contact.emails.map(em =>
-                        <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i><div>{em.email}</div></div>
+                        <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i>{em.email}</div>
                       )}
                       {contact.addresses.map(addrr =>
                         <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
@@ -906,7 +963,7 @@ class ChatMessages extends Component {
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
 
-        { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId ?
+        { this.chatAlreadyAssigned() ?
           (
             <div className="col-xs-12">
               <p>Esta conversación ya ha sido asignada a otro usuario.</p>
@@ -920,13 +977,13 @@ class ChatMessages extends Component {
                 </div>
               )
               : (
-                this.props.currentCustomer != 0 && !this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) ?
+                this.isChatClosed() ?
                   (
                     <div className="col-xs-12">
                       <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={() => this.openModal() }   >plantilla</a>.</p>
                     </div>
                   ) : (
-                    this.props.currentCustomer != 0 && this.state.can_write && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+                    this.canSendMessages() &&
                       <div className="col-xs-12 chat-input">
                         <div className="text-input">
                           <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} tabIndex="0">
