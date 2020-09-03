@@ -1366,25 +1366,6 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
             expect(customer3.reload.unread_whatsapp_chat).to eq(true)
           end
         end
-
-        it 'includes assigned_agent if customer has an agent assigned' do
-          agent_retailer_user = create(:retailer_user, :agent, retailer: retailer)
-          AgentCustomer.create(retailer_user: agent_retailer_user, customer: customer2)
-
-          patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
-            params: {
-              chat_service: 'whatsapp'
-            }
-
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['customers'].count).to eq(1)
-          expect(body['customers'].first['assigned_agent']).to eq({
-            "id" => customer2.agent.id,
-            "email" => customer2.agent.email,
-            "full_name" => customer2.agent.full_name
-          })
-        end
       end
 
       context 'when mobile request' do
@@ -1430,26 +1411,6 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
             expect(response.code).to eq('200')
             expect(customer3.reload.unread_whatsapp_chat).to eq(true)
           end
-        end
-
-        it 'includes assigned_agent if customer has an agent assigned' do
-          agent_retailer_user = create(:retailer_user, :agent, retailer: retailer)
-          AgentCustomer.create(retailer_user: agent_retailer_user, customer: customer2)
-
-          patch "/api/v1/whatsapp_unread_chat/#{customer2.id}",
-                params: {
-                  chat_service: 'whatsapp'
-                },
-                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
-
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['customers'].count).to eq(1)
-          expect(body['customers'].first['assigned_agent']).to eq({
-            "id" => customer2.agent.id,
-            "email" => customer2.agent.email,
-            "full_name" => customer2.agent.full_name
-          })
         end
       end
     end

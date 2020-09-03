@@ -181,7 +181,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       @message.customer.update_attribute(:unread_whatsapp_chat, false)
       agents = @message.customer.agent.present? ? [@message.customer.agent] : current_retailer.retailer_users.to_a
       if current_retailer.karix_integrated?
-        KarixNotificationHelper.broadcast_data(current_retailer, agents)
+        KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, nil, @message.customer)
       elsif current_retailer.gupshup_integrated?
         @message = Whatsapp::Gupshup::V1::Helpers::Messages.new(@message).notify_read!(
           current_retailer,
@@ -250,22 +250,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       end
     end
 
-    render status: 200,
-           json: {
-            customers: [
-              @customer.as_json(
-                methods: [
-                  :unread_whatsapp_message?,
-                  :unread_message?,
-                  :recent_inbound_message_date,
-                  :assigned_agent,
-                  :last_whatsapp_message,
-                  :handle_message_events?,
-                  :unread_whatsapp_messages
-                ]
-              )
-            ]
-          }
+    render status: 200, json: { message: 'Successful' }
   end
 
   def send_bulk_files

@@ -894,4 +894,17 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#unread_messenger_messages' do
+    let(:customer) { create(:customer) }
+
+    before do
+      create_list(:facebook_message, 2, :inbound, customer: customer)
+      create_list(:facebook_message, 3, :inbound, customer: customer, date_read: Time.now)
+    end
+
+    it 'returns the total unread inbound messenger messages' do
+      expect(customer.unread_messenger_messages).to eq(2)
+    end
+  end
 end
