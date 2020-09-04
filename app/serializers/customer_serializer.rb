@@ -1,7 +1,7 @@
 class CustomerSerializer < ActiveModel::Serializer
   attributes :id, :first_name, :last_name, :psid, :email, :phone, :address, :city,
              :state, :zip_code, :id_number, :unread_whatsapp_chat, :tags, :unread_message?,
-             :recent_message_date, :last_messenger_message, :assigned_agent
+             :recent_message_date, :last_messenger_message, :assigned_agent, :unread_messenger_messages
 
   def unread_message?
     object.unread_message?
@@ -17,5 +17,9 @@ class CustomerSerializer < ActiveModel::Serializer
 
   def assigned_agent
     object.assigned_agent
+  end
+
+  def unread_messenger_messages
+    object.unread_messenger_messages
   end
 end

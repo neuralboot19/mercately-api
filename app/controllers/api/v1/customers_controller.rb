@@ -23,7 +23,8 @@ class Api::V1::CustomersController < Api::ApiController
           :unread_message?,
           :last_messenger_message,
           :assigned_agent,
-          :tags
+          :tags,
+          :unread_messenger_messages
         ]
       ),
       agents: agents,

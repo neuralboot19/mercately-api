@@ -36,7 +36,11 @@ class ChatListUser extends Component {
           {this.props.chatType === 'facebook' ? (
               customer['unread_message?'] === true &&
                 <div className="tooltip">
-                  <b className="item__cookie item__cookie_whatsapp_messages notification"></b>
+                  <b className="item__cookie item__cookie_whatsapp_messages notification">
+                    {customer.unread_messenger_messages > 0 &&
+                      customer.unread_messenger_messages
+                    }
+                  </b>
                 </div>
             ) : (
               (customer.unread_whatsapp_chat === true || customer.unread_whatsapp_messages > 0 || customer["unread_whatsapp_message?"] === true) &&
