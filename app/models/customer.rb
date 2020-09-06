@@ -131,6 +131,10 @@ class Customer < ApplicationRecord
     self.send(messages).unread.where(direction: 'inbound').count
   end
 
+  def unread_messenger_messages
+    facebook_messages.customer_unread.count
+  end
+
   def recent_inbound_message_date
     messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
 
