@@ -18,7 +18,11 @@ RSpec.describe Facebook::Api do
           'status': 'granted'
         },
         {
-          'permission': 'manage_pages',
+          'permission': 'pages_manage_metadata',
+          'status': 'granted'
+        },
+        {
+          'permission': 'pages_read_engagement',
           'status': 'granted'
         },
         {
@@ -53,8 +57,12 @@ RSpec.describe Facebook::Api do
           'status': 'granted'
         },
         {
-          'permission': 'manage_pages',
+          'permission': 'pages_manage_metadata',
           'status': 'declined'
+        },
+        {
+          'permission': 'pages_read_engagement',
+          'status': 'granted'
         },
         {
           'permission': 'pages_show_list',
@@ -88,8 +96,12 @@ RSpec.describe Facebook::Api do
           'status': 'declined'
         },
         {
-          'permission': 'manage_pages',
+          'permission': 'pages_manage_metadata',
           'status': 'declined'
+        },
+        {
+          'permission': 'pages_read_engagement',
+          'status': 'granted'
         },
         {
           'permission': 'pages_show_list',

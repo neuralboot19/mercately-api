@@ -15,7 +15,8 @@ module Facebook
       return { granted_permissions: false } if response['error']
 
       if connection_type == 'messenger'
-        messenger_permissions = ['email', 'pages_messaging', 'manage_pages', 'pages_show_list']
+        messenger_permissions = ['email', 'pages_messaging', 'pages_manage_metadata', 'pages_read_engagement',
+          'pages_show_list']
         granted_permissions = response['data'].any? { |d| messenger_permissions.include?(d['permission']) &&
           d['status'] == 'declined' }
       elsif connection_type == 'catalog'

@@ -14,9 +14,13 @@ RSpec.describe RetailerUser, type: :model do
         'status': 'granted'
       }.with_indifferent_access,
       {
-        'permission': 'manage_pages',
+        'permission': 'pages_manage_metadata',
         'status': 'granted'
       }.with_indifferent_access,
+      {
+        'permission': 'pages_read_engagement',
+        'status': 'granted'
+      },
       {
         'permission': 'pages_show_list',
         'status': 'granted'
