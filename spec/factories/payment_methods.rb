@@ -44,11 +44,11 @@ FactoryBot.define do
           'wallet': nil
         },
         'created': 1593542433,
-        'customer': 'cus_HYvc776Iy0LLbF',
+        'customer': 'cus_00000000000000',
         'livemode': false,
         'metadata': {},
         'type': 'card'
-      }
+      }.to_json
     }
   end
 end
