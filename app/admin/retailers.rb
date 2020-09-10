@@ -22,7 +22,8 @@ ActiveAdmin.register Retailer do
                 :allow_bots,
                 :gupshup_api_key,
                 :manage_team_assignment,
-                :show_stats
+                :show_stats,
+                :allow_voice_notes
 
   filter :name
   filter :slug
@@ -100,6 +101,7 @@ ActiveAdmin.register Retailer do
       row :allow_bots
       row :manage_team_assignment
       row :show_stats
+      row :allow_voice_notes
       row :created_at
       row :updated_at
     end
@@ -306,6 +308,7 @@ ActiveAdmin.register Retailer do
       f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'
       f.input :manage_team_assignment, label: 'Activar Asignación Automática'
       f.input :show_stats, label: 'Activar acceso total a estadísticas'
+      f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
     end
     f.actions
   end

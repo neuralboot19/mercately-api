@@ -39,7 +39,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         storage_id: current_retailer_user.storage_id,
         filter_tags: current_retailer.tags,
         total_customers: total_pages,
-        gupshup_integrated: current_retailer.gupshup_integrated?
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
       }
     else
       render status: 404, json: {
@@ -49,7 +50,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         storage_id: current_retailer_user.storage_id,
         filter_tags: current_retailer.tags,
         customers: [],
-        gupshup_integrated: current_retailer.gupshup_integrated?
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
       }
     end
   end
@@ -88,7 +90,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
           recent_inbound_message_date: @customer.recent_inbound_message_date,
           customer_id: @customer.id,
           filter_tags: current_retailer.tags,
-          gupshup_integrated: current_retailer.gupshup_integrated?
+          gupshup_integrated: current_retailer.gupshup_integrated?,
+          allow_send_voice: current_retailer.allow_voice_notes
         }
       else
         render status: 401, json: {
@@ -100,13 +103,15 @@ class Api::V1::KarixWhatsappController < Api::ApiController
           total_pages: total_pages,
           balance_error_info: balance_error,
           filter_tags: current_retailer.tags,
-          gupshup_integrated: current_retailer.gupshup_integrated?
+          gupshup_integrated: current_retailer.gupshup_integrated?,
+          allow_send_voice: current_retailer.allow_voice_notes
         }
       end
     else
       render status: 404, json: {
         message: 'Messages not found',
-        gupshup_integrated: current_retailer.gupshup_integrated?
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
       }
     end
   end

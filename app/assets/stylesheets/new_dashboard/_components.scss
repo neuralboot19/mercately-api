@@ -990,6 +990,20 @@ i {
     [contentEditable=true]:empty::before {
       content:attr(placeholder-text)
     }
+
+    .cancel-audio-counter {
+      color: #FF0000;
+    }
+
+    .send-audio-counter {
+      color: #27C170;
+    }
+
+    .time-audio-counter {
+      .fa-circle {
+        color: #FF0000;
+      }
+    }
   }
 }
 

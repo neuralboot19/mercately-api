@@ -64,7 +64,8 @@ const reducer = (state = initialState, action) => {
         agents: action.data.agents,
         storageId: action.data.storage_id,
         agent_list: action.data.agent_list,
-        filter_tags: action.data.filter_tags
+        filter_tags: action.data.filter_tags,
+        allowSendVoice: action.data.allow_send_voice
       }
     case 'SET_WHATSAPP_MESSAGES':
       var balance_error = { status: null, message: null };
@@ -84,7 +85,8 @@ const reducer = (state = initialState, action) => {
         errorSendMessageText: balance_error.message,
         recentInboundMessageDate: action.data.recent_inbound_message_date,
         customerId: action.data.customer_id,
-        filter_tags: action.data.filter_tags
+        filter_tags: action.data.filter_tags,
+        allowSendVoice: action.data.allow_send_voice
       }
     case 'SET_WHATSAPP_TEMPLATES':
       return {
