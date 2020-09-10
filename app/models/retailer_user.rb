@@ -83,7 +83,7 @@ class RetailerUser < ApplicationRecord
   end
 
   def self.connect_messenger?(permissions, connection_type)
-    permissions.any? { |p| p['permission'] == 'manage_pages' && p['status'] == 'granted' } &&
+    permissions.any? { |p| p['permission'] == 'pages_manage_metadata' && p['status'] == 'granted' } &&
       connection_type == 'messenger'
   end
 
