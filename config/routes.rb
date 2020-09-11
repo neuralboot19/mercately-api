@@ -53,6 +53,7 @@ Rails.application.routes.draw do
     scope '/:slug' do
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
       get 'business_config', to: 'pages#business_config', as: :business_config
+      get 'total_messages_stats', to: 'stats#total_messages_stats', as: :total_messages_stats
       resources :products do
         member do
           put 'reactive', to: 'products#reactive_product', as: :reactivate_product
@@ -106,6 +107,7 @@ Rails.application.routes.draw do
         post 'delete_chat_bot_option', to: 'chat_bots#delete_chat_bot_option', as: :delete_chat_bot_option
       end
       resources :team_assignments
+      resources :stats, only: :index
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

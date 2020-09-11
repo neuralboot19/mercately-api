@@ -43,5 +43,9 @@ FactoryBot.define do
     trait :with_chat_bots do
       allow_bots { true }
     end
+
+    trait :with_stats do
+      show_stats { true }
+    end
   end
 end

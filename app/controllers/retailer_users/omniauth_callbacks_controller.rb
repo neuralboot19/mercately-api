@@ -29,7 +29,7 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
 
   def messenger
     session['auth_connection_type'] = 'messenger'
-    scope = 'email,pages_messaging,manage_pages,pages_show_list'
+    scope = 'email,pages_messaging,pages_manage_metadata,pages_read_engagement,pages_show_list'
 
     redirect_to retailer_user_facebook_omniauth_authorize_path, flash: { scope: scope }
   end
@@ -37,7 +37,7 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
   def catalog
     session['auth_connection_type'] = 'catalog'
     scope = 'business_management,catalog_management'
-    scope += ',email,pages_messaging,manage_pages,pages_show_list' if
+    scope += ',email,pages_messaging,pages_manage_metadata,pages_read_engagement,pages_show_list' if
       current_retailer_user.retailer.facebook_retailer
 
     redirect_to retailer_user_facebook_omniauth_authorize_path, flash: { scope: scope }
@@ -53,8 +53,8 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
 
     def check_facebook_retailer(permissions, connection_type)
       if @retailer_user.retailer.facebook_retailer.nil? &&
-         permissions[:permissions].any? { |p| p['permission'] == 'manage_pages' && p['status'] == 'granted' } &&
-         connection_type == 'messenger'
+         permissions[:permissions].any? { |p| p['permission'] == 'pages_manage_metadata' &&
+          p['status'] == 'granted' } && connection_type == 'messenger'
         redirect_to root_path, notice: 'Ya existe una cuenta de Mercately con esta cuenta de Facebook'
         return true
       end

@@ -21,7 +21,8 @@ ActiveAdmin.register Retailer do
                 :int_charges,
                 :allow_bots,
                 :gupshup_api_key,
-                :manage_team_assignment
+                :manage_team_assignment,
+                :show_stats
 
   filter :name
   filter :slug
@@ -98,6 +99,7 @@ ActiveAdmin.register Retailer do
       row :int_charges
       row :allow_bots
       row :manage_team_assignment
+      row :show_stats
       row :created_at
       row :updated_at
     end
@@ -303,6 +305,7 @@ ActiveAdmin.register Retailer do
       f.input :int_charges, label: 'Hace pagos Internacionales'
       f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'
       f.input :manage_team_assignment, label: 'Activar Asignación Automática'
+      f.input :show_stats, label: 'Activar acceso total a estadísticas'
     end
     f.actions
   end

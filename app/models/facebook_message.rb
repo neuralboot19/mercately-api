@@ -16,6 +16,7 @@ class FacebookMessage < ApplicationRecord
   scope :customer_unread, -> { where(date_read: nil, sent_by_retailer: false) }
   scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
   scope :unread, -> { where(date_read: nil) }
+  scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
   attr_accessor :file_url
 

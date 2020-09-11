@@ -1,0 +1,22 @@
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid index">
+      <div class="row">
+        <div class="col-xs-12 col-md-6 mb-20">
+          <h1 class="d-inline index__title">Estadísticas</h1>
+          <div class="index__desc">
+            Estadísticas de tu negocio
+          </div>
+        </div>
+
+        <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer || current_retailer.meli_retailer %>
+          <div class="col-xs-12 mt-20">
+            <%= link_to retailers_total_messages_stats_path(current_retailer), class: 'no-style' do %>
+              <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Mensajería</span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
