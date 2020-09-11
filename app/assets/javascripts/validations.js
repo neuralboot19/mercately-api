@@ -152,6 +152,7 @@ function onlyUnique(value, index, self) {
 // Subscripcion del formulario a validaciones
 function validateForm(e, form) {
   e.preventDefault();
+  $(form).find('input[type="submit"]').attr('disabled', true);
 
   // checks es un arreglo de booleans que vigila si todas las validaciones pasaron
   checks = [];
@@ -205,7 +206,11 @@ function validateForm(e, form) {
   checks.push(validateAnyRequired(form));
   checks.push(validateUniqueness(form));
 
-  if (!checks.includes(false)) form.submit();
+  if (!checks.includes(false)) {
+    form.submit();
+  } else {
+    $(form).find('input[type="submit"]').removeAttr('disabled');
+  }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
