@@ -1,6 +1,7 @@
 .container-payment-plan {
   padding-right: 2rem;
   padding-left: 2rem;
+
   .stripe-element {
     display: inherit;
 
@@ -15,6 +16,7 @@
       margin: 0;
     }
   }
+
   &_card {
     min-height: auto !important;
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3) !important;
