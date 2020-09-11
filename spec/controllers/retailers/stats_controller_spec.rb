@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe 'StatsController', type: :request do
-  let(:retailer) { create(:retailer) }
-  let(:retailer_user) { create(:retailer_user, retailer: retailer) }
-
   describe '#index' do
+    let(:retailer) { create(:retailer) }
+    let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+
     context 'when the retailer is not logged in' do
       it 'redirects to login page' do
         get retailers_stats_path(retailer)
@@ -274,42 +274,6 @@ RSpec.describe 'StatsController', type: :request do
           expect(assigns(:ml_prospects)).to eq(2)
           expect(assigns(:ml_currents)).to eq(1)
         end
-      end
-    end
-  end
-
-  describe '#current_time_zone' do
-    before do
-      sign_in retailer_user
-    end
-
-    context 'when the requests comes from Argentina' do
-      it 'returns a timezone equal to Argentina to query the data' do
-        allow(Time).to receive(:now).and_return('2020-09-10 13:40:19 -0300'.to_time)
-
-        get retailers_total_messages_stats_path(retailer)
-
-        expect(Time.zone.name).to eq('Brasilia')
-      end
-    end
-
-    context 'when the requests comes from Venezuela' do
-      it 'returns a timezone equal to Venezuela to query the data' do
-        allow(Time).to receive(:now).and_return('2020-09-10 13:40:19 -0400'.to_time)
-
-        get retailers_total_messages_stats_path(retailer)
-
-        expect(Time.zone.name).to eq('Caracas')
-      end
-    end
-
-    context 'when the requests comes from Ecuador' do
-      it 'returns a timezone equal to Ecuador to query the data' do
-        allow(Time).to receive(:now).and_return('2020-09-10 13:40:19 -0500'.to_time)
-
-        get retailers_total_messages_stats_path(retailer)
-
-        expect(Time.zone.name).to eq('Bogota')
       end
     end
   end
