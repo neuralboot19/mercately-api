@@ -22,4 +22,23 @@ module CustomerHelper
   def retailer_selectable_tags(retailer)
     retailer.tags.map { |tag| [tag.tag, tag.id] }
   end
+
+  def agents_allowed
+    current_retailer_user.admin? ||
+    current_retailer_user.supervisor? ?
+      agent_names(current_retailer.team_agents) :
+      [[name(current_retailer_user), current_retailer_user.id]]
+  end
+
+  private
+
+  def agent_names(agents)
+    agents.map { |agent| [name(agent), agent.id] }
+  end
+
+  def name(user)
+    return "#{user.full_name} - #{user.email}" unless user.full_name.strip.empty?
+
+    user.email
+  end
 end
