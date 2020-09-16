@@ -84,7 +84,7 @@ module Whatsapp
           api_key: ENV['CLOUDINARY_API_KEY'],
           timestamp: timestamp,
           signature: Cloudinary::Utils.api_sign_request(params_to_sign, ENV['CLOUDINARY_API_SECRET']),
-          resource_type: resource_type == 'image' ? 'image' : 'raw'
+          resource_type: cloudinary_resource_type(resource_type)
         )
       end
 
@@ -131,6 +131,13 @@ module Whatsapp
         end
 
         message
+      end
+
+      def cloudinary_resource_type(resource_type)
+        return 'image' if resource_type == 'image'
+        return 'video' if ['audio', 'voice', 'video'].include?(resource_type)
+
+        'raw'
       end
     end
   end
