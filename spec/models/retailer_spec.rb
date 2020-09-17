@@ -172,18 +172,35 @@ RSpec.describe Retailer, type: :model do
   describe '#team_agents' do
     subject(:retailer) { create(:retailer) }
 
-    let!(:retailer_user_admin) { create(:retailer_user, :with_retailer, :admin, retailer: retailer) }
+    let!(:retailer_user_admin) do
+      create(:retailer_user, :with_retailer, :admin, retailer: retailer, invitation_token: nil)
+    end
 
     let!(:retailer_user_agent) do
-      create(:retailer_user, :with_retailer, :agent, retailer: retailer, invitation_accepted_at: Date.today)
+      create(:retailer_user, :with_retailer, :agent, retailer: retailer, invitation_accepted_at:
+        Date.today, invitation_token: nil)
+    end
+
+    let!(:retailer_user_supervisor) do
+      create(:retailer_user, :with_retailer, :supervisor, retailer: retailer, invitation_accepted_at:
+        Date.today, invitation_token: nil)
     end
 
     let!(:retailer_user_agent_two) do
-      create(:retailer_user, :with_retailer, :agent, retailer: retailer, invitation_accepted_at: Date.today, removed_from_team: true)
+      create(:retailer_user, :with_retailer, :agent, retailer: retailer, invitation_accepted_at:
+        Date.today, removed_from_team: true, invitation_token: nil)
+    end
+
+    let!(:retailer_user_admin_two) do
+      create(:retailer_user, :with_retailer, :admin, retailer: retailer, invitation_token: 'test-token')
+    end
+
+    let!(:retailer_user_supervisor_two) do
+      create(:retailer_user, :with_retailer, :supervisor, retailer: retailer, invitation_token: 'test-token1')
     end
 
     it 'returns the active retailer users belonging to the retailer' do
-      expect(retailer.team_agents.count).to eq(2)
+      expect(retailer.team_agents.count).to eq(3)
     end
   end
 

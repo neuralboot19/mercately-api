@@ -130,9 +130,7 @@ class Retailer < ApplicationRecord
   end
 
   def team_agents
-    retailer_users.where(removed_from_team: false).where.not(invitation_accepted_at: nil) |
-      retailer_users.where(retailer_admin: true, invitation_token: nil) |
-      retailer_users.where(retailer_supervisor: true, invitation_token: nil)
+    retailer_users.where(removed_from_team: false, invitation_token: nil)
   end
 
   def admins
