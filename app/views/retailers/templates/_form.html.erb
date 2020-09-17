@@ -14,20 +14,36 @@
               <%= f.label :answer, 'Contenido' %>
               <%= f.text_area :answer, placeholder: 'Texto de respuesta', class: 'input h-77' %>
             </div>
-            <div class="mb-8 my-16">
-              <%= f.label :answer, 'Imagen' %><br/>
-              <%= f.file_field :image, accept: 'image/jpg, image/jpeg, image/png', class: 'uploadedImages', onchange: "previewImage(this)" %><br/>
-              <label class='btn btn--cta' for="template_image">
-                <i class="fas fa-upload mr-5"></i>
-                Seleccionar imagen
-              </label><br/><br/>
-              <div id="preview-container-image" class="p-relative w-200 d-none">
-                <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeImage()"></i>
-                <img id="preview-template-image" class="w-200 h-200" />
+            <div class="row">
+              <div class="mb-8 my-16 col-xs-12 col-sm-6 p-0">
+                <%= f.label :answer, 'Imagen' %><br/>
+                <%= f.file_field :image, accept: 'image/jpg, image/jpeg, image/png', class: 'uploadedImages', onchange: "previewImage(this)" %><br/>
+                <label class='btn btn--cta' for="template_image">
+                  <i class="fas fa-upload mr-5"></i>
+                  Seleccionar imagen
+                </label><br/><br/>
+                <div id="preview-container-image" class="p-relative w-200 d-none">
+                  <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeImage()"></i>
+                  <img id="preview-template-image" class="w-200 h-200" />
+                </div>
+                <% if f.object.image.attached? %>
+                  <div id="current-template-image">
+                    <%= cl_image_tag("#{f.object.image.key}", width: 200, height: 200) %>
+                  </div>
+                <% end %>
               </div>
-              <% if f.object.image.attached? %>
-                <div id="current-template-image">
-                  <%= cl_image_tag("#{f.object.image.key}", width: 200, height: 200) %>
+              <% if @template.new_record? || @template.retailer_user_id %>
+                <div class="mb-8 my-16 col-xs-12 col-sm-6 p-0">
+                  <div class="d-inline-flex">
+                    <div>
+                      <%= f.check_box :global, { 'class': 'input custom-checkbox' } %>
+                    </div>
+                    <div>
+                      <%= f.label :global, 'Respuesta global?' %>
+                    </div>
+                  </div>
+                  <p class="note-archived"><i>Las respuestas globales pueden ser enviadas por todos los agentes.
+                  Las que no lo son, sólo pueden ser enviadas y modificadas por el agente que las creó.</i></p>
                 </div>
               <% end %>
             </div>
