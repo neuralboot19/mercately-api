@@ -65,17 +65,17 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   def messages
     @messages = customer_messages
     if @messages.present?
-      agents = @messages.first.customer.agent.present? ? [@messages.first.customer.agent] : current_retailer
+      agents_to_notify = @messages.first.customer.agent.present? ? [@messages.first.customer.agent] : current_retailer
         .retailer_users.to_a
 
       total_pages = @messages.total_pages
       if current_retailer.karix_integrated?
-        KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, nil, @customer)
+        KarixNotificationHelper.broadcast_data(current_retailer, agents_to_notify, nil, nil, @customer)
         @messages = serialize_karix_messages.to_a.reverse
       elsif current_retailer.gupshup_integrated?
         @messages = Whatsapp::Gupshup::V1::Helpers::Messages.new(@messages).notify_messages!(
           current_retailer,
-          agents
+          agents_to_notify
         ).reverse
       end
 
