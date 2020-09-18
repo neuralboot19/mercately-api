@@ -6,17 +6,12 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
   before_action :load_tags, only: [:new, :edit, :create, :update]
   before_action :save_new_tags, only: [:create, :update]
+  before_action :validate_permissions, only: [:show, :edit, :update, :destroy]
 
   def index
-    cus = Customer.eager_load(:orders_success).active.where(retailer_id: current_retailer.id)
+    @filter = build_ransack_query
+    @customers = @filter.result.page(params[:page])
 
-    @q = if params[:q]&.[](:s).blank?
-           cus.order(created_at: :desc).ransack(params[:q])
-         else
-           cus.ransack(params[:q])
-         end
-
-    @customers = @q.result.page(params[:page])
     ActiveRecord::Precounter.new(@customers).precount(:orders_pending, :orders_success, :orders_cancelled)
     @export_params = export_params
   end
@@ -96,7 +91,9 @@ class Retailers::CustomersController < RetailersController
         :notes,
         :send_for_opt_in,
         tag_ids: []
-      )
+      ).tap do |param|
+        param[:agent_id] = nil unless param[:agent_id].present?
+      end
     end
 
     def export_params
@@ -124,5 +121,58 @@ class Retailers::CustomersController < RetailersController
       end
 
       params[:customer][:tag_ids] = new_tag_ids.compact
+    end
+
+    def validate_permissions
+      return unless current_retailer_user.agent?
+      return if has_permissions?
+
+      flash[:notice] = "Disculpe, no posee permisos sobre el cliente #{@customer.full_names}"
+      redirect_to retailers_customers_path  params: {
+          slug: current_retailer.slug,
+          q: { agent_id: nil}
+        }
+    end
+
+    def has_permissions?
+      return true unless @customer.agent.present?
+      @customer.agent_customer.retailer_user_id == current_retailer_user.id
+    end
+
+    def agent_ids
+      # An agent is filtering by agent_id, so, will filter
+      # only by the current logged in agent
+      agent_filtering = current_retailer_user.agent? && params[:q]&.[](:agent_id).present?
+      return [current_retailer_user.id] if agent_filtering
+
+      # An agent is not filtering by agent_id, so, needed to
+      # the default filter to be prepared
+      agent_not_filtering = current_retailer_user.agent? && !params[:q]&.[](:agent_id).present?
+      return [current_retailer_user.id, nil] if agent_not_filtering
+
+      # An admin is filtering by agent_id
+      [params[:q]&.[](:agent_id)]
+    end
+
+    def filtering_by_agent?
+      current_retailer_user.agent? || params[:q]&.[](:agent_id).present?
+    end
+
+    def filtered_customers
+      customers = Customer.eager_load(:orders_success)
+                          .active
+                          .where(retailer_id: current_retailer.id)
+
+      customers = customers.left_outer_joins(:agent_customer)
+                           .where(agent_customers: {
+                             retailer_user_id: agent_ids
+                           }) if filtering_by_agent?
+
+      customers
+    end
+
+    def build_ransack_query
+      return filtered_customers.ransack(params[:q]) unless params[:q]&.[](:s).blank?
+      filtered_customers.order(created_at: :desc).ransack(params[:q])
     end
 end
