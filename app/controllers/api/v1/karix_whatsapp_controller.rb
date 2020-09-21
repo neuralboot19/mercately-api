@@ -39,7 +39,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         storage_id: current_retailer_user.storage_id,
         filter_tags: current_retailer.tags,
         total_customers: total_pages,
-        gupshup_integrated: current_retailer.gupshup_integrated?
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
       }
     else
       render status: 404, json: {
@@ -49,7 +50,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         storage_id: current_retailer_user.storage_id,
         filter_tags: current_retailer.tags,
         customers: [],
-        gupshup_integrated: current_retailer.gupshup_integrated?
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
       }
     end
   end
@@ -63,17 +65,17 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   def messages
     @messages = customer_messages
     if @messages.present?
-      agents = @messages.first.customer.agent.present? ? [@messages.first.customer.agent] : current_retailer
+      agents_to_notify = @messages.first.customer.agent.present? ? [@messages.first.customer.agent] : current_retailer
         .retailer_users.to_a
 
       total_pages = @messages.total_pages
       if current_retailer.karix_integrated?
-        KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, nil, @customer)
+        KarixNotificationHelper.broadcast_data(current_retailer, agents_to_notify, nil, nil, @customer)
         @messages = serialize_karix_messages.to_a.reverse
       elsif current_retailer.gupshup_integrated?
         @messages = Whatsapp::Gupshup::V1::Helpers::Messages.new(@messages).notify_messages!(
           current_retailer,
-          agents
+          agents_to_notify
         ).reverse
       end
 
@@ -88,7 +90,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
           recent_inbound_message_date: @customer.recent_inbound_message_date,
           customer_id: @customer.id,
           filter_tags: current_retailer.tags,
-          gupshup_integrated: current_retailer.gupshup_integrated?
+          gupshup_integrated: current_retailer.gupshup_integrated?,
+          allow_send_voice: current_retailer.allow_voice_notes
         }
       else
         render status: 401, json: {
@@ -100,13 +103,15 @@ class Api::V1::KarixWhatsappController < Api::ApiController
           total_pages: total_pages,
           balance_error_info: balance_error,
           filter_tags: current_retailer.tags,
-          gupshup_integrated: current_retailer.gupshup_integrated?
+          gupshup_integrated: current_retailer.gupshup_integrated?,
+          allow_send_voice: current_retailer.allow_voice_notes
         }
       end
     else
       render status: 404, json: {
         message: 'Messages not found',
-        gupshup_integrated: current_retailer.gupshup_integrated?
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
       }
     end
   end

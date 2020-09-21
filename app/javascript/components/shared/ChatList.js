@@ -405,7 +405,8 @@ function mapState(state) {
     customers: state.customers || [],
     total_customers: state.total_customers || 0,
     agents: state.agents || [],
-    filter_tags: state.filter_tags || []
+    filter_tags: state.filter_tags || [],
+    allowSendVoice: state.allowSendVoice
   };
 }
 

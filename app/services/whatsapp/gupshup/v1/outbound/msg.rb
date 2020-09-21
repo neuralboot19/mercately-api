@@ -124,12 +124,16 @@ module Whatsapp::Gupshup::V1
       end
 
       # Send Audio
-      def audio
-        raise StandardError.new('Faltaron parámetros') unless @options[:file_url].present?
+      def audio(data)
+        raise StandardError.new('Faltaron parámetros') unless data[:file_url].present?
+
+        index = data[:file_url].rindex('.')
+        url = data[:file_url][0, index]
+        url += '.aac'
 
         message = {
           'type': 'audio',
-          'url': @options[:file_url]
+          'url': url
         }.to_json
 
         bodyString = base_body
@@ -230,6 +234,8 @@ module Whatsapp::Gupshup::V1
       end
 
       def get_resource_type(uploaded_file)
+        return 'audio' if ['audio', 'voice'].include?(@options[:params][:type])
+
         content_type = MIME::Types.type_for(uploaded_file.tempfile.path).first.content_type
         return unless content_type.present?
         return 'image' if content_type.include?('image')
