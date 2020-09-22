@@ -2,6 +2,7 @@ class Retailers::ChatBotsController < RetailersController
   before_action :check_bots_access, except: :index
   before_action :check_ownership, except: [:index, :new, :create]
   before_action :set_chat_bot, except: [:index, :new, :create]
+  after_action :check_options_attachment, only: [:update]
 
   def index
     @chat_bots = current_retailer.chat_bots.page(params[:page])
@@ -87,6 +88,8 @@ class Retailers::ChatBotsController < RetailersController
           :text,
           :answer,
           :parent_id,
+          :file,
+          :file_deleted,
           chat_bot_actions_attributes: [
             :id,
             :retailer_user_id,
@@ -119,6 +122,15 @@ class Retailers::ChatBotsController < RetailersController
         format.json {
           render json: { status: status, message: message }
         }
+      end
+    end
+
+    def check_options_attachment
+      chat_bot_params[:chat_bot_options_attributes].each do |cbo_param|
+        next unless cbo_param[1][:id].present?
+
+        cbo = @chat_bot.chat_bot_options.find(cbo_param[1][:id])
+        cbo.file.purge if cbo.file.attached? && cbo_param[1][:file_deleted] == 'true' && !cbo_param[1][:file]
       end
     end
 end

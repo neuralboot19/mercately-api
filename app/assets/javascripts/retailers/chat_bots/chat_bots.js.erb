@@ -150,3 +150,47 @@ $(document).ready(function() {
     $(removedItem).find('.validate-unique').removeClass('validate-unique');
   });
 });
+
+function previewFile(input) {
+  if (input.files && input.files[0]) {
+    let reader = new FileReader();
+    reader.onload = function (e) {
+      if (input.files[0].size > 5000000) {
+        $('#preview-chat-bot-option-container-img').hide();
+        $('#preview-chat-bot-option-container-pdf').hide()
+        $('#chat_bot_chat_bot_options_attributes_0_file').val('')
+        $('#preview-chat-bot-option-error-msg').show();
+      } else {
+        $('#preview-chat-bot-option-error-msg').hide()
+        if (['image/jpg', 'image/jpeg', 'image/png'].includes(input.files[0].type)) {
+          $('#preview-chat-bot-option-file-img').attr('src', e.target.result);
+          $('#preview-chat-bot-option-container-img').show();
+          $('#preview-chat-bot-option-container-pdf').hide()
+        }
+        if (input.files[0].type === 'application/pdf') {
+          $('#preview-chat-bot-option-file-pdf span').html(input.files[0].name);
+          $('#preview-chat-bot-option-container-pdf').show()
+          $('#preview-chat-bot-option-container-img').hide()
+        }
+        $('#preview-chat-bot-option-container-file').show();
+        $('#current-chat-bot-option-container').hide();
+      }
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeFile() {
+  $('#chat_bot_chat_bot_options_attributes_0_file').val('');
+  $('#preview-chat-bot-option-container-img').hide();
+  $('#preview-chat-bot-option-container-pdf').hide();
+  $('#current-chat-bot-option-container').show();
+}
+
+function removeAttachedFile() {
+  $('#chat_bot_chat_bot_options_attributes_0_file_deleted').val(true)
+  $('#chat_bot_chat_bot_options_attributes_0_file').val('');
+  $('#preview-chat-bot-option-container-img').hide();
+  $('#preview-chat-bot-option-container-pdf').hide();
+  $('#current-chat-bot-option-container').hide();
+}

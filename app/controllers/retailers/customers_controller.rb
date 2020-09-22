@@ -20,7 +20,7 @@ class Retailers::CustomersController < RetailersController
     Customers::ExportCustomersJob.perform_later(current_retailer_user.retailer.id,
                                                 current_retailer_user.email,
                                                 export_params)
-    redirect_to(retailers_customers_path(current_retailer),
+    redirect_to(retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }),
                 notice: 'La exportación está en proceso, recibirá un mail cuando esté lista.')
   end
 
@@ -40,7 +40,7 @@ class Retailers::CustomersController < RetailersController
     @customer.retailer_id = @retailer.id
 
     if @customer.save
-      redirect_to retailers_customers_path(@retailer), notice: 'Cliente creado con éxito.'
+      redirect_to retailers_customers_path(@retailer, q: { 's': 'created_at desc' }), notice: 'Cliente creado con éxito.'
     else
       flash[:notice] = @customer.errors.full_messages.join(', ')
       render :new
@@ -49,7 +49,7 @@ class Retailers::CustomersController < RetailersController
 
   def update
     if @customer.update(customer_params)
-      redirect_to retailers_customers_path(@retailer), notice: 'Cliente actualizado con éxito.'
+      redirect_to retailers_customers_path(@retailer, q: { 's': 'created_at desc' }), notice: 'Cliente actualizado con éxito.'
     else
       flash[:notice] = @customer.errors.full_messages.join(', ')
       render :edit
@@ -91,9 +91,7 @@ class Retailers::CustomersController < RetailersController
         :notes,
         :send_for_opt_in,
         tag_ids: []
-      ).tap do |param|
-        param[:agent_id] = nil unless param[:agent_id].present?
-      end
+      )
     end
 
     def export_params
@@ -130,7 +128,7 @@ class Retailers::CustomersController < RetailersController
       flash[:notice] = "Disculpe, no posee permisos sobre el cliente #{@customer.full_names}"
       redirect_to retailers_customers_path  params: {
           slug: current_retailer.slug,
-          q: { agent_id: nil}
+          q: { 's': 'created_at desc' }
         }
     end
 

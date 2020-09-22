@@ -550,4 +550,44 @@ RSpec.describe KarixWhatsappMessage, type: :model do
       end
     end
   end
+
+  describe 'chat bots execution' do
+    let(:set_karix_messages_service) { Whatsapp::Karix::Messages.new }
+
+    before do
+      allow(set_karix_messages_service).to receive(:send_message).and_return(karix_response)
+      allow(Whatsapp::Karix::Messages).to receive(:new).and_return(set_karix_messages_service)
+    end
+
+    context 'chat bot options with media' do
+      let(:root_option) { create(:chat_bot_option, text: 'Root node') }
+      let(:chat_bot_option_image) {create(:chat_bot_option,  :with_image_file, parent: root_option, position: 1, text: '1 Image')}
+      let(:chat_bot_option_pdf) {create(:chat_bot_option, :with_pdf_file, parent: root_option, position: 2, text: '2 PDF')}
+      let(:chat_bot) { create(:chat_bot, :bot_enabled, :with_accented_trigger, chat_bot_options: [root_option, chat_bot_option_image, chat_bot_option_pdf], trigger: 'Estoy interesado en Mercately' ) }
+      let(:retailer) { create(:retailer, :karix_integrated, :with_chat_bots, chat_bots: [chat_bot]) }
+      let(:customer) { create(:customer, :able_to_start_bots, retailer: retailer) }
+      let(:message) do
+        build(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer, content_type: 'text',
+          content_text: 'Estoy interesado en Mercately')
+      end
+
+      let(:answer_message) do
+        build(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer, content_type: 'text')
+      end
+
+      it 'selects a chat bot option with image' do
+        message.save!
+        answer_message.content_text = '1'
+        answer_message.save!
+        expect(customer.chat_bot_option_id).to eq(chat_bot_option_image.id)
+      end
+
+      it 'selects a chat bot option with pdf' do
+        message.save!
+        answer_message.content_text = '2'
+        answer_message.save!
+        expect(customer.chat_bot_option_id).to eq(chat_bot_option_pdf.id)
+      end
+    end
+  end
 end
