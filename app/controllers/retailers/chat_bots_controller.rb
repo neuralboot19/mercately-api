@@ -74,6 +74,8 @@ class Retailers::ChatBotsController < RetailersController
   private
 
     def chat_bot_params
+      params[:chat_bot][:reactivate_after] = nil unless params[:chat_bot][:check_reactivate_after].present?
+
       params.require(:chat_bot).permit(
         :name,
         :trigger,
@@ -83,6 +85,7 @@ class Retailers::ChatBotsController < RetailersController
         :enabled,
         :error_message,
         :repeat_menu_on_failure,
+        :reactivate_after,
         chat_bot_options_attributes: [
           :id,
           :text,

@@ -718,4 +718,44 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       expect(body['tags'][0]['tag']).to eq('Prueba 1')
     end
   end
+
+  describe 'PUT #toggle_chat_bot' do
+    let(:customer) { create(:customer, :bot_active, retailer: retailer) }
+    let(:chat_bot) { create(:chat_bot, :bot_enabled, retailer: retailer, reactivate_after: 1) }
+    let(:root_option) { create(:chat_bot_option, chat_bot: chat_bot, text: 'Root node') }
+
+    it 'deactivate chatbot if active' do
+      expect(customer.active_bot).to eq(true)
+
+      put api_v1_toggle_chat_bot_path(customer.id)
+      expect(customer.reload.active_bot).to eq(false)
+    end
+
+    it 'activate the chatbot if inactive' do
+      customer.update(
+        active_bot: false,
+        allow_start_bots: false
+      )
+      expect(customer.allow_start_bots).to eq(false)
+      put api_v1_toggle_chat_bot_path(customer.id)
+
+      expect(customer.reload.allow_start_bots).to eq(true)
+    end
+
+    it 'send a whatsapp notification' do
+      expect_any_instance_of(Api::V1::CustomersController).to receive(:send_notification).with('whatsapp')
+      expect(customer.active_bot).to eq(true)
+      put api_v1_toggle_chat_bot_path(customer.id)
+    end
+
+    it 'renders customer data with a status ok' do
+      expect(customer.active_bot).to eq(true)
+      put api_v1_toggle_chat_bot_path(customer.id)
+
+      expect(response).to have_http_status(:ok)
+      body = JSON.parse(response.body)
+
+      expect(body['customer']['id']).to eq(customer.id)
+    end
+  end
 end

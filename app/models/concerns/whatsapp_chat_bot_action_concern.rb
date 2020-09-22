@@ -23,6 +23,8 @@ module WhatsappChatBotActionConcern
     end
 
     def manage_chat_bot
+      customer.deactivate_chat_bot! if chat_bot_out_of_time?
+
       text = @text.strip
       if customer.active_bot
         selected = match_option(text)
@@ -63,7 +65,7 @@ module WhatsappChatBotActionConcern
     def manage_failed_attempts
       chat_bot_option = customer.chat_bot_option
       if customer.failed_bot_attempts + 1 >= chat_bot_option.chat_bot.failed_attempts
-        customer.update(active_bot: false, chat_bot_option_id: nil, failed_bot_attempts: 0, allow_start_bots: false)
+        customer.deactivate_chat_bot!
         send_answer(chat_bot_option, false, true)
         return
       end
@@ -108,15 +110,26 @@ module WhatsappChatBotActionConcern
 
     def chat_bot_selection(text)
       chat_bots = retailer.chat_bots.enabled_ones
-      chat_bot = chat_bots.select { |cb| I18n.transliterate(cb.trigger.strip.downcase) == I18n.transliterate(text.downcase) }&.first.presence ||
-                 chat_bots.find_by_any_interaction(true)
+      chat_bot = chat_bots.select do |cb|
+        I18n.transliterate(cb.trigger.strip.downcase) == I18n.transliterate(text.downcase)
+      end&.first.presence || chat_bots.find_by_any_interaction(true)
 
       check_chat_bot_history(chat_bot) ? chat_bot : nil
     end
 
     def check_chat_bot_history(chat_bot)
       return false unless chat_bot.present?
-      return customer.allow_start_bots if customer.chat_bot_customers.where(chat_bot_id: chat_bot.id).exists?
+
+      interactions = customer.chat_bot_customers.where(chat_bot_id: chat_bot.id)
+
+      if interactions.present?
+        if time_to_reactivate?(interactions, chat_bot) || customer.allow_start_bots
+          customer.chat_bot_customers.create(chat_bot_id: chat_bot.id)
+          return true
+        else
+          return false
+        end
+      end
 
       customer.chat_bot_customers.create(chat_bot_id: chat_bot.id)
       true
@@ -191,7 +204,7 @@ module WhatsappChatBotActionConcern
 
     def exit_bot
       option = customer.chat_bot_option
-      customer.update(active_bot: false, chat_bot_option_id: nil, failed_bot_attempts: 0, allow_start_bots: false)
+      customer.deactivate_chat_bot!
       @sent_in_action = true
       send_answer(option, true)
     end
@@ -218,5 +231,24 @@ module WhatsappChatBotActionConcern
 
     def api
       Whatsapp::Karix::Api.new
+    end
+
+    def time_to_reactivate?(interactions, chat_bot)
+      return false unless chat_bot.reactivate_after.present?
+
+      if ((created_at - interactions.last.created_at) / 3600).to_i >= chat_bot.reactivate_after
+        customer.deactivate_chat_bot!
+        return true
+      end
+
+      false
+    end
+
+    def chat_bot_out_of_time?
+      before_last_message = customer.before_last_whatsapp_message
+      chat_bot = customer.chat_bot
+
+      chat_bot && chat_bot.reactivate_after.present? && before_last_message &&
+        (((created_at - before_last_message.created_at) / 3600).to_i >= chat_bot.reactivate_after)
     end
 end

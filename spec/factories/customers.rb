@@ -14,6 +14,8 @@ FactoryBot.define do
     zip_code { '170207' }
     meli_customer { nil }
     unread_messenger_chat { false }
+    active_bot { false }
+    chat_bot_option { nil }
 
     trait :from_ml do
       meli_nickname { meli_customer.nickname }
@@ -38,6 +40,10 @@ FactoryBot.define do
 
     trait :opted_in do
       whatsapp_opt_in { true }
+    end
+
+    trait :bot_active do
+      active_bot { true }
     end
   end
 end
