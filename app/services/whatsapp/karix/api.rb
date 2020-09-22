@@ -77,6 +77,7 @@ module Whatsapp
         }
 
         public_id = File.basename(file.original_filename) if resource_type == 'document'
+        public_id = public_id.strip.gsub(/[?&#%<>\\]/, '').gsub(/^\/|\/$/, '') if public_id.present?
 
         Cloudinary::Uploader.upload(
           file,
