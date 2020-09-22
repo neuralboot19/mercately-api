@@ -45,12 +45,12 @@ module WhatsappChatBotActionConcern
       return unless params[:message].present?
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(retailer, customer)
-      gws.send_message(type: 'text', params: params)
+      gws.send_message(type: params[:type], params: params)
     end
 
     def send_karix_notification(params)
       karix_helper = KarixNotificationHelper
-      response = karix_helper.ws_message_service.send_message(retailer, customer, params, 'text')
+      response = karix_helper.ws_message_service.send_message(retailer, customer, params, params[:type])
       return if response['error'].present?
 
       message = retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
@@ -80,8 +80,27 @@ module WhatsappChatBotActionConcern
 
     def send_answer(selected, get_out = false, error_exit = false)
       params = {
-        message: api.prepare_chat_bot_message(selected, get_out, error_exit)
+        message: api.prepare_chat_bot_message(selected, get_out, error_exit),
+        type: 'text'
       }
+
+      if selected.file.attached?
+        # For pdf attachments, send caption in another message
+        if selected.file.content_type == 'application/pdf'
+          service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
+          send(service, params)
+        end
+        params[:type] = 'file'
+        params[:content_type] = selected.file.content_type
+        params[:url] = selected.file_url
+        # Karix service sets PDF name based on caption param
+        if retailer.karix_integrated? && selected.file.content_type == 'application/pdf'
+          params[:caption] = selected.file.blob.filename.to_s
+        else
+          params[:caption] = params[:message]
+          params[:file_name] = selected.file.blob.filename.to_s
+        end
+      end
 
       service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
       send(service, params)

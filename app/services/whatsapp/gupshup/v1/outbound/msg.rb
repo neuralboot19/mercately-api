@@ -220,8 +220,8 @@ module Whatsapp::Gupshup::V1
           file_url = response['secure_url'] || response['url']
           file_caption = ''
         elsif @options[:params][:url].present?
-          resource_type = 'image'
-          file_name = ''
+          resource_type = @options[:params][:content_type].present? ? get_resource_from_content_type(@options[:params][:content_type]) :'image'
+          file_name = @options[:params][:file_name].present? ? @options[:params][:file_name] : ''
           file_url = @options[:params][:url]
           file_caption = @options[:params][:caption] || ''
         end
@@ -238,8 +238,12 @@ module Whatsapp::Gupshup::V1
 
         content_type = MIME::Types.type_for(uploaded_file.tempfile.path).first.content_type
         return unless content_type.present?
+        get_resource_from_content_type content_type
+      end
+
+      def get_resource_from_content_type(content_type)
         return 'image' if content_type.include?('image')
-        return 'document' if ['application/pdf', 'application/msword',
+        'document' if ['application/pdf', 'application/msword',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
       end
   end

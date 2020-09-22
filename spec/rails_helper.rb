@@ -95,3 +95,7 @@ VCR.configure do |c|
     match_requests_on: [:method, VCR.request_matchers.uri_without_param(:access_token)]
   }
 end
+
+FactoryBot::SyntaxRunner.class_eval do
+  include ActionDispatch::TestProcess
+end

@@ -59,6 +59,29 @@
                               <i class="validation-msg">&nbsp;</i>
                             </div>
                           </div>
+                          <div class="row w-100 mt-16">
+                            <div class="col-xs-12 mb-16">
+                              <%= cbo.file_field :file, class: 'uploadedImages', accept: 'image/jpg, image/jpeg, image/png, application/pdf', onchange: "previewFile(this)" %>
+                              <label class='btn btn--cta' for="chat_bot_chat_bot_options_attributes_0_file">
+                                <i class="fas fa-upload mr-5"></i>
+                                Agregar imagen o PDF
+                              </label><br/><br/>
+                              <div id="preview-chat-bot-option-container-img" class="p-relative w-200 d-none">
+                                <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeFile()"></i>
+                                <img id="preview-chat-bot-option-file-img" class="w-200 h-200" />
+                              </div>
+                              <div id="preview-chat-bot-option-container-pdf" class="p-relative w-200 d-none">
+                                <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeFile()"></i>
+                                <div id="preview-chat-bot-option-file-pdf" class="w-200 h-200">
+                                  <i class="fas fa-file-pdf ml-8 mr-8"></i>
+                                  <span class="c-secondary fs-14"> </span>
+                                </div>
+                              </div>
+                              <div id="preview-chat-bot-option-error-msg" class="p-relative w-200 d-none">
+                                <span class="c-red fs-14"> El archivo debe tener un tamaño menor a 5MB </span>
+                              </div>
+                            </div>
+                          </div>
                           <%= render partial: 'chat_bot_actions', locals: { chat_bot: @chat_bot, f: cbo } %>
                         <% end %>
                         <div class="btn-box col-xs-12">
