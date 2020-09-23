@@ -19,5 +19,13 @@ FactoryBot.define do
     trait :for_whatsapp do
       enable_for_whatsapp { true }
     end
+
+    trait :with_retailer_user do
+      association :retailer_user
+    end
+
+    trait :global_template do
+      global { true }
+    end
   end
 end

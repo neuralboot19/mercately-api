@@ -127,8 +127,8 @@ class Api::V1::CustomersController < Api::ApiController
 
   # Filtra las plantillas para messenger por titulo o respuesta
   def fast_answers_for_messenger
-    templates = current_retailer.templates.for_messenger.where('title ILIKE ?' \
-      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%").page(params[:page])
+    templates = current_retailer.templates.for_messenger.owned_and_filtered(params[:search], current_retailer_user.id)
+      .page(params[:page])
 
     serialized = Api::V1::TemplateSerializer.new(templates)
     render status: 200, json: { templates: serialized, total_pages: templates.total_pages }

@@ -1,10 +1,11 @@
 class Retailers::TemplatesController < RetailersController
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_template, only: [:show, :edit, :update, :destroy]
+  before_action :check_permissions, only: [:show, :edit, :update, :destroy]
 
   # GET /templates
   def index
-    @templates = current_retailer.templates.page(params[:page])
+    @templates = current_retailer.templates.owned(current_retailer_user.id).page(params[:page])
   end
 
   # GET /templates/1
@@ -23,6 +24,7 @@ class Retailers::TemplatesController < RetailersController
   # POST /templates
   def create
     @template = current_retailer.templates.new(template_params)
+    @template.retailer_user = current_retailer_user
 
     if @template.save
       redirect_to retailers_template_path(current_retailer, @template), notice:
@@ -50,16 +52,14 @@ class Retailers::TemplatesController < RetailersController
 
   # Filtra las plantillas para preguntas por titulo o respuesta
   def templates_for_questions
-    templates = current_retailer.templates.for_questions.where('title ILIKE ?' \
-      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%")
+    templates = current_retailer.templates.for_questions.owned_and_filtered(params[:search], current_retailer_user.id)
 
     render json: templates
   end
 
   # Filtra las plantillas para chats por titulo o respuesta
   def templates_for_chats
-    templates = current_retailer.templates.for_chats.where('title ILIKE ?' \
-      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%")
+    templates = current_retailer.templates.for_chats.owned_and_filtered(params[:search], current_retailer_user.id)
 
     render json: templates
   end
@@ -76,6 +76,13 @@ class Retailers::TemplatesController < RetailersController
       @template = Template.find_by(web_id: params[:id])
     end
 
+    def check_permissions
+      return unless @template.retailer_user_id && current_retailer_user.agent?
+      return if @template.retailer_user_id == current_retailer_user.id
+
+      redirect_to retailers_templates_path(current_retailer), notice: 'No tienes permisos sobre la respuesta'
+    end
+
     # Only allow a trusted parameter "white list" through.
     def template_params
       params.require(:template).permit(
@@ -85,7 +92,8 @@ class Retailers::TemplatesController < RetailersController
         :enable_for_chats,
         :enable_for_messenger,
         :enable_for_whatsapp,
-        :image
+        :image,
+        :global
       )
     end
 end

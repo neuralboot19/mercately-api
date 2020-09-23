@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_14_221947) do
+ActiveRecord::Schema.define(version: 2020_09_17_191704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -699,7 +699,10 @@ ActiveRecord::Schema.define(version: 2020_09_14_221947) do
     t.string "web_id"
     t.boolean "enable_for_messenger", default: false
     t.boolean "enable_for_whatsapp", default: false
+    t.bigint "retailer_user_id"
+    t.boolean "global", default: false
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_templates_on_retailer_user_id"
   end
 
   create_table "top_ups", force: :cascade do |t|

@@ -204,8 +204,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
   # Filtra las plantillas para whatsapp por titulo o respuesta
   def fast_answers_for_whatsapp
-    templates = current_retailer.templates.for_whatsapp.where('title ILIKE ?' \
-      ' OR answer ILIKE ?', "%#{params[:search]}%", "%#{params[:search]}%").page(params[:page])
+    templates = current_retailer.templates.for_whatsapp.owned_and_filtered(params[:search], current_retailer_user.id)
+      .page(params[:page])
 
     serialized = Api::V1::TemplateSerializer.new(templates)
     render status: 200, json: { templates: serialized, total_pages: templates.total_pages }

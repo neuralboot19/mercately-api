@@ -9,6 +9,7 @@ class RetailerUser < ApplicationRecord
   has_many :mobile_tokens, dependent: :destroy
   has_many :agent_teams, dependent: :destroy
   has_many :team_assignments, through: :agent_teams
+  has_many :templates
 
   validate :onboarding_status_format
   validates :agree_terms, presence: true

@@ -1233,82 +1233,229 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'GET #fast_answers_for_whatsapp' do
-    before do
-      create_list(:template, 3, :for_whatsapp, retailer: retailer)
-      create_list(:template, 2, :for_messenger, retailer: retailer)
-      create_list(:template, 2, :for_whatsapp, retailer: retailer, title: 'Texto de prueba')
-      create(:template, :for_whatsapp, retailer: retailer, answer: 'Contenido de prueba')
-    end
+    let(:another_retailer_user) { create(:retailer_user, :agent, retailer: retailer) }
+    let(:retailer_user_agent) { create(:retailer_user, :agent, retailer: retailer) }
 
     context 'when local request' do
-      it 'returns a whatsapp fast answers list' do
-        get api_v1_fast_answers_for_whatsapp_path
-        body = JSON.parse(response.body)
-
-        expect(response).to have_http_status(:ok)
-        expect(body['templates']['data'].count).to eq(6)
+      before do
+        sign_out retailer_user
+        sign_in retailer_user_agent
       end
 
-      it 'filters by title' do
-        get api_v1_fast_answers_for_whatsapp_path, params: { search: 'texto' }
-        body = JSON.parse(response.body)
+      context 'when the templates are global' do
+        before do
+          create_list(:template, 3, :for_whatsapp, :global_template, retailer: retailer, retailer_user: retailer_user)
+          create_list(:template, 3, :for_whatsapp, :global_template, retailer: retailer, retailer_user:
+            another_retailer_user)
+        end
 
-        expect(response).to have_http_status(:ok)
-        expect(body['templates']['data'].count).to eq(2)
-        expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+        it 'returns a whatsapp fast answers list to all agents' do
+          get api_v1_fast_answers_for_whatsapp_path
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(6)
+        end
       end
 
-      it 'filters by content' do
-        get api_v1_fast_answers_for_whatsapp_path, params: { search: 'contenido' }
-        body = JSON.parse(response.body)
+      context 'when the templates do not have retailer user associated' do
+        before do
+          create_list(:template, 3, :for_whatsapp, retailer: retailer)
+        end
 
-        expect(response).to have_http_status(:ok)
-        expect(body['templates']['data'].count).to eq(1)
-        expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+        it 'returns a whatsapp fast answers list to all agents' do
+          get api_v1_fast_answers_for_whatsapp_path
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(3)
+        end
+      end
+
+      context 'when search param is present' do
+        before do
+          create(:template, :for_whatsapp, retailer: retailer, title: 'Texto de prueba', answer: 'Anything')
+          create(:template, :for_whatsapp, retailer: retailer, title: 'Anything', answer: 'Contenido de prueba')
+          create(:template, :for_messenger, retailer: retailer, title: 'Texto de prueba', answer: 'Anything')
+          create(:template, :for_messenger, retailer: retailer, title: 'Anything', answer: 'Contenido de prueba')
+        end
+
+        it 'filters by title' do
+          get api_v1_fast_answers_for_whatsapp_path, params: { search: 'texto' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(1)
+          expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+        end
+
+        it 'filters by content' do
+          get api_v1_fast_answers_for_whatsapp_path, params: { search: 'contenido' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(1)
+          expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+        end
+      end
+
+      context 'when the templates are not global and they have retailer user associated' do
+        context 'when it is not the templates creator' do
+          before do
+            create_list(:template, 3, :for_whatsapp, retailer: retailer, retailer_user:
+              another_retailer_user)
+            create_list(:template, 4, :for_whatsapp, retailer: retailer, retailer_user: retailer_user)
+          end
+
+          it 'does not return any template' do
+            get api_v1_fast_answers_for_whatsapp_path
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['templates']['data'].count).to eq(0)
+          end
+        end
+
+        context 'when it is the templates creator' do
+          before do
+            create_list(:template, 3, :for_whatsapp, retailer: retailer, retailer_user:
+              another_retailer_user)
+            create_list(:template, 4, :for_whatsapp, retailer: retailer, retailer_user: retailer_user_agent)
+          end
+
+          it 'returns the templates belonging to it' do
+            get api_v1_fast_answers_for_whatsapp_path
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['templates']['data'].count).to eq(4)
+          end
+        end
       end
     end
 
     context 'when mobile request' do
+      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_agent) }
+
+      let(:header_email) { retailer_user_agent.email }
+      let(:header_device) { mobile_token.device }
+      let(:header_token) { mobile_token.generate! }
+
       before do
         sign_out retailer_user
       end
 
-      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
+      context 'when the templates are global' do
+        before do
+          create_list(:template, 3, :for_whatsapp, :global_template, retailer: retailer, retailer_user: retailer_user)
+          create_list(:template, 3, :for_whatsapp, :global_template, retailer: retailer, retailer_user:
+            another_retailer_user)
+        end
 
-      let(:header_email) { retailer_user.email }
-      let(:header_device) { mobile_token.device }
-      let(:header_token) { mobile_token.generate! }
+        it 'returns a whatsapp fast answers list to all agents' do
+          get api_v1_fast_answers_for_whatsapp_path, headers: {
+            'email': header_email,
+            'device': header_device,
+            'token': header_token
+          }
+          body = JSON.parse(response.body)
 
-      it 'returns a whatsapp fast answers list' do
-        get api_v1_fast_answers_for_whatsapp_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
-        body = JSON.parse(response.body)
-
-        expect(response).to have_http_status(:ok)
-        expect(body['templates']['data'].count).to eq(6)
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(6)
+        end
       end
 
-      it 'filters by title' do
-        get api_v1_fast_answers_for_whatsapp_path,
-            params: { search: 'texto' },
-            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+      context 'when the templates do not have retailer user associated' do
+        before do
+          create_list(:template, 3, :for_whatsapp, retailer: retailer)
+        end
 
-        body = JSON.parse(response.body)
+        it 'returns a whatsapp fast answers list to all agents' do
+          get api_v1_fast_answers_for_whatsapp_path, headers: {
+            'email': header_email,
+            'device': header_device,
+            'token': header_token
+          }
+          body = JSON.parse(response.body)
 
-        expect(response).to have_http_status(:ok)
-        expect(body['templates']['data'].count).to eq(2)
-        expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(3)
+        end
       end
 
-      it 'filters by content' do
-        get api_v1_fast_answers_for_whatsapp_path,
-            params: { search: 'contenido' },
-            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+      context 'when search param is present' do
+        before do
+          create(:template, :for_whatsapp, retailer: retailer, title: 'Texto de prueba', answer: 'Anything')
+          create(:template, :for_whatsapp, retailer: retailer, title: 'Anything', answer: 'Contenido de prueba')
+          create(:template, :for_messenger, retailer: retailer, title: 'Texto de prueba', answer: 'Anything')
+          create(:template, :for_messenger, retailer: retailer, title: 'Anything', answer: 'Contenido de prueba')
+        end
 
-        body = JSON.parse(response.body)
+        it 'filters by title' do
+          get api_v1_fast_answers_for_whatsapp_path,
+              params: { search: 'texto' },
+              headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
-        expect(response).to have_http_status(:ok)
-        expect(body['templates']['data'].count).to eq(1)
-        expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(1)
+          expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+        end
+
+        it 'filters by content' do
+          get api_v1_fast_answers_for_whatsapp_path,
+              params: { search: 'contenido' },
+              headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(1)
+          expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+        end
+      end
+
+      context 'when the templates are not global and they have retailer user associated' do
+        context 'when it is not the templates creator' do
+          before do
+            create_list(:template, 3, :for_whatsapp, retailer: retailer, retailer_user:
+              another_retailer_user)
+            create_list(:template, 4, :for_whatsapp, retailer: retailer, retailer_user: retailer_user)
+          end
+
+          it 'does not return any template' do
+            get api_v1_fast_answers_for_whatsapp_path, headers: {
+              'email': header_email,
+              'device': header_device,
+              'token': header_token
+            }
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['templates']['data'].count).to eq(0)
+          end
+        end
+
+        context 'when it is the templates creator' do
+          before do
+            create_list(:template, 3, :for_whatsapp, retailer: retailer, retailer_user:
+              another_retailer_user)
+            create_list(:template, 4, :for_whatsapp, retailer: retailer, retailer_user: retailer_user_agent)
+          end
+
+          it 'returns the templates belonging to it' do
+            get api_v1_fast_answers_for_whatsapp_path, headers: {
+              'email': header_email,
+              'device': header_device,
+              'token': header_token
+            }
+            body = JSON.parse(response.body)
+
+            expect(response).to have_http_status(:ok)
+            expect(body['templates']['data'].count).to eq(4)
+          end
+        end
       end
     end
   end
