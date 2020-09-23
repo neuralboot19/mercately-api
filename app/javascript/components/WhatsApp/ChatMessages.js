@@ -572,7 +572,7 @@ class ChatMessages extends Component {
     })
 
     if (allFilled) {
-      var message = this.state.auxTemplateSelected.join('');
+      var message = this.state.auxTemplateSelected.join('').replace(/(\r)/gm, "");
 
       this.handleSubmitWhatsAppMessage(null, message, true);
       this.cancelTemplate();

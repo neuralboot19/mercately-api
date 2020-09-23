@@ -1,6 +1,6 @@
 ActiveAdmin.register FacebookMessage do
   filter :facebook_retailer_retailer_name, as: :string, label: 'RETAILER NAME'
-  filter :retailer_user
+  filter :retailer_user, as: :searchable_select
 
   index do
     selectable_column
