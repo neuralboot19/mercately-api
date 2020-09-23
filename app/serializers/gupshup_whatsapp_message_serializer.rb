@@ -11,7 +11,7 @@ class GupshupWhatsappMessageSerializer
     message = object.message_payload
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     type = message.try(:[], 'type') if type.blank?
-    next 'text' if type == 'text'
+    next 'text' if ['text', 'quick_reply'].include?(type)
     next 'media' if %[image audio video file].include?(type)
     next 'location' if type == 'location'
     next 'contact' if type == 'contact'
@@ -20,7 +20,7 @@ class GupshupWhatsappMessageSerializer
   attribute :content_text do |object|
     message = object.message_payload
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
-    next '' unless type == 'text'
+    next '' unless ['text', 'quick_reply'].include?(type)
     message['payload'].try(:[], 'payload').try(:[], 'text') || message['text']
   end
 

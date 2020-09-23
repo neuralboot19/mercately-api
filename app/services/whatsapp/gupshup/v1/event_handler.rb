@@ -5,7 +5,7 @@ module Whatsapp::Gupshup::V1
       # Check direction
       @params = params
       gsw_type = @params['type']
-      direction = gsw_type == 'message' ? 'inbound' : 'message_event'
+      direction = ['message', 'quick_reply'].include?(gsw_type) ? 'inbound' : 'message_event'
 
       # Call direction method
       self.send(direction)
