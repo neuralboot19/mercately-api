@@ -31,4 +31,28 @@ module ApplicationHelper
       end
     }
   end
+
+  def meta_title
+    content_for?(:meta_title) ? content_for(:meta_title) : "Mercately"
+  end
+
+  def meta_description
+    content_for?(:meta_description) ? content_for(:meta_description) : "Mercately"
+  end
+
+  def og_type
+    content_for?(:og_type) ? content_for(:og_type) : ""
+  end
+
+  def og_title
+    content_for?(:og_title) ? content_for(:og_title) : ""
+  end
+
+  def og_url
+    content_for?(:og_url) ? content_for(:og_url) : ""
+  end
+
+  def og_image
+    content_for?(:og_image) ? content_for(:og_image) : ""
+  end
 end

@@ -11,19 +11,19 @@
             <% end %>
             <span class="post-entry-category">
               <a class="category-link" style="background:#36c942" href="#">
-                Sports
+                <%= doc.tags&.first %>
               </a>
             </span>
           </div>
           <div class="post-entry-content">
             <h3 class="post-entry-title">
               <%= link_to blog_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
-              <%=  doc['blogentry.blog_title']&.as_text() %>
+                <%=  doc['blogentry.blog_title'].as_text() %>
               <% end %>
             </h3>
             <div class="">
               <span class="post-entry-date"><i class="far fa-clock"></i>
-                <%= doc['blogentry.publish_date'].value.to_date %></span>
+                <%= doc['blogentry.publish_date']&.value&.to_date %></span>
             </div>
             <div class="content-post-entry-grid">
               <%= doc['blogentry.blog_previos_content']&.as_html(link_resolver())&.html_safe %>
