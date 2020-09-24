@@ -1,3 +1,11 @@
+<% content_for :meta_title, "#{@document['blogentry.meta_title']&.as_text()}" %>
+<% content_for :meta_description, @document['blogentry.meta_description']&.as_text() %>
+<% content_for :og_type, "#{@document['blogentry.og_type']&.as_text()}" %>
+<% content_for :og_title, @document['blogentry.og_title']&.as_text() %>
+<% content_for :og_url, "#{@document['blogentry.og_url']&.as_text()}" %>
+<% content_for :og_image, @document['blogentry.og_image']&.url %>
+
+
 <div class="inner-blog">
   <div class="inner-blog-landing-wrapper">
     <div class="inner-blog-landing" style="background-image: url(<%= @document['blogentry.blog_main_image'].url %>)">
@@ -5,7 +13,7 @@
     <div class="single_post_entry_content">
       <span class="meta-category-small">
         <a class="single-post-entry-category" href="#">
-          Sports
+          <%= @document.tags&.first %>
         </a>
       </span>
       <h1 class="single-post-title-main">

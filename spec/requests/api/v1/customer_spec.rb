@@ -403,37 +403,103 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
   end
 
   describe 'GET #fast_answers_for_messenger' do
+    let(:another_retailer_user) { create(:retailer_user, :agent, retailer: retailer) }
+    let(:retailer_user_agent) { create(:retailer_user, :agent, retailer: retailer) }
+
     before do
-      create_list(:template, 3, :for_messenger, retailer: retailer)
-      create_list(:template, 2, :for_whatsapp, retailer: retailer)
-      create_list(:template, 2, :for_messenger, retailer: retailer, title: 'Texto de prueba')
-      create(:template, :for_messenger, retailer: retailer, answer: 'Contenido de prueba')
+      sign_out retailer_user
+      sign_in retailer_user_agent
     end
 
-    it 'returns a messenger fast answers list' do
-      get api_v1_fast_answers_for_messenger_path
-      body = JSON.parse(response.body)
+    context 'when the templates are global' do
+      before do
+        create_list(:template, 3, :for_messenger, :global_template, retailer: retailer, retailer_user: retailer_user)
+        create_list(:template, 3, :for_messenger, :global_template, retailer: retailer, retailer_user:
+          another_retailer_user)
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['templates']['data'].count).to eq(6)
+      it 'returns a messenger fast answers list to all agents' do
+        get api_v1_fast_answers_for_messenger_path
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(6)
+      end
     end
 
-    it 'filters by title' do
-      get api_v1_fast_answers_for_messenger_path, params: { search: 'texto' }
-      body = JSON.parse(response.body)
+    context 'when the templates do not have retailer user associated' do
+      before do
+        create_list(:template, 3, :for_messenger, retailer: retailer)
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['templates']['data'].count).to eq(2)
-      expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+      it 'returns a messenger fast answers list to all agents' do
+        get api_v1_fast_answers_for_messenger_path
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(3)
+      end
     end
 
-    it 'filters by content' do
-      get api_v1_fast_answers_for_messenger_path, params: { search: 'contenido' }
-      body = JSON.parse(response.body)
+    context 'when search param is present' do
+      before do
+        create(:template, :for_messenger, retailer: retailer, title: 'Texto de prueba', answer: 'Anything')
+        create(:template, :for_messenger, retailer: retailer, title: 'Anything', answer: 'Contenido de prueba')
+        create(:template, :for_whatsapp, retailer: retailer, title: 'Texto de prueba', answer: 'Anything')
+        create(:template, :for_whatsapp, retailer: retailer, title: 'Anything', answer: 'Contenido de prueba')
+      end
 
-      expect(response).to have_http_status(:ok)
-      expect(body['templates']['data'].count).to eq(1)
-      expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+      it 'filters by title' do
+        get api_v1_fast_answers_for_messenger_path, params: { search: 'texto' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(1)
+        expect(body['templates']['data'][0]['attributes']['title']).to include('Texto')
+      end
+
+      it 'filters by content' do
+        get api_v1_fast_answers_for_messenger_path, params: { search: 'contenido' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(1)
+        expect(body['templates']['data'][0]['attributes']['answer']).to include('Contenido')
+      end
+    end
+
+    context 'when the templates are not global and they have retailer user associated' do
+      context 'when it is not the templates creator' do
+        before do
+          create_list(:template, 3, :for_messenger, retailer: retailer, retailer_user:
+            another_retailer_user)
+          create_list(:template, 4, :for_messenger, retailer: retailer, retailer_user: retailer_user)
+        end
+
+        it 'does not return any template' do
+          get api_v1_fast_answers_for_messenger_path
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(0)
+        end
+      end
+
+      context 'when it is the templates creator' do
+        before do
+          create_list(:template, 3, :for_messenger, retailer: retailer, retailer_user:
+            another_retailer_user)
+          create_list(:template, 4, :for_messenger, retailer: retailer, retailer_user: retailer_user_agent)
+        end
+
+        it 'returns the templates belonging to it' do
+          get api_v1_fast_answers_for_messenger_path
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(4)
+        end
+      end
     end
   end
 

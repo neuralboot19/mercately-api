@@ -1,6 +1,6 @@
 ActiveAdmin.register KarixWhatsappMessage do
-  filter :retailer
-  filter :retailer_user
+  filter :retailer, as: :searchable_select
+  filter :retailer_user, as: :searchable_select
 
   index do
     selectable_column

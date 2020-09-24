@@ -6,13 +6,8 @@
           <div id="" class="about-us-footer">
             <div class="">
               <span class=""></span>
-              <div class="footer-title">
-                <h2>Acerca de nosotros</h2>
-              </div>
               <div>
-                <p class="footer-description">
-                  Mauris mattis auctor cursus. Phasellus tellus tellus, imperdiet ut imperdiet eu, iaculis a sem imperdiet ut imperdiet.
-                </p>
+                <%= image_tag 'landing/white-logo.png', alt: 'Mercately logo', class:'blog-footer-logo' %>
                 <div class="footer-social-icons">
                   <ul class="footer-social-icons-list">
                     <li><a href="https://www.facebook.com/mercately/" class="facebook" target="_blank"><i class="fab fa-facebook"></i></a></li>
@@ -24,6 +19,18 @@
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="col-md-4">
+        </div>
+
+        <div class="col-md-4">
+          <ul class="link-list">
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="https://mercately.crunch.help/" target="_blank">Centro de Ayuda</a></li>
+            <li><%= link_to 'Términos y condiciones', terms_path %></li>
+            <li><%= link_to 'Política de privacidad', privacy_path %></li>
+          </ul>
         </div>
       </div>
     </div>

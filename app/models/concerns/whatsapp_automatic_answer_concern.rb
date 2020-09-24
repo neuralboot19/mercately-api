@@ -17,7 +17,7 @@ module WhatsappAutomaticAnswerConcern
         message: welcome_message.message
       }
 
-      service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
+      service = "send_automatic_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
       send(service, params)
     end
 
@@ -30,11 +30,11 @@ module WhatsappAutomaticAnswerConcern
         message: inactive_message.message
       }
 
-      service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
+      service = "send_automatic_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
       send(service, params)
     end
 
-    def send_karix_notification(params)
+    def send_automatic_karix_notification(params)
       karix_helper = KarixNotificationHelper
       response = karix_helper.ws_message_service.send_message(retailer, customer, params, 'text')
       return if response['error'].present?
@@ -46,7 +46,7 @@ module WhatsappAutomaticAnswerConcern
       karix_helper.broadcast_data(retailer, retailer.retailer_users.to_a, message)
     end
 
-    def send_gupshup_notification(params)
+    def send_automatic_gupshup_notification(params)
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(retailer, customer)
       gws.send_message(type: 'text', params: params)
     end
