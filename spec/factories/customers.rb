@@ -35,5 +35,9 @@ FactoryBot.define do
     trait :able_to_start_bots do
       allow_start_bots {true}
     end
+
+    trait :opted_in do
+      whatsapp_opt_in { true }
+    end
   end
 end
