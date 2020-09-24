@@ -154,15 +154,15 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
     end
 
     context 'when it is a message_event' do
-      let(:message) do
+      let!(:message) do
         create(:gupshup_whatsapp_message, customer: customer, retailer: retailer, gupshup_message_id:
           '5336429d-b867-4782-afc1-218aa4639bd3', status: 'sent')
       end
 
-      it 'updates an existing message' do
-        expect(message.status).to eq('sent')
-        described_class.new(retailer, customer).process_event!(message_event_response)
-        expect(message.reload.status).to eq('read')
+      it 'does not create a new gupshup message' do
+        expect {
+          described_class.new(retailer, customer).process_event!(message_event_response)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
       end
     end
   end
