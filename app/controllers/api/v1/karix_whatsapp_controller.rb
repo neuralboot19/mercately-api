@@ -418,33 +418,21 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     def customer_messages
       @customer.update_attribute(:unread_whatsapp_chat, false)
       if current_retailer.karix_integrated?
+        @customer.karix_whatsapp_messages.where(direction: 'inbound').where.not(status: ['read', 'failed'])
+          .update_all(status: 'read')
+
         # Aca se buscan todos los mensajes asociados al customer, tanto inbound como outbound
-        messages = @customer.karix_whatsapp_messages
-        # Aca se colocan en status read los mensajes inbound que no se hayan leido hasta el momento
-        # pertenecientes al customer en cuestion
-        messages.where(direction: 'inbound')
-                .where.not(status: 'read')
+        messages = @customer.karix_whatsapp_messages.where.not(status: 'failed')
 
-        # for some reason if this filter is attached to the previous
-        # query is not working
-        messages = messages.where.not(status: 'failed')
-
-        messages.update_all(status: 'read')
         messages = messages.order(created_time: :desc).page(params[:page])
         return messages
       elsif current_retailer.gupshup_integrated?
+        @customer.gupshup_whatsapp_messages.where(direction: 'inbound').where.not(status: ['read', 'error'])
+          .update_all(status: 'read')
+
         # Aca se buscan todos los mensajes asociados al customer, tanto inbound como outbound
-        messages = @customer.gupshup_whatsapp_messages
-        # Aca se colocan en status read los mensajes inbound que no se hayan leido hasta el momento
-        # pertenecientes al customer en cuestion
-        messages.where(direction: 'inbound')
-                .where.not(status: 'read')
+        messages = @customer.gupshup_whatsapp_messages.where.not(status: 'error')
 
-        # for some reason if this filter is attached to the previous
-        # query is not working
-        messages = messages.where.not(status: 'error')
-
-        messages.update_all(status: 'read')
         messages = messages.order(created_at: :desc).page(params[:page])
         return messages
       end

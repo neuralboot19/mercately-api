@@ -12,7 +12,10 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
   before do
     # Whatsapp messages for customer1 and customer2
-    create_list(:karix_whatsapp_message, 6, retailer: retailer, customer: customer1)
+    create_list(:karix_whatsapp_message, 2, :inbound, retailer: retailer, customer: customer1, status: 'received')
+    create_list(:karix_whatsapp_message, 2, :inbound, retailer: retailer, customer: customer1, status: 'read')
+    create_list(:karix_whatsapp_message, 2, :outbound, retailer: retailer, customer: customer1, status: 'delivered')
+    create_list(:karix_whatsapp_message, 2, :inbound, retailer: retailer, customer: customer1, status: 'failed')
     create_list(:karix_whatsapp_message, 6, retailer: retailer, customer: customer2)
 
     sign_in retailer_user
@@ -734,129 +737,224 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'GET #messages' do
-    context 'when local request' do
-      context 'when the customer selected has messages' do
-        context 'when the retailer has positive balance' do
-          it 'successfully response a 200 status' do
-            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
-            body = JSON.parse(response.body)
+    context 'when Karix integrated' do
+      context 'when local request' do
+        context 'when the customer selected has messages' do
+          context 'when the retailer has positive balance' do
+            it 'successfully response a 200 status' do
+              get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+              body = JSON.parse(response.body)
 
-            expect(response.code).to eq('200')
-            expect(body['messages'].count).to eq(6)
+              expect(response.code).to eq('200')
+              expect(body['messages'].count).to eq(6)
+            end
+          end
+
+          context 'when the retailer has an unlimited account' do
+            before do
+              retailer.update!(unlimited_account: true, ws_balance: 0.0)
+            end
+
+            it 'successfully response a 200 status' do
+              get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+              body = JSON.parse(response.body)
+
+              expect(response.code).to eq('200')
+              expect(body['messages'].count).to eq(6)
+            end
+          end
+
+          context 'when the retailer has not enough balance' do
+            it 'responses a 401 status' do
+              retailer.update_attributes(ws_balance: 0.0671)
+
+              get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+              body = JSON.parse(response.body)
+
+              expect(response.code).to eq('401')
+              expect(body['messages'].count).to eq(6)
+              expect(body['balance_error_info']['status']).to eq(401)
+              expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                                                  'por favor, contáctese con su agente de ventas para recargar su saldo')
+            end
           end
         end
 
-        context 'when the retailer has an unlimited account' do
-          before do
-            retailer.update!(unlimited_account: true, ws_balance: 0.0)
-          end
+        context 'when the customer selected does not have messages' do
+          let(:customer3) { create(:customer) }
 
-          it 'successfully response a 200 status' do
-            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+          it 'fails, response a 404 status' do
+            get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages"
             body = JSON.parse(response.body)
 
-            expect(response.code).to eq('200')
-            expect(body['messages'].count).to eq(6)
+            expect(response.code).to eq('404')
+            expect(body['message']).to eq('Messages not found')
           end
         end
 
-        context 'when the retailer has not enough balance' do
-          it 'responses a 401 status' do
-            retailer.update_attributes(ws_balance: 0.0671)
+        it 'marks as read only not failed or read inbound messages' do
+          total_unread = customer1.karix_whatsapp_messages.where.not(status: ['read', 'failed']).count
+          expect(total_unread).to eq(4)
 
-            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
-            body = JSON.parse(response.body)
+          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
+          body = JSON.parse(response.body)
 
-            expect(response.code).to eq('401')
-            expect(body['messages'].count).to eq(6)
-            expect(body['balance_error_info']['status']).to eq(401)
-            expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
-                                                                'por favor, contáctese con su agente de ventas para recargar su saldo')
-          end
+          expect(response.code).to eq('200')
+          expect(body['messages'].count).to eq(6)
+
+          total_unread = customer1.karix_whatsapp_messages.where.not(status: ['read', 'failed']).count
+          expect(total_unread).to eq(2)
         end
       end
 
-      context 'when the customer selected does not have messages' do
-        let(:customer3) { create(:customer) }
+      context 'when mobile request' do
+        before do
+          sign_out retailer_user
+        end
 
-        it 'fails, response a 404 status' do
-          get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages"
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
+
+        let(:header_email) { retailer_user.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        context 'when the customer selected has messages' do
+          context 'when the retailer has positive balance' do
+            it 'successfully response a 200 status' do
+              get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+              body = JSON.parse(response.body)
+
+              expect(response.code).to eq('200')
+              expect(body['messages'].count).to eq(6)
+            end
+          end
+
+          context 'when the retailer has an unlimited account' do
+            before do
+              retailer.update!(unlimited_account: true, ws_balance: 0.0)
+            end
+
+            it 'successfully response a 200 status' do
+              get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              body = JSON.parse(response.body)
+
+              expect(response.code).to eq('200')
+              expect(body['messages'].count).to eq(6)
+            end
+          end
+
+          context 'when the retailer has not enough balance' do
+            it 'responses a 401 status' do
+              retailer.update_attributes(ws_balance: 0.0671)
+
+              get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
+                  headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+              body = JSON.parse(response.body)
+
+              expect(response.code).to eq('401')
+              expect(body['messages'].count).to eq(6)
+              expect(body['balance_error_info']['status']).to eq(401)
+              expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
+                                                                  'por favor, contáctese con su agente de ventas para recargar su saldo')
+            end
+          end
+        end
+
+        context 'when the customer selected does not have messages' do
+          let(:customer3) { create(:customer) }
+
+          it 'fails, response a 404 status' do
+            get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages",
+                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
+            body = JSON.parse(response.body)
+
+            expect(response.code).to eq('404')
+            expect(body['message']).to eq('Messages not found')
+          end
+        end
+
+        it 'marks as read only not failed or read inbound messages' do
+          total_unread = customer1.karix_whatsapp_messages.where.not(status: ['read', 'failed']).count
+          expect(total_unread).to eq(4)
+
+          get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+
           body = JSON.parse(response.body)
 
-          expect(response.code).to eq('404')
-          expect(body['message']).to eq('Messages not found')
+          expect(response.code).to eq('200')
+          expect(body['messages'].count).to eq(6)
+
+          total_unread = customer1.karix_whatsapp_messages.where.not(status: ['read', 'failed']).count
+          expect(total_unread).to eq(2)
         end
       end
     end
 
-    context 'when mobile request' do
+    context 'when GupShup integrated' do
       before do
+        create_list(:gupshup_whatsapp_message, 2, :inbound, retailer: retailer_gupshup, customer: customer3, status:
+          'delivered')
+        create_list(:gupshup_whatsapp_message, 2, :inbound, retailer: retailer_gupshup, customer: customer3, status:
+          'read')
+        create_list(:gupshup_whatsapp_message, 2, :outbound, retailer: retailer_gupshup, customer: customer3, status:
+          'delivered')
+        create_list(:gupshup_whatsapp_message, 2, :inbound, retailer: retailer_gupshup, customer: customer3, status:
+          'error')
+
         sign_out retailer_user
       end
 
-      let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
-
-      let(:header_email) { retailer_user.email }
-      let(:header_device) { mobile_token.device }
-      let(:header_token) { mobile_token.generate! }
-
-      context 'when the customer selected has messages' do
-        context 'when the retailer has positive balance' do
-          it 'successfully response a 200 status' do
-            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
-                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
-            body = JSON.parse(response.body)
-
-            expect(response.code).to eq('200')
-            expect(body['messages'].count).to eq(6)
-          end
+      context 'when local request' do
+        before do
+          sign_in retailer_user_gupshup
         end
 
-        context 'when the retailer has an unlimited account' do
-          before do
-            retailer.update!(unlimited_account: true, ws_balance: 0.0)
-          end
+        it 'marks as read only not failed or read inbound messages' do
+          total_unread = customer3.gupshup_whatsapp_messages.where.not(status: ['read', 'error']).count
+          expect(total_unread).to eq(4)
 
-          it 'successfully response a 200 status' do
-            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
-                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+          get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages"
+          body = JSON.parse(response.body)
 
-            body = JSON.parse(response.body)
+          expect(response.code).to eq('200')
+          expect(body['messages'].count).to eq(6)
 
-            expect(response.code).to eq('200')
-            expect(body['messages'].count).to eq(6)
-          end
-        end
-
-        context 'when the retailer has not enough balance' do
-          it 'responses a 401 status' do
-            retailer.update_attributes(ws_balance: 0.0671)
-
-            get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
-                headers: { 'email': header_email, 'device': header_device, 'token': header_token }
-
-            body = JSON.parse(response.body)
-
-            expect(response.code).to eq('401')
-            expect(body['messages'].count).to eq(6)
-            expect(body['balance_error_info']['status']).to eq(401)
-            expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
-                                                                'por favor, contáctese con su agente de ventas para recargar su saldo')
-          end
+          total_unread = customer3.gupshup_whatsapp_messages.where.not(status: ['read', 'error']).count
+          expect(total_unread).to eq(2)
         end
       end
 
-      context 'when the customer selected does not have messages' do
-        let(:customer3) { create(:customer) }
+      context 'when mobile request' do
+        before do
+          sign_out retailer_user_gupshup
+        end
 
-        it 'fails, response a 404 status' do
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
+
+        let(:header_email) { retailer_user_gupshup.email }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        it 'marks as read only not failed or read inbound messages' do
+          total_unread = customer3.gupshup_whatsapp_messages.where.not(status: ['read', 'error']).count
+          expect(total_unread).to eq(4)
+
           get "/api/v1/karix_whatsapp_customers/#{customer3.id}/messages",
-              headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
           body = JSON.parse(response.body)
 
-          expect(response.code).to eq('404')
-          expect(body['message']).to eq('Messages not found')
+          expect(response.code).to eq('200')
+          expect(body['messages'].count).to eq(6)
+
+          total_unread = customer3.gupshup_whatsapp_messages.where.not(status: ['read', 'error']).count
+          expect(total_unread).to eq(2)
         end
       end
     end
