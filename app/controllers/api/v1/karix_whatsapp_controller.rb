@@ -272,6 +272,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       message: 'Notificación enviada',
       recent_inbound_message_date: @customer.recent_inbound_message_date
     }
+  rescue => e
+    Rails.logger.error(e)
+    render status: 400, json: {message: "Faltaron parámetros"}
   end
 
   private

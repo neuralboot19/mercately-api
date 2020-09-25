@@ -1562,4 +1562,100 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
     end
   end
+
+  describe 'POST #send_bulk_files' do
+    let(:ok_net_response) { Net::HTTPOK.new(1.0, '200', 'OK') }
+    let(:ok_body_response) do
+      {
+        status: 'submitted',
+        messageId: 'ee4a68a0-1203-4c85-8dc3-49d0b3226a35'
+      }.to_json
+    end
+
+    context 'when mobile request' do
+      context 'when the retailer is gupshup integrated' do
+        let(:header_email) { retailer_user_gupshup.email }
+        let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
+        let(:header_device) { mobile_token.device }
+        let(:header_token) { mobile_token.generate! }
+
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(ok_net_response)
+            allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+            post "/api/v1/karix_whatsapp_send_bulk_files/#{customer3.id}",
+              params: {
+                url: 'https://res.cloudinary.com/hs5vmn5xd/image/upload/v1601084668/fgloe3nljoxidzmcou6v.jpg',
+                template: false,
+                id: customer3.id
+              },
+              headers: { email: header_email, device: header_device, token: header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body["message"]).to eq('Notificación enviada')
+          end
+        end
+
+        context 'when params are missing' do
+          it 'returns error when url is not sent' do
+            post "/api/v1/karix_whatsapp_send_bulk_files/#{customer3.id}",
+              params: {
+                template: false,
+                id: customer3.id
+              },
+              headers: { email: header_email, device: header_device, token: header_token }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq("400")
+            expect(body['message']).to eq("Faltaron parámetros")
+          end
+        end
+      end
+    end
+
+    context 'when local request' do
+      let(:cloudinary_image_response) do
+        {
+          'public_id': 'udbdbn7nv4xxupagiaxc',
+          'version': 1585073676,
+          'signature': '5d01c78a3b9e3ecd7563ce0cfd72bb48a256ee64',
+          'width': 236,
+          'height': 203,
+          'format': 'jpeg',
+          'resource_type': 'image',
+          'created_at': '2020-03-24T18:14:36Z',
+          'tags': [],
+          'bytes': 17804,
+          'type': 'upload',
+          'etag': 'ae455f6806cb00961ca947e120277fb3',
+          'placeholder': false,
+          'url': 'http://res.cloudinary.com/dhhrdm74a/image/upload/v1585073676/udbdbn7nv4xxupagiaxc.jpg',
+          'secure_url': 'https://res.cloudinary.com/dhhrdm74a/image/upload/v1585073676/udbdbn7nv4xxupagiaxc.jpg',
+          'original_filename': 'test_image'
+        }.with_indifferent_access
+      end
+      context 'when the retailer is gupshup integrated' do
+        before do
+          sign_in retailer_user_gupshup
+        end
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(ok_net_response)
+            allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+            allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_image_response)
+            post "/api/v1/karix_whatsapp_send_bulk_files/#{customer3.id}",
+              params: {
+                file_data: [fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')],
+                template: false,
+                id: customer3.id
+              }
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq('Notificación enviada')
+          end
+        end
+      end
+    end
+  end
 end
