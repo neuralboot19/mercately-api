@@ -31,15 +31,17 @@ module Whatsapp::Gupshup::V1
       @phone_number = @customer.phone_number(false)
       @options = options
 
-      @options[:params][:file_data]&.each_with_index do |file, index|
+      iteration_param = @options[:params][:url].present? ? [@options[:params][:url]] : @options[:params][:file_data]
+      unless iteration_param
+        raise StandardError.new('Faltaron parámetros')
+      end
+      iteration_param&.each_with_index do |file, index|
         @index = index
         request_body = self.send(@options[:type])
         response = send_message_request(request_body[0])
         response_body = JSON.parse(response.read_body)
         save_message(response.code, response_body, request_body, @options[:retailer_user])
       end
-    rescue StandardError => e
-      Rails.logger.error(e)
     end
 
     private
