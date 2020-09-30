@@ -13,6 +13,8 @@ class ChatBot < ApplicationRecord
 
   accepts_nested_attributes_for :chat_bot_options, reject_if: :all_blank, allow_destroy: true
 
+  INTERVALS = [['12 horas', 12], ['24 horas', 24], ['48 horas', 48], ['72 horas', 72]].freeze
+
   scope :enabled_ones, -> { where(enabled: true) }
 
   def to_param

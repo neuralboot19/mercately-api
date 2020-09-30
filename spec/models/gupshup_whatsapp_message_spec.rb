@@ -59,81 +59,246 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
     end
   end
 
-  context 'bots execution' do
-    let(:chat_bot_option) {create(:chat_bot_option)}
-    let(:chat_bot_option_a) {create(:chat_bot_option, parent: chat_bot_option, position: 1, text: 'Cuentame más')}
-    let(:chat_bot_option_b) {create(:chat_bot_option, parent: chat_bot_option, position: 2, text: 'Quiero Volver atrás')}
-    let(:chat_bot_option_c) {create(:chat_bot_option, parent: chat_bot_option, position: 3, text: 'Volver volver atrás')}
-    let(:chat_bot) { create(:chat_bot, :bot_enabled, :with_accented_trigger, chat_bot_options: [chat_bot_option, chat_bot_option_a, chat_bot_option_b, chat_bot_option_c]) }
+  describe 'bots execution' do
+    let(:chat_bot_option) { create(:chat_bot_option) }
+
+    let(:chat_bot_option_a) do
+      create(:chat_bot_option, parent: chat_bot_option, position: 1, text: 'Cuentame más')
+    end
+
+    let(:chat_bot_option_b) do
+      create(:chat_bot_option, parent: chat_bot_option, position: 2, text: 'Quiero Volver atrás')
+    end
+
+    let(:chat_bot_option_c) do
+      create(:chat_bot_option, parent: chat_bot_option, position: 3, text: 'Volver volver atrás')
+    end
+
+    let(:chat_bot) do
+      create(:chat_bot, :bot_enabled, :with_accented_trigger, chat_bot_options: [chat_bot_option, chat_bot_option_a,
+        chat_bot_option_b, chat_bot_option_c])
+    end
+
     let(:retailer) { create(:retailer, :with_chat_bots, chat_bots: [chat_bot]) }
     let(:customer) { create(:customer, :able_to_start_bots, retailer: retailer) }
-    let(:message) {
-      build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
-    }
-    let(:answer_message) {
-      build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
-    }
+    let(:message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
+    let(:answer_message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
 
-    it 'triggers a chat bot ignoring accent marks' do
-      message.save!
-      expect(customer.active_bot).to eq(true)
-      expect(customer.chat_bot_option_id).to eq(chat_bot_option.id)
-    end
-
-    it 'selects an option by matching whole sentence ignoring accent marks' do
-      message.save!
-      answer_message.message_payload = {'type': 'text', 'text': 'quiero volver atras' }
-      answer_message.save!
-      expect(customer.chat_bot_option_id).to eq(chat_bot_option_b.id)
-    end
-
-    it 'rejects selection and stays in last valid option if more than one option has the same ranking' do
-      message.save!
-      answer_message.message_payload = {'type': 'text', 'text': 'atras' }
-      answer_message.save!
-      expect(customer.chat_bot_option_id).to be nil
-    end
-
-    it 'selects an option by matches count ranking' do
-      message.save!
-      answer_message.message_payload = {'type': 'text', 'text': 'atras volver' }
-      answer_message.save!
-      expect(customer.chat_bot_option_id).to eq(chat_bot_option_c.id)
-    end
-
-    context 'chat bot options with media' do
-      let(:root_option) { create(:chat_bot_option, text: 'Root node') }
-      let(:chat_bot_option_image) {create(:chat_bot_option,  :with_image_file, parent: root_option, position: 1, text: '1 Image')}
-      let(:chat_bot_option_pdf) {create(:chat_bot_option, :with_pdf_file, parent: root_option, position: 2, text: '2 PDF')}
-      let(:chat_bot) do
-        create(:chat_bot, :bot_enabled, :with_accented_trigger,
-          chat_bot_options: [root_option, chat_bot_option_image, chat_bot_option_pdf],
-          trigger: 'Estoy interesado en Mercately')
-      end
-
-      let(:retailer) { create(:retailer, :gupshup_integrated, :with_chat_bots, chat_bots: [chat_bot]) }
-      let(:customer) { create(:customer, :able_to_start_bots, retailer: retailer) }
-      let(:message) do
-        build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer,
-          message_payload: {'type': 'text', 'text': 'Estoy interesado en Mercately'})
-      end
-
-      let(:answer_message) do
-        build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
-      end
-
-      it 'selects a chat bot option with image' do
+    context 'when the customer has not activated the chat bot yet' do
+      it 'triggers a chat bot ignoring accent marks' do
         message.save!
-        answer_message.message_payload = {'type': 'text', 'text': '1' }
-        answer_message.save!
-        expect(customer.chat_bot_option_id).to eq(chat_bot_option_image.id)
+        expect(customer.active_bot).to eq(true)
+        expect(customer.chat_bot_option_id).to eq(chat_bot_option.id)
       end
 
-      it 'selects a chat bot option with pdf' do
+      it 'selects an option by matching whole sentence ignoring accent marks' do
         message.save!
-        answer_message.message_payload = {'type': 'text', 'text': '2' }
+        answer_message.message_payload = {'type': 'text', 'text': 'quiero volver atras' }
         answer_message.save!
-        expect(customer.chat_bot_option_id).to eq(chat_bot_option_pdf.id)
+        expect(customer.chat_bot_option_id).to eq(chat_bot_option_b.id)
+      end
+
+      it 'rejects selection and stays in last valid option if more than one option has the same ranking' do
+        message.save!
+        answer_message.message_payload = {'type': 'text', 'text': 'atras' }
+        answer_message.save!
+        expect(customer.chat_bot_option_id).to be nil
+      end
+
+      it 'selects an option by matches count ranking' do
+        message.save!
+        answer_message.message_payload = {'type': 'text', 'text': 'atras volver' }
+        answer_message.save!
+        expect(customer.chat_bot_option_id).to eq(chat_bot_option_c.id)
+      end
+
+      context 'chat bot options with media' do
+        let(:root_option) { create(:chat_bot_option, text: 'Root node') }
+        let(:chat_bot_option_image) {create(:chat_bot_option,  :with_image_file, parent: root_option, position: 1, text: '1 Image')}
+        let(:chat_bot_option_pdf) {create(:chat_bot_option, :with_pdf_file, parent: root_option, position: 2, text: '2 PDF')}
+        let(:chat_bot) do
+          create(:chat_bot, :bot_enabled, :with_accented_trigger,
+            chat_bot_options: [root_option, chat_bot_option_image, chat_bot_option_pdf],
+            trigger: 'Estoy interesado en Mercately')
+        end
+
+        let(:retailer) { create(:retailer, :gupshup_integrated, :with_chat_bots, chat_bots: [chat_bot]) }
+        let(:customer) { create(:customer, :able_to_start_bots, retailer: retailer) }
+        let(:message) do
+          build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer,
+            message_payload: {'type': 'text', 'text': 'Estoy interesado en Mercately'})
+        end
+
+        let(:answer_message) do
+          build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer)
+        end
+
+        it 'selects a chat bot option with image' do
+          message.save!
+          answer_message.message_payload = {'type': 'text', 'text': '1' }
+          answer_message.save!
+          expect(customer.chat_bot_option_id).to eq(chat_bot_option_image.id)
+        end
+
+        it 'selects a chat bot option with pdf' do
+          message.save!
+          answer_message.message_payload = {'type': 'text', 'text': '2' }
+          answer_message.save!
+          expect(customer.chat_bot_option_id).to eq(chat_bot_option_pdf.id)
+        end
+      end
+    end
+
+    context 'when the customer has already activated the chat bot' do
+      let(:customer) { create(:customer, retailer: retailer) }
+      let(:message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
+
+      context 'when the chat bot does not have reactivation time and customer is not allowed to activate bots' do
+        let!(:chat_bot_customer) { create(:chat_bot_customer, customer: customer, chat_bot: chat_bot) }
+
+        it 'does not activate the chat bot' do
+          message.message_payload = { 'type': 'text', 'text': 'hola test' }
+          message.save
+          expect(customer.active_bot).to be false
+          expect(customer.chat_bot_option_id).to be_nil
+        end
+      end
+
+      context 'when customer is allowed to activate bots' do
+        let!(:chat_bot_customer) { create(:chat_bot_customer, customer: customer, chat_bot: chat_bot) }
+
+        before do
+          customer.activate_chat_bot!
+        end
+
+        it 'activates the chat bot' do
+          message.message_payload = { 'type': 'text', 'text': 'hola test' }
+          message.save
+          expect(customer.active_bot).to be true
+          expect(customer.chat_bot_option_id).to eq(chat_bot_option.id)
+        end
+      end
+
+      context 'when the chat bot has reactivation time' do
+        context 'when the message is received outside the reactivation time' do
+          let(:answer_message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
+
+          let!(:prev_message) do
+            create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer, created_at:
+              Time.now - 5.hours)
+          end
+
+          let!(:chat_bot_customer) do
+            create(:chat_bot_customer, customer: customer, chat_bot: chat_bot, created_at: Time.now - 5.hours)
+          end
+
+          before do
+            chat_bot.update(reactivate_after: 12)
+            customer.update(active_bot: true, chat_bot_option: chat_bot_option)
+          end
+
+          it 'continues the flow of the chat bot' do
+            answer_message.message_payload = { 'type': 'text', 'text': 'quiero volver atras' }
+            answer_message.save
+
+            expect(customer.chat_bot_option_id).to eq(chat_bot_option_b.id)
+          end
+        end
+
+        context 'when the message is received inside the reactivation time' do
+          context 'when the text of the message matches the activation text of a bot' do
+            let(:answer_message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
+
+            let!(:prev_message) do
+              create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer, created_at:
+                Time.now - 13.hours)
+            end
+
+            let!(:chat_bot_customer) do
+              create(:chat_bot_customer, customer: customer, chat_bot: chat_bot, created_at: Time.now - 12.hours)
+            end
+
+            before do
+              chat_bot.update(reactivate_after: 12)
+              customer.update(active_bot: true, chat_bot_option: chat_bot_option_b)
+            end
+
+            it 'reactivates the chat bot from the beginning' do
+              expect(customer.chat_bot_option_id).to eq(chat_bot_option_b.id)
+
+              answer_message.message_payload = { 'type': 'text', 'text': 'hola test' }
+              answer_message.save
+
+              expect(customer.chat_bot_option_id).to eq(chat_bot_option.id)
+            end
+          end
+
+          context 'when the text of the message does not match the activation text of any bot' do
+            context 'when there is not bot activated with any interaction' do
+              let(:answer_message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
+
+              let!(:prev_message) do
+                create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer, created_at:
+                  Time.now - 13.hours)
+              end
+
+              let!(:chat_bot_customer) do
+                create(:chat_bot_customer, customer: customer, chat_bot: chat_bot, created_at: Time.now - 12.hours)
+              end
+
+              before do
+                chat_bot.update(reactivate_after: 12)
+                customer.update(active_bot: true, chat_bot_option: chat_bot_option_b)
+              end
+
+              it 'deactivates the bot to the customer' do
+                expect(customer.chat_bot_option_id).to eq(chat_bot_option_b.id)
+
+                answer_message.message_payload = { 'type': 'text', 'text': 'Probando' }
+                answer_message.save
+
+                expect(customer.active_bot).to be false
+                expect(customer.chat_bot_option_id).to be_nil
+              end
+            end
+
+            context 'when there is a bot activated with any interaction' do
+              let(:answer_message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
+
+              let!(:chat_bot_option_d) do
+                create(:chat_bot_option, chat_bot: chat_bot_any_interaction)
+              end
+
+              let(:chat_bot_any_interaction) do
+                create(:chat_bot, :bot_enabled, :with_any_interaction, retailer: retailer)
+              end
+
+              let!(:prev_message) do
+                create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer, created_at:
+                  Time.now - 13.hours)
+              end
+
+              let!(:chat_bot_customer) do
+                create(:chat_bot_customer, customer: customer, chat_bot: chat_bot, created_at: Time.now - 12.hours)
+              end
+
+              before do
+                chat_bot.update(reactivate_after: 12)
+                customer.update(active_bot: true, chat_bot_option: chat_bot_option_b)
+              end
+
+              it 'deactivates the bot to the customer' do
+                expect(customer.chat_bot_option_id).to eq(chat_bot_option_b.id)
+
+                answer_message.message_payload = { 'type': 'text', 'text': 'Probando' }
+                answer_message.save
+
+                expect(customer.active_bot).to be true
+                expect(customer.chat_bot_option_id).to eq(chat_bot_option_d.id)
+              end
+            end
+          end
+        end
       end
     end
   end

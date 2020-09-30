@@ -17,6 +17,7 @@ RSpec.describe Customer, type: :model do
     it { is_expected.to have_many(:messages).dependent(:destroy) }
     it { is_expected.to have_many(:customer_tags).dependent(:destroy) }
     it { is_expected.to have_many(:tags).through(:customer_tags) }
+    it { is_expected.to have_one(:chat_bot).through(:chat_bot_option) }
   end
 
   describe 'enums' do
@@ -905,6 +906,38 @@ RSpec.describe Customer, type: :model do
 
     it 'returns the total unread inbound messenger messages' do
       expect(customer.unread_messenger_messages).to eq(2)
+    end
+  end
+
+  describe '#deactivate_chat_bot!' do
+    let(:customer) { create(:customer, :bot_active, retailer: retailer) }
+
+    it 'deactivates the current bot the customer has active' do
+      expect(customer.active_bot).to be true
+      customer.deactivate_chat_bot!
+      expect(customer.active_bot).to be false
+    end
+  end
+
+  describe '#activate_chat_bot!' do
+    context 'when the customer is not allowed to get already used chat bots activated' do
+      let(:customer) { create(:customer, retailer: retailer, allow_start_bots: false) }
+
+      it 'allows it' do
+        expect(customer.allow_start_bots).to be false
+        customer.activate_chat_bot!
+        expect(customer.allow_start_bots).to be true
+      end
+    end
+
+    context 'when the customer is allowed to get already used chat bots activated' do
+      let(:customer) { create(:customer, retailer: retailer, allow_start_bots: true) }
+
+      it 'does not allow it' do
+        expect(customer.allow_start_bots).to be true
+        customer.activate_chat_bot!
+        expect(customer.allow_start_bots).to be false
+      end
     end
   end
 end
