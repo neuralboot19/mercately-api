@@ -167,6 +167,29 @@
           </table>
       </div>
     <% end %>
+    <% if current_retailer.whatsapp_integrated? && @interactions.present? %>
+      <div class="card mt-60 pl-40 pr-40 pt-35 pb-40 container-payment-plan_card">
+        <h3 class="m-0 mb-10 container-payment-plan_sub-title">Interacción de ChatBots</h3>
+          <table class="w-100 t-center">
+            <thead class="c-secondary">
+              <tr>
+                <th class="t-justify p-5">Año</th>
+                <th class="t-justify p-5">Mes</th>
+                <th class="p-5">Interacciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @interactions.each do |interaction| %>
+                <tr>
+                  <td class="t-justify py-18 p-5"><%= interaction[:year] %></td>
+                  <td class="t-justify p-5"><%= interaction[:month] %></td>
+                  <td class="p-5"><%= interaction[:total] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+      </div>
+    <% end %>
   <% else %>
     <div class="card t-center mt-14 pl-40 pr-40 pt-35 pb-35 container-payment-plan_card index">
       <div class="container-payment-plan_parent">

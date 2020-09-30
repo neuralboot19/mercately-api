@@ -30,6 +30,7 @@ class Retailer < ApplicationRecord
   has_many :sales_channels, dependent: :destroy
   has_many :chat_bots, dependent: :destroy
   has_many :team_assignments, dependent: :destroy
+  has_many :chat_bot_customers, through: :customers
 
   validates :name, presence: true
   validates :slug, uniqueness: true
