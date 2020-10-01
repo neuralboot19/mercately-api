@@ -87,7 +87,7 @@ module Whatsapp
         def catch_status(message, status)
           return status if message.status.blank?
 
-          statuses = %w[failed queued received sent rejected undelivered delivered read]
+          statuses = %w[queued failed received sent rejected undelivered delivered read]
           return status if statuses.index(status).blank?
 
           statuses.index(status) > statuses.index(message.status) ? status : message.status

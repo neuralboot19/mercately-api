@@ -88,13 +88,16 @@ module WhatsappChatBotActionConcern
 
       if selected.file.attached?
         # For pdf attachments, send caption in another message
+        aux_url = selected.file_url
         if selected.file.content_type == 'application/pdf'
+          aux_url += '.pdf'
+
           service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
           send(service, params)
         end
         params[:type] = 'file'
         params[:content_type] = selected.file.content_type
-        params[:url] = selected.file_url
+        params[:url] = aux_url
         # Karix service sets PDF name based on caption param
         if retailer.karix_integrated? && selected.file.content_type == 'application/pdf'
           params[:caption] = selected.file.blob.filename.to_s
