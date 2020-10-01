@@ -222,7 +222,7 @@ module Whatsapp::Gupshup::V1
           file_url = response['secure_url'] || response['url']
           file_caption = ''
         elsif @options[:params][:url].present?
-          resource_type = @options[:params][:content_type].present? ? get_resource_from_content_type(@options[:params][:content_type]) :'image'
+          resource_type = check_type_on_url
           file_name = @options[:params][:file_name].present? ? @options[:params][:file_name] : ''
           file_url = @options[:params][:url]
           file_caption = @options[:params][:caption] || ''
@@ -247,6 +247,13 @@ module Whatsapp::Gupshup::V1
         return 'image' if content_type.include?('image')
         'document' if ['application/pdf', 'application/msword',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
+      end
+
+      def check_type_on_url
+        return 'audio' if ['audio', 'voice'].include?(@options[:params][:type])
+
+        @options[:params][:content_type].present? ?
+          get_resource_from_content_type(@options[:params][:content_type]) : 'image'
       end
   end
 end
