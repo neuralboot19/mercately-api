@@ -7,6 +7,7 @@ FactoryBot.define do
     goodbye_message { Faker::Lorem.sentence }
     any_interaction { false }
     enabled { false }
+    reactivate_after { nil }
 
     trait :with_any_interaction do
       any_interaction { true }

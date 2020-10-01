@@ -173,9 +173,9 @@ class Api::V1::CustomersController < Api::ApiController
 
   def toggle_chat_bot
     if @customer.active_bot
-      @customer.update(active_bot: false, chat_bot_option_id: nil, failed_bot_attempts: 0, allow_start_bots: false)
+      @customer.deactivate_chat_bot!
     else
-      @customer.update(allow_start_bots: !@customer.allow_start_bots)
+      @customer.activate_chat_bot!
     end
     send_notification('whatsapp')
 

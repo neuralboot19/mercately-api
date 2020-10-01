@@ -5,7 +5,10 @@ class Retailers::PaymentPlansController < RetailersController
     @payment_plan = PaymentPlan.find_by(retailer_id: current_retailer.id)
     @pm = payment_methods
 
-    used_whatsapp_messages if current_retailer.whatsapp_integrated?
+    return unless current_retailer.whatsapp_integrated?
+
+    used_whatsapp_messages
+    bot_interactions_counter
   end
 
   def subscribe

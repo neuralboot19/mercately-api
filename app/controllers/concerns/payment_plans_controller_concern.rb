@@ -105,4 +105,19 @@ module PaymentPlansControllerConcern
     @data[:counter] << 0
     @data[:sub_total] << 0
   end
+
+  def bot_interactions_counter
+    @interactions = []
+
+    total = current_retailer.chat_bot_customers.range_between(@payment_plan.start_date, Time.now)
+      .group_by_month(:created_at).count
+
+    total.map do |key, val|
+      @interactions << {
+        year: key.year.to_s,
+        month: MONTH_NAMES[key.month],
+        total: val
+      }
+    end
+  end
 end

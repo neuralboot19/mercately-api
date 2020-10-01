@@ -163,6 +163,7 @@ ActiveRecord::Schema.define(version: 2020_09_17_191704) do
     t.datetime "updated_at", null: false
     t.string "error_message"
     t.boolean "repeat_menu_on_failure", default: false
+    t.integer "reactivate_after"
     t.index ["retailer_id"], name: "index_chat_bots_on_retailer_id"
   end
 

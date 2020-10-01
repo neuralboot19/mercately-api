@@ -5,6 +5,8 @@ class Customer < ApplicationRecord
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
   belongs_to :chat_bot_option, required: false
+  has_one :chat_bot, through: :chat_bot_option
+
   has_one :agent_customer
   has_one :agent, class_name: 'RetailerUser', source: 'retailer_user', through: :agent_customer
 
@@ -292,6 +294,19 @@ class Customer < ApplicationRecord
     return whatsapp_name if whatsapp_name.present?
 
     phone
+  end
+
+  def deactivate_chat_bot!
+    update(
+      active_bot: false,
+      chat_bot_option_id: nil,
+      failed_bot_attempts: 0,
+      allow_start_bots: false
+    )
+  end
+
+  def activate_chat_bot!
+    update(allow_start_bots: !self.allow_start_bots)
   end
 
   private
