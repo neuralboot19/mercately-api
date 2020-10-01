@@ -280,6 +280,41 @@ ActiveAdmin.register Retailer do
         end
       end
     end
+
+    panel 'Agentes del retailer' do
+      table_for retailer.retailer_users do
+        column 'Nombres' do |ret_u|
+          ret_u.full_name
+        end
+
+        column :email
+
+        column 'Estado' do |ret_u|
+          if ret_u.removed_from_team
+            'Inactivo'
+          elsif ret_u.invitation_token.blank?
+            'Activo'
+          else
+            'Invitado'
+          end
+        end
+
+        column 'Role' do |ret_u|
+          if ret_u.retailer_admin == true
+            'Administrador'
+          elsif ret_u.retailer_supervisor == true
+            'Supervisor'
+          else
+            'Agente'
+          end
+        end
+
+        column 'Iniciar sesión' do |ret_u|
+          link_to 'Login as', login_as_admin_retailer_path(ret_u.retailer, retailer_user_email: ret_u.email), class:
+            'member_link edit_link'
+        end
+      end
+    end
   end
 
   form do |f|
@@ -320,7 +355,8 @@ ActiveAdmin.register Retailer do
   # Custom actions
   member_action :login_as do
     retailer = Retailer.find_by(slug: params[:id])
-    retailer_user = retailer.retailer_users.first
+    retailer_user = params[:retailer_user_email].present? ? retailer.retailer_users
+      .find_by_email(params[:retailer_user_email]) : retailer.retailer_users.first
     session[:old_retailer_id] = current_retailer_user.retailer.slug if current_retailer_user
     session[:current_retailer] = retailer
     session[:room_id] = retailer_user.id
