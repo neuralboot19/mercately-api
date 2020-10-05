@@ -1,6 +1,7 @@
 class Customer < ApplicationRecord
   include WebIdGenerateableConcern
   include PhoneNumberConcern
+  include ImportCustomersConcern
 
   belongs_to :retailer
   belongs_to :meli_customer, optional: true

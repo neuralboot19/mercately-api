@@ -83,7 +83,9 @@ Rails.application.routes.draw do
       put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
       get 'questions_list', to: 'messages#questions_list'
       get 'pricing', to: 'payment_plans#index', as: :payment_plans
+      get 'import', to: 'customers#import', as: :customers_import
       post 'export_customers', to: 'customers#export', as: :export_customers
+      post 'bulk_import', to: 'customers#bulk_import', as: :customers_bulk_import
       get 'manage_automatic_answers', to: 'automatic_answers#manage_automatic_answers', as: :manage_automatic_answers
       post 'save_automatic_answer', to: 'automatic_answers#save_automatic_answer', as: :save_automatic_answer
       get 'select_catalog', to: 'facebook_catalogs#select_catalog'

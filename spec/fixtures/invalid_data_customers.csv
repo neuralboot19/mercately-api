@@ -1,0 +1,5 @@
+First Name,Last Name,Email,Phone
+No Email,No Phone,,
+Email,No Phone,email@test.com.ec,
+Bad,Phone Format,john@wick.com,+3243
+john,,john@wick.co,+32432423433

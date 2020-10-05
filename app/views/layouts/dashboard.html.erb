@@ -93,7 +93,13 @@
     <script charset="utf-8">
       document.addEventListener("DOMContentLoaded", function() {
         <% if notice %>
-          showtoast("<%= notice %>")
+          <% if notice.is_a? Array %>
+            <% notice.each do |message| %>
+              showtoast("<%= message %>")
+            <% end %>
+          <% else %>
+            showtoast("<%= notice %>")
+          <% end %>
           <% flash[:notice] = nil %>
         <% end %>
 

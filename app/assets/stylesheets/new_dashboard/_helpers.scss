@@ -228,6 +228,10 @@ label:hover, a:hover {
 
 .f-right {
   float: right;
+
+  &.btn-import {
+    margin-right: 1em;
+  }
 }
 
 .f-left {
