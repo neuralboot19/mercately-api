@@ -344,6 +344,10 @@ label:hover, a:hover {
   border-radius: .25rem;
 }
 
+.text-pre-line {
+  white-space: pre-line;
+}
+
 @mixin fs-mixin ($size) {
   font-size: $size !important;
 }

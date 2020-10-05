@@ -49,7 +49,7 @@ const ChatMessage = ({message, toggleImgModal, downloadFile, fileType, timeMessa
             </div>
       break;
     default:
-        tag = <div>
+        tag = <div className="text-pre-line">
                 {message.text}
                 <br />
                 <div className="f-right">

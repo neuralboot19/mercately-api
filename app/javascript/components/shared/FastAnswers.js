@@ -146,7 +146,7 @@ class FastAnswers extends Component {
                   <img src={answer.attributes.image_url} />
                 }
               </div>
-              <small>{answer.attributes.answer}</small>
+              <small className="text-pre-line">{answer.attributes.answer}</small>
             </div>
           ))}
         </div>
