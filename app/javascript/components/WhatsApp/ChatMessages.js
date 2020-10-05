@@ -961,7 +961,7 @@ class ChatMessages extends Component {
                 {message.replied_message &&
                   <div className="replied-message mb-10">
                     {message.replied_message.data.attributes.content_type == 'text' &&
-                      <span className="text">{message.replied_message.data.attributes.content_text}</span>
+                      <span className="text text-pre-line">{message.replied_message.data.attributes.content_text}</span>
                     }
                     {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'image' &&
                       <img src={message.replied_message.data.attributes.content_media_url} className="image"
@@ -1005,7 +1005,7 @@ class ChatMessages extends Component {
                   </div>
                 }
                 {message.content_type == 'text' &&
-                  <div>
+                  <div className="text-pre-line">
                     {message.content_text}
                     <br />
                     <div className="f-right">
@@ -1044,7 +1044,7 @@ class ChatMessages extends Component {
                   <div className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></div>
                 )}
                 {message.content_media_caption && message.content_media_type !== 'document' &&
-                  (<div className="caption">{message.content_media_caption}</div>)}
+                  (<div className="caption text-pre-line">{message.content_media_caption}</div>)}
                 {message.content_type == 'contact' &&
                   message.contacts_information.map(contact =>
                     <div className="contact-card w-100 mb-10">
