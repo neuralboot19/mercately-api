@@ -6,7 +6,9 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
   before_action :load_tags, only: [:new, :edit, :create, :update]
   before_action :save_new_tags, only: [:create, :update]
-  before_action :validate_permissions, only: [:show, :edit, :update, :destroy]
+  before_action :validate_permissions, only: [
+    :show, :edit, :update, :destroy, :import , :bulk_import
+  ]
 
   def index
     @filter = build_ransack_query
@@ -22,6 +24,25 @@ class Retailers::CustomersController < RetailersController
                                                 export_params)
     redirect_to(retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }),
                 notice: 'La exportación está en proceso, recibirá un mail cuando esté lista.')
+  end
+
+  def import
+  end
+
+  def bulk_import
+    notice = 'Debe seleccionar un archivo'
+
+    if import_params['csv_file'].present?
+      results = Customer.csv_import!(current_retailer, import_params['csv_file'])
+
+      notice = ['La importación se realizó con éxito']
+      notice = results[:body][:errors].flatten if results[:status] != :ok
+    end
+
+    redirect_to(
+      retailers_customers_import_path(current_retailer),
+      notice: notice
+    )
   end
 
   def show
@@ -98,6 +119,10 @@ class Retailers::CustomersController < RetailersController
       params.permit(q: [:first_name_or_last_name_or_phone_or_email_cont, :s, customer_tags_tag_id_in: []])
     end
 
+    def import_params
+      params.permit(:csv_file)
+    end
+
     def load_tags
       @tags = current_retailer.available_customer_tags(@customer&.id) || []
     end
@@ -123,9 +148,9 @@ class Retailers::CustomersController < RetailersController
 
     def validate_permissions
       return unless current_retailer_user.agent?
-      return if has_permissions?
+      return if params[:action] != 'import' && has_permissions?
 
-      flash[:notice] = "Disculpe, no posee permisos sobre el cliente #{@customer.full_names}"
+      flash[:notice] = 'Disculpe, no posee permisos para ver esta página'
       redirect_to retailers_customers_path  params: {
           slug: current_retailer.slug,
           q: { 's': 'created_at desc' }

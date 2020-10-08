@@ -228,6 +228,10 @@ label:hover, a:hover {
 
 .f-right {
   float: right;
+
+  &.btn-import {
+    margin-right: 1em;
+  }
 }
 
 .f-left {
@@ -338,6 +342,10 @@ label:hover, a:hover {
   margin-bottom: 1rem;
   border: 1px solid transparent;
   border-radius: .25rem;
+}
+
+.text-pre-line {
+  white-space: pre-line;
 }
 
 @mixin fs-mixin ($size) {

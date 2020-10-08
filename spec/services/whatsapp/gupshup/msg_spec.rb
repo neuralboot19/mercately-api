@@ -13,6 +13,37 @@ RSpec.describe Whatsapp::Gupshup::V1::Outbound::Msg do
     }
   end
 
+  let(:audio_url_params) do
+    {
+      url: 'https://res.cloudinary.com/dhhrdm74a/video/upload/v1600269975/mubnkttmuxmbexcqqucz.mp4',
+      type: 'audio'
+    }
+  end
+
+  let(:pdf_url_params) do
+    {
+      url: 'https://res.cloudinary.com/dhhrdm74a/image/upload/v1600786470/7dgvVqKauCLTLQtWvWy1yEDb.pdf',
+      type: 'file',
+      content_type: 'application/pdf',
+      file_name: 'Test Spec'
+    }
+  end
+
+  let(:image_url_params_with_content_type) do
+    {
+      url: 'https://res.cloudinary.com/dhhrdm74a/image/upload/v1600715681/cEp879PjfNVgMaZ86vN9vAxD.png',
+      type: 'file',
+      content_type: 'image/png'
+    }
+  end
+
+  let(:image_url_params) do
+    {
+      url: 'https://res.cloudinary.com/dhhrdm74a/image/upload/v1600715681/cEp879PjfNVgMaZ86vN9vAxD.png',
+      type: 'file'
+    }
+  end
+
   let(:cloudinary_audio_response) do
     {
       'asset_id': 'c7fa2c0720915a5f998d7533ccb1b8d7',
@@ -55,20 +86,90 @@ RSpec.describe Whatsapp::Gupshup::V1::Outbound::Msg do
 
   describe '#send_message' do
     context 'when the message type is file' do
+      context 'when the file is a PDF' do
+        context 'when the PDF is sent as an URL' do
+          context 'when the content_type is passed in parameters' do
+            it 'prepares the message body to send it to GupShup' do
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+              allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+
+              expect {
+                @resp = described_class.new(retailer, customer).send_message(type: 'file', params:
+                  pdf_url_params, retailer_user: retailer_user)
+              }.to change(GupshupWhatsappMessage, :count).by(1)
+
+              gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
+              expect(gs_message.message_payload['url']).to eq(pdf_url_params[:url])
+            end
+          end
+        end
+      end
+
+      context 'when the file is an image' do
+        context 'when the image is sent as an URL' do
+          context 'when the content_type is passed in parameters' do
+            it 'prepares the message body to send it to GupShup' do
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+              allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+
+              expect {
+                @resp = described_class.new(retailer, customer).send_message(type: 'file', params:
+                  image_url_params_with_content_type, retailer_user: retailer_user)
+              }.to change(GupshupWhatsappMessage, :count).by(1)
+
+              gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
+              expect(gs_message.message_payload['originalUrl']).to eq(image_url_params_with_content_type[:url])
+            end
+          end
+
+          context 'when the content_type is not passed in parameters' do
+            it 'prepares the message body to send it to GupShup' do
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+              allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+
+              expect {
+                @resp = described_class.new(retailer, customer).send_message(type: 'file', params:
+                  image_url_params, retailer_user: retailer_user)
+              }.to change(GupshupWhatsappMessage, :count).by(1)
+
+              gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
+              expect(gs_message.message_payload['originalUrl']).to eq(image_url_params[:url])
+            end
+          end
+        end
+      end
+
       context 'when the file is an audio' do
-        it 'uploads the audio to Cloudinary and prepares the message body to send it to GupShup' do
-          allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_audio_response)
-          allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
-          allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+        context 'when the audio is sent as a file object' do
+          it 'uploads the audio to Cloudinary and prepares the message body to send it to GupShup' do
+            allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_audio_response)
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+            allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
 
-          expect {
-            @resp = described_class.new(retailer, customer).send_message(type: 'file', params:
-              audio_params, retailer_user: retailer_user)
-          }.to change(GupshupWhatsappMessage, :count).by(1)
+            expect {
+              @resp = described_class.new(retailer, customer).send_message(type: 'file', params:
+                audio_params, retailer_user: retailer_user)
+            }.to change(GupshupWhatsappMessage, :count).by(1)
 
-          gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
-          expect(gs_message.message_payload['url']).to eq(cloudinary_audio_response['secure_url']
-            .gsub('.webm', '.aac'))
+            gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
+            expect(gs_message.message_payload['url']).to eq(cloudinary_audio_response['secure_url']
+              .gsub('.webm', '.aac'))
+          end
+        end
+
+        context 'when the audio is sent as an URL' do
+          it 'prepares the message body to send it to GupShup' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+            allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+
+            expect {
+              @resp = described_class.new(retailer, customer).send_message(type: 'file', params:
+                audio_url_params, retailer_user: retailer_user)
+            }.to change(GupshupWhatsappMessage, :count).by(1)
+
+            gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
+            expect(gs_message.message_payload['url']).to eq(audio_url_params[:url].gsub('.mp4', '.aac'))
+          end
         end
       end
     end

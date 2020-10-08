@@ -139,3 +139,6 @@ gem 'prismic.io', require: 'prismic'
 
 # Push notifications
 gem 'exponent-server-sdk', '~> 0.1.0'
+
+# Pretty fast importation alternative
+gem 'activerecord-import', '~> 1.0', '>= 1.0.6'

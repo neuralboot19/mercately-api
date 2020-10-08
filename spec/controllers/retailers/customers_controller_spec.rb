@@ -244,10 +244,146 @@ RSpec.describe Retailers::CustomersController, type: :controller do
           get :show, params: { slug: agent1.retailer.slug, id: @customer_a2.web_id }
         ).to_not render_template('retailers/customers/show')
 
-        expect(flash[:notice]).to match("Disculpe, no posee permisos sobre el cliente #{@customer_a2.full_names}")
+        expect(flash[:notice]).to match('Disculpe, no posee permisos para ver esta página')
         expect(
           get :index, params: { slug: agent1.retailer.slug, q: { agent_id: nil} }
         ).to render_template('retailers/customers/index')
+      end
+    end
+  end
+
+  describe 'GET #import' do
+    context 'when has permissions' do
+      let(:retailer_user) { create(:retailer_user, :admin, :with_retailer) }
+
+      before do
+        sign_in retailer_user
+      end
+
+      it 'renders the view' do
+        expect(
+          get :import, params: { slug: retailer_user.retailer.slug }
+        ).to render_template('retailers/customers/import')
+      end
+    end
+
+    context 'when has no permissions' do
+      let(:agent) { create(:retailer_user, :agent, :with_retailer) }
+      before do
+        sign_in agent
+      end
+
+      it 'redirects to retailers customers view' do
+        get :import, params: { slug: agent.retailer.slug }
+
+        expect(flash[:notice]).to match('Disculpe, no posee permisos para ver esta página')
+
+        slug = agent.retailer.slug
+        redirect_url = "/retailers/#{slug}/customers?q%5Bs%5D=created_at+desc&slug=#{slug}"
+        expect(response).to redirect_to(redirect_url)
+      end
+    end
+  end
+
+  describe 'POST #bulk_import' do
+    context 'when has permissions' do
+      let(:retailer_user) { create(:retailer_user, :admin, :with_retailer) }
+      let(:retailer) { retailer_user.retailer }
+
+      before do
+        create(:customer, retailer: retailer)
+        create(:customer, retailer: retailer, phone: '55555555', country_id: 'EC')
+
+        sign_in retailer_user
+      end
+
+      it 'redirects to import view if not file sent' do
+        post :bulk_import, params: { slug: retailer.slug }
+
+        expect(flash[:notice]).to match('Debe seleccionar un archivo')
+        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+
+      it 'returns an error if not a csv file' do
+        post :bulk_import, params: {
+          slug: retailer.slug,
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')
+        }
+
+        expect(flash[:notice][0]).to include('El archivo que subiste no era un CSV')
+        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+
+      it 'returns an error if csv columns not match' do
+        post :bulk_import, params: {
+          slug: retailer.slug,
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/wrong_columns_customers.csv', 'text/csv')
+        }
+
+        expect(flash[:notice][0]).to include('Las columnas del archivo no coinciden')
+        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+
+      it 'returns an error when duplicated rows' do
+        post :bulk_import, params: {
+          slug: retailer.slug,
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/duplicated_data_in_customers.csv', 'text/csv')
+        }
+
+        expect(flash[:notice][0]).to include('Este teléfono')
+        expect(flash[:notice][0]).to include('está duplicado en su archivo')
+        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+
+      it 'returns errors when invalid customers data' do
+        post :bulk_import, params: {
+          slug: retailer.slug,
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/invalid_data_customers.csv', 'text/csv')
+        }
+
+        expect(flash[:notice].count).to eq(2)
+        expect(flash[:notice][0]).to include('No tiene email ni teléfono')
+        expect(flash[:notice][1]).to include('Error en el formato de teléfono')
+        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+
+      it 'returns an error when csv is empty' do
+        post :bulk_import, params: {
+          slug: retailer.slug,
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/empty_customers.csv', 'text/csv')
+        }
+
+        expect(flash[:notice][0]).to include('El archivo CSV está vacío')
+        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+
+      it 'returns success message' do
+        expect {
+          post :bulk_import, params: {
+            slug: retailer.slug,
+            csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.csv', 'text/csv')
+          }
+        }.to change(Customer, :count).by(1)
+
+        expect(flash[:notice][0]).to include('La importación se realizó con éxito')
+        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+    end
+
+    context 'when has no permissions' do
+      let(:agent) { create(:retailer_user, :agent, :with_retailer) }
+      before do
+        sign_in agent
+      end
+
+      it 'redirects to retailers customers view' do
+        get :import, params: { slug: agent.retailer.slug }
+
+        expect(flash[:notice]).to match('Disculpe, no posee permisos para ver esta página')
+
+        slug = agent.retailer.slug
+        redirect_url = "/retailers/#{slug}/customers?q%5Bs%5D=created_at+desc&slug=#{slug}"
+        expect(response).to redirect_to(redirect_url)
       end
     end
   end

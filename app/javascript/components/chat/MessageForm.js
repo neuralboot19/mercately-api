@@ -1,8 +1,43 @@
 import React, { Component } from "react";
+import 'emoji-mart/css/emoji-mart.css';
+import { Picker } from 'emoji-mart';
+
+const pickerI18n = {
+  search: 'Buscar emoji',
+  clear: 'Limpiar',
+  notfound: 'Emoji no encontrado',
+  skintext: 'Selecciona el tono de piel por defecto',
+  categories: {
+    search: 'Resultados de la búsqueda',
+    recent: 'Recientes',
+    smileys: 'Smileys & Emotion',
+    people: 'Emoticonos y personas',
+    nature: 'Animales y naturaleza',
+    foods: 'Alimentos y bebidas',
+    activity: 'Actividades',
+    places: 'Viajes y lugares',
+    objects: 'Objetos',
+    symbols: 'Símbolos',
+    flags: 'Banderas',
+    custom: 'Custom',
+  },
+  categorieslabel: 'Categorías de los emojis',
+  skintones: {
+    1: 'Tono de piel por defecto',
+    2: 'Tono de piel claro',
+    3: 'Tono de piel claro medio',
+    4: 'Tono de piel medio',
+    5: 'Tono de piel oscuro medio',
+    6: 'Tono de piel oscuro',
+  }
+}
 
 class MessageForm extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      showEmojiPicker: false
+    }
   }
 
   handleSubmit = (e) => {
@@ -11,7 +46,12 @@ class MessageForm extends Component {
     if (text.trim() === '' && this.selectionPresent() === false) return;
 
     let txt = this.getText();
-    this.props.handleSubmitMessage(e, txt)
+    this.props.handleSubmitMessage(e, txt);
+
+    this.setState({
+      showEmojiPicker: false
+    });
+
     input.html(null);
   }
 
@@ -80,10 +120,16 @@ class MessageForm extends Component {
     }
   }
 
+  toggleEmojiPicker = () => {
+    this.setState({
+      showEmojiPicker: !this.state.showEmojiPicker
+    });
+  }
+
   render() {
     return (
       <div className="text-input">
-        <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.props.pasteImages(e)} onKeyPress={this.onKeyPress} tabIndex="0">
+        <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.props.pasteImages(e)} onKeyPress={this.onKeyPress} onKeyUp={this.props.getCaretPosition} onMouseUp={this.props.getCaretPosition} tabIndex="0">
         </div>
         {this.props.selectedProduct && this.props.selectedProduct.attributes.image &&
           <div className="selected-product-image-container">
@@ -97,7 +143,20 @@ class MessageForm extends Component {
             <img src={this.props.selectedFastAnswer.attributes.image_url} />
           </div>
         }
-        <div className="t-right mr-15">
+        <div className="t-right mr-15 p-relative">
+          {this.state.showEmojiPicker &&
+            <div id="emojis-holder" className="emojis-container">
+              <Picker
+                set='apple'
+                title='Seleccionar...'
+                emoji='point_up'
+                onSelect={(emoji) => this.props.insertEmoji(emoji)}
+                color='#00B4FF'
+                i18n={pickerI18n}
+                skinEmoji='hand'
+              />
+            </div>
+          }
           <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
           <div className="tooltip-top">
             <i className="fas fa-paperclip fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
@@ -127,6 +186,12 @@ class MessageForm extends Component {
             <i className="fas fa-map-marker-alt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.getLocation()}></i>
             {this.props.onMobile == false &&
               <div className="tooltiptext">Ubicación</div>
+            }
+          </div>
+          <div className="tooltip-top">
+            <i className="fas fa-smile fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleEmojiPicker()}></i>
+            {this.props.onMobile == false &&
+              <div className="tooltiptext">Emojis</div>
             }
           </div>
           <div className="tooltip-top ml-15"></div>
