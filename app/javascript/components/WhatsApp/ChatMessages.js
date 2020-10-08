@@ -14,10 +14,41 @@ import {
 import Modal from 'react-modal';
 import ImagesSelector from './../shared/ImagesSelector';
 import GoogleMap from './../shared/Map';
+import 'emoji-mart/css/emoji-mart.css';
+import { Picker } from 'emoji-mart';
 
 var currentCustomer = 0;
 var total_pages = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
+const pickerI18n = {
+  search: 'Buscar emoji',
+  clear: 'Limpiar',
+  notfound: 'Emoji no encontrado',
+  skintext: 'Selecciona el tono de piel por defecto',
+  categories: {
+    search: 'Resultados de la búsqueda',
+    recent: 'Recientes',
+    smileys: 'Smileys & Emotion',
+    people: 'Emoticonos y personas',
+    nature: 'Animales y naturaleza',
+    foods: 'Alimentos y bebidas',
+    activity: 'Actividades',
+    places: 'Viajes y lugares',
+    objects: 'Objetos',
+    symbols: 'Símbolos',
+    flags: 'Banderas',
+    custom: 'Custom',
+  },
+  categorieslabel: 'Categorías de los emojis',
+  skintones: {
+    1: 'Tono de piel por defecto',
+    2: 'Tono de piel claro',
+    3: 'Tono de piel claro medio',
+    4: 'Tono de piel medio',
+    5: 'Tono de piel oscuro medio',
+    6: 'Tono de piel oscuro',
+  }
+}
 
 const customStyles = {
   content : {
@@ -59,11 +90,13 @@ class ChatMessages extends Component {
       recordingAudio: false,
       totalSeconds: 0,
       audioSeconds: '00',
-      audioMinutes: '00'
+      audioMinutes: '00',
+      showEmojiPicker: false
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
     this.cancelledAudio = false;
+    this.caretPosition = 0;
   }
 
   handleLoadMore = () => {
@@ -232,6 +265,10 @@ class ChatMessages extends Component {
   }
 
   handleSubmit = (e) => {
+    this.setState({
+      showEmojiPicker: false
+    });
+
     if (this.objectPresence()) {
       this.handleSubmitImg();
       return;
@@ -683,10 +720,35 @@ class ChatMessages extends Component {
     }
   }
 
-  setFocus = () => {
+  setFocus = (position) => {
     if (ENV['CURRENT_AGENT_ROLE'] === 'Supervisor')
       return true;
-    document.getElementById("divMessage").focus();
+
+    let node = document.getElementById("divMessage");
+    let caret = 0;
+    let input = $(node);
+    let text = input.text();
+
+    node.focus();
+
+    if (position) {
+      caret = position;
+    } else {
+      caret = text.length;
+    }
+
+    if (caret > 0) {
+      let textNode = node.firstChild;
+      let range = document.createRange();
+      range.setStart(textNode, caret);
+      range.setEnd(textNode, caret);
+
+      let sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    this.caretPosition = caret;
   }
 
   getText = () => {
@@ -888,6 +950,55 @@ class ChatMessages extends Component {
     });
 
     this.resetAudio(stream);
+  }
+
+  toggleEmojiPicker = () => {
+    this.setState({
+      showEmojiPicker: !this.state.showEmojiPicker
+    });
+  }
+
+  insertEmoji = (emoji) => {
+    let input = $('#divMessage');
+    let text = input.text();
+    let first = text.substring(0, this.caretPosition);
+    let second = text.substring(this.caretPosition);
+
+    if (text.length == 0) this.caretPosition = 0;
+
+    text = (first + emoji.native + second);
+    input.html(text);
+
+    this.setFocus(this.caretPosition + emoji.native.length);
+  }
+
+  getCaretPosition = () => {
+    let sel, range, editableDiv = document.getElementById('divMessage');
+
+    if (window.getSelection) {
+      sel = window.getSelection();
+
+      if (sel.rangeCount) {
+        range = sel.getRangeAt(0);
+
+        if (range.commonAncestorContainer.parentNode == editableDiv) {
+          this.caretPosition = range.endOffset;
+        }
+      }
+    } else if (document.selection && document.selection.createRange) {
+      range = document.selection.createRange();
+
+      if (range.parentElement() == editableDiv) {
+        let tempEl = document.createElement("span");
+        editableDiv.insertBefore(tempEl, editableDiv.firstChild);
+
+        let tempRange = range.duplicate();
+        tempRange.moveToElementText(tempEl);
+        tempRange.setEndPoint("EndToEnd", range);
+
+        this.caretPosition = tempRange.text.length;
+      }
+    }
   }
 
   render() {
@@ -1093,7 +1204,7 @@ class ChatMessages extends Component {
                     this.canSendMessages() &&
                       <div className="col-xs-12 chat-input">
                         <div className="text-input">
-                          <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} tabIndex="0">
+                          <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} onKeyUp={this.getCaretPosition} onMouseUp={this.getCaretPosition} tabIndex="0">
                           </div>
                           {this.state.selectedProduct && this.state.selectedProduct.attributes.image &&
                             <div className="selected-product-image-container">
@@ -1109,7 +1220,20 @@ class ChatMessages extends Component {
                           }
                           <div className="t-right mr-15">
                             {!this.state.recordingAudio &&
-                              <div>
+                              <div className="p-relative">
+                                {this.state.showEmojiPicker &&
+                                  <div id="emojis-holder" className="emojis-container">
+                                    <Picker
+                                      set='apple'
+                                      title='Seleccionar...'
+                                      emoji='point_up'
+                                      onSelect={(emoji) => this.insertEmoji(emoji)}
+                                      color='#00B4FF'
+                                      i18n={pickerI18n}
+                                      skinEmoji='hand'
+                                    />
+                                  </div>
+                                }
                                 <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
                                 <div className="tooltip-top">
                                   <i className="fas fa-paperclip fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
@@ -1149,6 +1273,12 @@ class ChatMessages extends Component {
                                     }
                                   </div>
                                 }
+                                <div className="tooltip-top">
+                                  <i className="fas fa-smile fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleEmojiPicker()}></i>
+                                  {this.props.onMobile == false &&
+                                    <div className="tooltiptext">Emojis</div>
+                                  }
+                                </div>
                                 <div className="tooltip-top ml-15"></div>
                                 <div className="tooltip-top">
                                   <i className="fas fa-paper-plane fs-22 mr-5 c-secondary cursor-pointer" onClick={(e) => this.handleSubmit(e)}></i>

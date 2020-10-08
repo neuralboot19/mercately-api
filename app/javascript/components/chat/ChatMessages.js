@@ -42,6 +42,7 @@ class ChatMessages extends Component {
       zoomLevel: 17
     };
     this.bottomRef = React.createRef();
+    this.caretPosition = 0;
   }
 
   handleLoadMore = () => {
@@ -414,10 +415,35 @@ class ChatMessages extends Component {
     return ENV['CURRENT_AGENT_ROLE'] !== 'Supervisor';
   }
 
-  setFocus = () => {
+  setFocus = (position) => {
     if (!this.canSendMessages())
       return true;
-    document.getElementById("divMessage").focus();
+
+    let node = document.getElementById("divMessage");
+    let caret = 0;
+    let input = $(node);
+    let text = input.text();
+
+    node.focus();
+
+    if (position) {
+      caret = position;
+    } else {
+      caret = text.length;
+    }
+
+    if (caret > 0) {
+      let textNode = node.firstChild;
+      let range = document.createRange();
+      range.setStart(textNode, caret);
+      range.setEnd(textNode, caret);
+
+      let sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    this.caretPosition = caret;
   }
 
   objectPresence = () => {
@@ -457,6 +483,49 @@ class ChatMessages extends Component {
     return (
       <span className={message.sent_by_retailer == false ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_at).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
     )
+  }
+
+  insertEmoji = (emoji) => {
+    let input = $('#divMessage');
+    let text = input.text();
+    let first = text.substring(0, this.caretPosition);
+    let second = text.substring(this.caretPosition);
+
+    if (text.length == 0) this.caretPosition = 0;
+
+    text = (first + emoji.native + second);
+    input.html(text);
+
+    this.setFocus(this.caretPosition + emoji.native.length);
+  }
+
+  getCaretPosition = () => {
+    let sel, range, editableDiv = document.getElementById('divMessage');
+
+    if (window.getSelection) {
+      sel = window.getSelection();
+
+      if (sel.rangeCount) {
+        range = sel.getRangeAt(0);
+
+        if (range.commonAncestorContainer.parentNode == editableDiv) {
+          this.caretPosition = range.endOffset;
+        }
+      }
+    } else if (document.selection && document.selection.createRange) {
+      range = document.selection.createRange();
+
+      if (range.parentElement() == editableDiv) {
+        let tempEl = document.createElement("span");
+        editableDiv.insertBefore(tempEl, editableDiv.firstChild);
+
+        let tempRange = range.duplicate();
+        tempRange.moveToElementText(tempEl);
+        tempRange.setEndPoint("EndToEnd", range);
+
+        this.caretPosition = tempRange.text.length;
+      }
+    }
   }
 
   render() {
@@ -545,6 +614,8 @@ class ChatMessages extends Component {
                   removeSelectedFastAnswer={this.removeSelectedFastAnswer}
                   objectPresence={this.objectPresence}
                   toggleMap={this.toggleMap}
+                  getCaretPosition={this.getCaretPosition}
+                  insertEmoji={this.insertEmoji}
                 />
               </div>
           )
