@@ -1,5 +1,9 @@
 class Retailers::StatsController < RetailersController
   include StatsControllerConcern
+  include StatsProspectsConcern
+  include StatsAgentsConcern
+
+  before_action :check_role_access
 
   def total_messages_stats
     if params[:search] && params[:search][:range].present?
@@ -19,5 +23,15 @@ class Retailers::StatsController < RetailersController
     @cast_end_date = Time.parse(@end_date)
 
     total_count_messages
+    total_prospects_vs_currents
+    total_agents_performance
   end
+
+  private
+
+    def check_role_access
+      return if current_retailer_user.admin? || current_retailer_user.supervisor?
+
+      redirect_to retailers_dashboard_path(current_retailer)
+    end
 end
