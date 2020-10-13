@@ -1075,6 +1075,16 @@
   pointer-events: none;
 }
 
+.stats-agent-headers {
+  background-color: #F7F7F7;
+  font-size: 15px;
+  color: #6B2288;
+}
+
+.stats-agent-items {
+  border-bottom: 1px solid #6B2288;
+}
+
 @media screen and (min-height: 780px) {
   #onboarding {
     .onboarding {

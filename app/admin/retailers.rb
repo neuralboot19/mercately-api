@@ -283,6 +283,8 @@ ActiveAdmin.register Retailer do
 
     panel 'Agentes del retailer' do
       table_for retailer.retailer_users do
+        column :id
+
         column 'Nombres' do |ret_u|
           ret_u.full_name
         end

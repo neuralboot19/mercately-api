@@ -9,6 +9,8 @@ class AgentCustomer < ApplicationRecord
   after_destroy :free_spot_on_destroy
   after_update :free_spot_on_change, if: :saved_change_to_retailer_user_id?
 
+  scope :update_range_between, -> (start_date, end_date) { where(updated_at: start_date..end_date) }
+
   private
 
     def send_push_notification
