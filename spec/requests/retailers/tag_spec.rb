@@ -170,5 +170,16 @@ RSpec.describe 'TagsController', type: :request do
         expect(CustomerTag.count).to eq(0)
       end
     end
+
+    context "when tag cant not delete and return error" do
+      it "error occrus when delete" do
+        allow_any_instance_of(Tag).to receive(:destroy).and_return(false)
+        delete retailers_tag_path(retailer, tag)
+        expect(response).to redirect_to("/retailers/#{retailer.slug}/tags")
+        expect(flash[:notice]).to eq("Error al eliminar etiqueta.")
+      end
+    end
+
   end
+
 end

@@ -170,6 +170,18 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         end
       end
 
+      context 'when the agent filter is "not_assigned"' do
+        let!(:agent_customer) {create(:agent_customer, customer: customer1, retailer_user: retailer_user)}
+
+        it 'responses customers with not agent assigned' do
+          get api_v1_customers_path, params: { agent: 'not_assigned' }
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+      end
+
       context 'when the agent filter is not "all"' do
         let(:agent) { create(:retailer_user, :agent, retailer: retailer) }
         let!(:agent_customer) do
@@ -717,6 +729,54 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       expect(body['tags'].size).to eq(1)
       expect(body['tags'][0]['tag']).to eq('Prueba 1')
     end
+
+    context "when karix_integrated" do
+      let(:retailer_whatsapp) { create(:retailer, :karix_integrated) }
+      let(:retailer_user_whatsapp) { create(:retailer_user, :admin, retailer: retailer_whatsapp) }
+
+      before do
+        sign_out retailer_user
+        sign_in retailer_user_whatsapp
+      end
+
+      it "sends notification after adding a tag" do
+        post api_v1_add_tag_path(customer.id), params: { chat_service: 'whatsapp', tag: 'Prueba whatsapp 1' }
+        body = JSON.parse(response.body)
+        expect(customer.customer_tags.reload.size).to eq(1)
+        expect(body['customer']['tags'].count).to eq(1)
+        expect(body['customer']['tags'][0]['tag']).to eq('Prueba whatsapp 1')
+        expect(response.code).to eq('200')
+      end
+    end
+
+    context "when gupshup integrated " do
+      let(:retailer_gupshup) { create(:retailer, :gupshup_integrated) }
+      let(:retailer_user_gupshup) { create(:retailer_user, :admin, retailer: retailer_gupshup) }
+      before do
+        sign_out retailer_user
+        sign_in retailer_user_gupshup
+      end
+
+      it "sends notification after adding a tag" do
+        post api_v1_add_tag_path(customer.id), params: { chat_service: 'whatsapp',tag: 'Prueba whatsapp 2' }
+        body = JSON.parse(response.body)
+        expect(customer.customer_tags.reload.size).to eq(1)
+        expect(body['customer']['tags'].size).to eq(1)
+        expect(body['customer']['tags'][0]['tag']).to eq('Prueba whatsapp 2')
+        expect(response.code).to eq('200')
+      end
+    end
+
+    context "when send by facebook" do
+      it "sends notification after adding a tag" do
+        post api_v1_add_tag_path(customer.id), params: { chat_service: 'facebook',tag: 'Prueba facebook 2' }
+        body = JSON.parse(response.body)
+        expect(customer.customer_tags.reload.size).to eq(1)
+        expect(body['customer']['tags'].size).to eq(1)
+        expect(body['customer']['tags'][0]['tag']).to eq('Prueba facebook 2')
+        expect(response.code).to eq('200')
+      end
+    end
   end
 
   describe 'PUT #toggle_chat_bot' do
@@ -736,6 +796,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         active_bot: false,
         allow_start_bots: false
       )
+
       expect(customer.allow_start_bots).to eq(false)
       put api_v1_toggle_chat_bot_path(customer.id)
 
@@ -745,6 +806,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     it 'send a whatsapp notification' do
       expect_any_instance_of(Api::V1::CustomersController).to receive(:send_notification).with('whatsapp')
       expect(customer.active_bot).to eq(true)
+
       put api_v1_toggle_chat_bot_path(customer.id)
     end
 
@@ -756,6 +818,21 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       body = JSON.parse(response.body)
 
       expect(body['customer']['id']).to eq(customer.id)
+    end
+  end
+
+  describe 'POST #send_bulk_files' do
+    it 'sends files to facebook messenger service' do
+      params = {
+        file_data: [
+          fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')
+        ]
+      }
+
+      expect(FacebookMessage).to receive(:create).with(anything())
+      allow(FacebookMessage).to receive(:create).and_return(true)
+
+      post api_v1_send_bulk_files_path(customer1.id), params: params
     end
   end
 end

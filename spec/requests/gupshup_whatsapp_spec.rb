@@ -22,10 +22,6 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
     end
 
     context 'outbound message events' do
-      context 'when the response from Gupshup does not have errors' do
-        it 'successfully response a 200 status'
-      end
-
       context 'when the response from Gupshup has errors' do
         let!(:gupshup_message) do
           create(:gupshup_whatsapp_message, retailer: retailer, gupshup_message_id:
