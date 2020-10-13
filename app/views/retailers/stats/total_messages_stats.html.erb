@@ -196,6 +196,48 @@
       <% end %>
     </div>
   </div>
+
+  <div class="card mt-30 py-35 general-new-container_card">
+    <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title">Total de chats por plataforma</h3>
+
+    <div class="px-20">
+      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+        <div class="row">
+          <div class="col-xs-3 t-center">
+            Plataforma
+          </div>
+          <div class="col-xs-3 t-center">
+            Total de chats
+          </div>
+          <div class="col-xs-3 t-center">
+            Chats respondidos
+          </div>
+          <div class="col-xs-3 t-center">
+            Chats sin responder
+          </div>
+        </div>
+      </div>
+
+      <% @total_chats.each_with_index do |chat, index| %>
+        <div class="col-xs-12 py-15 stats-agent-items fs-14 <%= 'fw-bold' if index == 2 %>">
+          <div class="row">
+            <div class="col-xs-3 t-center truncate">
+              <%= chat[:platform] %>
+            </div>
+            <div class="col-xs-3 t-center">
+              <%= chat[:total_chats] %>
+            </div>
+            <div class="col-xs-3 t-center">
+              <%= chat[:total_answered] %>
+            </div>
+            <div class="col-xs-3 t-center">
+              <%= chat[:total_not_answered] %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <script type="text/javascript">
