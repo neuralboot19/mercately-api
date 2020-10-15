@@ -161,6 +161,16 @@ RSpec.describe Retailers::SettingsController, type: :controller do
       expect(member.reload.retailer_supervisor).to eq(true)
     end
 
+    it 'can not set a supervisor when raise an error' do
+      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false, retailer_supervisor: false )
+
+      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
+      post :set_supervisor_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+      expect(response).to redirect_to(retailers_dashboard_path(retailer_user.retailer.slug))
+      expect(flash[:notice]).to be_present
+      expect(flash[:notice]).to eq("Error al actualizar usuario.")
+    end
+
     it 'redirects to dashboard if an exception occurs' do
       member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: true )
       allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
