@@ -2,6 +2,7 @@ class Retailers::StatsController < RetailersController
   include StatsControllerConcern
   include StatsProspectsConcern
   include StatsAgentsConcern
+  include StatsChatsConcern
 
   before_action :check_role_access
 
@@ -22,9 +23,16 @@ class Retailers::StatsController < RetailersController
     @cast_start_date = Time.parse(@start_date)
     @cast_end_date = Time.parse(@end_date)
 
+    @integration, @status, @model = if current_retailer.karix_integrated?
+                                      ['karix_whatsapp_messages', 'failed', KarixWhatsappMessage]
+                                    elsif current_retailer.gupshup_integrated?
+                                      ['gupshup_whatsapp_messages', 'error', GupshupWhatsappMessage]
+                                    end
+
     total_count_messages
     total_prospects_vs_currents
     total_agents_performance
+    total_chats_answered
   end
 
   private

@@ -4,12 +4,6 @@ module StatsProspectsConcern
   extend ActiveSupport::Concern
 
   def total_prospects_vs_currents
-    @integration, @status = if current_retailer.karix_integrated?
-                              ['karix_whatsapp_messages', 'failed']
-                            elsif current_retailer.gupshup_integrated?
-                              ['gupshup_whatsapp_messages', 'error']
-                            end
-
     prospects_vs_currents_ws
     prospects_vs_currents_msn
     prospects_vs_currents_ml

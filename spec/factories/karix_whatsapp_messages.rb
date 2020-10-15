@@ -22,5 +22,13 @@ FactoryBot.define do
     trait :outbound do
       direction { 'outbound' }
     end
+
+    trait :conversation do
+      message_type { 'conversation' }
+    end
+
+    trait :notification do
+      message_type { 'notification' }
+    end
   end
 end
