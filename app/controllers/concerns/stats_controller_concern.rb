@@ -4,6 +4,12 @@ module StatsControllerConcern
   extend ActiveSupport::Concern
 
   def total_count_messages
+    @integration, @status = if current_retailer.karix_integrated?
+                              ['karix_whatsapp_messages', 'failed']
+                            elsif current_retailer.gupshup_integrated?
+                              ['gupshup_whatsapp_messages', 'error']
+                            end
+
     total_whatsapp
     total_messenger
     total_ml
@@ -16,11 +22,6 @@ module StatsControllerConcern
     total_stats_msn
     total_stats_ml
     total_stats
-
-    prospects_vs_currents_ws
-    prospects_vs_currents_msn
-    prospects_vs_currents_ml
-    total_percentage
   end
 
   def total_whatsapp
@@ -28,21 +29,11 @@ module StatsControllerConcern
     @total_outbound_ws = 0
     return unless current_retailer.whatsapp_integrated?
 
-    @total_inbound_ws += if current_retailer.karix_integrated?
-                           current_retailer.karix_whatsapp_messages.range_between(@cast_start_date, @cast_end_date)
-                           .where(direction: 'inbound').where.not(status: 'failed').size || 0
-                         elsif current_retailer.gupshup_integrated?
-                           current_retailer.gupshup_whatsapp_messages.range_between(@cast_start_date, @cast_end_date)
-                           .where(direction: 'inbound').where.not(status: 'error').size || 0
-                         end
+    @total_inbound_ws += current_retailer.send(@integration).range_between(@cast_start_date, @cast_end_date)
+      .where(direction: 'inbound').where.not(status: @status).size || 0
 
-    @total_outbound_ws += if current_retailer.karix_integrated?
-                            current_retailer.karix_whatsapp_messages.range_between(@cast_start_date, @cast_end_date)
-                            .where(direction: 'outbound').where.not(status: 'failed').size || 0
-                          elsif current_retailer.gupshup_integrated?
-                            current_retailer.gupshup_whatsapp_messages.range_between(@cast_start_date, @cast_end_date)
-                            .where(direction: 'outbound').where.not(status: 'error').size || 0
-                          end
+    @total_outbound_ws += current_retailer.send(@integration).range_between(@cast_start_date, @cast_end_date)
+      .where(direction: 'outbound').where.not(status: @status).size || 0
   end
 
   def total_messenger
@@ -73,13 +64,8 @@ module StatsControllerConcern
     @total_stats_ws = {}
     return unless current_retailer.whatsapp_integrated?
 
-    @total_stats_ws = if current_retailer.karix_integrated?
-                        current_retailer.karix_whatsapp_messages.range_between(@cast_start_date, @cast_end_date)
-                        .group_by_day(:created_at).where.not(status: 'failed').size
-                      elsif current_retailer.gupshup_integrated?
-                        current_retailer.gupshup_whatsapp_messages.range_between(@cast_start_date, @cast_end_date)
-                        .group_by_day(:created_at).where.not(status: 'error').size
-                      end
+    @total_stats_ws = current_retailer.send(@integration).range_between(@cast_start_date, @cast_end_date)
+      .group_by_day(:created_at).where.not(status: @status).size
 
     @total_stats << {
       name: 'Whatsapp',
@@ -133,69 +119,5 @@ module StatsControllerConcern
       data: stats,
       color: '#6B2288'
     }
-  end
-
-  def prospects_vs_currents_ws
-    @ws_currents = 0
-    @ws_prospects = 0
-    return unless current_retailer.whatsapp_integrated?
-
-    customers = if current_retailer.karix_integrated?
-                  current_retailer.customers.includes(:karix_whatsapp_messages)
-                  .where("karix_whatsapp_messages.created_at >= ? and karix_whatsapp_messages.created_at <= ? and " \
-                  "direction = ?", @cast_start_date, @cast_end_date, 'inbound')
-                  .where.not(karix_whatsapp_messages: { status: 'failed' })
-                elsif current_retailer.gupshup_integrated?
-                  current_retailer.customers.includes(:gupshup_whatsapp_messages)
-                  .where("gupshup_whatsapp_messages.created_at >= ? and gupshup_whatsapp_messages.created_at <= ? " \
-                  "and direction = ?", @cast_start_date, @cast_end_date, 'inbound')
-                  .where.not(gupshup_whatsapp_messages: { status: 'error' })
-                end
-
-    @ws_prospects = customers.range_between(@cast_start_date, @cast_end_date).size
-    @ws_currents = customers.out_of_range(@cast_start_date, @cast_end_date).size
-  end
-
-  def prospects_vs_currents_msn
-    @msn_currents = 0
-    @msn_prospects = 0
-    return unless current_retailer.facebook_retailer&.connected?
-
-    customers = current_retailer.customers.includes(:facebook_messages)
-      .where("facebook_messages.created_at >= ? and facebook_messages.created_at <= ?",
-      @cast_start_date, @cast_end_date)
-      .where(facebook_messages: { sent_by_retailer: false })
-
-    @msn_prospects = customers.range_between(@cast_start_date, @cast_end_date).size
-    @msn_currents = customers.out_of_range(@cast_start_date, @cast_end_date).size
-  end
-
-  def prospects_vs_currents_ml
-    @ml_currents = 0
-    @ml_prospects = 0
-    return unless current_retailer.meli_retailer
-
-    Question.unscoped do
-      customers = current_retailer.customers.includes(:questions)
-        .where("questions.created_at >= ? and questions.created_at <= ?",
-        @cast_start_date, @cast_end_date)
-        .where.not(questions: { question: [nil, ''] })
-
-      @ml_prospects = customers.range_between(@cast_start_date, @cast_end_date).size
-      @ml_currents = customers.out_of_range(@cast_start_date, @cast_end_date).size
-    end
-  end
-
-  def total_percentage
-    total_prospects = @ws_prospects + @msn_prospects + @ml_prospects
-    total_currents = @ws_currents + @msn_currents + @ml_currents
-    total = total_prospects + total_currents
-    @percentage_prospects = 0.0
-    @percentage_currents = 0.0
-
-    return unless total > 0
-
-    @percentage_prospects = (total_prospects.to_f / total.to_f * 100).round(2)
-    @percentage_currents = (total_currents.to_f / total.to_f * 100).round(2)
   end
 end

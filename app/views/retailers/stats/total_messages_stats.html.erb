@@ -142,6 +142,60 @@
       </div>
     </div>
   </div>
+
+  <div class="card mt-30 py-35 general-new-container_card">
+    <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title">Rendimiento por agente</h3>
+
+    <div class="px-20">
+      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+        <div class="row">
+          <div class="col-xs-3 t-center">
+            Agente
+          </div>
+          <div class="col-xs-2 t-center">
+            Chats asignados
+          </div>
+          <div class="col-xs-1 t-center">
+            Mensajes
+          </div>
+          <div class="col-xs-2 t-center">
+            Total de clientes
+          </div>
+          <div class="col-xs-2 t-center">
+            Clientes recurrentes
+          </div>
+          <div class="col-xs-2 t-center">
+            Clientes nuevos
+          </div>
+        </div>
+      </div>
+
+      <% @agent_stats.each do |agent| %>
+        <div class="col-xs-12 py-15 stats-agent-items fs-14">
+          <div class="row">
+            <div class="col-xs-3 t-center truncate">
+              <%= agent[:name] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:chats_assigned] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:messages_sent] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:customers] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:currents] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:prospects] %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <script type="text/javascript">

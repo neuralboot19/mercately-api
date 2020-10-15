@@ -228,5 +228,26 @@ RSpec.describe 'PaymentezController', type: :request do
 
       expect(current_retailer.reload.payment_plan.status).to eq('inactive')
     end
+
+    it 'plan is not activated if not accept the terms' do
+      purchase_params_mock_terms = {'amount': '25', 'cc_id': credit_card.id.to_s, terms: '', plan: 'professional'}
+
+      allow_any_instance_of(PaymentezCreditCard).to receive(:create_transaction_with_plan).and_return(false)
+
+      current_retailer = retailer_user.retailer
+      current_retailer.payment_plan.update(status: 'active')
+
+      post purchase_plan_retailers_paymentez_index_path(
+        current_retailer,
+        card: purchase_params_mock_terms
+      )
+      expect(flash[:notice]).to be_present
+      expect(flash[:notice]).to match(/Usted debe aceptar los términos y condiciones/)
+      expect(response.status).to eq(500)
+      body = JSON.parse(response.body)
+      expect(body['message']).to eq('Usted debe aceptar los términos y condiciones')
+
+       expect(current_retailer.reload.payment_plan.status).to eq('active')
+    end
   end
 end

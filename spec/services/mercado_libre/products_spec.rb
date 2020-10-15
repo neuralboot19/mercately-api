@@ -259,6 +259,15 @@ RSpec.describe MercadoLibre::Products, vcr: true do
           expect(product.reload.meli_permalink).not_to be_nil
         end
       end
+
+      it 'not updates the product with ML information when raise an error' do
+        VCR.use_cassette('products/pull_update_and_updates_item') do
+          allow_any_instance_of(described_class).to receive(:after_save_data).and_raise(ActiveRecord::RecordNotUnique)
+
+          products_service.pull_update(product.meli_product_id)
+          expect(product.reload.meli_permalink).to be_nil
+        end
+      end
     end
 
     context 'when the product does not have images attached yet' do

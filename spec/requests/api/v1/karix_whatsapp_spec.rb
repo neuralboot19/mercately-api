@@ -1255,34 +1255,63 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   end
 
   describe 'PUT #message_read' do
-    let(:message) { create(:karix_whatsapp_message, customer: customer1, status: 'delivered') }
-
     context 'when local request' do
-      context 'when the message is updated without errors' do
-        it 'successfully, will response a 200 status' do
-          put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
-            params: {
-              message_id: message.id
-            }
+      context 'when is karix integrated' do
+        let(:message) { create(:karix_whatsapp_message, customer: customer1, status: 'delivered') }
 
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('200')
-          expect(body['message']['status']).to eq('read')
+        context 'when the message is updated without errors' do
+          it 'successfully, will response a 200 status' do
+            put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
+              params: {
+                message_id: message.id
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']['status']).to eq('read')
+          end
+        end
+
+        context 'when the message is not updated because of errors' do
+          it 'will response a 500 status' do
+            allow_any_instance_of(KarixWhatsappMessage).to receive(:update_column).and_return(false)
+
+            put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
+              params: {
+                message_id: message.id
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('500')
+            expect(body['message']).to eq('Error al actualizar mensajes')
+          end
         end
       end
 
-      context 'when the message is not updated because of errors' do
-        it 'will response a 500 status' do
-          allow_any_instance_of(KarixWhatsappMessage).to receive(:update_column).and_return(false)
+      context 'when is gupshup integrated' do
+        before do
+          sign_out retailer_user
+          sign_in retailer_user_gupshup
+        end
 
-          put "/api/v1/whatsapp_update_message_read/#{customer1.id}",
-            params: {
-              message_id: message.id
-            }
+        let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
+        let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
 
-          body = JSON.parse(response.body)
-          expect(response.code).to eq('500')
-          expect(body['message']).to eq('Error al actualizar mensajes')
+        context 'when the message is sent without errors' do
+          it 'successfully, will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+              .and_return(message)
+            allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new).and_return(service_instance)
+
+            put "/api/v1/whatsapp_update_message_read/#{customer3.id}",
+              params: {
+                message_id: message.id
+              }
+
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']['id']).to eq(message.id)
+          end
         end
       end
     end
@@ -1291,7 +1320,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       before do
         sign_out retailer_user
       end
-
+      let(:message) { create(:karix_whatsapp_message, customer: customer1) }
       let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
       let(:header_email) { retailer_user.email }
@@ -1573,6 +1602,27 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         expect(response.code).to eq('200')
         expect(customer1.reload.unread_messenger_chat).to eq(true)
       end
+
+      context 'when the retailer user is an agent' do
+        let(:retailer_user_agent) { create(:retailer_user, :with_retailer, :agent, retailer: retailer) }
+        let!(:agent_customer1) { create(:agent_customer, retailer_user: retailer_user, customer: customer1) }
+
+        before do
+          sign_out retailer_user
+          sign_in retailer_user_agent
+        end
+
+        it 'sets the chat as unread when customer.agent is present' do
+          patch "/api/v1/whatsapp_unread_chat/#{customer1.id}",
+            params: {
+              chat_service: 'facebook'
+            }
+
+          expect(response.code).to eq('200')
+          expect(assigns(:customer)).to be_present
+          expect(customer1.reload.unread_messenger_chat).to eq(true)
+        end
+      end
     end
 
     describe 'when chat service is whatsapp' do
@@ -1742,6 +1792,23 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
             allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(ok_net_response)
             allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
             allow(Cloudinary::Uploader).to receive(:upload).and_return(cloudinary_image_response)
+            post "/api/v1/karix_whatsapp_send_bulk_files/#{customer3.id}",
+              params: {
+                file_data: [fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')],
+                template: false,
+                id: customer3.id
+              }
+            body = JSON.parse(response.body)
+            expect(response.code).to eq('200')
+            expect(body['message']).to eq('Notificación enviada')
+          end
+        end
+      end
+
+      context 'when the retailer is karix integrated' do
+        context 'when the message is sent without errors' do
+          it 'will response a 200 status' do
+            allow_any_instance_of(Whatsapp::Karix::Messages).to receive(:send_bulk_files).and_return(true)
             post "/api/v1/karix_whatsapp_send_bulk_files/#{customer3.id}",
               params: {
                 file_data: [fixture_file_upload(Rails.root + 'spec/fixtures/profile.jpg', 'image/jpeg')],
