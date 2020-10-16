@@ -569,22 +569,45 @@ class ChatMessages extends Component {
 
   getTextInput = () => {
     let new_array = this.state.templateSelected.split('')
+
     return new_array.map((key, index) => {
-      if (key == '*'){
-        return <input value='' onChange={ (e) => this.changeTemplateSelected(e, index)} /> ;
-      } else {
-        return key
+      if (key === '*') {
+        if (index === 0 || new_array[index - 1] !== '\\') {
+          return <input value='' onChange={ (e) => this.changeTemplateSelected(e, index)} />;
+        } else {
+          return key;
+        }
+      } else if (key === '\\') {
+        if (index === (new_array.length - 1) || new_array[index + 1] !== '*') {
+          return key;
+        } else {
+          return '';
+        }
       }
-    })
+      else {
+        return key;
+      }
+    });
   }
 
   getTextInputEdited = () => {
     let new_array = this.state.templateSelected.split('')
+
     return new_array.map((key, index) => {
-      if (key == '*'){
-        return <input value={this.state.auxTemplateSelected[index] === '*' ? '' : this.state.auxTemplateSelected[index] } onChange={ (e) => this.changeTemplateSelected(e, index)}   /> ;
+      if (key === '*') {
+        if (index === 0 || new_array[index - 1] !== '\\') {
+          return <input value={this.state.auxTemplateSelected[index] === '*' ? '' : this.state.auxTemplateSelected[index] } onChange={ (e) => this.changeTemplateSelected(e, index)} />;
+        } else {
+          return key;
+        }
+      } else if (key === '\\') {
+        if (index === (new_array.length - 1) || new_array[index + 1] !== '*') {
+          return key;
+        } else {
+          return '';
+        }
       } else {
-        return key
+        return key;
       }
     })
   }
@@ -602,14 +625,15 @@ class ChatMessages extends Component {
 
   sendTemplate = () => {
     var allFilled = true;
-    this.state.auxTemplateSelected.map((key) => {
-      if (key === '*') {
+    this.state.auxTemplateSelected.map((key, index) => {
+      if (key === '*' && (index === 0 || this.state.auxTemplateSelected[index - 1] !== '\\')) {
         allFilled = false;
       }
     })
 
     if (allFilled) {
       var message = this.state.auxTemplateSelected.join('').replace(/(\r)/gm, "");
+      message = this.getCleanTemplate(message);
 
       this.handleSubmitWhatsAppMessage(null, message, true);
       this.cancelTemplate();
@@ -1001,6 +1025,10 @@ class ChatMessages extends Component {
     }
   }
 
+  getCleanTemplate = (text) => {
+    return text.replaceAll('\\*', '*');
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -1331,7 +1359,7 @@ class ChatMessages extends Component {
                 {this.props.templates.map((template) => (
                   <div className="row" key={template.id}>
                     <div className={this.props.onMobile ? "col-md-10 fs-10" : "col-md-10" }>
-                      <p>{template.text}</p>
+                      <p>{this.getCleanTemplate(template.text)}</p>
                     </div>
                     <div className="col-md-2">
                       <button onClick={(e) => this.selectTemplate(template)}>Seleccionar</button>

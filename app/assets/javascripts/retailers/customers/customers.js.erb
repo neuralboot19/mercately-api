@@ -4,15 +4,25 @@ var templateSelected = '';
 function setKarixTemplate(index) {
   $('#karix-templates-list').hide();
   $('#karix-template-edition').show();
-  templateSelected = $(`#template-${index}`).html();
+  templateSelected = $(`#original-template-${index}`).html();
 
   auxTemplate = templateSelected.split('');
 
   let new_array = templateSelected.split('');
   let container = $('#karix-template-text').html('');
   new_array.map((key, index) => {
-    if (key == '*'){
-      container.append(`<input value="" onChange="changeTemplate(this, ${index})" />`);
+    if (key === '*') {
+      if (index === 0 || new_array[index - 1] !== '\\') {
+        container.append(`<input value="" onChange="changeTemplate(this, ${index})" />`);
+      } else {
+        container.append(`${key}`);
+      }
+    } else if (key === '\\') {
+      if (index === (new_array.length - 1) || new_array[index + 1] !== '*') {
+        container.append(`${key}`);
+      } else {
+        container.append('');
+      }
     } else {
       container.append(`${key}`);
     }
@@ -43,15 +53,15 @@ function cancelTemplate() {
 
 function sendTemplate() {
   var allFilled = true;
-  auxTemplate.map((key) => {
-    if (key === '*') {
+  auxTemplate.map((key, index) => {
+    if (key === '*' && (index === 0 || auxTemplate[index - 1] !== '\\')) {
       allFilled = false;
     }
   })
 
   if (allFilled) {
     data = {
-      message: auxTemplate.join(''),
+      message: auxTemplate.join('').replaceAll('\\*', '*'),
       customer_id: $('#karix-customer-id').val() || $('#customer_id_index').val(),
       template: true,
       type: 'text'
