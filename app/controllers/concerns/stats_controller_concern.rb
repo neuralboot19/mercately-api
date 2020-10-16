@@ -4,12 +4,6 @@ module StatsControllerConcern
   extend ActiveSupport::Concern
 
   def total_count_messages
-    @integration, @status = if current_retailer.karix_integrated?
-                              ['karix_whatsapp_messages', 'failed']
-                            elsif current_retailer.gupshup_integrated?
-                              ['gupshup_whatsapp_messages', 'error']
-                            end
-
     total_whatsapp
     total_messenger
     total_ml

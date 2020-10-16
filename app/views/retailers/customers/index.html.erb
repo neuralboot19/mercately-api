@@ -288,7 +288,8 @@
                 <% current_retailer.whatsapp_templates.active.each_with_index do |template, index| %>
                   <div class="row">
                     <div class="col-md-10">
-                      <p id="template-<%= index %>"><%= template.text %></p>
+                      <p id="template-<%= index %>"><%= template.clean_template %></p>
+                      <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
                     </div>
                     <div class="col-md-2">
                       <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>

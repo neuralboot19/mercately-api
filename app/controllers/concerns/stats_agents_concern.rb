@@ -4,12 +4,6 @@ module StatsAgentsConcern
   extend ActiveSupport::Concern
 
   def total_agents_performance
-    @integration, @status = if current_retailer.karix_integrated?
-                              ['karix_whatsapp_messages', 'failed']
-                            elsif current_retailer.gupshup_integrated?
-                              ['gupshup_whatsapp_messages', 'error']
-                            end
-
     total_agent_outbound_messages_ws
     total_agent_outbound_messages_msn
     total_agent_chats_assigned
