@@ -1,3 +1,4 @@
+desc 'Updates ML categories'
 task update_categories: :environment do
   puts 'Downloading categories'
   ActiveRecord::Base.transaction do
@@ -22,6 +23,7 @@ task update_categories: :environment do
 
     Category.where(meli_id: current_array).update_all(status: 'inactive')
   end
+  Categories::UpdateJob.perform_at(Date.today.end_of_day + 2.hours)
   puts 'Done.'
 end
 
@@ -49,4 +51,7 @@ end
 def faraday_request_get(url)
   conn = Connection.prepare_connection(url)
   Connection.get_request(conn)
+rescue
+  Raven.capture_exception 'Error al actualizar las categorias de MercadoLibre, se reintentara en 15 minutos.'
+  Categories::UpdateJob.perform_in(15.minutes)
 end
