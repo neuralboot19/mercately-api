@@ -11,6 +11,7 @@ class Retailer < ApplicationRecord
   has_one :retailer_user, dependent: :destroy
   has_one :facebook_retailer, dependent: :destroy
   has_one :payment_plan, dependent: :destroy
+  has_one :facebook_catalog, dependent: :destroy
   has_one_attached :avatar
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
@@ -27,7 +28,6 @@ class Retailer < ApplicationRecord
   has_many :gs_templates, dependent: :destroy
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
-  has_one :facebook_catalog, dependent: :destroy
   has_many :tags, dependent: :destroy
   has_many :sales_channels, dependent: :destroy
   has_many :chat_bots, dependent: :destroy
@@ -37,21 +37,28 @@ class Retailer < ApplicationRecord
   has_many :calendar_events, dependent: :destroy
   has_many :reminders, dependent: :destroy
 
+  has_many :hubspot_fields
+  has_many :customer_hubspot_fields
+
   validates :name, presence: true
   validates :slug, uniqueness: true
 
   before_validation :gupshup_src_name_to_nil
   after_save :generate_slug, if: :saved_change_to_name?
   after_save :add_sales_channel
+  before_create :format_phone_number
   after_create :save_free_plan
   after_create :send_to_mailchimp
   before_create :format_phone_number
+  after_update :get_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
+  after_update :sync_hs_customers, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
 
   validates :slug,
             exclusion: { in: %w(www),
             message: "%{value} is reserved." }
 
   enum id_type: %i[cedula pasaporte ruc]
+  enum hubspot_match: %i[phone_or_email phone email], _prefix: true
 
   def facebook_unread_messages
     facebook_retailer&.facebook_unread_messages
@@ -204,6 +211,10 @@ class Retailer < ApplicationRecord
     karix_integrated? || gupshup_integrated?
   end
 
+  def hubspot_integrated?
+    hs_access_token.present?
+  end
+
   def main_paymentez_credit_card
     self.paymentez_credit_cards.find_by_main(true)
   end
@@ -230,5 +241,29 @@ class Retailer < ApplicationRecord
 
     def gupshup_src_name_to_nil
       self.gupshup_src_name = nil if gupshup_src_name.blank?
+    end
+
+    def get_hubspot_properties
+      properties = hubspot.contact_properties.pluck('name', 'label', 'type').map do |name, label, type|
+        { hubspot_field: name, hubspot_label: label, hubspot_type: type }
+      end
+      hubspot_fields.import(
+        properties,
+        validate: true,
+        validate_with_context: :bulk_import,
+        on_duplicate_key_update: {
+          conflict_target: [:retailer_id, :hubspot_field]
+        }
+      )
+    end
+
+    def hubspot
+      @hubspot = HubspotService::Api.new(hs_access_token)
+    end
+
+    def sync_hs_customers
+      return unless hubspot_integrated?
+
+      customers.update_all(hs_active: true)
     end
 end

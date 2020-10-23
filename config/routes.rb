@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   get '/chatbots-whatsapp', to: 'pages#chatbots_whatsapp', as: :chatbots_whatsapp
 
   namespace :retailers do
+    get 'integrations/hubspot', to: 'integrations#connect_to_hubspot'
     namespace :api, defaults: { format: :json } do
       namespace :v1 do
         get 'ping', to: 'welcome#ping'
@@ -75,6 +76,15 @@ Rails.application.routes.draw do
       resources :templates
       put 'messages/:id/answer_question', to: 'messages#answer_question', as: :answer_question
       get 'integrations', to: 'integrations#index'
+      #Hubspot Ingreation
+      resources :hubspot, only: :index do
+        collection do
+          post 'create_mapped_field', to: 'hubspot#create'
+          post 'update/:id', to: 'hubspot#update', as: :update_mapped_field
+          post 'update_matching', to: 'hubspot#update_matching'
+          delete 'mapped_field/:id', to: 'hubspot#destroy', as: :delete_mapped_field
+        end
+      end
       #Facebook Chats
       get 'facebook_chats', to: 'messages#facebook_chats', as: :facebook_chats
       get 'facebook_chat/:id', to: 'messages#facebook_chat', as: :facebook_chat

@@ -7,16 +7,27 @@ class Connection
     end
   end
 
-  def self.get_request(connection)
-    get_connection = connection.get
+  def self.get_request(connection, headers = {})
+    get_connection = connection.get do |req|
+      if headers.present?
+        headers.each do |k, v|
+          req.headers[k] = v
+        end
+      end
+    end
     json_body = get_connection.body
 
     JSON.parse(json_body)
   end
 
-  def self.post_request(connection, body)
+  def self.post_request(connection, body, headers = {})
     post_connection = connection.post do |req|
       req.headers['Content-Type'] = 'application/json'
+      if headers.present?
+        headers.each do |k, v|
+          req.headers[k] = v
+        end
+      end
       req.body = body
     end
 
@@ -35,6 +46,21 @@ class Connection
     put_connection = connection.put do |req|
       req.headers['Content-Type'] = 'application/json'
       req.headers['Accept'] = 'application/json'
+      req.body = body
+    end
+
+    put_connection
+  end
+
+  def self.patch_request(connection, body, headers = {})
+    put_connection = connection.patch do |req|
+      req.headers['Content-Type'] = 'application/json'
+      req.headers['Accept'] = 'application/json'
+      if headers.present?
+        headers.each do |k, v|
+          req.headers[k] = v
+        end
+      end
       req.body = body
     end
 

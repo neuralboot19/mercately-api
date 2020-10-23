@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_26_154959) do
+ActiveRecord::Schema.define(version: 2021_02_04_211523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -260,6 +260,17 @@ ActiveRecord::Schema.define(version: 2021_01_26_154959) do
     t.index ["customer_id"], name: "index_customer_bot_options_on_customer_id"
   end
 
+  create_table "customer_hubspot_fields", force: :cascade do |t|
+    t.string "customer_field"
+    t.bigint "hubspot_field_id"
+    t.bigint "retailer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_field", "hubspot_field_id", "retailer_id"], name: "chf_customer_field_husbpot_field_retailer", unique: true
+    t.index ["hubspot_field_id"], name: "index_customer_hubspot_fields_on_hubspot_field_id"
+    t.index ["retailer_id"], name: "index_customer_hubspot_fields_on_retailer_id"
+  end
+
   create_table "customer_related_data", force: :cascade do |t|
     t.bigint "customer_related_field_id"
     t.bigint "customer_id"
@@ -324,6 +335,8 @@ ActiveRecord::Schema.define(version: 2021_01_26_154959) do
     t.jsonb "endpoint_response", default: {}
     t.jsonb "endpoint_failed_response", default: {}
     t.float "ws_notification_cost", default: 0.0672
+    t.boolean "hs_active"
+    t.string "hs_id"
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
@@ -412,6 +425,19 @@ ActiveRecord::Schema.define(version: 2021_01_26_154959) do
     t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_gupshup_whatsapp_messages_on_retailer_user_id"
     t.index ["whatsapp_message_id"], name: "index_gupshup_whatsapp_messages_on_whatsapp_message_id"
+  end
+
+  create_table "hubspot_fields", force: :cascade do |t|
+    t.string "hubspot_field"
+    t.string "hubspot_label"
+    t.string "hubspot_type"
+    t.boolean "taken", default: false
+    t.boolean "deleted", default: false
+    t.bigint "retailer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id", "hubspot_field"], name: "index_hubspot_fields_on_retailer_id_and_hubspot_field", unique: true
+    t.index ["retailer_id"], name: "index_hubspot_fields_on_retailer_id"
   end
 
   create_table "karix_whatsapp_messages", force: :cascade do |t|
@@ -816,6 +842,12 @@ ActiveRecord::Schema.define(version: 2021_01_26_154959) do
     t.boolean "allow_voice_notes", default: true
     t.boolean "show_calendar", default: false
     t.boolean "allow_reminders", default: false
+    t.integer "hubspot_match", default: 0
+    t.datetime "hs_expires_in"
+    t.string "hs_access_token"
+    t.string "hs_refresh_token"
+    t.boolean "all_customers_hs_integrated", default: true
+    t.boolean "hs_tags", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -913,6 +945,8 @@ ActiveRecord::Schema.define(version: 2021_01_26_154959) do
   add_foreign_key "agent_notifications", "retailer_users"
   add_foreign_key "calendar_events", "retailer_users"
   add_foreign_key "calendar_events", "retailers"
+  add_foreign_key "customer_hubspot_fields", "hubspot_fields"
+  add_foreign_key "customer_hubspot_fields", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
@@ -920,6 +954,7 @@ ActiveRecord::Schema.define(version: 2021_01_26_154959) do
   add_foreign_key "gs_templates", "retailers"
   add_foreign_key "gupshup_whatsapp_messages", "customers"
   add_foreign_key "gupshup_whatsapp_messages", "retailers"
+  add_foreign_key "hubspot_fields", "retailers"
   add_foreign_key "karix_whatsapp_messages", "customers"
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"

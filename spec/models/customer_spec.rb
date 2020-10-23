@@ -980,4 +980,53 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#sync_hs' do
+    let(:retailer_user) { create(:retailer_user, :admin, :with_retailer) }
+    let(:retailer) { retailer_user.retailer }
+    let(:customer) { create(:customer, retailer: retailer, hs_active: true) }
+    let(:contact_response) do
+      {
+        'id'=>'101',
+        'properties'=>{
+          'createdate'=>'2021-02-01T20:01:01.058Z',
+          'email'=>'dortin42@gmail.com',
+          'firstname'=>'Daniel',
+          'hs_object_id'=>'101',
+          'lastmodifieddate'=>'2021-02-03T02:02:23.777Z',
+          'lastname'=>'Ortin'
+        },
+        'createdAt'=>'2021-02-01T20:01:01.058Z',
+        'updatedAt'=>'2021-02-03T02:02:23.777Z',
+        'archived'=>false
+      }
+    end
+    let(:contact_properties_response) do
+      [
+        {"name"=>"company_size", "label"=>"Company size", "type"=>"string", "fieldType"=>"text", "groupName"=>"facebook_ads_properties", "options"=>[], "displayOrder"=>-1, "calculated"=>false, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>true},
+        {"name"=>"date_of_birth", "label"=>"Date of birth", "type"=>"string", "fieldType"=>"text", "groupName"=>"facebook_ads_properties", "options"=>[], "displayOrder"=>-1, "calculated"=>false, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>true},
+        {"name"=>"days_to_close", "label"=>"Days To Close", "type"=>"number", "fieldType"=>"number", "groupName"=>"deal_information", "options"=>[], "displayOrder"=>-1, "calculated"=>true, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>false},
+        {"name"=>"degree", "label"=>"Degree", "type"=>"string", "fieldType"=>"text", "groupName"=>"facebook_ads_properties", "options"=>[], "displayOrder"=>-1, "calculated"=>false, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>true},
+        {"name"=>"field_of_study", "label"=>"Field of study", "type"=>"string", "fieldType"=>"text", "groupName"=>"facebook_ads_properties", "options"=>[], "displayOrder"=>-1, "calculated"=>false, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>true},
+        {"name"=>"first_conversion_date", "label"=>"First Conversion Date", "type"=>"datetime", "fieldType"=>"date", "groupName"=>"contact_activity", "options"=>[], "displayOrder"=>-1, "calculated"=>true, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>false},
+        {"name"=>"first_conversion_event_name", "label"=>"First Conversion", "type"=>"string", "fieldType"=>"text", "groupName"=>"contact_activity", "options"=>[], "displayOrder"=>-1, "calculated"=>true, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>false},
+        {"name"=>"first_deal_created_date", "label"=>"First Deal Created Date", "type"=>"datetime", "fieldType"=>"date", "groupName"=>"deal_information", "options"=>[], "displayOrder"=>-1, "calculated"=>false, "externalOptions"=>false, "hasUniqueValue"=>false, "hidden"=>false, "formField"=>false}
+      ]
+    end
+
+    before do
+      allow_any_instance_of(HubspotService::Api).to receive(:contact_properties).and_return(contact_properties_response)
+      retailer.update(hs_access_token: 'CK3_krf2LhICAQEY_PC4BCDmvqsGKIbQDjIZALypCKWvZcmF-D-RAwomzwIqjQdcwK3NJjoaAAoCQQAADIADAAgAAAABAAAAAAAAABjAABNCGQC8qQileauAqGkAwUfvfK8_0hB97oc77u0')
+    end
+
+    context 'when hubspot integrated' do
+      it 'gets the hs_id' do
+        allow_any_instance_of(HubspotService::Api).to receive(:contact_update).and_return(contact_response)
+        allow_any_instance_of(HubspotService::Api).to receive(:search).and_return(contact_response)
+        allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(contact_response)
+        customer.send :sync_hs
+        expect(customer.hs_id).to eq '101'
+      end
+    end
+  end
 end
