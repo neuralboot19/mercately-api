@@ -32,9 +32,9 @@ $secondary-color: #00B4FF;
 }
 
 .claim,
-.hero p.hero-claim {
+.hero h1.hero-claim {
   line-height: 3.125rem;
-  font-size: 2.25rem;
+  font-size: 2rem;
 }
 
 .btn-group-large {
@@ -154,7 +154,8 @@ $secondary-color: #00B4FF;
   text-align: center;
   color: #000;
   font-weight: bolder;
-  line-height: 1.275rem;
+  line-height: 1.25rem;
+  font-size: 1rem;
 }
 
 .section-explanation-cta {
@@ -503,7 +504,7 @@ footer {
   .feature-wrapper:hover {
     animation: unset;
   }
-  
+
   .show-on-mobile {
     display: block;
   }

@@ -3,92 +3,102 @@
 <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 
-<% if ENV['ENVIRONMENT'] == 'production' && current_page?(root_path) %>
+<% if ENV['ENVIRONMENT'] == 'production' %>
 
-  <meta name="description" content="Con mercately sincroniza tu tienda con Mercado Libre, responde a tus clientes de forma rápida, gestiona tu inventario y vende más ¡Ingresa y conócenos!" />
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-W8FF76S');</script>
+  <!-- End Google Tag Manager -->
 
-  <meta charset="utf-8"/>
+  <% if current_page?(root_path) %>
+    <meta name="description" content="Con mercately sincroniza tu tienda con Mercado Libre, responde a tus clientes de forma rápida, gestiona tu inventario y vende más ¡Ingresa y conócenos!" />
 
-  <link rel="canonical" href="https://www.mercately.com/" />
-  <link rel="alternate" hreflang="es-EC" href="https://www.mercately.com/"/>
-  <link rel="alternate" hreflang="es-CO" href="https://www.mercately.com/"/>
+    <meta charset="utf-8"/>
 
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:site" content="@mercately">
-  <meta name="twitter:title" content="Mercately | Sincronice el Inventario de Mercadolibre">
-  <meta name="twitter:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar.">
-  <meta name="twitter:image" content="https://www.mercately.com/profile.jpg">
+    <link rel="canonical" href="https://www.mercately.com/" />
+    <link rel="alternate" hreflang="es-EC" href="https://www.mercately.com/"/>
+    <link rel="alternate" hreflang="es-CO" href="https://www.mercately.com/"/>
 
-  <meta property="og:title" content="Mercately | Sincronice el Inventario de Mercadolibre" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.mercately.com/" />
-  <meta property="og:locale" content="es_LA" />
-  <meta property="og:image" content="https://www.mercately.com/facebook_preview.jpg" />
-  <meta property="og:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar." />
-  <meta property="og:site_name" content="Mercately" />
-  <meta property="fb:app_id" content="<%= ENV['FACEBOOK_APP_ID'] %>" />
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@mercately">
+    <meta name="twitter:title" content="Mercately | Sincronice el Inventario de Mercadolibre">
+    <meta name="twitter:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar.">
+    <meta name="twitter:image" content="https://www.mercately.com/profile.jpg">
 
-  <script type="application/ld+json">
-    {
-      "@context": "http://schema.org",
-      "@type": "Organization",
-      "name": "Mercately",
-      "url": "https://www.mercately.com",
-      "address": "",
-      "sameAs": [
-        "https://www.facebook.com/mercately/",
-        "https://twitter.com/mercately",
-        "https://www.linkedin.com/company/40729433"
-      ]
-    }
-  </script>
+    <meta property="og:title" content="Mercately | Sincronice el Inventario de Mercadolibre" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.mercately.com/" />
+    <meta property="og:locale" content="es_LA" />
+    <meta property="og:image" content="https://www.mercately.com/facebook_preview.jpg" />
+    <meta property="og:description" content="Con Mercately podrás sincronizar tu inventario de productos en Mercado Libre, gestionar pedidos, responder preguntas y mucho más. Todo en un solo lugar." />
+    <meta property="og:site_name" content="Mercately" />
+    <meta property="fb:app_id" content="<%= ENV['FACEBOOK_APP_ID'] %>" />
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=<%=ENV['GOOGLE_TRACKING_ID']%>"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": "Mercately",
+        "url": "https://www.mercately.com",
+        "address": "",
+        "sameAs": [
+          "https://www.facebook.com/mercately/",
+          "https://twitter.com/mercately",
+          "https://www.linkedin.com/company/40729433"
+        ]
+      }
+    </script>
 
-    gtag('config', "<%= ENV['GOOGLE_TRACKING_ID'] %>");
-  </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=<%=ENV['GOOGLE_TRACKING_ID']%>"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  <!-- Event snippet for Registro conversion page -->
-  <script>
-    gtag('event', 'conversion', {'send_to': "<%= ENV['GOOGLE_TRACKING_ID'] %>/anasCMPEiK4BEIeJ5tMC"});
-  </script>
+      gtag('config', "<%= ENV['GOOGLE_TRACKING_ID'] %>");
+    </script>
 
-  <!-- Start of HubSpot Embed Code -->
-  <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/6467598.js"></script>
-  <!-- End of HubSpot Embed Code -->
+    <!-- Event snippet for Registro conversion page -->
+    <script>
+      gtag('event', 'conversion', {'send_to': "<%= ENV['GOOGLE_TRACKING_ID'] %>/anasCMPEiK4BEIeJ5tMC"});
+    </script>
 
-  <!-- Facebook Pixel Code -->
-  <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-      n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '464358527533472');
-    fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none"
-                                      src="https://www.facebook.com/tr?id=464358527533472&ev=PageView&noscript=1"
-                                      /></noscript>
-  <!-- End Facebook Pixel Code -->
+    <!-- Start of HubSpot Embed Code -->
+    <script type="text/javascript" id="hs-script-loader" async defer src="//js.hs-scripts.com/6467598.js"></script>
+    <!-- End of HubSpot Embed Code -->
 
-  <!-- Hotjar Tracking Code for https://www.mercately.com/ -->
-  <script>
-    (function(h,o,t,j,a,r){
-      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-      h._hjSettings={hjid:1627743,hjsv:6};
-      a=o.getElementsByTagName('head')[0];
-      r=o.createElement('script');r.async=1;
-      r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-      a.appendChild(r);
-    })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-  </script>
+    <!-- Facebook Pixel Code -->
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+          'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '464358527533472');
+      fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+                                        src="https://www.facebook.com/tr?id=464358527533472&ev=PageView&noscript=1"
+                                        /></noscript>
+    <!-- End Facebook Pixel Code -->
+
+    <!-- Hotjar Tracking Code for https://www.mercately.com/ -->
+    <script>
+      (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:1627743,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+      })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+    </script>
+  <% end %>
 <% end %>

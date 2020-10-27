@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="es-EC">
   <head>
-    <title>Optimiza tu negocio y vende más en Mercado Libre | Mercately</title>
+    <title><%= meta_title %></title>
+    <meta name="description" content="<%= meta_description %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag    'pages', media: 'all' %>
@@ -12,6 +13,13 @@
   </head>
 
   <body>
+    <% if ENV['ENVIRONMENT'] == 'production' %>
+      <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8FF76S"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager (noscript) -->
+    <% end %>
+
     <%= render 'layouts/pages_new/header' %>
     <%= yield %>
     <div class="bubble ws-bubble">
