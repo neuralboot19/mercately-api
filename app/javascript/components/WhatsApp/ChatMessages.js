@@ -14,11 +14,14 @@ import {
 import Modal from 'react-modal';
 import ImagesSelector from './../shared/ImagesSelector';
 import GoogleMap from './../shared/Map';
+import Message from './Message';
 import 'emoji-mart/css/emoji-mart.css';
 import { Picker } from 'emoji-mart';
 
 var currentCustomer = 0;
 var total_pages = 0;
+var comesFromSelection = false;
+var justMounted = false;
 const csrfToken = document.querySelector('[name=csrf-token]').content
 const pickerI18n = {
   search: 'Buscar emoji',
@@ -120,8 +123,8 @@ class ChatMessages extends Component {
       selectedProduct: null,
       selectedFastAnswer: null
     }, () => {
+      justMounted = true;
       this.props.fetchWhatsAppMessages(id);
-      this.scrollToBottom();
     });
 
     this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
@@ -145,8 +148,9 @@ class ChatMessages extends Component {
             this.setState({
               messages: this.state.messages.concat(karix_message).sort(this.sortMessages()),
               new_message: false,
-              updated: false
-            }, () => this.setState({ updated: true}))
+              updated: false,
+              scrolable: false
+            }, () => this.setState({ updated: true, scrolable: false}))
           }
         }
       } else if ((['image', 'voice', 'audio', 'video', 'document'].includes(karix_message.content_media_type) || ['location', 'contact'].includes(karix_message.content_type)) &&
@@ -154,6 +158,7 @@ class ChatMessages extends Component {
         this.setState({
           messages: this.state.messages.concat(karix_message),
           new_message: false,
+          scrolable: false
         })
       }
 
@@ -227,7 +232,7 @@ class ChatMessages extends Component {
     if (currentCustomer !== id) {
       currentCustomer = id;
       total_pages = 0;
-      this.scrollToBottom();
+      comesFromSelection = true;
       this.opted_in = this.props.customer.whatsapp_opt_in;
       this.setState({
         messages: [],
@@ -240,10 +245,12 @@ class ChatMessages extends Component {
       });
 
       this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
-    }
-
-    if (this.state.scrolable) {
-      this.scrollToBottom();
+    } else{
+      if((comesFromSelection || justMounted) && this.state.messages.length){
+        this.scrollToBottom();
+        comesFromSelection = false;
+        justMounted = false;
+      }
     }
   }
 
@@ -487,15 +494,6 @@ class ChatMessages extends Component {
     } else if (file_type.includes('video/') || file_type == 'video') {
       return 'video';
     }
-  }
-
-  downloadFile = (e, file_url, filename) => {
-    e.preventDefault();
-    var link = document.createElement('a');
-    link.href = file_url;
-    link.target = '_blank';
-    link.download = filename;
-    link.click();
   }
 
   toggleImgModal = (e) => {
@@ -829,12 +827,6 @@ class ChatMessages extends Component {
     });
   }
 
-  timeMessage = (message) => {
-    return (
-      <span className={message.direction == 'inbound' ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_time).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
-    )
-  }
-
   overwriteStyle = () => {
     return ENV['CURRENT_AGENT_ROLE'] === 'Supervisor' ? { height: '80vh'} : {}
   }
@@ -1097,250 +1089,137 @@ class ChatMessages extends Component {
           {this.state.messages.map((message, index) => (
             <div key={index} className="message">
               <div className={ this.divClasses(message) } >
-                {message.replied_message &&
-                  <div className="replied-message mb-10">
-                    {message.replied_message.data.attributes.content_type == 'text' &&
-                      <span className="text text-pre-line">{message.replied_message.data.attributes.content_text}</span>
-                    }
-                    {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'image' &&
-                      <img src={message.replied_message.data.attributes.content_media_url} className="image"
-                        onClick={(e) => this.toggleImgModal(e)}/>
-                    }
-                    {message.replied_message.data.attributes.content_type == 'media' && (message.replied_message.data.attributes.content_media_type == 'voice' || message.replied_message.data.attributes.content_media_type == 'audio') && (
-                      <audio controls>
-                        <source src={message.replied_message.data.attributes.content_media_url}/>
-                      </audio>
-                    )}
-                    {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'video' && (
-                      <video width="120" height="80" controls>
-                        <source src={message.replied_message.data.attributes.content_media_url}/>
-                      </video>
-                    )}
-                    {message.replied_message.data.attributes.content_type == 'location' &&
-                        (<div className="fs-15 no-back-color"><a href={`https://www.google.com/maps/place/${message.replied_message.data.attributes.content_location_latitude},${message.replied_message.data.attributes.content_location_longitude}`} target="_blank">
-                          <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></div>)}
-                    {message.replied_message.data.attributes.content_type == 'media' && message.replied_message.data.attributes.content_media_type == 'document' && (
-                      <div className="fs-15 no-back-color"><a href="" onClick={(e) => this.downloadFile(e, message.replied_message.data.attributes.content_media_url, message.replied_message.data.attributes.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.replied_message.data.attributes.content_media_caption || 'Descargar archivo'}</a></div>
-                    )}
-                    {message.replied_message.data.attributes.content_type == 'contact' &&
-                      message.replied_message.data.attributes.contacts_information.map(contact =>
-                        <div className="contact-card w-100 mb-10 no-back-color">
-                          <div className="w-100 mb-10"><i className="fas fa-user mr-8"></i>{contact.names.formatted_name}</div>
-                          {contact.phones.map(ph =>
-                            <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
-                          )}
-                          {contact.emails.map(em =>
-                            <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i>{em.email}</div>
-                          )}
-                          {contact.addresses.map(addrr =>
-                            <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
-                          )}
-                          {contact.org && contact.org.company &&
-                            <div className="w-100 fs-14"><i className="fas fa-building mr-8"></i>{contact.org.company}</div>
-                          }
-                        </div>
-                      )
-                    }
-                  </div>
-                }
-                {message.content_type == 'text' &&
-                  <div className="text-pre-line">
-                    {message.content_text}
-                    <br />
-                    <div className="f-right">
-                      {this.timeMessage(message)}
-                      {message.direction == 'outbound' && this.props.handleMessageEvents === true  &&
-                        <i className={ `checks-mark ml-7 fas fa-${
-                          message.status === 'sent' ? 'check stroke' : (message.status === 'delivered' ? 'check-double stroke' : ( message.status === 'read' ? 'check-double read' : 'sync'))
-                        }`
-                        }></i>
-                      }
-                    </div>
-                  </div>
-                }
-                {message.content_type == 'media' && message.content_media_type == 'image' &&
-                    (<div className="img-holder">
-                      <img src={message.content_media_url} className="msg__img"
-                        onClick={(e) => this.toggleImgModal(e)}/>
-                      {message.is_loading && (
-                        <div className="lds-dual-ring"></div>
-                      )}
-                    </div>)}
-                {message.content_type == 'media' && (message.content_media_type == 'voice' || message.content_media_type == 'audio') && (
-                  <audio controls>
-                    <source src={message.content_media_url}/>
-                  </audio>
-                )}
-                {message.content_type == 'media' && message.content_media_type == 'video' && (
-                  <video width="320" height="240" controls>
-                    <source src={message.content_media_url}/>
-                  </video>
-                )}
-                {message.content_type == 'location' &&
-                    (<div className="fs-15"><a href={`https://www.google.com/maps/place/${message.content_location_latitude},${message.content_location_longitude}`} target="_blank">
-                      <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></div>)}
-                {message.content_type == 'media' && message.content_media_type == 'document' && (
-                  <div className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, message.content_media_url, message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{message.content_media_caption || 'Descargar archivo'}</a></div>
-                )}
-                {message.content_media_caption && message.content_media_type !== 'document' &&
-                  (<div className="caption text-pre-line">{message.content_media_caption}</div>)}
-                {message.content_type == 'contact' &&
-                  message.contacts_information.map(contact =>
-                    <div className="contact-card w-100 mb-10">
-                      <div className="w-100 mb-10"><i className="fas fa-user mr-8"></i>{contact.names.formatted_name}</div>
-                      {contact.phones.map(ph =>
-                        <div className="w-100 fs-14"><i className="fas fa-phone-square-alt mr-8"></i>{ph.phone}</div>
-                      )}
-                      {contact.emails.map(em =>
-                        <div className="w-100 fs-14"><i className="fas fa-at mr-8"></i>{em.email}</div>
-                      )}
-                      {contact.addresses.map(addrr =>
-                        <div className="w-100 fs-14"><i className="fas fa-map-marker-alt mr-8"></i>{addrr.street ? addrr.street : (addrr.city + ', ' + addrr.state + ', ' + addrr.country)}</div>
-                      )}
-                      {contact.org && contact.org.company &&
-                        <div className="w-100 fs-14"><i className="fas fa-building mr-8"></i>{contact.org.company}</div>
-                      }
-                    </div>
-                  )
-                }
+                <Message message = {message} handleMessageEvents = {this.props.handleMessageEvents} />
               </div>
             </div>
           ))}
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
 
-        { this.chatAlreadyAssigned() ?
-          (
+        { this.chatAlreadyAssigned() ? (
             <div className="col-xs-12">
               <p>Esta conversación ya ha sido asignada a otro usuario.</p>
             </div>
-            )
-          : (
-            this.props.errorSendMessageStatus ?
-              (
+          ) : ( this.props.errorSendMessageStatus ? (
+              <div className="col-xs-12">
+                <p>{this.props.errorSendMessageText}</p>
+              </div>
+            ) : ( this.isChatClosed() ? (
                 <div className="col-xs-12">
-                  <p>{this.props.errorSendMessageText}</p>
+                  <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={() => this.openModal() }   >plantilla</a>.</p>
                 </div>
-              )
-              : (
-                this.isChatClosed() ?
-                  (
-                    <div className="col-xs-12">
-                      <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={() => this.openModal() }   >plantilla</a>.</p>
-                    </div>
-                  ) : (
-                    this.canSendMessages() &&
-                      <div className="col-xs-12 chat-input">
-                        <div className="text-input">
-                          <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} onKeyUp={this.getCaretPosition} onMouseUp={this.getCaretPosition} tabIndex="0">
-                          </div>
-                          {this.state.selectedProduct && this.state.selectedProduct.attributes.image &&
-                            <div className="selected-product-image-container">
-                              <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedProduct()}></i>
-                              <img src={this.state.selectedProduct.attributes.image} />
-                            </div>
-                          }
-                          {this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url &&
-                            <div className="selected-product-image-container">
-                              <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedFastAnswer()}></i>
-                              <img src={this.state.selectedFastAnswer.attributes.image_url} />
-                            </div>
-                          }
-                          <div className="t-right mr-15">
-                            {!this.state.recordingAudio &&
-                              <div className="p-relative">
-                                {this.state.showEmojiPicker &&
-                                  <div id="emojis-holder" className="emojis-container">
-                                    <Picker
-                                      set='apple'
-                                      title='Seleccionar...'
-                                      emoji='point_up'
-                                      onSelect={(emoji) => this.insertEmoji(emoji)}
-                                      color='#00B4FF'
-                                      i18n={pickerI18n}
-                                      skinEmoji='hand'
-                                    />
-                                  </div>
-                                }
-                                <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
-                                <div className="tooltip-top">
-                                  <i className="fas fa-paperclip fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Archivos</div>
-                                  }
-                                </div>
-                                <div className="tooltip-top">
-                                  <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleLoadImages()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Imágenes</div>
-                                  }
-                                </div>
-                                <div className="tooltip-top">
-                                  <i className="fas fa-bolt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Respuestas Rápidas</div>
-                                  }
-                                </div>
-                                <div className="tooltip-top">
-                                  <i className="fas fa-shopping-bag fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.props.toggleProducts()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Productos</div>
-                                  }
-                                </div>
-                                <div className="tooltip-top">
-                                  <i className="fas fa-map-marker-alt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.getLocation()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Ubicación</div>
-                                  }
-                                </div>
-                                {ENV['INTEGRATION'] == '1' && this.props.allowSendVoice &&
-                                  <div className="tooltip-top">
-                                    <i className="fas fa-microphone fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.recordAudio()}></i>
-                                    {this.props.onMobile == false &&
-                                      <div className="tooltiptext">Notas de voz</div>
-                                    }
-                                  </div>
-                                }
-                                <div className="tooltip-top">
-                                  <i className="fas fa-smile fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleEmojiPicker()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Emojis</div>
-                                  }
-                                </div>
-                                <div className="tooltip-top ml-15"></div>
-                                <div className="tooltip-top">
-                                  <i className="fas fa-paper-plane fs-22 mr-5 c-secondary cursor-pointer" onClick={(e) => this.handleSubmit(e)}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Enviar</div>
-                                  }
-                                </div>
-                              </div>
-                            }
-                            {this.state.recordingAudio &&
-                              <div className="d-inline-flex ">
-                                <div className="tooltip-top cancel-audio-counter">
-                                  <i className="far fa-times-circle fs-25 ml-7 mr-7 cursor-pointer" onClick={() => this.cancelAudio()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Cancelar</div>
-                                  }
-                                </div>
-                                <div className="time-audio-counter ml-7 mr-7">
-                                  <i className="fas fa-circle fs-15 mr-4"></i>
-                                  <span className="c-gray-label">{this.state.audioMinutes}:</span><span className="c-gray-label">{this.state.audioSeconds}</span>
-                                </div>
-                                <div className="tooltip-top send-audio-counter">
-                                  <i className="far fa-check-circle fs-25 ml-7 mr-7 cursor-pointer" onClick={() => this.mediaRecorder.stop()}></i>
-                                  {this.props.onMobile == false &&
-                                    <div className="tooltiptext">Enviar</div>
-                                  }
-                                </div>
-                              </div>
-                            }
-                          </div>
-                        </div>
+              ) : ( this.canSendMessages() &&
+                  <div className="col-xs-12 chat-input">
+                    <div className="text-input">
+                      <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} onKeyUp={this.getCaretPosition} onMouseUp={this.getCaretPosition} tabIndex="0">
                       </div>
-                  )
+                      {this.state.selectedProduct && this.state.selectedProduct.attributes.image &&
+                        <div className="selected-product-image-container">
+                          <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedProduct()}></i>
+                          <img src={this.state.selectedProduct.attributes.image} />
+                        </div>
+                      }
+                      {this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url &&
+                        <div className="selected-product-image-container">
+                          <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedFastAnswer()}></i>
+                          <img src={this.state.selectedFastAnswer.attributes.image_url} />
+                        </div>
+                      }
+                      <div className="t-right mr-15">
+                        {!this.state.recordingAudio &&
+                          <div className="p-relative">
+                            {this.state.showEmojiPicker &&
+                              <div id="emojis-holder" className="emojis-container">
+                                <Picker
+                                  set='apple'
+                                  title='Seleccionar...'
+                                  emoji='point_up'
+                                  onSelect={(emoji) => this.insertEmoji(emoji)}
+                                  color='#00B4FF'
+                                  i18n={pickerI18n}
+                                  skinEmoji='hand'
+                                />
+                              </div>
+                            }
+                            <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
+                            <div className="tooltip-top">
+                              <i className="fas fa-paperclip fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Archivos</div>
+                              }
+                            </div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleLoadImages()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Imágenes</div>
+                              }
+                            </div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-bolt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Respuestas Rápidas</div>
+                              }
+                            </div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-shopping-bag fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.props.toggleProducts()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Productos</div>
+                              }
+                            </div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-map-marker-alt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.getLocation()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Ubicación</div>
+                              }
+                            </div>
+                            {ENV['INTEGRATION'] == '1' && this.props.allowSendVoice &&
+                              <div className="tooltip-top">
+                                <i className="fas fa-microphone fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.recordAudio()}></i>
+                                {this.props.onMobile == false &&
+                                  <div className="tooltiptext">Notas de voz</div>
+                                }
+                              </div>
+                            }
+                            <div className="tooltip-top">
+                              <i className="fas fa-smile fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleEmojiPicker()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Emojis</div>
+                              }
+                            </div>
+                            <div className="tooltip-top ml-15"></div>
+                            <div className="tooltip-top">
+                              <i className="fas fa-paper-plane fs-22 mr-5 c-secondary cursor-pointer" onClick={(e) => this.handleSubmit(e)}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Enviar</div>
+                              }
+                            </div>
+                          </div>
+                        }
+                        {this.state.recordingAudio &&
+                          <div className="d-inline-flex ">
+                            <div className="tooltip-top cancel-audio-counter">
+                              <i className="far fa-times-circle fs-25 ml-7 mr-7 cursor-pointer" onClick={() => this.cancelAudio()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Cancelar</div>
+                              }
+                            </div>
+                            <div className="time-audio-counter ml-7 mr-7">
+                              <i className="fas fa-circle fs-15 mr-4"></i>
+                              <span className="c-gray-label">{this.state.audioMinutes}:</span><span className="c-gray-label">{this.state.audioSeconds}</span>
+                            </div>
+                            <div className="tooltip-top send-audio-counter">
+                              <i className="far fa-check-circle fs-25 ml-7 mr-7 cursor-pointer" onClick={() => this.mediaRecorder.stop()}></i>
+                              {this.props.onMobile == false &&
+                                <div className="tooltiptext">Enviar</div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
               )
+            )
           )
         }
 
