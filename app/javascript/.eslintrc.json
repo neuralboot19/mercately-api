@@ -1,0 +1,46 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "jquery": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "airbnb"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "comma-dangle": ["error", "never"],
+        "react/jsx-filename-extension": 0,
+        "react/prop-types": 0,
+        "react/sort-comp": 0,
+        "react/destructuring-assignment": 0,
+        "react/no-unused-state": 0,
+        "react/no-did-update-set-state": 0,
+        "quotes": "off",
+        "no-alert": "off",
+        "quote-props": "off",
+        "max-len": ["error", { "code": 120 }],
+        "jsx-a11y/anchor-is-valid": "off",
+        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "jsx-a11y/click-events-have-key-events": "off",
+        "jsx-a11y/media-has-caption": "off",
+        "no-restricted-globals": "off",
+        "jsx-a11y/no-static-element-interactions": "off",
+        "react/jsx-no-target-blank": "off",
+        "jsx-a11y/control-has-associated-label": "off",
+        "jsx-a11y/alt-text": "off"
+    }
+}

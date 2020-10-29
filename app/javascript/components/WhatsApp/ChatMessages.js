@@ -1,76 +1,42 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import moment from 'moment';
 import {
-  sendWhatsAppMessage,
-  fetchWhatsAppMessages,
-  sendWhatsAppImg,
-  setWhatsAppMessageAsRead,
-  fetchWhatsAppTemplates,
   changeCustomerAgent,
+  fetchWhatsAppMessages,
+  fetchWhatsAppTemplates,
+  sendWhatsAppBulkFiles,
+  sendWhatsAppImg,
+  sendWhatsAppMessage,
   setNoRead,
-  toggleChatBot,
-  sendWhatsAppBulkFiles } from "../../actions/whatsapp_karix";
-import Modal from 'react-modal';
-import ImagesSelector from './../shared/ImagesSelector';
-import GoogleMap from './../shared/Map';
+  setWhatsAppMessageAsRead,
+  toggleChatBot
+} from '../../actions/whatsapp_karix';
+import ImagesSelector from '../shared/ImagesSelector';
+import GoogleMap from '../shared/Map';
 import Message from './Message';
 import 'emoji-mart/css/emoji-mart.css';
-import { Picker } from 'emoji-mart';
+import TopChatBar from './TopChatBar';
+import ClosedChannel from './ClosedChannel';
+import MessageForm from './MessageForm';
+import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
+import TemplateSelectionModal from './TemplateSelectionModal';
+import ImageModal from '../shared/ImageModal';
+import MobileTopChatBar from '../shared/MobileTopChatBar';
+import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
 
-var currentCustomer = 0;
-var total_pages = 0;
-var comesFromSelection = false;
-var justMounted = false;
-var templateParams = {};
-var gupshupTemplateId;
-const csrfToken = document.querySelector('[name=csrf-token]').content
-const pickerI18n = {
-  search: 'Buscar emoji',
-  clear: 'Limpiar',
-  notfound: 'Emoji no encontrado',
-  skintext: 'Selecciona el tono de piel por defecto',
-  categories: {
-    search: 'Resultados de la búsqueda',
-    recent: 'Recientes',
-    smileys: 'Smileys & Emotion',
-    people: 'Emoticonos y personas',
-    nature: 'Animales y naturaleza',
-    foods: 'Alimentos y bebidas',
-    activity: 'Actividades',
-    places: 'Viajes y lugares',
-    objects: 'Objetos',
-    symbols: 'Símbolos',
-    flags: 'Banderas',
-    custom: 'Custom',
-  },
-  categorieslabel: 'Categorías de los emojis',
-  skintones: {
-    1: 'Tono de piel por defecto',
-    2: 'Tono de piel claro',
-    3: 'Tono de piel claro medio',
-    4: 'Tono de piel medio',
-    5: 'Tono de piel oscuro medio',
-    6: 'Tono de piel oscuro',
-  }
-}
-
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)',
-    height: '80vh',
-    width: '50%'
-  }
-};
+let currentCustomer = 0;
+let totalPages = 0;
+let comesFromSelection = false;
+let justMounted = false;
+let templateParams = {};
+let gupshupTemplateId;
+const csrfToken = document.querySelector('[name=csrf-token]').content;
 
 class ChatMessages extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       messages: [],
       new_message: false,
@@ -107,16 +73,18 @@ class ChatMessages extends Component {
   }
 
   handleLoadMore = () => {
-    let id = this.props.currentCustomer;
-    if (total_pages > this.state.page) {
-      this.setState({ page: this.state.page += 1, load_more: true, scrolable: false}, () => {
+    const id = this.props.currentCustomer;
+    if (totalPages > this.state.page) {
+      this.setState((prevState) => (
+        { page: prevState.page + 1, load_more: true, scrolable: false }
+      ), () => {
         this.props.fetchWhatsAppMessages(id, this.state.page);
       });
     }
   }
 
   componentDidMount() {
-    let id = this.props.currentCustomer;
+    const id = this.props.currentCustomer;
     this.opted_in = this.props.customerDetails.whatsapp_opt_in;
     currentCustomer = id;
 
@@ -132,75 +100,77 @@ class ChatMessages extends Component {
     });
 
     this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
-    socket.on("message_chat", data => this.updateChat(data));
+    // eslint-disable-next-line no-undef
+    socket.on("message_chat", (data) => this.updateChat(data));
 
     this.setFocus();
   }
 
   updateChat = (data) => {
-    var karix_message = data.karix_whatsapp_message.karix_whatsapp_message;
-    if (currentCustomer == karix_message.customer_id) {
-      if (karix_message.content_type == 'text') {
+    const newMessage = data.karix_whatsapp_message.karix_whatsapp_message;
+    if (currentCustomer === newMessage.customer_id) {
+      if (newMessage.content_type === 'text') {
         if (!this.state.new_message) {
-          var messages = this.state.messages;
-          var message_id = karix_message.id;
+          let { messages } = this.state;
+          const messageId = newMessage.id;
 
-          messages = this.removeByTextArray(messages, karix_message.content_text, message_id);
-          var index = this.findMessageInArray(messages, message_id);
+          messages = this.removeByTextArray(messages, newMessage.content_text, messageId);
+          const index = this.findMessageInArray(messages, messageId);
 
           if (index === -1) {
-            this.setState({
-              messages: this.state.messages.concat(karix_message).sort(this.sortMessages()),
+            this.setState((prevState) => ({
+              messages: prevState.messages.concat(newMessage).sort(this.sortMessages()),
               new_message: false,
               updated: false,
               scrolable: false
-            }, () => this.setState({ updated: true, scrolable: false}))
+            }), () => this.setState({ updated: true, scrolable: false }));
           }
         }
-      } else if ((['image', 'voice', 'audio', 'video', 'document'].includes(karix_message.content_media_type) || ['location', 'contact'].includes(karix_message.content_type)) &&
-        karix_message.direction === 'inbound') {
-        this.setState({
-          messages: this.state.messages.concat(karix_message),
+      } else if ((
+        ['image', 'voice', 'audio', 'video', 'document'].includes(newMessage.content_media_type)
+        || ['location', 'contact'].includes(newMessage.content_type))
+        && newMessage.direction === 'inbound') {
+        this.setState((prevState) => ({
+          messages: prevState.messages.concat(newMessage),
           new_message: false,
           scrolable: false
-        })
+        }));
       }
 
-      if (karix_message.direction === 'inbound') {
-        this.props.setWhatsAppMessageAsRead(currentCustomer, {message_id: karix_message.id}, csrfToken);
+      if (newMessage.direction === 'inbound') {
+        this.props.setWhatsAppMessageAsRead(currentCustomer, { message_id: newMessage.id }, csrfToken);
         this.state.can_write = true;
       }
     }
   }
 
-  sortMessages = () => {
-    return function(a, b) {
-      if (moment(a.created_time) == moment(b.created_time)) {
+  sortMessages = () => (
+    (a, b) => {
+      if (moment(a.created_time) === moment(b.created_time)) {
         return 0;
       }
       if (moment(a.created_time) > moment(b.created_time)) {
         return 1;
       }
-      if (moment(a.created_time) < moment(b.created_time)) {
-        return -1;
-      }
+      return -1;
     }
-  }
+  )
 
-  componentWillReceiveProps(newProps){
-    if (newProps.messages != this.props.messages) {
-      var rDate = moment(newProps.recentInboundMessageDate).local();
-      this.setState({
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(newProps) {
+    if (newProps.messages !== this.props.messages) {
+      const rDate = moment(newProps.recentInboundMessageDate).local();
+      this.setState((prevState) => ({
         new_message: false,
-        messages: newProps.messages.concat(this.state.messages),
+        messages: newProps.messages.concat(prevState.messages),
         load_more: false,
         can_write: moment().local().diff(rDate, 'hours') < 24
-      }, () => {
-        this.opted_in = false
+      }), () => {
+        this.opted_in = false;
         if (this.props.customer !== undefined) {
-          this.opted_in = this.props.customer.whatsapp_opt_in || false
+          this.opted_in = this.props.customer.whatsapp_opt_in || false;
         }
-      })
+      });
     }
 
     if (newProps.selectedFastAnswer) {
@@ -212,10 +182,10 @@ class ChatMessages extends Component {
 
     if (newProps.selectedProduct) {
       this.state.selectedProduct = newProps.selectedProduct;
-      var productString = '';
-      productString += (this.state.selectedProduct.attributes.title + '\n');
-      productString += ('Precio $' + this.state.selectedProduct.attributes.price + '\n');
-      productString += (this.state.selectedProduct.attributes.description + '\n');
+      let productString = '';
+      productString += (`${this.state.selectedProduct.attributes.title}\n`);
+      productString += (`Precio $${this.state.selectedProduct.attributes.price}\n`);
+      productString += (`${this.state.selectedProduct.attributes.description}\n`);
       productString += (this.state.selectedProduct.attributes.url ? this.state.selectedProduct.attributes.url : '');
       $('#divMessage').html(productString);
       this.props.selectProduct(null);
@@ -224,18 +194,18 @@ class ChatMessages extends Component {
   }
 
   componentDidUpdate() {
-    let id = this.props.currentCustomer;
-    var rDate = moment(this.props.recentInboundMessageDate).local();
+    const id = this.props.currentCustomer;
+    const rDate = moment(this.props.recentInboundMessageDate).local();
     if (this.state.new_message) {
       this.setState({
         can_write: moment().local().diff(rDate, 'hours') < 24,
         new_message: false
-      })
+      });
     }
 
     if (currentCustomer !== id) {
       currentCustomer = id;
-      total_pages = 0;
+      totalPages = 0;
       comesFromSelection = true;
       this.opted_in = this.props.customer.whatsapp_opt_in;
       this.setState({
@@ -249,12 +219,10 @@ class ChatMessages extends Component {
       });
 
       this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
-    } else{
-      if((comesFromSelection || justMounted) && this.state.messages.length){
-        this.scrollToBottom();
-        comesFromSelection = false;
-        justMounted = false;
-      }
+    } else if ((comesFromSelection || justMounted) && this.state.messages.length) {
+      this.scrollToBottom();
+      comesFromSelection = false;
+      justMounted = false;
     }
   }
 
@@ -262,14 +230,8 @@ class ChatMessages extends Component {
     this.bottomRef.current.scrollIntoView();
   }
 
-  handleInputChange = (e) => {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
-  }
-
   onKeyPress = (e) => {
-    if(e.which === 13) {
+    if (e.which === 13) {
       e.preventDefault();
       this.handleSubmit(e);
     }
@@ -285,22 +247,22 @@ class ChatMessages extends Component {
       return;
     }
 
-    let input = $('#divMessage');
-    let text = input.text();
-    if(text.trim() === '') return;
+    const input = $('#divMessage');
+    const text = input.text();
+    if (text.trim() === '') return;
 
-    let txt = this.getText();
-    var rDate = moment(this.props.recentInboundMessageDate).local();
+    const txt = this.getText();
+    const rDate = moment(this.props.recentInboundMessageDate).local();
     this.setState({
       can_write: moment().local().diff(rDate, 'hours') < 24
     }, () => {
       if (this.state.can_write) {
         this.setState({ selectedProduct: null, selectedFastAnswer: null }, () => {
-          this.handleSubmitWhatsAppMessage(e, txt, false)
+          this.handleSubmitWhatsAppMessage(e, txt, false);
           input.html(null);
         });
       }
-    })
+    });
 
     this.setFocus();
   }
@@ -310,24 +272,29 @@ class ChatMessages extends Component {
       e.preventDefault();
     }
 
-    let text = { message: message, customer_id: this.props.currentCustomer, template: isTemplate, type: 'text' }
+    const text = {
+      message, customer_id: this.props.currentCustomer, template: isTemplate, type: 'text'
+    };
 
     if (isTemplate) {
-      text['gupshup_template_id'] = gupshupTemplateId;
+      text.gupshup_template_id = gupshupTemplateId;
 
-      let params = Object.values(templateParams);
-      text['template_params'] = [];
+      const params = Object.values(templateParams);
+      text.template_params = [];
 
-      params.forEach(value => text['template_params'].push(value));
+      params.forEach((value) => text.template_params.push(value));
     }
 
-    this.setState({ messages: this.state.messages.concat({
-      content_type: 'text',
-      content_text: message,
-      direction: 'outbound',
-      status: 'enqueued',
-      created_time: new Date()
-    }), new_message: true}, () => {
+    this.setState((prevState) => ({
+      messages: prevState.messages.concat({
+        content_type: 'text',
+        content_text: message,
+        direction: 'outbound',
+        status: 'enqueued',
+        created_time: new Date()
+      }),
+      new_message: true
+    }), () => {
       this.props.sendWhatsAppMessage(text, csrfToken);
       this.scrollToBottom();
     });
@@ -335,34 +302,34 @@ class ChatMessages extends Component {
 
   findMessageInArray = (arr, id) => (
     arr.findIndex((el) => (
-      el.id == id
+      el.id === id
     ))
   )
 
-  removeByTextArray = (arr, text, id=null) => {
+  removeByTextArray = (arr, text, id = null) => {
     let index;
 
     if (id) {
-      index = arr.findIndex((el) => el.content_text === text && el.id === id)
+      index = arr.findIndex((el) => el.content_text === text && el.id === id);
       if (index === -1) {
-        index = arr.findIndex((el) => el.content_text === text && !el.id)
+        index = arr.findIndex((el) => el.content_text === text && !el.id);
       }
     } else {
-      index = arr.findIndex((el) => el.content_text === text && !el.id)
+      index = arr.findIndex((el) => el.content_text === text && !el.id);
     }
 
     if (index !== -1) {
       arr.splice(index, 1);
     }
 
-    return arr
+    return arr;
   }
 
   handleScrollToTop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    let el = e.target;
-    if(el.scrollTop >= 0 && el.scrollTop <= 5) {
+    const el = e.target;
+    if (el.scrollTop >= 0 && el.scrollTop <= 5) {
       el.scrollTop = 10;
       this.handleLoadMore();
     }
@@ -374,94 +341,89 @@ class ChatMessages extends Component {
       return;
     }
 
-    var showError = false;
-    for (var x in files) {
-      if (this.validateImages(files[x])) {
+    let showError = false;
+
+    Object.values(files).forEach((file) => {
+      if (this.validateImages(file)) {
         if (this.state.loadedImages.length >= 5) {
           alert('Error: Máximo 5 imágenes permitidas');
           return;
         }
-
-        this.setState({ loadedImages: this.state.loadedImages.concat(files[x]) });
+        this.setState((prevState) => ({ loadedImages: prevState.loadedImages.concat(file) }));
       } else {
         showError = true;
       }
-    }
+    });
 
-    if (showError || !files || files.length == 0) {
+    if (showError || !files || files.length === 0) {
       alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
     }
   }
 
-  validateImages = (file) => {
-    if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type) || file.size > 5*1024*1024) {
-      return false;
-    }
-
-    return true;
-  }
+  validateImages = (file) => (
+    ['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)
+    || file.size <= 5 * 1024 * 1024
+  )
 
   sendImages = () => {
-    var insertedMessages = [];
-    var data = new FormData();
+    const insertedMessages = [];
+    const data = new FormData();
     data.append('template', false);
-    this.state.loadedImages.map((image) => {
+    this.state.loadedImages.forEach((image) => {
       data.append('file_data[]', image);
 
-      var url = URL.createObjectURL(image);
-      var type = this.fileType(image.type);
-      var caption = type == 'document' ? image.name : null;
+      const url = URL.createObjectURL(image);
+      const type = this.fileType(image.type);
+      const caption = type === 'document' ? image.name : null;
 
-      insertedMessages.push({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption, created_time: new Date()})
+      insertedMessages.push({
+        content_type: 'media',
+        content_media_type: type,
+        content_media_url: url,
+        direction: 'outbound',
+        content_media_caption: caption,
+        created_time: new Date()
+      });
     });
 
-    this.setState({
-      messages: this.state.messages.concat(insertedMessages),
+    this.setState((prevState) => ({
+      messages: prevState.messages.concat(insertedMessages),
       new_message: true,
       selectedProduct: null,
       selectedFastAnswer: null
-    });
+    }));
 
     this.props.sendWhatsAppBulkFiles(this.props.currentCustomer, data, csrfToken);
     this.scrollToBottom();
     this.toggleLoadImages();
   }
 
-  handleImgSubmit = (e) => {
-    var el = e.target;
-    var file = el.files[0];
-    if (!this.validateImages(file)) {
-      alert('Error: El archivo debe ser una imagen JPG/JPEG o PNG, de máximo 5MB');
-      return;
-    }
-
-    var data = new FormData();
-    data.append('file_data', file);
-    data.append('template', false);
-    this.handleSubmitImg(el, data);
-  }
-
-  handleSubmitImg = (el, file_data) => {
-    var url, type, caption, filename;
-    var input = $('#divMessage');
+  handleSubmitImg = (el, fileData) => {
+    let url;
+    let type;
+    let caption;
+    let filename;
+    const input = $('#divMessage');
+    const data = new FormData();
 
     if (this.state.selectedProduct || this.state.selectedFastAnswer) {
-      url = this.state.selectedProduct ? this.state.selectedProduct.attributes.image : this.state.selectedFastAnswer.attributes.image_url;
+      url = this.state.selectedProduct
+        ? this.state.selectedProduct.attributes.image
+        : this.state.selectedFastAnswer.attributes.image_url;
       type = 'image';
       caption = this.getText();
 
-      var data = new FormData();
       data.append('template', false);
       data.append('url', url);
       data.append('type', 'file');
       data.append('caption', caption);
-    } else if (file_data && file_data.get('template') === 'true') {
-      let auxFile = file_data.get('file_data');
+    } else if (fileData && fileData.get('template') === 'true') {
+      const auxFile = fileData.get('file_data');
 
       url = URL.createObjectURL(auxFile);
       type = this.fileType(auxFile.type);
       filename = type === 'document' ? auxFile.name : null;
-      caption = file_data.get('caption');
+      caption = fileData.get('caption');
     } else {
       url = URL.createObjectURL(el.files[0]);
       type = this.fileType(el.files[0].type);
@@ -469,108 +431,109 @@ class ChatMessages extends Component {
       caption = null;
     }
 
-    this.setState({
-      messages: this.state.messages.concat(
+    this.setState((prevState) => ({
+      messages: prevState.messages.concat(
         {
           content_type: 'media',
           content_media_type: type,
           content_media_url: url,
           direction: 'outbound',
           content_media_caption: caption,
-          filename: filename,
+          filename,
           created_time: new Date()
         }
       ),
       new_message: true,
       selectedProduct: null,
       selectedFastAnswer: null
-    }, () => {
-      this.props.sendWhatsAppImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
+    }), () => {
+      this.props.sendWhatsAppImg(this.props.currentCustomer, fileData || data, csrfToken);
       input.html(null);
       this.scrollToBottom();
     });
   }
 
   handleFileSubmit = (e) => {
-    var el = e.target;
-    var file = el.files[0];
+    const el = e.target;
+    const file = el.files[0];
 
-    if(!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+    if (
+      !['application/pdf', 'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+        .includes(file.type)) {
       alert('Error: El archivo debe ser de tipo PDF o Word');
       return;
     }
 
     // Max 20 Mb allowed
-    if(file.size > 20*1024*1024) {
+    if (file.size > 20 * 1024 * 1024) {
       alert('Error: Maximo permitido 20MB');
       return;
     }
 
-    var data = new FormData();
+    const data = new FormData();
     data.append('file_data', file);
     data.append('template', false);
     this.handleSubmitImg(el, data);
   }
 
-  fileType = (file_type) => {
-    if (file_type == null) {
-      return file_type;
-    } else if (file_type.includes('image/') || file_type == 'image') {
+  fileType = (type) => {
+    if (type == null) {
+      return type;
+    } if (type.includes('image/') || type === 'image') {
       return 'image';
-    } else if (['application/pdf', 'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file_type) ||
-      file_type == 'document') {
-        return 'document';
-    } else if (file_type.includes('audio/') || ['audio', 'voice'].includes(file_type)) {
+    } if (['application/pdf', 'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(type)
+      || type === 'document') {
+      return 'document';
+    } if (type.includes('audio/') || ['audio', 'voice'].includes(type)) {
       return 'audio';
-    } else if (file_type.includes('video/') || file_type == 'video') {
+    } if (type.includes('video/') || type === 'video') {
       return 'video';
     }
+    return null;
   }
 
   toggleImgModal = (e) => {
-    var el = e.target;
-
-    this.setState({
+    const el = e.target;
+    this.setState((prevState) => ({
       url: el.src,
-      isImgModalOpen: !this.state.isImgModalOpen
-    });
+      isImgModalOpen: !prevState.isImgModalOpen
+    }));
   }
 
   openModal = () => {
-    if (this.props.customer.whatsapp_opt_in || ENV['INTEGRATION'] == '0' || this.opted_in) {
+    // eslint-disable-next-line no-undef
+    if (this.props.customer.whatsapp_opt_in || ENV.INTEGRATION === '0' || this.opted_in) {
       this.toggleModal();
-    } else {
-      if (this.opted_in == false) {
-        if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
-          var id = this.props.currentCustomer;
+    } else if (this.opted_in === false) {
+      if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
+        const id = this.props.currentCustomer;
 
-          const requestOptions = {
-              method: 'PATCH',
-              headers: { 'X-CSRF-Token': csrfToken }
-          };
+        const requestOptions = {
+          method: 'PATCH',
+          headers: { 'X-CSRF-Token': csrfToken }
+        };
 
-          fetch('/api/v1/accept_optin_for_whatsapp/' + id, requestOptions)
-          .then(async response => {
-              const data = await response.json();
-
-              if (response.ok) {
-                this.opted_in = true;
-                this.toggleModal();
-              } else {
-                const error = (data && data.message) || response.status;
-                return Promise.reject(error);
-              }
+        fetch(`/api/v1/accept_optin_for_whatsapp/${id}`, requestOptions)
+          .then(async (response) => {
+            const data = await response.json();
+            if (response.ok) {
+              this.opted_in = true;
+              this.toggleModal();
+              return Promise.resolve(response);
+            }
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
           });
-        }
       }
     }
   }
 
   toggleModal = () => {
-    this.setState({
-      isModalOpen: !this.state.isModalOpen
-    });
+    this.setState((prevState) => ({
+      isModalOpen: !prevState.isModalOpen
+    }));
   }
 
   selectTemplate = (template) => {
@@ -587,15 +550,17 @@ class ChatMessages extends Component {
   }
 
   changeTemplateSelected = (e, id) => {
-    this.state.templateSelected.split('').map((key, index) => {
-      if (key == '*'){
-        if (index == id && e.target.value && e.target.value !== '') {
-          this.state.auxTemplateSelected[index] = templateParams[index] = e.target.value;
-        } else if (index == id && (!e.target.value || e.target.value === '')) {
-          this.state.auxTemplateSelected[index] = templateParams[index] = '*';
+    this.state.templateSelected.split('').forEach((key, index) => {
+      if (key === '*') {
+        if (index === id && e.target.value && e.target.value !== '') {
+          this.state.auxTemplateSelected[index] = e.target.value;
+          templateParams[index] = e.target.value;
+        } else if (index === id && (!e.target.value || e.target.value === '')) {
+          this.state.auxTemplateSelected[index] = '*';
+          templateParams[index] = '*';
         }
       }
-    })
+    });
 
     this.setState({
       templateEdited: true
@@ -603,48 +568,47 @@ class ChatMessages extends Component {
   }
 
   getTextInput = () => {
-    let new_array = this.state.templateSelected.split('')
+    const newArray = this.state.templateSelected.split('');
 
-    return new_array.map((key, index) => {
+    return newArray.map((key, index) => {
       if (key === '*') {
-        if (index === 0 || new_array[index - 1] !== '\\') {
-          return <input value='' onChange={ (e) => this.changeTemplateSelected(e, index)} />;
-        } else {
-          return key;
+        if (index === 0 || newArray[index - 1] !== '\\') {
+          return <input value="" onChange={(e) => this.changeTemplateSelected(e, index)} />;
         }
-      } else if (key === '\\') {
-        if (index === (new_array.length - 1) || new_array[index + 1] !== '*') {
-          return key;
-        } else {
-          return '';
-        }
-      }
-      else {
         return key;
+      } if (key === '\\') {
+        if (index === (newArray.length - 1) || newArray[index + 1] !== '*') {
+          return key;
+        }
+        return '';
       }
+
+      return key;
     });
   }
 
   getTextInputEdited = () => {
-    let new_array = this.state.templateSelected.split('')
+    const newArray = this.state.templateSelected.split('');
 
-    return new_array.map((key, index) => {
+    return newArray.map((key, index) => {
       if (key === '*') {
-        if (index === 0 || new_array[index - 1] !== '\\') {
-          return <input value={this.state.auxTemplateSelected[index] === '*' ? '' : this.state.auxTemplateSelected[index] } onChange={ (e) => this.changeTemplateSelected(e, index)} />;
-        } else {
-          return key;
+        if (index === 0 || newArray[index - 1] !== '\\') {
+          return (
+            <input
+              value={this.state.auxTemplateSelected[index] === '*' ? '' : this.state.auxTemplateSelected[index]}
+              onChange={(e) => this.changeTemplateSelected(e, index)}
+            />
+          );
         }
-      } else if (key === '\\') {
-        if (index === (new_array.length - 1) || new_array[index + 1] !== '*') {
-          return key;
-        } else {
-          return '';
-        }
-      } else {
         return key;
+      } if (key === '\\') {
+        if (index === (newArray.length - 1) || newArray[index + 1] !== '*') {
+          return key;
+        }
+        return '';
       }
-    })
+      return key;
+    });
   }
 
   cancelTemplate = () => {
@@ -655,34 +619,37 @@ class ChatMessages extends Component {
       isTemplateSelected: false,
       auxTemplateSelected: [],
       templateEdited: false
-    })
+    });
 
     this.toggleModal();
   }
 
   sendTemplate = () => {
-    var allFilled = true;
+    let allFilled = true;
     let file = null;
 
-    this.state.auxTemplateSelected.map((key, index) => {
+    this.state.auxTemplateSelected.forEach((key, index) => {
       if (key === '*' && (index === 0 || this.state.auxTemplateSelected[index - 1] !== '\\')) {
         allFilled = false;
       }
-    })
+    });
 
-    if (this.state.templateType !== 'text') file = document.getElementById('template_file').files[0];
+    if (this.state.templateType !== 'text') {
+      // eslint-disable-next-line prefer-destructuring
+      file = document.getElementById('template_file').files[0];
+    }
 
-    let fileSelected = this.state.templateType === 'text' || file;
+    const fileSelected = this.state.templateType === 'text' || file;
 
     if (allFilled && fileSelected) {
-      var message = this.state.auxTemplateSelected.join('').replace(/(\r)/gm, "");
+      let message = this.state.auxTemplateSelected.join('').replace(/(\r)/gm, "");
       message = this.getCleanTemplate(message);
 
       if (file) {
         if (this.state.templateType === 'image' && this.validateImages(file) === false) return;
         if (this.state.templateType === 'file' && this.validFile(file) === false) return;
 
-        var data = new FormData();
+        const data = new FormData();
         data.append('template', true);
         data.append('file_data', file);
         data.append('type', 'file');
@@ -694,18 +661,20 @@ class ChatMessages extends Component {
 
       this.cancelTemplate();
     } else {
-      let alertMessage = allFilled ? 'Debe seleccionar una Imagen o archivo PDF' : 'Debe llenar todos los campos editables';
+      const alertMessage = allFilled
+        ? 'Debe seleccionar una Imagen o archivo PDF'
+        : 'Debe llenar todos los campos editables';
       alert(alertMessage);
     }
   }
 
   handleAgentAssignment = (e) => {
-    var value = parseInt(e.target.value);
-    var agent = this.props.agent_list.filter(agent => agent.id === value);
+    const value = parseInt(e.target.value, 10);
+    const agent = this.props.agent_list.filter((currentAgent) => currentAgent.id === value);
 
-    var r = confirm("Estás seguro de asignar este chat a otro agente?");
-    if (r == true) {
-      var params = {
+    const r = confirm("Estás seguro de asignar este chat a otro agente?");
+    if (r === true) {
+      const params = {
         agent: {
           retailer_user_id: agent[0] ? agent[0].id : null,
           chat_service: 'whatsapp'
@@ -721,25 +690,30 @@ class ChatMessages extends Component {
     this.props.toggleFastAnswers();
   }
 
-  toggleProducts = () => {
-    this.props.toggleProducts();
-  }
-
   removeSelectedProduct = () => {
-    this.setState({selectedProduct: null});
+    this.setState({ selectedProduct: null });
   }
 
   removeSelectedFastAnswer = () => {
-    this.setState({selectedFastAnswer: null});
+    this.setState({ selectedFastAnswer: null });
   }
 
   divClasses = (message) => {
-    var classes = message.direction == 'outbound' ? 'message-by-retailer f-right' : 'message-by-customer';
+    let classes = message.direction === 'outbound'
+      ? 'message-by-retailer f-right'
+      : 'message-by-customer';
     classes += ' main-message-container';
-    if (message.status == 'read' && message.content_type == 'text' && this.props.handleMessageEvents === true)
+    if (message.status === 'read'
+      && message.content_type === 'text'
+      && this.props.handleMessageEvents === true) {
       classes += ' read-message';
-    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) classes += ' video-audio no-background';
-    if (this.fileType(message.content_media_type) === 'image') classes += ' no-background';
+    }
+    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) {
+      classes += ' video-audio no-background';
+    }
+    if (this.fileType(message.content_media_type) === 'image') {
+      classes += ' no-background';
+    }
     return classes;
   }
 
@@ -754,29 +728,31 @@ class ChatMessages extends Component {
   }
 
   toggleLoadImages = () => {
-    this.setState({
-      showLoadImages: !this.state.showLoadImages,
+    this.setState((prevState) => ({
+      showLoadImages: !prevState.showLoadImages,
       loadedImages: []
-    });
+    }));
   }
 
   removeImage = (index) => {
     this.state.loadedImages.splice(index, 1);
-    this.setState({ loadedImages: this.state.loadedImages });
+    this.setState((prevState) => ({ loadedImages: prevState.loadedImages }));
   }
 
   pasteImages = (e, fromSelector) => {
     e.preventDefault();
 
     if (e.clipboardData || e.originalEvent.clipboardData) {
-      var clipboard = e.clipboardData || e.originalEvent.clipboardData;
-      var pos = clipboard.types.indexOf('Files');
+      const clipboard = e.clipboardData || e.originalEvent.clipboardData;
+      const pos = clipboard.types.indexOf('Files');
+      let file;
 
       if (pos !== -1) {
         if (clipboard.items) {
-          var file = clipboard.items[pos].getAsFile();
+          file = clipboard.items[pos].getAsFile();
         } else if (clipboard.files) {
-          var file = clipboard.files[0];
+          // eslint-disable-next-line prefer-destructuring
+          file = clipboard.files[0];
         }
 
         if (file) {
@@ -785,30 +761,30 @@ class ChatMessages extends Component {
             return;
           }
 
-          this.setState({
-            loadedImages: this.state.loadedImages.concat(file),
+          this.setState((prevState) => ({
+            loadedImages: prevState.loadedImages.concat(file),
             showLoadImages: true
-          })
+          }));
         } else {
           alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
         }
-      } else {
-        if (!fromSelector) {
-          var text = clipboard.getData('text/plain');
-          document.execCommand('insertText', false, text);
-        }
+      } else if (!fromSelector) {
+        const text = clipboard.getData('text/plain');
+        document.execCommand('insertText', false, text);
       }
     }
   }
 
   setFocus = (position) => {
-    if (ENV['CURRENT_AGENT_ROLE'] === 'Supervisor')
-      return true;
+    // eslint-disable-next-line no-undef
+    if (ENV.CURRENT_AGENT_ROLE === 'Supervisor') {
+      return;
+    }
 
-    let node = document.getElementById("divMessage");
-    let caret = 0;
-    let input = $(node);
-    let text = input.text();
+    const node = document.getElementById("divMessage");
+    let caret;
+    const input = $(node);
+    const text = input.text();
 
     node.focus();
 
@@ -819,12 +795,12 @@ class ChatMessages extends Component {
     }
 
     if (caret > 0) {
-      let textNode = node.firstChild;
-      let range = document.createRange();
+      const textNode = node.firstChild;
+      const range = document.createRange();
       range.setStart(textNode, caret);
       range.setEnd(textNode, caret);
 
-      let sel = window.getSelection();
+      const sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
     }
@@ -833,20 +809,16 @@ class ChatMessages extends Component {
   }
 
   getText = () => {
-    let input = $('#divMessage');
-    let txt = input.html();
+    const input = $('#divMessage');
+    const txt = input.html();
 
     return txt.replace(/<br>/g, "\n");
   }
 
-  objectPresence = () => {
-    if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
-      (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
-        return true;
-      }
-
-    return false;
-  }
+  objectPresence = () => (
+    ((this.state.selectedProduct && this.state.selectedProduct.attributes.image)
+      || (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url))
+  )
 
   getLocation = () => {
     if (navigator.geolocation) {
@@ -859,129 +831,125 @@ class ChatMessages extends Component {
   }
 
   sendLocation = (position) => {
-    let params = {
+    const params = {
       longitude: position.lng,
       latitude: position.lat,
       customer_id: this.props.currentCustomer,
       template: false,
       type: 'location'
-    }
+    };
 
-    this.setState({ messages: this.state.messages.concat({
-      content_type: 'location',
-      content_location_latitude: params.latitude,
-      content_location_longitude: params.longitude,
-      direction: 'outbound',
-      status: 'enqueued',
-      created_time: new Date()
-    }), new_message: true, showMap: false}, () => {
+    this.setState((prevState) => ({
+      messages: prevState.messages.concat({
+        content_type: 'location',
+        content_location_latitude: params.latitude,
+        content_location_longitude: params.longitude,
+        direction: 'outbound',
+        status: 'enqueued',
+        created_time: new Date()
+      }),
+      new_message: true,
+      showMap: false
+    }), () => {
       this.props.sendWhatsAppMessage(params, csrfToken);
       this.scrollToBottom();
     });
   }
 
   toggleMap = () => {
-    this.setState({
-      showMap: !this.state.showMap
-    });
+    this.setState((prevState) => ({
+      showMap: !prevState.showMap
+    }));
   }
 
-  overwriteStyle = () => {
-    return ENV['CURRENT_AGENT_ROLE'] === 'Supervisor' ? { height: '80vh'} : {}
-  }
+  // eslint-disable-next-line no-undef
+  overwriteStyle = () => (ENV.CURRENT_AGENT_ROLE === 'Supervisor' ? { height: '80vh' } : {})
 
-  customerRemoved = () => {
-    return (
-      !this.props.removedCustomer ||
-      (
-        this.props.removedCustomer &&
-        this.props.currentCustomer !== this.props.removedCustomerId
+  customerRemoved = () => (
+    !this.props.removedCustomer
+      || (
+        this.props.removedCustomer
+        && this.props.currentCustomer !== this.props.removedCustomerId
       )
-    );
-  }
+  )
 
-  canSendMessages = () => {
-    return (
-      this.props.currentCustomer != 0 &&
-      this.state.can_write &&
-      this.customerRemoved() &&
-      ENV['CURRENT_AGENT_ROLE'] !== 'Supervisor'
-    );
-  }
+  canSendMessages = () => (
+    this.props.currentCustomer !== 0
+      && this.state.can_write
+      && this.customerRemoved()
+    // eslint-disable-next-line no-undef
+      && ENV.CURRENT_AGENT_ROLE !== 'Supervisor'
+  )
 
-  isChatClosed = () => {
-    return (
-      this.props.currentCustomer != 0 &&
-      !this.state.can_write &&
-      this.customerRemoved()
-    );
-  }
+  isChatClosed = () => (
+    this.props.currentCustomer !== 0
+      && !this.state.can_write
+      && this.customerRemoved()
+  )
 
-  chatAlreadyAssigned = () => {
-    return (
-      this.props.currentCustomer != 0 &&
-      this.props.removedCustomer &&
-      this.props.currentCustomer == this.props.removedCustomerId
-    );
-  }
+  chatAlreadyAssigned = () => (
+    this.props.currentCustomer !== 0
+      && this.props.removedCustomer
+      && this.props.currentCustomer === this.props.removedCustomerId
+  )
 
   recordAudio = () => {
     if (navigator.mediaDevices) {
       navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
-        this.setState({recordingAudio: true});
-        this.timer = setInterval(() => {
-          let totalSeconds = this.state.totalSeconds + 1;
+        .then((stream) => {
+          this.setState({ recordingAudio: true });
+          this.timer = setInterval(() => {
+            // eslint-disable-next-line react/no-access-state-in-setstate
+            const totalSeconds = this.state.totalSeconds + 1;
 
-          this.setState({
-            totalSeconds: totalSeconds,
-            audioSeconds: this.pad(totalSeconds % 60),
-            audioMinutes: this.pad(parseInt(totalSeconds / 60))
-          });
-        }, 1000);
+            this.setState({
+              totalSeconds,
+              audioSeconds: this.pad(totalSeconds % 60),
+              audioMinutes: this.pad(parseInt(totalSeconds / 60, 10))
+            });
+          }, 1000);
 
-        this.cancelledAudio = false;
-        this.mediaRecorder = new MediaRecorder(stream);
-        this.mediaRecorder.start();
+          this.cancelledAudio = false;
+          this.mediaRecorder = new MediaRecorder(stream);
+          this.mediaRecorder.start();
 
-        this.chunks = [];
-        this.mediaRecorder.ondataavailable = (e) => {
-          this.chunks.push(e.data);
-        }
+          this.chunks = [];
+          this.mediaRecorder.ondataavailable = (e) => {
+            this.chunks.push(e.data);
+          };
 
-        this.mediaRecorder.onstop = () => {
-          if (this.cancelledAudio) {
-            this.resetAudio(stream);
-            return;
-          }
+          this.mediaRecorder.onstop = () => {
+            if (this.cancelledAudio) {
+              this.resetAudio(stream);
+              return;
+            }
 
-          let blob = new Blob(this.chunks, { 'type' : 'audio/aac' });
+            const blob = new Blob(this.chunks, { 'type': 'audio/aac' });
 
-          if (blob.size > 10*1024*1024) {
-            this.resetAudio(stream);
-            alert('Error: La nota debe ser de menos de 10MB');
-            return;
-          }
+            if (blob.size > 10 * 1024 * 1024) {
+              this.resetAudio(stream);
+              alert('Error: La nota debe ser de menos de 10MB');
+              return;
+            }
 
-          let url = URL.createObjectURL(blob);
-          this.sendAudio(blob, url, stream);
-        }
-      }).catch(err => {
-        alert('Para enviar notas de voz, debes permitir el acceso al micrófono');
-      });
+            const url = URL.createObjectURL(blob);
+            this.sendAudio(blob, url, stream);
+          };
+        }).catch(() => {
+          alert('Para enviar notas de voz, debes permitir el acceso al micrófono');
+        });
     } else {
       alert('La grabación de audio no está soportada en este navegador');
     }
   }
 
   pad = (val) => {
-    var valString = val + "";
+    const valString = `${val}`;
 
     if (valString.length < 2) {
-      return "0" + valString;
-    } else {
-      return valString;
+      return `0${valString}`;
     }
+    return valString;
   }
 
   cancelAudio = () => {
@@ -1004,13 +972,13 @@ class ChatMessages extends Component {
   }
 
   sendAudio = (blob, url, stream) => {
-    var data = new FormData();
+    const data = new FormData();
     data.append('template', false);
     data.append('file_data', blob);
     data.append('type', 'audio');
 
-    this.setState({
-      messages: this.state.messages.concat(
+    this.setState((prevState) => ({
+      messages: prevState.messages.concat(
         {
           content_type: 'media',
           content_media_type: 'audio',
@@ -1019,7 +987,7 @@ class ChatMessages extends Component {
           created_time: new Date()
         }
       )
-    }, () => {
+    }), () => {
       this.props.sendWhatsAppImg(this.props.currentCustomer, data, csrfToken);
       this.scrollToBottom();
     });
@@ -1028,18 +996,21 @@ class ChatMessages extends Component {
   }
 
   toggleEmojiPicker = () => {
-    this.setState({
-      showEmojiPicker: !this.state.showEmojiPicker
+    this.setState((prevState) => {
+      const newShowEmojiPicker = !prevState.showEmojiPicker;
+      return ({ showEmojiPicker: newShowEmojiPicker });
     });
   }
 
   insertEmoji = (emoji) => {
-    let input = $('#divMessage');
+    const input = $('#divMessage');
     let text = input.text();
-    let first = text.substring(0, this.caretPosition);
-    let second = text.substring(this.caretPosition);
+    const first = text.substring(0, this.caretPosition);
+    const second = text.substring(this.caretPosition);
 
-    if (text.length == 0) this.caretPosition = 0;
+    if (text.length === 0) {
+      this.caretPosition = 0;
+    }
 
     text = (first + emoji.native + second);
     input.html(text);
@@ -1048,7 +1019,8 @@ class ChatMessages extends Component {
   }
 
   getCaretPosition = () => {
-    let sel, range, editableDiv = document.getElementById('divMessage');
+    let sel; let range; const
+      editableDiv = document.getElementById('divMessage');
 
     if (window.getSelection) {
       sel = window.getSelection();
@@ -1056,18 +1028,18 @@ class ChatMessages extends Component {
       if (sel.rangeCount) {
         range = sel.getRangeAt(0);
 
-        if (range.commonAncestorContainer.parentNode == editableDiv) {
+        if (range.commonAncestorContainer.parentNode === editableDiv) {
           this.caretPosition = range.endOffset;
         }
       }
     } else if (document.selection && document.selection.createRange) {
       range = document.selection.createRange();
 
-      if (range.parentElement() == editableDiv) {
-        let tempEl = document.createElement("span");
+      if (range.parentElement() === editableDiv) {
+        const tempEl = document.createElement("span");
         editableDiv.insertBefore(tempEl, editableDiv.firstChild);
 
-        let tempRange = range.duplicate();
+        const tempRange = range.duplicate();
         tempRange.moveToElementText(tempEl);
         tempRange.setEndPoint("EndToEnd", range);
 
@@ -1076,22 +1048,19 @@ class ChatMessages extends Component {
     }
   }
 
-  getCleanTemplate = (text) => {
-    return text.replaceAll('\\*', '*');
-  }
+  getCleanTemplate = (text) => text.replaceAll('\\*', '*')
 
   setTemplateType = (type) => {
     if (type === 'text') {
       return 'Texto';
-    } else if (type === 'image') {
+    } if (type === 'image') {
       return 'Imagen';
-    } else {
-      return 'PDF';
     }
+    return 'PDF';
   }
 
   validFile = (file) => {
-    if (file.type !== 'application/pdf' || file.size > 20*1024*1024) {
+    if (file.type !== 'application/pdf' || file.size > 20 * 1024 * 1024) {
       alert('El archivo debe ser PDF, de máximo 20MB');
       return false;
     }
@@ -1103,16 +1072,17 @@ class ChatMessages extends Component {
     let accepted = '';
 
     if (this.state.templateType === 'image') {
-       accepted = 'image/jpg, image/jpeg, image/png';
+      accepted = 'image/jpg, image/jpeg, image/png';
     } else if (this.state.templateType === 'file') {
       accepted = 'application/pdf';
     }
 
-    this.setState({acceptedFiles: accepted});
+    this.setState({ acceptedFiles: accepted });
   }
 
   render() {
-    if (this.state.templateEdited == false){
+    let screen;
+    if (this.state.templateEdited === false) {
       screen = this.getTextInput();
     } else {
       screen = this.getTextInputEdited();
@@ -1121,251 +1091,106 @@ class ChatMessages extends Component {
     return (
       <div className="row bottom-xs">
         {this.props.onMobile && (
-          <div className="col-xs-12 row">
-            <div className="col-xs-2 pl-0" onClick={() => this.props.backToChatList()}>
-              <i className="fas fa-arrow-left c-secondary fs-30 mt-12"></i>
-            </div>
-            <div className="col-xs-8 pl-0">
-              <div className="profile__name">
-                {`${this.props.customerDetails.first_name && this.props.customerDetails.last_name  ? `${this.props.customerDetails.first_name} ${this.props.customerDetails.last_name}` : this.props.customerDetails.whatsapp_name ? this.props.customerDetails.whatsapp_name : this.props.customerDetails.phone}`}
-              </div>
-              <div className={this.props.customerDetails["unread_whatsapp_message?"] ? 'fw-bold' : ''}>
-                <small>{moment(this.props.customerDetails.recent_message_date).locale('es').fromNow()}</small>
-              </div>
-            </div>
-            <div className="col-xs-2 pl-0" onClick={() => this.props.editCustomerDetails()}>
-              <div className="c-secondary mt-12">
-                Editar
-              </div>
-            </div>
-          </div>
+          <MobileTopChatBar
+            backToChatList={this.props.backToChatList}
+            chatType="whatsapp"
+            customerDetails={this.props.customerDetails}
+            editCustomerDetails={this.props.editCustomerDetails}
+          />
         )}
-        { this.props.currentCustomer != 0 && this.customerRemoved() &&
-          (<div className="top-chat-bar pl-10">
-            <div className='assigned-to'>
-              <small>Asignado a: </small>
-              <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={(e) => this.handleAgentAssignment(e)}>
-                <option value="">No asignado</option>
-                {this.props.agent_list.map((agent, index) => (
-                  <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
-                ))}
-              </select>
-            </div>
-            {this.props.activeChatBot && this.props.onMobile == false &&
-              <div className="tooltip-top chat-bot-icon">
-                <i className="fas fa-robot c-secondary fs-15"></i>
-                <div className="tooltiptext">ChatBot Activo</div>
-              </div>
-            }
-            <div className='mark-no-read'>
-              <button onClick={(e) => this.setNoRead(e)} className='btn btn--cta btn-small right'>Marcar como no leído</button>
-              <button onClick={(e) => this.toggleChatBot(e)} className='btn btn--cta btn-small right'>
-                {this.props.activeChatBot || (this.props.customer && this.props.customer.allow_start_bots) ?
-                  <span>Desactivar Bot</span>
-                : <span>Activar Bot</span>
-                }
-              </button>
-            </div>
-          </div>
+        { this.props.currentCustomer !== 0 && this.customerRemoved()
+          && (
+            <TopChatBar
+              activeChatBot={this.props.activeChatBot}
+              agentsList={this.props.agent_list}
+              customerDetails={this.props.customerDetails}
+              newAgentAssignedId={this.props.newAgentAssignedId}
+              handleAgentAssignment={this.handleAgentAssignment}
+              customer={this.props.customer}
+              onMobile={this.props.onMobile}
+              setNoRead={this.setNoRead}
+              toggleChatBot={this.toggleChatBot}
+            />
           )}
         {this.state.isImgModalOpen && (
-          <div className="img_modal">
-            <div className="img_modal__overlay" onClick={(e) => this.toggleImgModal(e)}>
-            </div>
-            <img src={this.state.url} />
-          </div>
+          <ImageModal url={this.state.url} toggleImgModal={this.toggleImgModal} />
         )}
-        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
-          {this.state.messages.map((message, index) => (
-            <div key={index} className="message">
-              <div className={ this.divClasses(message) } >
+        <div
+          className="col-xs-12 chat__box pt-8"
+          onScroll={(e) => this.handleScrollToTop(e)}
+          style={this.overwriteStyle()}
+        >
+          {this.state.messages.map((message) => (
+            <div key={message.id} className="message">
+              <div className={this.divClasses(message)}>
                 <Message
-                  message = {message}
-                  handleMessageEvents = {this.props.handleMessageEvents}
-                  toggleImgModal = {this.toggleImgModal}
+                  message={message}
+                  handleMessageEvents={this.props.handleMessageEvents}
+                  toggleImgModal={this.toggleImgModal}
                 />
               </div>
             </div>
           ))}
-          <div id="bottomRef" ref={this.bottomRef}></div>
+          <div id="bottomRef" ref={this.bottomRef} />
         </div>
-
-        { this.chatAlreadyAssigned() ? (
-            <div className="col-xs-12">
-              <p>Esta conversación ya ha sido asignada a otro usuario.</p>
-            </div>
-          ) : ( this.props.errorSendMessageStatus ? (
-              <div className="col-xs-12">
-                <p>{this.props.errorSendMessageText}</p>
-              </div>
-            ) : ( this.isChatClosed() ? (
-                <div className="col-xs-12">
-                  <p>Este canal de chat se encuentra cerrado. Si lo desea puede enviar una <a href="#" onClick={() => this.openModal() }   >plantilla</a>.</p>
-                </div>
-              ) : ( this.canSendMessages() &&
-                  <div className="col-xs-12 chat-input">
-                    <div className="text-input">
-                      <div id="divMessage" contentEditable="true" role="textbox" placeholder-text="Escribe un mensaje aquí" className="message-input fs-14" onPaste={(e) => this.pasteImages(e)} onKeyPress={this.onKeyPress} onKeyUp={this.getCaretPosition} onMouseUp={this.getCaretPosition} tabIndex="0">
-                      </div>
-                      {this.state.selectedProduct && this.state.selectedProduct.attributes.image &&
-                        <div className="selected-product-image-container">
-                          <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedProduct()}></i>
-                          <img src={this.state.selectedProduct.attributes.image} />
-                        </div>
-                      }
-                      {this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url &&
-                        <div className="selected-product-image-container">
-                          <i className="fas fa-times-circle cursor-pointer" onClick={() => this.removeSelectedFastAnswer()}></i>
-                          <img src={this.state.selectedFastAnswer.attributes.image_url} />
-                        </div>
-                      }
-                      <div className="t-right mr-15">
-                        {!this.state.recordingAudio &&
-                          <div className="p-relative">
-                            {this.state.showEmojiPicker &&
-                              <div id="emojis-holder" className="emojis-container">
-                                <Picker
-                                  set='apple'
-                                  title='Seleccionar...'
-                                  emoji='point_up'
-                                  onSelect={(emoji) => this.insertEmoji(emoji)}
-                                  color='#00B4FF'
-                                  i18n={pickerI18n}
-                                  skinEmoji='hand'
-                                />
-                              </div>
-                            }
-                            <input id="attach-file" className="d-none" type="file" name="messageFile" accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" onChange={(e) => this.handleFileSubmit(e)}/>
-                            <div className="tooltip-top">
-                              <i className="fas fa-paperclip fs-22 ml-7 mr-7 cursor-pointer" onClick={() => document.querySelector('#attach-file').click()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Archivos</div>
-                              }
-                            </div>
-                            <div className="tooltip-top">
-                              <i className="fas fa-image fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleLoadImages()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Imágenes</div>
-                              }
-                            </div>
-                            <div className="tooltip-top">
-                              <i className="fas fa-bolt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Respuestas Rápidas</div>
-                              }
-                            </div>
-                            <div className="tooltip-top">
-                              <i className="fas fa-shopping-bag fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.props.toggleProducts()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Productos</div>
-                              }
-                            </div>
-                            <div className="tooltip-top">
-                              <i className="fas fa-map-marker-alt fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.getLocation()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Ubicación</div>
-                              }
-                            </div>
-                            {ENV['INTEGRATION'] == '1' && this.props.allowSendVoice &&
-                              <div className="tooltip-top">
-                                <i className="fas fa-microphone fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.recordAudio()}></i>
-                                {this.props.onMobile == false &&
-                                  <div className="tooltiptext">Notas de voz</div>
-                                }
-                              </div>
-                            }
-                            <div className="tooltip-top">
-                              <i className="fas fa-smile fs-22 ml-7 mr-7 cursor-pointer" onClick={() => this.toggleEmojiPicker()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Emojis</div>
-                              }
-                            </div>
-                            <div className="tooltip-top ml-15"></div>
-                            <div className="tooltip-top">
-                              <i className="fas fa-paper-plane fs-22 mr-5 c-secondary cursor-pointer" onClick={(e) => this.handleSubmit(e)}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Enviar</div>
-                              }
-                            </div>
-                          </div>
-                        }
-                        {this.state.recordingAudio &&
-                          <div className="d-inline-flex ">
-                            <div className="tooltip-top cancel-audio-counter">
-                              <i className="far fa-times-circle fs-25 ml-7 mr-7 cursor-pointer" onClick={() => this.cancelAudio()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Cancelar</div>
-                              }
-                            </div>
-                            <div className="time-audio-counter ml-7 mr-7">
-                              <i className="fas fa-circle fs-15 mr-4"></i>
-                              <span className="c-gray-label">{this.state.audioMinutes}:</span><span className="c-gray-label">{this.state.audioSeconds}</span>
-                            </div>
-                            <div className="tooltip-top send-audio-counter">
-                              <i className="far fa-check-circle fs-25 ml-7 mr-7 cursor-pointer" onClick={() => this.mediaRecorder.stop()}></i>
-                              {this.props.onMobile == false &&
-                                <div className="tooltiptext">Enviar</div>
-                              }
-                            </div>
-                          </div>
-                        }
-                      </div>
-                    </div>
-                  </div>
+        {/* eslint-disable-next-line no-nested-ternary */}
+        {this.chatAlreadyAssigned() ? (
+          <AlreadyAssignedChatLabel />
+        ) : (
+          // eslint-disable-next-line no-nested-ternary
+          this.props.errorSendMessageStatus ? (
+            <ErrorSendingMessageLabel text={this.props.errorSendMessageText} />
+          ) : (
+            this.isChatClosed() ? (
+              <ClosedChannel openModal={this.openModal} />
+            ) : (
+              this.canSendMessages()
+              && (
+                <MessageForm
+                  allowSendVoice={this.props.allowSendVoice}
+                  audioMinutes={this.state.audioMinutes}
+                  audioSeconds={this.state.audioSeconds}
+                  cancelAudio={this.cancelAudio}
+                  getCaretPosition={this.getCaretPosition}
+                  getLocation={this.getLocation}
+                  handleFileSubmit={this.handleFileSubmit}
+                  handleSubmit={this.handleSubmit}
+                  insertEmoji={this.insertEmoji}
+                  mediaRecorder={this.mediaRecorder}
+                  onKeyPress={this.onKeyPress}
+                  onMobile={this.props.onMobile}
+                  pasteImages={this.pasteImages}
+                  recordAudio={this.recordAudio}
+                  recordingAudio={this.state.recordingAudio}
+                  removeSelectedFastAnswer={this.removeSelectedFastAnswer}
+                  removeSelectedProduct={this.removeSelectedProduct}
+                  selectedFastAnswer={this.state.selectedFastAnswer}
+                  selectedProduct={this.state.selectedProduct}
+                  showEmojiPicker={this.state.showEmojiPicker}
+                  toggleEmojiPicker={this.toggleEmojiPicker}
+                  toggleFastAnswers={this.toggleFastAnswers}
+                  toggleLoadImages={this.toggleLoadImages}
+                  toggleProducts={this.props.toggleProducts}
+                />
               )
             )
           )
-        }
-
-        <Modal isOpen={this.state.isModalOpen} style={customStyles}>
-          <div className={this.props.onMobile ? "row mt-50" : "row" }>
-            <div className="col-md-10">
-              <p className={this.props.onMobile ? "fs-20 mt-0" : "fs-30 mt-0" }>Plantillas</p>
-            </div>
-            <div className="col-md-2 t-right">
-              <button onClick={(e) => this.toggleModal()}>Cerrar</button>
-            </div>
-          </div>
-          { !this.state.isTemplateSelected ?
-            (
-              <div>
-                {this.props.templates.map((template) => (
-                  <div className="row" key={template.id}>
-                    <div className={this.props.onMobile ? "col-md-10 fs-10" : "col-md-10" }>
-                      <p>[{this.setTemplateType(template.template_type)}] {this.getCleanTemplate(template.text)}</p>
-                    </div>
-                    <div className="col-md-2">
-                      <button onClick={(e) => this.selectTemplate(template)}>Seleccionar</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              )
-            : (
-              <div>
-                <div className="row">
-                  <div className="col-md-12">
-                    [{this.setTemplateType(this.state.templateType)}] {screen}
-                  </div>
-                </div>
-                {this.state.templateType !== 'text' &&
-                  <div id="template-file">
-                    <br/>
-                    <input type="file" name="file" id="template_file" accept={this.state.acceptedFiles}/>
-                  </div>
-                }
-                <div className="row mt-30">
-                  <div className="col-md-6 t-right">
-                    <button onClick={(e) => this.cancelTemplate()}>Cancelar</button>
-                  </div>
-                  <div className="col-md-6 t-left">
-                    <button onClick={(e) => this.sendTemplate()}>Enviar</button>
-                  </div>
-                </div>
-              </div>
-            )
-          }
-        </Modal>
+        )}
+        <TemplateSelectionModal
+          acceptedFiles={this.state.acceptedFiles}
+          cancelTemplate={this.cancelTemplate}
+          getCleanTemplate={this.getCleanTemplate}
+          isModalOpen={this.state.isModalOpen}
+          isTemplateSelected={this.state.isTemplateSelected}
+          onMobile={this.props.onMobile}
+          screen={screen}
+          selectTemplate={this.selectTemplate}
+          sendTemplate={this.sendTemplate}
+          setTemplateType={this.setTemplateType}
+          templates={this.props.templates}
+          templateType={this.state.templateType}
+          toggleModal={this.toggleModal}
+        />
 
         <ImagesSelector
           showLoadImages={this.state.showLoadImages}
@@ -1386,12 +1211,12 @@ class ChatMessages extends Component {
           sendLocation={this.sendLocation}
         />
       </div>
-    )
+    );
   }
 }
 
 function mapStateToProps(state) {
-  total_pages = state.total_pages || 0;
+  totalPages = state.total_pages || 0;
 
   return {
     messages: state.messages || [],
@@ -1430,11 +1255,11 @@ function mapDispatch(dispatch) {
     changeCustomerAgent: (id, body, token) => {
       dispatch(changeCustomerAgent(id, body, token));
     },
-    setNoRead: (customer_id, token) => {
-      dispatch(setNoRead(customer_id, token));
+    setNoRead: (customerId, token) => {
+      dispatch(setNoRead(customerId, token));
     },
-    toggleChatBot: (customer_id, token) => {
-      dispatch(toggleChatBot(customer_id, token));
+    toggleChatBot: (customerId, token) => {
+      dispatch(toggleChatBot(customerId, token));
     },
     sendWhatsAppBulkFiles: (id, body, token) => {
       dispatch(sendWhatsAppBulkFiles(id, body, token));

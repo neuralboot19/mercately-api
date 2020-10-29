@@ -58,7 +58,7 @@ class FastAnswers extends Component {
 
   handleKeyPress = event => {
     if (event.key === "Enter") {
-      this.setState({shouldUpdate: true}, () => { 
+      this.setState({shouldUpdate: true}, () => {
         this.applySearch();
       })
     }
@@ -134,8 +134,8 @@ class FastAnswers extends Component {
               onKeyPress={this.handleKeyPress}
             />
           </div>
-          {this.state.fastAnswers.map((answer) => (
-            <div className="fast_answer_content">
+          {this.state.fastAnswers.map((answer, index) => (
+            <div key={index} className="fast_answer_content">
               <div className="pb-10 t-right c-secondary">
                 <small className="select_answer" onClick={() => this.changeFastAnswer(answer)}>Seleccionar</small>
               </div>
