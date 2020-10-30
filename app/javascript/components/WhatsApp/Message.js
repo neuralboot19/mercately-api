@@ -20,15 +20,6 @@ class Message extends Component {
     )
   }
 
-  toggleImgModal = (e) => {
-    var el = e.target;
-
-    this.setState({
-      url: el.src,
-      isImgModalOpen: !this.state.isImgModalOpen
-    });
-  }
-
   render() {
     return (
       <div>
@@ -39,7 +30,7 @@ class Message extends Component {
             }
             {this.props.message.replied_message.data.attributes.content_type == 'media' && this.props.message.replied_message.data.attributes.content_media_type == 'image' &&
               <img src={this.props.message.replied_message.data.attributes.content_media_url} className="image"
-                onClick={(e) => this.toggleImgModal(e)}/>
+                onClick={(e) => this.props.toggleImgModal(e)}/>
             }
             {this.props.message.replied_message.data.attributes.content_type == 'media' && (this.props.message.replied_message.data.attributes.content_media_type == 'voice' || this.props.message.replied_message.data.attributes.content_media_type == 'audio') && (
               <audio controls>
@@ -96,7 +87,7 @@ class Message extends Component {
         {this.props.message.content_type == 'media' && this.props.message.content_media_type == 'image' &&
             (<div className="img-holder">
               <img src={this.props.message.content_media_url} className="msg__img"
-                onClick={(e) => this.toggleImgModal(e)}/>
+                onClick={(e) => this.props.toggleImgModal(e)}/>
               {this.props.message.is_loading && (
                 <div className="lds-dual-ring"></div>
               )}
