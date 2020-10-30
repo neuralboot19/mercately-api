@@ -1089,7 +1089,11 @@ class ChatMessages extends Component {
           {this.state.messages.map((message, index) => (
             <div key={index} className="message">
               <div className={ this.divClasses(message) } >
-                <Message message = {message} handleMessageEvents = {this.props.handleMessageEvents} />
+                <Message
+                  message = {message}
+                  handleMessageEvents = {this.props.handleMessageEvents}
+                  toggleImgModal = {this.toggleImgModal}
+                />
               </div>
             </div>
           ))}
