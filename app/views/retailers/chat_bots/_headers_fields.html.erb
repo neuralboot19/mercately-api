@@ -1,0 +1,16 @@
+<div class="row w-100">
+  <div class="col-xs-12 col-sm-5 my-10">
+    <%= f.label :key, 'Nombre' %>
+    <%= f.text_field :key, class: 'input deactivate-on-selection input-header' %>
+  </div>
+  <div class="col-xs-12 col-sm-5 my-10 p-relative">
+    <%= f.label :value, 'Valor' %>
+    <%= f.text_field :value, class: 'input deactivate-on-selection input-header', onfocus: 'showListOptions(this)', onblur: 'hideListOptions(this)' %>
+  </div>
+  <div class="col-xs-12 col-sm-2 my-10 p-relative">
+    <%= f.check_box :_destroy, class: 'd-none deactivate-on-selection input-header', onchange: 'hideHeader(this)' %>
+    <%= f.label :_destroy, class: 'btn btn--destroy delete-icon-headers' do %>
+      <i class="fas fa-trash-alt c-red"></i>
+    <% end %>
+  </div>
+</div>

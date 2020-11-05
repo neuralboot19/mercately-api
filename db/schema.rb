@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_09_212414) do
+ActiveRecord::Schema.define(version: 2020_11_17_155907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -166,7 +166,19 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.integer "action_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "target_field"
+    t.string "webhook"
+    t.integer "action_event", default: 0
+    t.string "username"
+    t.string "password"
+    t.integer "payload_type", default: 0
+    t.jsonb "data", default: []
+    t.jsonb "headers", default: []
+    t.integer "classification", default: 0
+    t.string "exit_message"
+    t.bigint "customer_related_field_id"
     t.index ["chat_bot_option_id"], name: "index_chat_bot_actions_on_chat_bot_option_id"
+    t.index ["customer_related_field_id"], name: "index_chat_bot_actions_on_customer_related_field_id"
     t.index ["retailer_user_id"], name: "index_chat_bot_actions_on_retailer_user_id"
   end
 
@@ -188,6 +200,7 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "option_deleted", default: false
+    t.integer "option_type", default: 0
     t.index ["ancestry"], name: "index_chat_bot_options_on_ancestry"
     t.index ["chat_bot_id"], name: "index_chat_bot_options_on_chat_bot_id"
   end
@@ -206,6 +219,8 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.string "error_message"
     t.boolean "repeat_menu_on_failure", default: false
     t.integer "reactivate_after"
+    t.integer "on_failed_attempt"
+    t.string "on_failed_attempt_message"
     t.index ["retailer_id"], name: "index_chat_bots_on_retailer_id"
   end
 
@@ -218,15 +233,25 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.index ["customer_id"], name: "index_customer_bot_options_on_customer_id"
   end
 
-  create_table "customer_hubspot_fields", force: :cascade do |t|
-    t.string "customer_field"
-    t.bigint "hubspot_field_id"
-    t.bigint "retailer_id"
+  create_table "customer_related_data", force: :cascade do |t|
+    t.bigint "customer_related_field_id"
+    t.bigint "customer_id"
+    t.string "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["customer_field", "hubspot_field_id", "retailer_id"], name: "chf_customer_field_husbpot_field_retailer", unique: true
-    t.index ["hubspot_field_id"], name: "index_customer_hubspot_fields_on_hubspot_field_id"
-    t.index ["retailer_id"], name: "index_customer_hubspot_fields_on_retailer_id"
+    t.index ["customer_id"], name: "index_customer_related_data_on_customer_id"
+    t.index ["customer_related_field_id"], name: "index_customer_related_data_on_customer_related_field_id"
+  end
+
+  create_table "customer_related_fields", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "name"
+    t.string "identifier"
+    t.integer "field_type", default: 0
+    t.string "web_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_customer_related_fields_on_retailer_id"
   end
 
   create_table "customer_tags", force: :cascade do |t|
@@ -258,6 +283,7 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
+    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -267,6 +293,8 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.bigint "chat_bot_option_id"
     t.integer "failed_bot_attempts", default: 0
     t.boolean "allow_start_bots", default: false
+    t.jsonb "endpoint_response", default: {}
+    t.jsonb "endpoint_failed_response", default: {}
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
@@ -339,19 +367,6 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_gupshup_whatsapp_messages_on_retailer_user_id"
     t.index ["whatsapp_message_id"], name: "index_gupshup_whatsapp_messages_on_whatsapp_message_id"
-  end
-
-  create_table "hubspot_fields", force: :cascade do |t|
-    t.string "hubspot_field"
-    t.string "hubspot_label"
-    t.string "hubspot_type"
-    t.boolean "taken", default: false
-    t.boolean "deleted", default: false
-    t.bigint "retailer_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["retailer_id", "hubspot_field"], name: "index_hubspot_fields_on_retailer_id_and_hubspot_field", unique: true
-    t.index ["retailer_id"], name: "index_hubspot_fields_on_retailer_id"
   end
 
   create_table "karix_whatsapp_messages", force: :cascade do |t|
@@ -463,6 +478,16 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.string "mobile_push_token"
     t.index ["device", "retailer_user_id"], name: "index_mobile_tokens_on_device_and_retailer_user_id", unique: true
     t.index ["retailer_user_id"], name: "index_mobile_tokens_on_retailer_user_id"
+  end
+
+  create_table "option_sub_lists", force: :cascade do |t|
+    t.bigint "chat_bot_option_id"
+    t.string "value_to_save"
+    t.string "value_to_show"
+    t.integer "position", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_bot_option_id"], name: "index_option_sub_lists_on_chat_bot_option_id"
   end
 
   create_table "order_items", force: :cascade do |t|
@@ -658,6 +683,10 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -668,10 +697,6 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -708,10 +733,10 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
     t.string "gupshup_phone_number"
     t.string "gupshup_src_name"
+    t.string "karix_account_uid"
+    t.string "karix_account_token"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
@@ -720,8 +745,6 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
     t.boolean "manage_team_assignment", default: false
     t.boolean "show_stats", default: false
     t.boolean "allow_voice_notes", default: true
-    t.boolean "hubspot_integrated", default: false
-    t.string "hubspot_api_key", default: ""
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -803,15 +826,12 @@ ActiveRecord::Schema.define(version: 2020_11_09_212414) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agent_customers", "customers"
   add_foreign_key "agent_customers", "retailer_users"
-  add_foreign_key "customer_hubspot_fields", "hubspot_fields"
-  add_foreign_key "customer_hubspot_fields", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
   add_foreign_key "facebook_retailers", "retailers"
   add_foreign_key "gupshup_whatsapp_messages", "customers"
   add_foreign_key "gupshup_whatsapp_messages", "retailers"
-  add_foreign_key "hubspot_fields", "retailers"
   add_foreign_key "karix_whatsapp_messages", "customers"
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"

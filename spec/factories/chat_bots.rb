@@ -5,6 +5,7 @@ FactoryBot.define do
     trigger { Faker::Lorem.word }
     failed_attempts { 0 }
     goodbye_message { Faker::Lorem.sentence }
+    error_message { Faker::Lorem.sentence }
     any_interaction { false }
     enabled { false }
     reactivate_after { nil }

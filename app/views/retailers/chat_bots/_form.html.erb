@@ -29,9 +29,15 @@
           </div>
           <div class="row w-100">
             <div class="col-xs-12 col-md-6 mb-8 my-16">
-              <%= f.label :repeat_menu_on_failure, 'Reenviar opciones del menú en intento fallido?' %><br/>
-              <%= f.check_box :repeat_menu_on_failure %>
+              <%= f.label :on_failed_attempt, 'Qué desea hacer en un intento fallido?' %>
+              <%= f.select :on_failed_attempt, on_failed_attempts_list, { include_blank: true }, class: 'input', onchange: 'showAttemptInput()' %>
             </div>
+            <div class="col-xs-12 col-md-6 mb-8 my-16">
+              <%= f.label :on_failed_attempt_message, 'Mensaje personalizado para intentos fallidos' %><br/>
+              <%= f.text_area :on_failed_attempt_message, class: 'input' %>
+            </div>
+          </div>
+          <div class="row w-100">
             <div class="col-xs-12 col-md-6 mb-8 my-16">
               <%= f.label :goodbye_message, 'Mensaje de despedida' %><br/>
               <%= f.text_area :goodbye_message, class: 'input validate-required' %>
@@ -111,3 +117,5 @@
     activate_select();
   })();
 </script>
+
+<script src="<%= asset_path 'retailers/chat_bots/chat_bots.js' %>" charset="utf-8"></script>

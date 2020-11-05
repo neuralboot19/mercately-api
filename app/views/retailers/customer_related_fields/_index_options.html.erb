@@ -1,0 +1,20 @@
+<ul class="dropdown__menu">
+  <li>
+    <%= link_to retailers_customer_related_field_path(current_retailer, customer_related_field), class: 'c-black no-style' do %>
+      <i class="fas fa-eye mr-8"></i>
+      Ver
+    <% end %>
+  </li>
+  <li>
+    <%= link_to edit_retailers_customer_related_field_path(current_retailer, customer_related_field), class: 'c-black no-style' do %>
+      <i class="fas fa-edit mr-8"></i>
+      Editar
+    <% end %>
+  </li>
+  <li>
+    <%= link_to retailers_customer_related_field_path(current_retailer, customer_related_field), method: :delete, data: { confirm: '¿Estás seguro de eliminar el campo?' }, class: 'c-red no-style' do %>
+      <i class="fas fa-trash-alt mr-8"></i>
+      Eliminar
+    <% end %>
+  </li>
+</ul>
