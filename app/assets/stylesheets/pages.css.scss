@@ -1,6 +1,5 @@
 @import "bootstrap";
 @import 'font_awesome5_webfont';
-@import 'blogs';
 @import 'new_dashboard/_fonts';
 @import 'fonts/Poppins/stylesheet';
 
@@ -79,6 +78,10 @@ $secondary-color: #00B4FF;
   -webkit-box-shadow: 0 6px 13px 0 rgba(0, 0, 0, 0.05);
   box-shadow: 0 6px 13px 0 rgba(0, 0, 0, 0.05);
   outline: 0;
+
+  &.aligned-with-label {
+    margin-top: -8px;
+  }
 }
 
 .btn-white:hover {
@@ -267,6 +270,10 @@ $secondary-color: #00B4FF;
   border-radius: 50%;
   margin-bottom: 10px;
   background-color: #fff;
+}
+
+.world-img img {
+  width: 149px !important;
 }
 
 /* FAQs */
@@ -581,6 +588,12 @@ footer {
       font-size: 15px !important;
     }
   }
+
+  .btn-white {
+    &.aligned-with-label {
+      margin-top: unset;
+    }
+  }
 }
 
 .middle {
@@ -793,5 +806,18 @@ footer {
         margin-top: 7px;
       }
     }
+  }
+}
+
+.main-section {
+  padding-top: 150px;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .btn-group-large>.btn,
+  .btn-group-large [class*="link-"] {
+    margin-right: unset;
+    width: 90%;
+    margin-bottom: 20px;
   }
 }

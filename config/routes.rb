@@ -38,7 +38,6 @@ Rails.application.routes.draw do
 
   get '/privacidad', to: 'pages#privacy', as: :privacy
   get '/terminos', to: 'pages#terms', as: :terms
-  get '/precios', to: 'pages#price', as: :pricing
   get '/whatsapp-crm', to: 'pages#whatsapp_crm', as: :whatsapp_crm
 
   namespace :retailers do

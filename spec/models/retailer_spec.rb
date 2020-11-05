@@ -38,6 +38,14 @@ RSpec.describe Retailer, type: :model do
     expect(retailer.slug).not_to be_nil
   end
 
+  it 'sets default ws_conversation_cost int_charges allow_voice_notes when created' do
+    retailer = Retailer.create(name: 'Retailer Name')
+
+    expect(retailer.ws_conversation_cost).to eq(0.0)
+    expect(retailer.int_charges).to eq(true)
+    expect(retailer.allow_voice_notes).to eq(true)
+  end
+
   context 'when there are retailers with the same name' do
     let(:retailer_2) { create(:retailer, name: retailer.name) }
 

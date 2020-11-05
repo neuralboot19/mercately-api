@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_17_191704) do
+ActiveRecord::Schema.define(version: 2020_11_02_231911) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -205,6 +205,7 @@ ActiveRecord::Schema.define(version: 2020_09_17_191704) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
+    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -592,6 +593,10 @@ ActiveRecord::Schema.define(version: 2020_09_17_191704) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -602,10 +607,6 @@ ActiveRecord::Schema.define(version: 2020_09_17_191704) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -641,19 +642,19 @@ ActiveRecord::Schema.define(version: 2020_09_17_191704) do
     t.float "ws_balance", default: 0.0
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
-    t.float "ws_conversation_cost", default: 0.005
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
+    t.float "ws_conversation_cost", default: 0.0
     t.string "gupshup_phone_number"
     t.string "gupshup_src_name"
+    t.string "karix_account_uid"
+    t.string "karix_account_token"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
-    t.boolean "int_charges", default: false
+    t.boolean "int_charges", default: true
     t.string "gupshup_api_key"
     t.boolean "manage_team_assignment", default: false
     t.boolean "show_stats", default: false
-    t.boolean "allow_voice_notes", default: false
+    t.boolean "allow_voice_notes", default: true
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

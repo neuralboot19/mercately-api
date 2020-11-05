@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
   layout 'catalog', only: [:catalog, :product]
-  layout 'new_pages', only: [:whatsapp_crm]
+
   before_action :set_retailer, only: [:catalog, :product]
 
   def index

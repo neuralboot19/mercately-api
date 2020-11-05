@@ -1,44 +1,43 @@
 <!DOCTYPE html>
 <html lang="es-EC">
   <head>
-    <title>Optimiza tu negocio y vende más en Mercado Libre | Mercately</title>
+    <title><%= meta_title %></title>
+    <meta name="description" content="<%= meta_description %>">
+    <meta property="og:type" content="<%= og_type %>" />
+    <meta property="og:title" content="<%= og_title %>" />
+    <meta property="og:url" content="<%= og_url %>" />
+    <meta property="og:image" content="<%= og_image %>" />
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= stylesheet_link_tag    'application', media: 'all' %>
-    <%= javascript_include_tag 'application' %>
+    <%= stylesheet_link_tag    'blogs', media: 'all' %>
+    <%= javascript_include_tag 'blogs' %>
 
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/typeit@7.0.4/dist/typeit.min.js"></script>
 
     <%= render "layouts/head" %>
   </head>
-
   <body>
-    <% if ENV['ENVIRONMENT'] == 'production' %>
-      <!-- Google Tag Manager (noscript) -->
-      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8FF76S"
-      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-      <!-- End Google Tag Manager (noscript) -->
-    <% end %>
-
-    <%= render 'layouts/header' %>
+    <%= render 'layouts/blog/header' %>
     <%= yield %>
     <div class="bubble ws-bubble">
       <%= link_to 'https://api.whatsapp.com/send?l=es&phone=593989083446&text=Hola%20quiero%20saber%20más%20de%20Mercately.com', target: '_blank' do %>
         <i class="fab fa-whatsapp"></i>
       <% end %>
     </div>
-    <%= render 'layouts/footer' %>
+    <%= render 'layouts/blog/footer' %>
     <% if ENV['ENVIRONMENT'] == 'production' && current_page?(root_path) %>
       <script src="//assets.pcrl.co/js/jstracker.min.js"></script>
     <% end %>
-  </body>
 
-  <% if notice %>
-    <script charset="utf-8">
-      document.addEventListener("DOMContentLoaded", function() {
-        showtoast("<%= notice %>")
-      });
-    </script>
-  <% end %>
+    <% if notice %>
+      <script charset="utf-8">
+        document.addEventListener("DOMContentLoaded", function() {
+          showtoast("<%= notice %>")
+        });
+      </script>
+    <% end %>
+  </body>
 </html>

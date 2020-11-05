@@ -1620,6 +1620,10 @@ i {
     min-height: auto !important;
     box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.3) !important;
     overflow: hidden;
+
+    &_agent-summary {
+      min-height: 11em !important;
+    }
   }
 
   &_header-title, &_sub-title {
@@ -1636,6 +1640,12 @@ i {
 .center-flex {
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.beetwen-flex {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
