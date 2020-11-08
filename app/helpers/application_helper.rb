@@ -55,4 +55,8 @@ module ApplicationHelper
   def og_image
     content_for?(:og_image) ? content_for(:og_image) : ""
   end
+
+  def og_description
+    content_for?(:og_description) ? content_for(:og_description) : ""
+  end
 end

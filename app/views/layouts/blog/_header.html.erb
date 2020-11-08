@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light custom_navbar">
   <a href='/'>
     <%= image_tag 'landing/logo.png', alt: 'Mercately logo' %></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -6,25 +6,98 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto">
-      <ul class="navbar-nav ml-auto  main-nav-item">
-        <li class="nav-item menu-item-with-mega-menu">
-          <%= link_to blog_path, class: "nav-link" do %>
-          <span class="normal-item">Blog</span>
-          <% end %>
-        </li>
-      </ul>
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item menu-item-with-mega-menu">
-          <%= link_to new_retailer_user_registration_path, class: 'nav-link' do  %>
-          <span class="header-btn-start">Empezar</span>
+        <li class="nav-item">
+          <%= link_to blog_path, class: "nav-link" do %>
+            <span class="header-plain-link">Blog</span>
           <% end %>
         </li>
-        <li class="nav-item menu-item-with-mega-menu">
+        <li class="nav-item">
           <%= link_to new_retailer_user_session_path, class: "nav-link" do %>
-          <i class="icon icon-user"></i><span class="header-btn-login">Ingresar</span>
+            <span class="header-plain-link">Ingresar</span>
+          <% end %>
+        </li>
+        <li class="nav-item">
+          <%= link_to new_retailer_user_registration_path, class: 'nav-link' do  %>
+            <span class="header-btn-register">Registrarse</span>
           <% end %>
         </li>
       </ul>
     </ul>
   </div>
 </nav>
+
+<input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" />
+<div class="modal">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal__background" for="modal--toggle"></label>
+        <div class="modal__window box p-30 h-unset mt-0" style="z-index: 1000;">
+          <label class="modal__close" for="modal--toggle">
+            <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
+          </label>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="card__title c-black">Solicitar una demostración</div>
+              <div class="divider"></div>
+              <%= form_tag request_demo_path, method: :post, id: 'form_demo', class: 'validate-form col-xs-12 p-0' do %>
+                <fieldset class="fieldset mt-16 t-left">
+                  <legend>Dejanos tu información de contacto y nuestro equipo se estará comunicando para concretar una reunión personal o por zoom</legend>
+                  <div class="mt-8 mb-12">
+                    <%= label_tag :name, 'Nombre*' %>
+                    <%= text_field_tag :name, nil, class: 'input validate-required', placeholder: 'Nombre y apellido' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="mt-8 mb-12">
+                    <%= label_tag :email, 'Email*' %>
+                    <%= text_field_tag :email, nil, class: 'input validate-email validate-required', placeholder: 'email@example.com' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="mt-8 mb-12">
+                    <%= label_tag :company, 'Nombre de la empresa' %>
+                    <%= text_field_tag :company, nil, class: 'input' %>
+                  </div>
+                  <div class="mt-8 mb-12">
+                    <%= label_tag :phone, 'Teléfono*' %>
+                    <%= text_field_tag :phone, nil, class: 'input validate-required', placeholder: '098-333-4444' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="mt-8 mb-12">
+                    <%= label_tag :message, 'Mensaje' %>
+                    <%= text_area_tag :message, nil, class: 'input h-unset' %>
+                  </div>
+                  <div class="mt-8 mb-12">
+                    <% if @show_checkbox_recaptcha %>
+                      <%= recaptcha_tags(site_key: ENV['RECAPTCHA_SITE_KEY_V2']) %>
+                    <% else %>
+                      <%= recaptcha_v3(action: 'schedule') %>
+                      <div class="subtitle">
+                        Este sitio está protegido por reCAPTCHA bajo los
+                        <a href="https://policies.google.com/terms">terminos de servicio</a>
+                        y la
+                        <a href="https://policies.google.com/privacy">política de privacidad</a> de Google
+                      </div>
+                    <% end %>
+                  </div>
+                </fieldset>
+                <div class="btn-box col-xs-12">
+                  <%= submit_tag 'Solicitar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script charset="utf-8">
+  $(document).ready(function() {
+    $('#modal--toggle').on('change', function(e) {
+      $('body').toggleClass('o-hidden');
+    })
+  })
+</script>

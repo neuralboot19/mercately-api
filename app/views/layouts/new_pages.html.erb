@@ -9,17 +9,13 @@
     <%= javascript_include_tag 'pages' %>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/typeit@7.0.4/dist/typeit.min.js"></script>
+
     <%= render "layouts/head" %>
   </head>
 
   <body>
-    <% if ENV['ENVIRONMENT'] == 'production' %>
-      <!-- Google Tag Manager (noscript) -->
-      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W8FF76S"
-      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-      <!-- End Google Tag Manager (noscript) -->
-    <% end %>
-
     <%= render 'layouts/pages_new/header' %>
     <%= yield %>
     <div class="bubble ws-bubble">

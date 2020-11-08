@@ -143,25 +143,43 @@
     </div>
   </div>
 
-  <div class="card mt-30 py-35 general-new-container_card">
-    <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title">Rendimiento por agente</h3>
+  <div class="card mt-30 py-35 general-new-container_card_agent-summary">
+    <div class="px-0 py-5 mb-20 fs-11 mr-20 no-style-filter p-relative select-range">
+      <label class="item__dropdown d-inline">
+        <a class="dropdown__button beetwen-flex px-10" tabindex="-1" href="#!" id="show-list-platform">
+          <span id="selected-platform">Total</span>&nbsp;<i class="fas fa-sort"></i>
+        </a>
+        <ul class="dropdown__menu w-100 t-left" id="options-list-platform">
+          <li value="total">Total</li>
+          <li value="whatsapp">WhatsApp</li>
+          <li value="msn">Messenger</li>
+        </ul>
+      </label>
+    </div>
+    <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title">Rendimiento por agente - <span id="platform-title">Total</span></h3>
 
-    <div class="px-20">
+    <div class="px-20" id="stats_table_total">
       <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
         <div class="row">
-          <div class="col-xs-3 t-center">
+          <div class="col-xs-2 t-center">
             Agente
           </div>
-          <div class="col-xs-2 t-center">
+          <div class="col-xs-1 t-center">
             Chats asignados
+          </div>
+          <div class="col-xs-2 t-center">
+            Chats asignados respondidos
+          </div>
+          <div class="col-xs-2 t-center">
+            Chats asignados sin responder
           </div>
           <div class="col-xs-1 t-center">
             Mensajes
           </div>
-          <div class="col-xs-2 t-center">
+          <div class="col-xs-1 t-center">
             Total de clientes
           </div>
-          <div class="col-xs-2 t-center">
+          <div class="col-xs-1 t-center">
             Clientes recurrentes
           </div>
           <div class="col-xs-2 t-center">
@@ -170,22 +188,152 @@
         </div>
       </div>
 
-      <% @agent_stats.each do |agent| %>
+      <% @agent_stats .each do |agent| %>
         <div class="col-xs-12 py-15 stats-agent-items fs-14">
           <div class="row">
-            <div class="col-xs-3 t-center truncate">
+            <div class="col-xs-2 t-center truncate">
               <%= agent[:name] %>
             </div>
-            <div class="col-xs-2 t-center">
+            <div class="col-xs-1 t-center">
               <%= agent[:chats_assigned] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:chats_answered] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%=  agent[:chats_not_answered] %>
             </div>
             <div class="col-xs-1 t-center">
               <%= agent[:messages_sent] %>
             </div>
-            <div class="col-xs-2 t-center">
+            <div class="col-xs-1 t-center">
               <%= agent[:customers] %>
             </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:currents] %>
+            </div>
             <div class="col-xs-2 t-center">
+              <%= agent[:prospects] %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="px-20 d-none" id="stats_table_whatsapp">
+      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+        <div class="row">
+          <div class="col-xs-2 t-center">
+            Agente
+          </div>
+          <div class="col-xs-1 t-center">
+            Chats asignados
+          </div>
+          <div class="col-xs-2 t-center">
+            Chats asignados respondidos
+          </div>
+          <div class="col-xs-2 t-center">
+            Chats asignados sin responder
+          </div>
+          <div class="col-xs-1 t-center">
+            Mensajes
+          </div>
+          <div class="col-xs-1 t-center">
+            Total de clientes
+          </div>
+          <div class="col-xs-1 t-center">
+            Clientes recurrentes
+          </div>
+          <div class="col-xs-2 t-center">
+            Clientes nuevos
+          </div>
+        </div>
+      </div>
+
+      <% @agent_stats_ws.each do |agent| %>
+        <div class="col-xs-12 py-15 stats-agent-items fs-14">
+          <div class="row">
+            <div class="col-xs-2 t-center truncate">
+              <%= agent[:name] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:chats_assigned] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:chats_answered] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%=  agent[:chats_not_answered] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:messages_sent] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:customers] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:currents] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:prospects] %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="px-20 d-none" id="stats_table_msn">
+      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+        <div class="row">
+          <div class="col-xs-2 t-center">
+            Agente
+          </div>
+          <div class="col-xs-1 t-center">
+            Chats asignados
+          </div>
+          <div class="col-xs-2 t-center">
+            Chats asignados respondidos
+          </div>
+          <div class="col-xs-2 t-center">
+            Chats asignados sin responder
+          </div>
+          <div class="col-xs-1 t-center">
+            Mensajes
+          </div>
+          <div class="col-xs-1 t-center">
+            Total de clientes
+          </div>
+          <div class="col-xs-1 t-center">
+            Clientes recurrentes
+          </div>
+          <div class="col-xs-2 t-center">
+            Clientes nuevos
+          </div>
+        </div>
+      </div>
+
+      <% @agent_stats_msn.each do |agent| %>
+        <div class="col-xs-12 py-15 stats-agent-items fs-14">
+          <div class="row">
+            <div class="col-xs-2 t-center truncate">
+              <%= agent[:name] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:chats_assigned] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= agent[:chats_answered] %>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%=  agent[:chats_not_answered] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:messages_sent] %>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= agent[:customers] %>
+            </div>
+            <div class="col-xs-1 t-center">
               <%= agent[:currents] %>
             </div>
             <div class="col-xs-2 t-center">
@@ -207,13 +355,13 @@
             Plataforma
           </div>
           <div class="col-xs-3 t-center">
-            Total de chats
+            Total de chats asignados
           </div>
           <div class="col-xs-3 t-center">
-            Chats respondidos
+            Total de chats asignados respondidos
           </div>
           <div class="col-xs-3 t-center">
-            Chats sin responder
+            Total de chats asignados sin responder
           </div>
         </div>
       </div>
@@ -297,6 +445,24 @@
 
     $('#date-picker-container, #search_range').on('click', function() {
       $('#search_range').data('daterangepicker').toggle();
+    });
+
+    $('#options-list-platform li').each(function(index, li) {
+      if ($(li).text() === $('#platform-title').text()) {
+        $('#selected-platform').html($(li).html());
+      }
+    });
+    $('#options-list-platform li').on('click', function() {
+      $('#selected-platform').html($(this).html());
+      $('#platform-title').text($(this).text());
+      $('[id^="stats_table_"]').hide();
+      $('#stats_table_'+$(this).attr('value')).show();
+      $('#options-list-platform').hide();
+      console.log($(this).attr('value'));
+    });
+
+    $('#show-list-platform').on('click', function() {
+      $('#options-list-platform').show();
     });
   });
 </script>
