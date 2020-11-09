@@ -22,6 +22,7 @@
 //= require moment
 //= require moment/es.js
 //= require daterangepicker
+//= require ahoy
 
 $(document).ready(function () {
   $( "select" ).select2({

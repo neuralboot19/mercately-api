@@ -23,7 +23,7 @@
     <%= render 'layouts/blog/header' %>
     <%= yield %>
     <div class="bubble ws-bubble">
-      <%= link_to 'https://api.whatsapp.com/send?l=es&phone=593989083446&text=Hola%20quiero%20saber%20más%20de%20Mercately.com', target: '_blank' do %>
+      <%= link_to go_to_wp_path(params.to_unsafe_h), id: "ws-bubble", target: '_blank' do %>
         <i class="fab fa-whatsapp"></i>
       <% end %>
     </div>

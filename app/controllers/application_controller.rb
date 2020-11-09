@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   layout :layout_by_resource
   before_action :set_raven_context
+  skip_before_action :track_ahoy_visit
 
   def current_subdomain
     Retailer.find_by_slug(request.subdomain).present?

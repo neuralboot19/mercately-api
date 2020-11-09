@@ -18,7 +18,7 @@
           <% end %>
         </li>
         <li class="nav-item">
-          <%= link_to new_retailer_user_registration_path, class: 'nav-link' do  %>
+          <%= link_to new_retailer_user_registration_path(params.to_unsafe_h), class: 'nav-link' do  %>
             <span class="header-btn-register">Registrarse</span>
           <% end %>
         </li>
@@ -43,6 +43,11 @@
               <div class="card__title c-black">Solicitar una demostración</div>
               <div class="divider"></div>
               <%= form_tag request_demo_path, method: :post, id: 'form_demo', class: 'validate-form col-xs-12 p-0' do %>
+                <%= hidden_field_tag :utm_source, params[:utm_source] %>
+                <%= hidden_field_tag :utm_medium, params[:utm_medium] %>
+                <%= hidden_field_tag :utm_term, params[:utm_term] %>
+                <%= hidden_field_tag :utm_content, params[:utm_content] %>
+                <%= hidden_field_tag :utm_campaign, params[:utm_campaign] %>
                 <fieldset class="fieldset mt-16 t-left">
                   <legend>Dejanos tu información de contacto y nuestro equipo se estará comunicando para concretar una reunión personal o por zoom</legend>
                   <div class="mt-8 mb-12">

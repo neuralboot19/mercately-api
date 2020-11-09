@@ -1,6 +1,7 @@
 class BlogsController < ApplicationController
   layout 'blog/blog'
   before_action :set_prismic_variables
+  before_action :track_ahoy_visit, only: :index
 
   def index
     api = Prismic.api(@url, @token)

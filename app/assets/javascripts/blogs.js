@@ -2,6 +2,7 @@
 //= require popper
 //= require bootstrap-sprockets
 //= require validations
+//= require ahoy
 
 function ToastBuilder(options) {
   // options are optional
