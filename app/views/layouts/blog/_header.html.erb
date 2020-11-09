@@ -83,7 +83,8 @@
                     </select>
                   </div>
                   <div class="mt-8 mb-12">
-                    <% if @show_checkbox_recaptcha %>
+                    <%# if @show_checkbox_recaptcha %>
+                    <% if true %>
                       <%= recaptcha_tags(site_key: ENV['RECAPTCHA_SITE_KEY_V2']) %>
                     <% else %>
                       <%= recaptcha_v3(action: 'schedule') %>
