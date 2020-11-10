@@ -3,10 +3,14 @@
   <head>
     <title><%= meta_title %></title>
     <meta name="description" content="<%= meta_description %>">
+    <meta property="og:locale" content="es_LA" />
+    <meta property="og:site_name" content="Mercately" />
     <meta property="og:type" content="<%= og_type %>" />
     <meta property="og:title" content="<%= og_title %>" />
     <meta property="og:url" content="<%= og_url %>" />
     <meta property="og:image" content="<%= og_image %>" />
+    <meta property="og:description" content="<%= og_description %>" />
+    <meta property="fb:app_id" content="<%= ENV['FACEBOOK_APP_ID'] %>" />
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
