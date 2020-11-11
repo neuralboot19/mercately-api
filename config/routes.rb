@@ -9,6 +9,8 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  get 'go_to_wp', to: 'pages#go_to_wp'
+
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
     sessions: 'retailer_users/sessions', passwords: 'retailer_users/passwords',
