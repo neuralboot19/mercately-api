@@ -10,6 +10,8 @@ class RequestDemoMailer < ApplicationMailer
     @company = client_data[:company]
     @phone = client_data[:phone]
     @message = client_data[:message]
+    @employee_quantity = client_data[:employee_quantity]
+    @problem_to_resolve = client_data[:problem_to_resolve]
 
     mail to: 'hola@mercately.com, henry2992@hotmail.com, pvelasquez9294@gmail.com, jalagut8@gmail.com',
          subject: "Mercately demo requested by #{@name}"

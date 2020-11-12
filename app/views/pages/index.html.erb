@@ -64,7 +64,7 @@ inventario sincronizado y automatiza procesos desde un solo lugar." %>
           </p>
            <div class="btn-group-large btn-on-mobile">
               <label for="modal--toggle" class="btn btn-large btn-white">Quiero una Demo</label>
-              <%= link_to 'Registrarse', new_retailer_user_registration_path, class: 'btn btn-large btn-white aligned-with-label' %>
+              <%= link_to 'Registrarse', new_retailer_user_registration_path(params.to_unsafe_h), class: 'btn btn-large btn-white aligned-with-label' %>
             <div>
               <%= image_tag 'whatsapp_api/official-wa-integration.png', class: '', alt: 'WhatsApp Business API Oficial' %>
             </div>
@@ -195,7 +195,7 @@ inventario sincronizado y automatiza procesos desde un solo lugar." %>
                 <%= image_tag 'landing/facebook-logo.jpg', class: 'facebook-img', alt: 'Facebook Messenger' %>
               </div>
               <div class="col-xs-12 col-md-6 t-center no-padding-left">
-                <%= link_to "Sincronizar", new_retailer_user_registration_path, class:'bttn bttn-border' %>
+                <%= link_to "Sincronizar", new_retailer_user_registration_path(params.to_unsafe_h), class:'bttn bttn-border' %>
               </div>
             </div>
           </div>
@@ -205,7 +205,7 @@ inventario sincronizado y automatiza procesos desde un solo lugar." %>
                 <%= image_tag 'landing/instagram-logo.png', class: 'insta-img', alt: 'Instagram' %>
               </div>
               <div class="col-xs-12 col-md-6 t-center no-padding-left">
-                <%= link_to "Sincronizar", new_retailer_user_registration_path, class:'bttn bttn-border' %>
+                <%= link_to "Sincronizar", new_retailer_user_registration_path(params.to_unsafe_h), class:'bttn bttn-border' %>
               </div>
             </div>
           </div>
@@ -217,7 +217,7 @@ inventario sincronizado y automatiza procesos desde un solo lugar." %>
                 <%= image_tag 'landing/whatsapp-logo.png', class: 'ws-img', alt: 'WhatsApp' %>
               </div>
               <div class="col-xs-12 col-md-6 t-center no-padding-left">
-                <%= link_to "Sincronizar", new_retailer_user_registration_path, class:'bttn bttn-border' %>
+                <%= link_to "Sincronizar", new_retailer_user_registration_path(params.to_unsafe_h), class:'bttn bttn-border' %>
               </div>
             </div>
           </div>
@@ -227,7 +227,7 @@ inventario sincronizado y automatiza procesos desde un solo lugar." %>
                 <%= image_tag 'landing/mercado-libre-1.svg', class: '', alt: 'MercadoLibre' %>
               </div>
               <div class="col-xs-12 col-md-6 t-center no-padding-left">
-                <%= link_to "Sincronizar", new_retailer_user_registration_path, class:'bttn bttn-border' %>
+                <%= link_to "Sincronizar", new_retailer_user_registration_path(params.to_unsafe_h), class:'bttn bttn-border' %>
               </div>
             </div>
           </div>

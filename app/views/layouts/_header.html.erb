@@ -15,7 +15,7 @@
       </ul>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item menu-item-with-mega-menu">
-          <%= link_to new_retailer_user_registration_path, class: 'nav-link' do  %>
+          <%= link_to new_retailer_user_registration_path(params.to_unsafe_h), class: 'nav-link' do  %>
           <span class="header-btn-start">Empezar</span>
           <% end %>
         </li>
@@ -59,9 +59,19 @@
                     <%= text_field_tag :email, nil, class: 'input validate-email validate-required', placeholder: 'email@example.com' %>
                     <i class="validation-msg"></i>
                   </div>
-                  <div class="mt-8 mb-12">
-                    <%= label_tag :company, 'Nombre de la empresa' %>
-                    <%= text_field_tag :company, nil, class: 'input' %>
+                  <div class="row">
+                    <div class="col-xs-6 pl-0">
+                      <div class="mt-8 mb-12">
+                        <%= label_tag :company, 'Nombre de la empresa*' %>
+                        <%= text_field_tag :company, nil, class: 'input validate-required' %>
+                      </div>
+                    </div>
+                    <div class="col-xs-6 pr-0">
+                      <div class="mt-8 mb-12">
+                        <%= label_tag :employee_quantity, 'Cantidad de empleados' %>
+                        <%= text_field_tag :employee_quantity, nil, class: 'input h-unset' %>
+                      </div>
+                    </div>
                   </div>
                   <div class="mt-8 mb-12">
                     <%= label_tag :phone, 'Teléfono*' %>
@@ -69,8 +79,18 @@
                     <i class="validation-msg"></i>
                   </div>
                   <div class="mt-8 mb-12">
-                    <%= label_tag :message, 'Mensaje' %>
-                    <%= text_area_tag :message, nil, class: 'input h-unset' %>
+                    <%= label_tag :message, 'Mensaje*' %>
+                    <%= text_area_tag :message, nil, class: 'input h-unset validate-required', min: 40 %>
+                  </div>
+                  <div class="mt-8 mb-12">
+                    <%= label_tag :problem_to_resolve, '¿Que deseas resolver con Mercately?' %>
+                    <select name="problem_to_resolve" id="problem_to_resolve" class="input h-unset w-100">
+                      <option value="Conectar todo mi equipo a un solo número de Whatsapp">Conectar todo mi equipo a un solo número de Whatsapp</option>
+                      <option value="Tener chatbots en Whatsapp">Tener chatbots en Whatsapp</option>
+                      <option value="Mejorar la atención al cliente">Mejorar la atención al cliente</option>
+                      <option value="Automatizar mi negocio via WhatsApp">Automatizar mi negocio via WhatsApp</option>
+                      <option value="Todas las anteriores">Todas las anteriores</option>
+                    </select>
                   </div>
                   <div class="mt-8 mb-12">
                     <% if @show_checkbox_recaptcha %>

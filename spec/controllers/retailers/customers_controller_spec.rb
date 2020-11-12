@@ -363,7 +363,7 @@ RSpec.describe Retailers::CustomersController, type: :controller do
             slug: retailer.slug,
             csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.csv', 'text/csv')
           }
-        }.to change(Customer, :count).by(1)
+        }.to change(Customer, :count).by(2)
 
         expect(flash[:notice][0]).to include('La importación se realizó con éxito')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
