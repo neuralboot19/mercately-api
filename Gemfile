@@ -28,6 +28,8 @@ gem 'faraday', '~> 0.16.0'
 gem 'cocoon', '~> 1.2', '>= 1.2.12'
 gem 'ancestry', '~> 3.0', '>= 3.0.5'
 
+gem 'activerecord-session_store', '~> 1.1', '>= 1.1.3'
+
 # Pagination
 gem 'kaminari', '~> 1.1', '>= 1.1.1'
 

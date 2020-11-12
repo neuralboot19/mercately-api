@@ -33,18 +33,19 @@ module ImportCustomersConcern
       return error_response(@errors[:errors]) if @errors[:errors].any?
       return error_response(['El archivo CSV está vacío']) unless rows.any?
 
+      extra_attributes = [:retailer_id, :valid_customer, :web_id ]
+      columns = CSV_ATTRIBUTES.values.push(extra_attributes).flatten
+
       Customer.transaction do
         Customer.import(
+          columns,
           rows,
           validate: true,
           batch_size: 1000,
           validate_with_context: :bulk_import,
           all_or_none: true,
           track_validation_failures: true,
-          on_duplicate_key_update: {
-            conflict_target: [:id], # unique index fields to check
-            columns: CSV_ATTRIBUTES.values # columns are permited to update
-          }
+          on_duplicate_key_update: :id
         )
 
         { body: nil, status: :ok }
@@ -198,7 +199,7 @@ module ImportCustomersConcern
     end
 
     def right_phone_format?(row_number, phone)
-      phone_regexp = Regexp.new('^\+[0-9]{10,12}$')
+      phone_regexp = Regexp.new('^\+[0-9]{10,13}$')
       return true if phone&.match?(phone_regexp)
 
       @errors[:errors] << error_message(row_number, 'Error en el formato de teléfono')
