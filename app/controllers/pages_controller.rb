@@ -53,6 +53,13 @@ class PagesController < ApplicationController
       RequestDemoMailer.demo_requested(params.to_unsafe_h).deliver_now
 
       if params['from-ws-crm'].present?
+        ahoy.track('WA CRM Request Demo button', {
+          utm_source: params[:utm_source],
+          utm_medium: params[:utm_medium],
+          utm_term: params[:utm_term],
+          utm_content: params[:utm_content],
+          utm_campaign: params[:utm_campaign]
+        })
         redirect_to whatsapp_crm_path, notice: 'Gracias! Nuestro equipo se contactará pronto.'
       else
         ahoy.track('Request Demo button', {
