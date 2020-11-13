@@ -24,32 +24,28 @@ module ImportCustomersConcern
       @phones_in_csv = {}.with_indifferent_access
       @emails_in_csv = {}.with_indifferent_access
 
-      # Stores customer phones and emails from the current retailer,
-      # it helps to prevent N+1 queries
-      customers = retailer.customers
-      @customer_phones, @customer_emails = customer_phones_and_emails(customers)
-
       rows = parse_file(retailer, file)
       return error_response(@errors[:errors]) if @errors[:errors].any?
       return error_response(['El archivo CSV está vacío']) unless rows.any?
 
-      extra_attributes = [:retailer_id, :valid_customer, :web_id ]
-      columns = CSV_ATTRIBUTES.values.push(extra_attributes).flatten
-
       Customer.transaction do
-        Customer.import(
-          columns,
-          rows,
-          validate: true,
-          batch_size: 1000,
-          validate_with_context: :bulk_import,
-          all_or_none: true,
-          track_validation_failures: true,
-          on_duplicate_key_update: :id
-        )
+        rows.each_with_index do |row|
+          phone = row[:phone]&.strip
+          email = row[:email]&.strip
 
-        { body: nil, status: :ok }
+          customer = retailer.customers.find_by(phone: phone) if phone.present?
+          customer ||= retailer.customers.find_by(email: email) if email.present?
+          customer ||= Customer.new
+
+          customer.assign_attributes(row.except(:row_number))
+          customer.save!
+        rescue => e
+          @errors[:errors] << error_message(row[:row_number], e.message)
+          return error_response(@errors[:errors])
+        end
       end
+
+      { body: nil, status: :ok }
     end
 
     private
@@ -74,8 +70,11 @@ module ImportCustomersConcern
         @emails_in_csv.merge!("#{email}": true) if email.present?
 
         row = row.to_h.with_indifferent_access
-        row.merge!(row_number: index)
-        build_customer(retailer, row)
+
+        row['row_number'] = index
+        row['retailer_id'] = retailer.id
+        row['valid_customer'] = true
+        row
       end
     end
 
@@ -115,21 +114,6 @@ module ImportCustomersConcern
       file_data
     end
 
-    def build_customer(retailer, row)
-      row['retailer_id'] = retailer.id
-      row['valid_customer'] = true
-      row['web_id'] = Customer.generate_web_id(retailer, next_id(row['row_number']))
-      row = row.except('row_number')
-
-      # If the customer is not registered it will create a new one
-      customer_present = @customer_phones[row['phone']].present? || @customer_emails[row['email']].present?
-      return Customer.new(row) unless customer_present
-
-      # Else it will attach id, so import gem can update
-      row['id'] = @customer_phones[row['phone']] || @customer_emails[row['email']]
-      Customer.new(row)
-    end
-
     def type_error_message
       [
         'El archivo que subiste no era un CSV. ' \
@@ -138,7 +122,7 @@ module ImportCustomersConcern
     end
 
     def error_message(row_number, message)
-      "Fila #{row_number} inválida: #{message}"
+      "Fila #{row_number + 1} inválida: #{message}"
     end
 
     def error_response(messages)
@@ -169,27 +153,8 @@ module ImportCustomersConcern
       true
     end
 
-    def customer_phones_and_emails(customers)
-      customer_phones = {}
-      customer_emails = {}
-      customers.active.pluck(
-        :id,
-        :phone,
-        :email
-      ).each do |emp|
-        customer_phones[emp[1]] = emp[0]
-        customer_emails[emp[2]] = emp[0]
-      end
-
-      [customer_phones, customer_emails]
-    end
-
-    def next_id(row_number)
-      (Customer.select('MAX(id) as id')[0]&.id || 0) + (row_number.to_i + 1)
-    end
-
     def email_phone_valid?(index, phone, email)
-      if email.nil? && phone.nil?
+      if email.blank? && phone.blank?
         @errors[:errors] << error_message(index, 'No tiene email ni teléfono')
         return false
       end
