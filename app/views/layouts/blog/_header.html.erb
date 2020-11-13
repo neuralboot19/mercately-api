@@ -63,6 +63,7 @@
                   <div class="mt-8 mb-12">
                     <%= label_tag :company, 'Nombre de la empresa*' %>
                     <%= text_field_tag :company, nil, class: 'input validate-required' %>
+                    <i class="validation-msg"></i>
                   </div>
                   <div class="mt-8 mb-12">
                     <%= label_tag :employee_quantity, 'Cantidad de empleados' %>
@@ -76,6 +77,7 @@
                   <div class="mt-8 mb-12">
                     <%= label_tag :message, 'Mensaje*' %>
                     <%= text_area_tag :message, nil, class: 'input h-unset validate-required', min: 40 %>
+                    <i class="validation-msg"></i>
                   </div>
                   <div class="mt-8 mb-12 pr-3">
                     <%= label_tag :problem_to_resolve, '¿Que deseas resolver con Mercately?' %>
