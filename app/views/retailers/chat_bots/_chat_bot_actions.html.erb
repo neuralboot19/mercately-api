@@ -1,17 +1,51 @@
 <fieldset class="col-xs-12 fieldset pt-16 row">
-<legend>Acciones de la opción</legend>
+<legend class="fs-20">Acciones de la opción</legend>
   <div id="validate-unique-error" class="d-none">
     <i class="validation-msg">Debes agregar máximo una acción de cada tipo</i><br />
   </div>
   <div id="chat_bot_actions" class="w-100">
-    <%= f.fields_for :chat_bot_actions do |cba| %>
+    <div class="fs-15">Acciones generales <small><i>(Se ejecutan al ser seleccionada esta opción)</i></small></div>
+    <%= f.fields_for :chat_bot_actions, f.object.chat_bot_actions.classified('default') do |cba| %>
       <%= render "chat_bot_actions_fields", f: cba %>
     <% end %>
     <div class="mt-16 mb-24">
-      <%= link_to_add_association f, :chat_bot_actions, partial: 'new_chat_bot_actions_fields', id: 'add_chat_bot_actions', class: 'btn btn--cta' do %>
+      <%= link_to_add_association f, :chat_bot_actions, partial: 'new_chat_bot_actions_fields', render_options: { locals: { classification: 'default' } }, id: 'add_chat_bot_actions', class: 'btn btn--cta' do %>
         <i class="fas fa-plus mr-5"></i>
         Agregar Acción
       <% end %>
     </div>
   </div>
+  <div id="exec-endpoint-actions-container" class="w-100">
+    <div id="chat_bot_actions_success" class="w-100 mt-40">
+      <div class="fs-15">Acciones de éxito <small><i>(Se ejecutan sólo cuando la respuesta del Endpoint sea existosa)</i></small></div>
+      <%= f.fields_for :chat_bot_actions, f.object.chat_bot_actions.classified('success') do |cba| %>
+        <%= render "chat_bot_actions_fields", f: cba %>
+      <% end %>
+      <div class="mt-16 mb-24">
+        <%= link_to_add_association f, :chat_bot_actions, partial: 'new_chat_bot_actions_fields', render_options: { locals: { classification: 'success' } }, id: 'add_chat_bot_actions_success', class: 'btn btn--cta' do %>
+          <i class="fas fa-plus mr-5"></i>
+          Agregar Acción
+        <% end %>
+      </div>
+    </div>
+    <div id="chat_bot_actions_failed" class="w-100 mt-40">
+      <div class="fs-15">Acciones de fallo <small><i>(Se ejecutan sólo cuando la respuesta del Endpoint no sea existosa)</i></small></div>
+      <%= f.fields_for :chat_bot_actions, f.object.chat_bot_actions.classified('failed') do |cba| %>
+        <%= render "chat_bot_actions_fields", f: cba %>
+      <% end %>
+      <div class="mt-16 mb-24">
+        <%= link_to_add_association f, :chat_bot_actions, partial: 'new_chat_bot_actions_fields', render_options: { locals: { classification: 'failed' } }, id: 'add_chat_bot_actions_failed', class: 'btn btn--cta' do %>
+          <i class="fas fa-plus mr-5"></i>
+          Agregar Acción
+        <% end %>
+      </div>
+    </div>
+  </div>
 </fieldset>
+
+<div id="list-options-input" class="input-webhook-options absolute-panel-options d-none">
+  <div class="panel-options-title">Ingresa un valor o selecciona un campo</div>
+  <% customer_columns_list.each do |cl| %>
+    <div class="w-100 c-secondary panel-options-items" onmousedown="insertFieldInput('<%= cl[1] %>', this)"><%= cl[0] %> <small class="c-grey">(<%= cl[1] %>)</small></div>
+  <% end %>
+</div>

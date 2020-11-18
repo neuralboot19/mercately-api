@@ -110,6 +110,7 @@ Rails.application.routes.draw do
       end
       resources :team_assignments
       resources :stats, only: :index
+      resources :customer_related_fields
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

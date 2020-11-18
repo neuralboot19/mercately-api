@@ -1,3 +1,5 @@
+var globalWebhookId, globalHeaderCounter, globalDataCounter;
+
 function searchOptions() {
   getAjax(`${window.location.origin}/retailers/chat_bots/${$('#cb-web-id').val()}/tree_options`, function(data) {
     var json = JSON.parse(data);
@@ -13,16 +15,18 @@ function buildTree(option, parent) {
     var listContainer = $(`#options-li-tree-${parent.id}`);
   }
 
+  var addChildBlocked = option.option_type === 'form' && option.children.length > 0;
+
   listContainer.append(
     `<ul id="options-ul-tree-${option.id}" class="chat-bot-option-ul ${!parent ? 'pl-12' : ''}">
     <li id="options-li-tree-${option.id}" class="chat-bot-option-li">
     <div class="li-content">
     <i class="fas fa-chevron-right fs-12 c-secondary mr-8"></i>
-    <span class="fs-14 fw-bold">${option.position}.</span> <span class="fs-14 c-gray-label">${option.text}</span>
+    ${insertTitle(option)}
     <span class="tree-options-links">
-    <a class="ml-10 fs-12" href="${window.location.origin}/retailers/${$('#slug-id').val()}/chat_bots/${$('#cb-web-id').val()}/new_chat_bot_option?parent_id=${option.id}">Agregar opción</a>
+    <a class="ml-10 fs-12" href="javascript:;" onclick="addChildOption(${option.id}, ${addChildBlocked})">Agregar opción</a>
     <a class="ml-10 fs-12" href="${window.location.origin}/retailers/${$('#slug-id').val()}/chat_bots/${$('#cb-web-id').val()}/edit_chat_bot_option?option_id=${option.id}">Editar</a>
-    <a class="ml-10 fs-12 delete" href="javascript:;" onclick="deleteOption(${option.id})">Eliminar</a>
+    <a class="ml-10 fs-12 delete" href="javascript:;" onclick="deleteOption(${option.id}, ${option.auto_generated})">Eliminar</a>
     <a class="ml-10 fs-12" href="javascript:;" onclick="buildConversation(${option.id})">Vista previa</a>
     </span></div></li>
     </ul>`
@@ -32,6 +36,14 @@ function buildTree(option, parent) {
     for (child in option.children) {
       buildTree(option.children[child], option);
     }
+  }
+}
+
+function insertTitle(option) {
+  if (option.auto_generated) {
+    return `<span class="fs-14 c-gray-label">Opción dinámica</span>`;
+  } else {
+    return `<span class="fs-14 fw-bold">${option.position}.</span> <span class="fs-14 c-gray-label">${option.text}</span>`;
   }
 }
 
@@ -46,11 +58,17 @@ function buildConversation(option_id) {
     for (node in path) {
       var str = `<div class="w-100 row mt-10">
         <div class="sent-message-preview">
-        <span>${path[node].attributes.answer}</span><br /><br />`
+        <span>${path[node].attributes.auto_generated ? 'Se construye la opción dinámica' : path[node].attributes.answer}</span><br /><br />`
 
-      if (path[node].attributes.children && path[node].attributes.children.length > 0) {
+      if (path[node].attributes.option_type == 'decision' && path[node].attributes.children && path[node].attributes.children.length > 0) {
         for (child in path[node].attributes.children) {
           str += `<span><b>${path[node].attributes.children[child].position}.</b> ${path[node].attributes.children[child].text}</span><br />`
+        }
+      }
+
+      if (path[node].attributes.option_type == 'form' && path[node].attributes.option_sub_list && path[node].attributes.option_sub_list.length > 0) {
+        for (child in path[node].attributes.option_sub_list) {
+          str += `<span><b>${path[node].attributes.option_sub_list[child].position}.</b> ${path[node].attributes.option_sub_list[child].value_to_show}</span><br />`
         }
       }
 
@@ -64,7 +82,7 @@ function buildConversation(option_id) {
         target.append(
           `<div class="">
           <div class="my-10 received-message-preview">
-          <span>${path[node_aux + 1].attributes.position}</span>
+          ${insertPreviewResponse(path[node_aux], path[node_aux + 1])}
           </div></div>`
         )
       }
@@ -72,8 +90,17 @@ function buildConversation(option_id) {
   });
 }
 
+function insertPreviewResponse(node, next_node) {
+  if (node.attributes.option_type == 'form') {
+    return `<span>Cliente envía respuesta</span>`
+  } else {
+    return `<span>${next_node.attributes.position}</span>`
+  }
+}
+
 function showActionSelection(input) {
   value = input.value;
+  showHideActions(value);
   id = input.id.replace("_action_type", "");
   root = $(input).parent().parent().parent();
   root.find('.hide-on-selection').hide();
@@ -81,17 +108,19 @@ function showActionSelection(input) {
 
   switch (value) {
     case 'add_tag':
-      hideId = id + "_retailer_user_id";
+      hideId = `#${id}_target_field, #${id}_retailer_user_id, #${id}_exit_message`;
       showId = id + "_tag_ids";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'assign_agent':
-      hideId = id + "_tag_ids";
+      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_exit_message`;
       showId = id + "_retailer_user_id";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'get_out_bot':
-      root.find('.show-on-out-bot').show();
+      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_retailer_user_id`;
+      showId = id + "_exit_message";
+      showHideSelectFields(value, hideId, showId);
       break;
     case 'go_back_bot':
       root.find('.show-on-back-bot').show();
@@ -99,17 +128,40 @@ function showActionSelection(input) {
     case 'go_init_bot':
       root.find('.show-on-init-bot').show();
       break;
+    case 'save_on_db':
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_exit_message`;
+      showId = id + "_target_field";
+      showHideSelectFields(value, hideId, showId);
+      break;
+    case 'exec_callback':
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message`;
+      showId = "webhook-action-container";
+      setGlobalWebhookId(id);
+      showHideSelectFields(value, hideId, showId, id);
+      break;
+    case 'auto_generate_option':
+      root.find('.show-on-auto-generate-option').show();
+      break;
+    case 'repeat_endpoint_option':
+      root.find('.show-on-repeat-endpoint-option').show();
+      break;
   }
 }
 
-function showHideSelectFields(action, hideId, showId) {
-  hideInput = $(`#${hideId}`);
+function showHideSelectFields(action, hideId, showId, plainId) {
+  hideInput = $(hideId);
   hideInput.parent().parent().hide();
   hideInput.attr('disabled', true);
 
   showInput = $(`#${showId}`);
-  showInput.parent().parent().show();
-  showInput.attr('disabled', false);
+
+  if (showId === 'webhook-action-container') {
+    showWebhookData(plainId);
+  } else {
+    hideWebhookData(plainId);
+    showInput.parent().parent().show();
+    showInput.attr('disabled', false);
+  }
 
   if (action === 'add_tag') {
     $(`#${showId}`).select2({
@@ -120,8 +172,118 @@ function showHideSelectFields(action, hideId, showId) {
   }
 }
 
-function deleteOption(id) {
-  if (confirm('¿Estás seguro de eliminar la opción?') == true) {
+function showWebhookData(id) {
+  $(`#${id}_webhook`).parent().parent().show();
+  $(`#${id}_webhook`).attr('disabled', false);
+  $(`#${id}_action_event`).attr('disabled', false);
+  $(`#${id}_payload_type`).attr('disabled', false);
+  $(`#${id}_username`).attr('disabled', false);
+  $(`#${id}_password`).attr('disabled', false);
+  $("input.input-header").attr('disabled', false);
+}
+
+function hideWebhookData(id) {
+  $(`#${id}_webhook`).parent().parent().hide();
+  $(`#${id}_webhook`).attr('disabled', true);
+  $(`#${id}_action_event`).attr('disabled', true);
+  $(`#${id}_payload_type`).attr('disabled', true);
+  $(`#${id}_username`).attr('disabled', true);
+  $(`#${id}_password`).attr('disabled', true);
+}
+
+function addHeaderForm(index, actionPosition, input) {
+  if (globalHeaderCounter) {
+    globalHeaderCounter++;
+  } else {
+    globalHeaderCounter = index;
+  }
+
+  $(input).parent().find('#headers-container').append(
+    `<div class="row w-100">
+      <div class="col-xs-12 col-sm-5 my-10">
+        <label for="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_headers_attributes_${globalHeaderCounter}_key">Nombre</label>
+        <input class="input deactivate-on-selection input-header" type="text" value="" name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][headers_attributes][${globalHeaderCounter}][key]" id="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_headers_attributes_${globalHeaderCounter}_key">
+      </div>
+      <div class="col-xs-12 col-sm-5 my-10 p-relative">
+        <label for="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_headers_attributes_${globalHeaderCounter}_value">Valor</label>
+        <input class="input deactivate-on-selection input-header" type="text" value="" name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][headers_attributes][${globalHeaderCounter}][value]" id="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_headers_attributes_${globalHeaderCounter}_value" onfocus="showListOptions(this)" onblur="hideListOptions(this)">
+      </div>
+      <div class="col-xs-12 col-sm-2 my-10 p-relative">
+        <input name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][headers_attributes][${globalHeaderCounter}][_destroy]" type="hidden" value="0">
+        <input class="d-none deactivate-on-selection input-header" type="checkbox" value="1" name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][headers_attributes][${globalHeaderCounter}][_destroy]" id="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_headers_attributes_${globalHeaderCounter}__destroy", onchange="hideHeader(this)">
+        <label class="btn btn--destroy delete-icon-headers" for="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_headers_attributes_${globalHeaderCounter}__destroy">
+          <i class="fas fa-trash-alt c-red"></i>
+        </label>
+      </div>
+    </div>`
+  );
+}
+
+function addDataForm(index, actionPosition, input) {
+  if (globalDataCounter) {
+    globalDataCounter++;
+  } else {
+    globalDataCounter = index;
+  }
+
+  $(input).parent().find('#data-container').append(
+    `<div class="row w-100">
+      <div class="col-xs-12 col-sm-5 my-10">
+        <label for="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_data_attributes_${globalDataCounter}_key">Nombre</label>
+        <input class="input deactivate-on-selection input-header" type="text" value="" name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][data_attributes][${globalDataCounter}][key]" id="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_data_attributes_${globalDataCounter}_key">
+      </div>
+      <div class="col-xs-12 col-sm-5 my-10 p-relative">
+        <label for="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_data_attributes_${globalDataCounter}_value">Valor</label>
+        <input class="input deactivate-on-selection input-header" type="text" value="" name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][data_attributes][${globalDataCounter}][value]" id="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_data_attributes_${globalDataCounter}_value" onfocus="showListOptions(this)" onblur="hideListOptions(this)">
+      </div>
+      <div class="col-xs-12 col-sm-2 my-10 p-relative">
+        <input name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][data_attributes][${globalDataCounter}][_destroy]" type="hidden" value="0">
+        <input class="d-none deactivate-on-selection input-header" onchange="hideData(this)" type="checkbox" value="1" name="chat_bot[chat_bot_options_attributes][0][chat_bot_actions_attributes][${globalWebhookId || actionPosition}][data_attributes][${globalDataCounter}][_destroy]" id="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_data_attributes_${globalDataCounter}__destroy">
+        <label class="btn btn--destroy delete-icon-headers" for="chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_${globalWebhookId || actionPosition}_data_attributes_${globalDataCounter}__destroy">
+          <i class="fas fa-trash-alt c-red"></i>
+        </label>
+      </div>
+    </div>`
+  );
+}
+
+function setGlobalWebhookId(id) {
+  globalWebhookId = id.replace("chat_bot_chat_bot_options_attributes_0_chat_bot_actions_attributes_", "");
+}
+
+function hideHeader(input) {
+  $(input).parent().parent().hide();
+}
+
+function hideData(input) {
+  $(input).parent().parent().hide();
+}
+
+function showListOptions(input) {
+  var parent = $(input).parent();
+
+  if (parent.find('#list-options-input').length) {
+    parent.find('#list-options-input').show();
+  } else {
+    parent.append($('#list-options-input'));
+  }
+
+  parent.find('#list-options-input').show();
+}
+
+function hideListOptions(input) {
+  $(input).parent().find('#list-options-input').hide();
+}
+
+function insertFieldInput(value, input) {
+  var parent = $(input).parent().parent();
+  parent.find('input').val(value);
+}
+
+function deleteOption(id, autoGenerated) {
+  if (autoGenerated) {
+    alert('Las opciones dinámicas no se pueden eliminar.');
+  } else if (confirm('¿Estás seguro de eliminar la opción?') == true) {
     var request = $.ajax({
       url: '/retailers/' + ENV['SLUG'] + '/chat_bots/' + $('#cb-web-id').val() + '/delete_chat_bot_option',
       beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
@@ -145,10 +307,72 @@ function deleteOption(id) {
   }
 }
 
-$(document).ready(function() {
-  $('#chat_bot_actions').on('cocoon:after-remove', function(e, removedItem) {
-    $(removedItem).find('.validate-unique').removeClass('validate-unique');
+function addChildOption(optionId, addChildBlocked) {
+  if (addChildBlocked) {
+    alert('En opciones de tipo Formulario, se permite sólo una opción hija');
+  } else {
+    window.location = `${window.location.origin}/retailers/${$('#slug-id').val()}/chat_bots/${$('#cb-web-id').val()}/new_chat_bot_option?parent_id=${optionId}`;
+  }
+}
+
+function showHideActions(value) {
+  if (value === 'exec_callback' || endpointActionSelected()) {
+    $('#exec-endpoint-actions-container').show();
+  } else {
+    $('#exec-endpoint-actions-container').hide();
+  }
+}
+
+function endpointActionSelected() {
+  var found = false;
+
+  document.querySelectorAll('.validate-unique').forEach(function(input) {
+    if (input.value === 'exec_callback') {
+      found = true;
+    }
   });
+
+  return found;
+}
+
+function showHideSublist() {
+  var value = $('#chat_bot_chat_bot_options_attributes_0_option_type').val();
+
+  if (value === 'form') {
+    $('#sublist-option-container').show();
+  } else {
+    $('#sublist-option-container').hide();
+  }
+}
+
+function showAttemptInput() {
+  var value = $('#chat_bot_on_failed_attempt').val();
+  var elem = $('#chat_bot_on_failed_attempt_message');
+
+  if (value === 'send_attempt_message') {
+    elem.attr('disabled', false);
+    elem.parent().show();
+  } else {
+    elem.attr('disabled', true);
+    elem.parent().hide();
+  }
+}
+
+$(document).ready(function() {
+  $('#chat_bot_actions, #chat_bot_actions_success, #chat_bot_actions_failed').on('cocoon:after-remove', function(e, removedItem) {
+    $(removedItem).find('.validate-unique').removeClass('validate-unique');
+    showHideActions();
+  });
+
+  $('#chat_bot_actions').on('cocoon:before-insert', function(e, insertedItem, originalEvent) {
+    if (endpointActionSelected()) {
+      $(insertedItem).find(".selectable-action-type option[value='exec_callback']").remove();
+    }
+  });
+
+  showHideActions();
+  showHideSublist();
+  showAttemptInput();
 });
 
 function previewFile(input) {

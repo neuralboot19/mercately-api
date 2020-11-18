@@ -48,7 +48,11 @@ class Retailers::ChatBotsController < RetailersController
 
   def tree_options
     option = @chat_bot.chat_bot_options.first
-    options = option.subtree.active.order(:position).arrange_serializable if option.present?
+    if option.present?
+      options = option.subtree.active.order(:position).arrange_serializable do |parent, children|
+        TreeOptionSerializer.new(parent, children: children)
+      end
+    end
 
     render status: 200, json: { options: options }
   end
@@ -84,8 +88,9 @@ class Retailers::ChatBotsController < RetailersController
         :any_interaction,
         :enabled,
         :error_message,
-        :repeat_menu_on_failure,
         :reactivate_after,
+        :on_failed_attempt,
+        :on_failed_attempt_message,
         chat_bot_options_attributes: [
           :id,
           :text,
@@ -93,12 +98,38 @@ class Retailers::ChatBotsController < RetailersController
           :parent_id,
           :file,
           :file_deleted,
+          :option_type,
           chat_bot_actions_attributes: [
             :id,
             :retailer_user_id,
             :action_type,
             :_destroy,
-            tag_ids: []
+            :target_field,
+            :webhook,
+            :action_event,
+            :username,
+            :password,
+            :payload_type,
+            :classification,
+            :exit_message,
+            tag_ids: [],
+            headers_attributes: [
+              :key,
+              :value,
+              :_destroy
+            ],
+            data_attributes: [
+              :key,
+              :value,
+              :_destroy
+            ]
+          ],
+          option_sub_lists_attributes: [
+            :id,
+            :value_to_save,
+            :value_to_show,
+            :list_type,
+            :_destroy
           ]
         ]
       )

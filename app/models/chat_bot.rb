@@ -11,6 +11,8 @@ class ChatBot < ApplicationRecord
 
   after_create :generate_web_id
 
+  enum on_failed_attempt: %i[resend_options send_attempt_message]
+
   accepts_nested_attributes_for :chat_bot_options, reject_if: :all_blank, allow_destroy: true
 
   INTERVALS = [['12 horas', 12], ['24 horas', 24], ['48 horas', 48], ['72 horas', 72]].freeze

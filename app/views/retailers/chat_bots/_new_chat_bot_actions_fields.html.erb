@@ -2,8 +2,9 @@
   <div class="row bottom-xs divider pb-16">
     <div class="col-xs-12 col-sm-4">
       <div class="my-16">
+        <%= f.hidden_field :classification, value: classification %>
         <%= f.label :action_type, 'Acción' %>
-        <%= f.select :action_type, ChatBotAction.action_types.keys.collect { |a| [ChatBotAction.enum_translation(:action_type, a), a]}, { include_blank: true }, class: 'input validate-unique', onchange: 'showActionSelection(this);' %>
+        <%= f.select :action_type, action_types_list(classification), { include_blank: true }, class: 'input validate-unique selectable-action-type', onchange: 'showActionSelection(this);' %>
       </div>
     </div>
     <div class="col-xs-12 col-sm-6 d-none hide-on-selection">
@@ -18,9 +19,10 @@
         <%= f.select :tag_ids, retailer_selectable_tags(current_retailer), {}, { class: 'input deactivate-on-selection', disabled: true, multiple: true } %>
       </div>
     </div>
-    <div class="col-xs-12 col-sm-6 d-none hide-on-selection show-on-out-bot">
-      <div class="my-16">
-        <div class="fs-12">El ChatBot se desactivará para el cliente. Se enviará un mensaje con el texto de despedida del ChatBot.</div>
+    <div class="col-xs-12 col-sm-6 d-none hide-on-selection">
+      <div class="mt-16">
+        <%= f.label :exit_message, 'Mensaje enviado al salir' %>
+        <%= f.text_area :exit_message, class: 'input deactivate-on-selection' %>
       </div>
     </div>
     <div class="col-xs-12 col-sm-6 d-none hide-on-selection show-on-back-bot">
@@ -37,6 +39,52 @@
         <div class="fs-12"><span>El ChatBot regresará al inicio, a la opción:</span><br />
           <b class="c-secondary"><%= @parent.root.position.to_s + '. ' %></b><span class="c-secondary"><%= @parent.root.text %></span>
         </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 d-none hide-on-selection">
+      <div class="my-16">
+        <%= f.label :target_field, 'Campo a guardar' %>
+        <%= f.select :target_field, customer_columns_list, { include_blank: true }, class: 'input deactivate-on-selection', disabled: true %>
+      </div>
+    </div>
+    <div class="col-xs-12 d-none hide-on-selection">
+      <div class="my-10">
+        <%= f.label :webhook, 'URL' %>
+        <%= f.text_field :webhook, class: 'input deactivate-on-selection' %>
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6 my-10 pl-0">
+          <%= f.label :action_event, 'Evento' %>
+          <%= f.select :action_event, action_events_list, { include_blank: false }, class: 'input deactivate-on-selection', disabled: true %>
+        </div>
+        <div class="col-xs-12 col-sm-6 my-10 pr-0">
+          <%= f.label :payload_type, 'Formato' %>
+          <%= f.select :payload_type, payload_types_list, { include_blank: false }, class: 'input deactivate-on-selection', disabled: true %>
+        </div>
+      </div>
+      <div class="fs-15 mt-10">Datos a enviar</div>
+      <div id="data-container" class="w-100">
+        <%= f.fields_for :data, ChatBotAction::Data.new do |d| %>
+          <%= render 'data_fields', f: d %>
+        <% end %>
+      </div>
+      <a href="#!" id="add-data-link" class="fs-13" onclick="addDataForm(1, null, this)">Agregar Dato</a>
+      <div class="fs-15 mt-20">Headers</div>
+      <div id="headers-container" class="w-100">
+        <%= f.fields_for :headers, ChatBotAction::Header.new do |h| %>
+          <%= render 'headers_fields', f: h %>
+        <% end %>
+      </div>
+      <a href="#!" id="add-headers-link" class="fs-13" onclick="addHeaderForm(1, null, this)">Agregar Header</a>
+    </div>
+    <div class="col-xs-12 col-sm-6 d-none hide-on-selection show-on-auto-generate-option">
+      <div class="my-16">
+        <div class="fs-12">La siguiente opción a enviar se genera tomando la información devuelta por el Endpoint.</div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 d-none hide-on-selection show-on-repeat-endpoint-option">
+      <div class="my-16">
+        <div class="fs-12">Se enviará el mensaje nuevamente al cliente.</div>
       </div>
     </div>
     <div class="col-xs-12 col-sm-2 center-xs p-0 my-16">

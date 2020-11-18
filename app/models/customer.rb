@@ -28,6 +28,7 @@ class Customer < ApplicationRecord
   has_many :chat_bots, through: :chat_bot_customers
   has_many :customer_bot_options, dependent: :destroy
   has_many :chat_bot_options, through: :customer_bot_options
+  has_many :customer_related_data, dependent: :destroy
 
   validates_uniqueness_of :psid, allow_blank: true
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
@@ -302,12 +303,63 @@ class Customer < ApplicationRecord
       active_bot: false,
       chat_bot_option_id: nil,
       failed_bot_attempts: 0,
-      allow_start_bots: false
+      allow_start_bots: false,
+      endpoint_response: {},
+      endpoint_failed_response: {}
     )
   end
 
   def activate_chat_bot!
     update(allow_start_bots: !self.allow_start_bots)
+  end
+
+  def endpoint_response
+    response = read_attribute(:endpoint_response)
+
+    if response.is_a?(Array)
+      response.map { |e| EndpointResponse.new(e) }
+    else
+      EndpointResponse.new(response)
+    end
+  end
+
+  class EndpointResponse
+    attr_accessor :option_name, :message, :options
+
+    def initialize(data = {})
+      @option_name = data['option_name'] || ''
+      @message = data['message'] || ''
+
+      @options = data['options'].map.with_index { |opt, index| Option.new(opt, index + 1) } if data['options'].present?
+    end
+
+    class Option
+      attr_accessor :key, :value, :position
+
+      def initialize(data = {}, position = 1)
+        @key = data['key'] || ''
+        @value = data['value'] || ''
+        @position = position
+      end
+    end
+  end
+
+  def endpoint_failed_response
+    response = read_attribute(:endpoint_failed_response)
+
+    if response.is_a?(Array)
+      response.map { |e| EndpointFailedResponse.new(e) }
+    else
+      EndpointFailedResponse.new(response)
+    end
+  end
+
+  class EndpointFailedResponse
+    attr_accessor :message
+
+    def initialize(data = {})
+      @message = data['message'] || ''
+    end
   end
 
   private
