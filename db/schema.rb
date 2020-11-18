@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_07_150039) do
+ActiveRecord::Schema.define(version: 2020_12_21_174212) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "adminpack"
   enable_extension "plpgsql"
 
   create_table "action_tags", force: :cascade do |t|
@@ -147,6 +146,22 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["retailer_id"], name: "index_automatic_answers_on_retailer_id"
+  end
+
+  create_table "calendar_events", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "title"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
+    t.datetime "remember_at"
+    t.bigint "retailer_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "web_id"
+    t.integer "remember"
+    t.string "timezone"
+    t.index ["retailer_id"], name: "index_calendar_events_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_calendar_events_on_retailer_user_id"
   end
 
   create_table "categories", force: :cascade do |t|
@@ -284,7 +299,6 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
-    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -699,10 +713,6 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -713,6 +723,10 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -749,10 +763,10 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "gupshup_phone_number"
-    t.string "gupshup_src_name"
     t.string "karix_account_uid"
     t.string "karix_account_token"
+    t.string "gupshup_phone_number"
+    t.string "gupshup_src_name"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
@@ -761,6 +775,7 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.boolean "manage_team_assignment", default: false
     t.boolean "show_stats", default: false
     t.boolean "allow_voice_notes", default: true
+    t.boolean "show_calendar", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -854,6 +869,8 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agent_customers", "customers"
   add_foreign_key "agent_customers", "retailer_users"
+  add_foreign_key "calendar_events", "retailer_users"
+  add_foreign_key "calendar_events", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"

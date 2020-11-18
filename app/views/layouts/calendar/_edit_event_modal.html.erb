@@ -1,0 +1,44 @@
+<input type="checkbox" class="d-none" name="event-modal--edit" id="event-modal--edit" />
+<div class="modal">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal__background" for="event-modal--edit"></label>
+        <div class="modal__window box p-16">
+          <div class="row middle-xs">
+            <div class="col-xs-8 col-sm-8">
+              <h1 class="d-inline name">Editar evento</h1>
+            </div>
+            <div class="col-xs-4 col-sm-4">
+              <div class="index__ctas f-right">
+                <label class="btn btn--no-border c-red" for="event-modal--edit">
+                  <i class="fas fa-times mr-5"></i>
+                  Cerrar
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <%= form_tag "/retailers/#{current_retailer.slug}/calendar_events/:id", id: 'edit_event', class: 'validate-form col-xs-12 p-0' do %>
+              <%= render 'layouts/calendar/event_fields', cache: true, id: '_edit' %>
+              <div class="my-16 box">
+                <div class="row">
+                  <div class="col-xs-6 col-md-6">
+                    <button id="delete_event" data-action="/retailers/<%= current_retailer.slug %>/calendar_events/:id" class="btn-btn btn-submit btn-primary-style bg-red">
+                      Borrar
+                    </button>
+                  </div>
+                  <div class="t-right col-xs-6 col-md-6">
+                    <%= submit_tag 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
