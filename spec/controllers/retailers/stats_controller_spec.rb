@@ -1,6 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe 'StatsController', type: :request do
+  before do
+    now = Time.parse("2020-07-20 10:17:40")
+    date = Time.parse("2020-07-20 10:17:40")
+    allow(Time).to receive(:now) { now }
+    allow(Date).to receive(:today) { date }
+  end
+
   describe '#index' do
     let(:retailer) { create(:retailer) }
 

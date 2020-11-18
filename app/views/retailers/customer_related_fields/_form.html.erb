@@ -1,0 +1,37 @@
+<div class="box p-relative card mt-14 pl-40 pr-40 pt-35 form-container_card">
+  <%= form_for [:retailers, @customer_related_field], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
+    <div class="box">
+      <fieldset class="fieldset-to-replace">
+        <h3 class="form-container_sub-title mt-0 ml-8">Información básica</h3>
+        <div class="row">
+          <div class="my-16 col-xs-12 col-sm-6">
+            <%= f.label :name, 'Nombre' %>
+            <%= f.text_field :name, maxlength: 40, class: 'input validate-required' %>
+            <i class="validation-msg"></i>
+          </div>
+          <div class="my-16 col-xs-12 col-sm-6">
+            <%= f.label :field_type, 'Tipo' %>
+            <%= f.select :field_type, field_types_list, { include_blank: false }, class: 'input validate-required' %>
+            <i class="validation-msg"></i>
+          </div>
+        </div>
+      </fieldset>
+      <div class="my-16 t-right hide-on-xs">
+        <%= link_to 'Cancelar', retailers_customer_related_fields_path, class: 'cancel-link mr-30' %>
+        <%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
+      </div>
+      <div class="hide-on-xs-and-up t-center my-16">
+        <div><%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %></div>
+        <div class="mt-20"><%= link_to 'Cancelar', retailers_customer_related_fields_path, class: 'cancel-link' %></div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script charset="utf-8">
+  <% if @customer_related_field&.errors&.any? %>
+    <% @customer_related_field.errors.each do |attribute, message| %>
+      showtoast("<%= message %>")
+    <% end %>
+  <% end %>
+</script>

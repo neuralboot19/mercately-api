@@ -1,0 +1,18 @@
+<fieldset class="col-xs-12 fieldset pt-16 mt-16 row">
+<legend class="fs-20">Sublista de selección</legend>
+  <div id="option_sub_lists" class="w-100">
+    <% if f.object.is_auto_generated? %>
+      <p class="mt-0">Sublista auto generada desde la opción padre.</p>
+    <% else %>
+      <%= f.fields_for :option_sub_lists do |osl| %>
+        <%= render "option_sub_lists_fields", f: osl %>
+      <% end %>
+      <div class="mt-16 mb-24">
+        <%= link_to_add_association f, :option_sub_lists, partial: 'new_option_sub_lists_fields', id: 'add_option_sub_lists', class: 'btn btn--cta' do %>
+          <i class="fas fa-plus mr-5"></i>
+          Agregar Item
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</fieldset>

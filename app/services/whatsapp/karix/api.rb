@@ -115,23 +115,15 @@ module Whatsapp
         }.to_json
       end
 
-      def prepare_chat_bot_message(chat_bot_option, get_out = false, error_exit = false)
+      def prepare_chat_bot_message(*args)
+        chat_bot_option, customer, get_out, error_exit, failed_attempt = args
         return unless chat_bot_option.present?
 
-        if get_out == false && error_exit == false
-          message = chat_bot_option.answer + "\n\n"
+        chat_bot = chat_bot_option.chat_bot
+        return chat_bot.on_failed_attempt_message if chat_bot.on_failed_attempt == 'send_attempt_message' &&
+                                                     failed_attempt
 
-          children = chat_bot_option.children.active
-          if children.present?
-            children.order(:position).each do |child|
-              message += (child.position.to_s + '. ' + child.text + "\n")
-            end
-          end
-        else
-          message = get_out ? chat_bot_option.chat_bot.goodbye_message : chat_bot_option.chat_bot.error_message
-        end
-
-        message
+        option_body(chat_bot_option, customer, get_out, error_exit)
       end
 
       def cloudinary_resource_type(resource_type)
@@ -139,6 +131,109 @@ module Whatsapp
         return 'video' if ['audio', 'voice', 'video'].include?(resource_type)
 
         'raw'
+      end
+
+      def prepare_option_sub_list(chat_bot_option, message)
+        message += get_option_answer(chat_bot_option, true)
+        items_size = chat_bot_option.option_sub_lists.size - 1
+
+        chat_bot_option.option_sub_lists.order(:position).each_with_index do |item, index|
+          message += (item.position.to_s + '. ' + item.value_to_show)
+          message += "\n" if index != items_size
+        end
+
+        message
+      end
+
+      def prepare_dynamic_sub_list(customer)
+        data = customer.endpoint_response
+
+        message = data.message + "\n\n"
+        items_size = data.options.size - 1
+
+        data.options.each_with_index do |item, index|
+          message += (item.position.to_s + '. ' + item.value)
+          message += "\n" if index != items_size
+        end
+
+        message
+      end
+
+      def build_message(chat_bot_option, customer, message)
+        if chat_bot_option.has_sub_list?
+          prepare_option_sub_list(chat_bot_option, message)
+        elsif chat_bot_option.is_auto_generated?
+          prepare_dynamic_sub_list(customer)
+        else
+          message + get_option_answer(chat_bot_option, false)
+        end
+      end
+
+      def set_text_from_response(chat_bot_option, customer, get_out)
+        text = if get_out
+                 get_out_message(chat_bot_option, customer)
+               else
+                 going_on_message(chat_bot_option, customer)
+               end
+
+        text.presence || ''
+      end
+
+      def get_exit_message(chat_bot_option, get_out)
+        if get_out
+          action = chat_bot_option.chat_bot_actions.find_by_action_type(:get_out_bot)
+          action&.exit_message.presence || chat_bot_option.chat_bot.goodbye_message
+        else
+          chat_bot_option.chat_bot.error_message
+        end
+      end
+
+      def get_option_answer(chat_bot_option, concat)
+        answer = chat_bot_option.answer.presence || ''
+        answer += "\n\n" if concat && answer.present?
+
+        answer
+      end
+
+      def get_out_message(chat_bot_option, customer)
+        return unless chat_bot_option.execute_endpoint?
+
+        message = customer.endpoint_failed_response.message.presence || customer.endpoint_response.message
+        message.present? ? message + "\n\n" : ''
+      end
+
+      def going_on_message(chat_bot_option, customer)
+        if chat_bot_option.parent&.execute_endpoint?
+          customer.endpoint_response.message.present? ? customer.endpoint_response.message + "\n\n" : ''
+        elsif chat_bot_option.execute_endpoint?
+          message = customer.endpoint_failed_response.message.presence || customer.endpoint_response.message
+          message.present? ? message + "\n\n" : ''
+        end
+      end
+
+      def option_body(chat_bot_option, customer, get_out, error_exit)
+        message = set_text_from_response(chat_bot_option, customer, get_out)
+
+        if get_out == false && error_exit == false
+          return build_message(chat_bot_option, customer, message) if chat_bot_option.option_type == 'form'
+
+          message += get_option_answer(chat_bot_option, false)
+
+          children = chat_bot_option.children.active
+          if children.present?
+            message += "\n\n"
+            children_size = children.size - 1
+
+            children.order(:position).each_with_index do |child, index|
+              message += (child.position.to_s + '. ' + child.text)
+              message += "\n" if index != children_size
+            end
+          end
+        else
+          message += get_exit_message(chat_bot_option, get_out)
+        end
+
+        message
       end
     end
   end

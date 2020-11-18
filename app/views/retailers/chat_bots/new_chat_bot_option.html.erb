@@ -36,7 +36,11 @@
                       <div class="col-xs-12 mt-16">
                         <label class="c-grey fs-14">Ruta de opciones:</label>
                         <% @parent.path&.each do |node|  %>
-                          <span class="c-secondary fs-14"> / <%= node.position %>. <%= node.text %></span>
+                          <% if node.is_auto_generated? %>
+                            <span class="c-secondary fs-14"> / Opción dinámica</span>
+                          <% else %>
+                            <span class="c-secondary fs-14"> / <%= node.position %>. <%= node.text %></span>
+                          <% end %>
                         <% end %>
                       </div>
                     </div>
@@ -51,11 +55,16 @@
                               <%= cbo.text_field :text, class: 'input validate-required' %>
                               <i class="validation-msg">&nbsp;</i>
                             </div>
+                            <div class="col-xs-12 col-md-6">
+                              <%= cbo.label :option_type, 'Tipo de opción' %>
+                              <%= cbo.select :option_type, option_types_list, { include_blank: false }, class: 'input validate-required', onchange: 'showHideSublist()' %>
+                              <i class="validation-msg">&nbsp;</i>
+                            </div>
                           </div>
                           <div class="row w-100">
                             <div class="col-xs-12">
                               <%= cbo.label :answer, 'Respuesta' %>
-                              <%= cbo.text_area :answer, class: 'input validate-required' %>
+                              <%= cbo.text_area :answer, class: 'input' %>
                               <i class="validation-msg">&nbsp;</i>
                             </div>
                           </div>
@@ -83,6 +92,9 @@
                             </div>
                           </div>
                           <%= render partial: 'chat_bot_actions', locals: { chat_bot: @chat_bot, f: cbo } %>
+                          <div id="sublist-option-container">
+                            <%= render partial: 'option_sub_lists', locals: { f: cbo } %>
+                          </div>
                         <% end %>
                         <div class="btn-box col-xs-12">
                           <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>

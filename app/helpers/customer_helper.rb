@@ -30,6 +30,22 @@ module CustomerHelper
       [[name(current_retailer_user), current_retailer_user.id]]
   end
 
+  def customer_columns_list
+    fields = [
+      ['Nombres', 'first_name'],
+      ['Apellidos', 'last_name'],
+      ['Email', 'email'],
+      ['Identificación', 'id_number'],
+      ['Dirección', 'address'],
+      ['Ciudad', 'city'],
+      ['Estado (Provincia)', 'state'],
+      ['Zip', 'zip_code']
+    ]
+
+    fields += current_retailer.customer_related_fields.map { |crf| [crf.name, crf.identifier] }
+    fields.compact
+  end
+
   private
 
   def agent_names(agents)
@@ -40,5 +56,9 @@ module CustomerHelper
     return "#{user.full_name} - #{user.email}" unless user.full_name.strip.empty?
 
     user.email
+  end
+
+  def field_types_list
+    CustomerRelatedField.field_types.keys.collect { |f| [CustomerRelatedField.enum_translation(:field_type, f), f] }
   end
 end

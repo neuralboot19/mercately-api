@@ -79,6 +79,31 @@ es:
           get_out_bot: Salir del ChatBot
           go_back_bot: Ir atrás
           go_init_bot: Ir al menú principal
+          save_on_db: Guardar respuesta en Cliente
+          exec_callback: Enviar respuesta a Endpoint
+          auto_generate_option: Generar opción hija dinámica
+          repeat_endpoint_option: Reenviar opción
+        action_events:
+          post: POST
+          get: GET
+          put: PUT
+          patch: PATCH
+          remove: DELETE
+        payload_types:
+          json: Json
+          form: Form
+      chat_bot_option:
+        option_types:
+          decision: Decisión
+          form: Formulario
+      chat_bot:
+        on_failed_attempts:
+          resend_options: Reenviar opciones del menú
+          send_attempt_message: Enviar mensaje personalizado
+      customer_related_field:
+        field_types:
+          string: Texto
+          integer: Entero
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'
