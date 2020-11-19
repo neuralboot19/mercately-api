@@ -26,7 +26,7 @@
               <div class="row">
                 <div class="col-xs-12 col-sm-2 px-0 fs-14 no-style-filter"> Buscar por: </div>
                 <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.search_field :first_name_or_last_name_or_phone_or_email_cont, class: 'input-100 search-field', placeholder: 'Busca por nombres, email, teléfono o agente' %>
+                  <%= f.search_field :first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont, class: 'input-100 search-field', placeholder: 'Busca por nombres, email o teléfono' %>
                 </div>
 
                 <div class="col-xs-12 col-sm-2 mt-5 pl-0 fs-14 no-style-filter t-right ordering-label"> Ordenar por: </div>
@@ -93,7 +93,7 @@
               <div class="divider"></div>
               <div class="table__item row middle-xs">
                 <div class="col-xs-4 col-sm-2">
-                  <div class="t-center"><%= customer.full_names %></div>
+                  <div class="t-center"><%= customer.full_names.presence || customer.whatsapp_name %></div>
                 </div>
                 <div class="col-xs-4 col-sm-1 c-grey">
                   <div class="t-center truncate"><%= customer.email %></div>

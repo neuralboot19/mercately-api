@@ -169,7 +169,7 @@ class Customer < ApplicationRecord
   end
 
   def self.to_csv(customers)
-    attributes = %w[first_name last_name email phone id_type id_number]
+    attributes = %w[first_name last_name whatsapp_name email phone id_type id_number]
     CSV.generate(headers: true) do |csv|
       csv << attributes
       customers.each do |customer|
@@ -367,7 +367,7 @@ class Customer < ApplicationRecord
     def update_valid_customer
       return if valid_customer?
 
-      self.valid_customer = first_name.present? || last_name.present? || email.present?
+      self.valid_customer = first_name.present? || last_name.present? || email.present? || whatsapp_name.present?
     end
 
     def strip_whitespace
