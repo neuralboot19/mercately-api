@@ -59,7 +59,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   def create
     customer = current_retailer.customers.find(params[:customer_id])
     integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
-    return self.send("send_#{integration}_notification", customer, params, params[:type])
+    self.send("send_#{integration}_notification", customer, params, params[:type])
   end
 
   def messages

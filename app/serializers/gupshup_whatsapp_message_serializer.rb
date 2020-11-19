@@ -5,7 +5,7 @@ class GupshupWhatsappMessageSerializer
   set_id :id
 
   attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :uid, :created_time,
-             :replied_message
+             :replied_message, :filename
 
   attribute :content_type do |object|
     message = object.message_payload
@@ -41,10 +41,11 @@ class GupshupWhatsappMessageSerializer
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless %[image audio video file].include?(type)
 
-    next message.try(:[], 'caption') ||
-         message.try(:[], 'payload').try(:[], 'payload').try(:[],'caption') if %[image audio video].include?(type)
-    next message.try(:[], 'filename') ||
-         message.try(:[], 'payload').try(:[], 'payload').try(:[],'filename') if type == 'file'
+    if %[image audio video].include?(type) || (type == 'file' && object.message_type == 'notification')
+      next message.try(:[], 'caption') ||
+           message.try(:[], 'payload').try(:[], 'payload').try(:[],'caption')
+    end
+
     ''
   end
 
@@ -142,5 +143,13 @@ class GupshupWhatsappMessageSerializer
         replied
       ).serialized_json
     )
+  end
+
+  attribute :filename do |object|
+    message = object.message_payload
+    type = message.try(:[], 'payload').try(:[], 'type') || message['type']
+    next '' unless type == 'file'
+
+    next message.try(:[], 'filename') || message.try(:[], 'payload').try(:[], 'payload').try(:[], 'filename')
   end
 end
