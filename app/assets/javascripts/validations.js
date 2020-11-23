@@ -160,7 +160,7 @@ function validateForm(e, form) {
     productCondition = document.getElementById('product_condition');
   }
 
-  document.querySelectorAll(`#${form.id} input, #${form.id} textarea`).forEach(function(input) {
+  document.querySelectorAll(`#${form.id} input, #${form.id} select, #${form.id} textarea`).forEach(function(input) {
     // inputChecks es un arreglo de booleans que vigila si todas las validaciones del input pasaron
     inputChecks = [];
 

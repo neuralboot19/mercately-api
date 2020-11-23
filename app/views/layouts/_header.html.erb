@@ -84,13 +84,15 @@
                   </div>
                   <div class="mt-8 mb-12">
                     <%= label_tag :problem_to_resolve, '¿Que deseas resolver con Mercately?' %>
-                    <select name="problem_to_resolve" id="problem_to_resolve" class="input h-unset w-100">
+                    <select name="problem_to_resolve" id="problem_to_resolve" class="input h-unset w-100 validate-required">
+                      <option disabled selected value="" hidden></option>
                       <option value="Conectar todo mi equipo a un solo número de Whatsapp">Conectar todo mi equipo a un solo número de Whatsapp</option>
                       <option value="Tener chatbots en Whatsapp">Tener chatbots en Whatsapp</option>
                       <option value="Mejorar la atención al cliente">Mejorar la atención al cliente</option>
                       <option value="Automatizar mi negocio via WhatsApp">Automatizar mi negocio via WhatsApp</option>
                       <option value="Todas las anteriores">Todas las anteriores</option>
                     </select>
+                    <i class="validation-msg"></i>
                   </div>
                   <div class="mt-8 mb-12">
                     <% if @show_checkbox_recaptcha %>
