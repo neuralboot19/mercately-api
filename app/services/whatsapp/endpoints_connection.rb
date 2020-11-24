@@ -4,7 +4,7 @@ module Whatsapp
       url = URI(url)
 
       https = Net::HTTP.new(url.host, url.port)
-      https.use_ssl = true
+      https.use_ssl = is_protocol_secure(url)
 
       request = Net::HTTP::Get.new(url)
       request = copy_headers(headers, request)
@@ -17,7 +17,7 @@ module Whatsapp
       url = URI(url)
 
       https = Net::HTTP.new(url.host, url.port)
-      https.use_ssl = true
+      https.use_ssl = is_protocol_secure(url)
 
       request = Net::HTTP::Post.new(url)
       request["Content-Type"] = "application/x-www-form-urlencoded"
@@ -31,7 +31,7 @@ module Whatsapp
       url = URI(url)
 
       https = Net::HTTP.new(url.host, url.port);
-      https.use_ssl = true
+      https.use_ssl = is_protocol_secure(url)
 
       request = Net::HTTP::Post.new(url)
       request = copy_headers(headers, request)
@@ -46,6 +46,10 @@ module Whatsapp
       end
 
       request
+    end
+
+    def is_protocol_secure(url)
+      url.scheme == 'https'
     end
   end
 end

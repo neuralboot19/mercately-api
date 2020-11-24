@@ -332,6 +332,9 @@ RSpec.describe Retailers::CustomersController, type: :controller do
 
         expect(flash[:notice][0]).to include('Este teléfono')
         expect(flash[:notice][0]).to include('está duplicado en su archivo')
+        expect(flash[:notice][1]).to include('Este email')
+        expect(flash[:notice][1]).to include('está duplicado en su archivo')
+        expect(flash[:notice][2]).to include('Error en el formato del email')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
       end
 
@@ -363,10 +366,24 @@ RSpec.describe Retailers::CustomersController, type: :controller do
             slug: retailer.slug,
             csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.csv', 'text/csv')
           }
-        }.to change(Customer, :count).by(2)
+        }.to change(Customer, :count).by(1)
 
         expect(flash[:notice][0]).to include('La importación se realizó con éxito')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+      end
+
+      it "raises an error" do
+        allow_any_instance_of(Customer).to receive(:save!) do |instance|
+          instance.errors.add(:base, 'error')
+          raise(ActiveRecord::RecordInvalid, instance)
+        end
+
+        post :bulk_import, params: {
+          slug: retailer.slug,
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.csv', 'text/csv')
+        }
+
+        expect(flash[:notice][0]).to include('error')
       end
     end
 

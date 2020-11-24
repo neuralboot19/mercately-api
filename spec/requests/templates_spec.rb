@@ -226,7 +226,7 @@ RSpec.describe 'TemplatesController', type: :request do
       before do
         sign_in retailer_user
         create(:template, :for_questions_ml, retailer: retailer, title: 'Titulo de prueba', answer: 'Anything')
-        create(:template, :for_questions_ml, retailer: retailer, title: 'Otro titulo', answer: 'Anything')
+        create(:template, :for_questions_ml, retailer: retailer, title: 'Otro Titulo', answer: 'Anything')
         create(:template, :for_questions_ml, retailer: retailer, title: 'Anything', answer: 'Otra prueba')
         create(:template, :for_messages_ml, retailer: retailer, title: 'Titulo', answer: 'Otra prueba')
       end
@@ -320,7 +320,7 @@ RSpec.describe 'TemplatesController', type: :request do
       before do
         sign_in retailer_user
         create(:template, :for_messages_ml, retailer: retailer, title: 'Titulo de prueba', answer: 'Anything')
-        create(:template, :for_messages_ml, retailer: retailer, title: 'Otro titulo', answer: 'Anything')
+        create(:template, :for_messages_ml, retailer: retailer, title: 'Otro Titulo', answer: 'Anything')
         create(:template, :for_messages_ml, retailer: retailer, title: 'Anything', answer: 'Otra prueba')
         create(:template, :for_questions_ml, retailer: retailer, title: 'Titulo', answer: 'Otra prueba')
       end

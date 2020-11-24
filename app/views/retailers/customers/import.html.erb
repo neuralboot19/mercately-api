@@ -18,6 +18,7 @@
             <li><strong>Phone:</strong> Número de teléfono de WhatsApp en formato internacional, ejemplo <strong>+593994455678 (Puede estar vacío, pero, no puede estar repetido)</strong></li>
           </ul>
           <p>Para guardar correctamente los datos, no debe existir campos vacíos y el número de teléfono debe llevar el código del país.</p>
+          <p>Nota: Dependiendo de la cantidad de registros que contenga el archivo, se puede tardar unos segundos en terminar la importación. Se recomienda no cambiar de vista hasta que el proceso termine.</p>
           <p>Usted puede descargarse <a href="/customers.csv" download>esta plantilla</a> de ejemplo.</p>
             <%= form_tag(retailers_customers_bulk_import_path(current_retailer), :multipart => true) do %>
               <p>
