@@ -35,7 +35,7 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         get :index, params: {
           slug: retailer_user.retailer.slug,
           q: {
-            'first_name_or_last_name_or_phone_or_email_cont': @customers_a1.first.email,
+            'first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont': @customers_a1.first.email,
             s: 'created_at desc',
             agent_id: nil
           }
@@ -83,7 +83,7 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         get :index, params: {
           slug: retailer_user.retailer.slug,
           q: {
-            'first_name_or_last_name_or_phone_or_email_cont': @customers_a1.first.email,
+            'first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont': @customers_a1.first.email,
             s: 'created_at desc',
             agent_id: nil
           }
@@ -129,7 +129,7 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         get :index, params: {
           slug: agent1.retailer.slug,
           q: {
-            'first_name_or_last_name_or_phone_or_email_cont': @customers_a1.first.email,
+            'first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont': @customers_a1.first.email,
             s: 'created_at desc'
           }
         }
@@ -142,7 +142,7 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         get :index, params: {
           slug: agent1.retailer.slug,
           q: {
-            'first_name_or_last_name_or_phone_or_email_cont': @customer_a2.email
+            'first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont': @customer_a2.email
           }
         }
 
