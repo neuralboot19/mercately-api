@@ -26,7 +26,7 @@
               <div class="row">
                 <div class="col-xs-12 col-sm-2 px-0 fs-14 no-style-filter"> Buscar por: </div>
                 <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.search_field :first_name_or_last_name_or_phone_or_email_cont, class: 'input-100 search-field', placeholder: 'Busca por nombres, email, teléfono o agente' %>
+                  <%= f.search_field :first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont, class: 'input-100 search-field', placeholder: 'Busca por nombres, email o teléfono' %>
                 </div>
 
                 <div class="col-xs-12 col-sm-2 mt-5 pl-0 fs-14 no-style-filter t-right ordering-label"> Ordenar por: </div>
@@ -93,7 +93,7 @@
               <div class="divider"></div>
               <div class="table__item row middle-xs">
                 <div class="col-xs-4 col-sm-2">
-                  <div class="t-center"><%= customer.full_names %></div>
+                  <div class="t-center"><%= customer.full_names.presence || customer.whatsapp_name %></div>
                 </div>
                 <div class="col-xs-4 col-sm-1 c-grey">
                   <div class="t-center truncate"><%= customer.email %></div>
@@ -288,8 +288,9 @@
                 <% current_retailer.whatsapp_templates.active.each_with_index do |template, index| %>
                   <div class="row">
                     <div class="col-md-10">
-                      <p id="template-<%= index %>"><%= template.clean_template %></p>
+                      <p id="template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
                       <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
+                      <p id="template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
                     </div>
                     <div class="col-md-2">
                       <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>
@@ -299,6 +300,10 @@
               </div>
               <div id="karix-template-edition" class="col-xs-12">
                 <div id="karix-template-text">
+                </div>
+                <div id="template-file">
+                  <br/>
+                  <input type="file" name="file" id="template_file"/>
                 </div>
                 <div class="row mt-30">
                   <div class="col-md-6 t-right">

@@ -103,6 +103,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Link stylesheets to actionmailer
 gem 'premailer-rails'
+gem 'mailgun-ruby', '~>1.1.6'
 
 gem 'mini_magick'
 

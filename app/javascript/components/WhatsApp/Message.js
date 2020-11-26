@@ -106,9 +106,9 @@ class Message extends Component {
             (<div className="fs-15"><a href={`https://www.google.com/maps/place/${this.props.message.content_location_latitude},${this.props.message.content_location_longitude}`} target="_blank">
               <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación</a></div>)}
         {this.props.message.content_type == 'media' && this.props.message.content_media_type == 'document' && (
-          <div className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, this.props.message.content_media_url, this.props.message.content_media_caption)}><i className="fas fa-file-download mr-8"></i>{this.props.message.content_media_caption || 'Descargar archivo'}</a></div>
+          <div className="fs-15"><a href="" onClick={(e) => this.downloadFile(e, this.props.message.content_media_url, this.props.message.filename)}><i className="fas fa-file-download mr-8"></i>{this.props.message.filename || 'Descargar archivo'}</a></div>
         )}
-        {this.props.message.content_media_caption && this.props.message.content_media_type !== 'document' &&
+        {this.props.message.content_media_caption &&
           (<div className="caption text-pre-line">{this.props.message.content_media_caption}</div>)}
         {this.props.message.content_type == 'contact' &&
           this.props.message.contacts_information.map(contact =>

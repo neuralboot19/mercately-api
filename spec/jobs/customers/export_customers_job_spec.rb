@@ -22,7 +22,7 @@ RSpec.describe Customers::ExportCustomersJob, type: :job do
     it 'sends a mail with the exported customers as a file attached' do
       retailer_user.save
       customer.save
-      Customers::ExportCustomersJob.perform_now(retailer.id, retailer_user.email, {})
+      Customers::ExportCustomersJob.perform_now(retailer_user.id, {})
 
       mail = ActionMailer::Base.deliveries.last
       expect(mail.subject).to eq 'Mercately Exportación de Clientes Completa'

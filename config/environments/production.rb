@@ -99,6 +99,15 @@ Rails.application.configure do
   config.action_mailer.asset_host = ENV["ACTION_MAILER_ASSET_HOST"]
   config.action_mailer.default_url_options = { host: ENV["HOST_URL"] }
   config.default_url_options = { host: ENV["HOST_URL"] }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    authentication: :plain,
+    address: "smtp.mailgun.org",
+    port: 587,
+    domain: ENV['MAILGUN_DOMAIN'],
+    user_name: ENV['MAILGUN_USER'],
+    password: ENV['MAILGUN_PASSWORD']
+  }
 
   Raven.configure do |config|
     config.dsn = ENV['SENTRY_DSN']

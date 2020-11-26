@@ -15,7 +15,7 @@ module Whatsapp::Gupshup::V1
       response = send_message_request(request_body[0])
       response_body = JSON.parse(response.read_body)
 
-      # Stores the Gupshup Whatsapp Meesage in our DB
+      # Stores the Gupshup Whatsapp Message in our DB
       save_message(response.code, response_body, request_body, @options[:retailer_user])
 
       # Returns the Gupshup response
@@ -125,6 +125,22 @@ module Whatsapp::Gupshup::V1
         [bodyString, message]
       end
 
+      def document_template(file_url:, file_name:, file_caption:)
+        message = {
+          isHSM: 'true',
+          type: 'file',
+          url: file_url,
+          caption: file_caption,
+          filename: file_name
+        }.to_json
+
+        bodyString = base_body
+        bodyString += "&message=#{CGI.escape(message)}"
+
+        [bodyString, message]
+      end
+
+
       # Send Audio
       def audio(data)
         raise StandardError.new('Faltaron parámetros') unless data[:file_url].present?
@@ -213,12 +229,14 @@ module Whatsapp::Gupshup::V1
         if @options[:params][:file_data].present?
           file = @index ? @options[:params][:file_data][@index] : @options[:params][:file_data]
           resource_type = get_resource_type(file)
-          response = Whatsapp::Karix::Api.new().upload_file_to_cloudinary(
+          response = Whatsapp::Karix::Api.new.upload_file_to_cloudinary(
             file,
             resource_type
           )
 
-          file_name = resource_type == 'document' ? response['original_filename'] : ''
+          file_name = ['document_template', 'document'].include?(resource_type) ? response['original_filename'] : ''
+          file_name = file_name.parameterize
+          file_name += '.pdf' if resource_type == 'document_template'
           file_url = response['secure_url'] || response['url']
           file_caption = ''
         elsif @options[:params][:url].present?
@@ -228,6 +246,9 @@ module Whatsapp::Gupshup::V1
           file_caption = @options[:params][:caption] || ''
         end
 
+        if @options[:params][:type] == 'file' && @options[:params][:template] == 'true'
+          file_caption = @options[:params][:caption] || ''
+        end
         self.send(resource_type, {
           file_name: file_name,
           file_url: file_url,
@@ -236,6 +257,7 @@ module Whatsapp::Gupshup::V1
       end
 
       def get_resource_type(uploaded_file)
+        return 'document_template' if @options[:params][:type] == 'file' && @options[:params][:template] == 'true'
         return 'audio' if ['audio', 'voice'].include?(@options[:params][:type])
 
         content_type = MIME::Types.type_for(uploaded_file.tempfile.path).first.content_type

@@ -94,7 +94,9 @@ class ChatMessages extends Component {
       totalSeconds: 0,
       audioSeconds: '00',
       audioMinutes: '00',
-      showEmojiPicker: false
+      showEmojiPicker: false,
+      templateType: '',
+      acceptedFiles: ''
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -428,7 +430,7 @@ class ChatMessages extends Component {
   }
 
   handleSubmitImg = (el, file_data) => {
-    var url, type, caption;
+    var url, type, caption, filename;
     var input = $('#divMessage');
 
     if (this.state.selectedProduct || this.state.selectedFastAnswer) {
@@ -441,14 +443,32 @@ class ChatMessages extends Component {
       data.append('url', url);
       data.append('type', 'file');
       data.append('caption', caption);
+    } else if (file_data && file_data.get('template') === 'true') {
+      let auxFile = file_data.get('file_data');
+
+      url = URL.createObjectURL(auxFile);
+      type = this.fileType(auxFile.type);
+      filename = type === 'document' ? auxFile.name : null;
+      caption = file_data.get('caption');
     } else {
       url = URL.createObjectURL(el.files[0]);
       type = this.fileType(el.files[0].type);
-      caption = type == 'document' ? el.files[0].name : null;
+      filename = type === 'document' ? el.files[0].name : null;
+      caption = null;
     }
 
     this.setState({
-      messages: this.state.messages.concat({content_type: 'media', content_media_type: type, content_media_url: url, direction: 'outbound', content_media_caption: caption, created_time: new Date()}),
+      messages: this.state.messages.concat(
+        {
+          content_type: 'media',
+          content_media_type: type,
+          content_media_url: url,
+          direction: 'outbound',
+          content_media_caption: caption,
+          filename: filename,
+          created_time: new Date()
+        }
+      ),
       new_message: true,
       selectedProduct: null,
       selectedFastAnswer: null
@@ -545,7 +565,10 @@ class ChatMessages extends Component {
     this.setState({
       isTemplateSelected: true,
       templateSelected: template.text,
-      auxTemplateSelected: template.text.split('')
+      auxTemplateSelected: template.text.split(''),
+      templateType: template.template_type
+    }, () => {
+      this.acceptedFiles();
     });
   }
 
@@ -623,20 +646,40 @@ class ChatMessages extends Component {
 
   sendTemplate = () => {
     var allFilled = true;
+    let file = null;
+
     this.state.auxTemplateSelected.map((key, index) => {
       if (key === '*' && (index === 0 || this.state.auxTemplateSelected[index - 1] !== '\\')) {
         allFilled = false;
       }
     })
 
-    if (allFilled) {
+    if (this.state.templateType !== 'text') file = document.getElementById('template_file').files[0];
+
+    let fileSelected = this.state.templateType === 'text' || file;
+
+    if (allFilled && fileSelected) {
       var message = this.state.auxTemplateSelected.join('').replace(/(\r)/gm, "");
       message = this.getCleanTemplate(message);
 
-      this.handleSubmitWhatsAppMessage(null, message, true);
+      if (file) {
+        if (this.state.templateType === 'image' && this.validateImages(file) === false) return;
+        if (this.state.templateType === 'file' && this.validFile(file) === false) return;
+
+        var data = new FormData();
+        data.append('template', true);
+        data.append('file_data', file);
+        data.append('type', 'file');
+        data.append('caption', message);
+        this.handleSubmitImg(null, data);
+      } else {
+        this.handleSubmitWhatsAppMessage(null, message, true);
+      }
+
       this.cancelTemplate();
     } else {
-      alert('Debe llenar todos los campos editables');
+      let alertMessage = allFilled ? 'Debe seleccionar una Imagen o archivo PDF' : 'Debe llenar todos los campos editables';
+      alert(alertMessage);
     }
   }
 
@@ -1021,6 +1064,37 @@ class ChatMessages extends Component {
     return text.replaceAll('\\*', '*');
   }
 
+  setTemplateType = (type) => {
+    if (type === 'text') {
+      return 'Texto';
+    } else if (type === 'image') {
+      return 'Imagen';
+    } else {
+      return 'PDF';
+    }
+  }
+
+  validFile = (file) => {
+    if (file.type !== 'application/pdf' || file.size > 20*1024*1024) {
+      alert('El archivo debe ser PDF, de máximo 20MB');
+      return false;
+    }
+
+    return true;
+  }
+
+  acceptedFiles = () => {
+    let accepted = '';
+
+    if (this.state.templateType === 'image') {
+       accepted = 'image/jpg, image/jpeg, image/png';
+    } else if (this.state.templateType === 'file') {
+      accepted = 'application/pdf';
+    }
+
+    this.setState({acceptedFiles: accepted});
+  }
+
   render() {
     if (this.state.templateEdited == false){
       screen = this.getTextInput();
@@ -1242,7 +1316,7 @@ class ChatMessages extends Component {
                 {this.props.templates.map((template) => (
                   <div className="row" key={template.id}>
                     <div className={this.props.onMobile ? "col-md-10 fs-10" : "col-md-10" }>
-                      <p>{this.getCleanTemplate(template.text)}</p>
+                      <p>[{this.setTemplateType(template.template_type)}] {this.getCleanTemplate(template.text)}</p>
                     </div>
                     <div className="col-md-2">
                       <button onClick={(e) => this.selectTemplate(template)}>Seleccionar</button>
@@ -1255,9 +1329,15 @@ class ChatMessages extends Component {
               <div>
                 <div className="row">
                   <div className="col-md-12">
-                    {screen}
+                    [{this.setTemplateType(this.state.templateType)}] {screen}
                   </div>
                 </div>
+                {this.state.templateType !== 'text' &&
+                  <div id="template-file">
+                    <br/>
+                    <input type="file" name="file" id="template_file" accept={this.state.acceptedFiles}/>
+                  </div>
+                }
                 <div className="row mt-30">
                   <div className="col-md-6 t-right">
                     <button onClick={(e) => this.cancelTemplate()}>Cancelar</button>

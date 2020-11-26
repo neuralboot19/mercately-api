@@ -7,7 +7,7 @@ class Retailers::CustomersController < RetailersController
   before_action :load_tags, only: [:new, :edit, :create, :update]
   before_action :save_new_tags, only: [:create, :update]
   before_action :validate_permissions, only: [
-    :show, :edit, :update, :destroy, :import , :bulk_import
+    :show, :edit, :update, :destroy, :import, :bulk_import
   ]
 
   def index
@@ -19,9 +19,8 @@ class Retailers::CustomersController < RetailersController
   end
 
   def export
-    Customers::ExportCustomersJob.perform_later(current_retailer_user.retailer.id,
-                                                current_retailer_user.email,
-                                                export_params)
+    Customers::ExportCustomersJob.perform_later(current_retailer_user.id, export_params)
+
     redirect_to(retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }),
                 notice: 'La exportación está en proceso, recibirá un mail cuando esté lista.')
   end
@@ -61,7 +60,8 @@ class Retailers::CustomersController < RetailersController
     @customer.retailer_id = @retailer.id
 
     if @customer.save
-      redirect_to retailers_customers_path(@retailer, q: { 's': 'created_at desc' }), notice: 'Cliente creado con éxito.'
+      redirect_to retailers_customers_path(@retailer, q: { 's': 'created_at desc' }), notice:
+        'Cliente creado con éxito.'
     else
       flash[:notice] = @customer.errors.full_messages.join(', ')
       render :new
@@ -70,7 +70,8 @@ class Retailers::CustomersController < RetailersController
 
   def update
     if @customer.update(customer_params)
-      redirect_to retailers_customers_path(@retailer, q: { 's': 'created_at desc' }), notice: 'Cliente actualizado con éxito.'
+      redirect_to retailers_customers_path(@retailer, q: { 's': 'created_at desc' }), notice:
+        'Cliente actualizado con éxito.'
     else
       flash[:notice] = @customer.errors.full_messages.join(', ')
       render :edit
@@ -116,7 +117,14 @@ class Retailers::CustomersController < RetailersController
     end
 
     def export_params
-      params.permit(q: [:first_name_or_last_name_or_phone_or_email_cont, :s, customer_tags_tag_id_in: []])
+      params.permit(
+        q: [
+          :first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont,
+          :s,
+          :agent_id,
+          customer_tags_tag_id_in: []
+        ]
+      )
     end
 
     def import_params
@@ -148,17 +156,18 @@ class Retailers::CustomersController < RetailersController
 
     def validate_permissions
       return unless current_retailer_user.agent?
-      return if params[:action] != 'import' && has_permissions?
+      return if params[:action] != 'import' && permissions?
 
       flash[:notice] = 'Disculpe, no posee permisos para ver esta página'
-      redirect_to retailers_customers_path  params: {
-          slug: current_retailer.slug,
-          q: { 's': 'created_at desc' }
-        }
+      redirect_to retailers_customers_path params: {
+        slug: current_retailer.slug,
+        q: { 's': 'created_at desc' }
+      }
     end
 
-    def has_permissions?
+    def permissions?
       return true unless @customer.agent.present?
+
       @customer.agent_customer.retailer_user_id == current_retailer_user.id
     end
 
@@ -183,19 +192,22 @@ class Retailers::CustomersController < RetailersController
 
     def filtered_customers
       customers = Customer.eager_load(:orders_success)
-                          .active
-                          .where(retailer_id: current_retailer.id)
+        .active
+        .where(retailer_id: current_retailer.id)
 
-      customers = customers.left_outer_joins(:agent_customer)
-                           .where(agent_customers: {
-                             retailer_user_id: agent_ids
-                           }) if filtering_by_agent?
+      if filtering_by_agent?
+        customers = customers.left_outer_joins(:agent_customer)
+          .where(agent_customers: {
+            retailer_user_id: agent_ids
+          })
+      end
 
       customers
     end
 
     def build_ransack_query
       return filtered_customers.ransack(params[:q]) unless params[:q]&.[](:s).blank?
+
       filtered_customers.order(created_at: :desc).ransack(params[:q])
     end
 end
