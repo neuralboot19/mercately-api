@@ -1,10 +1,9 @@
 ActiveAdmin.register WhatsappTemplate do
-  permit_params :text,
-                :status,
-                :retailer_id
+  permit_params :text, :status, :retailer_id, :template_type
 
   filter :text
   filter :status
+  filter :template_type
   filter :retailer, as: :searchable_select
 
   index do
@@ -13,6 +12,7 @@ ActiveAdmin.register WhatsappTemplate do
     column :text
     column :status
     column :retailer
+    column :template_type
     column :created_at
     column :updated_at
   end
@@ -22,6 +22,7 @@ ActiveAdmin.register WhatsappTemplate do
       f.input :retailer, as: :searchable_select
       f.input :text
       f.input :status
+      f.input :template_type
     end
 
     f.actions do
