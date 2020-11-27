@@ -22,6 +22,8 @@ var currentCustomer = 0;
 var total_pages = 0;
 var comesFromSelection = false;
 var justMounted = false;
+var templateParams = {};
+var gupshupTemplateId;
 const csrfToken = document.querySelector('[name=csrf-token]').content
 const pickerI18n = {
   search: 'Buscar emoji',
@@ -309,6 +311,16 @@ class ChatMessages extends Component {
     }
 
     let text = { message: message, customer_id: this.props.currentCustomer, template: isTemplate, type: 'text' }
+
+    if (isTemplate) {
+      text['gupshup_template_id'] = gupshupTemplateId;
+
+      let params = Object.values(templateParams);
+      text['template_params'] = [];
+
+      params.forEach(value => text['template_params'].push(value));
+    }
+
     this.setState({ messages: this.state.messages.concat({
       content_type: 'text',
       content_text: message,
@@ -562,6 +574,8 @@ class ChatMessages extends Component {
   }
 
   selectTemplate = (template) => {
+    gupshupTemplateId = template.gupshup_template_id;
+
     this.setState({
       isTemplateSelected: true,
       templateSelected: template.text,
@@ -576,9 +590,9 @@ class ChatMessages extends Component {
     this.state.templateSelected.split('').map((key, index) => {
       if (key == '*'){
         if (index == id && e.target.value && e.target.value !== '') {
-          this.state.auxTemplateSelected[index] = e.target.value;
+          this.state.auxTemplateSelected[index] = templateParams[index] = e.target.value;
         } else if (index == id && (!e.target.value || e.target.value === '')) {
-          this.state.auxTemplateSelected[index] = '*';
+          this.state.auxTemplateSelected[index] = templateParams[index] = '*';
         }
       }
     })
@@ -634,6 +648,8 @@ class ChatMessages extends Component {
   }
 
   cancelTemplate = () => {
+    templateParams = {};
+
     this.setState({
       templateSelected: '',
       isTemplateSelected: false,

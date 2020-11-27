@@ -384,45 +384,12 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         }.with_indifferent_access
       end
 
-      context 'when customer is not opted-in' do
-        let(:service_response) {
-          { code: '500' }
-        }
-
-        before do
-          allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
-            .and_return(gupshup_successful_response)
-          allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
-            .and_return(service_response)
-        end
-
-        it 'responses a 500, telling the customer can not be verified' do
-          # Making the request
-          post '/retailers/api/v1/whatsapp/send_notification',
-          params: {
-            phone_number: '+584149999999',
-            message: 'My Message Text',
-            template: true
-          },
-          headers: {
-            'Slug': slug,
-            'Api-Key': api_key
+      context 'when sending by template text' do
+        context 'when customer is not opted-in' do
+          let(:service_response) {
+            { code: '500' }
           }
 
-          expect(response.code).to eq('500')
-
-          body = JSON.parse(response.body)
-          expect(body['message']).to eq('Error')
-          expect(body['info']['message']).to eq('No fue posible verificar el número de destino')
-        end
-      end
-
-      context 'when customer is opted-in' do
-        let(:service_response) {
-          { code: '202' }
-        }
-
-        context 'when the message is successfully sent' do
           before do
             allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
               .and_return(gupshup_successful_response)
@@ -430,36 +397,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
               .and_return(service_response)
           end
 
-          it 'responses a 200, telling the message was submitted' do
-            # Making the request
-            post '/retailers/api/v1/whatsapp/send_notification',
-            params: {
-              phone_number: '+584149999999',
-              message: 'My Message Text',
-              template: true
-            },
-            headers: {
-              'Slug': slug,
-              'Api-Key': api_key
-            }
-
-            expect(response.code).to eq('200')
-
-            body = JSON.parse(response.body)
-            expect(body['message']).to eq('Ok')
-            expect(body['info']['status']).to eq('submitted')
-          end
-        end
-
-        context 'when the message is not sent' do
-          before do
-            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
-              .and_return(gupshup_error_response)
-            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
-              .and_return(service_response)
-          end
-
-          it 'responses a 500, telling the message was not sent' do
+          it 'responses a 500, telling the customer can not be verified' do
             # Making the request
             post '/retailers/api/v1/whatsapp/send_notification',
             params: {
@@ -476,7 +414,205 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
 
             body = JSON.parse(response.body)
             expect(body['message']).to eq('Error')
-            expect(body['info']['message']).to eq('No fue posible entregar el mensaje al número de destino')
+            expect(body['info']['message']).to eq('No fue posible verificar el número de destino')
+          end
+        end
+
+        context 'when customer is opted-in' do
+          let(:service_response) {
+            { code: '202' }
+          }
+
+          context 'when the message is successfully sent' do
+            before do
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+                .and_return(gupshup_successful_response)
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
+                .and_return(service_response)
+            end
+
+            it 'responses a 200, telling the message was submitted' do
+              # Making the request
+              post '/retailers/api/v1/whatsapp/send_notification',
+              params: {
+                phone_number: '+584149999999',
+                message: 'My Message Text',
+                template: true
+              },
+              headers: {
+                'Slug': slug,
+                'Api-Key': api_key
+              }
+
+              expect(response.code).to eq('200')
+
+              body = JSON.parse(response.body)
+              expect(body['message']).to eq('Ok')
+              expect(body['info']['status']).to eq('submitted')
+            end
+          end
+
+          context 'when the message is not sent' do
+            before do
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+                .and_return(gupshup_error_response)
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
+                .and_return(service_response)
+            end
+
+            it 'responses a 500, telling the message was not sent' do
+              # Making the request
+              post '/retailers/api/v1/whatsapp/send_notification',
+              params: {
+                phone_number: '+584149999999',
+                message: 'My Message Text',
+                template: true
+              },
+              headers: {
+                'Slug': slug,
+                'Api-Key': api_key
+              }
+
+              expect(response.code).to eq('500')
+
+              body = JSON.parse(response.body)
+              expect(body['message']).to eq('Error')
+              expect(body['info']['message']).to eq('No fue posible entregar el mensaje al número de destino')
+            end
+          end
+        end
+      end
+
+      context 'when sending by template ID' do
+        context 'when all the parameters are not sent' do
+          it 'responses a 400 error' do
+            post '/retailers/api/v1/whatsapp/send_notification_by_id',
+            params: {
+              phone_number: '+584149999999'
+            },
+            headers: {
+              'Slug': slug,
+              'Api-Key': api_key
+            }
+
+            expect(response.code).to eq('400')
+
+            body = JSON.parse(response.body)
+            expect(body['message']).to eq('Error: Missing phone number and/or gupshup_template_id')
+          end
+        end
+
+        context 'when template ID sent is not found' do
+          it 'responses a 404 error' do
+            post '/retailers/api/v1/whatsapp/send_notification_by_id',
+            params: {
+              phone_number: '+584149999999',
+              gupshup_template_id: 'xxxxxxxxxxxxxxx'
+            },
+            headers: {
+              'Slug': slug,
+              'Api-Key': api_key
+            }
+
+            expect(response.code).to eq('404')
+
+            body = JSON.parse(response.body)
+            expect(body['message']).to eq('Error: Template not found. Please check the ID sent.')
+          end
+        end
+
+        context 'when all needed template params are not sent' do
+          context 'when the template has editable fields' do
+            let!(:template) do
+              create(:whatsapp_template, retailer: retailer, gupshup_template_id:
+                '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed', text: 'Your OTP for * is *. This is valid for *.')
+            end
+
+            it 'responses a 400 error' do
+              post '/retailers/api/v1/whatsapp/send_notification_by_id',
+              params: {
+                phone_number: '+584149999999',
+                gupshup_template_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                template_params: ['test 1', 'test 2']
+              },
+              headers: {
+                'Slug': slug,
+                'Api-Key': api_key
+              }
+
+              expect(response.code).to eq('400')
+
+              body = JSON.parse(response.body)
+              expect(body['message']).to eq('Error: Parameters mismatch. Required 3, but 2 sent.')
+            end
+          end
+
+          context 'when the template does not have editable fields' do
+            let(:service_response) { { code: '202' } }
+
+            before do
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+                .and_return(gupshup_successful_response)
+              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
+                .and_return(service_response)
+            end
+
+            let!(:template) do
+              create(:whatsapp_template, :with_formatting_asterisks, retailer: retailer, gupshup_template_id:
+                '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed')
+            end
+
+            it 'responses a 200 success' do
+              post '/retailers/api/v1/whatsapp/send_notification_by_id',
+              params: {
+                phone_number: '+584149999999',
+                gupshup_template_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed'
+              },
+              headers: {
+                'Slug': slug,
+                'Api-Key': api_key
+              }
+
+              expect(response.code).to eq('200')
+
+              body = JSON.parse(response.body)
+              expect(body['message']).to eq('Ok')
+              expect(body['info']['status']).to eq('submitted')
+            end
+          end
+        end
+
+        context 'when all needed template params are sent' do
+          let(:service_response) { { code: '202' } }
+          let!(:template) do
+            create(:whatsapp_template, retailer: retailer, gupshup_template_id:
+              '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed', text: 'Your OTP for * is *. This is valid for *.')
+          end
+
+          before do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+              .and_return(gupshup_successful_response)
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
+              .and_return(service_response)
+          end
+
+          it 'responses a 200 success' do
+            post '/retailers/api/v1/whatsapp/send_notification_by_id',
+              params: {
+                phone_number: '+584149999999',
+                gupshup_template_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                template_params: ['test 1', 'test 2', 'test 3']
+              },
+              headers: {
+                'Slug': slug,
+                'Api-Key': api_key
+              }
+
+              expect(response.code).to eq('200')
+
+              body = JSON.parse(response.body)
+              expect(body['message']).to eq('Ok')
+              expect(body['info']['status']).to eq('submitted')
           end
         end
       end

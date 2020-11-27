@@ -84,6 +84,26 @@ RSpec.describe Whatsapp::Gupshup::V1::Outbound::Msg do
     }.to_json
   end
 
+  let(:template_text_params) do
+    {
+      template: true,
+      message: 'Your Test number 12345 has been updated.',
+      customer_id: customer.id,
+      type: 'text'
+    }
+  end
+
+  let(:template_id_params) do
+    {
+      template: true,
+      message: 'Your OTP for Test is abc. This is valid for Today.',
+      customer_id: customer.id,
+      type: 'text',
+      template_params: ['Test', 'abc', 'Today'],
+      gupshup_template_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed'
+    }
+  end
+
   describe '#send_message' do
     context 'when the message type is file' do
       context 'when the file is a PDF' do
@@ -169,6 +189,46 @@ RSpec.describe Whatsapp::Gupshup::V1::Outbound::Msg do
 
             gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
             expect(gs_message.message_payload['url']).to eq(audio_url_params[:url].gsub('.mp4', '.aac'))
+          end
+        end
+      end
+    end
+
+    context 'when the message type is text' do
+      context 'when it is a template' do
+        context 'when it is sent through template text' do
+          it 'sends the text of the template' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+            allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+
+            expect {
+              @resp = described_class.new(retailer, customer).send_message(type: 'template', params:
+                template_text_params, retailer_user: retailer_user)
+            }.to change(GupshupWhatsappMessage, :count).by(1)
+
+            gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
+            expect(gs_message.message_payload['isHSM']).to eq('true')
+            expect(gs_message.message_payload['type']).to eq('text')
+            expect(gs_message.message_payload['text']).to eq('Your Test number 12345 has been updated.')
+          end
+        end
+
+        context 'when it is sent through template ID' do
+          it 'sends the ID of the template and the parameters' do
+            allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+            allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+
+            expect {
+              @resp = described_class.new(retailer, customer).send_message(type: 'template', params:
+                template_id_params, retailer_user: retailer_user)
+            }.to change(GupshupWhatsappMessage, :count).by(1)
+
+            gs_message = GupshupWhatsappMessage.find_by_gupshup_message_id(@resp[:body]['messageId'])
+            expect(gs_message.message_payload['isHSM']).to eq('true')
+            expect(gs_message.message_payload['type']).to eq('text')
+            expect(gs_message.message_payload['text']).to eq('Your OTP for Test is abc. This is valid for Today.')
+            expect(gs_message.message_payload['id']).to eq('997dd550-c8d8-4bf7-ad98-a5ac4844a1ed')
+            expect(gs_message.message_payload['params']).to eq(['Test', 'abc', 'Today'])
           end
         end
       end

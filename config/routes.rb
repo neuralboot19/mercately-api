@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       namespace :v1 do
         get 'ping', to: 'welcome#ping'
         post 'whatsapp/send_notification', to: 'karix_whatsapp#create'
+        post 'whatsapp/send_notification_by_id', to: 'karix_whatsapp#create_by_id'
       end
     end
 
