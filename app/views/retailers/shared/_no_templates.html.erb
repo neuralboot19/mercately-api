@@ -1,0 +1,43 @@
+<div class="row">
+  <% if controller_name == 'gs_templates' %>
+    <div class="col-xs-12 col-md-2"></div>
+  <% end %>
+  <div class="<%= controller_name == 'gs_templates' ? 'col-md-4' : 'col-md-6' %> col-xs-12">
+    <%= image_tag 'dashboard/ilustracion-cel.png', class: 'pt-36' %>
+  </div>
+  <div class="col-xs-12 <%= controller_name == 'gs_templates' ? 'col-md-4' : 'col-md-6' %> t-justify">
+    <h2 class="c-secondary">¿Qué son las <b>plantillas</b>?</h2>
+    Las plantillas de mensajería de WhatsApp son <b>mensajes preaprobados</b>
+    por WhatsApp para que puedas <b>iniciar una conversación</b> o retomar una
+    conversación con tus clientes.
+    <br/>
+    <br/>
+    <h2 class="c-secondary">Contenido</h2>
+    <ul class="list-checks">
+      <li>
+        Las plantillas se basan en <b>texto</b> y solo deben contener <b>letras</b>
+      </li>
+      <li>
+        <b>No</b> puede contener <b>más de 1024 caracteres</b>
+      </li>
+      <li>
+        No puede incluir lineas extra, pestañas, o más de cuatro espacios consecutivos
+      </li>
+    </ul>
+    <div class="t-center">
+      <br/>
+      <%= link_to new_retailers_gs_template_path(current_retailer), class: 'btn btn--cta' do %>
+        <i class="fas fa-plus mr-5"></i>
+        &nbsp;&nbsp;&nbsp;Crear mi primera plantilla&nbsp;&nbsp;
+      <% end %>
+      <br/>
+      <br/>
+      <%= link_to 'https://mercately.crunch.help/integraciones/como-crear-plantillas-de-whats-app-hsm', class: 'btn btn--cta', target: :_blank do %>
+        <i class="fas fa-book-open mr-5"></i>
+        Instrucciones y limitaciones
+      <% end %>
+      <br/>
+      <br/>
+    </div>
+  </div>
+</div>
