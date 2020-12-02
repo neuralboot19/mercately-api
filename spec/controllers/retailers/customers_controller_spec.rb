@@ -177,6 +177,121 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         expect(assigns(:customers).count).to eq(5)
       end
     end
+
+    context 'when filters include tags' do
+      let(:retailer) { create(:retailer) }
+      let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+      let(:customer) { create(:customer, retailer: retailer) }
+      let(:customer2) { create(:customer, retailer: retailer) }
+      let(:customer3) { create(:customer, retailer: retailer) }
+      let(:tag) { create(:tag, retailer: retailer) }
+      let(:tag2) { create(:tag, retailer: retailer) }
+      let(:tag3) { create(:tag, retailer: retailer) }
+      let(:tag4) { create(:tag, retailer: retailer) }
+      let!(:customer_tag) { create(:customer_tag, customer: customer, tag: tag) }
+      let!(:customer_tag2) { create(:customer_tag, customer: customer2, tag: tag) }
+      let!(:customer_tag3) { create(:customer_tag, customer: customer3, tag: tag) }
+      let!(:customer_tag4) { create(:customer_tag, customer: customer, tag: tag2) }
+      let!(:customer_tag5) { create(:customer_tag, customer: customer, tag: tag3) }
+      let!(:customer_tag6) { create(:customer_tag, customer: customer2, tag: tag2) }
+
+      before do
+        sign_in retailer_user
+      end
+
+      context 'when one tag is sent' do
+        it 'returns only the customers belonging to all tags sent' do
+          get :index, params: {
+            slug: retailer.slug,
+            q: { customer_tags_tag_id_in: [tag.id] }
+          }
+
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:customers).count).to eq(3)
+        end
+      end
+
+      context 'when two tags are sent' do
+        it 'returns only the customers belonging to all tags sent' do
+          get :index, params: {
+            slug: retailer.slug,
+            q: { customer_tags_tag_id_in: [tag.id, tag2.id] }
+          }
+
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:customers).count).to eq(2)
+        end
+      end
+
+      context 'when three tags are sent' do
+        it 'returns only the customers belonging to all tags sent' do
+          get :index, params: {
+            slug: retailer.slug,
+            q: { customer_tags_tag_id_in: [tag.id, tag2.id, tag3.id] }
+          }
+
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:customers).count).to eq(1)
+        end
+      end
+
+      context 'when four tags are sent' do
+        it 'returns only the customers belonging to all tags sent' do
+          get :index, params: {
+            slug: retailer.slug,
+            q: { customer_tags_tag_id_in: [tag.id, tag2.id, tag3.id, tag4.id] }
+          }
+
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:customers).count).to eq(0)
+        end
+      end
+    end
+
+    context 'when filters do not include tags' do
+      let(:retailer) { create(:retailer) }
+      let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+      let(:customer) { create(:customer, retailer: retailer) }
+      let(:customer2) { create(:customer, retailer: retailer) }
+      let(:customer3) { create(:customer, retailer: retailer) }
+      let(:tag) { create(:tag, retailer: retailer) }
+      let(:tag2) { create(:tag, retailer: retailer) }
+      let(:tag3) { create(:tag, retailer: retailer) }
+      let(:tag4) { create(:tag, retailer: retailer) }
+      let!(:customer_tag) { create(:customer_tag, customer: customer, tag: tag) }
+      let!(:customer_tag2) { create(:customer_tag, customer: customer2, tag: tag) }
+      let!(:customer_tag3) { create(:customer_tag, customer: customer3, tag: tag) }
+      let!(:customer_tag4) { create(:customer_tag, customer: customer, tag: tag2) }
+      let!(:customer_tag5) { create(:customer_tag, customer: customer, tag: tag3) }
+      let!(:customer_tag6) { create(:customer_tag, customer: customer2, tag: tag2) }
+
+      before do
+        sign_in retailer_user
+      end
+
+      context 'when it sends the tags array empty' do
+        it 'returns all the customers' do
+          get :index, params: {
+            slug: retailer.slug,
+            q: { customer_tags_tag_id_in: [] }
+          }
+
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:customers).count).to eq(3)
+        end
+      end
+
+      context 'when the tags array is not sent' do
+        it 'returns all the customers' do
+          get :index, params: {
+            slug: retailer.slug
+          }
+
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:customers).count).to eq(3)
+        end
+      end
+    end
   end
 
   describe 'GET #show' do

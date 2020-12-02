@@ -6,6 +6,7 @@ class Retailers::CustomersController < RetailersController
   before_action :set_customer, only: [:show, :edit, :update, :destroy]
   before_action :load_tags, only: [:new, :edit, :create, :update]
   before_action :save_new_tags, only: [:create, :update]
+  before_action :clean_empty_tag, only: [:index, :export]
   before_action :validate_permissions, only: [
     :show, :edit, :update, :destroy, :import, :bulk_import
   ]
@@ -202,12 +203,34 @@ class Retailers::CustomersController < RetailersController
           })
       end
 
-      customers
+      filter_by_tags(customers)
     end
 
     def build_ransack_query
       return filtered_customers.ransack(params[:q]) unless params[:q]&.[](:s).blank?
 
       filtered_customers.order(created_at: :desc).ransack(params[:q])
+    end
+
+    def filter_by_tags(customers)
+      return customers unless params[:q]&.[](:customer_tags_tag_id_in).present?
+
+      size = params[:q][:customer_tags_tag_id_in].size
+      cust_ids = customers.includes(:customer_tags).where(
+        {
+          customer_tags:
+            {
+              tag_id: params[:q][:customer_tags_tag_id_in]
+            }
+        }
+      ).group('customers.id').count('distinct customer_tags.tag_id').map { |c| c.first if c.second == size }
+
+      customers.where(id: cust_ids)
+    end
+
+    def clean_empty_tag
+      return unless params[:q]&.[](:customer_tags_tag_id_in).present?
+
+      params[:q][:customer_tags_tag_id_in].delete('')
     end
 end
