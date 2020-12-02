@@ -260,17 +260,15 @@ class CustomerDetails extends Component {
               <p className="label inline-block">Etiquetas:</p>
             </div>
 
-            {!this.props.customer.tags || (this.props.customer.tags && this.props.customer.tags.length < 5) &&
-              <div>
-                <SelectableField 
-                  handleSelectTagChange={this.handleSelectTagChange}
-                  isTag={true}
-                  options={this.props.tags}
-                />
-                
-                <input className="input" type="text" name="newTag" value={this.state.newTag} placeholder="Nueva etiqueta" maxLength="20" onChange={this.handleNewTagChange} onKeyPress={this.onKeyPress} />
-              </div>
-            }
+            <div>
+              <SelectableField
+                handleSelectTagChange={this.handleSelectTagChange}
+                isTag={true}
+                options={this.props.tags}
+              />
+
+              <input className="input" type="text" name="newTag" value={this.state.newTag} placeholder="Nueva etiqueta" maxLength="20" onChange={this.handleNewTagChange} onKeyPress={this.onKeyPress} />
+            </div>
 
             <div className="row bottom-xs">
               {this.props.customer.tags && this.props.customer.tags.map((tag) => (
