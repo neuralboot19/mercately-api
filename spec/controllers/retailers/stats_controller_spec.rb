@@ -234,6 +234,8 @@ RSpec.describe 'StatsController', type: :request do
         create_list(:facebook_message, 2, :outbound, facebook_retailer: facebook_retailer, retailer_user:
           retailer_user, customer: customer_old, created_at: Time.now - 6.days)
 
+        # Se eliminan las asignaciones creadas automaticamente porque no concuerdan las fechas con las pruebas
+        retailer_user.agent_customers.destroy_all
         create(:agent_customer, retailer_user: retailer_user, customer: customer_old2, updated_at: Time.now - 25.hours)
         create(:agent_customer, retailer_user: retailer_user, customer: customer, updated_at: Time.now - 27.hours)
         create(:agent_customer, retailer_user: retailer_user, customer: customer2, updated_at: Time.now)
@@ -679,6 +681,8 @@ RSpec.describe 'StatsController', type: :request do
           create(:facebook_message, :inbound, facebook_retailer: facebook_retailer, retailer_user:
             retailer_user, customer: customer3, created_at: Time.now)
 
+          # Se eliminan las asignaciones creadas automaticamente porque no concuerdan las fechas con las pruebas
+          retailer_user.agent_customers.destroy_all
           create(:agent_customer, retailer_user: retailer_user, customer: customer1, updated_at: Time.now - 2.hours)
           create(:agent_customer, retailer_user: retailer_user, customer: customer2, updated_at: Time.now - 12.hours)
           create(:agent_customer, retailer_user: retailer_user, customer: customer3, updated_at: Time.now - 19.hours)

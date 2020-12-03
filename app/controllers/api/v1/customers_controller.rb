@@ -89,6 +89,7 @@ class Api::V1::CustomersController < Api::ApiController
       retailer_user: current_retailer_user,
       file_type: params[:type]
     )
+
     render status: 200, json: { message: message } if message.save
   end
 
@@ -111,6 +112,7 @@ class Api::V1::CustomersController < Api::ApiController
       file_url: params[:url],
       file_type: params[:type]
     )
+
     render status: 200, json: { message: message } if message.save
   end
 
