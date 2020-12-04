@@ -293,8 +293,13 @@ RSpec.describe FacebookMessage, type: :model do
 
         context 'with the chat already answered by agent' do
           let!(:outbound_message) do
-            create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer,
-              retailer_user: retailer_user)
+            create(
+              :facebook_message,
+              :outbound,
+              customer: customer,
+              facebook_retailer: facebook_retailer,
+              retailer_user: retailer_user
+            )
           end
 
           it 'returns nil' do
@@ -319,69 +324,105 @@ RSpec.describe FacebookMessage, type: :model do
         context 'when there is not any agent with free spots to assign' do
           let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
           let!(:agent_team1) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
-              max_assignments: 2, assigned_amount: 2)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: retailer_user,
+              max_assignments: 2,
+              assigned_amount: 2
+            )
           end
 
           let!(:agent_team2) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: another_retailer_user,
-              max_assignments: 4, assigned_amount: 4)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: another_retailer_user,
+              max_assignments: 4,
+              assigned_amount: 4
+            )
           end
 
           it 'does not assign an agent to the customer' do
-            expect {
+            expect do
               create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
-            }.to change(AgentCustomer, :count).by(0)
+            end.to change(AgentCustomer, :count).by(0)
           end
         end
 
         context 'when there is at least one agent with free spots to assign' do
           let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
           let!(:agent_team1) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
-              max_assignments: 2, assigned_amount: 2)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: retailer_user,
+              max_assignments: 2,
+              assigned_amount: 2
+            )
           end
 
           let!(:agent_team2) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: another_retailer_user,
-              max_assignments: 4, assigned_amount: 3)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: another_retailer_user,
+              max_assignments: 4,
+              assigned_amount: 3
+            )
           end
 
           it 'assigns an agent to the customer' do
-            expect {
+            expect do
               create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
-            }.to change(AgentCustomer, :count).by(1)
+            end.to change(AgentCustomer, :count).by(1)
           end
         end
 
         context 'when there is more than one agent with free spots to assign' do
           let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
           let(:agent_team1) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
-              max_assignments: 2, assigned_amount: 0)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: retailer_user,
+              max_assignments: 2,
+              assigned_amount: 0
+            )
           end
 
           let(:agent_team2) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: another_retailer_user,
-              max_assignments: 4, assigned_amount: 0)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: another_retailer_user,
+              max_assignments: 4,
+              assigned_amount: 0
+            )
           end
 
           it 'assigns the agent with less assignments to the customer and so on' do
             agent_team1
             agent_team2
 
-            expect {
+            expect do
               create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
-            }.to change(AgentCustomer, :count).by(1)
+            end.to change(AgentCustomer, :count).by(1)
 
             last = AgentCustomer.last
             expect(agent_team1.retailer_user_id).to eq(last.retailer_user_id)
             expect(last.team_assignment_id).to eq(default_team.id)
             expect(agent_team1.reload.assigned_amount).to eq(1)
 
-            expect {
+            expect do
               create(:facebook_message, :inbound, customer: customer2, facebook_retailer: facebook_retailer)
-            }.to change(AgentCustomer, :count).by(1)
+            end.to change(AgentCustomer, :count).by(1)
 
             last = AgentCustomer.last
             expect(agent_team2.retailer_user_id).to eq(last.retailer_user_id)
@@ -397,8 +438,13 @@ RSpec.describe FacebookMessage, type: :model do
         end
 
         let(:outbound_message) do
-          create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer,
-            retailer_user: retailer_user)
+          create(
+            :facebook_message,
+            :outbound,
+            customer: customer,
+            facebook_retailer: facebook_retailer,
+            retailer_user: retailer_user
+          )
         end
 
         context 'when the message does not come from an agent' do
@@ -428,8 +474,14 @@ RSpec.describe FacebookMessage, type: :model do
         context 'when the message is not the first one sent to the customer' do
           let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
           let!(:agent_team) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
-              max_assignments: 2, assigned_amount: 0)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: retailer_user,
+              max_assignments: 2,
+              assigned_amount: 0
+            )
           end
 
           let!(:agent_customer) do
@@ -437,8 +489,13 @@ RSpec.describe FacebookMessage, type: :model do
           end
 
           let!(:other_outbound) do
-            create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer,
-              retailer_user: retailer_user)
+            create(
+              :facebook_message,
+              :outbound,
+              customer: customer,
+              facebook_retailer: facebook_retailer,
+              retailer_user: retailer_user
+            )
           end
 
           it 'returns nil' do
@@ -449,8 +506,14 @@ RSpec.describe FacebookMessage, type: :model do
         context 'when the message is the first one sent to the customer' do
           let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
           let!(:agent_team) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
-              max_assignments: 2, assigned_amount: 1)
+            create(
+              :agent_team,
+              :activated,
+              team_assignment: default_team,
+              retailer_user: retailer_user,
+              max_assignments: 2,
+              assigned_amount: 1
+            )
           end
 
           let!(:agent_customer) do
@@ -460,8 +523,13 @@ RSpec.describe FacebookMessage, type: :model do
           it 'decreases by one the assigned amount of the agent team' do
             expect(agent_team.assigned_amount).to eq(1)
 
-            create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer,
-              retailer_user: retailer_user)
+            create(
+              :facebook_message,
+              :outbound,
+              customer: customer,
+              facebook_retailer: facebook_retailer,
+              retailer_user: retailer_user
+            )
 
             expect(agent_team.reload.assigned_amount).to eq(0)
           end
@@ -475,6 +543,50 @@ RSpec.describe FacebookMessage, type: :model do
 
       it 'returns nil' do
         expect(message.send(:assign_agent)).to be_nil
+      end
+    end
+
+    context 'when a chat is answered' do
+      let(:customer) { create(:customer, retailer: retailer) }
+
+      context 'when the message is not sent from an agent' do
+        let(:outbound_message) do
+          create(:facebook_message, :outbound, customer: customer, facebook_retailer: facebook_retailer)
+        end
+
+        it 'does not assign the customer to anyone' do
+          outbound_message
+          expect(customer.agent).to be_nil
+        end
+      end
+
+      context 'when the message is sent from an agent' do
+        let(:outbound_message) do
+          create(
+            :facebook_message,
+            :outbound,
+            customer: customer,
+            facebook_retailer: facebook_retailer,
+            retailer_user: retailer_user
+          )
+        end
+
+        context 'when the customer does not have an agent yet' do
+          it 'assigns the customer to the agent' do
+            outbound_message
+            expect(customer.agent).to eq(retailer_user)
+          end
+        end
+
+        context 'when the customer already has an agent' do
+          let(:retailer_user2) { create(:retailer_user, retailer: retailer) }
+          let!(:agent_customer) { create(:agent_customer, customer: customer, retailer_user: retailer_user2) }
+
+          it 'does not assign the customer to the agent' do
+            outbound_message
+            expect(customer.agent).to eq(retailer_user2)
+          end
+        end
       end
     end
   end
