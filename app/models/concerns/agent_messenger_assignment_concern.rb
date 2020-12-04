@@ -4,6 +4,10 @@ module AgentMessengerAssignmentConcern
   private
 
     def assign_agent
+      # Se le asigna el agente al customer si no tiene uno ya asignado.
+      # Solo cuando el mensaje es enviado por un agente/admin/supervisor.
+      AgentCustomer.create_with(retailer_user: retailer_user).find_or_create_by(customer: customer) if retailer_user
+        .present?
       return unless facebook_retailer.retailer.manage_team_assignment
 
       if sent_by_retailer == false

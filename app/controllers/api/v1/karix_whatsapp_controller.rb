@@ -169,6 +169,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         }
       end
     elsif current_retailer.gupshup_integrated?
+      assign_agent(@customer)
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, @customer)
       gws.send_message(type: 'file', params: params, retailer_user: current_retailer_user)
 
@@ -259,6 +260,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   end
 
   def send_bulk_files
+    assign_agent(@customer)
     if current_retailer.karix_integrated?
       karix_helper = KarixNotificationHelper
       karix_helper.ws_message_service.send_bulk_files(retailer: current_retailer, retailer_user: current_retailer_user,

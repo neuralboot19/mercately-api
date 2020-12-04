@@ -9,7 +9,7 @@ module Customers
 
       active_customers = filtered_customers(@retailer_user.agent?, params)
       active_customers.order(created_at: :desc) if params[:q] && params[:q]&.[](:s).blank?
-      q = active_customers.ransack(params[:q])
+      q = active_customers.ransack(params[:q]&.except(:customer_tags_tag_id_in))
       customers = q.result
 
       RetailerMailer.export_customers(@retailer, @retailer_user.email, Customer.to_csv(customers)).deliver_now
@@ -40,7 +40,31 @@ module Customers
           })
       end
 
-      customers
+      filter_by_tags(customers, params)
+    end
+
+    def filter_by_tags(customers, params)
+      params = clean_empty_tag(params)
+      return customers unless params[:q]&.[](:customer_tags_tag_id_in).present?
+
+      size = params[:q][:customer_tags_tag_id_in].size
+      cust_ids = customers.includes(:customer_tags).where(
+        {
+          customer_tags:
+            {
+              tag_id: params[:q][:customer_tags_tag_id_in]
+            }
+        }
+      ).group('customers.id').count('distinct customer_tags.tag_id').map { |c| c.first if c.second == size }
+
+      customers.where(id: cust_ids)
+    end
+
+    def clean_empty_tag(params)
+      return params unless params[:q]&.[](:customer_tags_tag_id_in).present?
+
+      params[:q][:customer_tags_tag_id_in].delete('')
+      params
     end
   end
 end

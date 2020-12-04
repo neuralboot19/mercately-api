@@ -1,6 +1,6 @@
 module Retailers::Api::V1
   class KarixWhatsappController < Retailers::Api::V1::ApiController
-    before_action :validate_balance, only: [:create]
+    before_action :validate_balance, only: [:create, :create_by_id]
 
     KARIX_PERMITED_PARAMS = %w[
       channel
@@ -16,6 +16,25 @@ module Retailers::Api::V1
     def create
       params_present = params[:phone_number].present? && params[:message].present? && params[:template].present?
       set_response(500, 'Error: Missing phone number and/or message and/or template') && return unless params_present
+
+      integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
+      self.send("send_#{integration}_notification", params)
+    end
+
+    def create_by_id
+      set_response(400, 'Error: Missing phone number and/or gupshup_template_id') and
+        return unless template_params_complete?
+
+      template = find_template
+      set_response(404, 'Error: Template not found. Please check the ID sent.') and
+        return unless template.present?
+
+      ok_params, params_required, params_sent = template.check_params_match(params)
+      set_response(400, "Error: Parameters mismatch. Required #{params_required}, but #{params_sent} sent.") and
+        return unless ok_params
+
+      params[:template] = true
+      params[:message] = template.template_text(params)
 
       integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
       self.send("send_#{integration}_notification", params)
@@ -104,6 +123,14 @@ module Retailers::Api::V1
         customer.save
 
         customer
+      end
+
+      def template_params_complete?
+        params[:phone_number].present? && params[:gupshup_template_id].present?
+      end
+
+      def find_template
+        current_retailer.whatsapp_templates.find_by(gupshup_template_id: params[:gupshup_template_id].strip)
       end
   end
 end

@@ -2,6 +2,7 @@ module Whatsapp::Gupshup::V1
   class Outbound::Msg < Base
 
     SM_URL = "#{GUPSHUP_BASE_URL}/msg"
+    TEMPLATE_URL = "#{GUPSHUP_BASE_URL}/template/msg"
 
     def send_message(options)
       @phone_number = @customer.phone_number(false)
@@ -61,18 +62,31 @@ module Whatsapp::Gupshup::V1
 
       # Send Template Message
       def template
-        raise StandardError.new('Faltaron parámetros') unless @options[:params]&.[](:message).present?
+        raise StandardError.new('Faltaron parámetros') unless complete_template_params?
 
+        body_string = base_body
         message = {
-          'isHSM': 'true',
-          'type': 'text',
-          'text': @options[:params][:message]
-        }.to_json
+          isHSM: 'true',
+          type: 'text',
+          text: @options[:params][:message]
+        }
 
-        bodyString = base_body
-        bodyString += "&message=#{CGI.escape(message)}"
+        if @options[:params][:gupshup_template_id].present?
+          @is_template_with_id = true
 
-        [bodyString, message]
+          message[:id] = @options[:params][:gupshup_template_id]
+          message[:params] = @options[:params][:template_params].presence || []
+
+          except = [:isHSM, :type, :text]
+          aux_message = message.except(*except).to_json
+          message = message.to_json
+          body_string += "&template=#{aux_message}"
+        else
+          message = message.to_json
+          body_string += "&message=#{CGI.escape(message)}"
+        end
+
+        [body_string, message]
       end
 
       # Send Text
@@ -221,7 +235,8 @@ module Whatsapp::Gupshup::V1
 
       def send_message_request(body)
         @retailer.with_advisory_lock(@retailer.to_global_id.to_s) do
-          post(SM_URL, body)
+          url = @is_template_with_id ? TEMPLATE_URL : SM_URL
+          post(url, body)
         end
       end
 
@@ -276,6 +291,10 @@ module Whatsapp::Gupshup::V1
 
         @options[:params][:content_type].present? ?
           get_resource_from_content_type(@options[:params][:content_type]) : 'image'
+      end
+
+      def complete_template_params?
+        @options[:params]&.[](:message).present? || @options[:params]&.[](:gupshup_template_id).present?
       end
   end
 end
