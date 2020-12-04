@@ -129,7 +129,7 @@
                   </div>
                   <% if can_send_whatsapp_notification?(current_retailer_user, customer) %>
                     <div class="t-center"><label for="modal--toggle-index" class="request-demo-label ws-contact"
-                      data-customer_full_names="<%= customer.full_names %>"
+                      data-customer_full_names="<%= customer.full_names.presence || customer.whatsapp_name %>"
                       data-customer_id="<%= customer.id %>"
                       data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>"
                       >
@@ -291,6 +291,7 @@
                       <p id="template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
                       <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
                       <p id="template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
+                      <p id="gupshup-template-id-<%= index %>" class="d-none"><%= template.gupshup_template_id %></p>
                     </div>
                     <div class="col-md-2">
                       <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>

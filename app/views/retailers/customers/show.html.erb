@@ -357,6 +357,7 @@
                       <p id="template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
                       <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
                       <p id="template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
+                      <p id="gupshup-template-id-<%= index %>" class="d-none"><%= template.gupshup_template_id %></p>
                     </div>
                     <div class="col-md-2">
                       <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>
