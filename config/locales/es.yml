@@ -21,6 +21,8 @@ es:
         one: Item
         other: Items
     attributes:
+      stripe_transaction:
+        amount: Monto
       order:
         customer:
           blank: Por favor selecciona un cliente
@@ -220,7 +222,7 @@ es:
       even: '%{attribute} debe ser par'
       exclusion: '%{attribute} está reservado'
       greater_than: '%{attribute} debe ser mayor que %{count}'
-      greater_than_or_equal_to: '%{attribute} debe ser mayor que o igual a %{count}'
+      greater_than_or_equal_to: '%{attribute} debe ser mayor o igual a %{count}'
       inclusion: '%{attribute} no está incluido en la lista'
       invalid: '%{attribute} no es válido'
       less_than: '%{attribute} debe ser menor que %{count}'

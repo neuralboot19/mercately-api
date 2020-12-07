@@ -101,6 +101,11 @@ Rails.application.routes.draw do
         end
       end
       resources :tags
+      resources :stripe, only: [:create] do
+        collection do
+          post :add_balance
+        end
+      end
 
       resources :sales_channels
       resources :chat_bots, except: [:destroy] do
