@@ -9,7 +9,7 @@
 
     <div class="blog-landing-list">
       <li class="">
-        <%= link_to "📲 WhatsApp", blog_category_path("whatsApp") %>
+        <%= link_to "📲 WhatsApp", blog_category_path("whatsapp") %>
       </li>
       <li class="">
         <%= link_to "🤖 Chatbots", blog_category_path("chatbots") %>
@@ -22,21 +22,9 @@
 </div>
 
 <div class="container">
-
   <div class="post-entries-container">
     <div class="row">
       <% @documents.each_with_index do |doc, index| %>
-        <% if index == 9 %>
-          <div class="post-sell">
-
-            <p>Mejora tu servicio al cliente y automatiza tus procesos de mensajería por WhatsApp y Messenger.
-              <br /> <br />
-              <span>
-                <a class="post-sell-cta" href="https://mercately.com/" rel="nofollow noopener" target="_blank">👉 Empieza Gratis hoy mismo &nbsp;!</a>
-              </span>
-            <p>
-          </div>
-        <% end %>
         <div class="col-md-4 blog_grid_post_style">
           <div class="post-entry-wrapper">
             <div class="entry-image-post-thumb">
@@ -66,7 +54,7 @@
             </div>
           </div>
         </div>
-        <% end %>
+      <% end %>
     </div>
   </div>
 </div>
