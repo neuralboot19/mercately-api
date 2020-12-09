@@ -47,7 +47,7 @@ class Products extends Component {
 
   handleKeyPress = event => {
     if (event.key === "Enter") {
-      this.setState({shouldUpdate: true}, () => { 
+      this.setState({shouldUpdate: true}, () => {
         this.applySearch();
       })
     }
@@ -112,8 +112,8 @@ class Products extends Component {
               onKeyPress={this.handleKeyPress}
             />
           </div>
-          {this.state.products.map((product) => (
-            <div className="product-right-side-content">
+          {this.state.products.map((product, index) => (
+            <div key={index} className="product-right-side-content">
               <div className="d-inline-flex">
                 <div className="products__img">
                   {product.attributes.image ?

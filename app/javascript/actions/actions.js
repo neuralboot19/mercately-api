@@ -3,10 +3,11 @@ export const fetchCustomers = (page = 1, params, offset) => {
   let endpoint = `/api/v1/customers?page=${page}&offset=${offset}`;
 
   if (params !== null && params !== undefined) {
-    endpoint += `&${$.param(params)}`
+    // eslint-disable-next-line no-undef
+    endpoint += `&${$.param(params)}`;
   }
 
-  return dispatch =>
+  return (dispatch) => {
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -15,21 +16,23 @@ export const fetchCustomers = (page = 1, params, offset) => {
         "Content-Type": "application/json"
       }
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => dispatch({ type: "SET_CUSTOMERS", data }),
-        err => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => dispatch({ type: "SET_CUSTOMERS", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
       ).catch((error) => {
-        if (error.response)
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
+  };
 };
 
 export const fetchCustomer = (id) => {
   const endpoint = `/api/v1/customers/${id}`;
-  return dispatch =>
+  return (dispatch) => {
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -38,50 +41,54 @@ export const fetchCustomer = (id) => {
         "Content-Type": "application/json"
       }
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => dispatch({ type: "SET_CUSTOMER", data }),
-        err => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => dispatch({ type: "SET_CUSTOMER", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
       ).catch((error) => {
-        if (error.response)
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
+  };
 };
 
 export const updateCustomer = (id, body, token) => {
   const endpoint = `/api/v1/customers/${id}`;
-  const csrf_token = token
-  return dispatch => {
+  const csrfToken = token;
+  return (dispatch) => {
     fetch(endpoint, {
       method: "PUT",
       credentials: 'same-origin',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': csrf_token,
+        'X-CSRF-Token': csrfToken,
         'Content-Type': 'application/json',
-        'Accept': 'application/json, text/plain, */*',
+        'Accept': 'application/json, text/plain, */*'
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     })
-    .then(res => res.json())
-    .then(
-      data => dispatch({ type: 'SET_CUSTOMER', data }),
-      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
-    ).catch((error) => {
-        if (error.response)
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_CUSTOMER', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
   };
 };
 
+/* Messages */
 
 export const fetchMessages = (id, page = 1) => {
   const endpoint = `/api/v1/customers/${id}/messages?page=${page}`;
-  return dispatch =>
+  return (dispatch) => {
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -90,95 +97,100 @@ export const fetchMessages = (id, page = 1) => {
         "Content-Type": "application/json"
       }
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => dispatch({ type: "SET_MESSAGES", data }),
-        err => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => dispatch({ type: "SET_MESSAGES", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
       ).catch((error) => {
-        if (error.response)
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
+  };
 };
 
 export const sendMessage = (id, body, token) => {
   const endpoint = `/api/v1/customers/${id}/messages`;
-  const csrf_token = token
-  return dispatch => {
+  const csrfToken = token;
+  return (dispatch) => {
     fetch(endpoint, {
       method: "POST",
       credentials: 'same-origin',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': csrf_token,
+        'X-CSRF-Token': csrfToken,
         'Content-Type': 'application/json',
-        'Accept': 'application/json, text/plain, */*',
+        'Accept': 'application/json, text/plain, */*'
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(body)
     })
-    .then(res => res.json())
-    .then(
-      data => dispatch({ type: 'SET_SEND_MESSAGE', data }),
-      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
-    ).catch((error) => {
-        if (error.response)
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
   };
 };
 
 export const sendImg = (id, body, token) => {
   const endpoint = `/api/v1/customers/${id}/messages/imgs`;
-  const csrf_token = token
-  return dispatch => {
+  const csrfToken = token;
+  return (dispatch) => {
     fetch(endpoint, {
       method: "POST",
       credentials: 'same-origin',
       headers: {
-        'X-CSRF-Token': csrf_token,
+        'X-CSRF-Token': csrfToken
       },
-      body: body,
+      body
     })
-    .then(res => res.json())
-    .then(
-      data => dispatch({ type: 'SET_SEND_MESSAGE', data }),
-      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
-    ).catch((error) => {
-        if (error.response)
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
   };
 };
 
 export const setMessageAsRead = (id, token) => {
   const endpoint = `/api/v1/messages/${id}/read`;
-  const csrf_token = token
-  return dispatch => {
+  const csrfToken = token;
+  return (dispatch) => {
     fetch(endpoint, {
       method: "POST",
       credentials: 'same-origin',
       headers: {
         'X-Requested-With': 'XMLHttpRequest',
-        'X-CSRF-Token': csrf_token,
+        'X-CSRF-Token': csrfToken,
         'Content-Type': 'application/json',
-        'Accept': 'application/json, text/plain, */*',
+        'Accept': 'application/json, text/plain, */*'
       },
-      body: '',
+      body: ''
     })
-    .then(res => res.json())
-    .then(
-      data => dispatch({ type: 'SET_SEND_MESSAGE', data }),
-      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
-    ).catch((error) => {
-        if (error.response)
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
   };
 };
@@ -187,10 +199,10 @@ export const getMessengerFastAnswers = (page = 1, params) => {
   let endpoint = `/api/v1/fast_answers_for_messenger?page=${page}`;
 
   if (params !== '' && params !== undefined) {
-    endpoint += `&search=${params}`
+    endpoint += `&search=${params}`;
   }
 
-  return dispatch =>
+  return (dispatch) => {
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -199,26 +211,28 @@ export const getMessengerFastAnswers = (page = 1, params) => {
         "Content-Type": "application/json"
       }
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => dispatch({ type: "SET_MESSENGER_FAST_ANSWERS", data }),
-        err => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => dispatch({ type: "SET_MESSENGER_FAST_ANSWERS", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
       ).catch((error) => {
-        if (error.response)
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
+  };
 };
 
 export const getProducts = (page = 1, params) => {
   let endpoint = `/api/v1/products?page=${page}`;
 
   if (params !== '' && params !== undefined) {
-    endpoint += `&search=${params}`
+    endpoint += `&search=${params}`;
   }
 
-  return dispatch =>
+  return (dispatch) => {
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -227,39 +241,42 @@ export const getProducts = (page = 1, params) => {
         "Content-Type": "application/json"
       }
     })
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
-        data => dispatch({ type: "SET_PRODUCTS", data }),
-        err => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => dispatch({ type: "SET_PRODUCTS", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
       ).catch((error) => {
-        if (error.response)
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
+  };
 };
 
 export const sendBulkFiles = (id, body, token) => {
   const endpoint = `/api/v1/customers/${id}/messages/send_bulk_files`;
-  const csrf_token = token
-  return dispatch => {
+  const csrfToken = token;
+  return (dispatch) => {
     fetch(endpoint, {
       method: "POST",
       credentials: 'same-origin',
       headers: {
-        'X-CSRF-Token': csrf_token,
+        'X-CSRF-Token': csrfToken
       },
-      body: body,
+      body
     })
-    .then(res => res.json())
-    .then(
-      data => dispatch({ type: 'SET_SEND_MESSAGE', data }),
-      err => dispatch({ type: 'LOAD_DATA_FAILURE', err })
-    ).catch((error) => {
-        if (error.response)
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
           alert(error.response);
-        else
+        } else {
           alert("An unexpected error occurred.");
+        }
       });
   };
 };

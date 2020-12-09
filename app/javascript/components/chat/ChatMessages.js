@@ -16,8 +16,12 @@ import {
 
 import MessageForm from './MessageForm';
 import Message from './Message';
-import ImagesSelector from './../shared/ImagesSelector';
-import GoogleMap from './../shared/Map';
+import ImagesSelector from "../shared/ImagesSelector";
+import GoogleMap from "../shared/Map";
+import TopChatBar from './TopChatBar';
+import ImageModal from '../shared/ImageModal';
+import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
+import MobileTopChatBar from '../shared/MobileTopChatBar';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -117,12 +121,6 @@ class ChatMessages extends Component {
     }
   }
 
-  findIndexInArray = (arr, id) => (
-    arr.findIndex((el) => (
-      el.id == id
-    ))
-  )
-
   toggleImgModal = (e) => {
     var el = e.target;
 
@@ -133,7 +131,7 @@ class ChatMessages extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    if (newProps.messages != this.props.messages) {
+    if (newProps.messages !== this.props.messages) {
       this.setState({
         new_message: false,
         messages: newProps.messages.concat(this.state.messages),
@@ -191,14 +189,14 @@ class ChatMessages extends Component {
 
   findMessageInArray = (arr, id) => (
     arr.findIndex((el) => (
-      el.id == id
+      el.id === id
     ))
   )
 
   updateChat = (data) =>{
     var facebook_message = data.facebook_message.facebook_message;
-    if (currentCustomer == facebook_message.customer_id) {
-      if (!this.state.new_message && facebook_message.sent_from_mercately == false) {
+    if (currentCustomer === facebook_message.customer_id) {
+      if (!this.state.new_message && facebook_message.sent_from_mercately === false) {
         var index = this.findMessageInArray(this.state.messages, facebook_message.id);
 
         if (index === -1) {
@@ -211,12 +209,12 @@ class ChatMessages extends Component {
         }
       }
 
-      if (facebook_message.sent_by_retailer == false) {
+      if (facebook_message.sent_by_retailer === false) {
         this.props.setMessageAsRead(facebook_message.id, csrfToken);
       }
 
-      if (facebook_message.sent_by_retailer == true && facebook_message.date_read) {
-        this.state.messages.filter(obj => obj.sent_by_retailer == true)
+      if (facebook_message.sent_by_retailer === true && facebook_message.date_read) {
+        this.state.messages.filter(obj => obj.sent_by_retailer === true)
           .forEach(function(message) {
             if (!message.date_read && moment(message.created_at) <= moment(facebook_message.created_at)) {
               message.date_read = facebook_message.date_read
@@ -238,17 +236,17 @@ class ChatMessages extends Component {
   fileType = (file_type) => {
     if (file_type == null) {
       return file_type;
-    } else if (file_type.includes('image/') || file_type == 'image') {
+    } else if (file_type.includes('image/') || file_type === 'image') {
       return 'image';
     } else if (['application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file_type) ||
-      file_type == 'file') {
+      file_type === 'file') {
         return 'file';
-    } else if (file_type.includes('audio/') || file_type == 'audio') {
+    } else if (file_type.includes('audio/') || file_type === 'audio') {
       return 'audio';
-    } else if (file_type.includes('video/') || file_type == 'video') {
+    } else if (file_type.includes('video/') || file_type === 'video') {
       return 'video';
-    } else if (file_type.includes('location/') || file_type == 'location') {
+    } else if (file_type.includes('location/') || file_type === 'location') {
       return 'location';
     }
   }
@@ -270,9 +268,9 @@ class ChatMessages extends Component {
   }
 
   divClasses = (message) => {
-    var classes = message.sent_by_retailer == true ? 'message-by-retailer f-right' : 'message-by-customer';
+    var classes = message.sent_by_retailer === true ? 'message-by-retailer f-right' : 'message-by-customer';
     classes += ' main-message-container';
-    if (message.sent_by_retailer == true && message.date_read && message.text && !message.file_type)
+    if (message.sent_by_retailer === true && message.date_read && message.text && !message.file_type)
       classes += ' read-message';
     if (['voice', 'audio', 'video'].includes(this.fileType(message.file_type))) classes += ' video-audio no-background';
     if (this.fileType(message.file_type) === 'image') classes += ' no-background';
@@ -284,7 +282,7 @@ class ChatMessages extends Component {
     var agent = this.props.agent_list.filter(agent => agent.id === value);
 
     var r = confirm("Estás seguro de asignar este chat a otro agente?");
-    if (r == true) {
+    if (r === true) {
       var params = {
         agent: {
           retailer_user_id: agent[0] ? agent[0].id : null,
@@ -322,7 +320,7 @@ class ChatMessages extends Component {
       }
     }
 
-    if (showError || !files || files.length == 0) {
+    if (showError || !files || files.length === 0) {
       alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
     }
   }
@@ -415,6 +413,14 @@ class ChatMessages extends Component {
     return ENV['CURRENT_AGENT_ROLE'] !== 'Supervisor';
   }
 
+  chatAlreadyAssigned = () => {
+    return (
+      this.props.currentCustomer !== 0 &&
+      this.props.removedCustomer &&
+      this.props.currentCustomer === this.props.removedCustomerId
+    );
+  }
+
   setFocus = (position) => {
     if (!this.canSendMessages())
       return true;
@@ -446,14 +452,8 @@ class ChatMessages extends Component {
     this.caretPosition = caret;
   }
 
-  objectPresence = () => {
-    if ((this.state.selectedProduct && this.state.selectedProduct.attributes.image) ||
-      (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url)) {
-        return true;
-      }
-
-    return false;
-  }
+  objectPresence = () => ((this.state.selectedProduct && this.state.selectedProduct.attributes.image)
+      || (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url))
 
   sendLocation = (position) => {
     let text = {
@@ -481,7 +481,7 @@ class ChatMessages extends Component {
 
   timeMessage = (message) => {
     return (
-      <span className={message.sent_by_retailer == false ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_at).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
+      <span className={message.sent_by_retailer === false ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_at).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
     )
   }
 
@@ -532,47 +532,24 @@ class ChatMessages extends Component {
     return (
       <div className="row bottom-xs">
         {this.props.onMobile && (
-          <div className="col-xs-12 row mb-15">
-            <div className="col-xs-2 pl-0" onClick={() => this.props.backToChatList()}>
-              <i className="fas fa-arrow-left c-secondary fs-30 mt-12"></i>
-            </div>
-            <div className="col-xs-8 pl-0">
-              <div className="profile__name">
-                {`${this.props.customerDetails.first_name && this.props.customerDetails.last_name  ? `${this.props.customerDetails.first_name} ${this.props.customerDetails.last_name}` : this.props.customerDetails.phone}`}
-              </div>
-              <div className={this.props.customerDetails["unread_message?"] ? 'fw-bold' : ''}>
-                <small>{moment(this.props.customerDetails.recent_message_date).locale('es').fromNow()}</small>
-              </div>
-            </div>
-            <div className="col-xs-2 pl-0" onClick={() => this.props.editCustomerDetails()}>
-              <div className="c-secondary mt-12">
-                Editar
-              </div>
-            </div>
-          </div>
+          <MobileTopChatBar
+            backToChatList={this.props.backToChatList}
+            customerDetails={this.props.customerDetails}
+            editCustomerDetails={this.props.editCustomerDetails}
+          />
         )}
-        { this.props.currentCustomer != 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
-          (<div className="top-chat-bar pl-10">
-            <div className='assigned-to'>
-              <small>Asignado a: </small>
-              <select id="agents" value={this.props.newAgentAssignedId || this.props.customerDetails.assigned_agent.id || ''} onChange={(e) => this.handleAgentAssignment(e)}>
-                <option value="">No asignado</option>
-                {this.props.agent_list.map((agent, index) => (
-                  <option value={agent.id} key={index}>{`${agent.first_name && agent.last_name ? agent.first_name + ' ' + agent.last_name : agent.email}`}</option>
-                ))}
-              </select>
-            </div>
-            <div className='mark-no-read'>
-              <button onClick={(e) => this.setNoRead(e)} className='btn btn--cta btn-small right'>Marcar como no leído</button>
-            </div>
-          </div>
+        { this.props.currentCustomer !== 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
+          (
+            <TopChatBar
+              agent_list={this.props.agent_list}
+              customerDetails={this.props.customerDetails}
+              handleAgentAssignment={this.handleAgentAssignment}
+              newAgentAssignedId={this.props.newAgentAssignedId}
+              setNoRead={this.setNoRead}
+            />
           )}
         {this.state.isModalOpen && (
-          <div className="img_modal">
-            <div className="img_modal__overlay" onClick={(e) => this.toggleImgModal(e)}>
-            </div>
-            <img src={this.state.url} />
-          </div>
+          <ImageModal url={this.state.url} toggleImgModal={this.toggleImgModal}/>
         )}
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
           {this.state.messages.map((message) => (
@@ -590,11 +567,9 @@ class ChatMessages extends Component {
           ))}
           <div id="bottomRef" ref={this.bottomRef}></div>
         </div>
-        { this.props.currentCustomer != 0 && this.props.removedCustomer && this.props.currentCustomer == this.props.removedCustomerId ?
-          (
-            <div className="col-xs-12">
-              <p>Esta conversación ya ha sido asignada a otro usuario.</p>
-            </div>
+
+        { this.chatAlreadyAssigned() ? (
+            <AlreadyAssignedChatLabel/>
             )
           : (
             this.canSendMessages() &&

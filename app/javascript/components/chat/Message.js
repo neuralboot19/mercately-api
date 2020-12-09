@@ -1,65 +1,59 @@
 import React from "react";
+import ImageMessage from '../shared/messages/ImageMessage';
+import AudioMessage from '../shared/messages/AudioMessage';
+import DocumentMessage from '../shared/messages/DocumentMessage';
+import VideoMessage from '../shared/messages/VideoMessage';
+import LocationMessage from './messages/LocationMessage';
+import DefaultMessage from './messages/DefaultMessage';
 
-const ChatMessage = ({message, toggleImgModal, downloadFile, fileType, timeMessage}) => {
-  var tag;
+const ChatMessage = ({
+  message,
+  toggleImgModal,
+  downloadFile,
+  fileType,
+  timeMessage
+}) => {
+  let tag;
   switch (fileType(message.file_type)) {
     case 'image':
-      tag = <div className="img-holder">
-              <img src={message.url} className="msg__img" onClick={(e) => toggleImgModal(e)}/>
-              {message.is_loading && (
-                <div class="lds-dual-ring"></div>
-              )}
-            </div>
+      tag = <ImageMessage message={message} onClick={toggleImgModal} />;
       break;
     case 'audio':
-      tag = <div className="w-400 message-video-audio-content">
-              <audio controls>
-                <source src={message.url}/>
-              </audio>
-              {message.is_loading && (
-                <div class="lds-dual-ring"></div>
-              )}
-            </div>
+      tag = (
+        <AudioMessage
+          mediaUrl={message.url}
+          isLoading={message.is_loading}
+        />
+      );
       break;
     case 'file':
-        tag = <div className="fs-15">
-                <a href="" onClick={(e) => downloadFile(e, message.url, message.filename)}>
-                  <i className="fas fa-file-download mr-8"></i>{message.filename || 'Descargar archivo'}
-                </a>
-              </div>
-              {message.is_loading && (
-                <div class="lds-dual-ring"></div>
-              )}
-        break;
+      tag = (
+        <DocumentMessage
+          isLoading={message.is_loading}
+          caption={message.filename}
+          onClick={downloadFile}
+          url={message.url}
+        />
+      );
+      break;
     case 'video':
       tag = <div className="w-400 message-video-audio-content">
-              <video width="320" height="240" controls>
-                <source src={message.url}/>
-              </video>
+              <VideoMessage
+                url={message.url}
+              />
               {message.is_loading && (
                 <div class="lds-dual-ring"></div>
               )}
             </div>
       break;
     case 'location':
-      tag = <div className="fs-15">
-              <a href={message.url || message.text} target="_blank">
-                <i className="fas fa-map-marker-alt mr-8"></i>Ver ubicación
-              </a>
-            </div>
+      tag = <LocationMessage message={message} />
       break;
     default:
-        tag = <div className="text-pre-line">
-                {message.text}
-                <br />
-                <div className="f-right">
-                  {timeMessage(message)}
-                  {
-                  message.sent_by_retailer == true && message.date_read && (
-                    <i className="ml-7 fas fa-check-double checks-mark"></i>
-                  )}
-                </div>
-              </div>
+        tag = <DefaultMessage
+          message={message}
+          timeMessage={timeMessage}
+        />
   }
   return (tag)
 }

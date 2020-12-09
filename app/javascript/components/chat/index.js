@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import ChatMessages from './ChatMessages';
+import React, { Component } from "react";
+import ChatMessages from '../chat/ChatMessages';
 import ChatSideBar from '../shared/ChatSideBar';
-import CustomerDetails from '../shared/CustomerDetails';
-import FastAnswers from '../shared/FastAnswers';
-import Products from '../shared/Products';
+import CustomerDetails from './../shared/CustomerDetails';
+import FastAnswers from './../shared/FastAnswers';
+import Products from './../shared/Products';
 import SelectChatLabel from '../shared/SelectChatLabel';
 
-class WhatsAppChat extends Component {
+class Chat extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       currentCustomer: 0,
       currentCustomerDetails: {},
@@ -23,15 +23,16 @@ class WhatsAppChat extends Component {
       onMobile: false,
       showProducts: false,
       selectedProduct: null,
-      selectedFastAnswer: null,
-      activeChatBot: false
+      selectedFastAnswer: null
     };
   }
 
-  handleOpenChat = (customerDetails) => {
+  handleOpenChat = (customer_details) => {
+    customer_details["unread_message?"] = false;
     this.setState({
-      currentCustomer: customerDetails.id,
-      currentCustomerDetails: { ...customerDetails, ...{ "unread_whatsapp_message?": false } },
+      ...this.state,
+      currentCustomer: customer_details.id,
+      currentCustomerDetails: customer_details,
       removedCustomer: null,
       removedCustomerId: null,
       newAgentAssignedId: null,
@@ -43,45 +44,47 @@ class WhatsAppChat extends Component {
       this.setState({
         showChatList: false,
         showChatMessages: true
-      });
+      })
     }
   }
 
-  getScreenWidth = () => window.innerWidth
+  getScreenWidth = () => {
+    return window.innerWidth;
+  }
 
   backToChatList = () => {
     this.setState({
       showChatList: true,
       showChatMessages: false
-    });
+    })
   }
 
   backToChatMessages = () => {
     this.setState({
       showChatMessages: true,
       showCustomerDetails: false
-    });
+    })
   }
 
   editCustomerDetails = () => {
     this.setState({
       showChatMessages: false,
       showCustomerDetails: true
-    });
+    })
   }
 
   toggleFastAnswers = () => {
-    this.setState((prevState) => ({
-      showFastAnswers: !prevState.showFastAnswers,
+    this.setState({
+      showFastAnswers: !this.state.showFastAnswers,
       showProducts: false
-    }));
+    })
 
     if (this.state.onMobile) {
-      this.setState((prevState) => ({
-        showChatMessages: !prevState.showChatMessages,
+      this.setState({
+        showChatMessages: !this.state.showChatMessages,
         showCustomerDetails: false,
         showProducts: false
-      }));
+      })
     }
   }
 
@@ -89,28 +92,28 @@ class WhatsAppChat extends Component {
     this.setState({
       selectedFastAnswer: answer,
       selectedProduct: null
-    });
+    })
 
     if (this.state.onMobile) {
       this.setState({
         showFastAnswers: false,
         showChatMessages: true
-      });
+      })
     }
   }
 
   toggleProducts = () => {
-    this.setState((prevState) => ({
-      showProducts: !prevState.showProducts,
+    this.setState({
+      showProducts: !this.state.showProducts,
       showFastAnswers: false
-    }));
+    })
 
     if (this.state.onMobile) {
-      this.setState((prevState) => ({
-        showChatMessages: !prevState.showChatMessages,
+      this.setState({
+        showChatMessages: !this.state.showChatMessages,
         showCustomerDetails: false,
         showFastAnswers: false
-      }));
+      })
     }
   }
 
@@ -118,18 +121,18 @@ class WhatsAppChat extends Component {
     this.setState({
       selectedProduct: product,
       selectedFastAnswer: null
-    });
+    })
 
     if (this.state.onMobile) {
       this.setState({
         showProducts: false,
         showChatMessages: true
-      });
+      })
     }
   }
 
   componentDidMount() {
-    const screenWidth = this.getScreenWidth();
+    var screenWidth = this.getScreenWidth();
 
     if (screenWidth <= 767) {
       this.setState({
@@ -140,25 +143,16 @@ class WhatsAppChat extends Component {
         showFastAnswers: false,
         showProducts: false,
         onMobile: true
-      });
+      })
     }
   }
 
   setRemovedCustomerInfo = (data) => {
-    this.setState((prevState) => ({
+    this.setState({
       removedCustomer: data.remove_only,
       removedCustomerId: data.customer.customer.id,
-      newAgentAssignedId:
-        prevState.currentCustomer === data.customer.customer.id
-          ? data.customer.customer.assigned_agent.id
-          : null
-    }));
-  }
-
-  setActiveChatBot = (customer) => {
-    if (this.state.currentCustomer === customer.id) {
-      this.setState({ activeChatBot: customer.active_bot });
-    }
+      newAgentAssignedId: this.state.currentCustomer === data.customer.customer.id ? data.customer.customer.assigned_agent.id : null
+    })
   }
 
   render() {
@@ -167,25 +161,19 @@ class WhatsAppChat extends Component {
         <div className="box">
           <div className="row">
             {this.state.showChatList && (
-              <div className={
-                this.state.onMobile
-                  ? "col-xs-12 col-sm-3 chat_list_holder no-border-right"
-                  : "col-xs-12 col-sm-3 chat_list_holder"
-              }
-              >
+              <div className={this.state.onMobile ? "col-xs-12 col-sm-3 chat_list_holder no-border-right" : "col-xs-12 col-sm-3 chat_list_holder" }>
                 <ChatSideBar
                   handleOpenChat={this.handleOpenChat}
                   currentCustomer={this.state.currentCustomer}
-                  chatType="whatsapp"
+                  chatType="facebook"
                   setRemovedCustomerInfo={this.setRemovedCustomerInfo}
                   storageId={$('meta[name=user_storage]').attr("content")}
-                  setActiveChatBot={this.setActiveChatBot}
                 />
               </div>
             )}
 
             {this.state.currentCustomer === 0 && this.state.showChatMessagesSelect && (
-              <SelectChatLabel />
+              <SelectChatLabel/>
             )}
 
             {this.state.currentCustomer !== 0 && this.state.showChatMessages && (
@@ -205,40 +193,38 @@ class WhatsAppChat extends Component {
                   toggleProducts={this.toggleProducts}
                   selectProduct={this.selectProduct}
                   selectedProduct={this.state.selectedProduct}
-                  activeChatBot={this.state.activeChatBot}
                 />
               </div>
             )}
 
-            {this.state.currentCustomer !== 0
-            && this.state.showFastAnswers === false
-            && this.state.showProducts === false
-            && this.state.showCustomerDetails
-            && (
+            {this.state.currentCustomer !== 0 &&
+            this.state.showFastAnswers === false &&
+            this.state.showProducts === false &&
+            this.state.showCustomerDetails &&
               <div className="col-xs-12 col-sm-3">
                 <CustomerDetails
                   customerDetails={this.state.currentCustomerDetails}
-                  chatType="whatsapp_chats"
+                  chatType='facebook_chats'
                   onMobile={this.state.onMobile}
                   backToChatMessages={this.backToChatMessages}
                 />
               </div>
-            )}
-            {this.state.currentCustomer !== 0
-            && this.state.showFastAnswers
-            && (
+            }
+
+            {this.state.currentCustomer !== 0 &&
+            this.state.showFastAnswers &&
               <div className="col-xs-12 col-sm-3">
                 <FastAnswers
-                  chatType="whatsapp"
+                  chatType='facebook'
                   changeFastAnswer={this.changeFastAnswer}
                   toggleFastAnswers={this.toggleFastAnswers}
                   onMobile={this.state.onMobile}
                 />
               </div>
-            )}
-            {this.state.currentCustomer !== 0
-            && this.state.showProducts
-            && (
+            }
+
+            {this.state.currentCustomer !== 0 &&
+            this.state.showProducts &&
               <div className="col-xs-12 col-sm-3">
                 <Products
                   onMobile={this.state.onMobile}
@@ -246,12 +232,12 @@ class WhatsAppChat extends Component {
                   selectProduct={this.selectProduct}
                 />
               </div>
-            )}
+            }
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default WhatsAppChat;
+export default Chat;

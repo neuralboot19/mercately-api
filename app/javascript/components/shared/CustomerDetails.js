@@ -83,7 +83,7 @@ class CustomerDetails extends Component {
     if(e.which === 13) {
       e.preventDefault();
       if (this.state.newTag.trim() === '') return;
-      
+
       this.createTag();
     }
   }
@@ -110,7 +110,7 @@ class CustomerDetails extends Component {
       customer: {
         first_name: customer.first_name,
         last_name: customer.last_name,
-        email: customer.email, 
+        email: customer.email,
         id_type: customer.id_type,
         id_number: customer.id_number,
         address: customer.address,
@@ -149,8 +149,8 @@ class CustomerDetails extends Component {
               <p className="label inline-block">Nombres</p>
             </div>
             { Object.keys(this.state.customer).length != 0   && (
-              <div> 
-                <EditableField 
+              <div>
+                <EditableField
                   handleInputChange={this.handleInputChange}
                   content={this.state.customer.first_name}
                   handlesubmit={this.handlesubmit}
@@ -158,7 +158,7 @@ class CustomerDetails extends Component {
                   placeholder="Nombre"
                 />
                 <br />
-                <EditableField 
+                <EditableField
                  handleInputChange={this.handleInputChange}
                  content={this.state.customer.last_name}
                  handlesubmit={this.handlesubmit}
@@ -174,7 +174,7 @@ class CustomerDetails extends Component {
               <p className="label inline-block">Teléfono:</p>
             </div>
             <div>{this.state.customer.emoji_flag}
-              <EditableField 
+              <EditableField
                 handleInputChange={this.handleInputChange}
                 content={this.state.customer.phone}
                 handlesubmit={this.handlesubmit}
@@ -189,7 +189,7 @@ class CustomerDetails extends Component {
               <p className="label inline-block">Email:</p> <small className="validation-msg">{this.props.errors.email}</small>
             </div>
             { Object.keys(this.state.customer).length != 0   && (
-               <EditableField 
+               <EditableField
                  handleInputChange={this.handleInputChange}
                  content={this.state.customer.email}
                  handlesubmit={this.handlesubmit}
@@ -199,18 +199,18 @@ class CustomerDetails extends Component {
              )}
           </div>
           <div>
-            
+
             <div>
               <i className="fs-18 mt-4 mr-4 fas fa-address-card editable_card_id" />
               <p className="label inline-block">Identificación:</p>
             </div>
 
-            <SelectableField 
+            <SelectableField
               selected={customer.id_type}
               handleSelectChange={this.handleSelectChange}
             />
 
-            <EditableField 
+            <EditableField
               handleInputChange={this.handleInputChange}
               content={this.state.customer.id_number}
               handlesubmit={this.handlesubmit}
@@ -227,7 +227,7 @@ class CustomerDetails extends Component {
 
             { Object.keys(this.state.customer).length != 0   && (
               <div>
-                <EditableField 
+                <EditableField
                   handleInputChange={this.handleInputChange}
                   content={this.state.customer.address}
                   handlesubmit={this.handlesubmit}
@@ -235,7 +235,7 @@ class CustomerDetails extends Component {
                   placeholder="Dirección"
                 />
                 <br />
-                <EditableField 
+                <EditableField
                   handleInputChange={this.handleInputChange}
                   content={this.state.customer.city}
                   handlesubmit={this.handlesubmit}
@@ -243,7 +243,7 @@ class CustomerDetails extends Component {
                   placeholder="Ciudad"
                 />
                 <br />
-                <EditableField 
+                <EditableField
                   handleInputChange={this.handleInputChange}
                   content={this.state.customer.state}
                   handlesubmit={this.handlesubmit}
@@ -271,8 +271,8 @@ class CustomerDetails extends Component {
             </div>
 
             <div className="row bottom-xs">
-              {this.props.customer.tags && this.props.customer.tags.map((tag) => (
-                <div className="customer-saved-tags mt-10">
+              {this.props.customer.tags && this.props.customer.tags.map((tag, index) => (
+                <div key={index} className="customer-saved-tags mt-10">
                   {tag.tag}
                   {<i className="fas fa-times f-right mt-2 cursor-pointer" onClick={() => this.removeCustomerTag(tag)}></i>}
                 </div>
@@ -281,7 +281,7 @@ class CustomerDetails extends Component {
           </div>
 
           <div>
-            <EditableField 
+            <EditableField
               handleInputChange={this.handleInputChange}
               content={this.state.customer.notes}
               handlesubmit={this.handlesubmit}
