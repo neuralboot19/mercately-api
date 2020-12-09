@@ -1,4 +1,5 @@
 ActiveAdmin.register PaymentezTransaction do
+  menu parent: 'Transacciones'
   actions :all, except: %i[edit update destroy]
 
   index do

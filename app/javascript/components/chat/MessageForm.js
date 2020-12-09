@@ -19,7 +19,7 @@ const pickerI18n = {
     objects: 'Objetos',
     symbols: 'Símbolos',
     flags: 'Banderas',
-    custom: 'Custom',
+    custom: 'Custom'
   },
   categorieslabel: 'Categorías de los emojis',
   skintones: {
@@ -28,24 +28,24 @@ const pickerI18n = {
     3: 'Tono de piel claro medio',
     4: 'Tono de piel medio',
     5: 'Tono de piel oscuro medio',
-    6: 'Tono de piel oscuro',
+    6: 'Tono de piel oscuro'
   }
-}
+};
 
 class MessageForm extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       showEmojiPicker: false
-    }
+    };
   }
 
   handleSubmit = (e) => {
-    let input = $('#divMessage');
-    let text = input.text();
+    const input = $('#divMessage');
+    const text = input.text();
     if (text.trim() === '' && this.selectionPresent() === false) return;
 
-    let txt = this.getText();
+    const txt = this.getText();
     this.props.handleSubmitMessage(e, txt);
 
     this.setState({
@@ -56,61 +56,60 @@ class MessageForm extends Component {
   }
 
   handleFileSubmit = (e) => {
-    var el = e.target;
-    var file = el.files[0];
+    const el = e.target;
+    const file = el.files[0];
 
-    if(!['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file.type)) {
+    if (![
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ].includes(file.type)) {
       alert('Error: El archivo debe ser de tipo PDF o Word');
       return;
     }
 
     // Max 20 Mb allowed
-    if(file.size > 20*1024*1024) {
+    if (file.size > 20 * 1024 * 1024) {
       alert('Error: Maximo permitido 20MB');
       return;
     }
 
-    var data = new FormData();
+    const data = new FormData();
     data.append('file_data', file);
     this.props.handleSubmitImg(el, data);
   }
 
   onKeyPress = (e) => {
-    if(e.which === 13) {
+    if (e.which === 13) {
       e.preventDefault();
       this.handleSubmit(e);
     }
   }
 
-  componentWillReceiveProps(newProps){
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(newProps) {
     if (newProps.selectedFastAnswer) {
       $('#divMessage').html(newProps.selectedFastAnswer.attributes.answer);
     }
 
     if (newProps.selectedProduct) {
-      var productString = '';
-      productString += (newProps.selectedProduct.attributes.title + '\n');
-      productString += ('Precio $' + newProps.selectedProduct.attributes.price + '\n');
-      productString += (newProps.selectedProduct.attributes.description + '\n');
+      let productString = '';
+      productString += (`${newProps.selectedProduct.attributes.title}\n`);
+      productString += (`Precio $${newProps.selectedProduct.attributes.price}\n`);
+      productString += (`${newProps.selectedProduct.attributes.description}\n`);
       productString += (newProps.selectedProduct.attributes.url ? newProps.selectedProduct.attributes.url : '');
       $('#divMessage').html(productString);
     }
   }
 
   getText = () => {
-    let input = $('#divMessage');
-    let txt = input.html();
+    const input = $('#divMessage');
+    const txt = input.html();
 
     return txt.replace(/<br>/g, "\n");
   }
 
-  selectionPresent = () => {
-    if (this.props.objectPresence()) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  selectionPresent = () => this.props.objectPresence()
 
   getLocation = () => {
     if (navigator.geolocation) {

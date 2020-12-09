@@ -13,7 +13,7 @@
     <div class="single_post_entry_content">
       <span class="meta-category-small">
         <a class="single-post-entry-category" href="#">
-          <%= @document.tags&.first %>
+          <%= @document['blogentry.category'].as_text() %>
         </a>
       </span>
       <h1 class="single-post-title-main">
@@ -34,7 +34,13 @@
     <div class="col-md-12">
       <div class="entry-blog-content-wrapper">
         <%=  @document['blogentry.blog_content'].as_html(link_resolver()).html_safe %>
+        <div class="tag-container">
+          <% @document.tags.each do |tag| %>
+            <span><%= link_to tag, blog_tags_path(tag.downcase) %></span>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
 </div>
+

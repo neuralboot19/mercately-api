@@ -22,6 +22,7 @@ class Retailer < ApplicationRecord
   has_many :payment_methods, dependent: :destroy
   has_many :paymentez_credit_cards, dependent: :destroy
   has_many :paymentez_transactions
+  has_many :stripe_transactions
 
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy

@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import moment from 'moment';
 
-class ChatListUser extends Component {
+class ChatListItem extends Component {
   constructor(props) {
     super(props)
   }
@@ -98,8 +98,8 @@ class ChatListUser extends Component {
             </div>
           )}
           <div className="row mt-15 w-100 show-to-right">
-            {customer.tags && customer.tags.length > 0 && customer.tags.map((tag) =>
-              <div className="customer-tags-chats">
+            {customer.tags && customer.tags.length > 0 && customer.tags.map((tag, index) =>
+              <div key={index} className="customer-tags-chats">
                 {tag.tag}
               </div>
             )}
@@ -119,4 +119,4 @@ function mapState(state) {
 
 export default connect(
   mapState
-)(withRouter(ChatListUser));
+)(withRouter(ChatListItem));

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_27_151313) do
+ActiveRecord::Schema.define(version: 2020_12_07_150039) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -283,7 +283,6 @@ ActiveRecord::Schema.define(version: 2020_11_27_151313) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
-    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -339,6 +338,21 @@ ActiveRecord::Schema.define(version: 2020_11_27_151313) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
+  end
+
+  create_table "gs_templates", force: :cascade do |t|
+    t.integer "status", default: 0, null: false
+    t.string "label"
+    t.integer "key", default: 0, null: false
+    t.string "category"
+    t.text "text"
+    t.text "example"
+    t.string "language", default: "spanish"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "retailer_id"
+    t.text "reason"
+    t.index ["retailer_id"], name: "index_gs_templates_on_retailer_id"
   end
 
   create_table "gupshup_whatsapp_messages", force: :cascade do |t|
@@ -683,10 +697,6 @@ ActiveRecord::Schema.define(version: 2020_11_27_151313) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -697,6 +707,10 @@ ActiveRecord::Schema.define(version: 2020_11_27_151313) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -733,10 +747,10 @@ ActiveRecord::Schema.define(version: 2020_11_27_151313) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "gupshup_phone_number"
-    t.string "gupshup_src_name"
     t.string "karix_account_uid"
     t.string "karix_account_token"
+    t.string "gupshup_phone_number"
+    t.string "gupshup_src_name"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
@@ -767,6 +781,16 @@ ActiveRecord::Schema.define(version: 2020_11_27_151313) do
     t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
+  create_table "stripe_transactions", force: :cascade do |t|
+    t.integer "retailer_id"
+    t.string "stripe_id"
+    t.integer "amount"
+    t.bigint "payment_method_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["payment_method_id"], name: "index_stripe_transactions_on_payment_method_id"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -832,6 +856,7 @@ ActiveRecord::Schema.define(version: 2020_11_27_151313) do
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
   add_foreign_key "facebook_retailers", "retailers"
+  add_foreign_key "gs_templates", "retailers"
   add_foreign_key "gupshup_whatsapp_messages", "customers"
   add_foreign_key "gupshup_whatsapp_messages", "retailers"
   add_foreign_key "karix_whatsapp_messages", "customers"

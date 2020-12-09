@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
   var token =  $('meta[name="csrf-token"]').attr('content');
+  var pcc = $('#paymentez_credit_card').val();
 
   var submit_purchase_plan = $('#submit_purchase_plan');
   submit_purchase_plan.attr('disabled', true);
@@ -47,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
       body = {
         card: {
           amount: $('#selected_plan_price').text(),
-          cc_id: $('#paymentez_credit_card').val(),
+          cc_id: pcc,
           plan: $('#selected_plan').val(),
           terms: $('#agree_terms').prop('checked')
         }
@@ -68,12 +69,13 @@ document.addEventListener("DOMContentLoaded", function() {
       body = {
         card: {
           amount: $('#amount').val(),
-          cc_id: $('#paymentez_credit_card').val()
+          cc_id: pcc || $('#stripe_card').val()
         }
       };
 
       // Send the request to add balance
-      make_request(body, '/paymentez/add_balance')
+      url = pcc ? '/paymentez/add_balance' : '/stripe/add_balance'
+      make_request(body, url)
     });
   }
 

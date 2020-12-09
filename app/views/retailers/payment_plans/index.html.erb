@@ -64,11 +64,16 @@
                     <legend>Monto</legend>
                     <input type="number" class="input" min="10" name="amount" id="amount" value="25">
                     <i class="validation-msg"></i>
+                    <i class="subtitle">El monto mínimo son 10$</i>
                   </div>
                   <div class="my-16 col-xs-12 col-md-6">
                     <legend>Seleccionar Tarjeta</legend>
                     <div class="col-xs-12">
-                      <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
+                      <% if current_retailer.ecu_charges %>
+                        <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
+                      <% elsif current_retailer.int_charges %>
+                        <%= select_tag :stripe_card, options_for_select(stripe_cards(current_retailer.payment_methods)), class: 'input' %>
+                      <% end %>
                     </div>
                     <i class="validation-msg"></i>
                   </div>
@@ -86,6 +91,35 @@
         </div>
       </div>
     </div>
+    <% if current_retailer.stripe_transactions.exists? %>
+      <div class="card mt-60 pl-40 pr-40 pt-35 pb-40 container-payment-plan_card">
+        <h3 class="m-0 mb-10 container-payment-plan_sub-title">Historial de recargas</h3>
+        <table class="w-100 t-center">
+          <thead class="c-secondary">
+            <tr>
+              <th class="t-justify p-5">Año</th>
+              <th class="t-justify p-5">Mes</th>
+              <th class="t-justify p-5">Día</th>
+              <th class="p-5">Costo</th>
+              <th class="t-justify p-5">Estado</th>
+              <th class="p-5">Tarjeta</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% current_retailer.stripe_transactions.order(id: :desc).each do |t| %>
+              <tr>
+                <td class="t-justify py-18 pl-5"><%= t.created_at.year %></td>
+                <td class="t-justify pl-5"><%= FormatHelper.date_month(t.created_at.month) %></td>
+                <td class="t-justify pl-5"><%= t.created_at.day %></td>
+                <td><%= '$%05.2f' % t.amount %></td>
+                <td class="t-justify pl-5">Pagado</td>
+                <td><%= stripe_credit_card(t.payment_method_id).first %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
     <% if current_retailer.paymentez_transactions.present? %>
       <div class="card mt-60 pl-40 pr-40 pt-35 pb-40 container-payment-plan_card">
         <h3 class="m-0 mb-10 container-payment-plan_sub-title">Historial de facturación</h3>
@@ -295,11 +329,11 @@
                   <% end %>
 
                   <% if current_retailer.paymentez_credit_cards.any? %>
-                        <div class="my-16 col-xs-12">
-                          <legend>Seleccione una de sus tarjetas</legend>
-                          <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
-                          <i class="validation-msg"></i>
-                        </div>
+                    <div class="my-16 col-xs-12">
+                      <legend>Seleccione una de sus tarjetas</legend>
+                      <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
+                      <i class="validation-msg"></i>
+                    </div>
                     </div>
 
                     <div class="col-xs-12">

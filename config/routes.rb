@@ -101,6 +101,11 @@ Rails.application.routes.draw do
         end
       end
       resources :tags
+      resources :stripe, only: [:create] do
+        collection do
+          post :add_balance
+        end
+      end
 
       resources :sales_channels
       resources :chat_bots, except: [:destroy] do
@@ -192,6 +197,9 @@ Rails.application.routes.draw do
 
   get '/blog', to: 'blogs#index', as: :blog
   get '/blog/:id', to: 'blogs#show', as: :blog_content
+  get '/categoria/:id', to: 'blogs#category', as: :blog_category
+  get '/tag/:id', to: 'blogs#tag', as: :blog_tags
+
   get '/:slug/:web_id', to: 'pages#product', as: :product_catalog
   get '/:slug', to: 'pages#catalog', as: :catalog
 end
