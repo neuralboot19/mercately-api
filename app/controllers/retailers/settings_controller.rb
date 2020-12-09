@@ -4,12 +4,13 @@ class Retailers::SettingsController < RetailersController
                                   :remove_team_member, :reactive_team_member]
 
   def team
-    unless current_retailer_user.admin? || current_retailer_user.supervisor?
+    if current_retailer_user.agent?
       redirect_to root_path
       return
     end
 
-    @team = current_retailer.retailer_users.reject { |u| u == current_retailer_user }
+    @team = current_retailer.retailer_users.order(:id)
+    @team = @team.reject { |u| u == current_retailer_user } unless current_retailer_user == @team.first
     @user = RetailerUser.new
   end
 
@@ -24,7 +25,10 @@ class Retailers::SettingsController < RetailersController
       u.skip_invitation = true
     end
 
-    if user&.persisted?
+    if user&.errors.present?
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: user.errors.full_messages.join(', ')
+    elsif user&.persisted?
       user.update_column(:invitation_sent_at, Time.now.utc) if RetailerMailer.invitation(user).deliver_now
 
       redirect_back fallback_location: retailers_dashboard_path(@retailer),

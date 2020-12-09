@@ -8,7 +8,7 @@
             Invita a tu equipo de trabajo
           </div>
 
-          <% if current_retailer_user.retailer_admin %>
+          <% unless current_retailer_user.agent? %>
             <%= form_for @user, url: invite_team_member_path(current_retailer), html: { class: 'validate-form p-0' } do |f| %>
               <fieldset class="row fieldset mt-16">
                 <div class="col-md m-16">
@@ -28,6 +28,8 @@
                 </div>
 
                 <div class="col-md-4 m-16">
+                  <%= f.label 'Rol' %> <label for="modal--toggle" class="c-secondary modal__toggler"><i class="fas fa-info-circle fs-15"></i></label> <br>
+                  <%= f.radio_button :retailer_agent, 'retailer_agent', name: 'retailer_user[role]', checked: true %> Agente<br>
                   <% [:retailer_admin, :retailer_supervisor].each do |role| %>
                     <% role_label = role == :retailer_admin ? 'Administrador' : 'Supervisor' %>
                     <%= f.radio_button role, role.to_s, name: 'retailer_user[role]' %> <%= role_label %><br>
@@ -57,11 +59,14 @@
               <div class="col-sm-1"></div>
             </div>
 
-            <% @team.each do |member| %>
+            <% @team.each_with_index do |member, index| %>
               <div class="divider"></div>
               <div class="table__item row middle-xs">
                 <div class="col-xs-6 col-sm-3">
                   <div class="t-center truncate"><%= member.full_name %></div>
+                  <% if index == 0 %>
+                    <div class="t-center truncate c-green">Dueño de la cuenta</div>
+                  <% end %>
                 </div>
                 <div class="col-xs-6 col-sm-2">
                   <div class="t-center truncate"><%= member.email %></div>
@@ -88,7 +93,7 @@
                       <span class="c-red"><%= 'Inactivo' %></span>
                     <% elsif member.invitation_accepted_at %>
                       <span class="c-green"><%= 'Aceptado' %></span>
-                    <% else %>
+                    <% elsif member.invitation_token.present? && member.invitation_accepted_at.blank? %>
                       <span class="c-secondary"><%= 'Invitado' %></span>
                     <% end %>
                   </div>
@@ -161,6 +166,66 @@
                 </div>
               </div>
             <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" />
+<div class="modal">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal__background" for="modal--toggle"></label>
+        <div class="modal__window box p-16">
+          <div class="row middle-xs">
+            <div class="col-xs-8 col-sm-8">
+              <h1 class="d-inline name">Permisos por Rol</h1>
+            </div>
+            <div class="col-xs-4 col-sm-4">
+              <div class="index__ctas f-right">
+                <label class="btn btn--no-border c-red" for="modal--toggle">
+                  <i class="fas fa-times mr-5"></i>
+                  Cerrar
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div>Agente:</div>
+            </div>
+            <div class="col-xs-12">
+              <ul>
+                <li class="c-gray-label">Solo puede ver los chats que le han sido asignados, así como los que no tienen
+                  ninguna asignación.</li>
+                <li class="c-gray-label">No tiene acceso al módulo de estadísticas.</li>
+                <li class="c-gray-label">No tiene acceso a la configuración de equipo.</li>
+              </ul>
+            </div>
+            <div class="col-xs-12">
+              <div>Administrador:</div>
+            </div>
+            <div class="col-xs-12">
+              <ul>
+                <li class="c-gray-label">Puede enviar y recibir mensajería, incluso desde chats que estén asignados a
+                  otros agentes.</li>
+                <li class="c-gray-label">Tiene acceso a todas las funcionalidades del negocio.</li>
+              </ul>
+            </div>
+            <div class="col-xs-12">
+              <div>Supervisor:</div>
+            </div>
+            <div class="col-xs-12">
+              <ul>
+                <li class="c-gray-label">Puede ver todos los chats, pero no puede responderlos.</li>
+                <li class="c-gray-label">Tiene acceso a todas las funcionalidades del negocio, excepto enviar mensajería.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

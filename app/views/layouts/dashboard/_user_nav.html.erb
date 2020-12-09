@@ -33,7 +33,7 @@
                   Editar perfil
                 <% end %>
               </li>
-              <% if current_retailer_user.retailer_admin? %>
+              <% unless current_retailer_user.agent? %>
                 <li>
                   <%= link_to edit_team_path(current_retailer), class: 'no-style' do %>
                     <i class="fas fa-users mr-8"></i>
