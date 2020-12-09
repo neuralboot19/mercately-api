@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import ReplyMessage from './replies/ReplyMessage';
-import TextMessage from './messages/TextMessage';
+import RepliedMessage from '../shared/messages/replied/RepliedMessage';
+import TextMessage from '../shared/messages/TextMessage';
 import AudioMessage from '../shared/messages/AudioMessage';
-import VideoMessage from '../shared/messages/VideoMessage';
-import LocationMessage from './messages/LocationMessage';
-import DocumentMessage from '../shared/messages/DocumentMessage';
 import ContactMessage from './messages/ContactMessage';
+import DocumentMessage from '../shared/messages/DocumentMessage';
+import LocationMessage from '../shared/messages/LocationMessage';
 import ImageMessage from '../shared/messages/ImageMessage';
+import VideoMessage from '../shared/messages/VideoMessage';
 
 class Message extends Component {
   downloadFile = (e, fileUrl, filename) => {
@@ -23,7 +23,7 @@ class Message extends Component {
       <div>
         {this.props.message.replied_message
         && (
-          <ReplyMessage
+          <RepliedMessage
             downloadFile={this.downloadFile}
             message={this.props.message.replied_message}
             toggleImgModal={this.props.toggleImgModal}
@@ -32,6 +32,7 @@ class Message extends Component {
         {this.props.message.content_type === 'text'
         && (
           <TextMessage
+            chatType="whatsapp"
             handleMessageEvents={this.props.handleMessageEvents}
             message={this.props.message}
           />
@@ -41,6 +42,7 @@ class Message extends Component {
         && (
           <ImageMessage
             chatType="whatsapp"
+            handleMessageEvents={this.props.handleMessageEvents}
             message={this.props.message}
             onClick={this.props.toggleImgModal}
           />
@@ -49,21 +51,26 @@ class Message extends Component {
         && (this.props.message.content_media_type === 'voice' || this.props.message.content_media_type === 'audio')
         && (
           <AudioMessage
-            mediaUrl={this.props.message.content_media_url}
+            chatType="whatsapp"
+            handleMessageEvents={this.props.handleMessageEvents}
+            message={this.props.message}
           />
         )}
         {this.props.message.content_type === 'media'
         && this.props.message.content_media_type === 'video'
         && (
           <VideoMessage
-            url={this.props.message.content_media_url}
+            chatType="whatsapp"
+            handleMessageEvents={this.props.handleMessageEvents}
+            message={this.props.message}
           />
         )}
         {this.props.message.content_type === 'location'
         && (
           <LocationMessage
-            latitude={this.props.message.content_location_latitude}
-            longitude={this.props.message.content_location_longitude}
+            chatType="whatsapp"
+            handleMessageEvents={this.props.handleMessageEvents}
+            message={this.props.message}
           />
         )}
         {this.props.message.content_type === 'media'
@@ -71,19 +78,18 @@ class Message extends Component {
         && (
           <DocumentMessage
             chatType="whatsapp"
-            onClick={this.downloadFile}
+            handleMessageEvents={this.props.handleMessageEvents}
             message={this.props.message}
+            onClick={this.downloadFile}
           />
         )}
-        {this.props.message.content_media_caption
-        && (<div className="caption text-pre-line">{this.props.message.content_media_caption}</div>)}
         {this.props.message.content_type === 'contact'
-        && this.props.message.contacts_information.map((contact) => (
+        && (
           <ContactMessage
-            key={contact.id}
-            contact={contact}
+            message={this.props.message}
+            handleMessageEvents={this.props.handleMessageEvents}
           />
-        ))}
+        )}
       </div>
     );
   }

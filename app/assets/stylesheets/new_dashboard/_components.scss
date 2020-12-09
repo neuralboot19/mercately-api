@@ -853,6 +853,71 @@ h1 {
   &.no-background {
     background: unset !important;
   }
+
+  &.media-container {
+    padding: 0;
+    width: 300px;
+  }
+
+  .video-content {
+    position: relative;
+  }
+
+  .audio-content {
+    position: relative;
+  }
+
+  .media-content {
+    position: relative;
+    height: 300px;
+    border: 5px solid #F1F0F0;
+    border-radius: 0;
+  }
+
+  .media-caption {
+    background: #F1F0F0;
+    border-radius: 0 0 20px 20px;
+    padding: 6px 14px 6px 14px;
+    color: initial;
+  }
+
+  .img-holder {
+    width: 300px;
+  }
+
+  .msg__img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    max-width: unset !important;
+    max-height: unset !important;
+  }
+
+  %media-message-status {
+    position: absolute;
+    right: 4px;
+    bottom: 0;
+  }
+
+  .img-video-message-status {
+    @extend %media-message-status;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 1);
+    span {
+      color: #FFF;
+    }
+  }
+
+  .audio-message-status {
+    @extend %media-message-status;
+    span, i {
+      color: #646464;
+    }
+  }
+
+  span.inbound-media {
+    color: #FFF;
+  }
+
 }
 
 i {
@@ -888,6 +953,12 @@ i {
 .message-by-retailer {
   background: #3d8bfc !important;
   color: #FFF;
+
+
+  .img-holder {
+    text-align: right;
+  }
+
 
   &.read-message {
     background-color: #00A652 !important;

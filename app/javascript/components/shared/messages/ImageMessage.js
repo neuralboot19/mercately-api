@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import MediaMessageStatus from '../MediaMessageStatus';
 
-function ImageMessage(props) {
+function ImageMessage({
+  chatType,
+  handleMessageEvents,
+  message,
+  onClick
+}) {
   const [url, setUrl] = useState('');
 
   const getMsnUrl = () => {
-    if (!props.message.mid) {
-      setUrl(props.message.url);
+    if (!message.mid) {
+      setUrl(message.url);
       return;
     }
 
+    // eslint-disable-next-line no-undef
     FB.api(
-      `/${props.message.mid}`,
+      `/${message.mid}`,
       'get',
       {
+        // eslint-disable-next-line no-undef
         access_token: ENV.FANPAGE_TOKEN,
         fields: 'message, attachments'
       },
@@ -30,8 +38,8 @@ function ImageMessage(props) {
   };
 
   useEffect(() => {
-    if (props.chatType === 'whatsapp') {
-      setUrl(props.message.content_media_url);
+    if (chatType === 'whatsapp') {
+      setUrl(message.content_media_url);
     } else {
       getMsnUrl();
     }
@@ -39,15 +47,28 @@ function ImageMessage(props) {
 
   return (
     <div className="img-holder">
-      <img
-        src={url}
-        className="msg__img"
-        onClick={(e) => props.onClick(e)}
-        alt=""
-      />
-      {props.message.is_loading && (
-        <div className="lds-dual-ring" />
-      )}
+      <div>
+        <div className="media-content">
+          {message.is_loading && (
+            <div className="lds-dual-ring" />
+          )}
+          <img
+            src={url}
+            className="msg__img"
+            onClick={(e) => onClick(e)}
+            alt=""
+            style={{display: "block"}}
+          />
+          <MediaMessageStatus
+            chatType={chatType}
+            message={message}
+            handleMessageEvents={handleMessageEvents}
+            mediaMessageType="image"
+          />
+        </div>
+        {message.content_media_caption
+        && (<div className="media-caption text-pre-line">{message.content_media_caption}</div>)}
+      </div>
     </div>
   );
 }
