@@ -1,0 +1,97 @@
+<style type="text/css" media="screen">
+.subtitle {
+  color: #aaa;
+  font-size: 12px;
+  a {
+    color: #aaa;
+  }
+}
+</style>
+<div class="box p-relative card mt-14 pl-40 pr-40 pt-35 form-container_card">
+  <%= form_for [:retailers, @gs_template], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
+    <div class="box">
+      <fieldset class="fieldset-to-replace row">
+        <h3 class="form-container_sub-title mt-0 ml-8">Plantilla de WhatsApp</h3>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12 col-md-4">
+            <%= f.label :label, 'Etiqueta' %>
+            <%= f.text_field :label, class: 'input validate-required' %>
+            <i class="validation-msg"></i>
+            <i class="subtitle">(Solo se permiten letras minusculas, caracteres alfanumericos y guiones bajos(_))</i>
+          </div>
+          <div class="my-16 col-xs-12 col-md-4">
+            <%= f.label :category, 'Categoria' %>
+            <%= select_tag 'gs_template[category]', raw(%Q{
+              <option disabled #{'selected' if gs_template.category.blank?} value="" hidden></option>
+              <option #{'selected' if gs_template.category.blank?} value="ACCOUNT_UPDATE">ACCOUNT_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'PAYMENT_UPDATE'} value="PAYMENT_UPDATE">PAYMENT_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'PERSONAL_FINANCE_UPDATE'} value="PERSONAL_FINANCE_UPDATE">PERSONAL_FINANCE_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'SHIPPING_UPDATE'} value="SHIPPING_UPDATE">SHIPPING_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'RESERVATION_UPDATE'} value="RESERVATION_UPDATE">RESERVATION_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'ISSUE_RESOLUTION'} value="ISSUE_RESOLUTION">ISSUE_RESOLUTION</option>
+              <option #{'selected' if gs_template.category == 'APPOINTMENT_UPDATE'} value="APPOINTMENT_UPDATE">APPOINTMENT_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'TRANSFORMATION_UPDATE'} value="TRANSFORMATION_UPDATE">TRANSFORMATION_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'TICKET_UPDATE'} value="TICKET_UPDATE">TICKET_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'ALERT_UPDATE'} value="ALERT_UPDATE">ALERT_UPDATE</option>
+              <option #{'selected' if gs_template.category == 'AUTO_REPLY'} value="AUTO_REPLY">AUTO_REPLY</option>
+            }.squish), class: 'input h-unset w-100 validate-required' %>
+            <i class="validation-msg"></i>
+          </div>
+          <div class="my-16 col-xs-12 col-md-4">
+            <%= f.label :language, 'Idioma' %>
+            <%= select_tag 'gs_template[language]', raw(%Q{
+              <option #{'selected' if gs_template.language == 'spanish'} value="spanish">Español</option>
+              <option #{'selected' if gs_template.language == 'english'} value="english">Inglés</option>
+            }.squish), class: 'input h-unset w-100 validate-required' %>
+            <i class="validation-msg"></i>
+          </div>
+        </div>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :text, 'Texto de la plantilla' %>
+            <%= f.text_area :text, class: 'input mh-100 validate-required h-unset' %>
+            <i class="validation-msg"></i>
+            <i class="subtitle">
+              (Las variables deben ser números (a partir del 1) encerrados entre doble llaves {{}})
+              <br/>
+              Ejemplo: Buenas tardes <b>{{1}}</b>, tu compra será entragada a las <b>{{2}}</b>
+            </i>
+          </div>
+          <div class="my-16 col-xs-12 col-md-6">
+            <%= f.label :example, 'Ejemplo de la plantilla' %>
+            <%= f.text_area :example, class: 'input mh-100 validate-required h-unset' %>
+            <i class="validation-msg"></i>
+            <i class="subtitle">
+              (Un mensaje de muestra debe ser un mensaje completo que reemplace el marcador de posición dado en la plantilla con una palabra / declaración / números / caracteres especiales significativos.)
+              <br/>
+              Ejemplo: Buenas tardes <b>[Michael]</b>, tu compra será entragada a las <b>[14h00 del dia de hoy]</b>
+            </i>
+          </div>
+        </div>
+      </fieldset>
+      <div class="my-16 t-right hide-on-xs">
+        <%= link_to 'Cancelar', retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'cancel-link mr-30' %>
+        <%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
+      </div>
+      <div class="hide-on-xs-and-up t-center my-16">
+        <div><%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %></div>
+        <div class="mt-20"><%= link_to 'Cancelar', retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'cancel-link' %></div>
+      </div>
+    </div>
+  <% end %>
+</div>
+<script charset="utf-8">
+  $(document).ready(function () {
+    $("#gs_template_label").keyup(function () {
+      this.value = this.value.replace(/ /g, "_");
+      this.value = this.value.toLowerCase();
+      this.value = this.value.replace(/[^a-z0-9_]/gi,'');
+    });
+  });
+</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#gs_template_text").emojioneArea();
+    $("#gs_template_example").emojioneArea();
+  });
+</script>

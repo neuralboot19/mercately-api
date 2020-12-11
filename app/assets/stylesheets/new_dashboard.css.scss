@@ -7,6 +7,7 @@
 @import 'new_dashboard/_helpers';
 @import 'new_dashboard/payment_plans';
 @import 'devise';
+@import 'emojionearea.min';
 
 #stripe-error {
   color: #fb0545;
@@ -66,7 +67,7 @@
 }
 
 #sidebar--pc li img {
-  width: 30px;
+  width: 28px;
 }
 
 .select2-container .select2-selection--single {
@@ -228,7 +229,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 80px;
+  width: 65px;
   height: 100vh;
   background-color: #FFF;
   z-index: 100;
@@ -1439,4 +1440,8 @@
             justify-content:space-around}.between-sm{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}
             .first-sm{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-sm{-webkit-box-ordinal-group:2;-ms-flex-order:1;
               order:1}
+}
+
+.mh-100 {
+  min-height: 100px;
 }
