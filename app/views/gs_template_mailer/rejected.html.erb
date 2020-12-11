@@ -1,0 +1,41 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color">Hola <%= @retailer.admins.first.full_name %>, te saluda el equipo de Mercately.</p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 t-color lg-18">
+      Te escribimos para comentarte que la plantilla:
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 t-color lg-14">
+      <%= @gs_template.text %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-15 t-color">
+      Lamentablemente no ha sido aprobada. Whatsapp no nos envía una razón del porqué de esta decisión. Sin embargo, te recomendamos que revises las políticas de aprobación de plantillas que se encuentran en este
+      <%= link_to 'https://mercately.crunch.help/integraciones/como-crear-plantillas-de-whats-app-hsm', target: :_blank do %>
+        enlace.
+      <% end %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-15 t-color">
+      Te recomendamos enviar una nueva plantilla, o hacer pequeñas variaciones a la ya enviada a fin de que esta vez si tengas una respuesta positiva.
+      </p>
+    </div>
+
+    <%= render "shared/emails/footer" %>
+  </div>
+</div>

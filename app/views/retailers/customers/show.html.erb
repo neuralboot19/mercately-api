@@ -348,23 +348,33 @@
           <div class="row">
             <div class="col-xs-12">
               <div class="col-md-12">
-                <p class="fs-30 mt-0">Plantillas</p>
-              </div>
-              <div id="karix-templates-list">
-                <% @customer.retailer.whatsapp_templates.active.each_with_index do |template, index| %>
-                  <div class="row">
-                    <div class="col-md-10">
-                      <p id="template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
-                      <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
-                      <p id="template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
-                      <p id="gupshup-template-id-<%= index %>" class="d-none"><%= template.gupshup_template_id %></p>
-                    </div>
-                    <div class="col-md-2">
-                      <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>
-                    </div>
-                  </div>
+                <p class="fs-30 mt-0">
+                <% if current_retailer.whatsapp_templates.active.exists? %>
+                  Plantillas
+                <% else %>
+                  No tienes plantillas creadas
                 <% end %>
+                </p>
               </div>
+              <% if current_retailer.whatsapp_templates.active.exists? %>
+                <div id="karix-templates-list">
+                  <% @customer.retailer.whatsapp_templates.active.each_with_index do |template, index| %>
+                    <div class="row">
+                      <div class="col-md-10">
+                        <p id="template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
+                        <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
+                        <p id="template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
+                        <p id="gupshup-template-id-<%= index %>" class="d-none"><%= template.gupshup_template_id %></p>
+                      </div>
+                      <div class="col-md-2">
+                        <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% else %>
+                <%= render "retailers/shared/no_templates" %>
+              <% end %>
               <div id="karix-template-edition" class="col-xs-12">
                 <div id="karix-template-text">
                 </div>

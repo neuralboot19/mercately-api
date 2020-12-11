@@ -24,6 +24,7 @@ class Retailer < ApplicationRecord
   has_many :paymentez_transactions
   has_many :stripe_transactions
 
+  has_many :gs_templates, dependent: :destroy
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
   has_one :facebook_catalog, dependent: :destroy

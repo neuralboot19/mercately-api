@@ -592,30 +592,47 @@
   width: 100%;
   position: relative;
   display: inline-block;
+
+  &:hover {
+    &::after {
+      display: block;
+    }
+  }
 }
 
 /* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
   display: inline-table;
-  background-color: #555;
-  color: #FFF;
+  background-color: #FFF;
+  color: #000;
   text-align: justify;
-  padding: 5px 14px;
-  border: 1px solid #555;
+  padding: 10px 17px;
+  border: 1px solid #FFF;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 14px;
   max-width: unset;
+  -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.2);
 
   /* Position the tooltip text */
   position: absolute;
   z-index: 1;
-  top: 4px;
-  left: 89px;
+  top: 0px;
+  left: 70px;
 
   /* Fade in tooltip */
   opacity: 0;
   transition: opacity 0.3s;
+
+  &--big {
+    width: 210px;
+  }
+
+  &--medium {
+    width: 140px;
+  }
 
   &.positioned {
     top: -15px;
@@ -631,7 +648,26 @@
   margin-top: -7px;
   border-width: 7px;
   border-style: solid;
-  border-color: transparent #555 transparent transparent;
+  border-color: transparent #FFF transparent transparent;
+}
+
+.tooltip::after {
+  content: " ";
+  display: none;
+  position: absolute;
+  top: 0%;
+  left: 90%;
+  width: 30px;
+  height: 40px;
+
+  &:hover {
+    display: block;
+
+    .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */

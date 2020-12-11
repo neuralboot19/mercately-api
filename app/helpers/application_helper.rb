@@ -49,7 +49,7 @@ module ApplicationHelper
   end
 
   def og_url
-    content_for?(:og_url) ? content_for(:og_url) : ""
+    content_for?(:og_url) ? content_for(:og_url) : request.host + request.path
   end
 
   def og_image

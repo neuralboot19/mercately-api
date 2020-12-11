@@ -85,7 +85,7 @@
 
   .blog-hero-content {
     background: #692586;
-    height: 290px;
+    padding-bottom: 40px;
   }
 
   .blog-hero-content h1 {
@@ -309,21 +309,21 @@
     line-height: 250px;
     text-align: center;
     background-color: #692586;
-    margin: 80px 80px;
+    margin: 25px 0px;
   }
 
   .post-sell p {
     display: inline-block;
     vertical-align: middle;
     line-height: normal;
-    font-size: 25px;
+    font-size: 15px;
     color: #FFF;
     width: 80%;
   }
 
   .post-sell-cta {
     margin-top: 23px;
-    font-size: 16px;
+    font-size: 12px;
     border: 1px solid rgba(255, 255, 255, 0.65);
     padding: 10px 25px;
     border-radius: 25px;
@@ -375,7 +375,7 @@
     -ms-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
     height: auto;
-    max-width: 600px;
+    width: 90%;
     z-index: 1;
     text-align: center;
     padding: 0px;
@@ -414,7 +414,7 @@
     width: 100%;
     text-align: center;
     color: #FFF;
-    font-size: 28px;
+    font-size: 25px;
     font-weight: 600 !important;
     text-transform: capitalize !important;
     letter-spacing: -0.03em !important;
@@ -430,7 +430,7 @@
   }
 
   .entry-blog-content-wrapper {
-    margin: 50px 0px;
+    margin: 35px 0px;
   }
 
   .tag-container {
@@ -444,8 +444,37 @@
     border-radius: 5px;
     color: rgba(117, 117, 117, 1);
     margin-right: 25px;
+    margin-top: 8px;
+    display: inline-block;
   }
 
+  .entry-blog-ad {
+    width: 100%;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    background-color: #4CDEAA;
+    border-radius: 25px;
+    color: #fff;
+    padding: 15px 25px;
+    text-align: center;
+  }
+
+  .entry-blog-ad-title {
+    font-size: 25px;
+    font-weight: bold;
+    margin-bottom: -6px;
+  }
+
+  .entry-blog-ad-link {
+    color: #FFF;
+    border: 1px solid #FFF;
+    padding: 10px 25px;
+  }
+
+  .entry-blog-ad-link:hover {
+    color: #FFF;
+    text-decoration: none;
+  }
 
   /**********************************************    FOOTER  ********************************************************/
 
@@ -618,6 +647,25 @@
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
+
+  .blog-hero-content {
+    background: #692586;
+    height: 290px;
+    padding-bottom: 0px;
+  }
+
+  .post-sell {
+    margin: 80px 80px;
+  }
+
+  .post-sell p {
+    font-size: 25px;
+  }
+
+  .post-sell-cta {
+    font-size: 16px;
+  }
+
   .blog-hero-content h1{
     font-size: 2.5rem;
     padding: 80px 50px 0px;
@@ -631,14 +679,19 @@
     font-size: 40px;
   }
 
-  .entry-blog-content-wrapper {
-    margin: 100px 0px;
+  .single_post_entry_content {
+    max-width: 600px;
   }
 
 }
 
+ .block-img img{
+    width: 100%;
+  }
 
-// Fix Images with Max responsive breaks
+
+
+// Fix Images with Max responsive breaks for MAX WIDTH
 
 @media only screen and (max-width: 768px) {
 
@@ -650,6 +703,8 @@
     width: 100%;
     height: 300px;
   }
+
+
 }
 
 

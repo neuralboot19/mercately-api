@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       get 'dashboard', to: 'pages#dashboard', as: :dashboard
       get 'business_config', to: 'pages#business_config', as: :business_config
       get 'total_messages_stats', to: 'stats#total_messages_stats', as: :total_messages_stats
+      resources :gs_templates
       resources :products do
         member do
           put 'reactive', to: 'products#reactive_product', as: :reactivate_product

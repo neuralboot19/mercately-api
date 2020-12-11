@@ -271,12 +271,20 @@ label:hover, a:hover {
   color: #000 !important;
 }
 
+#sidebar--pc a.c-secondary:hover {
+  color: rgba(0, 180, 255, 0.7) !important;
+}
+
 .c-dark {
   color: #4F4F4F !important;
 }
 
 .c-gray-label {
   color: #646464;
+}
+
+.c-yellow {
+  color: #f3d02f;
 }
 
 .warning-box {
@@ -559,4 +567,20 @@ label:hover, a:hover {
 .subtitle {
   font-size: 10px;
   color: #aaa;
+}
+
+.list-checks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    list-style-type: '✓';
+    padding-left: 16px;
+    margin-bottom: 8px;
+  }
+
+  li::marker {
+    color: green;
+  }
 }

@@ -5,7 +5,6 @@
 <% content_for :og_url, "#{@document['blogentry.og_url']&.as_text()}" %>
 <% content_for :og_image, @document['blogentry.og_image']&.url %>
 
-
 <div class="inner-blog">
   <div class="inner-blog-landing-wrapper">
     <div class="inner-blog-landing" style="background-image: url(<%= @document['blogentry.blog_main_image'].url %>)">
@@ -29,16 +28,31 @@
     </div>
   </div>
 </div>
+
 <div class="container">
   <div class="row">
-    <div class="col-md-12">
+
+    <div class='col-md-2'></div>
+    <div class="col-md-8">
       <div class="entry-blog-content-wrapper">
         <%=  @document['blogentry.blog_content'].as_html(link_resolver()).html_safe %>
         <div class="tag-container">
           <% @document.tags.each do |tag| %>
-            <span><%= link_to tag, blog_tags_path(tag.downcase) %></span>
+            <% tag_name = tag != "whatsapp-business-api" ? tag : 'WhatsApp Business Api' %>
+            <span><%= link_to tag_name, blog_tags_path(tag.downcase) %></span>
           <% end %>
         </div>
+      </div>
+
+      <div class='entry-blog-ad'>
+        <p class="entry-blog-ad-title">Vende más por WhatsApp</p>
+        <p>Automatiza tu negocio con Mercately </p>
+
+        <p class="">
+          <a class="entry-blog-ad-link" href="https://mercately.com/" target="_blank">
+            👉 ¡Empieza a automatizar hoy mismo!
+          </a>
+        </p>
       </div>
     </div>
   </div>

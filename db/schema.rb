@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2020_12_07_150039) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "adminpack"
   enable_extension "plpgsql"
 
   create_table "action_tags", force: :cascade do |t|
@@ -283,6 +284,7 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
+    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -697,6 +699,10 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -707,10 +713,6 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -747,10 +749,10 @@ ActiveRecord::Schema.define(version: 2020_12_07_150039) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
     t.string "gupshup_phone_number"
     t.string "gupshup_src_name"
+    t.string "karix_account_uid"
+    t.string "karix_account_token"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false

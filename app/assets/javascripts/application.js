@@ -23,6 +23,8 @@
 //= require moment/es.js
 //= require daterangepicker
 //= require ahoy
+//= require emojionearea.min
+//= require readMoreJS.min
 
 $(document).ready(function () {
   $( "select" ).select2({
