@@ -8,7 +8,9 @@ RSpec.describe Retailers::SettingsController, type: :controller do
   end
 
   describe '#team' do
-    it 'redirects to root if current_retailer_user is not admin' do
+    let!(:second_retailer_user) { create(:retailer_user, :supervisor, retailer: retailer_user.retailer) }
+
+    it 'redirects to root if current_retailer_user is an agent' do
       retailer_user.retailer_admin = false
       retailer_user.save!
 
@@ -16,14 +18,35 @@ RSpec.describe Retailers::SettingsController, type: :controller do
       expect(response).to redirect_to(root_path(retailer_user.retailer.slug))
     end
 
-    it 'will set the right team members and a new instance of RetailerUser' do
-      create(:retailer_user, retailer: retailer_user.retailer, first_name: '', last_name: '' )
+    context 'when the user in session is not the owner of the account' do
+      before do
+        sign_out retailer_user
+        sign_in second_retailer_user
+      end
 
-      get :team, params: { slug: retailer_user.retailer.slug }
-      right_retailers = RetailerUser.all.reject { |u| u == retailer_user }
+      it 'set all team members except itself and a new instance of RetailerUser' do
+        create(:retailer_user, retailer: retailer_user.retailer, first_name: '', last_name: '' )
 
-      expect(assigns(:team)).to eq(right_retailers)
-      expect(assigns(:user)).to be_an_instance_of(RetailerUser)
+        get :team, params: { slug: second_retailer_user.retailer.slug }
+        right_retailers = RetailerUser.all.reject { |u| u == second_retailer_user }
+
+        expect(assigns(:team)).to eq(right_retailers)
+        expect(assigns(:team).size).to eq(2)
+        expect(assigns(:user)).to be_an_instance_of(RetailerUser)
+      end
+    end
+
+    context 'when the user in session is the owner of the account' do
+      it 'set all team members and a new instance of RetailerUser' do
+        create(:retailer_user, retailer: retailer_user.retailer, first_name: '', last_name: '' )
+
+        get :team, params: { slug: retailer_user.retailer.slug }
+        right_retailers = RetailerUser.all
+
+        expect(assigns(:team)).to eq(right_retailers)
+        expect(assigns(:team).size).to eq(3)
+        expect(assigns(:user)).to be_an_instance_of(RetailerUser)
+      end
     end
   end
 
@@ -84,6 +107,21 @@ RSpec.describe Retailers::SettingsController, type: :controller do
       expect(response).to redirect_to(retailers_dashboard_path(retailer_user.retailer.slug))
       expect(flash[:notice]).to be_present
       expect(flash[:notice]).to match(/Error al invitar usuario..*/)
+    end
+
+    it 'shows a notice with error if email already exists' do
+      create(:retailer_user, retailer: retailer_user.retailer, email: 'test@email.com')
+
+      agent_invited = {
+        email: 'test@email.com',
+        first_name: 'John',
+        last_name: 'Wick'
+      }
+      post :invite_team_member, params: { slug: retailer_user.retailer.slug, retailer_user: agent_invited }
+
+      expect(response).to redirect_to(retailers_dashboard_path(retailer_user.retailer.slug))
+      expect(flash[:notice]).to be_present
+      expect(flash[:notice]).to match(/Correo ya está asignado a alguien más/)
     end
   end
 
