@@ -30,9 +30,8 @@ const ChatMessage = ({
       tag = (
         <DocumentMessage
           isLoading={message.is_loading}
-          caption={message.filename}
+          message={message}
           onClick={downloadFile}
-          url={message.url}
         />
       );
       break;
