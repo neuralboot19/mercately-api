@@ -99,7 +99,11 @@
           <% end %>
           <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer %>
             <li class="submenu__item">
-              <%= link_to 'Mensajes de bienvenida', retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'item__name no-style' %>
+              <% if current_retailer.whatsapp_integrated? %>
+                <%= link_to 'Mensajes de bienvenida', retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'item__name no-style' %>
+              <% elsif current_retailer.facebook_retailer %>
+                <%= link_to 'Mensajes de bienvenida', retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'item__name no-style' %>
+              <% end %>
             </li>
           <% end %>
           <li class="submenu__item">
@@ -249,42 +253,48 @@
               <b class="item__cookie item__cookie_whatsapp_messages"><%= whatsapp_unread_messages %></b>
             </div>
           </li>
-          <li class="menu__item">
-            <div class="tooltip">
-              <%= image_tag('dashboard/config-mensajeria.png', class: 'item__name no-style', style: 'width: 32px;') %>
-              <div class="tooltiptext tooltiptext--big" style="top: -45px;">
-                Configuración de mensajería<br/>
-                <div class="divider"></div>
-                <% if current_retailer.whatsapp_integrated? %>
-                  <div>
-                    <%= link_to retailers_gs_templates_path(current_retailer), class: 'c-secondary no-style' do %>
-                      Plantillas de WhatsApp
-                    <% end %>
-                  </div>
-                <% end %>
-                <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer %>
-                  <div>
+        <% end %>
+        <li class="menu__item">
+          <div class="tooltip">
+            <%= image_tag('dashboard/config-mensajeria.png', class: 'item__name no-style', style: 'width: 32px;') %>
+            <div class="tooltiptext tooltiptext--big" style="top: -45px;">
+              Configuración de mensajería<br/>
+              <div class="divider"></div>
+              <% if current_retailer.whatsapp_integrated? %>
+                <div>
+                  <%= link_to retailers_gs_templates_path(current_retailer), class: 'c-secondary no-style' do %>
+                    Plantillas de WhatsApp
+                  <% end %>
+                </div>
+              <% end %>
+              <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer %>
+                <div>
+                  <% if current_retailer.whatsapp_integrated? %>
                     <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'c-secondary no-style' do %>
                       Mensajes de bienvenida
                     <% end %>
-                  </div>
-                <% end %>
-                <div>
-                  <%= link_to retailers_tags_path(current_retailer), class: 'c-secondary no-style' do %>
-                    Etiquetas
+                  <% elsif current_retailer.facebook_retailer %>
+                    <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'c-secondary no-style' do %>
+                      Mensajes de bienvenida
+                    <% end %>
                   <% end %>
                 </div>
-                <% if current_retailer.manage_team_assignment %>
-                  <div>
-                    <%= link_to retailers_team_assignments_path(current_retailer), class: 'c-secondary no-style' do %>
-                      Asignación Automática
-                    <% end %>
-                  </div>
+              <% end %>
+              <div>
+                <%= link_to retailers_tags_path(current_retailer), class: 'c-secondary no-style' do %>
+                  Etiquetas
                 <% end %>
               </div>
+              <% if current_retailer.manage_team_assignment %>
+                <div>
+                  <%= link_to retailers_team_assignments_path(current_retailer), class: 'c-secondary no-style' do %>
+                    Asignación Automática
+                  <% end %>
+                </div>
+              <% end %>
             </div>
-          </li>
-        <% end %>
+          </div>
+        </li>
         <% if current_retailer_user.admin? || current_retailer_user.supervisor? %>
           <li class="menu__item">
             <div class="tooltip">
