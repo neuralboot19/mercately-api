@@ -115,15 +115,19 @@ module Whatsapp
         }.to_json
       end
 
+      # Prepara el cuerpo del mensaje que se enviara
       def prepare_chat_bot_message(*args)
-        chat_bot_option, customer, get_out, error_exit, failed_attempt = args
+        chat_bot_option, customer, get_out, error_exit, failed_attempt, concat_answer_type = args
         return unless chat_bot_option.present?
 
         chat_bot = chat_bot_option.chat_bot
+        # Si es un intento fallido y el bot tiene configurado un mensaje personalizado para estos
+        # casos, se toma dicho mensaje.
         return chat_bot.on_failed_attempt_message if chat_bot.on_failed_attempt == 'send_attempt_message' &&
                                                      failed_attempt
 
-        option_body(chat_bot_option, customer, get_out, error_exit)
+        # Se carga el contenido de la opcion
+        option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type)
       end
 
       def cloudinary_resource_type(resource_type)
@@ -133,6 +137,7 @@ module Whatsapp
         'raw'
       end
 
+      # Construye la lista de opciones a seleccionar tomando en cuenta la sublista de la opcion.
       def prepare_option_sub_list(chat_bot_option, message)
         message += get_option_answer(chat_bot_option, true)
         items_size = chat_bot_option.option_sub_lists.size - 1
@@ -145,6 +150,7 @@ module Whatsapp
         message
       end
 
+      # Construye la lista de opciones a seleccionar tomando en cuenta la respuesta del endpoint.
       def prepare_dynamic_sub_list(customer)
         data = customer.endpoint_response
 
@@ -159,6 +165,10 @@ module Whatsapp
         message
       end
 
+      # Se construye el mensaje a enviar en caso de que la opcion sea tipo Formulario.
+      # Si tiene sublista, entonces se basa en ella.
+      # Si es dinamica, toma las opciones de la respuesta del endpoint.
+      # Sino es ninguna de las dos, toma solo la respuesta de la opcion.
       def build_message(chat_bot_option, customer, message)
         if chat_bot_option.has_sub_list?
           prepare_option_sub_list(chat_bot_option, message)
@@ -169,25 +179,33 @@ module Whatsapp
         end
       end
 
-      def set_text_from_response(chat_bot_option, customer, get_out)
-        text = if get_out
-                 get_out_message(chat_bot_option, customer)
-               else
-                 going_on_message(chat_bot_option, customer)
-               end
+      # Setea la respuesta del endpoint en caso de que la opcion tenga dicha accion.
+      # Si el parametro concat_answer_type es 'success', toma la respuesta de exito.
+      # Si el parametro concat_answer_type es 'failed', toma la respuesta de fallo.
+      def set_text_from_response(chat_bot_option, customer, concat_answer_type)
+        message = if concat_answer_type == 'success'
+                    customer.endpoint_response.message
+                  elsif concat_answer_type == 'failed'
+                    customer.endpoint_failed_response.message
+                  end
 
-        text.presence || ''
+        message.present? ? message + "\n\n" : ''
       end
 
+      # Setea el mensaje de salida del bot, dependiendo si fue por intentos fallidos o no.
       def get_exit_message(chat_bot_option, get_out)
         if get_out
+          # Si no fue por intentos fallidos, busca si en la accion de salida hay un mensaje configurado.
+          # De haberlo lo toma, sino toma el mensaje de salida general del bot.
           action = chat_bot_option.chat_bot_actions.find_by_action_type(:get_out_bot)
           action&.exit_message.presence || chat_bot_option.chat_bot.goodbye_message
         else
+          # Si es por intentos fallidos, toma el mensaje de salida por intentos fallidos del bot.
           chat_bot_option.chat_bot.error_message
         end
       end
 
+      # Devuelve la respuesta de la opcion.
       def get_option_answer(chat_bot_option, concat)
         answer = chat_bot_option.answer.presence || ''
         answer += "\n\n" if concat && answer.present?
@@ -195,30 +213,20 @@ module Whatsapp
         answer
       end
 
-      def get_out_message(chat_bot_option, customer)
-        return unless chat_bot_option.execute_endpoint?
+      # Se encarga de formar el mensaje con toda la informacion necesaria.
+      def option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type)
+        # inicializa el mensaje a enviar
+        message = set_text_from_response(chat_bot_option, customer, concat_answer_type)
 
-        message = customer.endpoint_failed_response.message.presence || customer.endpoint_response.message
-        message.present? ? message + "\n\n" : ''
-      end
-
-      def going_on_message(chat_bot_option, customer)
-        if chat_bot_option.parent&.execute_endpoint?
-          customer.endpoint_response.message.present? ? customer.endpoint_response.message + "\n\n" : ''
-        elsif chat_bot_option.execute_endpoint?
-          message = customer.endpoint_failed_response.message.presence || customer.endpoint_response.message
-          message.present? ? message + "\n\n" : ''
-        end
-      end
-
-      def option_body(chat_bot_option, customer, get_out, error_exit)
-        message = set_text_from_response(chat_bot_option, customer, get_out)
-
+        # Si no se esta saliendo del bot, ya sea por ejecucion o por intentos fallidos.
         if get_out == false && error_exit == false
+          # Construye el mensaje si se trata de una opcion tipo Formulario y retorna
           return build_message(chat_bot_option, customer, message) if chat_bot_option.option_type == 'form'
 
+          # Toma la respuesta de la opcion. 
           message += get_option_answer(chat_bot_option, false)
 
+          # Solo muestra las opciones hijas activas
           children = chat_bot_option.children.active
           if children.present?
             message += "\n\n"
@@ -230,6 +238,7 @@ module Whatsapp
             end
           end
         else
+          # Si se esta saliendo del bot. Busca el mensaje de salida apropiado.
           message += get_exit_message(chat_bot_option, get_out)
         end
 
