@@ -26,7 +26,8 @@
         SLUG: "<%= current_retailer.slug %>",
         CURRENT_RETAILER_ID: "<%= current_retailer.id %>",
         GOOGLE_API_KEY: "<%= ENV['GOOGLE_API_KEY'] %>",
-        CURRENT_AGENT_ROLE: "<%= current_retailer_user.admin? ? 'Admin' : current_retailer_user.supervisor? ? 'Supervisor' : 'agent' %>"
+        CURRENT_AGENT_ROLE: "<%= current_retailer_user.admin? ? 'Admin' : current_retailer_user.supervisor? ? 'Supervisor' : 'agent' %>",
+        FANPAGE_TOKEN: "<%= current_retailer.facebook_retailer&.access_token %>"
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>
@@ -41,6 +42,18 @@
   </head>
 
   <body>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId            : "<%= ENV['FACEBOOK_APP_ID'] %>",
+          autoLogAppEvents : false,
+          xfbml            : false,
+          version          : 'v9.0'
+        });
+      };
+    </script>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+
     <%= render 'layouts/dashboard/sidebar' %>
     <div id="content">
       <%= render "layouts/dashboard/user_nav" %>

@@ -35,6 +35,7 @@ class FacebookMessage < ApplicationRecord
             Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename, file_url, file_type)
           end
       update_column(:mid, m['message_id'])
+      import_facebook_message(m['message_id']) if file_data.present? || file_url.present?
     end
 
     def broadcast_to_counter_channel
@@ -72,7 +73,10 @@ class FacebookMessage < ApplicationRecord
         facebook_retailer: facebook_retailer,
         text: message,
         sent_from_mercately: true,
-        sent_by_retailer: true
+        sent_by_retailer: true,
+        url: nil,
+        file_type: nil,
+        filename: nil
       )
     end
 
@@ -80,5 +84,13 @@ class FacebookMessage < ApplicationRecord
       hours = ((created_at - before_last_message.created_at) / 3600).to_i
 
       hours >= inactive_message.interval
+    end
+
+    def import_facebook_message(mid)
+      facebook_service.import_delivered(mid, customer.psid)
+    end
+
+    def facebook_service
+      Facebook::Messages.new(facebook_retailer)
     end
 end
