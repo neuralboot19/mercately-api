@@ -33,9 +33,9 @@ class Retailers::CustomersController < RetailersController
     notice = 'Debe seleccionar un archivo'
 
     if import_params['csv_file'].present?
-      results = Customer.csv_import!(current_retailer, import_params['csv_file'])
+      results = Customer.csv_import(current_retailer_user, import_params['csv_file'])
 
-      notice = ['La importación se realizó con éxito']
+      notice = ['La importación está en proceso. Recibirá un correo cuando haya culminado.']
       notice = results[:body][:errors].flatten if results[:status] != :ok
     end
 

@@ -1,0 +1,37 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <% if @errors.blank? %>
+      <div class="ml-45 mt-20 mr-45">
+        <p class="fs-16 p-color lg-18">
+          La importación de clientes culminó exitosamente. Puede verificar la información cargada en la lista de clientes.
+        </p>
+      </div>
+    <% else %>
+      <div class="ml-45 mt-20 mr-45">
+        <p class="fs-16 p-color lg-18">
+          La importación se realizó exitosamente.
+        </p>
+        <p class="fs-16 p-color lg-18">
+          Hubo algunos clientes que no fue posible cargarlos por las siguientes razones:
+        </p>
+      </div>
+
+      <div class="ml-45 mt-20 mr-45">
+        <p class="fs-16 p-color lg-18">
+          <ul>
+            <% @errors.each do |err| %>
+              <li class="py-5 p-color"><%= err %></li>
+            <% end %>
+          </ul>
+        </p>
+      </div>
+    <% end %>
+
+    <%= render "shared/emails/footer" %>
+  </div>
+</div>
