@@ -581,6 +581,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         .and_return('Sent')
       allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
         .and_return(set_facebook_messages_service)
+      allow(set_facebook_messages_service).to receive(:import_delivered)
+        .and_return(set_facebook_messages_service)
     end
 
     context 'when file is an argument' do

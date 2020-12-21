@@ -25,12 +25,15 @@
 //= require ahoy
 //= require emojionearea.min
 //= require readMoreJS.min
+//= require fullcalendar/main.min
 
 $(document).ready(function () {
   $( "select" ).select2({
     placeholder: "Selecciona una opción",
     language: "es-ES"
   });
+
+  $(".no-select2").select2('destroy');
 
   $('.fieldset').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
     $( "select" ).select2({
@@ -93,10 +96,14 @@ function getAjax(url, success) {
   var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
   xhr.open('GET', url);
   xhr.onreadystatechange = function() {
-    if (xhr.readyState>3 && xhr.status==200) success(xhr.responseText);
+    if (xhr.readyState>3 && xhr.status == 200) success(xhr.responseText);
   };
   xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   xhr.send();
   return xhr;
 }
 var getAjax = getAjax;
+
+function convertDateToUTC(date) {
+  return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+}

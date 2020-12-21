@@ -70,9 +70,9 @@ class Message extends Component {
         && this.props.message.content_media_type === 'document'
         && (
           <DocumentMessage
-            caption={this.props.message.filename}
+            chatType="whatsapp"
             onClick={this.downloadFile}
-            url={this.props.message.content_media_url}
+            message={this.props.message}
           />
         )}
         {this.props.message.content_media_caption

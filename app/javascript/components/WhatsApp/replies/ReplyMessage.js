@@ -41,10 +41,10 @@ const ReplyMessage = ({ downloadFile, message, toggleImgModal }) => (
     && message.data.attributes.content_media_type === 'document'
     && (
       <DocumentMessage
-        caption={message.data.attributes.content_media_caption}
+        chatType="whatsapp"
+        message={message.data.attributes}
         isReply
         onClick={downloadFile}
-        url={message.data.attributes.content_media_url}
       />
     )}
     {message.data.attributes.content_type === 'contact'

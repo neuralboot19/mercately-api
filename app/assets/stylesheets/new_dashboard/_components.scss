@@ -545,7 +545,12 @@
   transition: all 0.4s ease-out;
 }
 
-#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index {
+#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal {
+  z-index: 300;
+}
+
+#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
+#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal {
   display: block;
 }
 

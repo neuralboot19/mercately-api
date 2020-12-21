@@ -34,6 +34,7 @@ class Retailer < ApplicationRecord
   has_many :team_assignments, dependent: :destroy
   has_many :chat_bot_customers, through: :customers
   has_many :customer_related_fields
+  has_many :calendar_events, dependent: :destroy
 
   validates :name, presence: true
   validates :slug, uniqueness: true

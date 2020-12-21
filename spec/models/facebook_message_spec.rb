@@ -37,25 +37,31 @@ RSpec.describe FacebookMessage, type: :model do
 
   describe '#send_facebook_message' do
     let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+    let(:msn_response) { { 'message_id': '1234567890' }.with_indifferent_access }
+    let(:customer) { create(:customer, retailer: retailer, psid: '1234567890') }
+
     let(:facebook_msg_sent) do
-      create(:facebook_message, facebook_retailer: facebook_retailer, sent_from_mercately: true, text: 'Testing')
+      create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_from_mercately:
+        true, text: 'Testing')
     end
 
     let(:facebook_file_sent) do
-      create(:facebook_message, facebook_retailer: facebook_retailer, sent_from_mercately: true, file_data:
-        '/tmp/file.pdf')
+      create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_from_mercately:
+        true, file_data: '/tmp/file.pdf')
     end
 
     let(:facebook_url_sent) do
-      create(:facebook_message, facebook_retailer: facebook_retailer, sent_from_mercately: true, file_url:
-        'https://www.images.com/image.jpg', file_type: 'image')
+      create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_from_mercately:
+        true, file_url: 'https://www.images.com/image.jpg', file_type: 'image')
     end
 
     before do
       allow(set_facebook_messages_service).to receive(:send_message)
-        .and_return(message_id: Faker::Internet.uuid)
+        .and_return(msn_response)
       allow(set_facebook_messages_service).to receive(:send_attachment)
-        .and_return(message_id: Faker::Internet.uuid)
+        .and_return(msn_response)
+      allow(set_facebook_messages_service).to receive(:import_delivered)
+        .and_return(set_facebook_messages_service)
       allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
         .and_return(set_facebook_messages_service)
     end
@@ -63,19 +69,22 @@ RSpec.describe FacebookMessage, type: :model do
     context 'when the message is sent from mercately' do
       context 'when the message is a text' do
         it 'calls the service to Facebok Message to send a text message' do
-          expect(facebook_msg_sent.send(:send_facebook_message)).to be true
+          facebook_msg_sent.send(:send_facebook_message)
+          expect(facebook_msg_sent.reload.mid).not_to be_nil
         end
       end
 
       context 'when the message contains an attachment' do
         it 'calls the service to Facebok Message to send an attachment message' do
-          expect(facebook_file_sent.send(:send_facebook_message)).to be true
+          facebook_msg_sent.send(:send_facebook_message)
+          expect(facebook_file_sent.reload.mid).not_to be_nil
         end
       end
 
       context 'when the message contains an url' do
         it 'calls the service to Facebok Message to send an attachment message' do
-          expect(facebook_url_sent.send(:send_facebook_message)).to be true
+          facebook_url_sent.send(:send_facebook_message)
+          expect(facebook_url_sent.reload.mid).not_to be_nil
         end
       end
     end

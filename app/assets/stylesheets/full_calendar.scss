@@ -1,0 +1,27 @@
+.fc .fc-toolbar-title {
+  font-size: 1.1em;
+}
+.fc .fc-toolbar.fc-header-toolbar {
+    margin: 0.5em;
+}
+.fc-direction-ltr .fc-timegrid-slot-label-frame {
+    text-align: left;
+}
+
+.fc-right, .fc-prev-button, .fc-right, .fc-next-button {
+  background-color: #00B4FF !important;
+  background-image: none;
+}
+
+.fc-button.fc-button-primary {
+  background-color: #00B4FF !important;
+  border-color: #00B4FF !important;
+}
+
+.fc .fc-button-primary:focus {
+  box-shadow: none !important;
+}
+
+.fc-toolbar-title:first-letter {
+  text-transform: capitalize;
+}
