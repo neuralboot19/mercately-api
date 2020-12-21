@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         get 'messages', to: 'messages#chat'
         post 'send_message', to: 'messages#send_message', as: :send_message
       end
+      resources :calendar_events, except: [:show, :new, :edit]
       resources :customers, except: [:destroy]
       resources :messages, only: [:show]
       resources :templates

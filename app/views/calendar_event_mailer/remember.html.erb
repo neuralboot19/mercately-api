@@ -1,0 +1,28 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color">Hola <%= @retailer_user.full_name %>.</p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 t-color lg-18">
+      Un evento está a punto de empezar:
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 t-color lg-14">
+      <%= @calendar_event.title %>
+      <br/>
+      <%= @calendar_event.starts_at.to_formatted_s(:short) %>
+      </p>
+    </div>
+
+    <%= render "shared/emails/footer" %>
+  </div>
+</div>

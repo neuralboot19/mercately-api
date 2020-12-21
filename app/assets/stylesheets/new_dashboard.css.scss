@@ -1,6 +1,7 @@
 @import 'font_awesome5_webfont';
 @import 'select2';
 @import 'daterangepicker';
+@import 'fullcalendar/main.min';
 @import 'new_dashboard/_fonts';
 @import 'new_dashboard/_vars';
 @import 'new_dashboard/_components';
@@ -8,6 +9,7 @@
 @import 'new_dashboard/payment_plans';
 @import 'devise';
 @import 'emojionearea.min';
+@import 'full_calendar';
 
 #stripe-error {
   color: #fb0545;
@@ -1444,4 +1446,33 @@
 
 .mh-100 {
   min-height: 100px;
+}
+
+.calendar-button {
+  cursor: pointer;
+}
+
+#calendar-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: none;
+  height: 100vh;
+  width: 340px;
+  background-color: #fff;
+  z-index: 200;
+
+  colgroup col {
+    width: 62px !important;
+  }
+
+  #calendar {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+#dropdown__menu--header ~ ul {
+  top: 60px;
+  right: 16px;
 }

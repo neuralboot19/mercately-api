@@ -1,4 +1,5 @@
 //= require notifications
+//= require full_calendar
 
 $(document).ready(function(){
   $('#modal--toggle-index').attr('checked', false);
@@ -38,4 +39,14 @@ $(document).ready(function(){
       return false;
     }
   })
+
+  $('.calendar-button').click(function(){
+    document.querySelector('#dropdown__menu--header').checked = false;
+    fullCalendarSidebar.refetchEvents();
+    $('#calendar-container').toggle();
+  })
+
+  document.getElementById('calendar-background').onclick = function() {
+    $('#calendar-container').toggle();
+  }
 })

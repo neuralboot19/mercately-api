@@ -23,7 +23,8 @@ ActiveAdmin.register Retailer do
                 :gupshup_api_key,
                 :manage_team_assignment,
                 :show_stats,
-                :allow_voice_notes
+                :allow_voice_notes,
+                :show_calendar
 
   filter :name
   filter :slug
@@ -102,6 +103,7 @@ ActiveAdmin.register Retailer do
       row :manage_team_assignment
       row :show_stats
       row :allow_voice_notes
+      row :show_calendar
       row :created_at
       row :updated_at
     end
@@ -329,6 +331,7 @@ ActiveAdmin.register Retailer do
       f.input :state
       f.input :zip_code
       f.input :phone_number
+      f.input :show_calendar
       f.input :unlimited_account
       f.input :whats_app_enabled
       f.input :karix_whatsapp_phone

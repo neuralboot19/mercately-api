@@ -1,0 +1,101 @@
+<% id ||= id %>
+<%= hidden_field_tag 'timezone', Time.zone, id: "timezone#{id}" %>
+<%= hidden_field_tag 'starts_at(1i)', 2020, id: "starts_at_year#{id}" %>
+<%= hidden_field_tag 'starts_at(2i)', 12, id: "starts_at_month#{id}" %>
+<%= hidden_field_tag 'starts_at(3i)', 17, id: "starts_at_day#{id}" %>
+<%= hidden_field_tag 'ends_at(1i)', 2020, id: "ends_at_year#{id}" %>
+<%= hidden_field_tag 'ends_at(2i)', 12, id: "ends_at_month#{id}" %>
+<%= hidden_field_tag 'ends_at(3i)', 17, id: "ends_at_day#{id}" %>
+<div class="box">
+  <div class="row">
+    <div class="my-16 col-xs-12">
+      <%= label_tag :title, 'Nombre del evento' %>
+      <%= text_field_tag :title, nil, id: "title#{id}", class: 'input validate-required', required: true %>
+      <i class="validation-msg"></i>
+    </div>
+    <div class="my-16 col-xs-12 col-md-4">
+      <%= label_tag :starts_at, 'Horario de inicio' %>
+      <div>
+        <select id="starts_at_hour<%= id %>" name="starts_at(4i)" class="input validate-required w-90 no-select2" required="required" tabindex="0" aria-hidden="false">
+          <option value="00">12 AM</option>
+          <option value="01">01 AM</option>
+          <option value="02">02 AM</option>
+          <option value="03">03 AM</option>
+          <option value="04">04 AM</option>
+          <option value="05">05 AM</option>
+          <option value="06">06 AM</option>
+          <option value="07">07 AM</option>
+          <option value="08">08 AM</option>
+          <option value="09">09 AM</option>
+          <option value="10">10 AM</option>
+          <option value="11">11 AM</option>
+          <option value="12">12 PM</option>
+          <option value="13">01 PM</option>
+          <option value="14">02 PM</option>
+          <option value="15">03 PM</option>
+          <option value="16">04 PM</option>
+          <option value="17">05 PM</option>
+          <option value="18">06 PM</option>
+          <option value="19">07 PM</option>
+          <option value="20">08 PM</option>
+          <option value="21">09 PM</option>
+          <option value="22">10 PM</option>
+          <option value="23">11 PM</option>
+        </select>
+        :
+        <select id="starts_at_minute<%= id %>" name="starts_at(5i)" class="input validate-required w-90 no-select2" required="required" tabindex="0" aria-hidden="false">
+          <option value="00">00</option>
+          <option value="15">15</option>
+          <option value="30">30</option>
+          <option value="45">45</option>
+        </select>
+      </div>
+      <i class="validation-msg"></i>
+    </div>
+    <div class="my-16 col-xs-12 col-md-4">
+      <%= label_tag :ends_at, 'Horario de cierre' %>
+      <div>
+        <select id="ends_at_hour<%= id %>" name="ends_at(4i)" class="input validate-required w-90 no-select2" required="required" tabindex="0" aria-hidden="false">
+          <option value="00">12 AM</option>
+          <option value="01">01 AM</option>
+          <option value="02">02 AM</option>
+          <option value="03">03 AM</option>
+          <option value="04">04 AM</option>
+          <option value="05">05 AM</option>
+          <option value="06">06 AM</option>
+          <option value="07">07 AM</option>
+          <option value="08">08 AM</option>
+          <option value="09">09 AM</option>
+          <option value="10">10 AM</option>
+          <option value="11">11 AM</option>
+          <option value="12">12 PM</option>
+          <option value="13">01 PM</option>
+          <option value="14">02 PM</option>
+          <option value="15">03 PM</option>
+          <option value="16">04 PM</option>
+          <option value="17">05 PM</option>
+          <option value="18">06 PM</option>
+          <option value="19">07 PM</option>
+          <option value="20">08 PM</option>
+          <option value="21">09 PM</option>
+          <option value="22">10 PM</option>
+          <option value="23">11 PM</option>
+        </select>
+        :
+        <select id="ends_at_minute<%= id %>" name="ends_at(5i)" class="input validate-required w-90 no-select2" required="required" tabindex="0" aria-hidden="false">
+          <option value="00">00</option>
+          <option value="15">15</option>
+          <option value="30">30</option>
+          <option value="45">45</option>
+        </select>
+      </div>
+      <i class="validation-msg"></i>
+    </div>
+    <div class="my-16 col-xs-12 col-md-4">
+      <%= label_tag :remember, 'Enviar recordatorio', style: 'margin-bottom: 4px; display: inline-block;' %>
+      <%= select_tag :remember, options_for_select([['10 minutos antes', 10], ['30 minutos antes', 30], ['1 hora antes', 60]]),
+        class: 'input validate-required', id: "remember#{id}", required: true %>
+      <i class="validation-msg"></i>
+    </div>
+  </div>
+</div>
