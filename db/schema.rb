@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_21_174212) do
+ActiveRecord::Schema.define(version: 2020_12_23_165953) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -310,6 +310,7 @@ ActiveRecord::Schema.define(version: 2020_12_21_174212) do
     t.boolean "allow_start_bots", default: false
     t.jsonb "endpoint_response", default: {}
     t.jsonb "endpoint_failed_response", default: {}
+    t.float "ws_notification_cost", default: 0.0672
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end

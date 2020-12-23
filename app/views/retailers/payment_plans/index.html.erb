@@ -24,9 +24,12 @@
             <% end %>
           </span>
         </p>
+        <p class="m-0 container-payment-plan_text">
+        <a class="fz-11 no-style fw-bold" style="color: #464646" href="https://mercately.crunch.help/pagos/costos-de-hsm-o-templates-de-whats-app" target="_blank">
+          Ver precios por país
+        </a>
+        </p>
       <% end %>
-      <hr class="my-30">
-      <div class="my-20 t-center"><button class="container-payment-plan_button">Actualizar a PREMIUM</button></div>
     </div>
     <% if current_retailer.ecu_charges || current_retailer.int_charges %>
       <div class="card mt-60 pl-40 pr-40 pt-35 pb-35 container-payment-plan_card">
@@ -38,6 +41,44 @@
         <% end %>
       </div>
     <% end %>
+    <div>
+      <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle-price-list"/>
+      <div class="modal">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-xs-12 col-md-8 middle">
+              <label class="modal__background" for="modal--toggle-price-list"></label>
+              <div class="modal__window box p-16">
+                <div class="row middle-xs">
+                  <div class="col-xs-12 col-sm-8">
+                    <div class="index__ctas f-right">
+                      <label class="skip modal__close" for="modal--toggle-price-list">
+                        <i class="far fa-times-circle"></i>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <table class="w-100 mb-16">
+                      <% all_countries_price.each_slice(3) do |a| %>
+                        <tr>
+                          <% a.each do |k, v| %>
+                            <td class="bg-grey p-8"><%= k %></td>
+                            <td class="p-16 bg-white"><%= v %></td>
+                          <% end %>
+                        </tr>
+                      <% end %>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
     <div class="modal">
       <div class="container">
