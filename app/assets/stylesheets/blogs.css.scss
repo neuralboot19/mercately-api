@@ -645,7 +645,11 @@
     text-decoration: none;
   }
 
-  .footer-container .link-list li a{
+  .footer-container .link-list li {
+    margin-top: 10px;
+  }
+
+  .footer-container .link-list li a {
     color: #26abe2;
     text-decoration: none;
   }

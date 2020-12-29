@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
-  get 'go_to_wp', to: 'pages#go_to_wp'
+  get 'go-to-wp', to: 'pages#go_to_wp'
 
   devise_for :retailer_users, path: '', path_names: {sign_up: 'register', sign_in: 'login',
     sign_out: 'logout'}, controllers: { registrations: 'retailer_users/registrations',
@@ -203,5 +203,4 @@ Rails.application.routes.draw do
   get '/tag/:id', to: 'blogs#tag', as: :blog_tags
 
   get '/:slug/:web_id', to: 'pages#product', as: :product_catalog
-  get '/:slug', to: 'pages#catalog', as: :catalog
 end
