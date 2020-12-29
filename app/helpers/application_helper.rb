@@ -41,7 +41,7 @@ module ApplicationHelper
   end
 
   def og_type
-    content_for?(:og_type) ? content_for(:og_type) : ""
+    content_for?(:og_type) ? content_for(:og_type) : "article"
   end
 
   def og_title
@@ -49,7 +49,7 @@ module ApplicationHelper
   end
 
   def og_url
-    content_for?(:og_url) ? content_for(:og_url) : request.host + request.path
+    content_for?(:og_url) ? content_for(:og_url) : "https://" + request.host + request.path
   end
 
   def og_image

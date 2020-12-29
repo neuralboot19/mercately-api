@@ -3,6 +3,15 @@
 @import 'pages';
 @import 'new_home';
 
+
+  .sticky-content {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding: 15px 0px;
+    text-align: center;
+  }
+
   /************************** Header **********************************/
 
   .custom_navbar {
@@ -10,7 +19,7 @@
     width: 100%;
     z-index: 1;
     background: transparent !important;
-        padding: 15px 75px;
+    padding: 15px 75px;
   }
 
   .menu-item-with-mega-menu span {
@@ -335,6 +344,13 @@
     text-decoration: none;
   }
 
+  .related-articles {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin: 35px 0px;
+  }
+
   /**********************************************   INNER BLOG  *****************************************************/
 
   .inner-blog {
@@ -469,12 +485,45 @@
     color: #FFF;
     border: 1px solid #FFF;
     padding: 10px 25px;
+    font-size: 11px;
   }
 
   .entry-blog-ad-link:hover {
     color: #FFF;
     text-decoration: none;
   }
+
+  .icon-wrapper {
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 75%;
+    align-self: flex-end;
+    display: none;
+  }
+
+  .icon-wrapper-mobile a {
+    margin: 0px 12px;
+  }
+
+  .icon-wrapper-mobile {
+    display: block;
+  }
+
+  .icon-wrapper p {
+    color: #00B4FF;
+  }
+
+  .icon-wrapper-mobile p {
+    color: #00B4FF;
+  }
+
+  .icon-3d {
+    color: #00B4FF;
+    left: 10px;
+    top: 5px;
+    font-size: 30px;
+  }
+
 
   /**********************************************    FOOTER  ********************************************************/
 
@@ -596,7 +645,11 @@
     text-decoration: none;
   }
 
-  .footer-container .link-list li a{
+  .footer-container .link-list li {
+    margin-top: 10px;
+  }
+
+  .footer-container .link-list li a {
     color: #26abe2;
     text-decoration: none;
   }
@@ -681,6 +734,22 @@
 
   .single_post_entry_content {
     max-width: 600px;
+  }
+
+  .entry-blog-ad-link {
+    font-size: 16px;
+  }
+
+  .icon-wrapper {
+    display: block;
+  }
+
+  .icon-wrapper-mobile {
+    display: none;
+  }
+
+  .sticky-content {
+    padding: 50px 0px;
   }
 
 }
