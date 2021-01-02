@@ -42,6 +42,8 @@ Rails.application.routes.draw do
   get '/terminos', to: 'pages#terms', as: :terms
   get '/whatsapp-crm', to: 'pages#whatsapp_crm', as: :whatsapp_crm
 
+  get '/chatbots-whatsapp', to: 'pages#chatbots_whatsapp', as: :chatbots_whatsapp
+
   namespace :retailers do
     namespace :api, defaults: { format: :json } do
       namespace :v1 do
