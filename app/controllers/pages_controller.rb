@@ -24,6 +24,9 @@ class PagesController < ApplicationController
     @show_checkbox_recaptcha = true
   end
 
+  def chatbots_whatsapp
+  end
+
   def catalog
     @products = @retailer.products
   end
@@ -40,7 +43,7 @@ class PagesController < ApplicationController
       utm_content: params[:utm_content],
       utm_campaign: params[:utm_campaign]
     })
-    redirect_to 'https://api.whatsapp.com/send?l=es&phone=593989083446&text=Hola%20quiero%20saber%20más%20de%20Mercately.com'
+    redirect_to "https://api.whatsapp.com/send?l=es&phone=593989083446&text=#{params['text']}"
   end
 
   def request_demo

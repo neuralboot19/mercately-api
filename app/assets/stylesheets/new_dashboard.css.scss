@@ -85,6 +85,21 @@
   width: 100% !important;
 }
 
+// NavBar
+
+  .nav-option {
+    font-size: 14px;
+    color: #1a2e3b;
+    letter-spacing: .025rem;
+    font-weight: bold;
+  }
+
+  .account {
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+  }
+
+
 // Sidebar v2
 #sidebar {
   position: fixed;
@@ -235,9 +250,7 @@
   height: 100vh;
   background-color: #FFF;
   z-index: 100;
-  -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-  -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
-  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  border-right: 0.5px solid #eee;
 
   &__logo {
     padding: 40px;
@@ -298,7 +311,6 @@
 
 // Content
 #content {
-  margin-left: 80px;
   margin-bottom: 24px;
 
   h2 {
@@ -308,20 +320,17 @@
 
 // Header
 .header--dashboard {
-  padding: 12px 0;
-  margin: 12px 0;
   height: $header-height;
+  border-bottom: 1px solid #eee;
 
   a {
     color: #000;
   }
 
-  #user {
-    height: 40px;
-  }
-
   .retailer {
     &__info {
+      display: inline-block;
+      margin-left: 52px;
       height: $header-height;
     }
   }
@@ -331,7 +340,7 @@
       width: $header-height;
       height: $header-height;
       line-height: $header-height;
-      padding: 10px;
+      padding: 5px 10px;
       border-radius: 10px;
       background-color: #00A652;
       color: #FFF;
@@ -343,7 +352,6 @@
   }
 
   .user__dropdown {
-    display: inline-block;
     position: relative;
   }
 }
@@ -992,7 +1000,7 @@
   &.social-newtork-card-ws {
     border: 1px solid #27C170;
     background: #D9F3E5;
-  
+
     .image-icon {
       position: absolute;
       right: -4px;
@@ -1004,7 +1012,7 @@
   &.social-newtork-card-msn {
     border: 1px solid #29ADE1;
     background: #E2F3FB;
-  
+
     .image-icon {
       position: absolute;
       right: -2px;
@@ -1016,7 +1024,7 @@
   &.social-newtork-card-ml {
     border: 1px solid #CFC12E;
     background: #FCF9DF;
-  
+
     .image-icon {
       position: absolute;
       right: -5px;
@@ -1028,7 +1036,7 @@
   &.social-newtork-card-total {
     border: 1px solid #692087;
     background: #E9DFED;
-  
+
     .icon-container {
       color: #692087;
       position: absolute;
@@ -1450,6 +1458,11 @@
 
 .calendar-button {
   cursor: pointer;
+  margin-right: 10px;
+  @media screen and (max-width: 520px) {
+    margin-right: 5px;
+  }
+  display: inline-block;
 }
 
 #calendar-container {
@@ -1473,6 +1486,6 @@
 }
 
 #dropdown__menu--header ~ ul {
-  top: 60px;
+  top: 40px;
   right: 16px;
 }

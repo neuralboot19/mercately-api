@@ -14,9 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
   var endsInputHour = document.getElementById('ends_at_hour');
   var endsInputMinute = document.getElementById('ends_at_minute');
 
-  var timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
-  var timezoneInput = document.getElementById('timezone');
+  const timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+  const timezoneInput = document.getElementById('timezone');
+  const timezoneInputEdit = document.getElementById('timezone_edit');
   timezoneInput.value = timezone;
+  timezoneInputEdit.value = timezone;
 
   var titleInputEdit = document.getElementById('title_edit');
   var startsInputYearEdit = document.getElementById('starts_at_year_edit');

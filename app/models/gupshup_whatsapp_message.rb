@@ -40,7 +40,7 @@ class GupshupWhatsappMessage < ApplicationRecord
       aux_cost = cost.present? ? cost : 0
 
       new_cost = if status != 'error' && aux_cost.zero?
-                   retailer.send("ws_#{message_type}_cost")
+                   customer.send("ws_#{message_type}_cost")
                  elsif status == 'error' && !aux_cost.zero?
                    0
                  end

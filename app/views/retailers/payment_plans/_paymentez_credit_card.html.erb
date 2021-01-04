@@ -7,8 +7,12 @@
       <p class="m-0 container-payment-plan_text">Fecha de expiración
         <span class="ml-110 container-payment-plan_mobile">
           <%= "#{payment_method['expiry_month']}/#{payment_method['expiry_year']}" %>
-          <%= link_to retailers_paymentez_path(slug: current_retailer, id: payment_method['id']), method: :delete, data: { confirm: 'Estás seguro de eliminar esta tarjeta?' }, class: 'btn btn--cta btn-small delete-card' do %>
-            <i class="far fa-trash-alt"></i>
+          <% if current_retailer.paymentez_credit_cards.count > 1 %>
+            <%= link_to retailers_paymentez_path(slug: current_retailer, id: payment_method['id']),
+              method: :delete, data: { confirm: 'Estás seguro de eliminar esta tarjeta?' },
+              class: 'btn btn--cta btn-small delete-card' do %>
+              <i class="far fa-trash-alt"></i>
+            <% end %>
           <% end %>
         </span>
       </p>

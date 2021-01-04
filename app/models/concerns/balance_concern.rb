@@ -2,7 +2,7 @@ module BalanceConcern
   extend ActiveSupport::Concern
 
   included do
-    after_create :substract_from_balance
+    after_create :substract_from_balance, unless: -> (obj) { ['error', 'failed'].include?(obj.status) }
   end
 
   private
@@ -14,13 +14,18 @@ module BalanceConcern
       when 'KarixWhatsappMessage'
         return unless status != 'failed'
 
-        amount = retailer.send("ws_#{ message_type }_cost")
+        amount = retailer.send("ws_#{message_type}_cost")
       when 'GupshupWhatsappMessage'
         return unless status != 'error'
 
         if direction == 'outbound'
           if message_payload['type'] == 'text'
-            cost_type_message = message_payload['isHSM'] == 'true' ? 'notification' : 'conversation'
+            cost_type_message = if message_payload['isHSM'] == 'true'
+                                  update(cost: customer.ws_notification_cost)
+                                  'notification'
+                                else
+                                  'conversation'
+                                end
           else
             cost_type_message = 'conversation'
           end
@@ -28,7 +33,7 @@ module BalanceConcern
           cost_type_message = 'conversation'
         end
 
-        amount = retailer.send("ws_#{ cost_type_message }_cost")
+        amount = customer.send("ws_#{cost_type_message}_cost")
       end
 
       retailer.ws_balance -= amount

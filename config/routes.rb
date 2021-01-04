@@ -42,6 +42,8 @@ Rails.application.routes.draw do
   get '/terminos', to: 'pages#terms', as: :terms
   get '/whatsapp-crm', to: 'pages#whatsapp_crm', as: :whatsapp_crm
 
+  get '/chatbots-whatsapp', to: 'pages#chatbots_whatsapp', as: :chatbots_whatsapp
+
   namespace :retailers do
     namespace :api, defaults: { format: :json } do
       namespace :v1 do
@@ -197,8 +199,66 @@ Rails.application.routes.draw do
     end
   end
 
+  #redirections from old blog post
+  get '/blog/aumenta-tus-ventas-en-navidad-y-fin-de-ano-con-estos-valiosos-tips',
+    to: redirect('/blog/mejores-tips-aumentar-ventas-navidad-fin-año', status: 301)
+  get '/blog/instagram-y-facebook-dan-mas-protagonismo-a-sus-tiendas-y-catalogos-de-ventas',
+    to: redirect('/blog/impulsar-ventas-instagram-facebook', status: 301)
+  get '/blog/recupera-tus-ventas-de-todo-el-ano-se-viene-black',
+    to: redirect('/blog/mejorar-ventas-black-friday-navidad', status: 301)
+  get '/blog/10-consejos-para-aumentar-tus-ventas-en-black-friday',
+    to: redirect('/blog/mejores-consejos-ventas-black-friday', status: 301)
+  get '/blog/las-tendencias-para-evolucionar-y-revolucionar-tu-negocio-en-el-2021',
+    to: redirect('/blog/razones-digitalizar-negocio', status: 301)
+  get '/blog/por-que-apostar-por-el-negocio-online',
+    to: redirect('/blog/beneficios-negocio-online', status: 301)
+  get '/blog/instagram-shopping',
+    to: redirect('/blog/usos-instagram-shopping', status: 301)
+  get '/blog/vende-mas-en-facebook',
+    to: redirect('/blog/trucos-aumentar-ventas-facebook', status: 301)
+  get '/blog/vende-tus-productos-en-marketplace-de-facebook',
+    to: redirect('/blog/mejores-tips-facebook-marketplace', status: 301)
+  get '/blog/futuro-comercio-electronico-latinoamerica',
+    to: redirect('/blog/beneficios-ecommerce-latinoamerica', status: 301)
+  get '/blog/como-los-chatbots-estan-impulsando-la-transformacion-digital',
+    to: redirect('/blog/como-utilizar-chatbots-marketing-digital', status: 301)
+  get '/blog/black-friday-la-epoca-de-descuentos-promociones-y-resultados-para-tu-negocio',
+    to: redirect('/blog/aprovechar-black-friday-ventas-digitales', status: 301)
+  get '/blog/chatbots-son-importantes-para-tu-negocio',
+    to: redirect('/blog/por-que-usar-chatbots-whatsapp-empresa', status: 301)
+  get '/blog/estrategias-para-vender-en-mercado-libre',
+    to: redirect('/blog/mejores-estrategias-vender-mercado-libre', status: 301)
+  get '/blog/como-ser-un-mercado-lider',
+    to: redirect('/blog/como-ser-mercadolider', status: 301)
+  get '/blog/mercado-libre-publicidad',
+    to: redirect('/blog/servicio-publicidad-mercado-libre', status: 301)
+  get '/blog/facebook-marketplace-mejor-plataforma-vender',
+    to: redirect('/blog/diferencias-mercado-libre-facebook-marketplace', status: 301)
+  get '/blog/potenciar-publicaciones-mercado-libre',
+    to: redirect('/blog/mejorar-visibilidad-mercado-libre', status: 301)
+  get '/blog/vender-mas-mercado-libre',
+    to: redirect('/blog/aumentar-ventas-mercado-libre', status: 301)
+  get '/blog/procesos-de-ventas-whatsaap-api',
+    to: redirect('/blog/mejorar-ventas-whatsapp-business-api', status: 301)
+  get '/blog/chatbots-de-whatsapp-servicio-al-cliente',
+    to: redirect('/blog/chatbots-whatsapp-servicio-cliente', status: 301)
+  get '/blog/whatsapp-para-empresas',
+    to: redirect('/blog/aumentar-ventas-whatsapp-empresas', status: 301)
+  get '/blog/whatsapp-marketing',
+    to: redirect('/blog/crear-publicidad-whatsapp-marketing', status: 301)
+  get '/blog/whatsapp-business-tipos-de-plantillas-y-como-crearlas-correctamente',
+    to: redirect('/blog/uso-plantillas-whatsapp-business', status: 301)
+  get '/blog/plantillas-para-whatsapp-business-api',
+    to: redirect('/blog/uso-plantillas-whatsapp-api', status: 301)
+  get '/blog/inventario-sincronizado',
+    to: redirect('/blog/inventario-sincronizado-facebook-mercado-libre', status: 301)
+
+  # Blog
   get '/blog', to: 'blogs#index', as: :blog
   get '/blog/:id', to: 'blogs#show', as: :blog_content
+
+
+
   get '/categoria/:id', to: 'blogs#category', as: :blog_category
   get '/tag/:id', to: 'blogs#tag', as: :blog_tags
 

@@ -1,7 +1,8 @@
+
 <header class="header--dashboard">
   <div class="retailer container-fluid">
-    <div class="row middle-xs">
-      <div class="col-xs-3 pl-0">
+    <div class="row middle-xs" style="height: 50px;">
+      <div class="col-xs-3">
         <div class="dropdown__button middle hide-on-pc">
           <label for="sidebar--toggle">
             <i class="fas fa-bars"></i>
@@ -10,31 +11,39 @@
 
         <div class="retailer__info">
           <div class="d-inline info__logo"><strong><%= two_upper_case_letters(current_retailer.name) %></strong></div>
-          <div class="d-inline info__name"><strong><%= current_retailer.name %></strong></div>
+          <div class="d-inline info__name"><strong class="account"><%= current_retailer.name %></strong></div>
         </div>
       </div>
-      <div class="col-xs-6 t-center">
-        <%= image_tag 'dashboard/logo.png', class: "hide-on-pc" %>
+      <div class="col-xs-5 t-center">
+        <%= image_tag 'landing/logo.png', class: "hide-on-pc" %>
       </div>
-      <div class="col-xs-2 t-right">
-        <% if current_retailer.show_calendar %>
-          <div class="calendar-button">
+      <div class="col-xs-4 t-right">
+        <div class="d-inline-block mr-7">
+          <span>
+            <i class="fas far fa-question-circle">
+            </i>
+            <a class="no-style" href="https://mercately.crunch.help/" target="_blank">
+              <strong class="hide-on-tablet-and-down nav-option">Ayuda</strong>
+            </a>
+          </span>
+        </div>
+        <div class="calendar-button">
+          <span>
             <i class="fas fa-calendar-alt">
             </i>
-            <strong class="hide-on-tablet-and-down">Calendario</strong>
-          </div>
-        <% end %>
-      </div>
-      <div class="col-xs-1">
-        <div id="user" class="f-right middle">
-          <label for="dropdown__menu--header" class="user__dropdown">
+            <strong class="hide-on-tablet-and-down nav-option">Calendario</strong>
+          </span>
+        </div>
+        <div id="user" class="d-inline-block">
+          <label id="user__dropdown--button" for="dropdown__menu--header" class="user__dropdown">
             <div class="dropdown__button middle">
-              <strong class="hide-on-tablet-and-down">Cuenta</strong>
+              <i class="fas far fa-user mr-2"></i>
+              <strong class="hide-on-tablet-and-down nav-option">Cuenta</strong>
               <i class="fas fa-sort-down mb-8 ml-8"></i>
             </div>
           </label>
           <input id="dropdown__menu--header" type="checkbox" class="dropdown__input"/>
-          <ul class="dropdown__menu">
+          <ul class="dropdown__menu t-left">
             <li>
               <%= link_to edit_retailer_info_path(current_retailer), class: 'no-style' do %>
                 <i class="fas fa-user-cog mr-8"></i>

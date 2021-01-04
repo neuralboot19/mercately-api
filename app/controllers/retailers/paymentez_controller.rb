@@ -28,7 +28,7 @@ class Retailers::PaymentezController < RetailersController
 
     redirect_path = retailers_payment_plans_path(current_retailer)
 
-    if pcc && pcc.delete_card!
+    if pcc && current_retailer.paymentez_credit_cards.count > 1 && pcc.delete_card!
       redirect_to redirect_path, notice: 'Tarjeta eliminada satisfactoriamente.'
       return
     end

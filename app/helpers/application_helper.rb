@@ -17,7 +17,7 @@ module ApplicationHelper
     end
   end
 
-  def link_resolver()
+  def link_resolver
     @link_resolver ||= Prismic::LinkResolver.new(nil) {|link|
       # URL for the category type
       if link.type == "category"
@@ -58,5 +58,9 @@ module ApplicationHelper
 
   def og_description
     content_for?(:og_description) ? content_for(:og_description) : ""
+  end
+
+  def all_countries_price
+    JSON.parse(File.read("#{Rails.public_path}/json/template_price.json")).sort
   end
 end

@@ -1,6 +1,6 @@
 class StripeTransaction < ApplicationRecord
   belongs_to :retailer
-  belongs_to :payment_method
+  belongs_to :payment_method, optional: true
 
   validates :amount, numericality: { greater_than_or_equal_to: 10 }
 

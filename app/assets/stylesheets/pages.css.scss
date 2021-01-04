@@ -813,6 +813,237 @@ footer {
   padding-top: 150px;
 }
 
+
+// WHATSAPP CHATBOTS LANDING PAGE
+
+
+.cw-hide-on-mobile {
+  display: none;
+}
+
+.cw-btn {
+  font-size: 15px ;
+}
+
+.cw-hero {
+  padding-top: 100px;
+  margin-bottom: 75px;
+  background: url(/assets/landing/landing-background.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.cw-hero-heading {
+  margin-top: 3rem;
+}
+
+
+.cw-btn-group-large label {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+.cw-btn-group-large a {
+  text-align: center;
+  width: 100%;
+  margin-bottom: 25px;
+}
+
+.cw-hero h1{
+  line-height: 3.125rem;
+  font-size: 25px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.cw-benefits-holder {
+  margin-bottom: 300px;
+}
+
+.cw-benefits-tools {
+  margin-bottom: 100px;
+}
+
+.cw-benefits-tools h2 {
+  color: #692586;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-bottom: 25px;
+  margin-top: 25px;
+  font-size: 25px;
+}
+
+.cw-benefits-img-holder {
+  text-align: center;
+}
+
+
+.cw-benefits-img-holder img {
+  width: 80%;
+}
+
+.cw-benefits-tools p {
+  font-size: 14px;
+  margin: 15px 0 25px 0;
+  line-height: 1.875rem;
+  color: #6F7982;
+  border-left: solid 3px #692586;
+  padding-left: 10px;
+  text-align: center;
+}
+
+.cw-vertical{
+  margin: 0;
+  position: relative;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.cw-vertical h2 {
+  font-size: 22px;
+}
+
+.cw-tools-holder {
+  position: relative;
+  min-height: auto;
+  background: url(/assets/chatbots-whatsapp/bg-tools.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.cw-tool-title {
+  color: #692586;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.cw-tool-wrapper {
+  position: relative;
+  top: -250px;
+  margin: 0;
+  left: 5%;
+  width: 90%;
+}
+
+.cw-tool-main{
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  padding: 15px 25px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.cw-tool-main h3 {
+  color: #00B4FF;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 25px;
+}
+
+.cw-tool-main p {
+  font-size: 14px;
+  margin: 15px 0 25px 0;
+  line-height: 1.875rem;
+  color: #6F7982;
+}
+
+.cw-tool-content {
+  display: inline-block;
+  width: 100%;
+  vertical-align: middle;
+  padding: 10px 15px;
+}
+
+.cw-tool-img {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+  vertical-align: text-bottom;
+}
+
+
+.cw-tool-exp {
+  margin: 25px 0px;
+}
+
+.cw-featuring-wrapper {
+  margin-top: 75px;
+}
+
+
+.cw-featuring-image {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  text-align: center;
+}
+
+.cw-featuring-img {
+  width: 200px;
+  border-radius: 50%;
+}
+
+.cw-featuring-content {
+  background: url(/assets/chatbots-whatsapp/qoute-bg.png);
+  background-repeat: no-repeat;
+  background-position: 0% 105%;
+  background-color: #fff;
+  vertical-align: middle;
+  display: inline-block;
+  background-color: #FFF;
+  width: 100%;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  display: table;
+  margin: 50px auto;
+  padding: 50px 30px;
+}
+
+.cw-quote-img {
+  width: 75px;
+}
+
+.cw-qoute-img-wrapper {
+  position: absolute;
+  width: 100%;
+  left: 0%;
+  top: 25px;
+}
+
+.cw-social-holder {
+  background-color: #f8f2f9;
+  padding: 80px 0px;
+}
+
+
+.cw-social-img-holder {
+  text-align: center;
+  height: 250px;
+}
+
+.cw-social-img-holder p {
+  font-size: 20px;
+  margin-top: 25px;
+  line-height: 1.2em;
+  font-weight: bold;
+}
+
+.cw-social-img-holder img {
+  height: 149px;
+}
+
+// Media Queries
+
+
+
+
 @media (min-width: 768px) and (max-width: 1199px) {
   .btn-group-large>.btn,
   .btn-group-large [class*="link-"] {
@@ -821,3 +1052,152 @@ footer {
     margin-bottom: 20px;
   }
 }
+
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .cw-hero {
+    padding-top: 150px;
+    padding-bottom: 150px;
+    min-height: 600px;
+    margin-bottom: 0px;
+  }
+
+  .cw-tool-content {
+    width: 75%;
+  }
+
+  .cw-benefits-img-holder img {
+    width: auto;
+  }
+
+  .cw-hero h1{
+    font-size: 35px;
+    text-align: left;
+  }
+
+  .cw-btn-group-large label {
+    width: 325px;
+    font-size: 12px;
+    padding: 10px 30px;
+  }
+
+  .cw-btn-group-large a {
+    width: 325px;
+    font-size: 12px;
+    padding: 10px 30px;
+  }
+
+
+  .cw-tool-img {
+    width: auto;
+    text-align: left;
+  }
+
+  .cw-tool-main h3 {
+    font-size: 20px;
+    text-align: left;
+    margin-top: 0px;
+  }
+
+  .cw-benefits-tools p {
+    font-size: 18px;
+    text-align: left;
+  }
+
+  .cw-tool-title {
+    text-align: left;
+    font-size: 24px;
+  }
+
+  .cw-vertical h2 {
+    font-size: 24px;
+  }
+
+  .cw-featuring-wrapper {
+    margin-top: 200px;
+  }
+
+  .cw-featuring-img {
+    width: 100%;
+  }
+
+  .cw-tool-main p {
+    font-size: 1rem;
+  }
+
+  .cw-featuring-content {
+    width: 75%;
+    padding: 70px 50px;
+    margin: 0px auto;
+  }
+
+
+  .cw-qoute-img-wrapper {
+    top: -25px;
+  }
+
+}
+
+
+@media only screen and (min-width: 992px) {
+  .cw-hide-on-mobile {
+    display: block;
+  }
+
+  .cw-btn-group-large label {
+    width: auto;
+  }
+
+  .cw-btn-group-large a {
+    width: auto;
+  }
+
+  .cw-vertical {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+  }
+
+
+  .cw-benefits-img-holder img {
+    width: 300px;
+    vertical-align: bottom;
+  }
+
+  .cw-benefits-tools h2 {
+    text-align: left;
+  }
+
+  .cw-tools-holder {
+    min-height: 1300px;
+  }
+
+  .cw-tool-wrapper {
+    // position: absolute;
+    left: 15%;
+    width: 70%;
+  }
+}
+
+
+
+@media (min-width: 1200px) {
+  .cw-hero-heading {
+    margin-top: 7rem;
+  }
+
+  .cw-btn-group-large label {
+    font-size: 15px;
+  }
+
+  .cw-btn-group-large a {
+    font-size: 15px;
+  }
+}
+
+
+
+

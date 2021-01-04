@@ -37,6 +37,7 @@ class Customer < ApplicationRecord
   before_validation :strip_whitespace
   before_save :update_valid_customer
   before_save :format_phone_number
+  before_save :calc_ws_notification_cost
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
   after_create :generate_web_id
@@ -103,6 +104,10 @@ class Customer < ApplicationRecord
     end
 
     update(phone: phone_area + meli_customer.phone)
+  end
+
+  def ws_conversation_cost
+    retailer.ws_conversation_cost
   end
 
   def unread_message?
@@ -438,5 +443,15 @@ class Customer < ApplicationRecord
       return true if answers.first.send(attribute) == message_uid
 
       false
+    end
+
+    def calc_ws_notification_cost
+      country_codes = JSON.parse(File.read("#{Rails.public_path}/json/all_countries_price.json"))
+      price = country_codes[country_id]
+      if price.nil?
+        country_codes['Others']
+      else
+        self.ws_notification_cost = price
+      end
     end
 end

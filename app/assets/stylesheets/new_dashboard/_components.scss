@@ -1,3 +1,8 @@
+h1 {
+  font-size: 22px;
+  letter-spacing: 0.5px;
+}
+
 .fieldset {
   border: 0;
   padding: 0;
@@ -325,8 +330,13 @@
   min-height: 80vh;
   background-color: #FFF;
   padding: 8px;
-  border-radius: 6px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+
+  @media screen and (min-width: 1024px) {
+    margin-left: 60px;
+    margin-top: 25px;
+  }
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
 
   &__module {
     // padding-bottom: 24px;
@@ -550,7 +560,7 @@
 }
 
 #modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
-#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal {
+#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal, input[name="modal--toggle"]:checked ~ .modal {
   display: block;
 }
 
@@ -1605,7 +1615,8 @@ i {
   font-family: 'Poppins-SemiBold';
   text-decoration: none;
   color: #AAA;
-  font-size: 18px;
+  font-size: 16px;
+  margin-top: 0;
 }
 
 .cancel-link {
@@ -1696,3 +1707,13 @@ i {
   right: -5px;
   text-align: left;
 }
+
+
+
+@media (min-width: 1024px) {
+  .container-titles {
+    margin-left: 60px;
+    margin-top: 25px;
+  }
+}
+
