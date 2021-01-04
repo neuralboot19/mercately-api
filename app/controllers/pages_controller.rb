@@ -43,7 +43,7 @@ class PagesController < ApplicationController
       utm_content: params[:utm_content],
       utm_campaign: params[:utm_campaign]
     })
-    redirect_to "https://api.whatsapp.com/send?l=es&phone=593989083446&text=#{params["text"]}"
+    redirect_to "https://api.whatsapp.com/send?l=es&phone=593989083446&text=#{params['text']}"
   end
 
   def request_demo
