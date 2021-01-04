@@ -21,7 +21,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  background-color: #ECEFF4;
+  background-color: #F5F7FA;
 }
 
 .top-chat-bar {
@@ -544,7 +544,7 @@ label:hover, a:hover {
   }
 }
 
-@media (min-width: 1024px) and (max-width: 1440px) {
+@media (min-width: 1024px) {
   .header--dashboard, #sidebar, .table__header, .btn {
     font-size: 14px;
   }
