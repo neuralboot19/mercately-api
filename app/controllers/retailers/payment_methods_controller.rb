@@ -46,7 +46,7 @@ class Retailers::PaymentMethodsController < RetailersController
     pm = current_retailer.payment_methods.find_by(stripe_pm_id: params['id'])
     redirect_path = retailers_payment_plans_path(current_retailer)
 
-    if pm
+    if pm && current_retailer.payment_methods.count > 1
       pm.destroy
       Stripe::PaymentMethod.detach(pm.stripe_pm_id)
       redirect_to redirect_path, notice: 'Método de pago eliminado con éxito.'

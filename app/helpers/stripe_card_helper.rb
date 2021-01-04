@@ -6,7 +6,8 @@ module StripeCardHelper
   end
 
   def stripe_credit_card(card_id)
-    card = PaymentMethod.unscoped.find(card_id)
+    card = PaymentMethod.unscoped.find_by(id: card_id)
+    return ['Tarjeta no encontrada'] if card.nil?
     pm = JSON.parse(card.payment_payload)
     [
       "#{pm['card']['brand']} #{pm['card']['last4']} #{pm['card']['exp_month']}/#{pm['card']['exp_year']}",

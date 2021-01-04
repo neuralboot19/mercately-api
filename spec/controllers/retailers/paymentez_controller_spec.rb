@@ -15,13 +15,26 @@ RSpec.describe Retailers::PaymentezController, type: :controller do
   end
 
   describe '#delete' do
-    it 'deletes a payment method and creates a notice message' do
-      allow(PaymentezCreditCard).to receive(:do_request).and_return(faraday_delete_mock)
-      delete :destroy, params: { slug: retailer_user.retailer.slug, id: credit_card.id }
+    context 'when only one card' do
+      it 'deletes a payment method and creates a notice message' do
+        allow(PaymentezCreditCard).to receive(:do_request).and_return(faraday_delete_mock)
+        delete :destroy, params: { slug: retailer_user.retailer.slug, id: credit_card.id }
 
-      expect(PaymentezCreditCard.count).to eq(0)
-      expect(flash[:notice]).to be_present
-      expect(flash[:notice]).to eq('Tarjeta eliminada satisfactoriamente.')
+        expect(PaymentezCreditCard.count).to eq(1)
+      end
+    end
+
+    context 'when have multiple cards' do
+      let!(:credit_card_2) { create(:paymentez_credit_card, retailer: retailer_user.retailer) }
+
+      it 'deletes a payment method and creates a notice message' do
+        allow(PaymentezCreditCard).to receive(:do_request).and_return(faraday_delete_mock)
+        delete :destroy, params: { slug: retailer_user.retailer.slug, id: credit_card.id }
+
+        expect(PaymentezCreditCard.count).to eq(1)
+        expect(flash[:notice]).to be_present
+        expect(flash[:notice]).to eq('Tarjeta eliminada satisfactoriamente.')
+      end
     end
 
     it 'does not delete and redirects back with a flash alert if not found' do
