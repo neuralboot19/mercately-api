@@ -1,0 +1,168 @@
+<form action="/admin/estadisticas_de_visitas" method="get" accept-charset="utf-8">
+  <% if params[:starts1] %>
+    <% @visits1 = Ahoy::Visit.where(started_at: params[:starts1]..params[:ends1]) %>
+    <% @visits2 = Ahoy::Visit.where(started_at: params[:starts2]..params[:ends2]) %>
+  <% else %>
+    <% @visits1 = Ahoy::Visit.where(started_at: 1.week.ago..Date.today) %>
+    <% @visits2 = Ahoy::Visit.where(started_at: 1.week.ago..Date.today) %>
+  <% end %>
+  <div>
+    Desde
+    <input type="date" value="<%= params[:starts1] || 1.week.ago.to_date %>" name="starts1" id="starts1" class="normal-input"/>
+    Hasta
+    <input type="date" value="<%= params[:ends1] || Date.today %>" name="ends1" id="ends1" class="normal-input"/>
+  </div>
+  <table class="normal-table">
+    <thead>
+      <tr>
+        <th>Pagina</th>
+        <th>Total</th>
+        <th>Campaña</th>
+        <th>Source</th>
+        <th>Term</th>
+        <th>Medium</th>
+        <th>Content</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @visits1.pluck(:landing_page).map {|x| x.gsub(/\?.*$/, '')}.uniq.each do |landing_page| %>
+        <% visits_by_landing = @visits1.where("landing_page LIKE '#{landing_page}%'") %>
+        <tr>
+          <td>
+            <%= landing_page %>
+          </td>
+          <td>
+            <%= visits_by_landing.count %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <div>
+                <%= utm_campaign.presence || 'Sin campaña' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign).count %>
+                <% (visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_source).uniq.length - 1).times.each do %>
+                  <div style="border-color: transparent;">&nbsp;</div>
+                <% end %>
+              </div>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_source).uniq.each do |utm_source| %>
+                <div>
+                  <%= utm_source.presence || 'Sin source' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_source: utm_source).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_term).uniq.each do |utm_term| %>
+                <div>
+                  <%= utm_term.presence || 'Sin term' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_term: utm_term).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_medium).uniq.each do |utm_medium| %>
+                <div>
+                  <%= utm_medium.presence || 'Sin medium' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_medium: utm_medium).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_content).uniq.each do |utm_content| %>
+                <div>
+                  <%= utm_content.presence || 'Sin content' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_content: utm_content).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <br/>
+  <br/>
+  <div>
+    Desde
+    <input type="date" value="<%= params[:starts2] || 1.week.ago.to_date %>" name="starts2" id="starts2" class="normal-input"/>
+    Hasta
+    <input type="date" value="<%= params[:ends2] || Date.today %>" name="ends2" id="ends2" class="normal-input"/>
+  </div>
+  <table class="normal-table">
+    <thead>
+      <tr>
+        <th>Pagina</th>
+        <th>Total</th>
+        <th>Campaña</th>
+        <th>Source</th>
+        <th>Term</th>
+        <th>Medium</th>
+        <th>Content</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @visits2.pluck(:landing_page).map {|x| x.gsub(/\?.*$/, '')}.uniq.each do |landing_page| %>
+        <% visits_by_landing = @visits2.where("landing_page LIKE '#{landing_page}%'") %>
+        <tr>
+          <td>
+            <%= landing_page %>
+          </td>
+          <td>
+            <%= visits_by_landing.count %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <div>
+                <%= utm_campaign.presence || 'Sin campaña' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign).count %>
+                <% (visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_source).uniq.length - 1).times.each do %>
+                  <div style="border-color: transparent;">&nbsp;</div>
+                <% end %>
+              </div>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_source).uniq.each do |utm_source| %>
+                <div>
+                  <%= utm_source.presence || 'Sin source' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_source: utm_source).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_term).uniq.each do |utm_term| %>
+                <div>
+                  <%= utm_term.presence || 'Sin term' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_term: utm_term).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_medium).uniq.each do |utm_medium| %>
+                <div>
+                  <%= utm_medium.presence || 'Sin medium' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_medium: utm_medium).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% visits_by_landing.pluck(:utm_campaign).uniq.each do |utm_campaign| %>
+              <% visits_by_landing.where(utm_campaign: utm_campaign).pluck(:utm_content).uniq.each do |utm_content| %>
+                <div>
+                  <%= utm_content.presence || 'Sin content' %>: <%= visits_by_landing.where(utm_campaign: utm_campaign, utm_content: utm_content).count %>
+                </div>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <input type="submit" id="" value="Enviar">
+</form>
