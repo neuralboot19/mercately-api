@@ -4,6 +4,7 @@
   "dependencies": {
     "@babel/preset-react": "^7.7.4",
     "@rails/webpacker": "^4.2.0",
+    "@sentry/react": "^5.29.2",
     "axios": "^0.19.0",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "emoji-mart": "^3.0.0",
