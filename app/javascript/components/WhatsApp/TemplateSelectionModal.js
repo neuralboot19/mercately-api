@@ -1,6 +1,8 @@
 import React from 'react';
 import Modal from 'react-modal';
+// eslint-disable-next-line import/no-unresolved
 import TemplateImg from 'images/dashboard/ilustracion-cel.png';
+import TemplateSelectionItem from './TemplateSelectionItem';
 
 const customStyles = {
   content: {
@@ -32,7 +34,7 @@ const TemplateSelectionModal = (
     toggleModal
   }
 ) => (
-  <Modal isOpen={isModalOpen} style={customStyles}>
+  <Modal appElement={document.getElementById("react_content")} isOpen={isModalOpen} style={customStyles}>
     <div className={onMobile ? "row mt-50" : "row"}>
       <div className="col-md-10">
         <p className={onMobile ? "fs-20 mt-0" : "fs-30 mt-0"}>
@@ -53,17 +55,14 @@ const TemplateSelectionModal = (
           {
             templates.length > 0
               ? (templates.map((template) => (
-                <div className="row" key={template.id}>
-                  <div className={onMobile ? "col-md-10 fs-10" : "col-md-10"}>
-                    <p>
-                      {`[${setTemplateType(template.template_type)}] `}
-                      {getCleanTemplate(template.text)}
-                    </p>
-                  </div>
-                  <div className="col-md-2">
-                    <button type="submit" onClick={() => selectTemplate(template)}>Seleccionar</button>
-                  </div>
-                </div>
+                <TemplateSelectionItem
+                  key={template.id}
+                  template={template}
+                  getCleanTemplate={getCleanTemplate}
+                  selectTemplate={selectTemplate}
+                  setTemplateType={setTemplateType}
+                  onMobile={onMobile}
+                />
               )))
               : (
                 <div className="row">

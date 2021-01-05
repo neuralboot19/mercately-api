@@ -3,12 +3,14 @@
         "browser": true,
         "commonjs": true,
         "es6": true,
-        "jquery": true
+        "jquery": true,
+        "jest/globals": true
     },
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
-        "airbnb"
+        "airbnb",
+        "plugin:jest/all"
     ],
     "parser": "babel-eslint",
     "parserOptions": {
@@ -19,7 +21,9 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "enzyme",
+        "jest"
     ],
     "rules": {
         "comma-dangle": ["error", "never"],

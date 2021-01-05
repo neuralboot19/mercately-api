@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tests over <TemplateSelectionItem/> should render on desktop 1`] = `
+<div
+  className="row"
+  key="90"
+>
+  <div
+    className="col-md-10"
+  >
+    <p>
+      [undefined] 
+    </p>
+  </div>
+  <div
+    className="col-md-2"
+  >
+    <button
+      onClick={[Function]}
+      type="submit"
+    >
+      Seleccionar
+    </button>
+  </div>
+</div>
+`;
+
+exports[`tests over <TemplateSelectionItem/> should render on mobile 1`] = `
+<div
+  className="row"
+  key="90"
+>
+  <div
+    className="col-md-10 fs-10"
+  >
+    <p>
+      [undefined] 
+    </p>
+  </div>
+  <div
+    className="col-md-2"
+  >
+    <button
+      onClick={[Function]}
+      type="submit"
+    >
+      Seleccionar
+    </button>
+  </div>
+</div>
+`;

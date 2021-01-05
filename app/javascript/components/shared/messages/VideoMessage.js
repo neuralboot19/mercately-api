@@ -1,12 +1,24 @@
 import React from 'react';
+import MediaMessageStatus from '../MediaMessageStatus';
 
-const VideoMessage = ({ isReply, url }) => {
-  const width = isReply ? 120 : 320;
-  const height = isReply ? 80 : 240;
+const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
+  const url = chatType === "whatsapp" ? message.content_media_url : message.url;
   return (
-    <video width={width} height={height} controls>
-      <source src={url} />
-    </video>
+    <div>
+      <div className="video-content">
+        <video width={320} height={240} controls className="d-block">
+          <source src={url} />
+        </video>
+        <MediaMessageStatus
+          chatType={chatType}
+          message={message}
+          handleMessageEvents={handleMessageEvents}
+          mediaMessageType="video"
+        />
+      </div>
+      {message.content_media_caption
+      && (<div className="media-caption text-pre-line">{message.content_media_caption}</div>)}
+    </div>
   );
 };
 
