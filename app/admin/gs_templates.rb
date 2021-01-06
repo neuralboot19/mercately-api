@@ -5,8 +5,14 @@ ActiveAdmin.register GsTemplate do
   scope :pending, default: true
   scope :accepted
   scope :rejected
+  scope :submitted
 
   filter :retailer, as: :searchable_select
+
+  batch_action :submit do |ids|
+    batch_action_collection.where(id: ids).pending.find_each(&:submitted!)
+    redirect_to admin_gs_templates_path, alert: 'Templates submitted!'
+  end
 
   batch_action :accept do |ids|
     batch_action_collection.where(id: ids).pending.find_each(&:accepted!)
