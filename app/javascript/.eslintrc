@@ -3,12 +3,14 @@
         "browser": true,
         "commonjs": true,
         "es6": true,
-        "jquery": true
+        "jquery": true,
+        "jest/globals": true
     },
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
-        "airbnb"
+        "airbnb",
+        "plugin:jest/all"
     ],
     "parser": "babel-eslint",
     "parserOptions": {
@@ -19,7 +21,9 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react"
+        "react",
+        "enzyme",
+        "jest"
     ],
     "rules": {
         "comma-dangle": ["error", "never"],
@@ -41,6 +45,7 @@
         "jsx-a11y/no-static-element-interactions": "off",
         "react/jsx-no-target-blank": "off",
         "jsx-a11y/control-has-associated-label": "off",
-        "jsx-a11y/alt-text": "off"
+        "jsx-a11y/alt-text": "off",
+        "import/no-extraneous-dependencies": "off"
     }
 }

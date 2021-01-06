@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import MessageStatus from '../MessageStatus';
 
+// chatType, handleMessageEvents, isReply, message, onClick
 function DocumentMessage(props) {
   const [url, setUrl] = useState('');
 
@@ -9,10 +11,12 @@ function DocumentMessage(props) {
       return;
     }
 
+    // eslint-disable-next-line no-undef
     FB.api(
       `/${props.message.mid}`,
       'get',
       {
+        // eslint-disable-next-line no-undef
         access_token: ENV.FANPAGE_TOKEN,
         fields: 'message, attachments'
       },
@@ -48,6 +52,12 @@ function DocumentMessage(props) {
           <i className="fas fa-file-download mr-8" />
           {props.message.filename || 'Descargar archivo'}
         </a>
+        <br />
+        <MessageStatus
+          chatType={props.chatType}
+          handleMessageEvents={props.handleMessageEvents}
+          message={props.message}
+        />
       </div>
     ))
   );

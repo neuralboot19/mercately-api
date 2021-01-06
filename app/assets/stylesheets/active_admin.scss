@@ -36,3 +36,27 @@ form fieldset.actions a.action {
     background-image: linear-gradient(180deg, #FFFFFF, #F1F1F1);
   }
 }
+
+.normal-input {
+  display: inline;
+  width: 150px !important;
+}
+
+.normal-table{
+  th, td {
+    border: 1px solid black;
+  }
+
+  td {
+    padding: 0;
+  }
+
+  td div {
+    padding: 4px 10px 4px 5px;
+    border-bottom: 1px solid black;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}

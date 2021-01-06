@@ -106,37 +106,32 @@ class ChatMessages extends Component {
     this.setFocus();
   }
 
+  addArrivingMessage = (currentMessages, newMessage) => {
+    // First remove message without Id to avoid duplication
+    let newMessagesArray = currentMessages.filter((message) => message.id);
+    // Then find and replace element if it exists
+    const index = currentMessages.findIndex((el) => (
+      el.id === newMessage.id
+    ));
+    if (index === -1) {
+      newMessagesArray = newMessagesArray.concat(newMessage);
+    } else {
+      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id) ? newMessage : message));
+    }
+    return newMessagesArray.sort(this.sortMessages());
+  }
+
   updateChat = (data) => {
     const newMessage = data.karix_whatsapp_message.karix_whatsapp_message;
     if (currentCustomer === newMessage.customer_id) {
-      if (newMessage.content_type === 'text') {
-        if (!this.state.new_message) {
-          let { messages } = this.state;
-          const messageId = newMessage.id;
-
-          messages = this.removeByTextArray(messages, newMessage.content_text, messageId);
-          const index = this.findMessageInArray(messages, messageId);
-
-          if (index === -1) {
-            this.setState((prevState) => ({
-              messages: prevState.messages.concat(newMessage).sort(this.sortMessages()),
-              new_message: false,
-              updated: false,
-              scrolable: false
-            }), () => this.setState({ updated: true, scrolable: false }));
-          }
-        }
-      } else if ((
-        ['image', 'voice', 'audio', 'video', 'document'].includes(newMessage.content_media_type)
-        || ['location', 'contact'].includes(newMessage.content_type))
-        && newMessage.direction === 'inbound') {
+      if (!this.state.new_message) {
         this.setState((prevState) => ({
-          messages: prevState.messages.concat(newMessage),
+          messages: this.addArrivingMessage(prevState.messages, newMessage),
           new_message: false,
+          updated: false,
           scrolable: false
-        }));
+        }), () => this.setState({ updated: true, scrolable: false }));
       }
-
       if (newMessage.direction === 'inbound') {
         this.props.setWhatsAppMessageAsRead(currentCustomer, { message_id: newMessage.id }, csrfToken);
         this.state.can_write = true;
@@ -300,29 +295,20 @@ class ChatMessages extends Component {
     });
   }
 
-  findMessageInArray = (arr, id) => (
-    arr.findIndex((el) => (
-      el.id === id
-    ))
-  )
 
-  removeByTextArray = (arr, text, id = null) => {
-    let index;
 
-    if (id) {
-      index = arr.findIndex((el) => el.content_text === text && el.id === id);
-      if (index === -1) {
-        index = arr.findIndex((el) => el.content_text === text && !el.id);
-      }
-    } else {
-      index = arr.findIndex((el) => el.content_text === text && !el.id);
-    }
+  removeFromMessagesByTextContent = (text, id) => {
+    const { messages } = this.state;
+    const index = messages.findIndex((el) => (
+      el.content_text === text && el.id === id)
+      || (el.content_text === text && !el.id
+      ));
 
     if (index !== -1) {
-      arr.splice(index, 1);
+      messages.splice(index, 1);
     }
 
-    return arr;
+    return messages;
   }
 
   handleScrollToTop = (e) => {
@@ -704,15 +690,13 @@ class ChatMessages extends Component {
       : 'message-by-customer';
     classes += ' main-message-container';
     if (message.status === 'read'
-      && message.content_type === 'text'
       && this.props.handleMessageEvents === true) {
       classes += ' read-message';
     }
-    if (['voice', 'audio', 'video'].includes(this.fileType(message.content_media_type))) {
+    if (['voice', 'audio'].includes(this.fileType(message.content_media_type))) {
       classes += ' video-audio no-background';
-    }
-    if (this.fileType(message.content_media_type) === 'image') {
-      classes += ' no-background';
+    } else if (['image', 'video'].includes(this.fileType(message.content_media_type))) {
+      classes += ' no-background media-container';
     }
     return classes;
   }
@@ -1124,6 +1108,7 @@ class ChatMessages extends Component {
             <div key={message.id} className="message">
               <div className={this.divClasses(message)}>
                 <Message
+                  key={message.id}
                   message={message}
                   handleMessageEvents={this.props.handleMessageEvents}
                   toggleImgModal={this.toggleImgModal}
@@ -1221,7 +1206,7 @@ function mapStateToProps(state) {
   return {
     messages: state.messages || [],
     message: state.message || '',
-    total_pages: state.total_pages || 0,
+    totalPages: state.total_pages || 0,
     templates: state.templates || [],
     total_template_pages: state.total_template_pages || 0,
     agents: state.agents || [],

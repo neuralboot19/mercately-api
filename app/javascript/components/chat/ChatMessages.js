@@ -15,7 +15,7 @@ import {
 } from "../../actions/whatsapp_karix";
 
 import MessageForm from './MessageForm';
-import Message from './Message';
+import ChatMessage from './ChatMessage';
 import ImagesSelector from "../shared/ImagesSelector";
 import GoogleMap from "../shared/Map";
 import TopChatBar from './TopChatBar';
@@ -479,12 +479,6 @@ class ChatMessages extends Component {
     });
   }
 
-  timeMessage = (message) => {
-    return (
-      <span className={message.sent_by_retailer === false ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3'}>{moment(message.created_at).local().locale('es').format('DD-MM-YYYY HH:mm')}</span>
-    )
-  }
-
   insertEmoji = (emoji) => {
     let input = $('#divMessage');
     let text = input.text();
@@ -555,12 +549,11 @@ class ChatMessages extends Component {
           {this.state.messages.map((message) => (
             <div key={message.id} className="message">
               <div className={ this.divClasses(message) }>
-                <Message
+                <ChatMessage
                   message={message}
                   toggleImgModal={this.toggleImgModal}
                   downloadFile={this.downloadFile}
                   fileType={this.fileType}
-                  timeMessage={this.timeMessage}
                   />
               </div>
             </div>

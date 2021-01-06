@@ -3,26 +3,29 @@ import ImageMessage from '../shared/messages/ImageMessage';
 import AudioMessage from '../shared/messages/AudioMessage';
 import DocumentMessage from '../shared/messages/DocumentMessage';
 import VideoMessage from '../shared/messages/VideoMessage';
-import LocationMessage from './messages/LocationMessage';
-import DefaultMessage from './messages/DefaultMessage';
+import LocationMessage from '../shared/messages/LocationMessage';
+import TextMessage from '../shared/messages/TextMessage';
 
 const ChatMessage = ({
   message,
   toggleImgModal,
   downloadFile,
-  fileType,
-  timeMessage
+  fileType
 }) => {
   let tag;
   switch (fileType(message.file_type)) {
     case 'image':
-      tag = <ImageMessage message={message} onClick={toggleImgModal} />;
+      tag = (
+        <ImageMessage
+          message={message}
+          onClick={toggleImgModal}
+        />
+      );
       break;
     case 'audio':
       tag = (
         <AudioMessage
-          mediaUrl={message.url}
-          isLoading={message.is_loading}
+          message={message}
         />
       );
       break;
@@ -36,25 +39,27 @@ const ChatMessage = ({
       );
       break;
     case 'video':
-      tag = <div className="w-400 message-video-audio-content">
-              <VideoMessage
-                url={message.url}
-              />
-              {message.is_loading && (
-                <div class="lds-dual-ring"></div>
-              )}
-            </div>
+      tag = (
+        <VideoMessage
+          message={message}
+        />
+      );
       break;
     case 'location':
-      tag = <LocationMessage message={message} />
+      tag = (
+        <LocationMessage
+          message={message}
+        />
+      );
       break;
     default:
-        tag = <DefaultMessage
+      tag = (
+        <TextMessage
           message={message}
-          timeMessage={timeMessage}
         />
+      );
   }
-  return (tag)
-}
+  return (tag);
+};
 
 export default ChatMessage;
