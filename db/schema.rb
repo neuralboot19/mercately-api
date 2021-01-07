@@ -82,6 +82,17 @@ ActiveRecord::Schema.define(version: 2021_01_21_190344) do
     t.index ["team_assignment_id"], name: "index_agent_customers_on_team_assignment_id"
   end
 
+  create_table "agent_notifications", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.bigint "retailer_user_id", null: false
+    t.string "notification_type"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_agent_notifications_on_customer_id"
+    t.index ["retailer_user_id"], name: "index_agent_notifications_on_retailer_user_id"
+  end
+
   create_table "agent_teams", force: :cascade do |t|
     t.bigint "team_assignment_id"
     t.bigint "retailer_user_id"
@@ -896,6 +907,8 @@ ActiveRecord::Schema.define(version: 2021_01_21_190344) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agent_customers", "customers"
   add_foreign_key "agent_customers", "retailer_users"
+  add_foreign_key "agent_notifications", "customers"
+  add_foreign_key "agent_notifications", "retailer_users"
   add_foreign_key "calendar_events", "retailer_users"
   add_foreign_key "calendar_events", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"

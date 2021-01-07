@@ -1,0 +1,32 @@
+<div class="notifications-button d-inline-block">
+  <label id="notifications__dropdown--button" for="dropdown__notifications" class="p-relative">
+    <div class="dropdown__button middle p-relative  pl-5 pr-5">
+      <i class="fas fa-bell"></i>
+      <b class="item__cookie assignment_notification" style="display: <%= @notifications.unread.count > 0 ? 'block' : 'none' %>"><%= @notifications.unread.count %></b>
+    </div>
+  </label>
+  <input id="dropdown__notifications" type="checkbox" class="dropdown__input"/>
+  <ul id="notifications_list" class="dropdown__menu t-left">
+    <% if @notifications.present? %>
+      <% @notifications.each do |notification| %>
+        <li class="p-relative h-30 <%= "unread-notification" if notification.status === 'unread' %>">
+          <%= link_to chat_url(notification), class: "no-style" , data: { id: notification.id } do %>
+            <i class="<%= chat_type_icon notification.notification_type %> mr-8 fa-lg"></i>
+            Nuevo chat asignado: <%= customer_name notification.customer  %>
+          <% end %>
+          <% if notification.status === 'unread' %>
+            <b class="item__cookie item__cookie_whatsapp_messages notification unread"></b>
+          <%end %>
+          <span class="fs-10 f-right"> <%=  l notification.created_at, format: :short %></span>
+        </li>
+        <li class="divider"></li>
+      <%end %>
+    <% else %>
+      <li class="no-notifications">
+        <div class="no-style">
+          No tiene notificaciones pendientes
+        </div>
+      </li>
+    <% end %>
+  </ul>
+</div>

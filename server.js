@@ -10,6 +10,7 @@ redis.subscribe('customer_chat');
 redis.subscribe('message_chat');
 redis.subscribe('customer_facebook_chat');
 redis.subscribe('message_facebook_chat');
+redis.subscribe('agent_assignment');
 
 redis.on("subscribe", function(channel) {
   console.log("Subscribed to " + channel);

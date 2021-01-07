@@ -1,7 +1,7 @@
 <header class="header--dashboard">
   <div class="retailer container-fluid">
     <div class="row middle-xs" style="height: 50px;">
-      <div class="col-xs-3 col-sm-7">
+      <div class="col-xs-2 col-sm-7">
         <div class="dropdown__button middle hide-on-pc">
           <label for="sidebar--toggle">
             <i class="fas fa-bars"></i>
@@ -13,10 +13,10 @@
           <div class="d-inline info__name"><strong class="account"><%= current_retailer.name %></strong></div>
         </div>
       </div>
-      <div class="col-xs-5 col-sm-1 t-center">
+      <div class="col-xs-4 col-sm-1 t-center">
         <%= image_tag 'landing/logo.png', class: "hide-on-pc" %>
       </div>
-      <div class="col-xs-4 t-right">
+      <div class="col-xs-6 col-sm-4 t-right">
         <div class="d-inline-block mr-7">
           <span>
             <i class="fas far fa-question-circle">
@@ -33,6 +33,9 @@
             <strong class="hide-on-tablet-and-down nav-option">Calendario</strong>
           </span>
         </div>
+        <!-- Notifications start -->
+        <%= render "layouts/dashboard/notifications/notifications" %>
+        <!-- Notifications end -->
         <div id="user" class="d-inline-block">
           <label id="user__dropdown--button" for="dropdown__menu--header" class="user__dropdown">
             <div class="dropdown__button middle">

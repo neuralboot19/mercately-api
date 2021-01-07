@@ -48,9 +48,19 @@ class ChatListItem extends Component {
   }
 
   render() {
-    let customer = this.props.customer;
+    const { customer } = this.props;
+
+    const containerClass = this.props.currentCustomer === customer.id
+      ? 'border border--secondary chat-selected'
+      : 'border border--transparent';
+
     return (
-      <div className={`profile fs-14 box ${this.props.currentCustomer == customer.id ? 'border border--secondary chat-selected' : 'border border--transparent'}`} onClick={() => this.props.handleOpenChat(this.props.customer)}>
+      <div
+        className={`profile fs-14 box ${containerClass}`}
+        onClick={() => this.props.handleOpenChat(this.props.customer)}
+        customer-id={customer.id}
+        chat-type={this.props.chatType}
+      >
         <div className="profile__data row">
           {this.props.chatType === 'facebook' ? (
               customer['unread_message?'] === true &&
