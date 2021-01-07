@@ -1,11 +1,11 @@
 <div class="general-new-container">
-  <h1 class="d-inline general-new-container_header-title">Dashboard</h1>
-  <p class="general-new-container_sub">Estadísticas de ventas, mensajería y otros</p>
-
   <div class="card mt-14 py-35 general-new-container_card">
     <div class="row">
       <div class="col-xs-12 col-md-8 p-0">
-        <h3 class="m-0 mb-10 ml-20 general-new-container_sub-title">Mensajería</h3>
+        <h1 class="m-0 mb-10 ml-20 general-new-container_sub-title d-inline index__title">Mensajería</h1>
+        <div class="ml-20 index__desc">
+          Estadísticas de ventas, mensajería y otros
+        </div>
         <% unless current_retailer.show_stats %>
           <div class="fs-13 ml-20">Sólo puedes ver datos de los últimos 5 días. Para ver datos completos actualiza a Premium.</div>
         <% end %>
