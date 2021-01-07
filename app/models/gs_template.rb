@@ -12,8 +12,14 @@ class GsTemplate < ApplicationRecord
   after_update :send_accepted_email, if: :accepted?
   after_update :send_rejected_email, if: :rejected?
 
+  scope :submitted, -> { where(submitted: true) }
+
   enum key: %i[text image video file]
   enum status: %i[pending accepted rejected]
+
+  def submitted!
+    update(submitted: true)
+  end
 
   private
 
