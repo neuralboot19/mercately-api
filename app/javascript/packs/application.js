@@ -12,8 +12,12 @@ import AppRoutes from "../AppRoutes";
 const store = configureStore();
 
 document.addEventListener('DOMContentLoaded', () => {
-  // eslint-disable-next-line no-undef
-  Sentry.init({ dsn: ENV.SENTRY_DSN });
+  Sentry.init({
+    // eslint-disable-next-line no-undef
+    dsn: ENV.SENTRY_DSN,
+    // eslint-disable-next-line no-undef
+    environment: ENV.ENVIRONMENT
+  });
   ReactDOM.render(
     <AppRoutes store={store} />,
     document.getElementById("react_content")
