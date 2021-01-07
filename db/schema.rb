@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_23_165953) do
+ActiveRecord::Schema.define(version: 2021_01_06_194023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -369,6 +369,7 @@ ActiveRecord::Schema.define(version: 2020_12_23_165953) do
     t.datetime "updated_at", null: false
     t.bigint "retailer_id"
     t.text "reason"
+    t.boolean "submitted", default: false
     t.index ["retailer_id"], name: "index_gs_templates_on_retailer_id"
   end
 
