@@ -10,7 +10,7 @@ module Whatsapp::Gupshup::V1::Helpers
       serialized_message = JSON.parse(serialize_message)
 
       retailer = @msg.retailer
-      agents = @msg.customer.agent.present? ? [@msg.customer.agent] : retailer.retailer_users.to_a
+      agents = @msg.customer.agent.present? ? [@msg.customer.agent] : retailer.retailer_users.all_customers.to_a
       retailer_users = agents | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ret_u|
@@ -26,10 +26,20 @@ module Whatsapp::Gupshup::V1::Helpers
       retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ret_u|
-        remove = assigned_agent.persisted? &&
+        removed_agent = false
+
+        if ret_u.agent? && ret_u.only_assigned?
+          removed_agent = (!assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id) ||
+            (assigned_agent.persisted? && assigned_agent.retailer_user_id != ret_u.id)
+          add_agent = assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id
+
+          next if !removed_agent && !add_agent
+        end
+
+        remove = (assigned_agent.persisted? &&
           assigned_agent.retailer_user_id != ret_u.id &&
           ret_u.admin? == false &&
-          ret_u.supervisor? == false
+          ret_u.supervisor? == false) || removed_agent
 
         redis.publish 'customer_chat',
                       {
@@ -38,7 +48,7 @@ module Whatsapp::Gupshup::V1::Helpers
                         room: ret_u.id
                       }.to_json
 
-        notify_new_counter(ret_u, assigned_agent.customer)
+        notify_new_counter(ret_u, assigned_agent.customer, removed_agent)
       end
     rescue StandardError => e
       Rails.logger.error(e)
@@ -73,7 +83,8 @@ module Whatsapp::Gupshup::V1::Helpers
     def notify_new_counter(*args)
       # Set all local vars
       retailer_user,
-      customer= args
+      customer,
+      removed_agent = args
 
       total = retailer_user.retailer.gupshup_unread_whatsapp_messages(retailer_user).size
 
@@ -82,7 +93,7 @@ module Whatsapp::Gupshup::V1::Helpers
         message = @msg.first
         execute = false
       else
-        customer ||= @msg.customer
+        customer ||= @msg&.customer
         message = @msg
         execute = true
       end
@@ -108,7 +119,7 @@ module Whatsapp::Gupshup::V1::Helpers
       ) : false
       customer_chat_args = {
         customer: serialized_customer,
-        remove_only: remove,
+        remove_only: remove || removed_agent,
         room: retailer_user.id
       }
 

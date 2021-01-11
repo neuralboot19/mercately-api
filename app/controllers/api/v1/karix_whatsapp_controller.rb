@@ -66,11 +66,12 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     @messages = customer_messages
     if @messages.present?
       agents_to_notify = @messages.first.customer.agent.present? ? [@messages.first.customer.agent] : current_retailer
-        .retailer_users.to_a
+        .retailer_users.all_customers.to_a
 
       total_pages = @messages.total_pages
       if current_retailer.karix_integrated?
-        KarixNotificationHelper.broadcast_data(current_retailer, agents_to_notify, nil, nil, @customer)
+        KarixNotificationHelper.broadcast_data(current_retailer, agents_to_notify, nil,
+          @messages.first.customer.agent_customer, @customer)
         @messages = serialize_karix_messages.to_a.reverse
       elsif current_retailer.gupshup_integrated?
         @messages = Whatsapp::Gupshup::V1::Helpers::Messages.new(@messages).notify_messages!(
@@ -128,8 +129,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       message = karix_helper.ws_message_service.assign_message(message, retailer, params['data'])
       message.save
 
-      agents = message.customer.agent.present? ? [message.customer.agent] : retailer.retailer_users.to_a
-      karix_helper.broadcast_data(retailer, agents, message) if message.persisted?
+      agents = message.customer.agent.present? ? [message.customer.agent] : retailer.retailer_users
+        .all_customers.to_a
+      karix_helper.broadcast_data(retailer, agents, message, message.customer.agent_customer) if message.persisted?
       render status: 200, json: { message: 'Succesful' }
     else
       render status: 404, json: { message: 'Account not found' }
@@ -159,7 +161,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         message.save
 
         unless has_agent
-          karix_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil,
+          karix_helper.broadcast_data(current_retailer, current_retailer.retailer_users.all_customers.to_a, nil,
             @customer.agent_customer)
         end
 
@@ -185,9 +187,11 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
     if @message.update_column(:status, 'read')
       @message.customer.update_attribute(:unread_whatsapp_chat, false)
-      agents = @message.customer.agent.present? ? [@message.customer.agent] : current_retailer.retailer_users.to_a
+      agents = @message.customer.agent.present? ? [@message.customer.agent] : current_retailer
+        .retailer_users.all_customers.to_a
       if current_retailer.karix_integrated?
-        KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, nil, @message.customer)
+        KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, @message.customer.agent_customer,
+          @message.customer)
       elsif current_retailer.gupshup_integrated?
         @message = Whatsapp::Gupshup::V1::Helpers::Messages.new(@message).notify_read!(
           current_retailer,
@@ -214,7 +218,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
   def set_chat_as_unread
     # Si el chat no está signado, se le notifican a todos
-    agents = current_retailer.retailer_users.to_a
+    agents = current_retailer.retailer_users.all_customers.to_a
 
     # Si el chat está asignado se le notifica a los admnnistradores
     # y al agente asignado
@@ -245,7 +249,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
           current_retailer,
           agents,
           nil,
-          nil,
+          @customer.agent_customer,
           @customer
         )
       else
@@ -364,6 +368,10 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         end
       end
 
+      if current_retailer_user.only_assigned? && !(current_retailer_user.retailer_supervisor || current_retailer_user.retailer_admin)
+        customer_ids = current_retailer_user.a_customers.pluck(:id)
+        customers = customers.where(id: customer_ids)
+      end
       customers = customers.group('customers.id')
                            .order(order)
                            .page(params[:page])
@@ -386,7 +394,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
                                                                  current_retailer_user)
         message.save
 
-        agents = customer.agent.present? && has_agent ? [customer.agent] : current_retailer.retailer_users.to_a
+        agents = customer.agent.present? && has_agent ? [customer.agent] : current_retailer.retailer_users
+          .all_customers.to_a
         karix_helper.broadcast_data(current_retailer, agents, message, customer.agent_customer)
         render status: 200, json: {
           message: response['objects'][0],
@@ -403,9 +412,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
       gws.send_message(type: type, params: params, retailer_user: current_retailer_user)
 
-      message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new(gws)
+      message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new()
 
-      agents = current_retailer.retailer_users.to_a
+      agents = current_retailer.retailer_users.all_customers.to_a
       message_helper.notify_agent!(current_retailer, agents, agent_customer)
 
       render status: 200, json: {

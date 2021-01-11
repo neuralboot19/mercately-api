@@ -76,8 +76,13 @@ class Retailers::MessagesController < RetailersController
   end
 
   def facebook_chats
-    @chats = current_retailer.customers.includes(:facebook_messages)
-      .where.not(facebook_messages: { id: nil }).page(params[:page])
+    @chats = if current_retailer_user.only_assigned
+               current_retailer_user.a_customers.includes(:facebook_messages)
+                 .where.not(facebook_messages: { id: nil }).page(params[:page])
+             else
+               current_retailer.customers.includes(:facebook_messages)
+                 .where.not(facebook_messages: { id: nil }).page(params[:page])
+             end
   end
 
   def facebook_chat

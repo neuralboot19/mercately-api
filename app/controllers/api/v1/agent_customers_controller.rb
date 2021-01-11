@@ -92,7 +92,7 @@ class Api::V1::AgentCustomersController < Api::ApiController
         ]
 
         # Se envian las notificaciones
-        case assign_agent_params.try(:[],:chat_service)
+        case assign_agent_params.try(:[], :chat_service)
         when 'facebook'
           facebook_helper = FacebookNotificationHelper
           facebook_helper.broadcast_data(*data)

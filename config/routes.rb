@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'retailer_users/omniauth_callbacks', invitations: 'retailer_users/invitations' }
   as :retailer_user do
     get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info
+    put 'retailers/:slug/update_user', to: 'retailers/settings#update', as: :update_user_info
     get 'retailers/:slug/team', to: 'retailers/settings#team', as: :edit_team
     post 'retailers/:slug/invite_team_member', to: 'retailers/settings#invite_team_member', as: :invite_team_member
     post 'retailers/:slug/reinvite_team_member', to: 'retailers/settings#reinvite_team_member', as: :reinvite_team_member
