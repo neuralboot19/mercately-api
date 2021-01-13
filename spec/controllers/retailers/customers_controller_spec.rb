@@ -1,4 +1,6 @@
 require 'rails_helper'
+require 'sidekiq/testing'
+Sidekiq::Testing.inline!
 
 RSpec.describe Retailers::CustomersController, type: :controller do
   describe 'GET #index' do
@@ -425,7 +427,7 @@ RSpec.describe Retailers::CustomersController, type: :controller do
           csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')
         }
 
-        expect(flash[:notice][0]).to include('El archivo que subiste no era un CSV')
+        expect(flash[:notice][0]).to include('Tipo de archivo inválido. Debe ser CSV (.csv) o Excel (.xlsx)')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
       end
 
@@ -439,66 +441,41 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
       end
 
-      it 'returns an error when duplicated rows' do
-        post :bulk_import, params: {
-          slug: retailer.slug,
-          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/duplicated_data_in_customers.csv', 'text/csv')
-        }
-
-        expect(flash[:notice][0]).to include('Este teléfono')
-        expect(flash[:notice][0]).to include('está duplicado en su archivo')
-        expect(flash[:notice][1]).to include('Este email')
-        expect(flash[:notice][1]).to include('está duplicado en su archivo')
-        expect(flash[:notice][2]).to include('Error en el formato del email')
-        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
-      end
-
-      it 'returns errors when invalid customers data' do
-        post :bulk_import, params: {
-          slug: retailer.slug,
-          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/invalid_data_customers.csv', 'text/csv')
-        }
-
-        expect(flash[:notice].count).to eq(2)
-        expect(flash[:notice][0]).to include('No tiene email ni teléfono')
-        expect(flash[:notice][1]).to include('Error en el formato de teléfono')
-        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
-      end
-
       it 'returns an error when csv is empty' do
         post :bulk_import, params: {
           slug: retailer.slug,
           csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/empty_customers.csv', 'text/csv')
         }
 
-        expect(flash[:notice][0]).to include('El archivo CSV está vacío')
+        expect(flash[:notice][0]).to include('El archivo está vacío')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
       end
 
-      it 'returns success message' do
-        expect {
+      context 'when it is a csv file' do
+        it 'returns success message' do
           post :bulk_import, params: {
             slug: retailer.slug,
             csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.csv', 'text/csv')
           }
-        }.to change(Customer, :count).by(1)
 
-        expect(flash[:notice][0]).to include('La importación se realizó con éxito')
-        expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+          expect(flash[:notice][0]).to include('La importación está en proceso. Recibirá un correo cuando ' \
+            'haya culminado.')
+          expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
+        end
       end
 
-      it "raises an error" do
-        allow_any_instance_of(Customer).to receive(:save!) do |instance|
-          instance.errors.add(:base, 'error')
-          raise(ActiveRecord::RecordInvalid, instance)
+      context 'when it is an excel file' do
+        it 'returns success message' do
+          post :bulk_import, params: {
+            slug: retailer.slug,
+            csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.xlsx',
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+          }
+
+          expect(flash[:notice][0]).to include('La importación está en proceso. Recibirá un correo cuando ' \
+            'haya culminado.')
+          expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
         end
-
-        post :bulk_import, params: {
-          slug: retailer.slug,
-          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.csv', 'text/csv')
-        }
-
-        expect(flash[:notice][0]).to include('error')
       end
     end
 

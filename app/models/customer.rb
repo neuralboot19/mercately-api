@@ -35,6 +35,7 @@ class Customer < ApplicationRecord
   validate :phone_uniqueness
 
   before_validation :strip_whitespace
+  before_validation :grab_country_on_import, if: -> { from_import_file }
   before_save :update_valid_customer
   before_save :format_phone_number
   before_save :calc_ws_notification_cost
@@ -44,7 +45,7 @@ class Customer < ApplicationRecord
 
   enum id_type: %i[cedula pasaporte ruc]
 
-  attr_accessor :ml_generated_phone, :send_for_opt_in
+  attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file
 
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
@@ -403,7 +404,9 @@ class Customer < ApplicationRecord
 
       return if retailer.blank? || phone.blank?
 
-      if retailer.customers.where(phone: self.phone).where.not(id: self.id || nil).present?
+      phones_to_check = [self.phone, self.phone.gsub('+', ''), former_phone_number]
+
+      if retailer.customers.where(phone: phones_to_check).where.not(id: self.id || nil).present?
         self.phone = former_phone_number
         errors.add(:base, 'Ya tienes un cliente registrado con este número de teléfono.')
       end
@@ -453,5 +456,12 @@ class Customer < ApplicationRecord
       else
         self.ws_notification_cost = price
       end
+    end
+
+    def grab_country_on_import
+      return unless phone.present? && country_id.blank?
+
+      parse_phone = Phonelib.parse(phone)
+      self.country_id = parse_phone&.country
     end
 end

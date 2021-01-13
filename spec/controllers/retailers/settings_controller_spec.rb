@@ -30,7 +30,7 @@ RSpec.describe Retailers::SettingsController, type: :controller do
         get :team, params: { slug: second_retailer_user.retailer.slug }
         right_retailers = RetailerUser.all.reject { |u| u == second_retailer_user }
 
-        expect(assigns(:team)).to eq(right_retailers)
+        expect(assigns(:team).sort_by(&:id)).to eq(right_retailers.sort_by(&:id))
         expect(assigns(:team).size).to eq(2)
         expect(assigns(:user)).to be_an_instance_of(RetailerUser)
       end
@@ -43,7 +43,7 @@ RSpec.describe Retailers::SettingsController, type: :controller do
         get :team, params: { slug: retailer_user.retailer.slug }
         right_retailers = RetailerUser.all
 
-        expect(assigns(:team)).to eq(right_retailers)
+        expect(assigns(:team).order(:id)).to eq(right_retailers.order(:id))
         expect(assigns(:team).size).to eq(3)
         expect(assigns(:user)).to be_an_instance_of(RetailerUser)
       end
