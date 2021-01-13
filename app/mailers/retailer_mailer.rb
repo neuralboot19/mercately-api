@@ -29,4 +29,10 @@ class RetailerMailer < ApplicationMailer
     @retailer = retailer
     mail to: retailer.admins.pluck(:email), subject: 'Su saldo está a punto de terminarse'
   end
+
+  def imported_customers(retailer_user, errors)
+    @errors = errors
+
+    mail to: retailer_user.email, subject: 'Importación de Clientes Completa'
+  end
 end

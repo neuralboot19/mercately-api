@@ -79,4 +79,43 @@ RSpec.describe RetailerMailer, type: :mailer do
       expect(mail.from).to eq(['hola@mercately.com'])
     end
   end
+
+  describe '.imported_customers' do
+    subject(:mail) { described_class.imported_customers(retailer_user, []).deliver_now }
+
+    let(:retailer_user) { create(:retailer_user, :with_retailer, email: 'retailer@example.com') }
+
+    it 'shows the correct subject' do
+      expect(mail.subject).to eq('Importación de Clientes Completa')
+    end
+
+    it 'shows the correct receiver email' do
+      expect(mail.to).to eq([retailer_user.email])
+    end
+
+    it 'shows the correct sender email' do
+      expect(mail.from).to eq(['hola@mercately.com'])
+    end
+
+    context 'when there are not errors in the importing file' do
+      errors = []
+      subject(:mail) { described_class.imported_customers(retailer_user, errors).deliver_now }
+
+      it 'shows a success message' do
+        expect(mail.body.encoded).to include('La importaci')
+        expect(mail.body.encoded).to include('de clientes culmin')
+        expect(mail.body.encoded).to include('exitosamente')
+      end
+    end
+
+    context 'when there are errors in the importing file' do
+      subject(:mail) { described_class.imported_customers(retailer_user, errors).deliver_now }
+
+      let(:errors) { { errors: ['Fila 2 inválida: Error en el formato del email'] } }
+
+      it 'shows the errors messages' do
+        expect(mail.body.encoded).to include('Error en el formato del email')
+      end
+    end
+  end
 end

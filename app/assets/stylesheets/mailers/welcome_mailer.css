@@ -158,3 +158,8 @@
   background-color: #00B4FF;
   color: #f6f6f6;
 }
+
+.py-5 {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
