@@ -31,6 +31,8 @@ function ImageMessage({
               && response.attachments.data[0]
               && response.attachments.data[0].image_data) {
             setUrl(response.attachments.data[0].image_data.url);
+          } else {
+            setUrl(message.url);
           }
         }
       }
