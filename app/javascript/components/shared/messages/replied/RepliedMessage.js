@@ -16,7 +16,7 @@ const RepliedMessage = ({
   const isText = () => message.data.attributes.content_type === 'text';
 
   const isImage = () => (
-    message.data.attributes.content_typentent_type === 'media'
+    message.data.attributes.content_type === 'media'
     && message.data.attributes.content_media_type === 'image'
   );
 
