@@ -8,6 +8,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   belongs_to :retailer
   belongs_to :customer
   belongs_to :retailer_user, required: false
+  has_one :reminder
 
   validates_presence_of :retailer, :customer, :status,
                         :direction, :source, :destination, :channel
@@ -23,6 +24,7 @@ class GupshupWhatsappMessage < ApplicationRecord
 
   before_create :set_message_type
   after_save :apply_cost
+  after_save :update_reminder
 
   def type
     message_payload.try(:[], 'payload').try(:[], 'type') || message_payload['type']
@@ -46,5 +48,11 @@ class GupshupWhatsappMessage < ApplicationRecord
                  end
 
       update_column(:cost, new_cost) if new_cost.present?
+    end
+
+    def update_reminder
+      return unless reminder.present?
+
+      reminder.update(status: :failed) if status == 'error'
     end
 end

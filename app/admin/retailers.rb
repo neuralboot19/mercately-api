@@ -24,7 +24,8 @@ ActiveAdmin.register Retailer do
                 :manage_team_assignment,
                 :show_stats,
                 :allow_voice_notes,
-                :show_calendar
+                :show_calendar,
+                :allow_reminders
 
   filter :name
   filter :slug
@@ -104,6 +105,7 @@ ActiveAdmin.register Retailer do
       row :show_stats
       row :allow_voice_notes
       row :show_calendar
+      row :allow_reminders
       row :created_at
       row :updated_at
     end
@@ -349,6 +351,7 @@ ActiveAdmin.register Retailer do
       f.input :manage_team_assignment, label: 'Activar Asignación Automática'
       f.input :show_stats, label: 'Activar acceso total a estadísticas'
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
+      f.input :allow_reminders, label: 'Permitir configurar recordatorios'
     end
     f.actions
   end

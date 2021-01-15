@@ -8,6 +8,7 @@ class KarixWhatsappMessage < ApplicationRecord
   belongs_to :retailer
   belongs_to :customer
   belongs_to :retailer_user, required: false
+  has_one :reminder
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :notification_messages, -> { where(message_type: 'notification').where.not(status: 'failed') }

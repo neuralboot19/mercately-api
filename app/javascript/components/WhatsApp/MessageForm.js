@@ -28,7 +28,9 @@ const MessageForm = ({
   toggleEmojiPicker,
   toggleFastAnswers,
   toggleLoadImages,
-  toggleProducts
+  toggleProducts,
+  openReminderConfigModal,
+  allowReminders
 }) => (
   <div className="col-xs-12 chat-input">
     <div className="text-input">
@@ -70,6 +72,8 @@ const MessageForm = ({
         toggleFastAnswers={toggleFastAnswers}
         toggleLoadImages={toggleLoadImages}
         toggleProducts={toggleProducts}
+        openReminderConfigModal={openReminderConfigModal}
+        allowReminders={allowReminders}
       />
     </div>
   </div>
