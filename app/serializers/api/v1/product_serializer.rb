@@ -5,7 +5,7 @@ module Api::V1
     set_type :product
     set_id :id
 
-    attributes :id, :title, :description, :url, :available_quantity, :price
+    attributes :id, :title, :description, :url, :available_quantity, :price, :code
 
     attribute :image do |product|
       url = "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/"

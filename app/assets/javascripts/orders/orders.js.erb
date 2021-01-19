@@ -29,7 +29,7 @@ function getProductInfo(input) {
       quantityInput.removeAttribute("disabled");
       quantityInput.removeAttribute("title");
 
-      $(`label[for="${quantityInputId}"]`).text(`Cantidad (disponible: ${json.quantity})`)
+      $(`label[for="${quantityInputId}"]`).text(`Disponible: ${json.quantity}`)
     } else {
       variations = json['variations'];
       priceInput.setAttribute("disabled", true);
@@ -118,8 +118,114 @@ function showHideFeedback(input) {
 }
 
 $(document).ready(function() {
+  function formatCustom(product) {
+    if(product.attributes ===  undefined) return 'No encontrado';
+    return $(
+      '<div><div>' + product.attributes.title + '</div><div class="foo">'
+      + (product.attributes.code || 'Sin código')
+      + '</div></div>'
+    );
+  }
+
+  function formatCustomer(customer) {
+    if(customer.id ===  undefined) return 'No encontrado';
+    return $(
+      '<div><div>' + customer.first_name + ' ' + customer.last_name + '</div><div class="foo">'
+      + (customer.id_number || 'Sin identificación') + '<br/>'
+      + (customer.email || 'Sin email') + ' ' + (customer.phone || 'Sin teléfono')
+      + '</div></div>'
+    );
+  }
+
+  function formatCustomerSelection(customer) {
+    if(customer.first_name == '' || customer.first_name === undefined) return 'Buscar por nombre, email, teléfono o identificación';
+    return customer.first_name + ' ' + customer.last_name;
+  }
+
+  $('#order_customer_id').select2({
+    placeholder: "Buscar por nombre, email, teléfono o identificación",
+    language: "es",
+    templateResult: formatCustomer,
+    templateSelection: formatCustomerSelection,
+    minimumInputLength: 2,
+    ajax: {
+      url: "/api/v1/retailer_customers",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          search: params.term, // search term
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        return {
+          results: data.customers,
+        };
+      },
+      cache: true
+    },
+  }).on('select2:select', function(e) {
+    setTimeout(function() {
+      $('#edit_customer').click();
+    }, 250);
+  });
+
+  $('#some_name').select2({
+    placeholder: "Añadir producto (buscar por nombre o código)",
+    language: "es",
+    templateResult: formatCustom,
+    minimumInputLength: 2,
+    ajax: {
+      url: "/api/v1/products",
+      dataType: 'json',
+      delay: 250,
+      data: function (params) {
+        return {
+          search: params.term, // search term
+        };
+      },
+      processResults: function (data, params) {
+        // parse the results into the format expected by Select2
+        // since we are using custom formatting functions we do not need to
+        // alter the remote JSON data, except to indicate that infinite
+        // scrolling can be used
+        params.page = params.page || 1;
+
+        return {
+          results: data.products.data,
+        };
+      },
+      cache: true
+    },
+  }).on('select2:select', function(e) {
+    let product = e.params.data;
+    $('#order_items #product_code').val(product.attributes.code || 'Sin código');
+    $('#order_items #product_title').val(product.attributes.title);
+    $('#order_items #product_img').val(product.attributes.image);
+    $('#order_items #product_id').val(product.id);
+    document.getElementById('add_order_items').click();
+    setTimeout(function() {
+      $('#select2-some_name-container').text('Añadir producto (buscar por nombre o código)');
+    }, 250);
+  });
   $('#order_items').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
-    getProductInfo(insertedItem.find('select')[0]);
+    insertedItem.find('.product_quantity')[0].focus();
+    insertedItem.find('.product_code')[0].innerText = $('#order_items #product_code').val();
+    insertedItem.find('.product_title')[0].innerText = $('#order_items #product_title').val();
+    if($('#order_items #product_img').val()) {
+      insertedItem.find('.product_img')[0].src = $('#order_items #product_img').val();
+      insertedItem.find('.product_img')[0].style.display = 'block';
+    }
+    let productInput = insertedItem.find('.product_id')[0];
+    productInput.value = $('#order_items #product_id').val();
+    productInput.dispatchEvent(new Event('change', { 'bubbles': true }));
+    getProductInfo(insertedItem.find('input[type="hidden"]')[0]);
   }).on('cocoon:before-remove', function(e, removedItem) {
     input = removedItem.find('select')[0];
 
@@ -175,7 +281,7 @@ function editClient() {
     updateEditForm();
   }
   $('#edit-client-order-form').show();
-  $('#add_customer').hide();
+  $('#add_customer, #add_customer_container').hide();
   $('#edit_customer').hide();
   $('#customer_id_container').hide();
 }
@@ -192,13 +298,21 @@ function updateEditForm() {
     $('#order_customer_attributes_last_name').val(customer.last_name);
     $('#order_customer_attributes_email').val(customer.email);
     $('#order_customer_attributes_phone').val(customer.phone);
+    $('#order_customer_attributes_retailer_id').val(customer.retailer_id);
+    $('#order_customer_attributes_country_id').val(customer.country_id);
+    $('#order_customer_attributes_id_type').val(customer.id_type);
+    $('#order_customer_attributes_id_number').val(customer.id_number);
+    $('#order_customer_attributes_city').val(customer.city);
+    $('#order_customer_attributes_state').val(customer.state);
+    $('#order_customer_attributes_address').val(customer.address);
+    $('#order_customer_attributes_zip_code').val(customer.zip_code);
   });
 }
 
 function hideClientForm() {
   disableEditForm();
   $('#edit-client-order-form').hide();
-  $('#add_customer').show();
+  $('#add_customer, #add_customer_container').show();
   $('#edit_customer').show();
   $('#customer_id_container').show();
 }
@@ -210,6 +324,14 @@ function disableEditForm() {
   $('#order_customer_attributes_email').prop('disabled', true);
   $('#order_customer_attributes_phone').prop('disabled', true);
   $('#order_customer_attributes_retailer_id').prop('disabled', true);
+  $('#order_customer_attributes_country_id').prop('disabled', true);
+  $('#order_customer_attributes_phone').prop('disabled', true);
+  $('#order_customer_attributes_id_type').prop('disabled', true);
+  $('#order_customer_attributes_id_number').prop('disabled', true);
+  $('#order_customer_attributes_city').prop('disabled', true);
+  $('#order_customer_attributes_state').prop('disabled', true);
+  $('#order_customer_attributes_address').prop('disabled', true);
+  $('#order_customer_attributes_zip_code').prop('disabled', true);
 }
 
 function enableEditForm() {
@@ -219,6 +341,14 @@ function enableEditForm() {
   $('#order_customer_attributes_email').prop('disabled', false);
   $('#order_customer_attributes_phone').prop('disabled', false);
   $('#order_customer_attributes_retailer_id').prop('disabled', false);
+  $('#order_customer_attributes_country_id').prop('disabled', false);
+  $('#order_customer_attributes_phone').prop('disabled', false);
+  $('#order_customer_attributes_id_type').prop('disabled', false);
+  $('#order_customer_attributes_id_number').prop('disabled', false);
+  $('#order_customer_attributes_city').prop('disabled', false);
+  $('#order_customer_attributes_state').prop('disabled', false);
+  $('#order_customer_attributes_address').prop('disabled', false);
+  $('#order_customer_attributes_zip_code').prop('disabled', false);
 }
 
 $(document).on('ready page:load cocoon:after-remove cocoon:after-insert', function() {
@@ -239,7 +369,9 @@ function calculateTotal() {
     if ($(this).is(":visible")) {
       quantity = $(this).find('.product_quantity').val();
       price = $(this).find('.product_price').val();
-      total += quantity * price;
+      subtotal = quantity * price;
+      total += subtotal;
+      $(this).find('.product_subtotal').text('$' + subtotal.toFixed(2));
     }
   });
   $('.total .money').text('$' + total.toFixed(2));

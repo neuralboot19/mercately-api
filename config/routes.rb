@@ -187,6 +187,7 @@ Rails.application.routes.draw do
       resources :karix_whatsapp, only: [:index, :create]
       resources :whatsapp_templates, only: [:index]
       resources :products, only: [:index]
+      get 'retailer_customers', to: 'retailer_customers#index', as: :retailer_customers
 
       get 'fast_answers_for_messenger', to: 'customers#fast_answers_for_messenger'
       patch 'accept_optin_for_whatsapp/:id', to: 'customers#accept_opt_in',  as: :accept_optin_for_whatsapp

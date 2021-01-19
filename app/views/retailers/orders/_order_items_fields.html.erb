@@ -1,28 +1,49 @@
-<div class="nested-fields box">
-  <div class="row my-16 bottom-xs">
+<div class="nested-fields box association-item">
+  <div class="row my-16 middle-xs t-center">
+    <div class="col-xs-12 pr-0">
+      <div class="divider mt-24"></div>
+    </div>
     <%= f.hidden_field :id %>
     <%= f.hidden_field :product_id %>
-    <div class="col-xs-12 col-sm-4">
-      <div class="input">
-        <%= f.object.product&.title || 'Sin producto seleccionado' %>
-      </div>
-      <i class="validation-msg">&nbsp;</i>
+    <div class="col-xs-12 col-sm-2 middle-xs">
+      <%= f.object.product&.code || 'Sin código' %>
     </div>
     <div class="col-xs-12 col-sm-3">
-      <%= f.label :quantity, 'Cantidad' %>
+      <div class="row middle-xs">
+        <div class="col-xs-6">
+          <div class="products__img">
+            <% if f.object.product&.images&.attached? %>
+              <%= image_tag f.object.product&.images&.first&.service_url, class: 'product_img' %>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-xs-6 t-left">
+          <%= f.object.product&.title || 'Sin producto seleccionado' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-2">
+      <%= f.label :quantity, "Disponible: #{f.object.product&.available_quantity}" %>
       <%= f.text_field :quantity, disabled: f.object.order.status != 'pending', class: 'input product_quantity validate-required', onkeypress: 'onlyNumber(event)' %>
       <i class="validation-msg">&nbsp;</i>
     </div>
-    <div class="col-xs-12 col-sm-3">
-      <%= f.label :unit_price, 'Precio unitario' %>
+    <div class="col-xs-12 col-sm-2">
+      <%= f.label :unit_price, '&nbsp;'.html_safe %>
       <%= f.text_field :unit_price, disabled: f.object.order.status != 'pending', class: 'input product_price validate-required', onkeyup: 'editPrice(this);' %>
       <i class="validation-msg">&nbsp;</i>
     </div>
-    <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mb-24">
+    <div class="col-xs-12 col-sm-2">
+      <div class="product_subtotal">
+        $<%= f.object.quantity * f.object.unit_price %>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-1 center-xs end-sm p-0 mb-24 t-center">
+      <div>
+        &nbsp;
+      </div>
       <% if f.object.order.status == 'pending' %>
-        <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0 association-item' do %>
-          <i class="fas fa-times mr-5"></i>
-          Remover item
+        <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
+          Remover
         <% end %>
       <% end %>
     </div>
@@ -35,9 +56,5 @@
         <% end %>
       </div>
     <% end %>
-
-    <div class="col-xs-12 pr-0">
-      <div class="divider mt-24"></div>
-    </div>
   </div>
 </div>
