@@ -43,7 +43,8 @@ module WhatsappAutomaticAnswerConcern
       message = karix_helper.ws_message_service.assign_message(message, retailer, response['objects'][0])
       message.save
 
-      karix_helper.broadcast_data(retailer, retailer.retailer_users.to_a, message)
+      agents = customer.agent.present? ? [customer.agent] : retailer.retailer_users.all_customers.to_a
+      karix_helper.broadcast_data(retailer, agents, message, customer.agent_customer)
     end
 
     def send_automatic_gupshup_notification(params)

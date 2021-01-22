@@ -1,7 +1,7 @@
 class Retailers::SettingsController < RetailersController
   before_action :set_user, only: [:set_admin_team_member, :set_agent_team_member,
                                   :set_supervisor_team_member, :reinvite_team_member,
-                                  :remove_team_member, :reactive_team_member]
+                                  :remove_team_member, :reactive_team_member, :update]
 
   def team
     if current_retailer_user.agent?
@@ -14,6 +14,16 @@ class Retailers::SettingsController < RetailersController
     @user = RetailerUser.new
   end
 
+  def update
+    if @user.update(invitation_params)
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Usuario actualizado con éxito.'
+    else
+      redirect_back fallback_location: retailers_dashboard_path(@retailer),
+                    notice: 'Error al actualizar usuario.'
+    end
+  end
+
   def invite_team_member
     user = RetailerUser.invite!(
       first_name: invitation_params[:first_name],
@@ -21,6 +31,7 @@ class Retailers::SettingsController < RetailersController
       email: invitation_params[:email],
       retailer_admin: invitation_params[:retailer_admin] || false,
       retailer_supervisor: invitation_params[:retailer_supervisor] || false,
+      only_assigned: invitation_params[:only_assigned] || false,
       retailer: current_retailer) do |u|
       u.skip_invitation = true
     end
@@ -142,7 +153,8 @@ class Retailers::SettingsController < RetailersController
             :email,
             :first_name,
             :last_name,
-            :role
+            :role,
+            :only_assigned
           ).tap do |param|
             if param[:role].present?
               role = param.delete(:role)

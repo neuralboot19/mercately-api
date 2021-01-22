@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_06_194023) do
+ActiveRecord::Schema.define(version: 2021_01_08_152811) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -732,6 +732,7 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
+    t.boolean "only_assigned", default: false
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"

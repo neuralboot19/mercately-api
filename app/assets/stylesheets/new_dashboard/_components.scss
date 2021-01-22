@@ -560,7 +560,8 @@ h1 {
 }
 
 #modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
-#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal, input[name="modal--toggle"]:checked ~ .modal {
+#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal, input[name="modal--toggle"]:checked ~ .modal,
+#modal-agent--toggle:checked ~ .modal-agent {
   display: block;
 }
 

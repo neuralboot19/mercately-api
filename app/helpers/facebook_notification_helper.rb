@@ -21,6 +21,15 @@ module FacebookNotificationHelper
       CustomerSerializer.new(customer)
     ).serializable_hash if customer.present?
     retailer_users.each do |ret_u|
+      removed_agent = false
+
+      if ret_u.agent? && ret_u.only_assigned?
+        removed_agent = is_removed(ret_u, assigned_agent)
+        add_agent = assigned_agent.present? && assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id
+
+        next if !removed_agent && !add_agent
+      end
+
       redis.publish 'new_message_counter', {
         identifier: '.item__cookie_facebook_messages',
         total: total,
@@ -52,7 +61,7 @@ module FacebookNotificationHelper
             assigned_agent.retailer_user_id != ret_u.id &&
             ret_u.admin? == false &&
             ret_u.supervisor? == false
-          )
+          ) || removed_agent
         })
       end
 
@@ -73,5 +82,11 @@ module FacebookNotificationHelper
     return 'Audio' if ['audio', 'voice'].include?(message.file_type)
     return 'Ubicación' if message.file_type == 'location'
     message.text
+  end
+
+  def self.is_removed(ret_u, assigned_agent)
+    assigned_agent.present? && ((!assigned_agent.persisted? &&
+      assigned_agent.retailer_user_id == ret_u.id) || (assigned_agent.persisted? &&
+      assigned_agent.retailer_user_id != ret_u.id))
   end
 end

@@ -55,8 +55,8 @@ module Retailers::Api::V1
         message.save
 
         agent = message.customer.agent
-        agents = agent.present? ? [agent] : current_retailer.retailer_users.to_a
-        karix_helper.broadcast_data(current_retailer, agents, message)
+        agents = agent.present? ? [agent] : current_retailer.retailer_users.all_customers.to_a
+        karix_helper.broadcast_data(current_retailer, agents, message, message.customer.agent_customer)
         set_response(200, 'Ok', format_response(response['objects'][0]))
       end
 
