@@ -36,16 +36,16 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def show
-    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), tags:
       current_retailer.available_customer_tags(@customer.id) }
   end
 
   def update
     if @customer.update(customer_params)
-      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), tags:
         current_retailer.available_customer_tags(@customer.id) }
     else
-      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), errors:
+      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), errors:
         @customer.errors, tags: current_retailer.available_customer_tags(@customer.id) }
     end
   end
