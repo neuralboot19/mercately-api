@@ -17,7 +17,7 @@ const MessageStatusIcon = ({
         className = 'check-double stroke';
         break;
       default:
-        className = 'sync';
+        className = message.content_type === 'text' ? 'check' : 'sync';
     }
     return `checks-mark ml-7 fas fa-${className}`;
   };
