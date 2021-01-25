@@ -1,129 +1,153 @@
 <div class="container-fluid product">
-  <div class="row card">
-    <div class="col-xs-12 col-md-6">
-      <h1 class="my-0"><%= @product.title %></h1>
-      <div class="product__categories mt-0"><%= @product.category.name %></div>
-    </div>
-    <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
-      <%= link_to retailers_products_path(current_retailer, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
-        <i class="fas fa-arrow-left mr-5"></i>
-        Volver
-      <% end %>
-      <%= link_to edit_retailers_product_path(current_retailer, @product), class: 'btn btn--cta' do %>
-        <i class="far fa-edit mr-5"></i>
-        Editar
-      <% end %>
-      <% if @product.status != 'archived' %>
-        <%= link_to retailers_archive_product_path(current_retailer, @product), method: :put, data: { confirm: 'Estás seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
-          <i class="far fa-trash-alt mr-5"></i>
-          Archivar
+  <div class="card">
+    <div class="row">
+      <div class="col-xs-12 col-md-6">
+        <h1 class="my-0"><%= @product.title %></h1>
+        <div class="product__categories mt-0"><%= @product.category.name %></div>
+      </div>
+      <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
+        <%= link_to retailers_products_path(current_retailer, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
+          <i class="fas fa-arrow-left mr-5"></i>
+          Volver
         <% end %>
-      <% end %>
-    </div>
-    <div class="col-xs-12 col-md-7 product__info">
-      <div class="box">
-        <div class="row center-xs middle-xs">
-          <div class="col-xs-9">
-            <section class="lazy slider">
-              <% ordered_images.each do |img| %>
-                <div class="image-slider-container">
-                  <%= cl_image_tag("#{img&.key}", class: 'my-35') %>
-                </div>
-              <% end %>
-              <% unless @product.images.exists? %>
-                <div>
-                  <i class="fas fa-camera-retro fs-100 c-grey"></i>
-                </div>
-              <% end %>
-            </section>
-          </div>
-          <div class="col-xs-3">
-            <section class="vertical slider draggable-container my-35">
-              <% ordered_images.each do |img| %>
-                <div>
-                  <%= cl_image_tag("#{img&.key}") %>
-                </div>
-              <% end %>
-              <% unless @product.images.exists? %>
-                <div>
-                  <i class="fas fa-camera-retro fs-40 c-grey"></i>
-                </div>
-              <% end %>
-            </section>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12 c-gray-label my-8">Descripción:</div>
-          <div class="col-xs-12">
-            <div class="p-16 c-grey t-justify text-overflow">
-              <%= @product.description %>
+        <%= link_to edit_retailers_product_path(current_retailer, @product), class: 'btn btn--cta' do %>
+          <i class="far fa-edit mr-5"></i>
+          Editar
+        <% end %>
+        <% if @product.status != 'archived' %>
+          <%= link_to retailers_archive_product_path(current_retailer, @product), method: :put, data: { confirm: 'Estás seguro de archivar el producto?' }, class: 'btn btn--destroy' do %>
+            <i class="far fa-trash-alt mr-5"></i>
+            Archivar
+          <% end %>
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-md-7 product__info">
+        <div class="box">
+          <div class="row center-xs middle-xs">
+            <div class="col-xs-9">
+              <section class="lazy slider">
+                <% ordered_images.each do |img| %>
+                  <div class="image-slider-container">
+                    <%= cl_image_tag("#{img&.key}", class: 'my-35') %>
+                  </div>
+                <% end %>
+                <% unless @product.images.exists? %>
+                  <div>
+                    <i class="fas fa-camera-retro fs-100 c-grey"></i>
+                  </div>
+                <% end %>
+              </section>
+            </div>
+            <div class="col-xs-3">
+              <section class="vertical slider draggable-container my-35">
+                <% ordered_images.each do |img| %>
+                  <div>
+                    <%= cl_image_tag("#{img&.key}") %>
+                  </div>
+                <% end %>
+                <% unless @product.images.exists? %>
+                  <div>
+                    <i class="fas fa-camera-retro fs-40 c-grey"></i>
+                  </div>
+                <% end %>
+              </section>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-xs-12 c-gray-label my-8">Precio:</div>
-          <div class="col-xs-12">
-            <div class="p-16 c-secondary t-justify">
-              $<%= @product.price %>
-            </div>
-          </div>
-        </div>
-        <% if @product.code.present? %>
           <div class="row">
-            <div class="col-xs-12 c-gray-label my-8">Código:</div>
+            <div class="col-xs-12 c-gray-label my-8">Descripción:</div>
             <div class="col-xs-12">
-              <div class="p-16 c-grey t-justify">
-                <%= @product.code %>
+              <div class="p-16 c-grey t-justify text-overflow">
+                <%= @product.description %>
               </div>
             </div>
           </div>
-        <% end %>
-
-        <% if current_retailer.facebook_catalog&.connected? %>
-          <div class="row info__details">
-            <div class="col-xs-12 c-gray-label my-8">Características de Facebook:</div>
-            <div class="col-xs-12 col-sm-12">
-              <table class="table_details w-100">
-                <tr>
-                  <td class="table_details__descriptor">
-                    Marca
-                  </td>
-                  <td class="table_details__value">
-                    <%= @product.brand %>
-                  </td>
-                </tr>
-              </table>
+          <div class="row">
+            <div class="col-xs-12 c-gray-label my-8">Precio:</div>
+            <div class="col-xs-12">
+              <div class="p-16 c-secondary t-justify">
+                $<%= @product.price %>
+              </div>
             </div>
           </div>
-        <% end %>
-
-        <div class="row info__details">
-          <% if current_retailer.meli_retailer %>
-            <div class="col-xs-12 c-gray-label my-8">Características de Mercado Libre:</div>
-          <% else %>
-            <div class="col-xs-12 c-gray-label my-8">Características:</div>
+          <% if @product.code.present? %>
+            <div class="row">
+              <div class="col-xs-12 c-gray-label my-8">Código:</div>
+              <div class="col-xs-12">
+                <div class="p-16 c-grey t-justify">
+                  <%= @product.code %>
+                </div>
+              </div>
+            </div>
           <% end %>
-          <div class="col-xs-12 col-sm-12">
-            <table class="table_details w-100">
-              <% @product.editable_attributes.each do |attribute| %>
-                <tr>
-                  <td class="table_details__descriptor">
-                    <%= attribute["name"] || attribute["id"] %>
-                  </td>
-                  <td class="table_details__value">
-                    <%= attribute["value_name"] %>
-                  </td>
-                </tr>
-              <% end %>
-            </table>
-          </div>
-          <% if @product.product_variations.present? %>
-            <div class="col-xs-12 c-gray-label my-8">Variaciones:</div>
+
+          <% if current_retailer.facebook_catalog&.connected? %>
+            <div class="row info__details">
+              <div class="col-xs-12 c-gray-label my-8">Características de Facebook:</div>
+              <div class="col-xs-12 col-sm-12">
+                <table class="table_details w-100">
+                  <tr>
+                    <td class="table_details__descriptor">
+                      Marca
+                    </td>
+                    <td class="table_details__value">
+                      <%= @product.brand %>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="row info__details">
+            <% if current_retailer.meli_retailer %>
+              <div class="col-xs-12 c-gray-label my-8">Características de Mercado Libre:</div>
+            <% else %>
+              <div class="col-xs-12 c-gray-label my-8">Características:</div>
+            <% end %>
             <div class="col-xs-12 col-sm-12">
               <table class="table_details w-100">
-                <% @product.product_variations[0..-2].each do |variation| %>
-                  <% next if variation.data['attribute_combinations'].nil? %>
-                  <% variation.data['attribute_combinations'][0..-2].each do |var| %>
+                <% @product.editable_attributes.each do |attribute| %>
+                  <tr>
+                    <td class="table_details__descriptor">
+                      <%= attribute["name"] || attribute["id"] %>
+                    </td>
+                    <td class="table_details__value">
+                      <%= attribute["value_name"] %>
+                    </td>
+                  </tr>
+                <% end %>
+              </table>
+            </div>
+            <% if @product.product_variations.present? %>
+              <div class="col-xs-12 c-gray-label my-8">Variaciones:</div>
+              <div class="col-xs-12 col-sm-12">
+                <table class="table_details w-100">
+                  <% @product.product_variations[0..-2].each do |variation| %>
+                    <% next if variation.data['attribute_combinations'].nil? %>
+                    <% variation.data['attribute_combinations'][0..-2].each do |var| %>
+                      <tr>
+                        <td class="table_details__descriptor">
+                          <%= var["name"] || var["id"] %>
+                        </td>
+                        <td class="table_details__value truncate">
+                          <%= var["value_name"] || var["value_id"] %>
+                        </td>
+                      </tr>
+                    <% end %>
+                    <tr class="divider">
+                      <td class="table_details__descriptor">
+                        <%= variation.data['attribute_combinations'].last["name"] || variation.data['attribute_combinations'].last["id"] %>
+                      </td>
+                      <td class="table_details__value truncate">
+                        <%= variation.data['attribute_combinations'].last["value_name"] || variation.data['attribute_combinations'].last["value_id"] %>
+                      </td>
+                      <td class="table_details__value truncate">
+                        <%= variation.data["available_quantity"].to_s + ' disponibles' %>
+                      </td>
+                    </tr>
+                  <% end %>
+                  <% @product.product_variations.last.data['attribute_combinations']&.each_with_index do |var, index| %>
+                    <% next if var.nil? %>
                     <tr>
                       <td class="table_details__descriptor">
                         <%= var["name"] || var["id"] %>
@@ -131,162 +155,140 @@
                       <td class="table_details__value truncate">
                         <%= var["value_name"] || var["value_id"] %>
                       </td>
+                      <% if index == @product.product_variations.last.data['attribute_combinations'].size - 1 %>
+                        <td class="table_details__value truncate">
+                          <%= @product.product_variations.last.data["available_quantity"].to_s  + ' disponibles' %>
+                        </td>
+                      <% end %>
                     </tr>
                   <% end %>
-                  <tr class="divider">
-                    <td class="table_details__descriptor">
-                      <%= variation.data['attribute_combinations'].last["name"] || variation.data['attribute_combinations'].last["id"] %>
-                    </td>
-                    <td class="table_details__value truncate">
-                      <%= variation.data['attribute_combinations'].last["value_name"] || variation.data['attribute_combinations'].last["value_id"] %>
-                    </td>
-                    <td class="table_details__value truncate">
-                      <%= variation.data["available_quantity"].to_s + ' disponibles' %>
-                    </td>
-                  </tr>
-                <% end %>
-                <% @product.product_variations.last.data['attribute_combinations']&.each_with_index do |var, index| %>
-                  <% next if var.nil? %>
-                  <tr>
-                    <td class="table_details__descriptor">
-                      <%= var["name"] || var["id"] %>
-                    </td>
-                    <td class="table_details__value truncate">
-                      <%= var["value_name"] || var["value_id"] %>
-                    </td>
-                    <% if index == @product.product_variations.last.data['attribute_combinations'].size - 1 %>
-                      <td class="table_details__value truncate">
-                        <%= @product.product_variations.last.data["available_quantity"].to_s  + ' disponibles' %>
-                      </td>
-                    <% end %>
-                  </tr>
-                <% end %>
-              </table>
-            </div>
-          <% end %>
+                </table>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-xs-12 col-md-5">
-      <div class="box">
-        <div class="row">
-          <div class="col-xs-12 card__module p-0">
-            <div class="card__title"><i class="fas fa-money-bill-alt c-secondary"></i> Finanzas</div>
-            <div class="box">
-              <div class="row card__submodule center-xs">
-                <div class="col-xs-12 submodule col-sm-4">
-                  <h2><%= @product.order_items.count %></h2>
-                  <h6>Ordenes</h6>
+      <div class="col-xs-12 col-md-5">
+        <div class="box">
+          <div class="row">
+            <div class="col-xs-12 card__module p-0">
+              <div class="card__title"><i class="fas fa-money-bill-alt c-secondary"></i> Finanzas</div>
+              <div class="box">
+                <div class="row card__submodule center-xs">
+                  <div class="col-xs-12 submodule col-sm-4">
+                    <h2><%= @product.order_items.count %></h2>
+                    <h6>Ordenes</h6>
+                  </div>
+                  <div class="col-xs-12 submodule col-sm-4">
+                    <h2><%= successfull_order_items_count(@product) %></h2>
+                    <h6>Ventas exitosas</h6>
+                  </div>
+                  <div class="col-xs-12 submodule col-sm-4">
+                    <h2>$<%= @product.earned %></h2>
+                    <h6>Ganancia</h6>
+                  </div>
                 </div>
-                <div class="col-xs-12 submodule col-sm-4">
-                  <h2><%= successfull_order_items_count(@product) %></h2>
-                  <h6>Ventas exitosas</h6>
-                </div>
-                <div class="col-xs-12 submodule col-sm-4">
-                  <h2>$<%= @product.earned %></h2>
-                  <h6>Ganancia</h6>
-                </div>
-              </div>
-              <div class="row card__submodule middle-xs center-xs">
-                <div class="col-xs-12">
-                  <div class="circle my-16">
-                    <h2><%= @product.available_quantity.to_i %></h2>
-                    <h6>Disponible</h6>
+                <div class="row card__submodule middle-xs center-xs">
+                  <div class="col-xs-12">
+                    <div class="circle my-16">
+                      <h2><%= @product.available_quantity.to_i %></h2>
+                      <h6>Disponible</h6>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <% if @product.meli_product_id %>
-            <div class="col-xs-12 card__module">
-              <div class="card__title"><%= image_tag 'dashboard/ml_logo.png', class: 'h-18 w-23' %> Mercado Libre Info</div>
-              <div class="box">
-                <div class="row">
-                  <div class="col-xs-12 col-sm-6">
-                    <table class="table_details table_details--underlined w-100">
-                      <tr>
-                        <td class="table_details__descriptor">Preguntas:</td>
-                        <td class="table_details__value"><%= @product.questions.count %></td>
-                      </tr>
-                      <!--<tr>
-                        <td class="table_details__descriptor">Visitas:</td>
-                        <td class="table_details__value">500</td>
-                        </tr>-->
+            <% if @product.meli_product_id %>
+              <div class="col-xs-12 card__module">
+                <div class="card__title"><%= image_tag 'dashboard/ml_logo.png', class: 'h-18 w-23' %> Mercado Libre Info</div>
+                <div class="box">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                      <table class="table_details table_details--underlined w-100">
                         <tr>
-                          <td class="table_details__descriptor">Expiración:</td>
-                          <td class="table_details__value"><%= @product.meli_end_time&.strftime("%d/%m/%Y") %></td>
+                          <td class="table_details__descriptor">Preguntas:</td>
+                          <td class="table_details__value"><%= @product.questions.count %></td>
+                        </tr>
+                        <!--<tr>
+                          <td class="table_details__descriptor">Visitas:</td>
+                          <td class="table_details__value">500</td>
+                          </tr>-->
+                          <tr>
+                            <td class="table_details__descriptor">Expiración:</td>
+                            <td class="table_details__value"><%= @product.meli_end_time&.strftime("%d/%m/%Y") %></td>
+                          </tr>
+                          <tr>
+                            <td class="table_details__descriptor">Código:</td>
+                            <td class="table_details__value fs-14"><%= @product.meli_product_id %></td>
+                          </tr>
+                      </table>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                      <table class="table_details table_details--underlined w-100">
+                        <tr>
+                          <td class="table_details__descriptor">Condición:</td>
+                          <td class="table_details__value"><%= humanize_ml_condition(@product.condition) %></td>
+                        </tr>
+                        <tr>
+                          <td class="table_details__descriptor">Tipo:</td>
+                          <td class="table_details__value"><%= @product.meli_listing_type_id %></td>
+                        </tr>
+                        <tr>
+                          <td class="table_details__descriptor">Enlace:</td>
+                          <td class="table_details__value">
+                            <div class="truncate">
+                              <a href="<%= @product.meli_permalink %>" target="_blank">
+                                Ver
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+            <% if @product.facebook_product_id %>
+              <div class="col-xs-12 card__module">
+                <div class="card__title"><i class="fab fa-facebook c-secondary"></i> Facebook Info</div>
+                <div class="box">
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                      <table class="table_details table_details--underlined w-100">
+                        <tr>
+                          <td class="table_details__descriptor">Condición:</td>
+                          <td class="table_details__value"><%= humanize_ml_condition(@product.condition) == 'No especificado' ? 'Usado' : humanize_ml_condition(@product.condition) %></td>
                         </tr>
                         <tr>
                           <td class="table_details__descriptor">Código:</td>
-                          <td class="table_details__value fs-14"><%= @product.meli_product_id %></td>
+                          <td class="table_details__value fs-14 pr-0"><%= @product.facebook_product_id %></td>
                         </tr>
-                    </table>
-                  </div>
-                  <div class="col-xs-12 col-sm-6">
-                    <table class="table_details table_details--underlined w-100">
-                      <tr>
-                        <td class="table_details__descriptor">Condición:</td>
-                        <td class="table_details__value"><%= humanize_ml_condition(@product.condition) %></td>
-                      </tr>
-                      <tr>
-                        <td class="table_details__descriptor">Tipo:</td>
-                        <td class="table_details__value"><%= @product.meli_listing_type_id %></td>
-                      </tr>
-                      <tr>
-                        <td class="table_details__descriptor">Enlace:</td>
-                        <td class="table_details__value">
-                          <div class="truncate">
-                            <a href="<%= @product.meli_permalink %>" target="_blank">
-                              Ver
-                            </a>
-                          </div>
-                        </td>
-                      </tr>
-                    </table>
+                      </table>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                      <table class="table_details table_details--underlined w-100">
+                        <tr>
+                          <td class="table_details__descriptor">Enlace:</td>
+                          <td class="table_details__value">
+                            <div class="truncate">
+                              <a href="https://www.facebook.com/commerce/products/<%= @product.facebook_product_id %>/" target="_blank">
+                                Ver
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td class="table_details__descriptor">Catálogo:</td>
+                          <td class="table_details__value fs-14"><%= current_retailer.facebook_catalog&.name %></td>
+                        </tr>
+                      </table>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          <% end %>
-          <% if @product.facebook_product_id %>
-            <div class="col-xs-12 card__module">
-              <div class="card__title"><i class="fab fa-facebook c-secondary"></i> Facebook Info</div>
-              <div class="box">
-                <div class="row">
-                  <div class="col-xs-12 col-sm-6">
-                    <table class="table_details table_details--underlined w-100">
-                      <tr>
-                        <td class="table_details__descriptor">Condición:</td>
-                        <td class="table_details__value"><%= humanize_ml_condition(@product.condition) == 'No especificado' ? 'Usado' : humanize_ml_condition(@product.condition) %></td>
-                      </tr>
-                      <tr>
-                        <td class="table_details__descriptor">Código:</td>
-                        <td class="table_details__value fs-14 pr-0"><%= @product.facebook_product_id %></td>
-                      </tr>
-                    </table>
-                  </div>
-                  <div class="col-xs-12 col-sm-6">
-                    <table class="table_details table_details--underlined w-100">
-                      <tr>
-                        <td class="table_details__descriptor">Enlace:</td>
-                        <td class="table_details__value">
-                          <div class="truncate">
-                            <a href="https://www.facebook.com/commerce/products/<%= @product.facebook_product_id %>/" target="_blank">
-                              Ver
-                            </a>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="table_details__descriptor">Catálogo:</td>
-                        <td class="table_details__value fs-14"><%= current_retailer.facebook_catalog&.name %></td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          <% end %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
