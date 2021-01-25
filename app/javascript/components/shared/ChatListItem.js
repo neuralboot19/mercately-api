@@ -28,6 +28,25 @@ class ChatListItem extends Component {
     return '';
   }
 
+  messageStatusIcon = (message) => {
+    let className;
+    switch (message.status) {
+      case 'sent':
+        className = 'check stroke';
+        break;
+      case 'delivered':
+        className = 'check-double stroke';
+        break;
+      case 'read':
+        className = 'check-double black';
+        break;
+      default:
+        className = message.content_type === 'text' ? 'check stroke' : 'sync black';
+    }
+
+    return className;
+  }
+
   render() {
     let customer = this.props.customer;
     return (
@@ -83,10 +102,7 @@ class ChatListItem extends Component {
               <div className="profile__name">
                 {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.whatsapp_name ? customer.whatsapp_name : customer.phone }`}&nbsp;&nbsp;
                 { customer.last_whatsapp_message.direction === 'outbound' && customer['handle_message_events?'] === true &&
-                  <i className={ `fas fa-${
-                    customer.last_whatsapp_message.status === 'sent' ? 'check stroke' : (customer.last_whatsapp_message.status === 'delivered' ? 'check-double stroke' : ( customer.last_whatsapp_message.status === 'read' ? 'check-double black' : 'sync black'))
-                  }`
-                  }></i>
+                  <i className={ `fas fa-${this.messageStatusIcon(customer.last_whatsapp_message)}`}></i>
                 }
                 <div className="fw-muted time-from">
                   {moment(customer.recent_message_date).locale('es').fromNow()}
