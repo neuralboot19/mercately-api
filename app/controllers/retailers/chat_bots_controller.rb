@@ -99,6 +99,7 @@ class Retailers::ChatBotsController < RetailersController
           :file,
           :file_deleted,
           :option_type,
+          :skip_option,
           chat_bot_actions_attributes: [
             :id,
             :retailer_user_id,
@@ -112,6 +113,7 @@ class Retailers::ChatBotsController < RetailersController
             :payload_type,
             :classification,
             :exit_message,
+            :jump_option_id,
             tag_ids: [],
             headers_attributes: [
               :key,

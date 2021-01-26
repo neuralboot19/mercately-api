@@ -9,8 +9,8 @@ class ChatBotOption < ApplicationRecord
 
   before_destroy :check_destroy_requirements
   before_create :set_position
+  before_save :check_skip_option
   after_save :update_descendants_on_delete
-  after_save :clear_form_actions
   after_save :clear_endpoint_actions
   after_save :clear_sub_list
   after_update :reassign_positions, if: :saved_change_to_option_deleted?
@@ -25,7 +25,11 @@ class ChatBotOption < ApplicationRecord
   scope :active, -> { where(option_deleted: false) }
 
   def file_url
-    "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{self.file.key}"
+    if file.content_type.include?('video/')
+      "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/video/upload/#{self.file.key}"
+    else
+      "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{self.file.key}"
+    end
   end
 
   def execute_endpoint?
@@ -42,6 +46,17 @@ class ChatBotOption < ApplicationRecord
     false
   end
 
+  def jump_to_option?
+    chat_bot_actions.where(action_type: :jump_to_option).exists?
+  end
+
+  def save_data_action_complete
+    action = chat_bot_actions.find_by_action_type(:save_on_db)
+    return unless action.present? && (action.target_field.present? || action.customer_related_field.present?)
+
+    action
+  end
+
   private
 
     def set_position
@@ -56,12 +71,6 @@ class ChatBotOption < ApplicationRecord
       return unless option_deleted == true
 
       self.descendants.update_all(option_deleted: true)
-    end
-
-    def clear_form_actions
-      return if option_type == 'form'
-
-      self.chat_bot_actions.where(action_type: :save_on_db).delete_all
     end
 
     def clear_endpoint_actions
@@ -82,5 +91,9 @@ class ChatBotOption < ApplicationRecord
       return if option_type == 'form'
 
       self.option_sub_lists.delete_all
+    end
+
+    def check_skip_option
+      self.skip_option = false if option_type == 'decision'
     end
 end

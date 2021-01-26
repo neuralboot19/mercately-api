@@ -85,6 +85,7 @@ es:
           exec_callback: Enviar respuesta a Endpoint
           auto_generate_option: Generar opción hija dinámica
           repeat_endpoint_option: Reenviar opción
+          jump_to_option: Saltar a una opción
         action_events:
           post: POST
           get: GET

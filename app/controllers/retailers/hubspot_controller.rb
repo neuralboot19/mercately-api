@@ -10,7 +10,7 @@ class Retailers::HubspotController < RetailersController
     end
     @hs_integration_options = [['Sincronizar todos los contactos', true], ['Sincronizar solo contactos seleccionados', false]]
     @hubspot_mapped_fields = current_retailer.customer_hubspot_fields.where.not(customer_field: 'tags').includes(:hubspot_field)
-    @customer_fields = Customer.public_fields + current_retailer.customer_related_fields.pluck(:name)
+    @customer_fields = Customer.public_fields + current_retailer.customer_related_fields.pluck(:identifier)
   end
 
   def create

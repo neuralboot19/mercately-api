@@ -25,7 +25,8 @@ ActiveAdmin.register Retailer do
                 :show_stats,
                 :allow_voice_notes,
                 :show_calendar,
-                :allow_reminders
+                :allow_reminders,
+                :allow_send_videos
 
   filter :name
   filter :slug
@@ -106,6 +107,7 @@ ActiveAdmin.register Retailer do
       row :allow_voice_notes
       row :show_calendar
       row :allow_reminders
+      row :allow_send_videos
       row :created_at
       row :updated_at
     end
@@ -352,6 +354,7 @@ ActiveAdmin.register Retailer do
       f.input :show_stats, label: 'Activar acceso total a estadísticas'
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
       f.input :allow_reminders, label: 'Permitir configurar recordatorios'
+      f.input :allow_send_videos, label: 'Permitir enviar videos'
     end
     f.actions
   end

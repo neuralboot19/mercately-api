@@ -2,10 +2,13 @@ class ChatBotAction < ApplicationRecord
   belongs_to :chat_bot_option
   belongs_to :retailer_user, required: false
   belongs_to :customer_related_field, required: false
+  belongs_to :jump_option, class_name: "ChatBotOption", required: false
   has_many :action_tags, dependent: :destroy
   has_many :tags, through: :action_tags
 
-  EXECUTION_ORDER = [0, 1, 5, 6, 8, 7, 2, 3, 4]
+  EXECUTION_ORDER = [0, 1, 5, 6, 8, 7, 2, 9, 3, 4].freeze
+
+  validate :avoid_same_option_to_jump
 
   before_save :manage_save_on_db_action
   after_create :generate_option
@@ -20,6 +23,7 @@ class ChatBotAction < ApplicationRecord
     exec_callback
     auto_generate_option
     repeat_endpoint_option
+    jump_to_option
   ]
   enum classification: %i[default success failed]
   enum action_event: %i[post get put patch remove]
@@ -106,5 +110,12 @@ class ChatBotAction < ApplicationRecord
 
       related = chat_bot_option.chat_bot.retailer.customer_related_fields.find_by_identifier(target_field)
       self.customer_related_field = related.presence || nil
+    end
+
+    def avoid_same_option_to_jump
+      return unless action_type == 'jump_to_option'
+
+      errors.add(:jump_option_id, 'La opción origen y la opción destino no pueden ser la misma.') if
+        jump_option_id == chat_bot_option_id
     end
 end
