@@ -1,104 +1,158 @@
 <div class="box">
   <div class="row">
     <%= form_for [:retailers, @order], html: { class: 'validate-form col-xs-12 p-0 order-form' } do |f| %>
-      <fieldset class="fieldset mt-16">
-        <legend>Información de la venta</legend>
-        <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
-        <input type="hidden" id="hidden-meli-id" value="<%= @order.meli_order_id %>" />
-        <% if @hide_client_form %>
-          <div class="my-16" id="customer_id_container">
-            <%= f.label :customer_id, 'Cliente' %>
-            <%= f.select :customer_id, current_retailer.customers.active.map { |c| [c.full_names, c.id] }, { include_blank: false }, class: 'input', onchange: 'updateEditForm()' %>
-          </div>
-          <div id="add_customer_container" class="links mt-16 mb-24 pb-10">
-            <a class="btn btn--cta fs-12 fs-sm-and-down-8 f-right" onclick="editClient()" id="edit_customer">
-              <i class="fas fa-edit mr-5"></i>
-              Editar cliente
-            </a>
-            <%= link_to_add_association f, :customer, partial: 'new_customer_fields', class: 'btn btn--cta fs-12 fs-sm-and-down-8 f-right', id: 'add_customer' do %>
-              <i class="fas fa-plus mr-5"></i>
-              Agregar cliente
-            <% end %>
-          </div>
-        <% else %>
-          <%= f.hidden_field :customer_id %>
-        <% end %>
-        <div id="edit-client-order-form" class="<%= 'd-none' if @hide_client_form %>">
-          <%= f.fields_for :customer, @customer do |cust| %>
-            <%= render "customer_fields", f: cust %>
-          <% end %>
-        </div>
-        <div class="my-16">
-          <%= f.label :status, 'Estado' %>
-          <%= f.select :status, Order.statuses.keys.collect { |s| [ Order.enum_translation(:statuses, s), s ]}, { include_blank: false, disabled: disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
-        </div>
-        <% if @order.status != 'pending' && @order.meli_order_id && @order.feedback_rating.present? %>
-          <div class="w-100">
-            <h4>Calificar Venta</h4>
-          </div>
-          <div class="my-16">
-            <p class="c-secondary">Ya calificaste la venta!</p>
-          </div>
-        <% end %>
-        <div id="feedback-container" class="row w-100">
-          <div class="w-100">
-            <h4>Calificar Venta</h4>
-          </div>
-          <div id="feedback-reason-container" class="my-16 w-100">
-            <%= f.label :feedback_reason, 'Motivo' %>
-            <%= f.select :feedback_reason, Order.feedback_reasons.keys.collect { |r| [ Order.enum_translation(:feedback_reasons, r), r ]}, class: 'input' %>
-          </div>
-          <div id="feedback-rating-container" class="my-16 w-100">
-            <%= f.label :feedback_rating, 'Calificación' %>
-            <%= f.select :feedback_rating, Order.feedback_ratings.keys.collect { |r| [ Order.enum_translation(:feedback_ratings, r), r ]}, disabled: ['positive'], class: 'input' %>
-          </div>
-          <div class="my-16 w-100">
-            <%= f.label :feedback_message, 'Mensaje' %>
-            <%= f.text_area :feedback_message, class: 'input h-40 validate-required' %>
-            <i class="validation-msg"></i>
-          </div>
-        </div>
-        <div class="my-16">
-          <%= f.label :retailer_user_id, 'Vendedor' %>
-          <%= f.select :retailer_user_id, current_retailer.team_agents.map { |t| [(t.full_name.presence || t.email), t.id] }, { include_blank: true }, class: 'input' %>
-        </div>
-        <div class="my-16">
-          <%= f.label :sales_channel_id, 'Canal de venta' %>
-          <%= f.select :sales_channel_id, current_retailer.sales_channels.map { |ch| [ch.title, ch.id] }, { include_blank: true }, class: 'input' %>
-        </div>
-        <div class="row w-100">
-          <div class="my-16 w-100">
-            <%= f.label :notes, 'Notas' %>
-            <%= f.text_area :notes, class: 'input h-40' %>
-          </div>
-        </div>
-        <fieldset class="fieldset mt-61">
-          <legend>Items en la venta</legend>
-          <i class="validation-msg">&nbsp;</i>
-          <div id="order_items" class="w-100 validate-association-presence">
-            <%= f.fields_for :order_items do |oi| %>
-              <%= render "order_items_fields", f: oi %>
-            <% end %>
-            <div class="links mt-16 mb-24 t-right">
-              <% if @order.id.blank? || @order.status == 'pending' %>
-                <div>
-                  <h3 class="total">
-                    Total:
-                    <span class="money fs-19">$<%= @order.total %></span>
-                  </h3>
-                </div>
-                <%= link_to_add_association f, :order_items, partial: 'new_order_items_fields', id: 'add_order_items',class: 'btn btn--cta' do %>
+      <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
+      <input type="hidden" id="hidden-meli-id" value="<%= @order.meli_order_id %>" />
+      <%= f.hidden_field :customer_id, value: f.object&.customer&.id || current_retailer.customers.first&.id, id: 'order_customer' %>
+      <div class="row">
+        <div class="col-xs-12 col-sm-6">
+          <div id="client-card-box" class="card-box mt-16">
+            <% if @hide_client_form %>
+              <div class="mb-16" id="customer_id_container">
+                <%= f.label :customer_id, 'Cliente', class: 'mb-6' %>
+                <%= f.select :customer_id, [], { include_blank: false }, class: 'input', onchange: 'updateEditForm()' %>
+              </div>
+              <div id="add_customer_container" class="links t-right mb-8 cocoon-load">
+                <a class="btn btn--cta fs-12 fs-sm-and-down-8" onclick="editClient()" id="edit_customer">
+                  <i class="fas fa-edit mr-5"></i>
+                  Editar cliente
+                </a>
+                <%= link_to_add_association f, :customer, partial: 'new_customer_fields', class: 'btn btn--cta fs-12 fs-sm-and-down-8 mr-0', id: 'add_customer' do %>
                   <i class="fas fa-plus mr-5"></i>
-                  Añadir Item
+                  Agregar cliente
                 <% end %>
+              </div>
+            <% else %>
+              <%= f.hidden_field :customer_id %>
+            <% end %>
+            <div id="edit-client-order-form" class="<%= 'd-none' if @hide_client_form %> cocoon-load">
+              <%= f.fields_for :customer, @customer do |cust| %>
+                <%= render "customer_fields", f: cust %>
               <% end %>
             </div>
           </div>
-        </fieldset>
-        <div class="btn-box col-xs-12">
-          <%= f.submit 'Guardar', class: 'btn-btn btn-submit m-0', data: { disable_with: false } %>
         </div>
-      </fieldset>
+        <div class="col-xs-12 col-sm-6">
+          <div class="card-box mt-16">
+            <div class="w-100">
+              Información de la venta
+              <div class="my-16">
+                <%= f.label :status, 'Estado' %>
+                <%= f.select :status, Order.statuses.keys.collect { |s| [ Order.enum_translation(:statuses, s), s ]}, { include_blank: false, disabled: disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
+              </div>
+              <% if @order.status != 'pending' && @order.meli_order_id && @order.feedback_rating.present? %>
+                <div class="w-100">
+                  <h4>Calificar Venta</h4>
+                </div>
+                <div class="my-16">
+                  <p class="c-secondary">Ya calificaste la venta!</p>
+                </div>
+              <% end %>
+              <div id="feedback-container" class="row w-100">
+                <div class="w-100">
+                  <h4>Calificar Venta</h4>
+                </div>
+                <div id="feedback-reason-container" class="my-16 w-100">
+                  <%= f.label :feedback_reason, 'Motivo' %>
+                  <%= f.select :feedback_reason, Order.feedback_reasons.keys.collect { |r| [ Order.enum_translation(:feedback_reasons, r), r ]}, class: 'input' %>
+                </div>
+                <div id="feedback-rating-container" class="my-16 w-100">
+                  <%= f.label :feedback_rating, 'Calificación' %>
+                  <%= f.select :feedback_rating, Order.feedback_ratings.keys.collect { |r| [ Order.enum_translation(:feedback_ratings, r), r ]}, disabled: ['positive'], class: 'input' %>
+                </div>
+                <div class="my-16 w-100">
+                  <%= f.label :feedback_message, 'Mensaje' %>
+                  <%= f.text_area :feedback_message, class: 'input h-40 validate-required' %>
+                  <i class="validation-msg"></i>
+                </div>
+              </div>
+              <div class="my-16">
+                <%= f.label :retailer_user_id, 'Vendedor' %>
+                <%= f.select :retailer_user_id, current_retailer.team_agents.map { |t| [(t.full_name.presence || t.email), t.id] }, { include_blank: true }, class: 'input' %>
+              </div>
+              <div class="my-16">
+                <%= f.label :sales_channel_id, 'Canal de venta' %>
+                <%= f.select :sales_channel_id, current_retailer.sales_channels.map { |ch| [ch.title, ch.id] }, { include_blank: true }, class: 'input' %>
+              </div>
+              <div class="row w-100">
+                <div class="w-100">
+                  <%= f.label :notes, 'Notas' %>
+                  <%= f.text_area :notes, class: 'input', style: 'height: 198px;' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-12">
+          <div class="card-box mt-16">
+            <div class="w-100">
+              <div class="mb-8">
+                <b>Detalles de la venta</b>
+                <i class="validation-msg">&nbsp;</i>
+              </div>
+              <div id="items-header" class="row py-4 t-center">
+                <div class="col-xs-12 col-sm-2">
+                  Código
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                  Producto
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                  Cantidad
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                  Precio unitario
+                </div>
+                <div class="col-xs-12 col-sm-2">
+                  Subtotal
+                </div>
+                <div class="col-xs-12 col-sm-1">
+                </div>
+              </div>
+              <div id="order_items" class="w-100 validate-association-presence">
+                <input type="hidden" id="product_code" value=""/>
+                <input type="hidden" id="product_title" value=""/>
+                <input type="hidden" id="product_img" value=""/>
+                <input type="hidden" id="product_id" value=""/>
+                <%= f.fields_for :order_items do |oi| %>
+                  <%= render "order_items_fields", f: oi %>
+                <% end %>
+                <div class="links mt-16 mb-24 t-right">
+                  <% if @order.id.blank? || @order.status == 'pending' %>
+                    <%= link_to_add_association f, :order_items, partial: 'new_order_items_fields', id: 'add_order_items',class: 'btn btn--cta d-none' do %>
+                      <i class="fas fa-plus mr-5"></i>
+                      Añadir Item
+                    <% end %>
+                    <div class="mt-8 t-left">
+                      <select id="some_name">
+                        <option>Añadir producto (buscar por nombre o código)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <h3 class="total">
+                        Total:
+                        <span class="money fs-19">$<%= @order.total %></span>
+                      </h3>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="my-16 t-right hide-on-xs">
+            <%= link_to 'Cancelar', retailers_orders_path(current_retailer, status: 'all'), class: 'cancel-link mr-30' %>
+            <%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
+          </div>
+          <div class="hide-on-xs-and-up t-center my-16">
+            <div><%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %></div>
+            <div class="mt-20"><%= link_to 'Cancelar', retailers_orders_path(current_retailer, status: 'all'), class: 'cancel-link' %></div>
+          </div>
+        </div>
+      </div>
     <% end %>
   </div>
 </div>
@@ -110,5 +164,15 @@
     <% end %>
   <% end %>
 </script>
+<% if params[:first_name].present? %>
+  <script charset="utf-8">
+    $(function() {
+      setTimeout(function() {
+        $('#add_customer').click(),
+        100
+      })
+    });
+  </script>
+<% end %>
 
 <script src="<%= asset_path 'orders/orders.js' %>" charset="utf-8"></script>

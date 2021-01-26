@@ -3,6 +3,7 @@
 class Retailers::OrdersController < RetailersController
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_order, only: [:show, :edit, :update, :destroy]
+  before_action :process_customer, only: [:create, :update]
 
   def index
     @orders = Order.includes(products: :product_variations).retailer_orders(current_retailer.id, params['status'])
@@ -28,7 +29,7 @@ class Retailers::OrdersController < RetailersController
       @order.customer.email = params[:email]
       @order.customer.phone = params[:phone]
       @order.retailer_user_id = current_retailer_user.id
-      @hide_client_form = false
+      @hide_client_form = true
     end
 
     if params[:from] == 'facebook_chats'
@@ -88,6 +89,13 @@ class Retailers::OrdersController < RetailersController
       output_items
     end
 
+    def process_customer
+      return unless params[:order][:customer_attributes]
+
+      customer_attributes = params[:order][:customer_attributes]
+      customer_attributes[:id_type] = nil if customer_attributes[:id_number].blank?
+    end
+
     # Only allow a trusted parameter "white list" through.
     def order_params
       params.require(:order).permit(
@@ -116,7 +124,14 @@ class Retailers::OrdersController < RetailersController
           :phone,
           :retailer_id,
           :first_name,
-          :last_name
+          :last_name,
+          :country_id,
+          :id_type,
+          :id_number,
+          :city,
+          :state,
+          :address,
+          :zip_code
         ]
       )
     end

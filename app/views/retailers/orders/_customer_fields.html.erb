@@ -1,44 +1,74 @@
 <div class="nested-fields box">
-  <div class="row my-16 bottom-xs">
-    <fieldset class="mt-16 w-100">
-      <legend>Información básica de cliente</legend>
-      <div class="w-100">
-        <div class="row col-xs-12">
-          <div class="col-xs-12 index__ctas">
-            <a class="btn btn--no-border f-right" onclick="hideClientForm()">
-              <i class="fas fa-times mr-5"></i>
-              Cancelar
-            </a>
-          </div>
-          <div class="col-xs-12 col-md-6 my-16">
-            <%= f.label :first_name, 'Nombre' %>
-            <%= f.text_field :first_name, class: 'input', disabled: @hide_client_form %>
-          </div>
-          <div class="col-xs-12 col-md-6 my-16">
-            <%= f.label :last_name, 'Apellido' %>
-            <%= f.text_field :last_name, class: 'input', disabled: @hide_client_form %>
-          </div>
-        </div>
-        <div class="row col-xs-12">
-          <div class="col-xs-12 col-md-6 my-16">
-            <%= f.label :email %>
-            <%= f.text_field :email, class: 'input validate-email validate-required', disabled: @hide_client_form %>
-            <i class="validation-msg"></i>
-          </div>
-          <div class="col-xs-12 col-md-6 my-16">
-            <%= f.label :phone, 'Teléfono' %>
-            <%= f.text_field :phone, class: 'input', disabled: @hide_client_form %>
-          </div>
-          <% if @order.id.blank? %>
-            <input type="hidden" name="order[customer_attributes][id]" id="order_customer_attributes_id">
-          <% end %>
-          <% if @hide_client_form %>
-            <input type="hidden" value="<%= current_retailer.id %>" name="order[customer_attributes][retailer_id]" id="order_customer_attributes_retailer_id" disabled="disabled">
-          <% else %>
-            <input type="hidden" value="<%= current_retailer.id %>" name="order[customer_attributes][retailer_id]" id="order_customer_attributes_retailer_id">
-          <% end %>
-        </div>
+  <div class="row bottom-xs">
+    <div class="row">
+      <div class="col-xs-12 index__ctas">
+        Información básica de cliente
+        <a class="c-secondary btn btn--no-border f-right pt-0 mt-0 pr-0 mr-0" onclick="hideClientForm()">
+          <i class="fas fa-user-edit mr-5"></i>
+          Buscar cliente
+        </a>
       </div>
-    </fieldset>
+      <div class="col-xs-12 col-md-6 my-16">
+        <%= f.label :first_name, 'Nombre' %>
+        <%= f.text_field :first_name, class: 'input', disabled: @hide_client_form %>
+      </div>
+      <div class="col-xs-12 col-md-6 my-16">
+        <%= f.label :last_name, 'Apellido' %>
+        <%= f.text_field :last_name, class: 'input', disabled: @hide_client_form %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12">
+        <%= f.label :email %>
+        <%= f.text_field :email, class: 'input validate-email validate-required', disabled: @hide_client_form %>
+        <i class="validation-msg"></i>
+      </div>
+      <div class="my-16 col-xs-12 col-md-4">
+        <%= f.label :country_id, 'Teléfono' %>
+        <%= f.country_select("country_id", { format: :with_country_code, include_blank: true }, { class: 'input' }) %>
+      </div>
+      <div class="my-16 col-xs-12 col-md-8">
+        <%= f.label :phone, '&nbsp;'.html_safe %>
+        <%= f.text_field :phone, class: 'input', onkeypress: 'onlyNumber(event)', disabled: @hide_client_form %>
+      </div>
+      <% if @order.id.blank? %>
+        <input type="hidden" name="order[customer_attributes][id]" id="order_customer_attributes_id">
+      <% end %>
+      <% if @hide_client_form %>
+        <input type="hidden" value="<%= current_retailer.id %>" name="order[customer_attributes][retailer_id]" id="order_customer_attributes_retailer_id" disabled="disabled">
+      <% else %>
+        <input type="hidden" value="<%= current_retailer.id %>" name="order[customer_attributes][retailer_id]" id="order_customer_attributes_retailer_id">
+      <% end %>
+    </div>
+    <div class="row w-100">
+      <div class="col-xs-12 col-md-6">
+        <%= f.label :id_type, 'Tipo de identificación' %>
+        <%= f.select :id_type, Customer.id_types.keys, id: nil, class: 'input' %>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <%= f.label :id_number, 'Identificación' %>
+        <%= f.text_field :id_number, class: 'input' %>
+      </div>
+    </div>
+    <div class="row w-100">
+      <div class="my-16 col-xs-12 col-md-6">
+        <%= f.label :city, 'Ciudad' %>
+        <%= f.text_field :city, class: 'input' %>
+      </div>
+      <div class="my-16 col-xs-12 col-md-6">
+        <%= f.label :state, 'Estado (Provincia)' %>
+        <%= f.text_field :state, class: 'input' %>
+      </div>
+    </div>
+    <div class="row w-100">
+      <div class="col-xs-12 col-md-6">
+        <%= f.label :address, 'Dirección' %>
+        <%= f.text_field :address, class: 'input' %>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <%= f.label :zip_code, 'Zip' %>
+        <%= f.text_field :zip_code, class: 'input' %>
+      </div>
+    </div>
   </div>
 </div>

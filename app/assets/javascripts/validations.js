@@ -196,7 +196,7 @@ function validateForm(e, form) {
     var $result = $(association).siblings('.validation-msg');
     $result.html(null);
 
-    if ($(association).find('.association-item').length < 1) {
+    if ($('.association-item').length < 1) {
       $result.html('Debe agregar al menos uno');
       checks.push(false);
     }
