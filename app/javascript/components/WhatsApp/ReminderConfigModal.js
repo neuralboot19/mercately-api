@@ -25,22 +25,19 @@ function ReminderConfigModal({
     acceptedFiles,
     cancelTemplate,
     getCleanTemplate,
-    isModalOpen,
     isTemplateSelected,
     onMobile,
     screen,
     selectTemplate,
-    sendTemplate,
     submitReminder,
     setTemplateType,
     templates,
     templateType,
-    toggleModal,
     isReminderConfigModalOpen,
     toggleReminderConfigModal
 }) {
   const [startDate, setStartDate] = useState(new Date());
-  
+
   return (
     <Modal appElement={document.getElementById("react_content")} isOpen={isReminderConfigModalOpen} style={customStyles}>
       <div className={onMobile ? "row mt-50" : "row"}>
@@ -136,13 +133,14 @@ function ReminderConfigModal({
                 <DatePicker
                   selected={startDate}
                   onChange={date => setStartDate(date)}
-                  locale="es"
-                  timeCaption="Hora"
+                  locale='es'
+                  timeCaption='Hora'
                   showTimeSelect
-                  timeFormat="p"
+                  timeFormat='p'
                   timeIntervals={1}
-                  dateFormat="Pp"
+                  dateFormat='Pp'
                   id='send_template_at'
+                  minDate={new Date()}
                 />
               </div>
             </div>

@@ -53,6 +53,6 @@ class GupshupWhatsappMessage < ApplicationRecord
     def update_reminder
       return unless reminder.present?
 
-      reminder.update(status: :failed) if status == 'error'
+      reminder.failed! if status == 'error'
     end
 end
