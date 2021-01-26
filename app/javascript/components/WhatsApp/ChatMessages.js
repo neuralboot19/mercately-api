@@ -11,7 +11,8 @@ import {
   sendWhatsAppMessage,
   setNoRead,
   setWhatsAppMessageAsRead,
-  toggleChatBot
+  toggleChatBot,
+  createReminder
 } from '../../actions/whatsapp_karix';
 import ImagesSelector from '../shared/ImagesSelector';
 import GoogleMap from '../shared/Map';
@@ -25,6 +26,7 @@ import TemplateSelectionModal from './TemplateSelectionModal';
 import ImageModal from '../shared/ImageModal';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
 import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
+import ReminderConfigModal from './ReminderConfigModal';
 
 let currentCustomer = 0;
 let totalPages = 0;
@@ -32,6 +34,7 @@ let comesFromSelection = false;
 let justMounted = false;
 let templateParams = {};
 let gupshupTemplateId;
+let templateSelectedId;
 const csrfToken = document.querySelector('[name=csrf-token]').content;
 
 class ChatMessages extends Component {
@@ -64,7 +67,8 @@ class ChatMessages extends Component {
       audioMinutes: '00',
       showEmojiPicker: false,
       templateType: '',
-      acceptedFiles: ''
+      acceptedFiles: '',
+      isReminderConfigModalOpen: false
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -493,26 +497,7 @@ class ChatMessages extends Component {
     if (this.props.customer.whatsapp_opt_in || ENV.INTEGRATION === '0' || this.opted_in) {
       this.toggleModal();
     } else if (this.opted_in === false) {
-      if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
-        const id = this.props.currentCustomer;
-
-        const requestOptions = {
-          method: 'PATCH',
-          headers: { 'X-CSRF-Token': csrfToken }
-        };
-
-        fetch(`/api/v1/accept_optin_for_whatsapp/${id}`, requestOptions)
-          .then(async (response) => {
-            const data = await response.json();
-            if (response.ok) {
-              this.opted_in = true;
-              this.toggleModal();
-              return Promise.resolve(response);
-            }
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          });
-      }
+      this.verifyOptIn('templates');
     }
   }
 
@@ -524,6 +509,7 @@ class ChatMessages extends Component {
 
   selectTemplate = (template) => {
     gupshupTemplateId = template.gupshup_template_id;
+    templateSelectedId = template.id;
 
     this.setState({
       isTemplateSelected: true,
@@ -597,7 +583,7 @@ class ChatMessages extends Component {
     });
   }
 
-  cancelTemplate = () => {
+  cancelTemplate = (from = 'templates') => {
     templateParams = {};
 
     this.setState({
@@ -607,7 +593,7 @@ class ChatMessages extends Component {
       templateEdited: false
     });
 
-    this.toggleModal();
+    from === 'templates' ? this.toggleModal() : this.toggleReminderConfigModal();
   }
 
   sendTemplate = () => {
@@ -1064,6 +1050,98 @@ class ChatMessages extends Component {
     this.setState({ acceptedFiles: accepted });
   }
 
+  openReminderConfigModal = () => {
+    // eslint-disable-next-line no-undef
+    if (this.props.customer.whatsapp_opt_in || ENV.INTEGRATION === '0' || this.opted_in) {
+      this.toggleReminderConfigModal();
+    } else if (this.opted_in === false) {
+      this.verifyOptIn('reminders')
+    }
+  }
+
+  toggleReminderConfigModal = () => {
+    this.setState((prevState) => ({
+      isReminderConfigModalOpen: !prevState.isReminderConfigModalOpen
+    }));
+  }
+
+  verifyOptIn = (from) => {
+    if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
+      const id = this.props.currentCustomer;
+
+      const requestOptions = {
+        method: 'PATCH',
+        headers: { 'X-CSRF-Token': csrfToken }
+      };
+
+      fetch(`/api/v1/accept_optin_for_whatsapp/${id}`, requestOptions)
+        .then(async (response) => {
+          const data = await response.json();
+          if (response.ok) {
+            this.opted_in = true;
+            from === 'templates' ? this.toggleModal() : this.toggleReminderConfigModal();
+            return Promise.resolve(response);
+          }
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        });
+    }
+  }
+
+  submitReminder = () => {
+    let allFilled = true;
+    let file = null;
+
+    this.state.auxTemplateSelected.forEach((key, index) => {
+      if (key === '*' && (index === 0 || this.state.auxTemplateSelected[index - 1] !== '\\')) {
+        allFilled = false;
+      }
+    });
+
+    if (this.state.templateType !== 'text') {
+      // eslint-disable-next-line prefer-destructuring
+      file = document.getElementById('template_file').files[0];
+    }
+
+    const fileSelected = this.state.templateType === 'text' || file;
+    const time = document.getElementById('send_template_at').value;
+
+    if (allFilled && fileSelected && time) {
+      if (this.state.templateType === 'image' && this.validateImages(file) === false) {
+        alert('La imagen debe ser JPG/JPEG o PNG, de máximo 5MB')
+        return;
+      }
+
+      if (this.state.templateType === 'file' && this.validFile(file) === false) return;
+
+      let params = new FormData();
+      params.append('reminder[customer_id]', this.props.currentCustomer);
+      params.append('reminder[whatsapp_template_id]', templateSelectedId);
+      params.append('reminder[send_at]', time);
+      params.append('reminder[timezone]', new Date().toString().match(/([-\+][0-9]+)\s/)[1]);
+
+      if (file) params.append('reminder[file]', file);
+
+      const insertedParams = Object.values(templateParams);
+      params.append('reminder[content_params]', JSON.stringify(insertedParams));
+
+      this.props.createReminder(params, csrfToken)
+      this.cancelTemplate('reminders');
+    } else {
+      let alertMessage = '';
+
+      if (!allFilled) {
+        alertMessage = 'Debe llenar todos los campos editables';
+      } else if (!fileSelected) {
+        alertMessage = 'Debe seleccionar una Imagen o archivo PDF';
+      } else {
+        alertMessage = 'Debe ingresar un horario de envío';
+      }
+
+      alert(alertMessage);
+    }
+  }
+
   render() {
     let screen;
     if (this.state.templateEdited === false) {
@@ -1127,7 +1205,11 @@ class ChatMessages extends Component {
             <ErrorSendingMessageLabel text={this.props.errorSendMessageText} />
           ) : (
             this.isChatClosed() ? (
-              <ClosedChannel openModal={this.openModal} />
+              <ClosedChannel
+                openModal={this.openModal}
+                openReminderConfigModal={this.openReminderConfigModal}
+                allowReminders={this.props.allowReminders}
+              />
             ) : (
               this.canSendMessages()
               && (
@@ -1156,6 +1238,8 @@ class ChatMessages extends Component {
                   toggleFastAnswers={this.toggleFastAnswers}
                   toggleLoadImages={this.toggleLoadImages}
                   toggleProducts={this.props.toggleProducts}
+                  openReminderConfigModal={this.openReminderConfigModal}
+                  allowReminders={this.props.allowReminders}
                 />
               )
             )
@@ -1195,6 +1279,25 @@ class ChatMessages extends Component {
           zoomLevel={this.state.zoomLevel}
           sendLocation={this.sendLocation}
         />
+
+        <ReminderConfigModal
+          acceptedFiles={this.state.acceptedFiles}
+          cancelTemplate={this.cancelTemplate}
+          getCleanTemplate={this.getCleanTemplate}
+          isModalOpen={this.state.isModalOpen}
+          isTemplateSelected={this.state.isTemplateSelected}
+          onMobile={this.props.onMobile}
+          screen={screen}
+          selectTemplate={this.selectTemplate}
+          sendTemplate={this.sendTemplate}
+          submitReminder={this.submitReminder}
+          setTemplateType={this.setTemplateType}
+          templates={this.props.templates}
+          templateType={this.state.templateType}
+          toggleModal={this.toggleModal}
+          toggleReminderConfigModal={this.toggleReminderConfigModal}
+          isReminderConfigModalOpen={this.state.isReminderConfigModalOpen}
+        />
       </div>
     );
   }
@@ -1216,7 +1319,8 @@ function mapStateToProps(state) {
     errorSendMessageStatus: state.errorSendMessageStatus,
     errorSendMessageText: state.errorSendMessageText,
     customer: state.customer,
-    allowSendVoice: state.allowSendVoice
+    allowSendVoice: state.allowSendVoice,
+    allowReminders: state.allowReminders
   };
 }
 
@@ -1248,6 +1352,9 @@ function mapDispatch(dispatch) {
     },
     sendWhatsAppBulkFiles: (id, body, token) => {
       dispatch(sendWhatsAppBulkFiles(id, body, token));
+    },
+    createReminder: (body, token) => {
+      dispatch(createReminder(body, token));
     }
   };
 }

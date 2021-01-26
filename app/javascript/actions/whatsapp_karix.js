@@ -394,3 +394,26 @@ export const sendWhatsAppBulkFiles = (id, body, token) => {
       });
   };
 };
+
+export const createReminder = (body, token) => {
+  const endpoint = `/api/v1/reminders`;
+  const csrfToken = token;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "POST",
+      credentials: 'same-origin',
+      headers: {
+        'X-CSRF-Token': csrfToken
+      },
+      body
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'CREATE_REMINDER', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) alert(error.response);
+        else alert("An unexpected error occurred.");
+      });
+  };
+};

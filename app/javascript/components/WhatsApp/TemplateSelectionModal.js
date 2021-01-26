@@ -119,7 +119,7 @@ const TemplateSelectionModal = (
           </div>
           {templateType !== 'text'
               && (
-                <div id="template-file">
+                <div id="template-file" className="col-md-12">
                   <br />
                   <input type="file" name="file" id="template_file" accept={acceptedFiles} />
                 </div>

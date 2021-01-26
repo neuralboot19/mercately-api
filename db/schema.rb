@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_08_152811) do
+ActiveRecord::Schema.define(version: 2021_01_21_190344) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -704,6 +704,29 @@ ActiveRecord::Schema.define(version: 2021_01_08_152811) do
     t.index ["product_id"], name: "index_questions_on_product_id"
   end
 
+  create_table "reminders", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.bigint "customer_id"
+    t.bigint "retailer_user_id"
+    t.bigint "whatsapp_template_id"
+    t.bigint "gupshup_whatsapp_message_id"
+    t.bigint "karix_whatsapp_message_id"
+    t.jsonb "content_params"
+    t.datetime "send_at"
+    t.datetime "send_at_timezone"
+    t.string "timezone"
+    t.string "web_id"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_reminders_on_customer_id"
+    t.index ["gupshup_whatsapp_message_id"], name: "index_reminders_on_gupshup_whatsapp_message_id"
+    t.index ["karix_whatsapp_message_id"], name: "index_reminders_on_karix_whatsapp_message_id"
+    t.index ["retailer_id"], name: "index_reminders_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_reminders_on_retailer_user_id"
+    t.index ["whatsapp_template_id"], name: "index_reminders_on_whatsapp_template_id"
+  end
+
   create_table "retailer_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -779,6 +802,7 @@ ActiveRecord::Schema.define(version: 2021_01_08_152811) do
     t.boolean "show_stats", default: false
     t.boolean "allow_voice_notes", default: true
     t.boolean "show_calendar", default: false
+    t.boolean "allow_reminders", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
