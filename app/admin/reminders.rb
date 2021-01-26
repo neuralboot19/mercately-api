@@ -3,8 +3,8 @@ ActiveAdmin.register Reminder do
   permit_params :status
   filter :retailer, as: :searchable_select
   filter :retailer_user, as: :searchable_select
-  filter :customer, as: :searchable_select, collection: Customer.where(valid_customer: true)
-    .map { |c| [c.full_names.presence || c.whatsapp_name || c.phone, c.id] }
+  filter :customer, as: :searchable_select, collection: -> { Customer.where(valid_customer: true)
+    .map { |c| [c.full_names.presence || c.whatsapp_name || c.phone, c.id] } }
 
   controller do
     defaults finder: :find_by_web_id
