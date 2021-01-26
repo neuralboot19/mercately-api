@@ -1625,7 +1625,6 @@ i {
 
 .card-to-replace {
   min-height: 80vh;
-  background-color: #ECEFF4;
 
   .container {
     padding: 0 4px;
@@ -1638,6 +1637,9 @@ i {
 .form-container {
   &_header-title, &_sub-title {
     font-family: 'Poppins-SemiBold';
+    @media screen and (min-width: 1024px) {
+      margin-left: 60px;
+    }
   }
 
   &_sub {
@@ -1694,6 +1696,11 @@ i {
   color: #AAA;
   font-size: 16px;
   margin-top: 0;
+  @media screen and (min-width: 1024px) {
+    display: inline-block;
+    margin-top: 20px;
+    margin-left: 60px;
+  }
 }
 
 .cancel-link {
