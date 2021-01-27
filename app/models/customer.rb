@@ -63,6 +63,8 @@ class Customer < ApplicationRecord
           "%#{search_text}%")
   end)
 
+  accepts_nested_attributes_for :customer_related_data, reject_if: :all_blank, allow_destroy: true
+
   ransacker :sort_by_completed_orders do
     Arel.sql('coalesce((select count(orders.id) as total from orders where ' \
       'orders.customer_id = customers.id and orders.status = 1), 0)')

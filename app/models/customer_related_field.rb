@@ -9,7 +9,7 @@ class CustomerRelatedField < ApplicationRecord
   validates :identifier, uniqueness: { scope: :retailer_id, message: 'Campo ya está en uso.' },
     allow_blank: false
 
-  enum field_type: %i[string integer]
+  enum field_type: %i[string integer float boolean date list]
 
   before_validation :set_identifier, on: :create
   before_destroy :check_destroy_requirements
