@@ -9,6 +9,7 @@ import RecordAudioIcon from './RecordAudioIcon';
 import PickEmojiIcon from './PickEmojiIcon';
 import SendButton from './SendButton';
 import RecordingAudioPanel from './RecordingAudioPanel';
+import ReminderIcon from './ReminderIcon';
 
 const MessageFormIconsBar = (
   {
@@ -28,7 +29,9 @@ const MessageFormIconsBar = (
     toggleEmojiPicker,
     toggleFastAnswers,
     toggleLoadImages,
-    toggleProducts
+    toggleProducts,
+    openReminderConfigModal,
+    allowReminders
   }
 ) => (
   <div className="t-right mr-15">
@@ -61,6 +64,9 @@ const MessageFormIconsBar = (
             && <RecordAudioIcon onMobile={onMobile} recordAudio={recordAudio} />
           }
           <PickEmojiIcon onMobile={onMobile} toggleEmojiPicker={toggleEmojiPicker} />
+          {allowReminders &&
+            <ReminderIcon onMobile={onMobile} openReminderConfigModal={openReminderConfigModal} />
+          }
           <div className="tooltip-top ml-15" />
           <SendButton handleSubmit={handleSubmit} onMobile={onMobile} />
         </div>

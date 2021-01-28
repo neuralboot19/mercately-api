@@ -1,122 +1,291 @@
-import React, { Component } from 'react';
-import { connect } from "react-redux";
+import React, { useEffect, useRef, useState } from 'react';
 import { withRouter } from "react-router-dom";
-import moment from 'moment';
 // eslint-disable-next-line import/no-unresolved
 import Loader from 'images/dashboard/loader.jpg';
-import { fetchCustomers } from "../../actions/actions";
-import { fetchWhatsAppCustomers } from "../../actions/whatsapp_karix";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchCustomers as fetchCustomersAction } from "../../actions/actions";
+import { fetchWhatsAppCustomers as fetchWhatsAppCustomersAction } from "../../actions/whatsapp_karix";
 import ChatFilter from './ChatFilter';
 import ChatSelector from './ChatSelector';
 
-class ChatSideBar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      page: 1,
-      customers: [],
-      shouldUpdate: true,
-      searchString: '',
-      order: 'received_desc',
-      agent: 'all',
-      type: 'all',
-      tag: 'all',
-      filter: {
-        searchString: '',
-        order: 'received_desc',
-        type: 'all',
-        agent: 'all',
-        tag: 'all'
+const _ = require('lodash');
+
+const initialState = {
+  page: 1,
+  customers: [],
+  assignedCustomers: [],
+  allCustomers: [],
+  searchString: '',
+  order: 'received_desc',
+  agent: 'all',
+  type: 'all',
+  tag: 'all',
+  filter: {
+    searchString: '',
+    order: 'received_desc',
+    type: 'all',
+    agent: 'all',
+    tag: 'all'
+  },
+  lastCustomerOffset: 0
+};
+
+const ChatSideBar = ({
+  handleOpenChat,
+  currentCustomer,
+  chatType,
+  setRemovedCustomerInfo,
+  storageId,
+  setActiveChatBot
+}) => {
+  const [state, setState] = useState(initialState);
+  const [loading, setLoading] = useState(true);
+  const [socketData, setSocketData] = useState();
+  const isMounted = useRef(false);
+  const isMountedForSearch = useRef(false);
+  const isMountedForListAssembly = useRef(false);
+
+  const customers = useSelector((reduxState) => reduxState.customers || []);
+  const totalPages = useSelector((reduxState) => reduxState.total_customers || 0);
+  const agents = useSelector((reduxState) => reduxState.agents || []);
+  const filterTags = useSelector((reduxState) => reduxState.filter_tags || []);
+
+  const dispatch = useDispatch();
+  const fetchCustomers = () => {
+    dispatch(fetchCustomersAction(state.page, state.filter, state.customers.length));
+  };
+  const fetchWhatsAppCustomers = () => {
+    dispatch(fetchWhatsAppCustomersAction(state.page, state.filter, state.customers.length));
+  };
+
+  // Initial effect
+  useEffect(() => {
+    let filter;
+    let order;
+    let agent;
+    let type;
+    let tag;
+    const storedFilter = JSON.parse(localStorage.getItem(`${storageId}_filter`));
+    if (storedFilter) {
+      storedFilter.searchString = '';
+      filter = storedFilter;
+      order = storedFilter.order;
+      agent = storedFilter.agent;
+      type = storedFilter.type;
+      tag = storedFilter.tag;
+    } else {
+      filter = { ...state.filter };
+      order = state.order;
+      agent = state.agent;
+      type = state.type;
+      tag = state.tag;
+    }
+
+    const eventHandler = (data) => setSocketData(data);
+    // Subscribe to assignation/de-assignation broadcasts
+    switch (chatType) {
+      case 'facebook': {
+        // eslint-disable-next-line no-undef
+        socket.on('customer_facebook_chat', eventHandler);
+        break;
+      }
+      case 'whatsapp': {
+        // eslint-disable-next-line no-undef
+        socket.on("customer_chat", eventHandler);
+        break;
+      }
+      default:
+        break;
+    }
+    setState({
+      ...state,
+      filter,
+      order,
+      agent,
+      type,
+      tag
+    });
+    return () => {
+      // unsubscribe from event for preventing memory leaks
+      switch (chatType) {
+        case 'facebook': {
+          // eslint-disable-next-line no-undef
+          socket.off('customer_facebook_chat', eventHandler);
+          break;
+        }
+        case 'whatsapp': {
+          // eslint-disable-next-line no-undef
+          socket.off("customer_chat", eventHandler);
+          break;
+        }
+        default:
+          break;
       }
     };
+  }, []);
 
-    this.last_customers_offset = 0;
-  }
+  useEffect(() => {
+    if (socketData) {
+      updateCustomerList(socketData);
+    }
+  }, [socketData]);
 
-  findCustomerInArray = (arr, id) => (
-    arr.findIndex((el) => (
-      el.id === id
-    ))
-  )
+  // Side effect which requests new data from API
+  // Fired after updating order, filter, agent, tag and page
+  useEffect(() => {
+    if (isMountedForSearch.current) {
+      applySearch();
+    } else {
+      isMountedForSearch.current = true;
+    }
+  }, [state.order, state.filter, state.agent, state.tag, state.page, state.type, state.customerId]);
 
-  handleLoadMore = () => {
-    if (this.props.total_customers > this.state.page
-      && this.state.customers.length !== this.last_customers_offset
+  // This side effect is fired after changes in redux's customer state, this just appends new customers'
+  // pages to local state
+  useEffect(() => {
+    const newCustomers = [...new Set([...state.customers, ...customers])];
+    if (isMounted.current) {
+      setLoading(false);
+      setState({
+        ...state,
+        customers: newCustomers,
+        lastCustomerOffset: state.customers.length
+      });
+    } else {
+      isMounted.current = true;
+    }
+  }, [customers]);
+
+  // This side effect assembles the list of customer to be shown
+  useEffect(() => {
+    if (isMountedForListAssembly.current) {
+      const allCustomers = [...new Set([...state.customers, ...state.assignedCustomers])];
+      const allCustomersUniq = _.uniqBy(allCustomers, 'id');
+      allCustomersUniq.sort(sortCustomers);
+      setState({
+        ...state,
+        allCustomers: allCustomersUniq
+      });
+    } else {
+      isMountedForListAssembly.current = true;
+    }
+  }, [state.customers, state.assignedCustomers]);
+
+  // Side effect which saves new filter to localStorage
+  // Fired on changes over filter state
+  useEffect(() => {
+    const newFilter = { ...state.filter };
+    delete newFilter.customer_id;
+    localStorage.setItem(`${storageId}_filter`, JSON.stringify(newFilter));
+  }, [state.filter]);
+
+  const sortCustomers = (cust1, cust2) => {
+    if (state.order === "received_asc") {
+      return Date.parse(cust1.recent_message_date) - Date.parse(cust2.recent_message_date);
+    }
+    return Date.parse(cust2.recent_message_date) - Date.parse(cust1.recent_message_date);
+  };
+
+  const handleLoadMore = () => {
+    if (totalPages > state.page
+      && state.customers.length !== state.lastCustomerOffset
     ) {
-      this.setState((prevState) => {
-        const page = prevState.page + 1;
-        if (this.props.chatType === "facebook") {
-          this.props.fetchCustomers(page, prevState.filter, prevState.customers.length);
-        }
-        if (this.props.chatType === "whatsapp") {
-          this.props.fetchWhatsAppCustomers(page, prevState.filter, prevState.customers.length);
-        }
-        this.last_customers_offset = prevState.customers.length;
-        return { page };
+      setState({
+        ...state,
+        page: state.page + 1
       });
     }
-  }
+  };
 
-  removeFromArray = (arr, index) => {
-    arr.splice(index, 1);
-    return arr;
-  }
-
-  updateCustomerList = (data) => {
-    const { customer } = data.customer;
-    const { customers } = this.state;
-    const index = this.findCustomerInArray(customers, customer.id);
-    let customerList = customers;
-
-    if (index !== -1 && data.remove_only) {
-      customerList = this.removeFromArray(customerList, index);
-    }
-
-    if (!data.remove_only) {
-      if (this.props.chatType === 'whatsapp') {
-        this.props.setActiveChatBot(customer);
-      }
-      customerList = this.insertCustomer(customerList, customer, index);
-    }
-
-    this.props.setRemovedCustomerInfo(data);
-    this.setState({
-      customers: customerList
-    });
-  }
-
-  findInsertPosition = (arr, date) => (
-    arr.findIndex((el) => (
-      moment(el.recent_message_date) <= moment(date)
-    ))
-  )
-
-  insertCustomer = (customerList, customer, index) => {
-    if (index === -1) {
-      if (customerList.length === 0) {
-        customerList.unshift(customer);
-        return customerList;
-      }
-
-      if (customerList[customerList.length - 1].recent_message_date < customer.recent_message_date) {
-        const position = this.findInsertPosition(customerList, customer.recent_message_date);
-
-        if (position !== -1) {
-          customerList.splice(position, 0, customer);
-        }
-      }
-    } else if (customerList[index].recent_message_date !== customer.recent_message_date) {
-      // eslint-disable-next-line no-param-reassign
-      customerList = this.removeFromArray(customerList, index);
-      customerList.unshift(customer);
+  const removeCustomer = (customer) => {
+    const assignedCustomers = [...state.assignedCustomers];
+    const newCustomers = [...state.customers];
+    let index = assignedCustomers.findIndex((cus) => (
+      cus.id === customer.id
+    ));
+    if (index !== -1) {
+      assignedCustomers.splice(index, 1);
     } else {
-      // eslint-disable-next-line no-param-reassign
-      customerList[index] = customer;
+      index = newCustomers.findIndex((cus) => (
+        cus.id === customer.id
+      ));
+      if (index !== -1) {
+        newCustomers.splice(index, 1);
+      }
     }
-    return customerList;
-  }
+    setState({
+      ...state,
+      customers: newCustomers,
+      assignedCustomers
+    });
+  };
 
-  handleLoadMoreOnScrollToBottom = (e) => {
+  const insertCustomer = (customer) => {
+    // First check if customer already exists in customers list
+    const currentCustomers = [...state.customers];
+    let index = currentCustomers.findIndex((cus) => (
+      cus.id === customer.id
+    ));
+    if (index === -1) {
+      // If element is not in customers list, check on assignedCustomers list
+      const assignedCustomers = [...state.assignedCustomers];
+      index = assignedCustomers.findIndex((cus) => (
+        cus.id === customer.id
+      ));
+      if (index === -1) {
+        // If element is not in customers list, check on assignedCustomers list
+        assignedCustomers.push(customer);
+        setState({
+          ...state,
+          assignedCustomers
+        });
+      } else {
+        assignedCustomers.splice(index, 1, customer);
+        setState({
+          ...state,
+          assignedCustomers
+        });
+      }
+    } else {
+      currentCustomers.splice(index, 1, customer);
+      setState({
+        ...state,
+        customers: currentCustomers
+      });
+    }
+  };
+
+  /**
+   * Called when a 'customer_facebook_chat' or 'customer_chat' event is broadcasted, usually after an assignation
+   * @param data customer info
+   */
+  const updateCustomerList = (data) => {
+    const { customer } = data.customer;
+    // Check  if event comes from removal
+    if (data.remove_only) {
+      // First check if customer is in recently assigned ones' list in order to remove from this list
+      // so customers list wont be affected.
+      // Assigned agents list is usually the shorter one. So we need to search for the item in this list first.
+      removeCustomer(customer);
+    } else {
+      if (chatType === 'whatsapp') {
+        setActiveChatBot(customer);
+      }
+      insertCustomer(customer);
+    }
+    setRemovedCustomerInfo(data);
+  };
+
+  const applySearch = () => {
+    if (chatType === 'whatsapp') {
+      fetchWhatsAppCustomers();
+    }
+    if (chatType === 'facebook') {
+      fetchCustomers();
+    }
+  };
+
+  const handleLoadMoreOnScrollToBottom = (e) => {
     e.preventDefault();
     e.stopPropagation();
     const el = e.target;
@@ -124,51 +293,53 @@ class ChatSideBar extends Component {
     // eslint-disable-next-line radix
     const scrollHeight = parseInt(style.getPropertyValue("height"));
     if (el.scrollTop + scrollHeight >= el.scrollHeight - 5) {
-      this.handleLoadMore();
+      handleLoadMore();
     }
-  }
+  };
 
-  handleChatSearch = (e) => {
-    e.persist();
-    let value;
-    this.setState((prevState) => {
-      const { filter } = prevState;
-      value = e.target.value;
-      filter.searchString = value;
-      return {
-        searchString: value,
-        filter
-      };
+  const handleSearchInputValueChange = (e) => {
+    e.preventDefault();
+    const { value } = e.target;
+    setState({
+      ...state,
+      searchString: value
     });
-  }
+  };
 
-  handleKeyPress = (event) => {
+  const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      this.setState({
-        shouldUpdate: true
-      }, () => {
-        this.applySearch();
+      const filter = { ...state.filter };
+      filter.searchString = state.searchString;
+      setState({
+        ...state,
+        page: 1,
+        customers: [],
+        filter
       });
     }
-  }
+  };
 
-  handleChatOrdering = (event) => {
-    if (event.target.value !== this.state.order) {
+  const handleChatOrdering = (event) => {
+    event.preventDefault();
+    if (event.target.value !== state.order) {
       const order = event.target.value;
-      const { filter } = this.state;
+      const filter = { ...state.filter };
       filter.order = order;
-      this.setState({
+      setState({
+        ...state,
         order,
-        filter
-      }, () => this.applySearch());
+        filter,
+        page: 1,
+        customers: []
+      });
     }
-  }
+  };
 
-  handleAddOptionToFilter = (by) => {
+  const handleAddOptionToFilter = (by) => {
     let type = null;
     let agent = null;
     let tag = null;
-    const { filter } = this.state;
+    const filter = { ...state.filter };
 
     if (by === 'type') {
       type = event.target.value;
@@ -177,161 +348,84 @@ class ChatSideBar extends Component {
     } else if (by === 'tag') {
       tag = event.target.value;
     }
-    type = type || this.state.type;
-    agent = agent || this.state.agent;
-    tag = tag || this.state.tag;
+    type = type || state.type;
+    agent = agent || state.agent;
+    tag = tag || state.tag;
 
     filter.type = type;
     filter.agent = agent;
     filter.tag = tag;
+    delete filter.customer_id;
 
-    this.setState({
+    setState({
+      ...state,
       type,
       agent,
       tag,
-      filter
-    }, () => this.applySearch());
-  }
-
-  applySearch = () => {
-    this.setState((prevState) => ({
-      customers: [],
-      filter: prevState.filter,
-      page: 1
-    }), () => {
-      localStorage.setItem(`${this.props.storageId}_filter`, JSON.stringify(this.state.filter));
-      if (this.props.chatType === 'whatsapp') {
-        this.props.fetchWhatsAppCustomers(1, this.state.filter, 0);
-      }
-      if (this.props.chatType === 'facebook') {
-        this.props.fetchCustomers(1, this.state.filter, 0);
-      }
+      filter,
+      page: 1,
+      customers: []
     });
-  }
+  };
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(newProps) {
-    if (newProps.customers !== this.props.customers) {
-      const storedFilter = JSON.parse(localStorage.getItem(`${this.props.storageId}_filter`));
-      this.setState((prevState) => ({
-        customers: prevState.customers.concat(newProps.customers),
-        order: storedFilter ? storedFilter.order : prevState.order,
-        agent: storedFilter ? storedFilter.agent : prevState.agent,
-        type: storedFilter ? storedFilter.type : prevState.type
-      }));
-    }
-  }
-
-  componentDidMount() {
-    let filter;
-    const storedFilter = JSON.parse(localStorage.getItem(`${this.props.storageId}_filter`));
-    if (storedFilter) {
-      storedFilter.searchString = '';
-      filter = storedFilter;
-    } else {
-      filter = this.state.filter;
-    }
-
-    switch (this.props.chatType) {
-      case 'facebook': {
-        this.props.fetchCustomers(1, filter, this.state.customers.length);
-        // eslint-disable-next-line no-undef
-        socket.on('customer_facebook_chat', (data) => this.updateCustomerList(data));
-        break;
+  const applySearchFromAssignation = (customerId) => {
+    const filter = {
+      ...state.filter,
+      ...{
+        customer_id: customerId,
+        searchString: '',
+        order: 'received_desc',
+        type: 'all',
+        agent: 'all',
+        tag: 'all'
       }
-      case 'whatsapp': {
-        this.props.fetchWhatsAppCustomers(1, filter, this.state.customers.length);
-        // eslint-disable-next-line no-undef
-        socket.on("customer_chat", (data) => this.updateCustomerList(data));
-        break;
-      }
-      default:
-        break;
-    }
-  }
+    };
 
-  componentDidUpdate() {
-    let filter = {};
-    const storedFilter = JSON.parse(localStorage.getItem(`${this.props.storageId}_filter`));
-    if (storedFilter) {
-      storedFilter.searchString = this.state.searchString;
-      filter = storedFilter;
-    } else {
-      filter = this.state.filter;
-    }
+    setState({
+      ...state,
+      filter,
+      page: 1,
+      customers: []
+    });
+  };
 
-    if (this.state.shouldUpdate) {
-      this.setState((prevState) => ({
-        shouldUpdate: false,
-        filter,
-        order: storedFilter ? storedFilter.order : prevState.order,
-        agent: storedFilter ? storedFilter.agent : prevState.agent,
-        type: storedFilter ? storedFilter.type : prevState.type,
-        tag: storedFilter ? storedFilter.tag : prevState.tag
-      }));
-    }
-  }
-
-  render() {
+  if (loading) {
     return (
       <div>
-        {this.state.shouldUpdate
-          ? (
-            <div className="chat_loader">
-              <img src={Loader} alt="" />
-            </div>
-          )
-          : (
-            <div>
-              <ChatFilter
-                agent={this.state.agent}
-                agents={this.props.agents}
-                filterTags={this.props.filter_tags}
-                handleAddOptionToFilter={this.handleAddOptionToFilter}
-                handleChatOrdering={this.handleChatOrdering}
-                handleChatSearch={this.handleChatSearch}
-                handleKeyPress={this.handleKeyPress}
-                order={this.state.order}
-                searchString={this.state.searchString}
-                tag={this.state.tag}
-                type={this.state.type}
-              />
-              <ChatSelector
-                chatType={this.props.chatType}
-                currentCustomer={this.props.currentCustomer}
-                customers={this.state.customers}
-                handleLoadMoreOnScrollToBottom={this.handleLoadMoreOnScrollToBottom}
-                handleOpenChat={this.props.handleOpenChat}
-              />
-            </div>
-          )}
+        <div className="chat_loader">
+          <img src={Loader} alt="" />
+        </div>
       </div>
     );
   }
-}
 
-function mapState(state) {
-  return {
-    customers: state.customers || [],
-    total_customers: state.total_customers || 0,
-    agents: state.agents || [],
-    filter_tags: state.filter_tags || [],
-    allowSendVoice: state.allowSendVoice
-  };
-}
+  return (
+    <div>
+      <div>
+        <ChatFilter
+          agent={state.agent}
+          agents={agents}
+          filterTags={filterTags}
+          handleAddOptionToFilter={handleAddOptionToFilter}
+          handleChatOrdering={handleChatOrdering}
+          handleSearchInputValueChange={handleSearchInputValueChange}
+          handleKeyPress={handleKeyPress}
+          order={state.order}
+          searchString={state.searchString}
+          tag={state.tag}
+          type={state.type}
+        />
+        <ChatSelector
+          chatType={chatType}
+          currentCustomer={currentCustomer}
+          customers={state.allCustomers}
+          applySearchFromAssignation={applySearchFromAssignation}
+          handleLoadMoreOnScrollToBottom={handleLoadMoreOnScrollToBottom}
+          handleOpenChat={handleOpenChat}
+        />
+      </div>
+    </div>
+  );
+};
 
-function mapDispatch(dispatch) {
-  return {
-    fetchCustomers: (page = 1, params, offset) => {
-      dispatch(fetchCustomers(page, params, offset));
-    },
-    fetchWhatsAppCustomers: (page = 1, params, offset) => {
-      dispatch(fetchWhatsAppCustomers(page, params, offset));
-    }
-  };
-}
-
-export default connect(
-  mapState,
-  mapDispatch
-)(withRouter(ChatSideBar));
+export default withRouter(ChatSideBar);

@@ -51,7 +51,8 @@ class Retailers::CustomerRelatedFieldsController < RetailersController
     def customer_related_field_params
       params.require(:customer_related_field).permit(
         :name,
-        :field_type
+        :field_type,
+        list_options: []
       )
     end
 

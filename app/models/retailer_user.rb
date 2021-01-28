@@ -6,19 +6,25 @@ class RetailerUser < ApplicationRecord
          :omniauthable, omniauth_providers: %i[facebook]
   belongs_to :retailer
   has_many :agent_customers
+  has_many :a_customers, class_name: 'Customer', source: :customer, through: :agent_customers
   has_many :mobile_tokens, dependent: :destroy
   has_many :agent_teams, dependent: :destroy
   has_many :team_assignments, through: :agent_teams
   has_many :templates
   has_many :calendar_events, dependent: :destroy
+  has_many :agent_notifications, dependent: :destroy
 
   validate :onboarding_status_format
   validates :agree_terms, presence: true
   validates :email, presence: true, uniqueness: true
 
+  before_save :set_only_assigned
+
   accepts_nested_attributes_for :retailer
 
   attr_reader :raw_invitation_token
+
+  scope :all_customers, -> { where(only_assigned: false) }
 
   def self.from_omniauth(auth, retailer_user, permissions, connection_type)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
@@ -109,5 +115,9 @@ class RetailerUser < ApplicationRecord
              [true, false].include?(ActiveModel::Type::Boolean.new.cast(onboarding_status[:completed]))
         errors.add(:onboarding_status, 'valores invalidos')
       end
+    end
+
+    def set_only_assigned
+      self.only_assigned = false unless agent?
     end
 end

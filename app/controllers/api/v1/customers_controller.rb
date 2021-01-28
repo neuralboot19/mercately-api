@@ -36,16 +36,16 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def show
-    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), tags:
       current_retailer.available_customer_tags(@customer.id) }
   end
 
   def update
     if @customer.update(customer_params)
-      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
+      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), tags:
         current_retailer.available_customer_tags(@customer.id) }
     else
-      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), errors:
+      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), errors:
         @customer.errors, tags: current_retailer.available_customer_tags(@customer.id) }
     end
   end
@@ -57,10 +57,11 @@ class Api::V1::CustomersController < Api::ApiController
     @messages = @messages.order(created_at: :desc).page(params[:page])
     @customer.update_attribute(:unread_messenger_chat, false)
     facebook_service.send_read_action(@customer.psid, 'mark_seen')
+    agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.all_customers.to_a
 
     facebook_helper.broadcast_data(
       current_retailer,
-      current_retailer.retailer_users.to_a,
+      agents,
       nil,
       @customer.agent_customer,
       @customer
@@ -121,9 +122,9 @@ class Api::V1::CustomersController < Api::ApiController
     @message = FacebookMessage.find(params[:id])
     @message.update_column(:date_read, Time.now)
     facebook_service.send_read_action(@message.customer.psid, 'mark_seen')
+    agents = @message.customer.agent ? [@message.customer.agent] : current_retailer.retailer_users.all_customers.to_a
 
-    facebook_helper.broadcast_data(current_retailer, current_retailer.retailer_users.to_a, nil, nil,
-      @message.customer)
+    facebook_helper.broadcast_data(current_retailer, agents, nil, @message.customer.agent_customer, @message.customer)
     render status: 200, json: { message: @message }
   end
 
@@ -260,6 +261,10 @@ class Api::V1::CustomersController < Api::ApiController
         end
       end
 
+      if current_retailer_user.only_assigned? && current_retailer_user.agent?
+        customer_ids = current_retailer_user.a_customers.pluck(:id)
+        customers = customers.where(id: customer_ids)
+      end
       customers = customers.group('customers.id')
                            .order(order)
                            .page(params[:page])
@@ -267,12 +272,12 @@ class Api::V1::CustomersController < Api::ApiController
     end
 
     def send_notification(chat_service)
-      agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.to_a
+      agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.all_customers.to_a
       data = [
         current_retailer,
         agents,
         nil,
-        nil,
+        @customer.agent_customer,
         @customer
       ]
 
@@ -284,7 +289,8 @@ class Api::V1::CustomersController < Api::ApiController
           KarixNotificationHelper.broadcast_data(*data)
         elsif current_retailer.gupshup_integrated?
           gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
-          gnhm.notify_customer_update!(*data.compact)
+          data = [current_retailer, agents, @customer]
+          gnhm.notify_customer_update!(*data)
         end
       end
     end

@@ -78,7 +78,7 @@ module Whatsapp
                     .find_or_create_by(customer: args[:customer])
 
         karix_helper = KarixNotificationHelper
-        karix_helper.broadcast_data(args[:retailer], args[:retailer].retailer_users.to_a, nil,
+        karix_helper.broadcast_data(args[:retailer], args[:retailer].retailer_users.all_customers.to_a, nil,
                                     args[:customer].agent_customer)
       end
 

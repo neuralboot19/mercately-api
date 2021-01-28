@@ -45,11 +45,13 @@ class Api::V1::AgentCustomersController < Api::ApiController
         @agent_customer.customer.update_attribute(:unread_messenger_chat, true)
         facebook_helper = FacebookNotificationHelper
         facebook_helper.broadcast_data(*data)
+        AgentNotificationHelper.notify_agent(data[3], 'messenger')
       when 'whatsapp'
         @agent_customer.customer.update_attribute(:unread_whatsapp_chat, true)
         if current_retailer.gupshup_integrated?
           gnhm = Whatsapp::Gupshup::V1::Helpers::Messages.new()
           gnhm.notify_agent!(*data.compact)
+          AgentNotificationHelper.notify_agent(data[3], 'whatsapp')
         elsif current_retailer.karix_integrated?
           KarixNotificationHelper.broadcast_data(*data)
         end
@@ -92,7 +94,7 @@ class Api::V1::AgentCustomersController < Api::ApiController
         ]
 
         # Se envian las notificaciones
-        case assign_agent_params.try(:[],:chat_service)
+        case assign_agent_params.try(:[], :chat_service)
         when 'facebook'
           facebook_helper = FacebookNotificationHelper
           facebook_helper.broadcast_data(*data)

@@ -25,6 +25,16 @@ module KarixNotificationHelper
     retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
     retailer_users.each do |ret_u|
+      removed_agent = false
+
+      if ret_u.agent? && ret_u.only_assigned?
+        removed_agent = (!assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id) ||
+          (assigned_agent.persisted? && assigned_agent.retailer_user_id != ret_u.id)
+        add_agent = assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id
+
+        next if !removed_agent && !add_agent
+      end
+
       total = retailer.karix_unread_whatsapp_messages(ret_u).size
 
       redis.publish 'new_message_counter',
@@ -56,7 +66,7 @@ module KarixNotificationHelper
         ) : false
         customer_chat_args = {
           customer: serialized_customer,
-          remove_only: remove,
+          remove_only: remove || removed_agent,
           room: ret_u.id
         }
         redis.publish 'customer_chat', customer_chat_args.to_json
@@ -69,7 +79,7 @@ module KarixNotificationHelper
             assigned_agent.retailer_user_id != ret_u.id &&
             ret_u.admin? == false &&
             ret_u.supervisor? == false
-          ),
+          ) || removed_agent,
           room: ret_u.id,
           recent_inbound_message_date: message&.customer&.recent_inbound_message_date
         }.to_json

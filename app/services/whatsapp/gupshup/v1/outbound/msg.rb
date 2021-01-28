@@ -17,12 +17,13 @@ module Whatsapp::Gupshup::V1
       response_body = JSON.parse(response.read_body)
 
       # Stores the Gupshup Whatsapp Message in our DB
-      save_message(response.code, response_body, request_body, @options[:retailer_user])
+      message = save_message(response.code, response_body, request_body, @options[:retailer_user])
 
       # Returns the Gupshup response
       {
         code: response.code,
-        body: response_body
+        body: response_body,
+        message: message
       }
     rescue StandardError => e
       Rails.logger.error(e)
@@ -229,6 +230,7 @@ module Whatsapp::Gupshup::V1
         end
 
         gwm.save!
+        gwm
       rescue => e
         Rails.logger.error(e)
       end
@@ -241,6 +243,8 @@ module Whatsapp::Gupshup::V1
       end
 
       def file
+        is_document_template = @options[:params][:type] == 'file' && @options[:params][:template] == 'true'
+
         if @options[:params][:file_data].present?
           file = @index ? @options[:params][:file_data][@index] : @options[:params][:file_data]
           resource_type = get_resource_type(file)
@@ -253,17 +257,14 @@ module Whatsapp::Gupshup::V1
           file_name = file_name.parameterize
           file_name += '.pdf' if resource_type == 'document_template'
           file_url = response['secure_url'] || response['url']
-          file_caption = ''
+          file_caption = is_document_template ? @options[:params][:caption] || '' : ''
         elsif @options[:params][:url].present?
-          resource_type = check_type_on_url
+          resource_type = is_document_template ? 'document_template' : check_type_on_url
           file_name = @options[:params][:file_name].present? ? @options[:params][:file_name] : ''
           file_url = @options[:params][:url]
           file_caption = @options[:params][:caption] || ''
         end
 
-        if @options[:params][:type] == 'file' && @options[:params][:template] == 'true'
-          file_caption = @options[:params][:caption] || ''
-        end
         self.send(resource_type, {
           file_name: file_name,
           file_url: file_url,

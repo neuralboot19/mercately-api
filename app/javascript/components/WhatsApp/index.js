@@ -29,22 +29,23 @@ class WhatsAppChat extends Component {
   }
 
   handleOpenChat = (customerDetails) => {
-    this.setState({
-      currentCustomer: customerDetails.id,
-      currentCustomerDetails: { ...customerDetails, ...{ "unread_whatsapp_message?": false } },
-      removedCustomer: null,
-      removedCustomerId: null,
-      newAgentAssignedId: null,
-      showFastAnswers: false,
-      showProducts: false
+    this.setState((prevState) => {
+      const newState = {
+        ...prevState,
+        currentCustomer: customerDetails.id,
+        currentCustomerDetails: { ...customerDetails, ...{ "unread_whatsapp_message?": false } },
+        removedCustomer: null,
+        removedCustomerId: null,
+        newAgentAssignedId: null,
+        showFastAnswers: false,
+        showProducts: false
+      };
+      if (prevState.onMobile) {
+        newState.showChatList = false;
+        newState.showChatMessages = true;
+      }
+      return newState;
     });
-
-    if (this.state.onMobile) {
-      this.setState({
-        showChatList: false,
-        showChatMessages: true
-      });
-    }
   }
 
   getScreenWidth = () => window.innerWidth

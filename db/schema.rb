@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_06_194023) do
+ActiveRecord::Schema.define(version: 2021_01_26_154959) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,17 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
     t.index ["customer_id"], name: "index_agent_customers_on_customer_id"
     t.index ["retailer_user_id"], name: "index_agent_customers_on_retailer_user_id"
     t.index ["team_assignment_id"], name: "index_agent_customers_on_team_assignment_id"
+  end
+
+  create_table "agent_notifications", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.bigint "retailer_user_id", null: false
+    t.string "notification_type"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_agent_notifications_on_customer_id"
+    t.index ["retailer_user_id"], name: "index_agent_notifications_on_retailer_user_id"
   end
 
   create_table "agent_teams", force: :cascade do |t|
@@ -255,6 +266,7 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
     t.string "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "selected_options", default: []
     t.index ["customer_id"], name: "index_customer_related_data_on_customer_id"
     t.index ["customer_related_field_id"], name: "index_customer_related_data_on_customer_related_field_id"
   end
@@ -267,6 +279,7 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
     t.string "web_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "list_options", default: []
     t.index ["retailer_id"], name: "index_customer_related_fields_on_retailer_id"
   end
 
@@ -704,6 +717,29 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
     t.index ["product_id"], name: "index_questions_on_product_id"
   end
 
+  create_table "reminders", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.bigint "customer_id"
+    t.bigint "retailer_user_id"
+    t.bigint "whatsapp_template_id"
+    t.bigint "gupshup_whatsapp_message_id"
+    t.bigint "karix_whatsapp_message_id"
+    t.jsonb "content_params"
+    t.datetime "send_at"
+    t.datetime "send_at_timezone"
+    t.string "timezone"
+    t.string "web_id"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_reminders_on_customer_id"
+    t.index ["gupshup_whatsapp_message_id"], name: "index_reminders_on_gupshup_whatsapp_message_id"
+    t.index ["karix_whatsapp_message_id"], name: "index_reminders_on_karix_whatsapp_message_id"
+    t.index ["retailer_id"], name: "index_reminders_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_reminders_on_retailer_user_id"
+    t.index ["whatsapp_template_id"], name: "index_reminders_on_whatsapp_template_id"
+  end
+
   create_table "retailer_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -732,6 +768,7 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
+    t.boolean "only_assigned", default: false
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"
@@ -778,6 +815,7 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
     t.boolean "show_stats", default: false
     t.boolean "allow_voice_notes", default: true
     t.boolean "show_calendar", default: false
+    t.boolean "allow_reminders", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -871,6 +909,8 @@ ActiveRecord::Schema.define(version: 2021_01_06_194023) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "agent_customers", "customers"
   add_foreign_key "agent_customers", "retailer_users"
+  add_foreign_key "agent_notifications", "customers"
+  add_foreign_key "agent_notifications", "retailer_users"
   add_foreign_key "calendar_events", "retailer_users"
   add_foreign_key "calendar_events", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"

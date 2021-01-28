@@ -50,9 +50,11 @@ class Retailers::CustomersController < RetailersController
 
   def new
     @customer = Customer.new
+    init_custom_fields
   end
 
   def edit
+    init_custom_fields
     edit_setup
   end
 
@@ -113,7 +115,12 @@ class Retailers::CustomersController < RetailersController
         :last_name,
         :notes,
         :send_for_opt_in,
-        tag_ids: []
+        tag_ids: [],
+        customer_related_data_attributes: [
+          :id,
+          :customer_related_field_id,
+          :data
+        ]
       )
     end
 
@@ -226,6 +233,12 @@ class Retailers::CustomersController < RetailersController
       ).group('customers.id').count('distinct customer_tags.tag_id').map { |c| c.first if c.second == size }
 
       customers.where(id: cust_ids)
+    end
+
+    def init_custom_fields
+      current_retailer.customer_related_fields.find_each do |cf|
+        @customer.customer_related_data.find_or_initialize_by(customer_related_field_id: cf.id)
+      end
     end
 
     def clean_empty_tag

@@ -41,8 +41,8 @@ class FacebookMessage < ApplicationRecord
     def broadcast_to_counter_channel
       facebook_helper = FacebookNotificationHelper
       retailer = facebook_retailer.retailer
-      agents = customer.agent.present? ? [customer.agent] : retailer.retailer_users.to_a
-      facebook_helper.broadcast_data(retailer, agents, self)
+      agents = customer.agent.present? ? [customer.agent] : retailer.retailer_users.all_customers.to_a
+      facebook_helper.broadcast_data(retailer, agents, self, customer.agent_customer)
     end
 
     def send_welcome_message

@@ -6,7 +6,7 @@ const ChatFilter = (
     agents,
     filterTags,
     handleChatOrdering,
-    handleChatSearch,
+    handleSearchInputValueChange,
     handleKeyPress,
     handleAddOptionToFilter,
     order,
@@ -27,7 +27,7 @@ const ChatFilter = (
       <input
         type="text"
         value={searchString}
-        onChange={(e) => handleChatSearch(e)}
+        onChange={handleSearchInputValueChange}
         placeholder="Buscar"
         style={{
           width: "95%",
@@ -37,7 +37,7 @@ const ChatFilter = (
           padding: "8px"
         }}
         className="form-control"
-        onKeyPress={(e) => handleKeyPress(e)}
+        onKeyPress={handleKeyPress}
       />
 
       <div
@@ -142,7 +142,7 @@ const ChatFilter = (
             }}
             id="order"
             value={order}
-            onChange={(e) => handleChatOrdering(e)}
+            onChange={handleChatOrdering}
           >
             <option value="received_desc">Reciente - Antíguo</option>
             <option value="received_asc">Antíguo - Reciente</option>

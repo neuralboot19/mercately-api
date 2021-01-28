@@ -15,7 +15,7 @@
 //= require activestorage
 //= require cocoon
 //= require select2
-//= require select2_locale_es
+//= require select2_es
 //= require validations
 //= require chartkick
 //= require Chart.bundle
@@ -30,15 +30,15 @@
 $(document).ready(function () {
   $( "select" ).select2({
     placeholder: "Selecciona una opción",
-    language: "es-ES"
+    language: "es"
   });
 
   $(".no-select2").select2('destroy');
 
-  $('.fieldset').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
-    $( "select" ).select2({
+  $('.fieldset, .cocoon-load').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
+    $(insertedItem).find("select").select2({
       placeholder: "Selecciona una opción",
-      language: "es-ES"
+      language: "es"
     });
   });
 });

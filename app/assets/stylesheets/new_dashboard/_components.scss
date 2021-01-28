@@ -326,6 +326,20 @@ h1 {
   }
 }
 
+.page-container {
+  @media screen and (min-width: 1024px) {
+    margin-left: 60px;
+    margin-top: 25px;
+  }
+
+  .container {
+    padding: 0 4px;
+    &-fluid {
+      padding: 0;
+    }
+  }
+}
+
 .card {
   min-height: 80vh;
   background-color: #FFF;
@@ -560,7 +574,8 @@ h1 {
 }
 
 #modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
-#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal, input[name="modal--toggle"]:checked ~ .modal {
+#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal, input[name="modal--toggle"]:checked ~ .modal,
+#modal-agent--toggle:checked ~ .modal-agent {
   display: block;
 }
 
@@ -1624,7 +1639,6 @@ i {
 
 .card-to-replace {
   min-height: 80vh;
-  background-color: #ECEFF4;
 
   .container {
     padding: 0 4px;
@@ -1637,6 +1651,9 @@ i {
 .form-container {
   &_header-title, &_sub-title {
     font-family: 'Poppins-SemiBold';
+    @media screen and (min-width: 1024px) {
+      margin-left: 60px;
+    }
   }
 
   &_sub {
@@ -1693,6 +1710,11 @@ i {
   color: #AAA;
   font-size: 16px;
   margin-top: 0;
+  @media screen and (min-width: 1024px) {
+    display: inline-block;
+    margin-top: 20px;
+    margin-left: 60px;
+  }
 }
 
 .cancel-link {
@@ -1793,3 +1815,9 @@ i {
   }
 }
 
+.card-box {
+  background-color: #FFF;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+}

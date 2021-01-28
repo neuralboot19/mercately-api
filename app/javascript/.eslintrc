@@ -23,7 +23,8 @@
     "plugins": [
         "react",
         "enzyme",
-        "jest"
+        "jest",
+        "react-hooks"
     ],
     "rules": {
         "comma-dangle": ["error", "never"],
@@ -46,6 +47,10 @@
         "react/jsx-no-target-blank": "off",
         "jsx-a11y/control-has-associated-label": "off",
         "jsx-a11y/alt-text": "off",
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "no-use-before-define": "off",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
+
     }
 }

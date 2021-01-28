@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'retailer_users/omniauth_callbacks', invitations: 'retailer_users/invitations' }
   as :retailer_user do
     get 'retailers/:slug/edit', to: 'retailer_users/registrations#edit', as: :edit_retailer_info
+    put 'retailers/:slug/update_user', to: 'retailers/settings#update', as: :update_user_info
     get 'retailers/:slug/team', to: 'retailers/settings#team', as: :edit_team
     post 'retailers/:slug/invite_team_member', to: 'retailers/settings#invite_team_member', as: :invite_team_member
     post 'retailers/:slug/reinvite_team_member', to: 'retailers/settings#reinvite_team_member', as: :reinvite_team_member
@@ -186,6 +187,7 @@ Rails.application.routes.draw do
       resources :karix_whatsapp, only: [:index, :create]
       resources :whatsapp_templates, only: [:index]
       resources :products, only: [:index]
+      get 'retailer_customers', to: 'retailer_customers#index', as: :retailer_customers
 
       get 'fast_answers_for_messenger', to: 'customers#fast_answers_for_messenger'
       patch 'accept_optin_for_whatsapp/:id', to: 'customers#accept_opt_in',  as: :accept_optin_for_whatsapp
@@ -196,6 +198,10 @@ Rails.application.routes.draw do
       delete 'customers/:id/remove_customer_tag', to: 'customers#remove_customer_tag', as: :remove_customer_tag
       post 'customers/:id/add_tag', to: 'customers#add_tag', as: :add_tag
       put 'customers/:id/toggle_chat_bot', to: 'customers#toggle_chat_bot', as: :toggle_chat_bot
+
+      resources :reminders, only: :create
+      patch 'mark_notification_as_read', to: 'agent_notifications#mark_as_read',  as: :mark_notification_as_read
+      patch 'mark_by_customer_as_read', to: 'agent_notifications#mark_by_customer_as_read',  as: :mark_by_customer_as_read
     end
   end
 

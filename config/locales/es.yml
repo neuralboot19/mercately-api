@@ -106,6 +106,10 @@ es:
         field_types:
           string: Texto
           integer: Entero
+          float: 'Entero con decimales'
+          boolean: 'Verdadero o falso'
+          date: 'Fecha'
+          list: 'Lista'
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'

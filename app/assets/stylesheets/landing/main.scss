@@ -717,7 +717,8 @@ p{
   }
 }
 
-#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index {
+#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
+#modal-agent--toggle:checked ~ .modal-agent {
   display: block;
 }
 

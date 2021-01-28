@@ -28,10 +28,39 @@ class ChatListItem extends Component {
     return '';
   }
 
+  messageStatusIcon = (message) => {
+    let className;
+    switch (message.status) {
+      case 'sent':
+        className = 'check stroke';
+        break;
+      case 'delivered':
+        className = 'check-double stroke';
+        break;
+      case 'read':
+        className = 'check-double black';
+        break;
+      default:
+        className = message.content_type === 'text' ? 'check stroke' : 'sync black';
+    }
+
+    return className;
+  }
+
   render() {
-    let customer = this.props.customer;
+    const { customer } = this.props;
+
+    const containerClass = this.props.currentCustomer === customer.id
+      ? 'border border--secondary chat-selected'
+      : 'border border--transparent';
+
     return (
-      <div className={`profile fs-14 box ${this.props.currentCustomer == customer.id ? 'border border--secondary chat-selected' : 'border border--transparent'}`} onClick={() => this.props.handleOpenChat(this.props.customer)}>
+      <div
+        className={`profile fs-14 box ${containerClass}`}
+        onClick={() => this.props.handleOpenChat(this.props.customer)}
+        customer-id={customer.id}
+        chat-type={this.props.chatType}
+      >
         <div className="profile__data row">
           {this.props.chatType === 'facebook' ? (
               customer['unread_message?'] === true &&
@@ -83,10 +112,7 @@ class ChatListItem extends Component {
               <div className="profile__name">
                 {`${customer.first_name && customer.last_name  ? `${customer.first_name} ${customer.last_name}` : customer.whatsapp_name ? customer.whatsapp_name : customer.phone }`}&nbsp;&nbsp;
                 { customer.last_whatsapp_message.direction === 'outbound' && customer['handle_message_events?'] === true &&
-                  <i className={ `fas fa-${
-                    customer.last_whatsapp_message.status === 'sent' ? 'check stroke' : (customer.last_whatsapp_message.status === 'delivered' ? 'check-double stroke' : ( customer.last_whatsapp_message.status === 'read' ? 'check-double black' : 'sync black'))
-                  }`
-                  }></i>
+                  <i className={ `fas fa-${this.messageStatusIcon(customer.last_whatsapp_message)}`}></i>
                 }
                 <div className="fw-muted time-from">
                   {moment(customer.recent_message_date).locale('es').fromNow()}
