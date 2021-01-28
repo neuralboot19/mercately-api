@@ -299,6 +299,150 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
       end
     end
 
+    describe 'when chat service is WhatsApp' do
+      context 'when local request' do
+        describe 'when karix_integrated' do
+          let(:customer) { create(:customer, :with_retailer_karix_integrated) }
+          let(:message) { create(:karix_whatsapp_message, :inbound, customer: customer, created_time: Time.now) }
+
+          context 'when the agent customer is a new record' do
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user_agent.id,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(1)
+            end
+          end
+
+          context 'when the agent customer is updated' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user.agent_customers.count).to eq(1)
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer is destroyed' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: nil,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer can not be save' do
+            it 'fails, a 500 Error will be responsed' do
+              put '/api/v1/customers/nil/assign_agent',
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('500')
+            end
+          end
+        end
+
+        describe 'when gupshup_integrated' do
+          let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
+          let(:message) { create(:gupshup_whatsapp_message, :inbound, customer: customer) }
+
+          context 'when the agent customer is a new record' do
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user_agent.id,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(1)
+              expect(retailer_user_agent.agent_notifications.count).to eq(1)
+            end
+          end
+
+          context 'when the agent customer is updated' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user.agent_customers.count).to eq(1)
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+              expect(retailer_user.agent_notifications.count).to eq(1)
+            end
+          end
+
+          context 'when the agent customer is destroyed' do
+            let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user_agent, customer: customer) }
+
+            it 'successfully, a 200 Ok will be responsed' do
+              put "/api/v1/customers/#{customer.id}/assign_agent",
+                  params: {
+                    agent: {
+                      retailer_user_id: nil,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('200')
+              expect(retailer_user_agent.agent_customers.count).to eq(0)
+            end
+          end
+
+          context 'when the agent customer can not be save' do
+            it 'fails, a 500 Error will be responsed' do
+              put '/api/v1/customers/nil/assign_agent',
+                  params: {
+                    agent: {
+                      retailer_user_id: retailer_user.id,
+                      chat_service: 'whatsapp'
+                    }
+                  }
+
+              expect(response.code).to eq('500')
+            end
+          end
+        end
+      end
+    end
+
     describe 'when chat service IS Facebook' do
       let(:customer) { create(:customer, :with_retailer_gupshup_integrated) }
       let(:message) { create(:facebook_message, customer: customer) }
@@ -319,6 +463,7 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
 
           expect(response.code).to eq('200')
           expect(retailer_user_agent.agent_customers.count).to eq(1)
+          expect(retailer_user_agent.agent_notifications.count).to eq(1)
         end
       end
 
@@ -337,6 +482,7 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
           expect(response.code).to eq('200')
           expect(retailer_user.agent_customers.count).to eq(1)
           expect(retailer_user_agent.agent_customers.count).to eq(0)
+          expect(retailer_user.agent_notifications.count).to eq(1)
         end
       end
 
@@ -354,6 +500,8 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
 
           expect(response.code).to eq('200')
           expect(retailer_user_agent.agent_customers.count).to eq(0)
+          expect(retailer_user_agent.agent_notifications.count).to eq(0)
+          expect(retailer_user_agent.agent_notifications.count).to eq(0)
         end
       end
 

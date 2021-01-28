@@ -12,6 +12,7 @@ class RetailerUser < ApplicationRecord
   has_many :team_assignments, through: :agent_teams
   has_many :templates
   has_many :calendar_events, dependent: :destroy
+  has_many :agent_notifications, dependent: :destroy
 
   validate :onboarding_status_format
   validates :agree_terms, presence: true

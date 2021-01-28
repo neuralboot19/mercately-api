@@ -27,25 +27,26 @@ class Chat extends Component {
     };
   }
 
-  handleOpenChat = (customer_details) => {
-    customer_details["unread_message?"] = false;
-    this.setState({
-      ...this.state,
-      currentCustomer: customer_details.id,
-      currentCustomerDetails: customer_details,
-      removedCustomer: null,
-      removedCustomerId: null,
-      newAgentAssignedId: null,
-      showFastAnswers: false,
-      showProducts: false
+  handleOpenChat = (customerDetails) => {
+    // eslint-disable-next-line no-param-reassign
+    customerDetails["unread_message?"] = false;
+    this.setState((prevState) => {
+      const newState = {
+        ...prevState,
+        currentCustomer: customerDetails.id,
+        currentCustomerDetails: customerDetails,
+        removedCustomer: null,
+        removedCustomerId: null,
+        newAgentAssignedId: null,
+        showFastAnswers: false,
+        showProducts: false
+      };
+      if (prevState.onMobile) {
+        newState.showChatList = false;
+        newState.showChatMessages = true;
+      }
+      return newState;
     });
-
-    if (this.state.onMobile) {
-      this.setState({
-        showChatList: false,
-        showChatMessages: true
-      })
-    }
   }
 
   getScreenWidth = () => {
