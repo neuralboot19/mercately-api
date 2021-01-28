@@ -184,4 +184,12 @@ $(document).ready(function() {
     tags: true,
     maximumInputLength: 20
   });
+
+  $('#show-custom-fields').on('change', function() {
+    if (this.checked) {
+      $('#show-custom-fields-label').text('Ocultar campos personalizados');
+    } else {
+      $('#show-custom-fields-label').text('Mostrar campos personalizados');
+    }
+  })
 })
