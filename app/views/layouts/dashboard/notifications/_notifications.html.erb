@@ -6,7 +6,7 @@
     </div>
   </label>
   <input id="dropdown__notifications" type="checkbox" class="dropdown__input"/>
-  <ul id="notifications_list" class="dropdown__menu t-left">
+  <%= content_tag :ul, id: 'notifications_list', class: "dropdown__menu t-left", 'data-total-pages': @notifications.total_pages do -%>
     <% if @notifications.present? %>
       <% @notifications.each do |notification| %>
         <li class="p-relative h-30 <%= "unread-notification" if notification.status === 'unread' %>">
@@ -28,5 +28,5 @@
         </div>
       </li>
     <% end %>
-  </ul>
+  <% end -%>
 </div>

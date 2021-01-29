@@ -1,6 +1,11 @@
 class Api::V1::AgentNotificationsController < Api::ApiController
   include CurrentRetailer
 
+  def notifications_list
+    @notifications = current_retailer_user.agent_notifications.order(created_at: :desc).page(params[:page]) if current_retailer_user
+    render json: { notifications: AgentNotificationSerializer.new(@notifications), total: @notifications.total_pages }
+  end
+
   def mark_as_read
     AgentNotification.find(permit_params[:id]).read!
     render status: :ok, json: { head: :ok }

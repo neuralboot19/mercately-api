@@ -1,5 +1,6 @@
 //= require notifications
 //= require full_calendar
+//= require agent_notifications
 
 $(document).ready(function(){
   $('#modal--toggle-index').attr('checked', false);
