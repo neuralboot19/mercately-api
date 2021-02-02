@@ -31,6 +31,6 @@ module CurrentRetailer
     end
 
     def check_notifications
-      @notifications = current_retailer_user.agent_notifications.order(created_at: :desc) if current_retailer_user
+      @notifications = current_retailer_user.agent_notifications.order(created_at: :desc).page(1) if current_retailer_user
     end
 end
