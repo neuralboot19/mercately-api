@@ -102,12 +102,13 @@ class Retailer < ApplicationRecord
     messages = gupshup_whatsapp_messages.includes(:customer).where.not(status: 'read', whatsapp_message_id: nil)
       .where(direction: 'inbound', customers: { retailer_id: id })
     return messages if retailer_user.admin? || retailer_user.supervisor?
-    customer_ids = messages.pluck(:customer_id).compact
+
+    customer_ids = messages.select(:customer_id)
     remove_customer_ids = AgentCustomer.where(customer_id: customer_ids)
                                        .where.not(retailer_user_id: retailer_user.id)
-                                       .pluck(:customer_id)
-                                       .compact
-    customer_ids -= remove_customer_ids
+                                       .select(:customer_id)
+
+    customer_ids = customer_ids.where.not(customer_id: remove_customer_ids)
 
     messages.where(customer_id: customer_ids)
   end

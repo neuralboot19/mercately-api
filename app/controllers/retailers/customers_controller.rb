@@ -199,7 +199,7 @@ class Retailers::CustomersController < RetailersController
     end
 
     def filtered_customers
-      customers = Customer.eager_load(:orders_success)
+      customers = Customer.eager_load(:orders_success, :agent)
         .active
         .where(retailer_id: current_retailer.id)
 
