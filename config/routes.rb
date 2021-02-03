@@ -202,6 +202,7 @@ Rails.application.routes.draw do
       resources :reminders, only: :create
       patch 'mark_notification_as_read', to: 'agent_notifications#mark_as_read',  as: :mark_notification_as_read
       patch 'mark_by_customer_as_read', to: 'agent_notifications#mark_by_customer_as_read',  as: :mark_by_customer_as_read
+      get 'notifications_list', to: 'agent_notifications#notifications_list'
     end
   end
 

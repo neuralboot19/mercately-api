@@ -43,73 +43,6 @@ socket.on('new_message_counter', function(data) {
   play(playAlert, data);
 });
 
-////////// AGENT ASSIGNATION NOTIFICATION START //////////
-
-function getCustomerName(customer) {
-  if(customer.first_name && customer.last_name) {
-    return `${customer.first_name} ${customer.last_name}`
-  }
-  if(customer.whatsapp_name) {
-    return customer.whatsapp_name;
-  }
-  return customer.phone
-}
-
-const getChatType = (notificationType) => {
-  switch (notificationType) {
-    case  'whatsapp':
-      return 'whatsapp_chats';
-    case 'messenger':
-      return 'facebook_chats';
-  }
-  return null;
-}
-
-const getChatNotificationIcon = (notificationType) => {
-  switch (notificationType) {
-    case  'whatsapp':
-      return 'fab fa-whatsapp';
-    case 'messenger':
-      return 'fab fa-facebook-messenger';
-  }
-  return 'far fa-comment-alt';
-}
-
-/*
- * Subscription to update notification counter and list when a chat is assigned to an agent
-*/
-socket.on('agent_assignment', (data) => {
-  const chatType = getChatType(data.notification_type)
-  if (chatType) {
-    const chatURL = `${'/retailers/' + ENV['SLUG']}/${chatType}?cid=${data.customer.customer.id}`
-
-    const listItem = `
-      <li class="p-relative h-30 unread-notification">
-        <a class="no-style" href="${chatURL}"  data-id="${data.id}">
-          <i class="${getChatNotificationIcon(data.notification_type)} mr-8 fa-lg"></i>
-          Nuevo chat asignado: ${getCustomerName(data.customer.customer).substring(0, 15)}
-        </a>
-        <b class="item__cookie item__cookie_whatsapp_messages notification unread"></b>
-        <span class="fs-10 f-right"> Ahora </span>
-      </li>
-      <li class="divider"></li>`;
-
-    const $notificationsList = $('#notifications_list')
-
-    if($notificationsList.find('li.no-notifications').length !== 0) {
-      $notificationsList.html(listItem);
-    }else {
-      $notificationsList.prepend(listItem);
-    }
-
-    const unreadMessagesCounterBadge = $('.assignment_notification')
-    unreadMessagesCounterBadge.html(parseInt(unreadMessagesCounterBadge.html()) + 1);
-    unreadMessagesCounterBadge.show()
-    const audio = new Audio('../../knock-brush.mp3');
-    audio.play();
-  }
-});
-
 function play(playAlert, data) {
   if (playAlert === true && data['execute_alert'] === true) {
     var audio = new Audio('../../notification_tune.mp3');
@@ -166,63 +99,6 @@ function showNotification(data) {
   }
 }
 
-const addNewNotificationClickListener = () => {
-  $(document).on('click', '#notifications_list li', function(e){
-    const listItem = e.target;
-    $.ajax({
-      url: '/api/v1/mark_notification_as_read',
-      type: 'PATCH',
-      data: {"agent_notification": { "id": listItem.dataset.id }},
-      statusCode: {
-        400: function(response) {
-          console.error(response.error);
-        }
-      }
-    });
-  })
-}
-
-const addNotificationsDropdownToggleListener = () => {
-  $(document).on("click", function(event){
-    event.stopPropagation()
-    $('.assignment_notification').hide();
-    const $trigger = $(".notifications-button");
-    if($trigger !== event.target && !$trigger.has(event.target).length){
-      $("#notifications_list").hide();
-    }else {
-      $("#notifications_list").show();
-    }
-  });
-}
-
-const addOnChatItemClickListener = () => {
-  $(document).on('click', '.chat__selector>.profile', function(e){
-    e.stopPropagation()
-    const customerId = e.currentTarget.getAttribute("customer-id");
-    const chatType = e.currentTarget.getAttribute("chat-type");
-    $.ajax({
-      url: '/api/v1/mark_by_customer_as_read',
-      type: 'PATCH',
-      data: { "agent_notification": { "customer_id": customerId, "notification_type": chatType } },
-      statusCode: {
-        200: function (response) {
-          $( "#notifications_list li.unread-notification" ).find('a').filter( function() {
-            return  response.notification_ids.includes($(this).data("id"))
-          }).parent().removeClass('unread-notification').find( "b" ).remove()
-        },
-        400: function (response) {
-          console.error(response.error);
-        },
-      }
-    });
-  })
-}
-
-////////// AGENT ASSIGNATION NOTIFICATION END //////////
-
 $(document).on('ready page:load', function() {
   play();
-  addNewNotificationClickListener();
-  addNotificationsDropdownToggleListener();
-  addOnChatItemClickListener();
 });

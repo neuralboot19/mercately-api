@@ -83,8 +83,7 @@ class RetailerUser < ApplicationRecord
   end
 
   def customers
-    Customer.joins(:agent_customer).where('retailer_user_id = ?', id) +
-      Customer.joins(:retailer).where.not(id: AgentCustomer.all.pluck(:customer_id)).where(retailer_id: retailer_id)
+    a_customers + retailer.customers.where.not(id: AgentCustomer.select(:customer_id))
   end
 
   def storage_id
