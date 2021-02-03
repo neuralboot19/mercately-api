@@ -1,3 +1,4 @@
 User-agent: *
+Disallow: /password/new
 Allow: /
 Sitemap: http://www.mercately.com/sitemap.xml
