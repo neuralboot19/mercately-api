@@ -19,7 +19,7 @@ class BlogsController < ApplicationController
       Prismic::Predicates.at("my.blogentry.category", @document.fragments['category']&.value)],
       { "pageSize" => 6, "orderings" => "[document.first_publication_date desc]"}
     )
-     @documents = response.results
+    @documents = response.results
   end
 
   def category

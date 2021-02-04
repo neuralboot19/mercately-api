@@ -36,6 +36,10 @@ module ApplicationHelper
     content_for?(:meta_title) ? content_for(:meta_title) : "Mercately"
   end
 
+  def canonical_url
+    content_for?(:canonical_url) ? content_for(:canonical_url) : "https://" + request.host + request.path
+  end
+
   def meta_description
     content_for?(:meta_description) ? content_for(:meta_description) : "Mercately"
   end
