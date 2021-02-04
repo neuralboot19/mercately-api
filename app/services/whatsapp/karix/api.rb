@@ -97,24 +97,6 @@ module Whatsapp
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
       end
 
-      def prepare_welcome_message_body(retailer)
-        message = 'Bienvenido a Mercately.com, centralizamos tus canales de ventas y comunicación.'
-        message += 'Si necesitas ayuda no dudes en contactarnos.'
-        sender = Retailer.find_by(karix_whatsapp_phone: '+593989083446')
-
-        {
-          channel: 'whatsapp',
-          source: sender.karix_whatsapp_phone,
-          destination: [
-            retailer.retailer_number
-          ],
-          content: {
-            text: message
-          },
-          events_url: "#{ENV['KARIX_WEBHOOK']}?account_id=#{sender.id}"
-        }.to_json
-      end
-
       # Prepara el cuerpo del mensaje que se enviara
       def prepare_chat_bot_message(*args)
         chat_bot_option, customer, get_out, error_exit, failed_attempt, concat_answer_type = args
@@ -223,7 +205,7 @@ module Whatsapp
           # Construye el mensaje si se trata de una opcion tipo Formulario y retorna
           return build_message(chat_bot_option, customer, message) if chat_bot_option.option_type == 'form'
 
-          # Toma la respuesta de la opcion. 
+          # Toma la respuesta de la opcion.
           message += get_option_answer(chat_bot_option, false)
 
           # Solo muestra las opciones hijas activas
