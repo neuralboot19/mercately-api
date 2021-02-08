@@ -31,17 +31,21 @@ class Customer < ApplicationRecord
   has_many :customer_related_data, dependent: :destroy
 
   validates_uniqueness_of :psid, allow_blank: true
-  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
+  validates_presence_of :email, if: :hs_active?
+  validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: -> (obj) { !obj.hs_active }
   validate :phone_uniqueness
 
   before_validation :strip_whitespace
   before_validation :grab_country_on_import, if: -> { from_import_file }
+  before_save :hs_active!, if: -> (obj) { obj.retailer.hubspot_integrated? && obj.hs_active.nil? && obj.retailer.all_customers_hs_integrated }
   before_save :update_valid_customer
   before_save :format_phone_number
   before_save :calc_ws_notification_cost
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
+  after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
+  after_update :sync_hs, if: :hs_active?
 
   enum id_type: %i[cedula pasaporte ruc]
 
@@ -85,12 +89,33 @@ class Customer < ApplicationRecord
       'orders.customer_id = customers.id and orders.status = 1), 0)')
   end
 
+  def self.public_fields
+    [
+      'email',
+      'first_name',
+      'last_name',
+      'phone',
+      'id_type',
+      'id_number',
+      'address',
+      'city',
+      'state',
+      'zip_code',
+      'country_id',
+      'notes'
+    ]
+  end
+
   def full_names
     "#{first_name} #{last_name}"
   end
 
   def earnings
     orders_success.map(&:total).sum.to_f.round(2)
+  end
+
+  def hs_active!
+    self.hs_active = true if email.present?
   end
 
   def generate_phone
@@ -465,5 +490,53 @@ class Customer < ApplicationRecord
 
       parse_phone = Phonelib.parse(phone)
       self.country_id = parse_phone&.country
+    end
+
+    def create_hs_customer
+      return false if email.blank?
+
+      params = {}
+      self_hash = as_json
+      retailer.customer_hubspot_fields.where(customer_field: Customer.public_fields).find_each do |chf|
+        params[chf.hubspot_field.hubspot_field] = self_hash[chf.customer_field]
+      end
+      params['email'] = email
+      hs_contact = hubspot.contact_create(params)
+      update(hs_id: hs_contact['id'])
+    end
+
+    def sync_hs
+      if hs_id.nil?
+        if retailer.hubspot_match_phone_or_email?
+          hs_c = hubspot.search(email: email)
+          hs_c = hubspot.search(phone: phone) if hs_c.blank?
+          return create_hs_customer if hs_c.blank?
+
+          update hs_id: hs_c['id']
+        elsif retailer.hubspot_match_phone?
+          hs_c = hubspot.search(phone: phone)
+          return create_hs_customer if hs_c.blank?
+
+          update hs_id: hs_c['id']
+        elsif retailer.hubspot_match_email?
+          hs_c = hubspot.search(email: email)
+          return create_hs_customer if hs_c.blank?
+
+          update hs_id: hs_c['id']
+        end
+      end
+
+      params = {}
+      self_hash = as_json
+      retailer.customer_hubspot_fields.where(customer_field: Customer.public_fields).find_each do |chf|
+        params[chf.hubspot_field.hubspot_field] = self_hash[chf.customer_field]
+      end
+      hubspot.contact_update(hs_id, params)
+    end
+
+    def hubspot
+      return if retailer.hs_access_token.blank?
+
+      @hubspot = HubspotService::Api.new(retailer.hs_access_token)
     end
 end

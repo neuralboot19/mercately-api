@@ -115,6 +115,7 @@ class Retailers::CustomersController < RetailersController
         :last_name,
         :notes,
         :send_for_opt_in,
+        :hs_active,
         tag_ids: [],
         customer_related_data_attributes: [
           :id,

@@ -110,6 +110,11 @@ es:
           boolean: 'Verdadero o falso'
           date: 'Fecha'
           list: 'Lista'
+      retailer:
+        hubspot_matches:
+          phone_or_email: 'Teléfono o email'
+          email: 'Email'
+          phone: 'Teléfono'
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'
