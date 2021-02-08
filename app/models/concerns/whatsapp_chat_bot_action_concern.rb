@@ -17,7 +17,7 @@ module WhatsappChatBotActionConcern
 
         @text = content_text
       when 'GupshupWhatsappMessage'
-        return unless direction == 'inbound' && type == 'text'
+        return unless direction == 'inbound' && (type == 'text' || type == 'quick_reply')
 
         @text = message_payload['payload'].try(:[], 'payload').try(:[], 'text') || message_payload['text']
       end

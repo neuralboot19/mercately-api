@@ -90,7 +90,7 @@ VCR.configure do |c|
   c.hook_into :webmock
   c.allow_http_connections_when_no_cassette = false
 
-  c.ignore_hosts 'res.cloudinary.com', 'miro.medium.com'
+  c.ignore_hosts 'res.cloudinary.com', 'miro.medium.com', 'api.hubapi.com'
   c.default_cassette_options = {
     match_requests_on: [:method, VCR.request_matchers.uri_without_param(:access_token)]
   }

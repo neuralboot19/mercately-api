@@ -1,6 +1,6 @@
 class Retailers::IntegrationsController < RetailersController
-  skip_before_action :authenticate_retailer_user!, except: [:index, :connect_to_ml]
-  skip_before_action :verify_authenticity_token, except: [:index, :connect_to_ml]
+  skip_before_action :authenticate_retailer_user!, except: [:index, :connect_to_ml, :connect_to_hubspot]
+  skip_before_action :verify_authenticity_token, except: [:index, :connect_to_ml, :connect_to_hubspot]
   before_action :set_ml, only: [:connect_to_ml]
 
   def index
@@ -13,6 +13,21 @@ class Retailers::IntegrationsController < RetailersController
     else
       redirect_to retailers_integrations_path(@retailer.slug), notice: 'Error al conectarse'
     end
+  end
+
+  def connect_to_hubspot
+    Hubspot.configure({
+      client_id: ENV['HUBSPOT_CLIENT'],
+      client_secret: ENV['HUBSPOT_CLIENT_SECRET'],
+      redirect_uri: ENV['HUBSPOT_REDIRECT_URL']
+    })
+    token = Hubspot::OAuth.create(params[:code])
+    current_retailer.update(
+      hs_expires_in: token['expires_in'].seconds.from_now,
+      hs_access_token: token['access_token'],
+      hs_refresh_token: token['refresh_token']
+    )
+    redirect_to retailers_hubspot_index_path(current_retailer)
   end
 
   def callbacks
