@@ -51,7 +51,6 @@ class Retailer < ApplicationRecord
   after_create :send_to_mailchimp
   before_create :format_phone_number
   after_update :get_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
-  after_update :sync_hs_customers, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
 
   validates :slug,
             exclusion: { in: %w(www),
@@ -258,11 +257,5 @@ class Retailer < ApplicationRecord
 
     def hubspot
       @hubspot = HubspotService::Api.new(hs_access_token)
-    end
-
-    def sync_hs_customers
-      return unless hubspot_integrated?
-
-      customers.update_all(hs_active: true)
     end
 end
