@@ -33,7 +33,7 @@
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>
-      <script type="application/javascript" src="https://wss.mercately.com/socket.io/socket.io.js"></script>
+      <script type="application/javascript" src="https://xwss.mercately.com/socket.io/socket.io.js"></script>
     <% elsif ENV['ENVIRONMENT'] == 'staging' %>
       <script type="application/javascript" src="https://swss.mercately.com/socket.io/socket.io.js"></script>
     <% else %>

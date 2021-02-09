@@ -19,7 +19,7 @@ module AgentNotificationHelper
   end
 
   def self.redis
-    @redis ||= Redis.new
+    @redis ||= Redis.new(url: 'redis://redis.mercately.com:6379/1')
   end
 
   def self.serialize_customer(customer, chat_type)

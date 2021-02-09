@@ -70,7 +70,7 @@ module FacebookNotificationHelper
   end
 
   def self.redis
-    @redis ||= Redis.new()
+    @redis ||= Redis.new(url: 'redis://redis.mercately.com:6379/1')
   end
 
   def self.message_info(message)

@@ -50,11 +50,8 @@ class Retailer < ApplicationRecord
   after_create :save_free_plan
   after_create :send_to_mailchimp
   before_create :format_phone_number
-<<<<<<< HEAD
-=======
   after_update :get_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
   after_update :sync_hs_customers, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
->>>>>>> develop
 
   validates :slug,
             exclusion: { in: %w(www),

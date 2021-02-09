@@ -6,7 +6,10 @@ module Whatsapp::Gupshup::V1
       @params = params
       gsw_type = @params['type']
       direction = ['message', 'quick_reply'].include?(gsw_type) ? 'inbound' : 'message_event'
-
+      Rails.logger.debug '*'.*100
+      Rails.logger.debug "PARAMS: #{params}"
+      Rails.logger.debug "DIRECTION: #{direction}"
+      Rails.logger.debug '*'.*100
       # Call direction method
       self.send(direction)
     end
@@ -34,6 +37,9 @@ module Whatsapp::Gupshup::V1
     private
 
       def inbound
+        Rails.logger.debug '*'.*100
+        Rails.logger.debug "INBOUND: #{retailer}"
+        Rails.logger.debug '*'.*100
         # Find or Store the client
         customer = save_customer
 
@@ -57,6 +63,9 @@ module Whatsapp::Gupshup::V1
           )
 
           # Broadcast to the proper chat
+          Rails.logger.debug '*'.*100
+          Rails.logger.debug "GWM: #{gwm}"
+          Rails.logger.debug '*'.*100
           broadcast(gwm)
         end
       rescue StandardError => e
@@ -159,6 +168,9 @@ module Whatsapp::Gupshup::V1
       end
 
       def broadcast(msg)
+        Rails.logger.debug '*'.*100
+        Rails.logger.debug "BROADCAST THE INBOUND MESSAGE: #{msg}"
+        Rails.logger.debug '*'.*100
         Whatsapp::Gupshup::V1::Helpers::Messages.new(msg).broadcast!
       end
   end
