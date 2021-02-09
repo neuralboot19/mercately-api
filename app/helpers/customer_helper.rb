@@ -63,4 +63,8 @@ module CustomerHelper
   def field_types_list
     CustomerRelatedField.field_types.keys.collect { |f| [CustomerRelatedField.enum_translation(:field_type, f), f] }
   end
+
+  def hubspot_matches_list
+    Retailer.hubspot_matches.keys.collect { |f| [Retailer.enum_translation(:hubspot_match, f), f] }
+  end
 end
