@@ -141,7 +141,7 @@ module Whatsapp::Gupshup::V1::Helpers
     private
 
       def redis
-        @redis ||= Redis.new(url: 'redis://redis.mercately.com:6379/1')
+        @redis ||= Redis.new(url: ENV['REDIS_PROVIDER'] || 'redis://localhost:6379/1')
       end
 
       def serialize_customer(customer)
