@@ -37,9 +37,6 @@ module Whatsapp::Gupshup::V1
     private
 
       def inbound
-        Rails.logger.debug '*'.*100
-        Rails.logger.debug "INBOUND: #{retailer}"
-        Rails.logger.debug '*'.*100
         # Find or Store the client
         customer = save_customer
 
@@ -63,9 +60,6 @@ module Whatsapp::Gupshup::V1
           )
 
           # Broadcast to the proper chat
-          Rails.logger.debug '*'.*100
-          Rails.logger.debug "GWM: #{gwm}"
-          Rails.logger.debug '*'.*100
           broadcast(gwm)
         end
       rescue StandardError => e
@@ -168,9 +162,6 @@ module Whatsapp::Gupshup::V1
       end
 
       def broadcast(msg)
-        Rails.logger.debug '*'.*100
-        Rails.logger.debug "BROADCAST THE INBOUND MESSAGE: #{msg}"
-        Rails.logger.debug '*'.*100
         Whatsapp::Gupshup::V1::Helpers::Messages.new(msg).broadcast!
       end
   end
