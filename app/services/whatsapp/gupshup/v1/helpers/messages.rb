@@ -142,9 +142,6 @@ module Whatsapp::Gupshup::V1::Helpers
 
       def redis
         @redis ||= Redis.new(url: 'redis://redis.mercately.com:6379/1')
-        Rails.logger.debug '*'.*100
-        Rails.logger.debug "REDIS: #{@redis}"
-        Rails.logger.debug '*'.*100
       end
 
       def serialize_customer(customer)
