@@ -1,6 +1,6 @@
 let webId;
 let pageId = 1;
-let totalPages;
+let totalQuestionPages;
 
 function getQuestionInfo(input) {
   var questionId = input.id;
@@ -86,7 +86,7 @@ function buildQuestionAnswer() {
 $('#q-list').scroll(function() {
   if ($('#q-list').scrollTop() + parseInt($(window).height()) >= $('#q-list')[0].scrollHeight) {
     pageId++;
-    if (pageId <= totalPages) {
+    if (pageId <= totalQuestionPages) {
       loadQuestions();
     }
   }
@@ -95,7 +95,7 @@ $('#q-list').scroll(function() {
 function loadQuestions() {
   getAjax(`${window.location.origin}/retailers/${$('#slug-id').val()}/questions_list?page=${pageId}`, function(data) {
     var json = JSON.parse(data);
-    totalPages = json.total;
+    totalQuestionPages = json.total;
     json.questions.forEach(buildQuestionList);
   });
 }
