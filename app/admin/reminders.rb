@@ -3,8 +3,6 @@ ActiveAdmin.register Reminder do
   permit_params :status
   filter :retailer, as: :searchable_select
   filter :retailer_user, as: :searchable_select
-  filter :customer, as: :searchable_select, collection: -> { Customer.where(valid_customer: true)
-    .map { |c| [c.full_names.presence || c.whatsapp_name || c.phone, c.id] } }
 
   controller do
     defaults finder: :find_by_web_id
@@ -53,9 +51,9 @@ ActiveAdmin.register Reminder do
     f.inputs do
       f.input :retailer, input_html: { disabled: true }
       f.input :retailer_user, input_html: { disabled: true }
-      f.input :customer, collection: Customer.where(valid_customer: true)
+      f.input :customer, collection: Customer.where(id: f.object.customer&.id)
         .map { |c| [c.full_names.presence || c.whatsapp_name || c.phone, c.id] }, input_html:
-        { disabled: true, selected: f.object }
+        { disabled: true, selected: f.object.customer }
       f.input :status
       f.input :send_at, input_html: { disabled: true }
     end
