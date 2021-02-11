@@ -502,7 +502,7 @@ class Customer < ApplicationRecord
       end
       params['email'] = email
       hs_contact = hubspot.contact_create(params)
-      update(hs_id: hs_contact['id'])
+      update_column(:hs_id, hs_contact['id'])
     end
 
     def sync_hs
@@ -512,17 +512,17 @@ class Customer < ApplicationRecord
           hs_c = hubspot.search(phone: phone) if hs_c.blank?
           return create_hs_customer if hs_c.blank?
 
-          update hs_id: hs_c['id']
+          update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_phone?
           hs_c = hubspot.search(phone: phone)
           return create_hs_customer if hs_c.blank?
 
-          update hs_id: hs_c['id']
+          update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_email?
           hs_c = hubspot.search(email: email)
           return create_hs_customer if hs_c.blank?
 
-          update hs_id: hs_c['id']
+          update_column(:hs_id, hs_c['id'])
         end
       end
 
