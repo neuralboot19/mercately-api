@@ -1,10 +1,15 @@
-var globalWebhookId, globalHeaderCounter, globalDataCounter;
+var globalWebhookId, globalHeaderCounter, globalDataCounter, rootJumpOption;
 
-function searchOptions() {
+function searchOptions(from) {
   getAjax(`${window.location.origin}/retailers/chat_bots/${$('#cb-web-id').val()}/tree_options`, function(data) {
     var json = JSON.parse(data);
     var options = json['options'];
-    buildTree(options[0]);
+    if (from === 'general') {
+      buildTree(options[0]);
+    } else {
+      $('#options-tree-modal').html('');
+      buildTreeModal(options[0]);
+    }
   });
 }
 
@@ -39,12 +44,46 @@ function buildTree(option, parent) {
   }
 }
 
-function insertTitle(option) {
-  if (option.auto_generated) {
-    return `<span class="fs-14 c-gray-label">Opción dinámica</span>`;
+function buildTreeModal(option, parent) {
+  if (!parent) {
+    var listContainer = $('#options-tree-modal');
   } else {
-    return `<span class="fs-14 fw-bold">${option.position}.</span> <span class="fs-14 c-gray-label">${option.text}</span>`;
+    var listContainer = $(`#options-li-tree-modal-${parent.id}`);
   }
+
+  listContainer.append(
+    `<ul id="options-ul-tree-${option.id}" class="chat-bot-option-ul ${!parent ? 'pl-12' : ''}">
+    <li id="options-li-tree-modal-${option.id}" class="chat-bot-option-li">
+    <div class="li-content">
+    <i class="fas fa-chevron-right fs-12 c-secondary mr-8"></i>
+    ${insertTitle(option)}
+    <span class="tree-options-links">
+      <label for="modal--toggle" class="ml-10 c-secondary fs-12" onclick="setJumpOption(${option.id}, '${option.text}')">Seleccionar</label>
+    </span></div></li>
+    </ul>`
+  )
+
+  if (option.children.length > 0) {
+    for (child in option.children) {
+      buildTreeModal(option.children[child], option);
+    }
+  }
+}
+
+function insertTitle(option) {
+  let title = '';
+
+  if (option.auto_generated) {
+    title = `<span class="fs-14 c-gray-label">Opción dinámica</span>`;
+  } else {
+    title = `<span class="fs-14 fw-bold">${option.position}.</span> <span class="fs-14 c-gray-label">${option.text}</span>`;
+  }
+
+  if (option.jump_option_name && option.jump_option_name !== '') {
+    title += ` <small class="fs-11">(Salta a la opción: <b>${option.jump_option_name}</b>)</small>`
+  }
+
+  return title;
 }
 
 function buildConversation(option_id) {
@@ -99,51 +138,68 @@ function insertPreviewResponse(node, next_node) {
 }
 
 function showActionSelection(input) {
-  value = input.value;
+  const value = input.value;
   showHideActions(value);
-  id = input.id.replace("_action_type", "");
-  root = $(input).parent().parent().parent();
+  const id = input.id.replace("_action_type", "");
+  const root = $(input).parent().parent().parent();
   root.find('.hide-on-selection').hide();
   root.find('.deactivate-on-selection').attr('disabled', true);
+  let hideId, showId;
 
   switch (value) {
     case 'add_tag':
-      hideId = `#${id}_target_field, #${id}_retailer_user_id, #${id}_exit_message`;
+      $(input).addClass('validate-unique');
+      hideId = `#${id}_target_field, #${id}_retailer_user_id, #${id}_exit_message, #${id}_jump_option_id`;
       showId = id + "_tag_ids";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'assign_agent':
-      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_exit_message`;
+      $(input).addClass('validate-unique');
+      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_exit_message, #${id}_jump_option_id`;
       showId = id + "_retailer_user_id";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'get_out_bot':
-      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_retailer_user_id`;
+      $(input).addClass('validate-unique');
+      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_retailer_user_id, #${id}_jump_option_id`;
       showId = id + "_exit_message";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'go_back_bot':
+      $(input).addClass('validate-unique');
       root.find('.show-on-back-bot').show();
       break;
     case 'go_init_bot':
+      $(input).addClass('validate-unique');
       root.find('.show-on-init-bot').show();
       break;
     case 'save_on_db':
-      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_exit_message`;
+      $(input).addClass('validate-unique');
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_exit_message, #${id}_jump_option_id`;
       showId = id + "_target_field";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'exec_callback':
-      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message`;
+      $(input).addClass('validate-unique');
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message, #${id}_jump_option_id`;
       showId = "webhook-action-container";
       setGlobalWebhookId(id);
       showHideSelectFields(value, hideId, showId, id);
       break;
     case 'auto_generate_option':
+      $(input).addClass('validate-unique');
       root.find('.show-on-auto-generate-option').show();
       break;
     case 'repeat_endpoint_option':
+      $(input).addClass('validate-unique');
       root.find('.show-on-repeat-endpoint-option').show();
+      break;
+    case 'jump_to_option':
+      $(input).removeClass('validate-unique');
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message`;
+      const enableId = id + '_jump_option_id';
+      showHideJumpOption(hideId, enableId);
+      root.find('.show-on-jump-to-option').show();
       break;
   }
 }
@@ -296,7 +352,7 @@ function deleteOption(id, autoGenerated) {
       if (msg.status == 200) {
         $('#options-tree').html(null);
         $('#chat-preview').html(null);
-        searchOptions();
+        searchOptions('general');
       }
       showtoast(msg.message);
     });
@@ -316,18 +372,18 @@ function addChildOption(optionId, addChildBlocked) {
 }
 
 function showHideActions(value) {
-  if (value === 'exec_callback' || endpointActionSelected()) {
+  if (value === 'exec_callback' || actionSelected('#chat_bot_actions', 'exec_callback')) {
     $('#exec-endpoint-actions-container').show();
   } else {
     $('#exec-endpoint-actions-container').hide();
   }
 }
 
-function endpointActionSelected() {
+function actionSelected(containerId, action) {
   var found = false;
 
-  document.querySelectorAll('.validate-unique').forEach(function(input) {
-    if (input.value === 'exec_callback') {
+  document.querySelectorAll(`${containerId} .selectable-action-type`).forEach(function(input) {
+    if (input.value === action) {
       found = true;
     }
   });
@@ -340,8 +396,10 @@ function showHideSublist() {
 
   if (value === 'form') {
     $('#sublist-option-container').show();
+    $('#skip-option-container').show();
   } else {
     $('#sublist-option-container').hide();
+    $('#skip-option-container').hide();
   }
 }
 
@@ -360,14 +418,28 @@ function showAttemptInput() {
 
 $(document).ready(function() {
   $('#chat_bot_actions, #chat_bot_actions_success, #chat_bot_actions_failed').on('cocoon:after-remove', function(e, removedItem) {
-    $(removedItem).find('.validate-unique').removeClass('validate-unique');
+    item = $(removedItem).find('.selectable-action-type');
+
+    if (item.val() === 'jump_to_option') {
+      item.removeClass('selectable-action-type');
+    } else {
+      item.removeClass('validate-unique');
+    }
+
     showHideActions();
   });
 
   $('#chat_bot_actions').on('cocoon:before-insert', function(e, insertedItem, originalEvent) {
-    if (endpointActionSelected()) {
-      $(insertedItem).find(".selectable-action-type option[value='exec_callback']").remove();
-    }
+    removeRepeatedItem(insertedItem, '#chat_bot_actions', 'exec_callback');
+    removeRepeatedItem(insertedItem, '#chat_bot_actions', 'jump_to_option');
+  });
+
+  $('#chat_bot_actions_success').on('cocoon:before-insert', function(e, insertedItem, originalEvent) {
+    removeRepeatedItem(insertedItem, '#chat_bot_actions_success', 'jump_to_option');
+  });
+
+  $('#chat_bot_actions_failed').on('cocoon:before-insert', function(e, insertedItem, originalEvent) {
+    removeRepeatedItem(insertedItem, '#chat_bot_actions_failed', 'jump_to_option');
   });
 
   showHideActions();
@@ -375,27 +447,47 @@ $(document).ready(function() {
   showAttemptInput();
 });
 
+function removeRepeatedItem(item, container, actionType) {
+  if (actionSelected(container, actionType)) {
+    $(item).find(`.selectable-action-type option[value=${actionType}]`).remove();
+  }
+}
+
 function previewFile(input) {
   if (input.files && input.files[0]) {
     let reader = new FileReader();
     reader.onload = function (e) {
-      if (input.files[0].size > 5000000) {
+      if (invalidAttachmentSize(input.files[0])) {
         $('#preview-chat-bot-option-container-img').hide();
-        $('#preview-chat-bot-option-container-pdf').hide()
-        $('#chat_bot_chat_bot_options_attributes_0_file').val('')
+        $('#preview-chat-bot-option-container-pdf').hide();
+        $('#preview-chat-bot-option-container-video').hide();
+        $('#chat_bot_chat_bot_options_attributes_0_file').val('');
         $('#preview-chat-bot-option-error-msg').show();
       } else {
-        $('#preview-chat-bot-option-error-msg').hide()
+        $('#preview-chat-bot-option-error-msg').hide();
+
         if (['image/jpg', 'image/jpeg', 'image/png'].includes(input.files[0].type)) {
           $('#preview-chat-bot-option-file-img').attr('src', e.target.result);
           $('#preview-chat-bot-option-container-img').show();
-          $('#preview-chat-bot-option-container-pdf').hide()
+          $('#preview-chat-bot-option-container-pdf').hide();
+          $('#preview-chat-bot-option-container-video').hide();
         }
+
         if (input.files[0].type === 'application/pdf') {
           $('#preview-chat-bot-option-file-pdf span').html(input.files[0].name);
-          $('#preview-chat-bot-option-container-pdf').show()
-          $('#preview-chat-bot-option-container-img').hide()
+          $('#preview-chat-bot-option-container-pdf').show();
+          $('#preview-chat-bot-option-container-img').hide();
+          $('#preview-chat-bot-option-container-video').hide();
         }
+
+        if (['video/mp4', 'video/3gpp'].includes(input.files[0].type)) {
+          $('#preview-chat-bot-option-file-video source').attr('src', URL.createObjectURL(input.files[0]));
+          $('#preview-chat-bot-option-file-video').load();
+          $('#preview-chat-bot-option-container-video').show();
+          $('#preview-chat-bot-option-container-pdf').hide();
+          $('#preview-chat-bot-option-container-img').hide();
+        }
+
         $('#preview-chat-bot-option-container-file').show();
         $('#current-chat-bot-option-container').hide();
       }
@@ -408,6 +500,7 @@ function removeFile() {
   $('#chat_bot_chat_bot_options_attributes_0_file').val('');
   $('#preview-chat-bot-option-container-img').hide();
   $('#preview-chat-bot-option-container-pdf').hide();
+  $('#preview-chat-bot-option-container-video').hide();
   $('#current-chat-bot-option-container').show();
 }
 
@@ -416,5 +509,40 @@ function removeAttachedFile() {
   $('#chat_bot_chat_bot_options_attributes_0_file').val('');
   $('#preview-chat-bot-option-container-img').hide();
   $('#preview-chat-bot-option-container-pdf').hide();
+  $('#preview-chat-bot-option-container-video').hide();
   $('#current-chat-bot-option-container').hide();
+}
+
+function invalidAttachmentSize(file) {
+  if (['image/jpg', 'image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+    return file.size > 5000000;
+  } else if (['video/mp4', 'video/3gpp'].includes(file.type)) {
+    return file.size > 14000000;
+  }
+}
+
+function setJumpOption(option_id, option_name) {
+  currentOptionId = $('#option-id').val();
+
+  if (currentOptionId == option_id) {
+    alert('La opción origen y la opción destino no pueden ser la misma.');
+    return;
+  }
+
+  rootJumpOption.find("input[type='hidden']").val(option_id);
+  rootJumpOption.find('.jump-option-name').html(option_name);
+}
+
+function showHideJumpOption(hideId, enableId) {
+  hideInput = $(hideId);
+  hideInput.parent().parent().hide();
+  hideInput.attr('disabled', true);
+
+  enableInput = $(`#${enableId}`);
+  enableInput.attr('disabled', false);
+}
+
+function launchModal(input) {
+  rootJumpOption = $(input).parent().parent();
+  searchOptions('modal');
 }

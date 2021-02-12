@@ -87,6 +87,15 @@
         <div class="fs-12">Se enviará el mensaje nuevamente al cliente.</div>
       </div>
     </div>
+    <div class="col-xs-12 col-sm-6 d-none hide-on-selection show-on-jump-to-option">
+      <div class="my-16">
+        <%= f.hidden_field :jump_option_id %>
+        <span class="fs-12">Salta a la opción: </span><span class="fs-13 fw-bold jump-option-name"></span>
+        <div class="fs-12">
+          <label for="modal--toggle" class="c-secondary modal__toggler" onclick="launchModal(this)">Seleccionar opción</label>
+        </div>
+      </div>
+    </div>
     <div class="col-xs-12 col-sm-2 center-xs p-0 my-16">
       <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
         <i class="fas fa-times mr-5"></i>
