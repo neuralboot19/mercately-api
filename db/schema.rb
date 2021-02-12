@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_04_211523) do
+ActiveRecord::Schema.define(version: 2021_02_10_181050) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,8 +204,10 @@ ActiveRecord::Schema.define(version: 2021_02_04_211523) do
     t.integer "classification", default: 0
     t.string "exit_message"
     t.bigint "customer_related_field_id"
+    t.bigint "jump_option_id"
     t.index ["chat_bot_option_id"], name: "index_chat_bot_actions_on_chat_bot_option_id"
     t.index ["customer_related_field_id"], name: "index_chat_bot_actions_on_customer_related_field_id"
+    t.index ["jump_option_id"], name: "index_chat_bot_actions_on_jump_option_id"
     t.index ["retailer_user_id"], name: "index_chat_bot_actions_on_retailer_user_id"
   end
 
@@ -228,6 +230,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_211523) do
     t.datetime "updated_at", null: false
     t.boolean "option_deleted", default: false
     t.integer "option_type", default: 0
+    t.boolean "skip_option", default: false
     t.index ["ancestry"], name: "index_chat_bot_options_on_ancestry"
     t.index ["chat_bot_id"], name: "index_chat_bot_options_on_chat_bot_id"
   end
@@ -842,6 +845,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_211523) do
     t.boolean "allow_voice_notes", default: true
     t.boolean "show_calendar", default: false
     t.boolean "allow_reminders", default: false
+    t.boolean "allow_send_videos", default: false
     t.integer "hubspot_match", default: 0
     t.datetime "hs_expires_in"
     t.string "hs_access_token"
@@ -945,6 +949,7 @@ ActiveRecord::Schema.define(version: 2021_02_04_211523) do
   add_foreign_key "agent_notifications", "retailer_users"
   add_foreign_key "calendar_events", "retailer_users"
   add_foreign_key "calendar_events", "retailers"
+  add_foreign_key "chat_bot_actions", "chat_bot_options", column: "jump_option_id"
   add_foreign_key "customer_hubspot_fields", "hubspot_fields"
   add_foreign_key "customer_hubspot_fields", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"

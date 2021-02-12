@@ -49,3 +49,37 @@
     <div class="w-100 c-secondary panel-options-items" onmousedown="insertFieldInput('<%= cl[1] %>', this)"><%= cl[0] %> <small class="c-grey">(<%= cl[1] %>)</small></div>
   <% end %>
 </div>
+
+<input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" />
+<div class="modal">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-xs-12 col-md-8 middle">
+        <label class="modal__background" for="modal--toggle"></label>
+        <div class="modal__window box p-16">
+          <div class="row middle-xs">
+            <div class="col-xs-8 col-sm-8">
+              Selecciona una opción
+            </div>
+            <div class="col-xs-4 col-sm-4">
+              <div class="index__ctas f-right">
+                <label class="btn btn--no-border c-red" for="modal--toggle">
+                  <i class="fas fa-times mr-5"></i>
+                  Cerrar
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div id="options-tree-modal">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

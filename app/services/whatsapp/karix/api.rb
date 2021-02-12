@@ -210,7 +210,7 @@ module Whatsapp
 
           # Solo muestra las opciones hijas activas
           children = chat_bot_option.children.active
-          if children.present?
+          if chat_bot_option.jump_to_option? == false && children.present?
             message += "\n\n"
             children_size = children.size - 1
 

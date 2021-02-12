@@ -34,7 +34,7 @@ class CustomerHubspotField < ApplicationRecord
       return if customer_field == 'tags'
 
       field_type = Customer.columns_hash[customer_field]&.type ||
-        CustomerRelatedField.find_by(retailer: retailer, name: customer_field)&.field_type
+        CustomerRelatedField.find_by(retailer: retailer, identifier: customer_field)&.field_type
       return false if field_type.nil?
 
       field_type = field_type.to_s

@@ -1,7 +1,7 @@
 class CustomerRelatedDatum < ApplicationRecord
   belongs_to :customer
   belongs_to :customer_related_field
-  after_update :sync_hs
+  after_save :sync_hs
 
   private
 
@@ -16,7 +16,7 @@ class CustomerRelatedDatum < ApplicationRecord
 
       chf = CustomerHubspotField.find_by(
         retailer: customer.retailer,
-        customer_field: customer_related_field.name
+        customer_field: customer_related_field.identifier
       )
       return if chf.nil?
 
