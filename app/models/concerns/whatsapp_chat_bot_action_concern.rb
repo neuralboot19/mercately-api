@@ -208,14 +208,14 @@ module WhatsappChatBotActionConcern
     def check_chat_bot_history(chat_bot)
       return false unless chat_bot.present?
 
-      interactions = customer.chat_bot_customers.where(chat_bot_id: chat_bot.id)
+      last_interaction = customer.chat_bot_customers.where(chat_bot_id: chat_bot.id).order(id: :desc).first
 
       # Si ya el customer ha interactuado con el chatbot seleccionado.
-      if interactions.present?
+      if last_interaction.present?
         # Si la reactivacion del bot esta activa y ya ha transcurrido el tiempo establecido desde la
         # ultima vez que el customer escribio, o el agente seteo manualmente que se le activen los bots
         # al customer, entonces el bot se le activara, de otro modo no.
-        if time_to_reactivate?(interactions, chat_bot) || customer.allow_start_bots
+        if time_to_reactivate?(last_interaction, chat_bot) || customer.allow_start_bots
           customer.chat_bot_customers.create(chat_bot_id: chat_bot.id)
           return true
         else
@@ -493,10 +493,10 @@ module WhatsappChatBotActionConcern
 
     # En caso de que el bot tenga reactivacion, calcula si ya paso el tiempo desde la ultima vez
     # que el customer escribio, para saber si volver a activar el bot o no.
-    def time_to_reactivate?(interactions, chat_bot)
+    def time_to_reactivate?(last_interaction, chat_bot)
       return false unless chat_bot.reactivate_after.present?
 
-      if ((created_at - interactions.last.created_at) / 3600).to_i >= chat_bot.reactivate_after
+      if ((created_at - last_interaction.created_at) / 3600).to_i >= chat_bot.reactivate_after
         # Si el customer tenia un bot activo, lo desactiva, ya que paso el tiempo de reactivacion
         # y se le debe activar de nuevo desde el inicio.
         customer.deactivate_chat_bot!
