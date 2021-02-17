@@ -50,7 +50,7 @@ class Retailer < ApplicationRecord
   after_create :save_free_plan
   after_create :send_to_mailchimp
   before_create :format_phone_number
-  after_update :get_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
+  after_update :import_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
 
   validates :slug,
             exclusion: { in: %w(www),
@@ -217,6 +217,10 @@ class Retailer < ApplicationRecord
     self.paymentez_credit_cards.find_by_main(true)
   end
 
+  def hs_properties
+    hubspot.contact_properties.pluck('name')
+  end
+
   private
 
     def save_free_plan
@@ -230,7 +234,7 @@ class Retailer < ApplicationRecord
     def format_phone_number
       return unless retailer_number.present?
 
-      self.retailer_number = '+593' + retailer_number[1,9] if
+      self.retailer_number = '+593' + retailer_number[1, 9] if
         retailer_number.size == 10 && retailer_number[0] == '0'
 
       self.retailer_number = '+' + retailer_number if
@@ -241,7 +245,7 @@ class Retailer < ApplicationRecord
       self.gupshup_src_name = nil if gupshup_src_name.blank?
     end
 
-    def get_hubspot_properties
+    def import_hubspot_properties
       properties = hubspot.contact_properties.pluck('name', 'label', 'type').map do |name, label, type|
         { hubspot_field: name, hubspot_label: label, hubspot_type: type }
       end
