@@ -52,6 +52,8 @@ Rails.application.routes.draw do
         get 'ping', to: 'welcome#ping'
         post 'whatsapp/send_notification', to: 'karix_whatsapp#create'
         post 'whatsapp/send_notification_by_id', to: 'karix_whatsapp#create_by_id'
+        get 'agents', to: 'retailer_users#index'
+        get 'whatsapp_templates', to: 'whatsapp_templates#index'
       end
     end
 
@@ -157,6 +159,9 @@ Rails.application.routes.draw do
   # Dynamic error pages
   get "/404", to: "errors#not_found"
   get "/500", to: "errors#internal_error"
+
+  # Api documentation
+  get 'docs', to: redirect('docs.html')
 
   # Gupshup callback
   post 'gupshup/ws', to: 'gupshup_whatsapp#save_message'

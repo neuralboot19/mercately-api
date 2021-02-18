@@ -22,7 +22,7 @@ module Retailers::Api::V1
     end
 
     def create_by_id
-      set_response(400, 'Error: Missing phone number and/or gupshup_template_id') and
+      set_response(400, 'Error: Missing phone number and/or internal_id') and
         return unless template_params_complete?
 
       template = find_template
@@ -35,6 +35,7 @@ module Retailers::Api::V1
 
       params[:template] = true
       params[:message] = template.template_text(params)
+      params[:gupshup_template_id] = params[:internal_id].strip
 
       integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
       self.send("send_#{integration}_notification", params)
@@ -136,11 +137,11 @@ module Retailers::Api::V1
       end
 
       def template_params_complete?
-        params[:phone_number].present? && params[:gupshup_template_id].present?
+        params[:phone_number].present? && params[:internal_id].present?
       end
 
       def find_template
-        current_retailer.whatsapp_templates.find_by(gupshup_template_id: params[:gupshup_template_id].strip)
+        current_retailer.whatsapp_templates.find_by(gupshup_template_id: params[:internal_id].strip)
       end
 
       def assign_agent(customer, params)
