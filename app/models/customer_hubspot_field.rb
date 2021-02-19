@@ -7,7 +7,7 @@ class CustomerHubspotField < ApplicationRecord
 
   after_save :set_hubspot_field_taken
   after_save :save_tags
-  after_commit :update_hubspot, on: :create
+  after_commit :update_hubspot, on: [:create, :update]
   after_destroy :set_hubspot_field_not_taken
 
   private
@@ -25,14 +25,12 @@ class CustomerHubspotField < ApplicationRecord
     end
 
     def save_tags
-      return if customer_field != 'tags'
+      return unless hs_tag
 
       retailer.update(hs_tags: true)
     end
 
     def same_field_type
-      return if customer_field == 'tags'
-
       field_type = Customer.columns_hash[customer_field]&.type ||
         CustomerRelatedField.find_by(retailer: retailer, identifier: customer_field)&.field_type
       return false if field_type.nil?

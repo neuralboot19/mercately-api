@@ -23,7 +23,7 @@ class Customer < ApplicationRecord
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :gupshup_whatsapp_messages, dependent: :destroy
   has_many :customer_tags, dependent: :destroy
-  has_many :tags, through: :customer_tags
+  has_many :tags, through: :customer_tags, dependent: :destroy
   has_many :chat_bot_customers, dependent: :destroy
   has_many :chat_bots, through: :chat_bot_customers
   has_many :customer_bot_options, dependent: :destroy
