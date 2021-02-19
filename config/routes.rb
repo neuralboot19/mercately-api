@@ -84,6 +84,7 @@ Rails.application.routes.draw do
           post 'create_mapped_field', to: 'hubspot#create'
           post 'update/:id', to: 'hubspot#update', as: :update_mapped_field
           post 'update_matching', to: 'hubspot#update_matching'
+          get 'update_properties', to: 'hubspot#update_properties_list'
           delete 'mapped_field/:id', to: 'hubspot#destroy', as: :delete_mapped_field
         end
       end

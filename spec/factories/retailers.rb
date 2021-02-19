@@ -14,6 +14,7 @@ FactoryBot.define do
     ws_notification_cost { 0.0672 }
     ws_conversation_cost { 0.005 }
     unlimited_account { false }
+    hs_expires_in { 6.hours.from_now }
 
     trait :with_retailer_user do
       association :retailer_user

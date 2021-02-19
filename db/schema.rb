@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_10_181050) do
+ActiveRecord::Schema.define(version: 2021_02_17_173501) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -269,6 +269,7 @@ ActiveRecord::Schema.define(version: 2021_02_10_181050) do
     t.bigint "retailer_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "hs_tag", default: false
     t.index ["customer_field", "hubspot_field_id", "retailer_id"], name: "chf_customer_field_husbpot_field_retailer", unique: true
     t.index ["hubspot_field_id"], name: "index_customer_hubspot_fields_on_hubspot_field_id"
     t.index ["retailer_id"], name: "index_customer_hubspot_fields_on_retailer_id"
@@ -845,13 +846,13 @@ ActiveRecord::Schema.define(version: 2021_02_10_181050) do
     t.boolean "allow_voice_notes", default: true
     t.boolean "show_calendar", default: false
     t.boolean "allow_reminders", default: false
-    t.boolean "allow_send_videos", default: false
     t.integer "hubspot_match", default: 0
     t.datetime "hs_expires_in"
     t.string "hs_access_token"
     t.string "hs_refresh_token"
     t.boolean "all_customers_hs_integrated", default: true
     t.boolean "hs_tags", default: false
+    t.boolean "allow_send_videos", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

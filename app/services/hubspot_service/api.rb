@@ -29,7 +29,23 @@ module HubspotService
       token
     end
 
+    def update_token
+      return false if @access_token.nil?
+
+      retailer = Retailer.find_by(hs_access_token: @access_token)
+      return if retailer.nil? || retailer.hs_expires_in > Time.now
+
+      token = refresh_token(retailer.hs_refresh_token)
+      @access_token = token['access_token']
+      retailer.update(
+        hs_expires_in: token['expires_in'].seconds.from_now,
+        hs_access_token: token['access_token'],
+        hs_refresh_token: token['refresh_token']
+      )
+    end
+
     def contact_properties
+      update_token
       connection = Connection.prepare_connection('https://api.hubapi.com/crm/v3/properties/contacts?archived=false')
       response = Connection.get_request(
         connection,
@@ -39,6 +55,7 @@ module HubspotService
     end
 
     def contact(vid)
+      update_token
       connection = Connection.prepare_connection("https://api.hubapi.com/crm/v3/objects/contacts/#{vid}?paginateAssociations=false&archived=false")
       Connection.get_request(
         connection,
@@ -47,6 +64,7 @@ module HubspotService
     end
 
     def contact_create(params = {})
+      update_token
       connection = Connection.prepare_connection('https://api.hubapi.com/crm/v3/objects/contacts')
       response = Connection.post_request(
         connection,
@@ -59,6 +77,7 @@ module HubspotService
     end
 
     def contact_update(vid, params = {})
+      update_token
       connection = Connection.prepare_connection("https://api.hubapi.com/crm/v3/objects/contacts/#{vid}")
       response = Connection.patch_request(
         connection,
@@ -71,6 +90,7 @@ module HubspotService
     end
 
     def search(params = {})
+      update_token
       filters = []
       params.each do |k, v|
         filters << {

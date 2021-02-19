@@ -40,16 +40,15 @@
               Seleccione el campo para guardar las etiquetas
             </div>
             <%= form_for :mapped_fields, url: @mapped_field_url do |f| %>
-              <%= f.hidden_field :customer_field, value: 'tags', class: 'input', readonly: true %>
+              <%= f.hidden_field :hs_tag, value: true %>
               <div class="row">
                 <div class="col-xs-12 col-sm-1 px-0 fs-14  mt-5 no-style-filter ">Mercately: </div>
                 <div class="col-xs-12 col-sm-3 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= text_field_tag :input, 'Etiquetas', class: 'input', readonly: true %>
+                  <%= f.select :customer_field, @tags, prompt: 'Seleccione uno', class: 'input' %>
                 </div>
                 <div class="col-xs-12 col-sm-1 px-0 fs-14 ml-10 mt-5 no-style-filter ">Hubspot: </div>
                 <div class="col-xs-12 col-sm-3 px-0 fs-14 mt-5 no-style-filter p-relative">
-                  <%= f.select :hubspot_field_id, options_for_select(@hubspot_field_tag,
-                  current_retailer.customer_hubspot_fields.find_by(customer_field: 'tags')&.hubspot_field&.id), class: 'input' %>
+                  <%= f.select :hubspot_field_id, @hubspot_fields, prompt: 'Seleccione uno', class: 'input' %>
                 </div>
                 <div class="col-xs-12 col-sm-2 px-0 mt-2 fs-14  t-center no-style-filter p-relative">
                   <%= f.submit 'Guardar', class: 'btn-btn btn-submit h-40' %>
@@ -82,24 +81,37 @@
               <% end %>
             <% end %>
           </div>
+          <div class="box mt-15">
+            <div class="index__desc">
+              Actualizar campos de Hubspot
+            </div>
+            <div class="row">
+              <div class="col-xs-12 px-0 fs-12 mt-5 c-grey">
+                <i>Al actualizar la lista de los campos de Hubspot se borrarán los campos que ya no existan en Hubspot (incluidos los campos ya mapeados)</i>
+              </div>
+              <div class="col-xs-12 px-0 fs-14 mt-15">
+                <%= link_to 'Actualizar', update_properties_retailers_hubspot_index_path(current_retailer), class: 'btn-btn btn-submit h-40' %>
+              </div>
+            </div>
+          </div>
           <!-- campos mapeados -->
           <div class="container-fluid products mt-50">
             <div class="row">
               <div class="col-xs-12">
                 <div class="table box">
                   <div class="table__header row ">
-                    <div class="col-xs-12 col-sm-5">Campos de Hubspot</div>
                     <div class="col-xs-12 col-sm-5">Campos de Mercately</div>
+                    <div class="col-xs-12 col-sm-5">Campos de Hubspot</div>
                     <div class="col-xs-12 col-sm-2 t-center">Acción</div>
                   </div>
                   <% @hubspot_mapped_fields.each do |mapped_field| %>
                     <div class="divider"></div>
                     <div class="table__item row middle-xs">
                       <div class="col-xs-12 col-sm-5">
-                        <div class=""><%= mapped_field.hubspot_field.hubspot_field %></div>
+                        <div class=""><%= mapped_field.customer_field %></div>
                       </div>
                       <div class="col-xs-12 col-sm-5">
-                        <div class=""><%= mapped_field.customer_field %></div>
+                        <div class=""><%= mapped_field.hubspot_field.hubspot_field %></div>
                       </div>
                       <div class="col-xs-12 col-sm-2 t-center">
                         <td><%= link_to 'Eliminar', delete_mapped_field_retailers_hubspot_index_path(current_retailer,mapped_field), method: :delete, data: { confirm: '¿Está seguro de borrar este campo mapeado?' } %></td>
@@ -114,6 +126,39 @@
               </div>
             </div>
           </div>
+          <% if @hubspot_mapped_tags.exists? %>
+            <div class="container-fluid products mt-50">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div class="table box">
+                    <div class="table__header row ">
+                      <div class="col-xs-12 col-sm-5">Etiqueta de Mercately</div>
+                      <div class="col-xs-12 col-sm-5">Campos de Hubspot</div>
+                      <div class="col-xs-12 col-sm-2 t-center">Acción</div>
+                    </div>
+                    <% @hubspot_mapped_tags.each do |mapped_field| %>
+                      <div class="divider"></div>
+                      <div class="table__item row middle-xs">
+                        <div class="col-xs-12 col-sm-5">
+                          <div class=""><%= mapped_field.customer_field %></div>
+                        </div>
+                        <div class="col-xs-12 col-sm-5">
+                          <div class=""><%= mapped_field.hubspot_field.hubspot_field %></div>
+                        </div>
+                        <div class="col-xs-12 col-sm-2 t-center">
+                          <td><%= link_to 'Eliminar', delete_mapped_field_retailers_hubspot_index_path(current_retailer,mapped_field), method: :delete, data: { confirm: '¿Está seguro de borrar este campo mapeado?' } %></td>
+                        </div>
+                      </div>
+                    <% end %>
+                    <div class="row middle-xs center-xs">
+                      <div class="col-xs-12">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>
