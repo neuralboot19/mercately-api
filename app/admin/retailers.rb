@@ -26,7 +26,8 @@ ActiveAdmin.register Retailer do
                 :allow_voice_notes,
                 :show_calendar,
                 :allow_reminders,
-                :allow_send_videos
+                :allow_send_videos,
+                :allow_multiple_answers
 
   filter :name
   filter :slug
@@ -108,6 +109,7 @@ ActiveAdmin.register Retailer do
       row :show_calendar
       row :allow_reminders
       row :allow_send_videos
+      row :allow_multiple_answers
       row :created_at
       row :updated_at
     end
@@ -355,6 +357,7 @@ ActiveAdmin.register Retailer do
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
       f.input :allow_reminders, label: 'Permitir configurar recordatorios'
       f.input :allow_send_videos, label: 'Permitir enviar videos'
+      f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
     end
     f.actions
   end

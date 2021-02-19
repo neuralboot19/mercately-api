@@ -59,7 +59,7 @@ class Retailers::ChatBotsController < RetailersController
 
   def path_option
     option = @chat_bot.chat_bot_options.find(params[:option_id])
-    serialized = ChatBotOptionSerializer.new(option.path)
+    serialized = ChatBotOptionSerializer.new(option.path.with_attached_file)
 
     render status: 200, json: { option: serialized }
   end
@@ -132,6 +132,13 @@ class Retailers::ChatBotsController < RetailersController
             :value_to_show,
             :list_type,
             :_destroy
+          ],
+          additional_bot_answers_attributes: [
+            :id,
+            :text,
+            :file,
+            :file_deleted,
+            :_destroy
           ]
         ]
       )
@@ -167,6 +174,15 @@ class Retailers::ChatBotsController < RetailersController
 
         cbo = @chat_bot.chat_bot_options.find(cbo_param[1][:id])
         cbo.file.purge if cbo.file.attached? && cbo_param[1][:file_deleted] == 'true' && !cbo_param[1][:file]
+
+        cbo_param[1][:additional_bot_answers_attributes]&.each do |aba_param|
+          next unless aba_param[1][:id].present?
+
+          aba = cbo.additional_bot_answers.find_by_id(aba_param[1][:id])
+          next unless aba.present?
+
+          aba.file.purge if aba.file.attached? && aba_param[1][:file_deleted] == 'true' && !aba_param[1][:file]
+        end
       end
     end
 end

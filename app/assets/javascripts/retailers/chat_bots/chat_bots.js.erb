@@ -80,7 +80,7 @@ function insertTitle(option) {
   }
 
   if (option.jump_option_name && option.jump_option_name !== '') {
-    title += ` <small class="fs-11">(Salta a la opción: <b>${option.jump_option_name}</b>)</small>`
+    title += ` <small class="fs-11">(Salta a la opción: <b>${option.jump_option_name}</b>)</small>`;
   }
 
   return title;
@@ -88,36 +88,33 @@ function insertTitle(option) {
 
 function buildConversation(option_id) {
   getAjax(`${window.location.origin}/retailers/chat_bots/${$('#cb-web-id').val()}/path_option?option_id=${option_id}`, function(data) {
-    var json = JSON.parse(data);
-    var path = json['option'].data;
+    const json = JSON.parse(data);
+    const path = json['option'].data;
+    let addAdditional;
 
-    var target = $('#chat-preview');
+    let target = $('#chat-preview');
     target.html('');
 
     for (node in path) {
-      var str = `<div class="w-100 row mt-10">
-        <div class="sent-message-preview">
-        <span>${path[node].attributes.auto_generated ? 'Se construye la opción dinámica' : path[node].attributes.answer}</span><br /><br />`
+      addAdditional = false;
 
-      if (path[node].attributes.option_type == 'decision' && path[node].attributes.children && path[node].attributes.children.length > 0) {
-        for (child in path[node].attributes.children) {
-          str += `<span><b>${path[node].attributes.children[child].position}.</b> ${path[node].attributes.children[child].text}</span><br />`
+      if (path[node].attributes.additional_bot_answers && path[node].attributes.additional_bot_answers.data && path[node].attributes.additional_bot_answers.data.length > 0)
+        addAdditional = true;
+
+      target = buildPreview(target, path[node], path, node, true, !addAdditional);
+
+      if (addAdditional) {
+        let string;
+
+        for (aba in path[node].attributes.additional_bot_answers.data) {
+          const lastOne = parseInt(aba) === path[node].attributes.additional_bot_answers.data.length - 1;
+          target = buildPreview(target, path[node].attributes.additional_bot_answers.data[aba], path, node, false, lastOne);
         }
       }
 
-      if (path[node].attributes.option_type == 'form' && path[node].attributes.option_sub_list && path[node].attributes.option_sub_list.length > 0) {
-        for (child in path[node].attributes.option_sub_list) {
-          str += `<span><b>${path[node].attributes.option_sub_list[child].position}.</b> ${path[node].attributes.option_sub_list[child].value_to_show}</span><br />`
-        }
-      }
+      const node_aux = parseInt(node);
 
-      str += '</div></div>'
-
-      target.append(str)
-
-      node_aux = parseInt(node);
-
-      if ((path.length - 1) >= (node_aux + 1)) {
+      if ((path.length - 1) >= (node_aux + 1) && (path[node].attributes.option_type == 'form' || !path[node].attributes.jump_to_option)) {
         target.append(
           `<div class="">
           <div class="my-10 received-message-preview">
@@ -129,11 +126,82 @@ function buildConversation(option_id) {
   });
 }
 
+function appendSelectionList(str, path, node) {
+  let appended = false;
+
+  if (path[node].attributes.option_type == 'decision' && path[node].attributes.children && path[node].attributes.children.length > 0 && !path[node].attributes.jump_to_option) {
+    appended = true;
+    for (child in path[node].attributes.children) {
+      str += `<span><b>${path[node].attributes.children[child].position}.</b> ${path[node].attributes.children[child].text}</span><br />`
+    }
+  }
+
+  if (path[node].attributes.option_type == 'form' && path[node].attributes.option_sub_list && path[node].attributes.option_sub_list.length > 0) {
+    appended = true;
+    for (child in path[node].attributes.option_sub_list) {
+      str += `<span><b>${path[node].attributes.option_sub_list[child].position}.</b> ${path[node].attributes.option_sub_list[child].value_to_show}</span><br />`
+    }
+  }
+
+  return [str, appended];
+}
+
+function buildPreview(target, data, path, node, main, lastOne) {
+  const type = data.attributes.type;
+  let text = main ? data.attributes.answer : data.attributes.text;
+  let string = `<div class="w-100 row mt-10">
+    <div class="sent-message-preview">`;
+
+  if (type === 'text') {
+    string += `<span>${text}</span><br /><br />`;
+  } else if (type === 'image') {
+    string += `<img class="w-200 h-150" src="${data.attributes.file_url}"/><br />
+      <span>${text}</span><br /><br />`;
+  } else if (type === 'pdf') {
+    let has_text = false;
+    if (text && text.trim() !== '') {
+      string += `<span>${text}</span><br /><br />`;
+      has_text = true;
+    }
+
+    let appendedOptions = false;
+    if (lastOne) {
+      const result = appendSelectionList(string, path, node);
+      string = result[0];
+      appendedOptions = result[1];
+    }
+
+    if (has_text || appendedOptions) {
+      string += '</div></div>';
+      target.append(string);
+    }
+
+    string = `<div class="w-100 row mt-10">
+      <div class="sent-message-preview">
+      <a class="w-100" target="_blank" href="${data.attributes.file_url}">
+        ${data.attributes.filename}
+      </a>`;
+  } else if (type === 'video') {
+    string += `<video controls class="w-200">
+      <source src="${data.attributes.file_url}"/>
+      </video><br />
+      <span>${text}</span><br /><br />`
+  }
+
+  if (lastOne && type !== 'pdf')
+    string = appendSelectionList(string, path, node)[0];
+
+  string += '</div></div>';
+  target.append(string);
+
+  return target;
+}
+
 function insertPreviewResponse(node, next_node) {
   if (node.attributes.option_type == 'form') {
-    return `<span>Cliente envía respuesta</span>`
+    return `<span>Cliente envía respuesta</span>`;
   } else {
-    return `<span>${next_node.attributes.position}</span>`
+    return `<span>${next_node.attributes.position}</span>`;
   }
 }
 
@@ -442,9 +510,17 @@ $(document).ready(function() {
     removeRepeatedItem(insertedItem, '#chat_bot_actions_failed', 'jump_to_option');
   });
 
+  $('#additional_bot_answers').on('cocoon:before-insert', function(e, insertedItem, originalEvent) {
+    const item = $(insertedItem);
+    const labelFor = item.find("input[type='file']").attr('id');
+
+    item.find('.label-for').attr('for', labelFor);
+  });
+
   showHideActions();
   showHideSublist();
   showAttemptInput();
+  initializeFileLabels();
 });
 
 function removeRepeatedItem(item, container, actionType) {
@@ -545,4 +621,79 @@ function showHideJumpOption(hideId, enableId) {
 function launchModal(input) {
   rootJumpOption = $(input).parent().parent();
   searchOptions('modal');
+}
+
+function previewAdditionalFile(input) {
+  if (input.files && input.files[0]) {
+    let item = $(input);
+    const closest = $(input).closest('.root-for-closest');
+    const type = fileType(input.files[0]);
+    let reader = new FileReader();
+
+    reader.onload = function (e) {
+      if (invalidAttachmentSize(input.files[0])) {
+        item.val('');
+        closest.find('.preview-img-container, .preview-pdf-container, .preview-video-container').hide();
+        closest.find('.preview-errors').show();
+      } else {
+        if (type === 'image') {
+          closest.find('.preview-pdf-container, .preview-video-container, .preview-errors').hide();
+          closest.find('.preview-img').attr('src', e.target.result);
+          closest.find('.preview-img-container').show();
+        } else if (type === 'pdf') {
+          closest.find('.preview-img-container, .preview-video-container, .preview-errors').hide();
+          closest.find('.preview-pdf span').html(input.files[0].name);
+          closest.find('.preview-pdf-container').show();
+        } else if (type === 'video') {
+          closest.find('.preview-img-container, .preview-pdf-container, .preview-errors').hide();
+          closest.find('.preview-video source').attr('src', URL.createObjectURL(input.files[0]));
+          closest.find('.preview-video').load();
+          closest.find('.preview-video-container').show();
+        }
+
+        closest.find('.current-additional-attach-container').hide();
+      }
+    }
+
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function fileType(file) {
+  if (['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)) {
+    return 'image';
+  } else if (file.type === 'application/pdf') {
+    return 'pdf';
+  } else if (['video/mp4', 'video/3gpp'].includes(file.type)) {
+    return 'video';
+  }
+}
+
+function removeAdditionalFile(input) {
+  const closest = $(input).closest('.root-for-closest');
+  let item = closest.find("input[type='file']");
+
+  item.val('');
+  closest.find('.preview-img-container, .preview-pdf-container, .preview-video-container').hide();
+  closest.find('.current-additional-attach-container').show();
+}
+
+function removeAdditionalAttachedFile(input) {
+  const closest = $(input).closest('.root-for-closest');
+  let item = closest.find("input[type='file']");
+
+  item.val('');
+  closest.find('.preview-img-container, .preview-pdf-container, .preview-video-container, .current-additional-attach-container').hide();
+  closest.find('.hidden-delete-file').val(true);
+}
+
+function initializeFileLabels() {
+  let item, labelFor;
+
+  document.querySelectorAll('.existing-answers-container').forEach(function(input) {
+    item = $(input);
+    labelFor = item.find("input[type='file']").attr('id');
+
+    item.find('.label-for').attr('for', labelFor);
+  });
 }
