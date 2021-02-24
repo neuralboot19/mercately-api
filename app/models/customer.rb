@@ -43,6 +43,7 @@ class Customer < ApplicationRecord
   before_save :calc_ws_notification_cost
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
+  after_save :format_mexican_numbers, if: -> { country_id == 'MX' }
   after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
   after_update :sync_hs, if: :hs_active?
@@ -538,5 +539,9 @@ class Customer < ApplicationRecord
       return if retailer.hs_access_token.blank?
 
       @hubspot = HubspotService::Api.new(retailer.hs_access_token)
+    end
+
+    def format_mexican_numbers
+      update_column(:phone, phone.insert(3, '1')) if phone[3] != '1'
     end
 end

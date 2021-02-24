@@ -87,6 +87,45 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
         }
       end
 
+      context 'when 52 mexican number' do
+        let(:gupshup_inbound_payload) do
+          {
+            'gupshup_whatsapp' => {
+              'app' => retailer.gupshup_src_name,
+              'timestamp' => 1589374987521,
+              'version' => 2,
+              'type' => 'message',
+              'payload' => {
+                'id' => 'ABEGWTmYN3BjAhBVDvUy9JyUgNNjdKvZWRFT',
+                'source' => '525599999999',
+                'type' => 'text',
+                'payload' => {
+                  'text' => 'Hi'
+                },
+                'sender' => {
+                  'phone' => '525599999999',
+                  'name' => 'bj',
+                  'country_code' => '52',
+                  'dial_code' => '5599999999'
+                }
+              }
+            }
+          }
+        end
+
+        it 'adds the 1 char' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(1)
+
+          expect(response.code).to eq('200')
+          expect(Customer.last.phone).to eq '+5215599999999'
+        end
+      end
+
       context 'when 521 mexican number' do
         let(:gupshup_inbound_payload) do
           {
@@ -113,7 +152,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
           }
         end
 
-        it 'removes the 1 char' do
+        it 'maintains the same number' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
 
           expect {
@@ -122,7 +161,21 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
           }.to change(Customer, :count).by(1)
 
           expect(response.code).to eq('200')
-          expect(Customer.last.phone).to eq '+525599999999'
+          expect(Customer.last.phone).to eq '+5215599999999'
+        end
+      end
+
+      context 'when not mexican number' do
+        it 'maintains the same number' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(1)
+
+          expect(response.code).to eq('200')
+          expect(Customer.last.phone).to eq '+593998377063'
         end
       end
 
