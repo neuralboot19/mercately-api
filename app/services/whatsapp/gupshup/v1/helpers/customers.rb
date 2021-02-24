@@ -8,6 +8,11 @@ module Whatsapp::Gupshup::V1::Helpers
         phone = params[:payload][:sender][:dial_code]
         country = parse_phone&.country
 
+        if country == 'MX'
+          phone_to_find[3] = '' if phone_to_find[3] == '1'
+          phone[0] = '' if phone[0] == '1'
+        end
+
         whatsapp_name = params['payload']['sender']['name']
       else
         phone_to_find = "+#{params[:payload][:destination]}"
