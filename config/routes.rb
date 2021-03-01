@@ -54,6 +54,9 @@ Rails.application.routes.draw do
         post 'whatsapp/send_notification_by_id', to: 'karix_whatsapp#create_by_id'
         get 'agents', to: 'retailer_users#index'
         get 'whatsapp_templates', to: 'whatsapp_templates#index'
+        get 'whatsapp_conversations', to: "whatsapp_conversations#whatsapp_conversations"
+
+        resources :customers, only: [:update]
       end
     end
 
