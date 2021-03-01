@@ -15,7 +15,7 @@ Documentation of agents resources
     + Headers
 
             Slug: test-connection
-            Api-Key: fba9709acd5f8c627a25a74076a0f420
+            Api-Key: 000611556b564bffc90159657ffea481
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
@@ -29,7 +29,7 @@ Documentation of agents resources
             {
               "agents": [
                 {
-                  "id": 10285,
+                  "id": 3475,
                   "first_name": "Agent",
                   "last_name": "Example",
                   "email": "agent@example.com",
@@ -53,7 +53,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 037ef676f81bca2b0ca5b69c5105d682
+            Api-Key: 3bfa35b122d94388b3caaba62c66b858
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -83,7 +83,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 32c5cb097b1a30c2a1c93bee987b2773
+            Api-Key: cc5b71cc1b09d697e5090218b66b89c0
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -113,7 +113,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: b4b246ca8306f59878d9b81096a9549e
+            Api-Key: f07cdd2e9d0604060e01af79342ed2fa
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -143,7 +143,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 6f2e1e9f18a6240d3fca740833b914b0
+            Api-Key: bf26c13b58bda5018cc5f98c2bade4b6
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -170,7 +170,7 @@ Documentation of notifications resources
                 "status": "submitted",
                 "destination": "+593999999999",
                 "country": "EC",
-                "created_time": "2021-02-18T15:22:41.637-04:00",
+                "created_time": "2021-03-01T12:04:46.095-04:00",
                 "error": null
               }
             }
@@ -181,13 +181,13 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 806b80a013f1c4539334f703b2b619c8
+            Api-Key: 088b3971c0e1406c56ffd35677a13a7d
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
     + Body
 
-            phone_number=%2B593999999999&internal_id=997dd550-c8d8-4bf7-ad98-a5ac4844a1ed&template_params[]=test+1&template_params[]=test+2&template_params[]=test+3&agent_id=10306
+            phone_number=%2B593999999999&internal_id=997dd550-c8d8-4bf7-ad98-a5ac4844a1ed&template_params[]=test+1&template_params[]=test+2&template_params[]=test+3&agent_id=3496
 
 + Response 200
 
@@ -208,7 +208,45 @@ Documentation of notifications resources
                 "status": "submitted",
                 "destination": "+593999999999",
                 "country": "EC",
-                "created_time": "2021-02-18T15:22:41.771-04:00",
+                "created_time": "2021-03-01T12:04:46.223-04:00",
+                "error": null
+              }
+            }
+
++ Request sends the notification, updating the customer info
+**POST**&nbsp;&nbsp;`/retailers/api/v1/whatsapp/send_notification_by_id`
+
+    + Headers
+
+            Slug: test-connection
+            Api-Key: 1feeea2b5ea280e0508e549181c7ef08
+            Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+            Content-Type: application/x-www-form-urlencoded
+
+    + Body
+
+            phone_number=%2B593999999999&internal_id=997dd550-c8d8-4bf7-ad98-a5ac4844a1ed&template_params[]=test+1&template_params[]=test+2&template_params[]=test+3&first_name=First+Name&last_name=Last+Name&email=email%40email.com&address=Customer+address&city=Customer+city&state=Customer+state&zip_code=12345&notes=Notes+related+to+the+customer
+
++ Response 200
+
+    + Headers
+
+            Content-Type: application/json; charset=utf-8
+
+    + Body
+
+            {
+              "message": "Ok",
+              "info": {
+                "channel": "whatsapp",
+                "content": {
+                  "text": "Your OTP for test 1 is test 2. This is valid for test 3."
+                },
+                "direction": "outbound",
+                "status": "submitted",
+                "destination": "+593999999999",
+                "country": "EC",
+                "created_time": "2021-03-01T12:04:46.313-04:00",
                 "error": null
               }
             }
@@ -228,7 +266,7 @@ Documentation of whatsapp templates resources
     + Headers
 
             Slug: test-connection
-            Api-Key: b1c9aaa439a6caf9274e84146f6cdd9d
+            Api-Key: e3fe14fb7573be3be8bdc31236d6a002
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
