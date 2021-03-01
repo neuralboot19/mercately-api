@@ -164,6 +164,9 @@ module Whatsapp::Gupshup::V1
         url = data[:file_url][0, index]
         url += '.aac'
 
+        fd_response = Faraday.get url
+        Rails.logger.info "GETTING #{url} and RESPONSE::: #{fd_response.status}"
+
         message = {
           'type': 'audio',
           'url': url
