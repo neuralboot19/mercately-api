@@ -2,15 +2,11 @@ class Retailers::HubspotController < RetailersController
   def index
     @hubspot_fields = current_retailer.hubspot_fields.not_taken.pluck(:hubspot_field, :id)
     @mapped_field_url = create_mapped_field_retailers_hubspot_index_path(current_retailer.slug)
-    @hubspot_field_tag = @hubspot_fields.dup
-    @field = current_retailer.customer_hubspot_fields.find_by(customer_field: 'tags')&.hubspot_field
-    @hubspot_field_tag.prepend([@field.hubspot_field, @field.id]) if @field
-    if current_retailer.hs_tags
-      @mapped_field_url = update_mapped_field_retailers_hubspot_index_path(current_retailer.slug, @field.id)
-    end
+    @tags = current_retailer.tags.pluck(:tag)
     @hs_integration_options = [['Sincronizar todos los contactos', true], ['Sincronizar solo contactos seleccionados', false]]
-    @hubspot_mapped_fields = current_retailer.customer_hubspot_fields.where.not(customer_field: 'tags').includes(:hubspot_field)
-    @customer_fields = Customer.public_fields + current_retailer.customer_related_fields.pluck(:name)
+    @hubspot_mapped_fields = current_retailer.customer_hubspot_fields.where(hs_tag: false).includes(:hubspot_field)
+    @hubspot_mapped_tags = current_retailer.customer_hubspot_fields.where(hs_tag: true).includes(:hubspot_field)
+    @customer_fields = Customer.public_fields + current_retailer.customer_related_fields.pluck(:identifier)
   end
 
   def create
@@ -41,6 +37,14 @@ class Retailers::HubspotController < RetailersController
     redirect_to retailers_hubspot_index_path(current_retailer), notice: 'Cambiadas las opciones de emparejamiento'
   end
 
+  def update_properties_list
+    hs_fields = current_retailer.hs_properties
+    current_retailer.hubspot_fields.where.not(hubspot_field: hs_fields).destroy_all
+    current_retailer.send :import_hubspot_properties
+
+    redirect_to retailers_hubspot_index_path(current_retailer), notice: 'Campos actualizados'
+  end
+
   def destroy
     customer_field = current_retailer.customer_hubspot_fields.find_by_id(params[:id])
     if customer_field.nil?
@@ -58,7 +62,8 @@ class Retailers::HubspotController < RetailersController
       params.require(:mapped_fields)
             .permit(
               :hubspot_field_id,
-              :customer_field
+              :customer_field,
+              :hs_tag
             ).merge(retailer_id: current_retailer.id)
     end
 end

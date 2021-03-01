@@ -16,7 +16,6 @@ ActiveAdmin.register Retailer do
                 :ws_conversation_cost,
                 :gupshup_phone_number,
                 :gupshup_src_name,
-                :hubspot_integrated,
                 :unlimited_account,
                 :ecu_charges,
                 :int_charges,
@@ -26,7 +25,8 @@ ActiveAdmin.register Retailer do
                 :show_stats,
                 :allow_voice_notes,
                 :show_calendar,
-                :allow_reminders
+                :allow_reminders,
+                :allow_send_videos
 
   filter :name
   filter :slug
@@ -98,7 +98,6 @@ ActiveAdmin.register Retailer do
       row :zip_code
       row :phone_number
       row :phone_verified
-      row :hubspot_integrated
       row :unlimited_account
       row :ecu_charges
       row :int_charges
@@ -108,6 +107,7 @@ ActiveAdmin.register Retailer do
       row :allow_voice_notes
       row :show_calendar
       row :allow_reminders
+      row :allow_send_videos
       row :created_at
       row :updated_at
     end
@@ -336,7 +336,6 @@ ActiveAdmin.register Retailer do
       f.input :zip_code
       f.input :phone_number
       f.input :show_calendar
-      f.input :hubspot_integrated
       f.input :unlimited_account
       f.input :whats_app_enabled
       f.input :karix_whatsapp_phone
@@ -355,6 +354,7 @@ ActiveAdmin.register Retailer do
       f.input :show_stats, label: 'Activar acceso total a estadísticas'
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
       f.input :allow_reminders, label: 'Permitir configurar recordatorios'
+      f.input :allow_send_videos, label: 'Permitir enviar videos'
     end
     f.actions
   end

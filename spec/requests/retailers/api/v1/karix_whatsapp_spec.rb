@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
+  include ApiDoc::V1::SendNotifications::Api
+
   describe 'POST #create' do
     context 'when Karix integrated' do
       let(:retailer) { create(:retailer, :karix_integrated) }
@@ -482,13 +484,47 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
           end
         end
       end
+    end
+  end
+
+  describe 'POST #create_by_id' do
+    include ApiDoc::V1::SendNotifications::CreateById
+
+    context 'when GupShup integrated' do
+      let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 10, name: 'Test Connection') }
+      let(:retailer_user) { create(:retailer_user, retailer: retailer, email: 'retailer@example.com') }
+      let!(:customer) { create(:customer, retailer: retailer, phone: '+584149999999') }
+
+      # Generating credentials for the retailer
+      let(:slug) { retailer_user.retailer.slug }
+      let(:api_key) { retailer_user.retailer.generate_api_key }
+
+      let(:gupshup_successful_response) do
+        {
+          code: '200',
+          body: {
+            status: 'submitted',
+            messageId: 'ee4a68a0-1203-4c85-8dc3-49d0b3226a35'
+          }
+        }.with_indifferent_access
+      end
+
+      let(:gupshup_error_response) do
+        {
+          code: '401',
+          body: {
+            status: 'submitted',
+            messageId: 'ee4a68a0-1203-4c85-8dc3-49d0b3226a35'
+          }
+        }.with_indifferent_access
+      end
 
       context 'when sending by template ID' do
         context 'when all the parameters are not sent' do
-          it 'responses a 400 error' do
+          it 'returns 400 - Bad Request', :dox do
             post '/retailers/api/v1/whatsapp/send_notification_by_id',
             params: {
-              phone_number: '+584149999999'
+              phone_number: '+593999999999'
             },
             headers: {
               'Slug': slug,
@@ -498,16 +534,16 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
             expect(response.code).to eq('400')
 
             body = JSON.parse(response.body)
-            expect(body['message']).to eq('Error: Missing phone number and/or gupshup_template_id')
+            expect(body['message']).to eq('Error: Missing phone number and/or internal_id')
           end
         end
 
         context 'when template ID sent is not found' do
-          it 'responses a 404 error' do
+          it 'returns 404 - Not Found', :dox do
             post '/retailers/api/v1/whatsapp/send_notification_by_id',
             params: {
-              phone_number: '+584149999999',
-              gupshup_template_id: 'xxxxxxxxxxxxxxx'
+              phone_number: '+593999999999',
+              internal_id: 'xxxxxxxxxxxxxxx'
             },
             headers: {
               'Slug': slug,
@@ -528,11 +564,11 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                 '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed', text: 'Your OTP for * is *. This is valid for *.')
             end
 
-            it 'responses a 400 error' do
+            it 'returns 400 - Bad Request', :dox do
               post '/retailers/api/v1/whatsapp/send_notification_by_id',
               params: {
-                phone_number: '+584149999999',
-                gupshup_template_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                phone_number: '+593999999999',
+                internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
                 template_params: ['test 1', 'test 2']
               },
               headers: {
@@ -566,7 +602,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
               post '/retailers/api/v1/whatsapp/send_notification_by_id',
               params: {
                 phone_number: '+584149999999',
-                gupshup_template_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed'
+                internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed'
               },
               headers: {
                 'Slug': slug,
@@ -596,11 +632,11 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
               .and_return(service_response)
           end
 
-          it 'responses a 200 success' do
+          it 'sends the notification', :dox do
             post '/retailers/api/v1/whatsapp/send_notification_by_id',
               params: {
-                phone_number: '+584149999999',
-                gupshup_template_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                phone_number: '+593999999999',
+                internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
                 template_params: ['test 1', 'test 2', 'test 3']
               },
               headers: {
@@ -613,6 +649,105 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
               body = JSON.parse(response.body)
               expect(body['message']).to eq('Ok')
               expect(body['info']['status']).to eq('submitted')
+          end
+
+          context 'when an agent id is sent' do
+            let(:agent) { create(:retailer_user, retailer: retailer) }
+
+            it 'sends the notification, assigning the customer to the agent', :dox do
+              expect {
+                post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                  params: {
+                    phone_number: '+593999999999',
+                    internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                    template_params: ['test 1', 'test 2', 'test 3'],
+                    agent_id: agent.id
+                  },
+                  headers: {
+                    'Slug': slug,
+                    'Api-Key': api_key
+                  }
+                }.to change{ AgentCustomer.count }.by(1)
+
+                expect(response.code).to eq('200')
+
+                body = JSON.parse(response.body)
+                expect(body['message']).to eq('Ok')
+                expect(body['info']['status']).to eq('submitted')
+            end
+          end
+
+          context 'when customer attributes are sent' do
+            let(:agent) { create(:retailer_user, retailer: retailer) }
+
+            it 'sends the notification, updating the customer info', :dox do
+              post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                params: {
+                  phone_number: '+593999999999',
+                  internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                  template_params: ['test 1', 'test 2', 'test 3'],
+                  first_name: 'First Name',
+                  last_name: 'Last Name',
+                  email: 'email@email.com',
+                  address: 'Customer address',
+                  city: 'Customer city',
+                  state: 'Customer state',
+                  zip_code: '12345',
+                  notes: 'Notes related to the customer',
+                },
+                headers: {
+                  'Slug': slug,
+                  'Api-Key': api_key
+                }
+
+                expect(response.code).to eq('200')
+
+                body = JSON.parse(response.body)
+                expect(body['message']).to eq('Ok')
+                expect(body['info']['status']).to eq('submitted')
+
+                customer = Customer.last
+                expect(customer.first_name).to eq('First Name')
+                expect(customer.last_name).to eq('Last Name')
+                expect(customer.email).to eq('email@email.com')
+            end
+
+            context 'when some customer attribute is empty/nil' do
+              let!(:customer) do
+                create(:customer, retailer: retailer, first_name: 'Test', notes: 'Test', phone: '+593999999999')
+              end
+
+              it 'does not update that specific attribute' do
+                post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                params: {
+                  phone_number: '+593999999999',
+                  internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                  template_params: ['test 1', 'test 2', 'test 3'],
+                  last_name: 'Last Name',
+                  email: 'email@email.com',
+                  address: 'Customer address',
+                  city: 'Customer city',
+                  state: 'Customer state',
+                  zip_code: '12345',
+                  notes: '',
+                },
+                headers: {
+                  'Slug': slug,
+                  'Api-Key': api_key
+                }
+
+                expect(response.code).to eq('200')
+
+                body = JSON.parse(response.body)
+                expect(body['message']).to eq('Ok')
+                expect(body['info']['status']).to eq('submitted')
+
+                customer = Customer.last
+                expect(customer.first_name).to eq('Test')
+                expect(customer.last_name).to eq('Last Name')
+                expect(customer.notes).to eq('Test')
+              end
+            end
           end
         end
       end

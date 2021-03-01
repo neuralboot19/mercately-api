@@ -6,9 +6,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
   let(:retailer_gupshup) { create(:retailer, :gupshup_integrated) }
   let(:retailer_user_gupshup) { create(:retailer_user, :admin, retailer: retailer_gupshup) }
 
-  let(:customer1) { create(:customer, retailer: retailer) }
-  let(:customer2) { create(:customer, retailer: retailer) }
-  let(:customer3) { create(:customer, retailer: retailer_gupshup) }
+  let(:customer1) { create(:customer, retailer: retailer, first_name: 'Pedro', last_name: 'Perez') }
+  let(:customer2) { create(:customer, retailer: retailer, first_name: 'Jane', last_name: 'Doe') }
+  let(:customer3) { create(:customer, retailer: retailer_gupshup, first_name: 'Carlos', last_name: 'Gil') }
 
   before do
     # Whatsapp messages for customer1 and customer2

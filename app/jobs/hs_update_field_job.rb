@@ -10,8 +10,18 @@ class HsUpdateFieldJob < ApplicationJob
         hubspot.contact_update(c.hs_id, "#{@chf.hubspot_field.hubspot_field}": c.send(customer_field))
         sleep 0.1
       end
-    elsif CustomerRelatedField.find_by(retailer: @retailer, name: customer_field)
-      crf = CustomerRelatedField.find_by(retailer: @retailer, name: customer_field)
+    elsif @chf.hs_tag
+      @retailer.customers.includes(:tags).where(hs_active: true, tags: { tag: customer_field }).where.not(hs_id: nil).find_each do |c|
+        hs_tag_fields = @retailer.customer_hubspot_fields.where(hs_tag: true, customer_field: customer_field)
+        params = {}
+        hs_tag_fields.each do |hs_tag_field|
+          params[hs_tag_field.hubspot_field.hubspot_field] = customer_field
+        end
+        hubspot.contact_update(c.hs_id, params)
+        sleep 0.1
+      end
+    elsif CustomerRelatedField.find_by(retailer: @retailer, identifier: customer_field)
+      crf = CustomerRelatedField.find_by(retailer: @retailer, identifier: customer_field)
       @retailer.customers.where(hs_active: true).where.not(hs_id: nil).find_each do |c|
         crf.customer_related_data.where(customer: c).each do |crd|
           hubspot.contact_update(c.hs_id, "#{@chf.hubspot_field.hubspot_field}": crd.data)

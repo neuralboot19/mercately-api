@@ -2,8 +2,8 @@ class CustomerTag < ApplicationRecord
   belongs_to :tag
   belongs_to :customer
 
-  after_commit :sync_tags
-  after_destroy :sync_tags
+  after_commit :sync_tags, on: :create
+  after_commit :remove_hs_value, on: :destroy
 
   private
 
@@ -11,10 +11,33 @@ class CustomerTag < ApplicationRecord
       return unless customer.retailer.hs_tags
       return if hubspot.nil? || customer.retailer.hs_access_token.blank?
 
-      hs_tag_field = customer.retailer.customer_hubspot_fields.find_by(customer_field: 'tags')
+      hs_tag_fields = customer.retailer.customer_hubspot_fields.where(hs_tag: true, customer_field: tag.tag)
+      params = {}
+      hs_tag_fields.each do |hs_tag_field|
+        params[hs_tag_field.hubspot_field.hubspot_field] = tag.tag
+      end
       hubspot.contact_update(
         customer.hs_id,
-        "#{hs_tag_field.hubspot_field.hubspot_field}": customer.tags.pluck(:tag).join(', ')
+        params
+      )
+    end
+
+    def remove_hs_value
+      return unless customer.retailer.hs_tags
+      return if hubspot.nil? || customer.retailer.hs_access_token.blank?
+
+      hs_tag_fields = customer.retailer.customer_hubspot_fields.where(hs_tag: true, customer_field: tag.tag)
+      params = {}
+      hs_tag_fields.each do |hs_tag_field|
+        next if hs_tag_field.hubspot_field.hubspot_field.blank?
+
+        params[hs_tag_field.hubspot_field.hubspot_field] = ''.freeze
+      end
+      return if params.empty?
+
+      hubspot.contact_update(
+        customer.hs_id,
+        params
       )
     end
 

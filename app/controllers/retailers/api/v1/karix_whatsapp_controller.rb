@@ -22,7 +22,7 @@ module Retailers::Api::V1
     end
 
     def create_by_id
-      set_response(400, 'Error: Missing phone number and/or gupshup_template_id') and
+      set_response(400, 'Error: Missing phone number and/or internal_id') and
         return unless template_params_complete?
 
       template = find_template
@@ -35,6 +35,7 @@ module Retailers::Api::V1
 
       params[:template] = true
       params[:message] = template.template_text(params)
+      params[:gupshup_template_id] = params[:internal_id].strip
 
       integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
       self.send("send_#{integration}_notification", params)
@@ -54,9 +55,12 @@ module Retailers::Api::V1
         message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
         message.save
 
-        agent = message.customer.agent
+        customer = message.customer
+        assign_agent(customer, params)
+
+        agent = customer.agent
         agents = agent.present? ? [agent] : current_retailer.retailer_users.all_customers.to_a
-        karix_helper.broadcast_data(current_retailer, agents, message, message.customer.agent_customer)
+        karix_helper.broadcast_data(current_retailer, agents, message, customer.agent_customer)
         set_response(200, 'Ok', format_response(response['objects'][0]))
       end
 
@@ -64,6 +68,8 @@ module Retailers::Api::V1
         customer = find_customer(params[:phone_number].strip)
         set_response(500, 'Error', { message: 'No fue posible verificar el número de destino' }.to_json) &&
           return unless customer&.whatsapp_opt_in
+
+        assign_agent(customer, params)
 
         gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, customer)
         type = true?(params[:template]) ? 'template' : 'text'
@@ -113,11 +119,15 @@ module Retailers::Api::V1
       def find_customer(phone_number)
         phone = phone_number[0] != '+' ? "+#{phone_number}" : phone_number
         customer = current_retailer.customers.find_or_initialize_by(phone: phone)
-        if customer.new_record?
-          customer.first_name = params[:first_name]
-          customer.last_name = params[:last_name]
-          customer.email = params[:email]
-        end
+
+        customer.first_name = params[:first_name] if params[:first_name].present?
+        customer.last_name = params[:last_name] if params[:last_name].present?
+        customer.email = params[:email] if params[:email].present?
+        customer.address = params[:address] if params[:address].present?
+        customer.city = params[:city] if params[:city].present?
+        customer.state = params[:state] if params[:state].present?
+        customer.zip_code = params[:zip_code] if params[:zip_code].present?
+        customer.notes = params[:notes] if params[:notes].present?
 
         if customer.country_id.blank?
           parse_phone = Phonelib.parse(customer.phone)
@@ -131,11 +141,22 @@ module Retailers::Api::V1
       end
 
       def template_params_complete?
-        params[:phone_number].present? && params[:gupshup_template_id].present?
+        params[:phone_number].present? && params[:internal_id].present?
       end
 
       def find_template
-        current_retailer.whatsapp_templates.find_by(gupshup_template_id: params[:gupshup_template_id].strip)
+        current_retailer.whatsapp_templates.find_by(gupshup_template_id: params[:internal_id].strip)
+      end
+
+      def assign_agent(customer, params)
+        return unless customer.present? && params[:agent_id].present?
+
+        agent = current_retailer.retailer_users.find_by_id(params[:agent_id])
+        return unless agent.present?
+
+        assigned_agent = AgentCustomer.find_or_initialize_by(customer_id: customer.id)
+        assigned_agent.retailer_user_id = agent.id
+        assigned_agent.save
       end
   end
 end

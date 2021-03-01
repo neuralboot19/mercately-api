@@ -164,6 +164,9 @@ module Whatsapp::Gupshup::V1
         url = data[:file_url][0, index]
         url += '.aac'
 
+        fd_response = Faraday.get url
+        Rails.logger.info "GETTING #{url} and RESPONSE::: #{fd_response.status}"
+
         message = {
           'type': 'audio',
           'url': url
@@ -176,13 +179,13 @@ module Whatsapp::Gupshup::V1
       end
 
       # Send Video
-      def video
-        raise StandardError.new('Faltaron parámetros') unless @options[:video_url].present?
+      def video(data)
+        raise StandardError.new('Faltaron parámetros') unless data[:file_url].present?
 
         message = {
           'type': 'video',
-          'url': @options[:video_url],
-          'caption': ''
+          'url': data[:file_url],
+          'caption': data[:file_caption]
         }.to_json
 
         bodyString = base_body
@@ -283,6 +286,8 @@ module Whatsapp::Gupshup::V1
 
       def get_resource_from_content_type(content_type)
         return 'image' if content_type.include?('image')
+        return 'video' if content_type.include?('video')
+
         'document' if ['application/pdf', 'application/msword',
           'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
       end

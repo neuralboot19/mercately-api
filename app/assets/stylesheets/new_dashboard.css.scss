@@ -997,7 +997,8 @@
   position: absolute;
   top: 0;
   right: 0;
-  color: #AAA;
+  color: #FF0000;
+  z-index: 100;
 
   &:hover {
     color: $secondary-color;

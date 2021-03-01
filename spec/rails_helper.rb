@@ -13,6 +13,7 @@ require File.expand_path('../config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort('The Rails environment is running in production mode!') if Rails.env.production?
 require 'rspec/rails'
+require 'dox'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -39,6 +40,9 @@ rescue ActiveRecord::PendingMigrationError => e
   puts e.to_s.strip
   exit 1
 end
+
+Dir[Rails.root.join("spec/api_doc/v1/**/*.rb")].each { |f| require f }
+
 RSpec.configure do |config|
   config.include(Shoulda::Matchers::ActiveModel, type: :model)
   config.include(Shoulda::Matchers::ActiveRecord, type: :model)
@@ -76,6 +80,11 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.after(:each, :dox) do |example|
+    example.metadata[:request] = request
+    example.metadata[:response] = response
+  end
 end
 
 Shoulda::Matchers.configure do |config|
@@ -98,4 +107,8 @@ end
 
 FactoryBot::SyntaxRunner.class_eval do
   include ActionDispatch::TestProcess
+end
+
+Dox.configure do |config|
+  config.headers_whitelist = ['Slug', 'Api-Key']
 end

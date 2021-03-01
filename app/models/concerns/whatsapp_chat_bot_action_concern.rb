@@ -87,13 +87,22 @@ module WhatsappChatBotActionConcern
       update_customer_flow
       # Se ejecutan las acciones de la opcion que retorna el metodo option_to_execute
       execute_actions(exec_option)
+
+      # Si la opcion seleccionada es de Formulario, y esta configurada para saltarse si tiene contenido,
+      # y no se ha saltado a ninguna otra opcion en las acciones, entonces se chequea si tiene contenido
+      # o no, para saber si mandarla o iniciar la recursividad para buscar la siguiente.
+      if skip_this_action?(@selected)
+        manage_skip_option(@selected)
+        return
+      end
+
       # Mandamos el mensaje con el contenido de la opcion seleccionada (@selected)
       send_answer(@selected) unless @sent_in_action
     end
 
     # Se encarga de enviar los mensajes de GupShup.
     def send_gupshup_notification(params)
-      return unless params[:message].present?
+      return unless params[:message].present? || params[:url].present?
 
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(retailer, customer)
       gws.send_message(type: params[:type], params: params)
@@ -153,6 +162,9 @@ module WhatsappChatBotActionConcern
         type: 'text'
       }
 
+      # Se revisa el texto a enviar, por si tiene variables, sustituirlas por el valor real
+      params[:message] = replace_message_variables(params[:message])
+
       if chat_bot_option.file.attached?
         # For pdf attachments, send caption in another message
         aux_url = chat_bot_option.file_url
@@ -196,14 +208,14 @@ module WhatsappChatBotActionConcern
     def check_chat_bot_history(chat_bot)
       return false unless chat_bot.present?
 
-      interactions = customer.chat_bot_customers.where(chat_bot_id: chat_bot.id)
+      last_interaction = customer.chat_bot_customers.where(chat_bot_id: chat_bot.id).order(id: :desc).first
 
       # Si ya el customer ha interactuado con el chatbot seleccionado.
-      if interactions.present?
+      if last_interaction.present?
         # Si la reactivacion del bot esta activa y ya ha transcurrido el tiempo establecido desde la
         # ultima vez que el customer escribio, o el agente seteo manualmente que se le activen los bots
         # al customer, entonces el bot se le activara, de otro modo no.
-        if time_to_reactivate?(interactions, chat_bot) || customer.allow_start_bots
+        if time_to_reactivate?(last_interaction, chat_bot) || customer.allow_start_bots
           customer.chat_bot_customers.create(chat_bot_id: chat_bot.id)
           return true
         else
@@ -297,6 +309,8 @@ module WhatsappChatBotActionConcern
           execute_callback(act, chat_bot_option)
         when 'repeat_endpoint_option'
           repeat_option
+        when 'jump_to_option'
+          jump_to_chat_bot_option(act)
         end
       end
     end
@@ -339,6 +353,13 @@ module WhatsappChatBotActionConcern
 
       # Se busca el abuelo de la opcion actual, que es donde en verdad retornara.
       second_parent = first_parent.parent
+
+      # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
+      if skip_this_action?(second_parent)
+        manage_skip_option(second_parent)
+        return
+      end
+
       customer.update(chat_bot_option_id: second_parent.id, failed_bot_attempts: 0)
       @sent_in_action = true
       send_answer(second_parent)
@@ -347,6 +368,13 @@ module WhatsappChatBotActionConcern
     # Reinicia el chatbot nuevamente. Lo manda al principio, a la opcion raiz.
     def restart_bot
       root = customer.chat_bot_option.root
+
+      # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
+      if skip_this_action?(root)
+        manage_skip_option(root)
+        return
+      end
+
       customer.update(chat_bot_option_id: root.id, failed_bot_attempts: 0)
       @sent_in_action = true
       send_answer(root)
@@ -358,7 +386,13 @@ module WhatsappChatBotActionConcern
 
       # Decide si guadar la opcion seleccionada de una sublista u opcion dinamica, o
       # el texto enviado por el customer.
-      value_to_save = @selected_value.presence || @text.strip
+
+      option = action.chat_bot_option
+      value_to_save = if option.option_type == 'decision'
+                        option.text
+                      else
+                        @selected_value.presence || @text.strip
+                      end
 
       # Si la accion tiene asociado un campo dinamico donde se va a guardar la informacion
       # entonces se crea o se actualiza el registro de dicho campo asoaciado al customer.
@@ -428,16 +462,41 @@ module WhatsappChatBotActionConcern
       send_answer(@current_option)
     end
 
+    # Hace saltar al bot a una opcion especifica para que continue desde alli.
+    # Primero chequea si la opcion actual tiene contenido para mandar el mensaje.
+    # De tener, envia el mensaje y luego envia el de la opcion a donde se salta.
+    def jump_to_chat_bot_option(action)
+      jump_option = action.jump_option
+      return unless jump_option.present?
+
+      option = action.chat_bot_option
+
+      if send_option_on_jump?(option)
+        send_answer(option)
+        sleep 5 if option.file.attached?
+      end
+
+      # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
+      if skip_this_action?(jump_option)
+        manage_skip_option(jump_option)
+        return
+      end
+
+      customer.update(chat_bot_option_id: jump_option.id, failed_bot_attempts: 0)
+      @sent_in_action = true
+      send_answer(jump_option)
+    end
+
     def api
       Whatsapp::Karix::Api.new
     end
 
     # En caso de que el bot tenga reactivacion, calcula si ya paso el tiempo desde la ultima vez
     # que el customer escribio, para saber si volver a activar el bot o no.
-    def time_to_reactivate?(interactions, chat_bot)
+    def time_to_reactivate?(last_interaction, chat_bot)
       return false unless chat_bot.reactivate_after.present?
 
-      if ((created_at - interactions.last.created_at) / 3600).to_i >= chat_bot.reactivate_after
+      if ((created_at - last_interaction.created_at) / 3600).to_i >= chat_bot.reactivate_after
         # Si el customer tenia un bot activo, lo desactiva, ya que paso el tiempo de reactivacion
         # y se le debe activar de nuevo desde el inicio.
         customer.deactivate_chat_bot!
@@ -658,5 +717,86 @@ module WhatsappChatBotActionConcern
       customer.deactivate_chat_bot!
       send_answer(@current_option, false, true)
       true
+    end
+
+    # Busca las variables en el texto del mensaje, y las reemplaza con el valor real.
+    def replace_message_variables(message)
+      return message unless message.include?('{{')
+
+      ocurrences = message.scan('{{').size
+
+      (1..ocurrences).each do
+        text = message[/\{{.*?\}}/]
+        text = text.gsub('{{', '')
+        text = text.gsub('}}', '')
+        message[/\{{.*?\}}/] = search_variable_value(text)
+      end
+
+      message
+    end
+
+    # Define el valor a setear en la variable. Lo tomara de un campo de la tabla customers,
+    # o sera tomado de un campo dinamico del customer.
+    def search_variable_value(value, from = 'variable')
+      value = value.strip
+      columns = Customer.column_names
+      # Buscamos si hay algun campo dinamico que coincida con el valor del dato.
+      related = retailer.customer_related_fields.find_by_identifier(value)
+
+      # Si lo hay, tomamos el valor de alli.
+      if related.present?
+        customer.customer_related_data.find_by(customer_related_field_id: related.id)&.data.presence || ''
+      elsif columns.include?(value)
+        # Sino hay campo dinamico, pero si hay coincidencia con algun campo de la tabla customers, se toma
+        customer.send(value)
+      else
+        # Sino coincide ninguno de los anteriores, entonces tomamos el valor tal cual esta si es que viene
+        # el llamado para sustituir una variable, sino, si viene de chequear el contenido, devolvemos nil.
+        from == 'variable' ? value : nil
+      end
+    end
+
+    # Chequea si enviar o no el mensaje de la opcion que ejecuta la accion de saltar a otra opcion
+    # es decir, de la opcion origen, antes de que haga dicho salto, y por ende antes de que mande
+    # el mensaje de la opcion a la que se salta (opcion destino).
+    def send_option_on_jump?(option)
+      option.option_type == 'decision' && (option.answer.present? || option.file.attached?)
+    end
+
+    # Hace una recursividad para buscar la proxima opcion que no tenga en true el atributo
+    # que dice que se debe saltar a la siguiente opcion si esta ya tiene informacion guardada.
+    # Y de encontrarla la envia y actualiza el flujo del customer/chat.
+    def manage_skip_option(option)
+      unless option.present?
+        customer.deactivate_chat_bot!
+        return
+      end
+
+      # Si la opcion es de decision, o no esta seteada para saltar, o si esta seteada para saltar pero
+      # no tiene valor, entonces entra en esa y manda el mensaje y actualiza el customer/chat.
+      if option.option_type == 'decision' || option.skip_option == false || not_existing_option_content?(option)
+        customer.update(chat_bot_option_id: option.id, failed_bot_attempts: 0)
+        @sent_in_action = true
+        send_answer(option)
+        return
+      else
+        manage_skip_option(option.children.active.first)
+      end
+    end
+
+    # Chequea si el campo solicitado en la accion que se desea ignorar, tiene valor o no
+    # De tener, retorna false, lo que hace que siga la recursividad buscando la siguiente
+    # opcion. Si no tiene, retorna true, finalizando la recursividad.
+    def not_existing_option_content?(option)
+      action = option.save_data_action_complete
+      return true unless action.present?
+
+      value = action.target_field.presence || action.customer_related_field&.identifier
+      search_variable_value(value, 'content').blank?
+    end
+
+    # Revisa si la opcion enviada en parametros esta configurada para saltarse.
+    def skip_this_action?(option)
+      option&.option_type == 'form' && option&.skip_option && @sent_in_action.blank?
     end
 end

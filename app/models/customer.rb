@@ -23,7 +23,7 @@ class Customer < ApplicationRecord
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :gupshup_whatsapp_messages, dependent: :destroy
   has_many :customer_tags, dependent: :destroy
-  has_many :tags, through: :customer_tags
+  has_many :tags, through: :customer_tags, dependent: :destroy
   has_many :chat_bot_customers, dependent: :destroy
   has_many :chat_bots, through: :chat_bot_customers
   has_many :customer_bot_options, dependent: :destroy
@@ -43,6 +43,7 @@ class Customer < ApplicationRecord
   before_save :calc_ws_notification_cost
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
+  after_save :format_mexican_numbers, if: -> { country_id == 'MX' }
   after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
   after_update :sync_hs, if: :hs_active?
@@ -502,7 +503,7 @@ class Customer < ApplicationRecord
       end
       params['email'] = email
       hs_contact = hubspot.contact_create(params)
-      update(hs_id: hs_contact['id'])
+      update_column(:hs_id, hs_contact['id'])
     end
 
     def sync_hs
@@ -512,17 +513,17 @@ class Customer < ApplicationRecord
           hs_c = hubspot.search(phone: phone) if hs_c.blank?
           return create_hs_customer if hs_c.blank?
 
-          update hs_id: hs_c['id']
+          update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_phone?
           hs_c = hubspot.search(phone: phone)
           return create_hs_customer if hs_c.blank?
 
-          update hs_id: hs_c['id']
+          update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_email?
           hs_c = hubspot.search(email: email)
           return create_hs_customer if hs_c.blank?
 
-          update hs_id: hs_c['id']
+          update_column(:hs_id, hs_c['id'])
         end
       end
 
@@ -538,5 +539,9 @@ class Customer < ApplicationRecord
       return if retailer.hs_access_token.blank?
 
       @hubspot = HubspotService::Api.new(retailer.hs_access_token)
+    end
+
+    def format_mexican_numbers
+      update_column(:phone, phone.insert(3, '1')) if phone[3] != '1'
     end
 end
