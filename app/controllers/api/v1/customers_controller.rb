@@ -200,8 +200,10 @@ class Api::V1::CustomersController < Api::ApiController
 
     def sanitize_params
       params[:customer].each_pair do |param|
-        params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish if
-          params[:customer][param.first]
+        if params[:customer][param.first]
+          next if param.first == 'notes' # Don't remove \n
+          params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish
+        end
       end
     end
 
