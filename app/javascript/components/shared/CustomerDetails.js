@@ -48,9 +48,16 @@ class CustomerDetails extends Component {
     this.setState({customer: current_customer});
   }
 
+  handleEnter = (e) => {
+    if (e.keyCode === 13 && !e.shiftKey) {
+      e.preventDefault();
+      e.target.blur();
+    }
+  }
+
   handlesubmit = () => {
-    let customer = this.state.customer
-    this.props.updateCustomer(customer.id, this.getCustomerInfo() , csrfToken)
+    let { customer } = this.state;
+    this.props.updateCustomer(customer.id, this.getCustomerInfo(), csrfToken);
   }
 
   handleSelectChange = (option) => {
@@ -123,9 +130,9 @@ class CustomerDetails extends Component {
   }
 
   render() {
-    let customer = this.state.customer
+    let { customer } = this.state;
     return (
-      <div className={this.props.onMobile ? "customer_sidebar no-border-left" : "customer_sidebar" }>
+      <div className={this.props.onMobile ? "customer_sidebar no-border-left" : "customer_sidebar"}>
         {this.props.onMobile && (
           <div className="c-secondary fs-15 mt-12" onClick={() => this.props.backToChatMessages()}>
             <i className="fas fa-chevron-left c-secondary"></i>&nbsp;&nbsp;volver
@@ -281,17 +288,16 @@ class CustomerDetails extends Component {
           </div>
 
           <div>
-            <EditableField
-              handleInputChange={this.handleInputChange}
-              content={this.state.customer.notes}
-              handlesubmit={this.handlesubmit}
-              targetName='notes'
+            <textarea
+              onKeyDown={this.handleEnter}
+              onChange={(e) => this.handleInputChange(e, 'notes')}
+              name="notes"
+              className="editable-notes"
+              onBlur={this.handlesubmit}
               placeholder="Notas"
-              givenClass='editable-notes'
+              value={customer.notes}
             />
           </div>
-
-
         </div>
 
         <div className="t-center mt-20">

@@ -119,18 +119,30 @@ module Retailers::Api::V1
       def find_customer(phone_number)
         phone = phone_number[0] != '+' ? "+#{phone_number}" : phone_number
         customer = current_retailer.customers.find_or_initialize_by(phone: phone)
-        if customer.new_record?
-          customer.first_name = params[:first_name]
-          customer.last_name = params[:last_name]
-          customer.email = params[:email]
+
+        country_id = customer.country_id
+        if country_id.blank?
+          parse_phone = Phonelib.parse(customer.phone)
+          country_id = parse_phone&.country
         end
 
-        if customer.country_id.blank?
-          parse_phone = Phonelib.parse(customer.phone)
-          customer.country_id = parse_phone&.country
+        if customer.new_record? && country_id == 'MX' && phone[3] != '1'
+          phone = phone.insert(3, '1')
+          customer = current_retailer.customers.find_or_initialize_by(phone: phone)
         end
+
+        customer.country_id = country_id
+        customer.first_name = params[:first_name] if params[:first_name].present?
+        customer.last_name = params[:last_name] if params[:last_name].present?
+        customer.email = params[:email] if params[:email].present?
+        customer.address = params[:address] if params[:address].present?
+        customer.city = params[:city] if params[:city].present?
+        customer.state = params[:state] if params[:state].present?
+        customer.zip_code = params[:zip_code] if params[:zip_code].present?
+        customer.notes = params[:notes] if params[:notes].present?
 
         customer.send_for_opt_in = true
+        customer.from_api = true
         customer.save
 
         customer

@@ -151,8 +151,9 @@ module Whatsapp
       # Si tiene sublista, entonces se basa en ella.
       # Si es dinamica, toma las opciones de la respuesta del endpoint.
       # Sino es ninguna de las dos, toma solo la respuesta de la opcion.
+      # Si es formulario, carga las opciones solo si no tiene respuestas adicionales la opcion.
       def build_message(chat_bot_option, customer, message)
-        if chat_bot_option.has_sub_list?
+        if chat_bot_option.has_sub_list? && chat_bot_option.has_additional_answers_filled? == false
           prepare_option_sub_list(chat_bot_option, message)
         elsif chat_bot_option.is_auto_generated?
           prepare_dynamic_sub_list(customer)
@@ -208,9 +209,12 @@ module Whatsapp
           # Toma la respuesta de la opcion.
           message += get_option_answer(chat_bot_option, false)
 
-          # Solo muestra las opciones hijas activas
+          # Solo muestra las opciones hijas activas.
+          # Carga las opciones solo si no tiene respuestas adicionales la opcion.
           children = chat_bot_option.children.active
-          if chat_bot_option.jump_to_option? == false && children.present?
+          if chat_bot_option.jump_to_option? == false && children.present? &&
+            chat_bot_option.has_additional_answers_filled? == false
+
             message += "\n\n"
             children_size = children.size - 1
 

@@ -105,11 +105,14 @@
                               <div id="preview-chat-bot-option-error-msg" class="p-relative d-none">
                                 <span class="c-red fs-14"> La imagen o PDF deben tener un tamaño menor a 5MB</span><br/>
                                 <% if current_retailer.allow_send_videos %>
-                                  <span class="c-red fs-14"> El video debe tener un tamaño menor a 12MB</span>
+                                  <span class="c-red fs-14"> El video debe tener un tamaño menor a 14MB</span>
                                 <% end %>
                               </div>
                             </div>
                           </div>
+                          <% if current_retailer.allow_multiple_answers %>
+                            <%= render partial: 'additional_bot_answers', locals: { f: cbo } %>
+                          <% end %>
                           <%= render partial: 'chat_bot_actions', locals: { chat_bot: @chat_bot, f: cbo } %>
                           <div id="sublist-option-container">
                             <%= render partial: 'option_sub_lists', locals: { f: cbo } %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_17_173501) do
+ActiveRecord::Schema.define(version: 2021_02_19_165437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,14 @@ ActiveRecord::Schema.define(version: 2021_02_17_173501) do
     t.string "checksum", null: false
     t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "additional_bot_answers", force: :cascade do |t|
+    t.bigint "chat_bot_option_id"
+    t.string "text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_bot_option_id"], name: "index_additional_bot_answers_on_chat_bot_option_id"
   end
 
   create_table "admin_users", force: :cascade do |t|
@@ -853,6 +861,7 @@ ActiveRecord::Schema.define(version: 2021_02_17_173501) do
     t.boolean "all_customers_hs_integrated", default: true
     t.boolean "hs_tags", default: false
     t.boolean "allow_send_videos", default: false
+    t.boolean "allow_multiple_answers", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

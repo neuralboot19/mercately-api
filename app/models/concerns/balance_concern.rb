@@ -39,9 +39,13 @@ module BalanceConcern
       retailer.ws_balance -= amount
 
       if retailer.ws_balance <= retailer.ws_next_notification_balance &&
+         retailer.ws_next_notification_balance > 0 &&
+         ((cost.to_f > 0 && self.class == GupshupWhatsappMessage) || self.class == KarixWhatsappMessage)
+        will_send_notification = true
+      end
+      if retailer.ws_balance <= retailer.ws_next_notification_balance &&
          retailer.ws_next_notification_balance > 0
         retailer.ws_next_notification_balance -= 0.5
-        will_send_notification = true
       end
 
       retailer.save

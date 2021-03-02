@@ -676,6 +676,79 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                 expect(body['info']['status']).to eq('submitted')
             end
           end
+
+          context 'when customer attributes are sent' do
+            let(:agent) { create(:retailer_user, retailer: retailer) }
+
+            it 'sends the notification, updating the customer info', :dox do
+              post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                params: {
+                  phone_number: '+593999999999',
+                  internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                  template_params: ['test 1', 'test 2', 'test 3'],
+                  first_name: 'First Name',
+                  last_name: 'Last Name',
+                  email: 'email@email.com',
+                  address: 'Customer address',
+                  city: 'Customer city',
+                  state: 'Customer state',
+                  zip_code: '12345',
+                  notes: 'Notes related to the customer',
+                },
+                headers: {
+                  'Slug': slug,
+                  'Api-Key': api_key
+                }
+
+                expect(response.code).to eq('200')
+
+                body = JSON.parse(response.body)
+                expect(body['message']).to eq('Ok')
+                expect(body['info']['status']).to eq('submitted')
+
+                customer = Customer.last
+                expect(customer.first_name).to eq('First Name')
+                expect(customer.last_name).to eq('Last Name')
+                expect(customer.email).to eq('email@email.com')
+            end
+
+            context 'when some customer attribute is empty/nil' do
+              let!(:customer) do
+                create(:customer, retailer: retailer, first_name: 'Test', notes: 'Test', phone: '+593999999999')
+              end
+
+              it 'does not update that specific attribute' do
+                post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                params: {
+                  phone_number: '+593999999999',
+                  internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                  template_params: ['test 1', 'test 2', 'test 3'],
+                  last_name: 'Last Name',
+                  email: 'email@email.com',
+                  address: 'Customer address',
+                  city: 'Customer city',
+                  state: 'Customer state',
+                  zip_code: '12345',
+                  notes: '',
+                },
+                headers: {
+                  'Slug': slug,
+                  'Api-Key': api_key
+                }
+
+                expect(response.code).to eq('200')
+
+                body = JSON.parse(response.body)
+                expect(body['message']).to eq('Ok')
+                expect(body['info']['status']).to eq('submitted')
+
+                customer = Customer.last
+                expect(customer.first_name).to eq('Test')
+                expect(customer.last_name).to eq('Last Name')
+                expect(customer.notes).to eq('Test')
+              end
+            end
+          end
         end
       end
     end
