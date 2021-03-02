@@ -1,0 +1,52 @@
+<div class="nested-fields box">
+  <div class="row bottom-xs divider pb-16">
+    <div class="col-xs-12">
+      <div class="my-16">
+        <%= f.label :text, 'Respuesta' %>
+        <%= f.text_area :text, class: 'input' %>
+      </div>
+    </div>
+    <div class="col-xs-12">
+      <div class="my-16 root-for-closest">
+        <%= f.file_field :file, class: 'uploadedImages', accept: "image/jpg, image/jpeg, image/png, application/pdf #{current_retailer.allow_send_videos ? ', video/mp4, video/3gpp' : ''}", onchange: "previewAdditionalFile(this)" %>
+        <label class='btn btn--cta label-for'>
+          <i class="fas fa-upload mr-5"></i>
+          <% if current_retailer.allow_send_videos %>
+            Agregar imagen, video o PDF
+          <% else %>
+            Agregar imagen o PDF
+          <% end %>
+        </label><br/><br/>
+        <div class="p-relative w-200 d-none preview-img-container">
+          <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeAdditionalFile(this)"></i>
+          <img class="w-200 h-200 preview-img" />
+        </div>
+        <div class="p-relative w-200 d-none preview-pdf-container">
+          <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeAdditionalFile(this)"></i>
+          <div class="w-200 h-200 preview-pdf">
+            <i class="fas fa-file-pdf ml-8 mr-8"></i>
+            <span class="c-secondary fs-14"> </span>
+          </div>
+        </div>
+        <div class="p-relative w-200 d-none preview-video-container">
+          <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeAdditionalFile(this)"></i>
+          <video controls class="w-200 h-200 preview-video">
+            <source/>
+          </video>
+        </div>
+        <div class="p-relative d-none preview-errors">
+          <span class="c-red fs-14"> La imagen o PDF deben tener un tamaño menor a 5MB</span><br/>
+          <% if current_retailer.allow_send_videos %>
+            <span class="c-red fs-14"> El video debe tener un tamaño menor a 14MB</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-2 center-xs p-0 my-16">
+      <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
+        <i class="fas fa-times mr-5"></i>
+        Remover
+      <% end %>
+    </div>
+  </div>
+</div>

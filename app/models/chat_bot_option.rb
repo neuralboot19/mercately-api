@@ -5,6 +5,7 @@ class ChatBotOption < ApplicationRecord
   has_many :customer_bot_options, dependent: :destroy
   has_many :customers, through: :customer_bot_options
   has_many :option_sub_lists, dependent: :destroy
+  has_many :additional_bot_answers, dependent: :destroy
   has_one_attached :file
 
   before_destroy :check_destroy_requirements
@@ -19,6 +20,7 @@ class ChatBotOption < ApplicationRecord
 
   accepts_nested_attributes_for :chat_bot_actions, reject_if: :all_blank, allow_destroy: true
   accepts_nested_attributes_for :option_sub_lists, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :additional_bot_answers, reject_if: :all_blank, allow_destroy: true
 
   enum option_type: %i[decision form]
 
@@ -55,6 +57,14 @@ class ChatBotOption < ApplicationRecord
     return unless action.present? && (action.target_field.present? || action.customer_related_field.present?)
 
     action
+  end
+
+  def has_additional_answers_filled?
+    additional_bot_answers.with_attached_file.each do |aba|
+      return true if aba.text.present? || aba.file.attached?
+    end
+
+    false
   end
 
   private
