@@ -176,7 +176,9 @@ Rails.application.routes.draw do
   # REACT
   namespace :api do
     namespace :v1 do
-      resources :customers, only: [:index, :show, :update]
+      resources :customers, only: [:index, :show, :update] do
+        resources :custom_fields, only: [:index, :update]
+      end
 
       put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
 

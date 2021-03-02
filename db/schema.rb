@@ -289,7 +289,6 @@ ActiveRecord::Schema.define(version: 2021_02_19_165437) do
     t.string "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "selected_options", default: []
     t.index ["customer_id"], name: "index_customer_related_data_on_customer_id"
     t.index ["customer_related_field_id"], name: "index_customer_related_data_on_customer_related_field_id"
   end
@@ -433,9 +432,11 @@ ActiveRecord::Schema.define(version: 2021_02_19_165437) do
     t.bigint "retailer_user_id"
     t.float "cost"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
+    t.index ["direction"], name: "index_gupshup_whatsapp_messages_on_direction"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
     t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_gupshup_whatsapp_messages_on_retailer_user_id"
+    t.index ["status"], name: "index_gupshup_whatsapp_messages_on_status"
     t.index ["whatsapp_message_id"], name: "index_gupshup_whatsapp_messages_on_whatsapp_message_id"
   end
 

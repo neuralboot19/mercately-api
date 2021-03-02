@@ -667,6 +667,11 @@ h1 {
   &.positioned {
     top: -15px;
   }
+
+  &.tootip-text-customer-chat-column {
+    top: -20px;
+    left: 40px;
+  }
 }
 
 /* Tooltip arrow */
@@ -818,11 +823,13 @@ h1 {
   margin-left: 5px;
 }
 
-.customer_details {
+.customer_details,
+.custome_fields {
   padding: 20px 10px;
 }
 
-.customer_details .details_holder {
+.customer_details .details_holder,
+.custome_fields .details_holder {
   background-color: #00B4FF;
   color: #fff;
   padding: 5px;
@@ -1193,10 +1200,17 @@ i {
 .editable_field {
   display: inline-block;
   min-width: 100px;
-}
+  color: #555;
+  border: none;
 
-.editable_field:hover {
+  &:hover {
     cursor: pointer;
+  }
+
+  &:focus {
+    color: #000;
+    border: 1px solid #eee;
+  }
 }
 
 .editable_email {
@@ -1221,6 +1235,11 @@ i {
 
 .details-select__placeholder {
   margin-top: -6px;
+}
+
+.details-select__single-value {
+  height: 100%;
+  position: unset;
 }
 
 .details-select__indicator-separator {

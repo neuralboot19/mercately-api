@@ -4,7 +4,10 @@ let initialState = {
   total_pages: 0,
   total_customers: 0,
   errorSendMessageStatus: null,
-  errorSendMessageText: null
+  errorSendMessageText: null,
+  tags: [],
+  customerFields: [],
+  customFields: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -31,6 +34,12 @@ const reducer = (state = initialState, action) => {
         agent_list: action.data.agent_list,
         filter_tags: action.data.filter_tags
       }
+    case 'SET_CUSTOM_FIELDS':
+      return {
+        ...state,
+        customerFields: action.data.customer_fields,
+        customFields: action.data.custom_fields
+      };
     case 'SET_MESSAGES':
       var balance_error = { status: null, message: null };
 

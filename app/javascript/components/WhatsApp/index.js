@@ -218,7 +218,7 @@ class WhatsAppChat extends Component {
             && (
               <div className="col-xs-12 col-sm-3">
                 <CustomerDetails
-                  customerDetails={this.state.currentCustomerDetails}
+                  customerId={this.state.currentCustomer}
                   chatType="whatsapp_chats"
                   onMobile={this.state.onMobile}
                   backToChatMessages={this.backToChatMessages}
