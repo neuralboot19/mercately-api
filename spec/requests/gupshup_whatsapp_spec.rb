@@ -179,6 +179,46 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
         end
       end
 
+      context 'when Mexican phone already registered in DB' do
+        let(:gupshup_inbound_payload) do
+          {
+            'gupshup_whatsapp' => {
+              'app' => retailer.gupshup_src_name,
+              'timestamp' => 1589374987521,
+              'version' => 2,
+              'type' => 'message',
+              'payload' => {
+                'id' => 'ABEGWTmYN3BjAhBVDvUy9JyUgNNjdKvZWRFT',
+                'source' => '525599999999',
+                'type' => 'text',
+                'payload' => {
+                  'text' => 'Hi'
+                },
+                'sender' => {
+                  'phone' => '525599999999',
+                  'name' => 'bj',
+                  'country_code' => '52',
+                  'dial_code' => '5599999999'
+                }
+              }
+            }
+          }
+        end
+
+        it 'does not create a new customer' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(1)
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(0)
+        end
+      end
+
       it 'stores a new customer with whatsapp name' do
         allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
 

@@ -37,20 +37,21 @@ class Customer < ApplicationRecord
 
   before_validation :strip_whitespace
   before_validation :grab_country_on_import, if: -> { from_import_file }
+  before_validation :format_mexican_numbers, if: -> { country_id == 'MX' && from_api }
   before_save :hs_active!, if: -> (obj) { obj.retailer.hubspot_integrated? && obj.hs_active.nil? && obj.retailer.all_customers_hs_integrated }
   before_save :update_valid_customer
   before_save :format_phone_number
   before_save :calc_ws_notification_cost
+  before_save :format_mexican_numbers, if: -> { country_id == 'MX' && !from_api }
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
-  after_save :format_mexican_numbers, if: -> { country_id == 'MX' }
   after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
   after_update :sync_hs, if: :hs_active?
 
   enum id_type: %i[cedula pasaporte ruc]
 
-  attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file
+  attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file, :from_api
 
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
@@ -542,6 +543,6 @@ class Customer < ApplicationRecord
     end
 
     def format_mexican_numbers
-      update_column(:phone, phone.insert(3, '1')) if phone[3] != '1'
+      self.phone = phone.insert(3, '1') if phone[3] != '1'
     end
 end
