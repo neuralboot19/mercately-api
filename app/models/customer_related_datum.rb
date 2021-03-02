@@ -1,7 +1,7 @@
 class CustomerRelatedDatum < ApplicationRecord
   belongs_to :customer
   belongs_to :customer_related_field
-  after_save :sync_hs
+  after_commit :sync_hs, on: [:create, :update]
 
   private
 
@@ -13,6 +13,7 @@ class CustomerRelatedDatum < ApplicationRecord
 
     def sync_hs
       return unless customer.hs_active?
+      return if customer.hs_id.blank?
 
       chf = CustomerHubspotField.find_by(
         retailer: customer.retailer,
