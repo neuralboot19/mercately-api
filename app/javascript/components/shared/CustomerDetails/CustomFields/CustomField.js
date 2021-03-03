@@ -21,7 +21,7 @@ const CustomField = ({
   const fieldType = customField.field_type;
 
   useEffect(() => {
-    setCurrentFieldValue(fieldValue);
+    setCurrentFieldValue(fieldValue || '');
   }, [fieldValue]);
 
   const isMounted = useRef(false);
@@ -164,10 +164,9 @@ const CustomField = ({
       );
     default:
       return (
-        <textarea
+        <input
           value={currentFieldValue}
           onChange={handleCustomFieldChange}
-          className="editable_field"
           onBlur={() => handleCustomFieldSubmit(customField)}
           placeholder={customField.name}
         />
