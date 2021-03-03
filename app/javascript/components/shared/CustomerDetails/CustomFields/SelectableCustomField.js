@@ -8,19 +8,21 @@ const customStyles = {
   })
 };
 
+const initialState = null;
+
 const SelectableCustomField = ({
   handleSelectChange,
   options,
   selected
 }) => {
-  const [selectedOption, setSelectedOption] = useState();
+  const [selectedOption, setSelectedOption] = useState(initialState);
 
   useEffect(() => {
     findSelectedOption();
   }, [selected]);
 
   const findSelectedOption = () => {
-    setSelectedOption(options.find((element) => (element.value === selected)));
+    setSelectedOption(options.find((element) => (element.value === selected)) || initialState);
   };
 
   return (

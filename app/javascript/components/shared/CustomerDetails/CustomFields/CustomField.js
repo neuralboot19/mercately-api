@@ -12,23 +12,24 @@ const _ = require('lodash');
 
 registerLocale('es', es);
 
+const initialFieldValue = '';
+
 const CustomField = ({
   fieldValue,
   customField,
   onSubmit
 }) => {
-  const [currentFieldValue, setCurrentFieldValue] = useState(fieldValue);
-  const fieldType = customField.field_type;
+  const [currentFieldValue, setCurrentFieldValue] = useState(initialFieldValue);
 
   useEffect(() => {
-    setCurrentFieldValue(fieldValue || '');
+    setCurrentFieldValue(fieldValue || initialFieldValue);
   }, [fieldValue]);
 
   const isMounted = useRef(false);
 
   useEffect(() => {
     if (isMounted.current
-      && (['boolean', 'date', 'list'].includes(fieldType))
+      && (['boolean', 'date', 'list'].includes(customField.field_type))
       && currentFieldValue !== fieldValue
     ) {
       onSubmit(currentFieldValue, customField);
@@ -38,7 +39,7 @@ const CustomField = ({
   }, [currentFieldValue]);
 
   const handleCustomFieldSubmit = () => {
-    onSubmit(fieldType === 'float' ? addPaddingZeroes(currentFieldValue) : currentFieldValue, customField);
+    onSubmit(customField.field_type === 'float' ? addPaddingZeroes(currentFieldValue) : currentFieldValue, customField);
   };
 
   const handleSelectTypeCustomFieldChange = (selection) => {
@@ -59,12 +60,6 @@ const CustomField = ({
 
   const handleDateTypeCustomFieldChange = (date) => {
     setCurrentFieldValue(date.toISOString());
-  };
-
-  const handleBooleanCustomFieldChange = (evt) => {
-    const { value } = evt.target;
-    setCurrentFieldValue(value);
-    onSubmit(currentFieldValue, customField);
   };
 
   const filterIntegerInput = (value) => value.replace(/[^0-9]/, '');
@@ -90,7 +85,7 @@ const CustomField = ({
   const handleCustomFieldChange = (evt) => {
     let filteredValue;
     const { value } = evt.target;
-    switch (fieldType) {
+    switch (customField.field_type) {
       case 'integer': {
         filteredValue = filterIntegerInput(value);
         break;
@@ -136,7 +131,6 @@ const CustomField = ({
     case 'float':
       return (
         <input
-          fieldtype={customField.field_type}
           value={currentFieldValue}
           onChange={handleCustomFieldChange}
           onBlur={() => handleCustomFieldSubmit(customField)}
@@ -150,7 +144,7 @@ const CustomField = ({
             type="radio"
             value="true"
             checked={currentFieldValue === "true"}
-            onChange={handleBooleanCustomFieldChange}
+            onChange={handleCustomFieldChange}
           />
           &nbsp;
           No
@@ -158,7 +152,7 @@ const CustomField = ({
             type="radio"
             value="false"
             checked={currentFieldValue === "false"}
-            onChange={handleBooleanCustomFieldChange}
+            onChange={handleCustomFieldChange}
           />
         </>
       );
