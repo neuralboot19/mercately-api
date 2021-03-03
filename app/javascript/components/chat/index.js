@@ -204,7 +204,7 @@ class Chat extends Component {
             this.state.showCustomerDetails &&
               <div className="col-xs-12 col-sm-3">
                 <CustomerDetails
-                  customerDetails={this.state.currentCustomerDetails}
+                  customerId={this.state.currentCustomer}
                   chatType='facebook_chats'
                   onMobile={this.state.onMobile}
                   backToChatMessages={this.backToChatMessages}
