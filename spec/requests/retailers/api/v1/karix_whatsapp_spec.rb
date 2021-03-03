@@ -749,6 +749,90 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
               end
             end
           end
+
+          context 'when the phone number is mexican' do
+            context 'when the phone number does not contain the digit 1' do
+              context 'when the customer already exists in DB' do
+                let!(:customer) do
+                  create(:customer, retailer: retailer, first_name: 'Test', notes: 'Test', phone:
+                    '+5219999999999', country_id: 'MX')
+                end
+
+                it 'does not create any customer' do
+                  expect {
+                    post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                      params: {
+                        phone_number: '+529999999999',
+                        internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                        template_params: ['test 1', 'test 2', 'test 3']
+                      },
+                      headers: {
+                        'Slug': slug,
+                        'Api-Key': api_key
+                      }
+                  }.to change { Customer.count }.by(0)
+                end
+              end
+
+              context 'when the customer does not exist in DB yet' do
+                it 'only creates one customer' do
+                  expect {
+                    post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                      params: {
+                        phone_number: '+529999999999',
+                        internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                        template_params: ['test 1', 'test 2', 'test 3']
+                      },
+                      headers: {
+                        'Slug': slug,
+                        'Api-Key': api_key
+                      }
+                  }.to change { Customer.count }.by(1)
+                end
+              end
+            end
+
+            context 'when the phone number contains the digit 1' do
+              context 'when the customer already exists in DB' do
+                let!(:customer) do
+                  create(:customer, retailer: retailer, first_name: 'Test', notes: 'Test', phone:
+                    '+5219999999999', country_id: 'MX')
+                end
+
+                it 'does not create any customer' do
+                  expect {
+                    post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                      params: {
+                        phone_number: '+5219999999999',
+                        internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                        template_params: ['test 1', 'test 2', 'test 3']
+                      },
+                      headers: {
+                        'Slug': slug,
+                        'Api-Key': api_key
+                      }
+                  }.to change { Customer.count }.by(0)
+                end
+              end
+
+              context 'when the customer does not exist in DB yet' do
+                it 'only creates one customer' do
+                  expect {
+                    post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                      params: {
+                        phone_number: '+5219999999999',
+                        internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                        template_params: ['test 1', 'test 2', 'test 3']
+                      },
+                      headers: {
+                        'Slug': slug,
+                        'Api-Key': api_key
+                      }
+                  }.to change { Customer.count }.by(1)
+                end
+              end
+            end
+          end
         end
       end
     end

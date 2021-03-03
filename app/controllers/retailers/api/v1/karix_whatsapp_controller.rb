@@ -127,6 +127,7 @@ module Retailers::Api::V1
         end
 
         if customer.new_record? && country_id == 'MX' && phone[3] != '1'
+          customer.destroy # Se destruye porque sino se inserta en la DB esta instancia anterior.
           phone = phone.insert(3, '1')
           customer = current_retailer.customers.find_or_initialize_by(phone: phone)
         end
