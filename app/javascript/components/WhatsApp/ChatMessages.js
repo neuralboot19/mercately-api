@@ -23,10 +23,11 @@ import ClosedChannel from './ClosedChannel';
 import MessageForm from './MessageForm';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
 import TemplateSelectionModal from './TemplateSelectionModal';
-import ImageModal from '../shared/ImageModal';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
 import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
 import ReminderConfigModal from './ReminderConfigModal';
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 
 let currentCustomer = 0;
 let totalPages = 0;
@@ -68,7 +69,9 @@ class ChatMessages extends Component {
       showEmojiPicker: false,
       templateType: '',
       acceptedFiles: '',
-      isReminderConfigModalOpen: false
+      isReminderConfigModalOpen: false,
+      isOpenImage: false,
+      imageUrl: null
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -484,12 +487,11 @@ class ChatMessages extends Component {
     return null;
   }
 
-  toggleImgModal = (e) => {
-    const el = e.target;
-    this.setState((prevState) => ({
-      url: el.src,
-      isImgModalOpen: !prevState.isImgModalOpen
-    }));
+  openImage = (url) => {
+    this.setState({
+      imageUrl: url,
+      isOpenImage: true
+    });
   }
 
   openModal = () => {
@@ -1174,8 +1176,12 @@ class ChatMessages extends Component {
               toggleChatBot={this.toggleChatBot}
             />
           )}
-        {this.state.isImgModalOpen && (
-          <ImageModal url={this.state.url} toggleImgModal={this.toggleImgModal} />
+        {this.state.isOpenImage && (
+          <Lightbox
+            mainSrc={this.state.imageUrl}
+            onCloseRequest={() => this.setState({ isOpenImage: false })}
+            imageLoadErrorMessage="Error al cargar la imagen"
+          />
         )}
         <div
           className="col-xs-12 chat__box pt-8"
@@ -1189,7 +1195,7 @@ class ChatMessages extends Component {
                   key={message.id}
                   message={message}
                   handleMessageEvents={this.props.handleMessageEvents}
-                  toggleImgModal={this.toggleImgModal}
+                  openImage={this.openImage}
                 />
               </div>
             </div>
