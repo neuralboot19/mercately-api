@@ -154,6 +154,18 @@ const CustomerDetails = ({
     }
   }, [customerInfo.id_type]);
 
+  const isMountedAux = useRef(false);
+  useEffect(() => {
+    if (isMountedAux.current
+      && customerInfo.hs_active !== undefined
+      && customerInfo.hs_active !== customer.hs_active
+    ) {
+      handleSubmit();
+    } else {
+      isMountedAux.current = true;
+    }
+  }, [customerInfo.hs_active]);
+
   useEffect(() => {
     setCustomerCustomFields(customerFields);
   }, [customerFields]);
@@ -164,7 +176,7 @@ const CustomerDetails = ({
 
   const handleCheckboxChange = (e) => {
     const input = e.target;
-    setCustomerInfo({ ...customerInfo, ...{ 'hs_active': input.checked } });
+    setCustomerInfo({ ...customerInfo, ...{ [input.name]: input.checked } });
   };
 
   const handleEnter = (e) => {
