@@ -648,7 +648,7 @@ h1 {
 
   /* Position the tooltip text */
   position: absolute;
-  z-index: 1;
+  z-index: 100;
   top: 0px;
   left: 70px;
 
@@ -666,6 +666,11 @@ h1 {
 
   &.positioned {
     top: -15px;
+  }
+
+  &.tootip-text-customer-chat-column {
+    top: -20px;
+    left: 40px;
   }
 }
 
@@ -759,11 +764,11 @@ h1 {
   }
 
   &__control {
-    padding: 0px 10px;
+    margin-right: 10px;
   }
 
   &__selector {
-    padding: 0px 10px;
+    margin-right: 10px;
     height: 68vh;
     overflow-y: auto;
   }
@@ -773,13 +778,14 @@ h1 {
   border-left: 1px solid #e7e7e7;
   height: 89vh;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 0px 10px;
 }
 
 
 .customer_sidebar .customer_box {
   border-bottom: 1px solid #e7e7e7;
-  padding: 10px 5px;
+  padding: 17px 5px;
   position: relative;
 }
 
@@ -818,11 +824,13 @@ h1 {
   margin-left: 5px;
 }
 
-.customer_details {
+.customer_details,
+.custome_fields {
   padding: 20px 10px;
 }
 
-.customer_details .details_holder {
+.customer_details .details_holder,
+.custome_fields .details_holder {
   background-color: #00B4FF;
   color: #fff;
   padding: 5px;
@@ -835,7 +843,8 @@ h1 {
 .chat_list_holder{
   border-right: 1px solid #e7e7e7;
   background-color: #FFF;
-  padding: 12px 5px 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .img__profile .rounded-circle {
@@ -1193,10 +1202,18 @@ i {
 .editable_field {
   display: inline-block;
   min-width: 100px;
-}
+  color: #555;
+  border: none;
 
-.editable_field:hover {
+  &:hover {
     cursor: pointer;
+  }
+
+  &:focus {
+    color: #000;
+    border: 1px solid #eee;
+    border-style: dotted;
+  }
 }
 
 .editable_email {
@@ -1219,35 +1236,22 @@ i {
   color: #3a71f1 !important;
 }
 
-.details-select__placeholder {
-  margin-top: -6px;
-}
-
-.details-select__indicator-separator {
-  margin-top: -1px !important;
-  height: 27px !important;
-}
-
-.details-select__indicator {
-  margin-top: -10px !important;
-}
-
 .inline-block {
-  display: inline-block
+  display: inline-block;
 }
 
 .editable-notes {
-  width: 100%;
   height: 100px;
-  border: solid 1px
-  hsl(0,0%,80%);
+  border: 1px solid hsl(0,0%,80%);
   border-radius: 5px;
   padding: 10px 5px;
   margin-top: 10px;
   overflow-y: auto;
 }
 
-
+.details-select__control {
+  height: unset !important;
+}
 
 [contenteditable=true]:empty:before {
   content: attr(placeholder);
@@ -1441,19 +1445,20 @@ i {
 
 .tooltip-top .tooltiptext {
   visibility: hidden;
-  width: 120px;
+  width: 100px;
   background-color: #555;
   border: 1px solid #555;
   color: #fff;
   text-align: center;
-  border-radius: 6px;
+  border-radius: 5px;
   padding: 5px 5px;
   position: absolute;
   z-index: 1;
   bottom: 150%;
   left: 30%;
-  margin-left: -60px;
+  margin-left: -50px;
   max-width: unset;
+  font-size: 12px;
 }
 
 .tooltip-top .tooltiptext::after {
@@ -1820,4 +1825,10 @@ i {
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.1);
+}
+
+.bordered-container {
+  border: 1px solid #e7e7e7;
+  padding: 20px;
+  border-radius: 5px;
 }

@@ -26,7 +26,7 @@ class Message extends Component {
           <RepliedMessage
             downloadFile={this.downloadFile}
             message={this.props.message.replied_message}
-            toggleImgModal={this.props.toggleImgModal}
+            openImage={this.props.openImage}
           />
         )}
         {this.props.message.content_type === 'text'
@@ -44,7 +44,7 @@ class Message extends Component {
             chatType="whatsapp"
             handleMessageEvents={this.props.handleMessageEvents}
             message={this.props.message}
-            onClick={this.props.toggleImgModal}
+            onClick={this.props.openImage}
           />
         )}
         {this.props.message.content_type === 'media'

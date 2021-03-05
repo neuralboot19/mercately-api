@@ -11,7 +11,7 @@ const RepliedMessage = ({
   chatType,
   downloadFile,
   message,
-  toggleImgModal
+  openImage
 }) => {
   const isText = () => message.data.attributes.content_type === 'text';
 
@@ -52,7 +52,7 @@ const RepliedMessage = ({
       && (
         <RepliedImageMessage
           mediaUrl={message.data.attributes.content_media_url}
-          onClick={toggleImgModal}
+          onClick={openImage}
         />
       )}
       {isAudio()

@@ -190,7 +190,7 @@ class WhatsAppChat extends Component {
             )}
 
             {this.state.currentCustomer !== 0 && this.state.showChatMessages && (
-              <div className="col-xs-12 col-sm-6">
+              <div className="col-xs-12 col-sm-6 pr-0">
                 <ChatMessages
                   currentCustomer={this.state.currentCustomer}
                   customerDetails={this.state.currentCustomerDetails}
@@ -218,7 +218,7 @@ class WhatsAppChat extends Component {
             && (
               <div className="col-xs-12 col-sm-3">
                 <CustomerDetails
-                  customerDetails={this.state.currentCustomerDetails}
+                  customerId={this.state.currentCustomer}
                   chatType="whatsapp_chats"
                   onMobile={this.state.onMobile}
                   backToChatMessages={this.backToChatMessages}

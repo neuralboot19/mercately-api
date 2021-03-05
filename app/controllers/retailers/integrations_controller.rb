@@ -22,10 +22,13 @@ class Retailers::IntegrationsController < RetailersController
       redirect_uri: ENV['HUBSPOT_REDIRECT_URL']
     })
     token = Hubspot::OAuth.create(params[:code])
+    hs = HubspotService::Api.new(token['access_token'])
+    hs_id = hs.me['portalId']
     current_retailer.update(
       hs_expires_in: token['expires_in'].seconds.from_now,
       hs_access_token: token['access_token'],
-      hs_refresh_token: token['refresh_token']
+      hs_refresh_token: token['refresh_token'],
+      hs_id: hs_id
     )
     redirect_to retailers_hubspot_index_path(current_retailer)
   end

@@ -57,7 +57,7 @@ function ImageMessage({
           <img
             src={url}
             className="msg__img"
-            onClick={(e) => onClick(e)}
+            onClick={() => onClick(url)}
             alt=""
             style={{display: "block"}}
           />

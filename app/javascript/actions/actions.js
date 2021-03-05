@@ -280,3 +280,58 @@ export const sendBulkFiles = (id, body, token) => {
       });
   };
 };
+
+/* Custom Fields */
+export const fetchCustomerFields = (customerId) => {
+  const endpoint = `/api/v1/customers/${customerId}/custom_fields`;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      }
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: "SET_CUSTOM_FIELDS", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      ).catch((error) => {
+        if (error.response) {
+          alert(error.response);
+        } else {
+          alert("An unexpected error occurred.");
+        }
+      });
+  };
+};
+
+export const updateCustomerField = (customerId, id, body, token) => {
+  const endpoint = `/api/v1/customers/${customerId}/custom_fields/${id}`;
+  const csrfToken = token;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "PUT",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrfToken,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*'
+      },
+      body: JSON.stringify(body)
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_CUSTOM_FIELDS', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
+          alert(error.response);
+        } else {
+          alert("An unexpected error occurred.");
+        }
+      });
+  };
+};

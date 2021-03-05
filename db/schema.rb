@@ -861,6 +861,7 @@ ActiveRecord::Schema.define(version: 2021_02_19_165437) do
     t.boolean "all_customers_hs_integrated", default: true
     t.boolean "hs_tags", default: false
     t.boolean "allow_send_videos", default: false
+    t.string "hs_id"
     t.boolean "allow_multiple_answers", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
