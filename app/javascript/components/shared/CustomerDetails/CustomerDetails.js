@@ -104,7 +104,8 @@ const CustomerDetails = ({
       notes,
       hs_active,
       hs_id,
-      phone
+      phone,
+      emoji_flag: emojiFlag
     } = customer;
     setCustomerInfo({
       first_name: firstName,
@@ -118,7 +119,8 @@ const CustomerDetails = ({
       notes,
       hs_active,
       hs_id,
-      phone
+      phone,
+      emoji_flag: emojiFlag
     });
   }, [customer.id,
     customer.first_name,
@@ -132,7 +134,8 @@ const CustomerDetails = ({
     customer.notes,
     customer.hs_active,
     customer.hs_id,
-    customer.phone]);
+    customer.phone,
+    customer.emoji_flag]);
 
   useEffect(() => {
     setState({ ...state, customerFields });

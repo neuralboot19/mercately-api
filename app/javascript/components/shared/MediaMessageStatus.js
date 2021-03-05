@@ -51,7 +51,7 @@ MediaMessageStatus.propTypes = {
   chatType: PropTypes.string,
   message: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    retailer_id: PropTypes.number.isRequired,
+    retailer_id: PropTypes.number,
     customer_id: PropTypes.number.isRequired,
     status: PropTypes.string,
     direction: PropTypes.string.isRequired,
