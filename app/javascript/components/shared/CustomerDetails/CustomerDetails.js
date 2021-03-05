@@ -37,7 +37,7 @@ const CustomerDetails = ({
 
   const [customerInfo, setCustomerInfo] = useState({});
 
-  const [customerCustomFields, setCustomerCustomFields] = useState({});
+  const [customerCustomFields, setCustomerCustomFields] = useState([]);
 
   const containerClassName = onMobile ? "customer_sidebar no-border-left" : "customer_sidebar";
 
