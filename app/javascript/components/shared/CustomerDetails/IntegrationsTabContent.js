@@ -80,5 +80,4 @@ const IntegrationsTabContent = ({
   </div>
 );
 
-
 export default IntegrationsTabContent;
