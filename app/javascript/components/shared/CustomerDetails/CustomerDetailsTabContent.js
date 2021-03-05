@@ -57,7 +57,7 @@ const CustomerDetailsTabContent = ({
           <i className="fs-18 mt-4 mr-4 fab fa-whatsapp-square editable_phone" />
           <p className="label inline-block">Teléfono:</p>
         </div>
-        <div>
+        <div className="d-flex">
           {customer.emoji_flag}
           <EditableField
             handleInputChange={handleInputChange}

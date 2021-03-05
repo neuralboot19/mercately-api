@@ -217,6 +217,10 @@ label:hover, a:hover, button:hover {
   display: none;
 }
 
+.d-flex {
+  display: flex;
+}
+
 @media screen and (min-width: 1024px) {
   .d-md-none {
     display: none;
