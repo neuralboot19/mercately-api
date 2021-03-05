@@ -8,9 +8,9 @@ import TextMessage from '../shared/messages/TextMessage';
 
 const ChatMessage = ({
   message,
-  toggleImgModal,
   downloadFile,
-  fileType
+  fileType,
+  openImage
 }) => {
   let tag;
   switch (fileType(message.file_type)) {
@@ -18,7 +18,7 @@ const ChatMessage = ({
       tag = (
         <ImageMessage
           message={message}
-          onClick={toggleImgModal}
+          onClick={openImage}
         />
       );
       break;
