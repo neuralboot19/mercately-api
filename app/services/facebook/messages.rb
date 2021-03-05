@@ -102,6 +102,18 @@ module Facebook
       Facebook::Api.new(@facebook_retailer, retailer_user).send_bulk_files(customer, params)
     end
 
+    def save_postback_interaction(message_data)
+      customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
+
+      FacebookMessage.create(
+        customer: customer,
+        facebook_retailer: @facebook_retailer,
+        sender_uid: message_data['sender']['id'],
+        id_client: message_data['sender']['id'],
+        text: message_data['postback']&.[]('payload')
+      )
+    end
+
     private
 
       def prepare_message(to, message)
