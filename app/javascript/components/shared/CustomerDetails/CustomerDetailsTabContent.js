@@ -36,15 +36,16 @@ const CustomerDetailsTabContent = ({
             <EditableField
               handleInputChange={handleInputChange}
               content={customer.first_name}
+              givenClass="mb-6 custom-input"
               handleSubmit={handleSubmit}
               targetName="first_name"
               placeholder="Nombre"
             />
-            <br />
             <EditableField
               handleInputChange={handleInputChange}
               content={customer.last_name}
               handleSubmit={handleSubmit}
+              givenClass="mb-6 custom-input"
               targetName="last_name"
               placeholder="Apellido"
             />
@@ -62,6 +63,7 @@ const CustomerDetailsTabContent = ({
             handleInputChange={handleInputChange}
             content={customer.phone}
             handleSubmit={handleSubmit}
+            givenClass="mb-6 custom-input"
             targetName="phone"
             placeholder="Teléfono"
           />
@@ -79,6 +81,7 @@ const CustomerDetailsTabContent = ({
             content={customer.email}
             handleSubmit={handleSubmit}
             targetName="email"
+            givenClass="mb-6 custom-input"
             placeholder="Email"
           />
         )}
@@ -96,6 +99,7 @@ const CustomerDetailsTabContent = ({
           handleInputChange={handleInputChange}
           content={customer.id_number}
           handleSubmit={handleSubmit}
+          givenClass="my-6 custom-input"
           targetName="id_number"
           placeholder="Identificación"
         />
@@ -113,22 +117,23 @@ const CustomerDetailsTabContent = ({
               handleSubmit={handleSubmit}
               targetName="address"
               placeholder="Dirección"
+              givenClass="mb-6 custom-input"
             />
-            <br />
             <EditableField
               handleInputChange={handleInputChange}
               content={customer.city}
               handleSubmit={handleSubmit}
               targetName="city"
+              givenClass="mb-6 custom-input"
               placeholder="Ciudad"
             />
-            <br />
             <EditableField
               handleInputChange={handleInputChange}
               content={customer.state}
               handleSubmit={handleSubmit}
               targetName="state"
               placeholder="Provincia/Estado"
+              givenClass="mb-6 custom-input"
             />
           </div>
         )}
@@ -176,7 +181,7 @@ const CustomerDetailsTabContent = ({
           onKeyDown={handleEnter}
           onChange={(e) => handleInputChange(e, 'notes')}
           name="notes"
-          className="editable-notes"
+          className="editable-notes w-100"
           onBlur={handleSubmit}
           placeholder="Notas"
           value={customer.notes || ''}

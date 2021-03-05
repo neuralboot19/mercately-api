@@ -18,6 +18,7 @@ import CustomerName from "./CustomerName";
 import TabSelector from "./TabSelector";
 import CustomerDetailsTabContent from "./CustomerDetailsTabContent";
 import CustomFieldsTabContent from "./CustomFieldsTabContent";
+import IntegrationsTabContent from "./IntegrationsTabContent";
 
 const csrfToken = document.querySelector('[name=csrf-token]').content;
 
@@ -32,6 +33,7 @@ const CustomerDetails = ({
     newTag: '',
     showUserDetails: 'block',
     showCustomFields: 'none',
+    showIntegrationSettings: 'none',
     fieldDate: new Date()
   });
 
@@ -100,6 +102,8 @@ const CustomerDetails = ({
       city,
       state: addressState,
       notes,
+      hs_active,
+      hs_id,
       phone
     } = customer;
     setCustomerInfo({
@@ -112,6 +116,8 @@ const CustomerDetails = ({
       city,
       state: addressState,
       notes,
+      hs_active,
+      hs_id,
       phone
     });
   }, [customer.id,
@@ -124,6 +130,8 @@ const CustomerDetails = ({
     customer.city,
     customer.state,
     customer.notes,
+    customer.hs_active,
+    customer.hs_id,
     customer.phone]);
 
   useEffect(() => {
@@ -135,6 +143,7 @@ const CustomerDetails = ({
   useEffect(() => {
     if (isMounted.current
       && customerInfo.id_type
+      && customerInfo.id_type !== customer.id_type
     ) {
       handleSubmit();
     } else {
@@ -148,6 +157,11 @@ const CustomerDetails = ({
 
   const handleInputChange = (evt, name) => {
     setCustomerInfo({ ...customerInfo, ...{ [name]: evt.target.value } });
+  };
+
+  const handleCheckboxChange = (e) => {
+    const input = e.target;
+    setCustomerInfo({ ...customerInfo, ...{ 'hs_active': input.checked } });
   };
 
   const handleEnter = (e) => {
@@ -214,6 +228,7 @@ const CustomerDetails = ({
     setState({
       ...state,
       showUserDetails: 'block',
+      showIntegrationSettings: 'none',
       showCustomFields: 'none'
     });
   };
@@ -222,7 +237,17 @@ const CustomerDetails = ({
     setState({
       ...state,
       showCustomFields: 'block',
+      showIntegrationSettings: 'none',
       showUserDetails: 'none'
+    });
+  };
+
+  const showIntegrationSettings = () => {
+    setState({
+      ...state,
+      showUserDetails: 'none',
+      showCustomFields: 'none',
+      showIntegrationSettings: 'block'
     });
   };
 
@@ -239,8 +264,10 @@ const CustomerDetails = ({
       <TabSelector
         showUserDetails={state.showUserDetails}
         showCustomFields={state.showCustomFields}
+        showIntegrationSettings={state.showIntegrationSettings}
         onClickUserDetails={showUserDetails}
         onClickCustomerFields={showCustomFields}
+        onClickIntegrationSettings={showIntegrationSettings}
       />
       <CustomerDetailsTabContent
         chatType={chatType}
@@ -264,6 +291,12 @@ const CustomerDetails = ({
         customerFields={customerCustomFields}
         showCustomFields={state.showCustomFields}
         updateCustomerField={updateCustomerField}
+      />
+      <IntegrationsTabContent
+        customer={customerInfo}
+        onClickUserDetails={showUserDetails}
+        handleCheckboxChange={handleCheckboxChange}
+        showIntegrationSettings={state.showIntegrationSettings}
       />
     </div>
   );

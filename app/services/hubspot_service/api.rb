@@ -44,6 +44,15 @@ module HubspotService
       )
     end
 
+    def me
+      update_token
+      connection = Connection.prepare_connection('https://api.hubapi.com/integrations/v1/me')
+      Connection.get_request(
+        connection,
+        authorization: "Bearer #{@access_token}"
+      )
+    end
+
     def contact_properties
       update_token
       connection = Connection.prepare_connection('https://api.hubapi.com/crm/v3/properties/contacts?archived=false')

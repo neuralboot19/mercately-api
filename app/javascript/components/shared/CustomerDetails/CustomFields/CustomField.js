@@ -121,6 +121,7 @@ const CustomField = ({
           selected={Date.parse(currentFieldValue)}
           onChange={(date) => handleDateTypeCustomFieldChange(date)}
           locale="es"
+          className="custom-input"
           yearDropdownItemNumber={5}
           dateFormat="yyyy-MM-dd"
           showYearDropdown
@@ -132,6 +133,7 @@ const CustomField = ({
       return (
         <input
           value={currentFieldValue}
+          className="custom-input"
           onChange={handleCustomFieldChange}
           onBlur={() => handleCustomFieldSubmit(customField)}
         />
@@ -160,6 +162,7 @@ const CustomField = ({
       return (
         <input
           value={currentFieldValue}
+          className="custom-input"
           onChange={handleCustomFieldChange}
           onBlur={() => handleCustomFieldSubmit(customField)}
           placeholder={customField.name}

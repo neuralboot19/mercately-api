@@ -190,7 +190,7 @@ class WhatsAppChat extends Component {
             )}
 
             {this.state.currentCustomer !== 0 && this.state.showChatMessages && (
-              <div className="col-xs-12 col-sm-6">
+              <div className="col-xs-12 col-sm-6 pr-0">
                 <ChatMessages
                   currentCustomer={this.state.currentCustomer}
                   customerDetails={this.state.currentCustomerDetails}
