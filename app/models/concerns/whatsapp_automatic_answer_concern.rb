@@ -23,8 +23,8 @@ module WhatsappAutomaticAnswerConcern
 
     def send_inactive_message
       inactive_message = retailer.whatsapp_inactive_message
-      before_last_message = customer.before_last_whatsapp_message
-      return unless check_for_inactive_sent(inactive_message, before_last_message)
+      before_last_message_ws = customer.before_last_whatsapp_message
+      return unless check_for_inactive_sent(inactive_message, before_last_message_ws)
 
       params = {
         message: inactive_message.message
@@ -52,14 +52,14 @@ module WhatsappAutomaticAnswerConcern
       gws.send_message(type: 'text', params: params)
     end
 
-    def send_message?(before_last_message, inactive_message)
-      hours = ((created_at - before_last_message.created_at) / 3600).to_i
+    def send_message?(before_last_message_ws, inactive_message)
+      hours = ((created_at - before_last_message_ws.created_at) / 3600).to_i
 
       hours >= inactive_message.interval
     end
 
-    def check_for_inactive_sent(inactive_message, before_last_message)
-      inactive_message && direction == 'inbound' && before_last_message &&
-        send_message?(before_last_message, inactive_message)
+    def check_for_inactive_sent(inactive_message, before_last_message_ws)
+      inactive_message && direction == 'inbound' && before_last_message_ws &&
+        send_message?(before_last_message_ws, inactive_message)
     end
 end

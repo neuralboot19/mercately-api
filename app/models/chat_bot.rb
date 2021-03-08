@@ -12,6 +12,7 @@ class ChatBot < ApplicationRecord
   after_create :generate_web_id
 
   enum on_failed_attempt: %i[resend_options send_attempt_message]
+  enum platform: %i[whatsapp messenger]
 
   accepts_nested_attributes_for :chat_bot_options, reject_if: :all_blank, allow_destroy: true
 

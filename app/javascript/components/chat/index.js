@@ -23,7 +23,8 @@ class Chat extends Component {
       onMobile: false,
       showProducts: false,
       selectedProduct: null,
-      selectedFastAnswer: null
+      selectedFastAnswer: null,
+      activeChatBot: false
     };
   }
 
@@ -156,6 +157,12 @@ class Chat extends Component {
     })
   }
 
+  setActiveChatBot = (customer) => {
+    if (this.state.currentCustomer === customer.id) {
+      this.setState({ activeChatBot: customer.active_bot });
+    }
+  }
+
   render() {
     return (
       <div>
@@ -169,6 +176,7 @@ class Chat extends Component {
                   chatType="facebook"
                   setRemovedCustomerInfo={this.setRemovedCustomerInfo}
                   storageId={$('meta[name=user_storage]').attr("content")}
+                  setActiveChatBot={this.setActiveChatBot}
                 />
               </div>
             )}
@@ -194,6 +202,7 @@ class Chat extends Component {
                   toggleProducts={this.toggleProducts}
                   selectProduct={this.selectProduct}
                   selectedProduct={this.state.selectedProduct}
+                  activeChatBot={this.state.activeChatBot}
                 />
               </div>
             )}

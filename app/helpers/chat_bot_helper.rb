@@ -37,4 +37,14 @@ module ChatBotHelper
   def on_failed_attempts_list
     ChatBot.on_failed_attempts.keys.collect { |o| [ChatBot.enum_translation(:on_failed_attempt, o), o] }
   end
+
+  def platform_list(retailer)
+    exceptions = []
+    exceptions << :whatsapp unless retailer.whatsapp_integrated?
+    exceptions << :messenger unless retailer.facebook_retailer&.connected?
+
+    ChatBot.platforms.except(*exceptions).keys.collect do |pl|
+      [ChatBot.enum_translation(:platform, pl), pl]
+    end
+  end
 end

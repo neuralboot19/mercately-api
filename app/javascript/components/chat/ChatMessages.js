@@ -11,7 +11,8 @@ import {
 
 import {
   changeCustomerAgent,
-  setNoRead
+  setNoRead,
+  toggleChatBot
 } from "../../actions/whatsapp_karix";
 
 import MessageForm from './MessageForm';
@@ -100,7 +101,15 @@ class ChatMessages extends Component {
       type = this.fileType(el.files[0].type);
     }
 
-    this.setState({ messages: this.state.messages.concat({url: url, sent_by_retailer: true, file_type: type, filename: el ? el.files[0].name : null}), new_message: true, selectedProduct: null, selectedFastAnswer: null}, () => {
+    this.setState({messages: this.state.messages.concat({
+      url: url,
+      sent_by_retailer: true,
+      file_type: type, filename: el ? el.files[0].name : null}),
+      new_message: true,
+      selectedProduct: null,
+      selectedFastAnswer: null,
+      created_at: new Date()
+    }, () => {
       this.props.sendImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
       this.scrollToBottom();
     });
@@ -192,37 +201,61 @@ class ChatMessages extends Component {
     ))
   )
 
-  updateChat = (data) =>{
-    var facebook_message = data.facebook_message.facebook_message;
-    if (currentCustomer === facebook_message.customer_id) {
-      if (!this.state.new_message && facebook_message.sent_from_mercately === false) {
-        var index = this.findMessageInArray(this.state.messages, facebook_message.id);
+  addArrivingMessage = (currentMessages, newMessage) => {
+    // First remove message without Id to avoid duplication
+    let newMessagesArray = currentMessages.filter((message) => message.id);
+    // Then find and replace element if it exists
+    const index = currentMessages.findIndex((el) => (
+      el.id === newMessage.id
+    ));
+    if (index === -1) {
+      newMessagesArray = newMessagesArray.concat(newMessage);
+    } else {
+      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id) ? newMessage : message));
+    }
+    return newMessagesArray.sort(this.sortMessages());
+  }
 
-        if (index === -1) {
-          this.setState({
-            messages: this.state.messages.concat(facebook_message),
-            new_message: false,
-          })
-        } else {
-          this.state.messages[index] = facebook_message;
-        }
+  updateChat = (data) => {
+    let facebookMessage = data.facebook_message.facebook_message;
+
+    if (currentCustomer === facebookMessage.customer_id) {
+      if (!this.state.new_message) {
+        if (!facebookMessage.text && !facebookMessage.url) return;
+
+        this.setState((prevState) => ({
+          messages: this.addArrivingMessage(prevState.messages, facebookMessage),
+          new_message: false
+        }))
       }
 
-      if (facebook_message.sent_by_retailer === false) {
-        this.props.setMessageAsRead(facebook_message.id, csrfToken);
+      if (facebookMessage.sent_by_retailer === false) {
+        this.props.setMessageAsRead(facebookMessage.id, csrfToken);
       }
 
-      if (facebook_message.sent_by_retailer === true && facebook_message.date_read) {
+      if (facebookMessage.sent_by_retailer === true && facebookMessage.date_read) {
         this.state.messages.filter(obj => obj.sent_by_retailer === true)
           .forEach(function(message) {
-            if (!message.date_read && moment(message.created_at) <= moment(facebook_message.created_at)) {
-              message.date_read = facebook_message.date_read
+            if (!message.date_read && moment(message.created_at) <= moment(facebookMessage.created_at)) {
+              message.date_read = facebookMessage.date_read
             }
         })
         this.setState({ messages: this.state.messages });
       }
     }
   }
+
+  sortMessages = () => (
+    (a, b) => {
+      if (moment(a.created_at) === moment(b.created_at)) {
+        return 0;
+      }
+      if (moment(a.created_at) > moment(b.created_at)) {
+        return 1;
+      }
+      return -1;
+    }
+  )
 
   downloadFile = (e, file_url, filename) => {
     e.preventDefault();
@@ -269,7 +302,7 @@ class ChatMessages extends Component {
   divClasses = (message) => {
     var classes = message.sent_by_retailer === true ? 'message-by-retailer f-right' : 'message-by-customer';
     classes += ' main-message-container';
-    if (message.sent_by_retailer === true && message.date_read && message.text && !message.file_type)
+    if (message.sent_by_retailer === true && message.date_read)
       classes += ' read-message';
     if (['voice', 'audio', 'video'].includes(this.fileType(message.file_type))) classes += ' video-audio no-background';
     if (this.fileType(message.file_type) === 'image') classes += ' no-background';
@@ -353,7 +386,7 @@ class ChatMessages extends Component {
       var url = URL.createObjectURL(image);
       var type = this.fileType(image.type);
 
-      insertedMessages.push({url: url, sent_by_retailer: true, file_type: type})
+      insertedMessages.push({url: url, sent_by_retailer: true, file_type: type, created_at: new Date()})
     });
 
     this.setState({
@@ -521,6 +554,15 @@ class ChatMessages extends Component {
     }
   }
 
+  toggleChatBot = (e) => {
+    e.preventDefault();
+
+    const params = {
+      chat_service: 'facebook'
+    }
+    this.props.toggleChatBot(this.props.currentCustomer, params, csrfToken);
+  }
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -534,11 +576,15 @@ class ChatMessages extends Component {
         { this.props.currentCustomer !== 0 && (!this.props.removedCustomer || (this.props.removedCustomer && this.props.currentCustomer !== this.props.removedCustomerId)) &&
           (
             <TopChatBar
+              activeChatBot={this.props.activeChatBot}
               agent_list={this.props.agent_list}
+              customer={this.props.customer}
               customerDetails={this.props.customerDetails}
               handleAgentAssignment={this.handleAgentAssignment}
               newAgentAssignedId={this.props.newAgentAssignedId}
+              onMobile={this.props.onMobile}
               setNoRead={this.setNoRead}
+              toggleChatBot={this.toggleChatBot}
             />
           )}
         {this.state.isOpenImage && (
@@ -648,6 +694,9 @@ function mapDispatch(dispatch) {
     },
     sendBulkFiles: (id, body, token) => {
       dispatch(sendBulkFiles(id, body, token));
+    },
+    toggleChatBot: (customerId, params, token) => {
+      dispatch(toggleChatBot(customerId, params, token));
     }
   };
 }

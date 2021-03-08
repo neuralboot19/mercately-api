@@ -75,11 +75,11 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
     end
 
     let(:chat_bot) do
-      create(:chat_bot, :bot_enabled, :with_accented_trigger, chat_bot_options: [chat_bot_option, chat_bot_option_a,
-        chat_bot_option_b, chat_bot_option_c])
+      create(:chat_bot, :bot_enabled, :with_accented_trigger, :for_whatsapp, chat_bot_options:
+        [chat_bot_option, chat_bot_option_a, chat_bot_option_b, chat_bot_option_c])
     end
 
-    let(:retailer) { create(:retailer, :with_chat_bots, chat_bots: [chat_bot]) }
+    let(:retailer) { create(:retailer, :with_chat_bots, :gupshup_integrated, chat_bots: [chat_bot]) }
     let(:customer) { create(:customer, :able_to_start_bots, retailer: retailer) }
     let(:message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
     let(:answer_message) { build(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer) }
@@ -117,7 +117,7 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
         let(:chat_bot_option_image) {create(:chat_bot_option,  :with_image_file, parent: root_option, position: 1, text: '1 Image')}
         let(:chat_bot_option_pdf) {create(:chat_bot_option, :with_pdf_file, parent: root_option, position: 2, text: '2 PDF')}
         let(:chat_bot) do
-          create(:chat_bot, :bot_enabled, :with_accented_trigger,
+          create(:chat_bot, :bot_enabled, :with_accented_trigger, :for_whatsapp,
             chat_bot_options: [root_option, chat_bot_option_image, chat_bot_option_pdf],
             trigger: 'Estoy interesado en Mercately')
         end
@@ -270,7 +270,7 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
               end
 
               let(:chat_bot_any_interaction) do
-                create(:chat_bot, :bot_enabled, :with_any_interaction, retailer: retailer)
+                create(:chat_bot, :bot_enabled, :with_any_interaction, :for_whatsapp, retailer: retailer)
               end
 
               let!(:prev_message) do

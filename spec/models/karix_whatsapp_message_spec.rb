@@ -561,9 +561,12 @@ RSpec.describe KarixWhatsappMessage, type: :model do
 
     context 'chat bot options with media' do
       let(:root_option) { create(:chat_bot_option, text: 'Root node') }
-      let(:chat_bot_option_image) {create(:chat_bot_option,  :with_image_file, parent: root_option, position: 1, text: '1 Image')}
-      let(:chat_bot_option_pdf) {create(:chat_bot_option, :with_pdf_file, parent: root_option, position: 2, text: '2 PDF')}
-      let(:chat_bot) { create(:chat_bot, :bot_enabled, :with_accented_trigger, chat_bot_options: [root_option, chat_bot_option_image, chat_bot_option_pdf], trigger: 'Estoy interesado en Mercately' ) }
+      let(:chat_bot_option_image) {create(:chat_bot_option,  :with_image_file, parent: root_option, position: 1,
+        text: '1 Image')}
+      let(:chat_bot_option_pdf) {create(:chat_bot_option, :with_pdf_file, parent: root_option, position: 2,
+        text: '2 PDF')}
+      let(:chat_bot) { create(:chat_bot, :bot_enabled, :with_accented_trigger, :for_whatsapp, chat_bot_options:
+        [root_option, chat_bot_option_image, chat_bot_option_pdf], trigger: 'Estoy interesado en Mercately' ) }
       let(:retailer) { create(:retailer, :karix_integrated, :with_chat_bots, chat_bots: [chat_bot]) }
       let(:customer) { create(:customer, :able_to_start_bots, retailer: retailer) }
       let(:message) do

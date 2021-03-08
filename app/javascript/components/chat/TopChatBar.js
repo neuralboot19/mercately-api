@@ -1,6 +1,16 @@
 import React from 'react';
 
-const TopChatBar = ({ agent_list, customerDetails, handleAgentAssignment, newAgentAssignedId, setNoRead }) => {
+const TopChatBar = ({
+  activeChatBot,
+  agent_list,
+  customer,
+  customerDetails,
+  handleAgentAssignment,
+  newAgentAssignedId,
+  onMobile,
+  setNoRead,
+  toggleChatBot
+}) => {
   return (
     <div className="top-chat-bar pl-10">
       <div className='assigned-to'>
@@ -14,9 +24,21 @@ const TopChatBar = ({ agent_list, customerDetails, handleAgentAssignment, newAge
           ))}
         </select>
       </div>
+      {activeChatBot && onMobile === false &&
+        <div className="tooltip-top chat-bot-icon">
+          <i className="fas fa-robot c-secondary fs-15"></i>
+          <div className="tooltiptext">ChatBot Activo</div>
+        </div>
+      }
       <div className='mark-no-read'>
         <button onClick={(e) => setNoRead(e)} className='btn btn--cta btn-small right'>Marcar
           como no leído
+        </button>
+        <button onClick={(e) => toggleChatBot(e)} className='btn btn--cta btn-small right'>
+          {activeChatBot || (customer && customer.allow_start_bots) ?
+            <span>Desactivar Bot</span>
+            : <span>Activar Bot</span>
+          }
         </button>
       </div>
     </div>
