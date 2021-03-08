@@ -19,9 +19,10 @@ import ChatMessage from './ChatMessage';
 import ImagesSelector from "../shared/ImagesSelector";
 import GoogleMap from "../shared/Map";
 import TopChatBar from './TopChatBar';
-import ImageModal from '../shared/ImageModal';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -35,15 +36,15 @@ class ChatMessages extends Component {
       messages: [],
       new_message: false,
       scrolable: false,
-      isModalOpen: false,
-      url: '',
       agents: [],
       selectedProduct: null,
       showLoadImages: false,
       loadedImages: [],
       selectedFastAnswer: null,
       showMap: false,
-      zoomLevel: 17
+      zoomLevel: 17,
+      isOpenImage: false,
+      imageUrl: null
     };
     this.bottomRef = React.createRef();
     this.caretPosition = 0;
@@ -121,12 +122,10 @@ class ChatMessages extends Component {
     }
   }
 
-  toggleImgModal = (e) => {
-    var el = e.target;
-
+  openImage = (url) => {
     this.setState({
-      url: el.src,
-      isModalOpen: !this.state.isModalOpen
+      imageUrl: url,
+      isOpenImage: true
     });
   }
 
@@ -542,8 +541,12 @@ class ChatMessages extends Component {
               setNoRead={this.setNoRead}
             />
           )}
-        {this.state.isModalOpen && (
-          <ImageModal url={this.state.url} toggleImgModal={this.toggleImgModal}/>
+        {this.state.isOpenImage && (
+          <Lightbox
+            mainSrc={this.state.imageUrl}
+            onCloseRequest={() => this.setState({ isOpenImage: false })}
+            imageLoadErrorMessage="Error al cargar la imagen"
+          />
         )}
         <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
           {this.state.messages.map((message) => (
@@ -551,9 +554,9 @@ class ChatMessages extends Component {
               <div className={ this.divClasses(message) }>
                 <ChatMessage
                   message={message}
-                  toggleImgModal={this.toggleImgModal}
                   downloadFile={this.downloadFile}
                   fileType={this.fileType}
+                  openImage={this.openImage}
                   />
               </div>
             </div>

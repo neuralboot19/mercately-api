@@ -3,7 +3,7 @@ module WhatsappChatBotActionConcern
   include Whatsapp::EndpointsConnection
 
   included do
-    after_create :chat_bot_execution
+    after_commit :chat_bot_execution, on: :create
   end
 
   private
@@ -97,7 +97,10 @@ module WhatsappChatBotActionConcern
       end
 
       # Mandamos el mensaje con el contenido de la opcion seleccionada (@selected)
-      send_answer(@selected) unless @sent_in_action
+      unless @sent_in_action
+        send_answer(@selected)
+        send_additional_answers(@selected)
+      end
     end
 
     # Se encarga de enviar los mensajes de GupShup.
@@ -165,26 +168,8 @@ module WhatsappChatBotActionConcern
       # Se revisa el texto a enviar, por si tiene variables, sustituirlas por el valor real
       params[:message] = replace_message_variables(params[:message])
 
-      if chat_bot_option.file.attached?
-        # For pdf attachments, send caption in another message
-        aux_url = chat_bot_option.file_url
-        if chat_bot_option.file.content_type == 'application/pdf'
-          aux_url += '.pdf'
-
-          service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
-          send(service, params)
-        end
-        params[:type] = 'file'
-        params[:content_type] = chat_bot_option.file.content_type
-        params[:url] = aux_url
-        # Karix service sets PDF name based on caption param
-        if retailer.karix_integrated? && chat_bot_option.file.content_type == 'application/pdf'
-          params[:caption] = chat_bot_option.file.blob.filename.to_s
-        else
-          params[:caption] = params[:message]
-          params[:file_name] = chat_bot_option.file.blob.filename.to_s
-        end
-      end
+      # Recopila la informacion del adjunto para enviar
+      params = attachment_data(chat_bot_option, nil, params) if chat_bot_option.file.attached?
 
       service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
       send(service, params)
@@ -338,6 +323,7 @@ module WhatsappChatBotActionConcern
       option = customer.chat_bot_option
       @sent_in_action = true
       send_answer(option, true)
+      send_additional_answers(option)
       customer.deactivate_chat_bot!
     end
 
@@ -363,6 +349,7 @@ module WhatsappChatBotActionConcern
       customer.update(chat_bot_option_id: second_parent.id, failed_bot_attempts: 0)
       @sent_in_action = true
       send_answer(second_parent)
+      send_additional_answers(second_parent)
     end
 
     # Reinicia el chatbot nuevamente. Lo manda al principio, a la opcion raiz.
@@ -378,6 +365,7 @@ module WhatsappChatBotActionConcern
       customer.update(chat_bot_option_id: root.id, failed_bot_attempts: 0)
       @sent_in_action = true
       send_answer(root)
+      send_additional_answers(root)
     end
 
     # Guarda la informacion enviada por el customer en la base de datos.
@@ -473,7 +461,7 @@ module WhatsappChatBotActionConcern
 
       if send_option_on_jump?(option)
         send_answer(option)
-        sleep 5 if option.file.attached?
+        send_additional_answers(option)
       end
 
       # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
@@ -485,6 +473,7 @@ module WhatsappChatBotActionConcern
       customer.update(chat_bot_option_id: jump_option.id, failed_bot_attempts: 0)
       @sent_in_action = true
       send_answer(jump_option)
+      send_additional_answers(jump_option)
     end
 
     def api
@@ -760,7 +749,8 @@ module WhatsappChatBotActionConcern
     # es decir, de la opcion origen, antes de que haga dicho salto, y por ende antes de que mande
     # el mensaje de la opcion a la que se salta (opcion destino).
     def send_option_on_jump?(option)
-      option.option_type == 'decision' && (option.answer.present? || option.file.attached?)
+      option.option_type == 'decision' && (option.answer.present? || option.file.attached? ||
+        option.has_additional_answers_filled?)
     end
 
     # Hace una recursividad para buscar la proxima opcion que no tenga en true el atributo
@@ -778,6 +768,7 @@ module WhatsappChatBotActionConcern
         customer.update(chat_bot_option_id: option.id, failed_bot_attempts: 0)
         @sent_in_action = true
         send_answer(option)
+        send_additional_answers(option)
         return
       else
         manage_skip_option(option.children.active.first)
@@ -798,5 +789,96 @@ module WhatsappChatBotActionConcern
     # Revisa si la opcion enviada en parametros esta configurada para saltarse.
     def skip_this_action?(option)
       option&.option_type == 'form' && option&.skip_option && @sent_in_action.blank?
+    end
+
+    # Se encarga de enviar las respuestas adicionales que posee la opcion del bot.
+    def send_additional_answers(option)
+      sleep 5 if option&.file&.attached?
+      return unless option&.has_additional_answers_filled?
+
+      # Se carga con with_attached_file para evitar un N+1
+      additional_answers = option.additional_bot_answers.with_attached_file.order(id: :asc)
+        .map { |m| m if m.text.present? || m.file.attached? }
+
+      size = additional_answers.size - 1
+      additional_answers.each_with_index do |aba, index|
+        has_file = aba.file.attached?
+        last_one = index == size
+        params = {
+          message: replace_message_variables(aba.text),
+          type: 'text'
+        }
+
+        # Recopila la informacion del adjunto para enviar
+        params = attachment_data(option, aba, params, last_one) if has_file
+        # De no ser un archivo, mandamos a agregar la lista de opciones al mensaje.
+        # Solo si ya es la ultima respuesta adicional.
+        params[:message] = append_options_to_message(option, params[:message]) if last_one && !has_file
+
+        service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
+        send(service, params)
+        sleep 5 if has_file
+      end
+    end
+
+    # Toma el adjunto de la opcion o de la respuesta adicional y construye los parametros
+    # necesarios para su correcto envio.
+    def attachment_data(option, object, params, last = false)
+      object ||= option
+      # For pdf attachments, send caption in another message
+      aux_url = object.file_url
+      is_pdf = object.file.content_type == 'application/pdf'
+
+      if is_pdf
+        aux_url += '.pdf'
+
+        params[:message] = append_options_to_message(option, params[:message]) if last
+
+        service = "send_#{retailer.karix_integrated? ? 'karix' : 'gupshup'}_notification"
+        send(service, params)
+      end
+      params[:type] = 'file'
+      params[:content_type] = object.file.content_type
+      params[:url] = aux_url
+      # Karix service sets PDF name based on caption param
+      if retailer.karix_integrated? && is_pdf
+        params[:caption] = object.file.blob.filename.to_s
+      else
+        params[:caption] = is_pdf ? params[:message] :
+          (last ? append_options_to_message(option, params[:message]) : params[:message])
+        params[:file_name] = object.file.blob.filename.to_s
+      end
+
+      params
+    end
+
+    # Agrega la lista de opciones a seleccionar en el mensaje pasado por parametro. Dependiendo si es de tipo
+    # Decision o Fomulario agrega las opciones correspondientes.
+    def append_options_to_message(option, message)
+      if option.option_type == 'decision'
+        # Solo muestra las opciones hijas activas
+        children = option.children.active
+
+        if option.jump_to_option? == false && children.present?
+          message = message.nil? ? '' : (message.present? ? message + "\n\n" : '')
+          children_size = children.size - 1
+
+          children.order(:position).each_with_index do |child, index|
+            message += (child.position.to_s + '. ' + child.text)
+            message += "\n" if index != children_size
+          end
+        end
+      elsif option.has_sub_list?
+        # Construye la lista de opciones a seleccionar tomando en cuenta la sublista de la opcion.
+        message = message.nil? ? '' : (message.present? ? message + "\n\n" : '')
+        items_size = option.option_sub_lists.size - 1
+
+        option.option_sub_lists.order(:position).each_with_index do |item, index|
+          message += (item.position.to_s + '. ' + item.value_to_show)
+          message += "\n" if index != items_size
+        end
+      end
+
+      message
     end
 end

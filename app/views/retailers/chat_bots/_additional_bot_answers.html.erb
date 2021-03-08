@@ -1,0 +1,20 @@
+<fieldset class="col-xs-12 fieldset pt-16 mt-16 mb-16 row">
+  <legend class="fs-20">Respuestas adicionales</legend>
+  <div id="additional_bot_answers" class="w-100">
+    <div class="fs-15">
+      <small><i>Las respuestas se envían en orden de creación. Si la opción es de tipo Formulario, debe
+        solicitar los datos a ingresar en la última respuesta. Si es de tipo Decisión, la lista de selección será
+        agregada en la última respuesta.</i>
+      </small>
+    </div>
+    <%= f.fields_for :additional_bot_answers do |aba| %>
+      <%= render "additional_bot_answers_fields", f: aba %>
+    <% end %>
+    <div class="mt-16 mb-24">
+      <%= link_to_add_association f, :additional_bot_answers, partial: 'new_additional_bot_answers_fields', id: 'add_additional_bot_answers', class: 'btn btn--cta' do %>
+        <i class="fas fa-plus mr-5"></i>
+        Agregar Respuesta
+      <% end %>
+    </div>
+  </div>
+</fieldset>

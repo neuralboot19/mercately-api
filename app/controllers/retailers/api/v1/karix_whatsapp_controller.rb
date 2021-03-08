@@ -120,6 +120,19 @@ module Retailers::Api::V1
         phone = phone_number[0] != '+' ? "+#{phone_number}" : phone_number
         customer = current_retailer.customers.find_or_initialize_by(phone: phone)
 
+        country_id = customer.country_id
+        if country_id.blank?
+          parse_phone = Phonelib.parse(customer.phone)
+          country_id = parse_phone&.country
+        end
+
+        if customer.new_record? && country_id == 'MX' && phone[3] != '1'
+          customer.destroy # Se destruye porque sino se inserta en la DB esta instancia anterior.
+          phone = phone.insert(3, '1')
+          customer = current_retailer.customers.find_or_initialize_by(phone: phone)
+        end
+
+        customer.country_id = country_id
         customer.first_name = params[:first_name] if params[:first_name].present?
         customer.last_name = params[:last_name] if params[:last_name].present?
         customer.email = params[:email] if params[:email].present?
@@ -129,12 +142,8 @@ module Retailers::Api::V1
         customer.zip_code = params[:zip_code] if params[:zip_code].present?
         customer.notes = params[:notes] if params[:notes].present?
 
-        if customer.country_id.blank?
-          parse_phone = Phonelib.parse(customer.phone)
-          customer.country_id = parse_phone&.country
-        end
-
         customer.send_for_opt_in = true
+        customer.from_api = true
         customer.save
 
         customer

@@ -36,8 +36,11 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def show
-    render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), tags:
-      current_retailer.available_customer_tags(@customer.id) }
+    render status: 200, json: {
+      customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]),
+      hubspot_integrated: @customer.retailer.hubspot_integrated?,
+      tags: current_retailer.available_customer_tags(@customer.id)
+    }
   end
 
   def update
@@ -200,8 +203,11 @@ class Api::V1::CustomersController < Api::ApiController
 
     def sanitize_params
       params[:customer].each_pair do |param|
-        params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish if
-          params[:customer][param.first]
+        if params[:customer][param.first]
+          next if param.first == 'notes' # Don't remove \n
+          next if params[:customer][param.first].in? [true, false]
+          params[:customer][param.first] = strip_tags(params[:customer][param.first]).squish
+        end
       end
     end
 
@@ -315,7 +321,8 @@ class Api::V1::CustomersController < Api::ApiController
         :state,
         :zip_code,
         :country_id,
-        :notes
+        :notes,
+        :hs_active
       )
     end
 

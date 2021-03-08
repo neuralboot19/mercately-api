@@ -15,6 +15,7 @@ class Retailer < ApplicationRecord
   has_one_attached :avatar
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
+  has_many :customer_related_data, through: :customers
   has_many :retailer_users, dependent: :destroy
   has_many :templates, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
