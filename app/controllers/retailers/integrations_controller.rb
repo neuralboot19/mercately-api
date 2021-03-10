@@ -75,6 +75,7 @@ class Retailers::IntegrationsController < RetailersController
     facebook_service = Facebook::Messages.new(facebook_retailer)
 
     save_facebook_message(facebook_service, message_data)
+    save_postback_button_interaction(facebook_service, message_data)
     import_facebook_message(facebook_service, message_data)
     read_facebook_message(facebook_service, message_data)
 
@@ -122,5 +123,11 @@ class Retailers::IntegrationsController < RetailersController
 
       psid = message_data['sender']['id']
       facebook_service.mark_read(psid)
+    end
+
+    def save_postback_button_interaction(facebook_service, message_data)
+      return unless message_data['postback']&.[]('payload')
+
+      facebook_service.save_postback_interaction(message_data)
     end
 end

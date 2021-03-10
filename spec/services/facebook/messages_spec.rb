@@ -92,6 +92,22 @@ RSpec.describe Facebook::Messages, vcr: true do
     }
   end
 
+  let(:get_started_button_response) do
+    {
+      'sender': {
+        'id': '2701618273252603'
+      },
+      'recipient': {
+        'id': '101072371445783'
+      },
+      'timestamp': 1615219411827,
+      'postback': {
+        'title': 'Get Started',
+        'payload': 'Iniciar chat'
+      }
+    }.with_indifferent_access
+  end
+
   describe '#save' do
     let(:customers_service) { Facebook::Customers.new(facebook_retailer) }
 
@@ -183,6 +199,23 @@ RSpec.describe Facebook::Messages, vcr: true do
 
     it 'sets as read the message sent by the customer in messenger' do
       expect(messages_service.send_read_action(customer.psid, 'mark_seen')).to eq(response_message_read)
+    end
+  end
+
+  describe '#save_postback_interaction' do
+    let(:customers_service) { Facebook::Customers.new(facebook_retailer) }
+
+    before do
+      allow(Facebook::Customers).to receive(:new).and_return(customers_service)
+      allow_any_instance_of(Facebook::Customers).to receive(:import).and_return(customer)
+    end
+
+    it 'saves get started button payload as a text message' do
+      expect do
+        messages_service.save_postback_interaction(get_started_button_response)
+      end.to change(FacebookMessage, :count).by(1)
+
+      expect(FacebookMessage.last.text).to eq('Iniciar chat')
     end
   end
 end

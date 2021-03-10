@@ -117,7 +117,7 @@ module Facebook
 
       def prepare_webhook_subscription
         {
-          subscribed_fields: 'messages,message_deliveries,message_reads'
+          subscribed_fields: 'messages,message_deliveries,message_reads,messaging_postbacks'
         }.to_json
       end
 
