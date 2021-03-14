@@ -30,6 +30,6 @@ module MercadoLibreNotificationHelper
   end
 
   def self.redis
-    @redis ||= Redis.new()
+    @redis ||= Redis.new(url: ENV['REDIS_PROVIDER'] || 'redis://localhost:6379/1')
   end
 end

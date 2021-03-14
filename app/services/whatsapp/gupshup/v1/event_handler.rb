@@ -6,7 +6,10 @@ module Whatsapp::Gupshup::V1
       @params = params
       gsw_type = @params['type']
       direction = ['message', 'quick_reply'].include?(gsw_type) ? 'inbound' : 'message_event'
-
+      Rails.logger.debug '*'.*100
+      Rails.logger.debug "PARAMS: #{params}"
+      Rails.logger.debug "DIRECTION: #{direction}"
+      Rails.logger.debug '*'.*100
       # Call direction method
       self.send(direction)
     end

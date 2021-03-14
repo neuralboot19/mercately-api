@@ -11,10 +11,11 @@
 # set :branch, 'master'
 set :branch, 'master'
 set :rails_env, 'production'
-
 # Extended Server Syntax
 # ======================
-server '165.227.198.193', user: 'mercately', roles: %w{web app db}
+role :web, %w{10.116.0.5 10.116.0.4}, user: 'mercately'
+role :app, %w{10.116.0.5 10.116.0.4}, user: 'mercately'
+role :db, %w{10.116.0.5}, user: 'mercately'
 
 # This can be used to drop a more detailed server
 # definition into the server list. The second argument
