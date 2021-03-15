@@ -49,6 +49,10 @@ $secondary-color: #00B4FF;
   margin-right: 30px;
 }
 
+.custom-max-width img {
+  max-width: 200px;
+}
+
 .btn-large {
   padding: 0.625rem 3.125rem;
   font-size: 0.875rem;
@@ -346,12 +350,207 @@ footer {
   height: 19px;
 }
 
+.fw-bold {
+  font-family: 'Poppins-Bold' !important;
+  font-weight: bold;
+}
+
+.poppins-medium {
+  font-family: 'Poppins-Medium';
+}
+
+.c-primary {
+  color: $primary-color !important;
+}
+
 .c-secondary {
   color: $secondary-color !important;
 }
 
+.bg-sky {
+  background-color: #55D1F2;
+}
+
+.bg-purple {
+  background-color: #9E42A5;
+}
+
+.bg-pink {
+  background-color: #FEFAFF;
+}
+
+.bg-primary {
+  background-color: $primary-color !important;
+}
+
+.bg-secondary {
+  background-color: $secondary-color !important;
+}
+
 .secondary {
   color: #26abe2;
+}
+
+@for $space from 0 through 250 {
+  .fz-#{$space} {
+    font-size: #{$space}px;
+  }
+}
+
+#price-hero {
+  background-image: url(image_path('price/background-hero.png'));
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#left-plan-button {
+  background-color: #9E42A5;
+  padding: 24px 36px;
+  width: 262px;
+  font-size: 1.25rem;
+  border-radius: 18px 0 0 18px;
+
+  @media screen and (max-width: 768px) {
+    border-radius: 18px;
+  }
+}
+
+#right-plan-button {
+  background-color: #F4F4F4;
+  padding: 24px 36px;
+  width: 262px;
+  font-size: 1.25rem;
+  border-radius: 0 18px 18px 0;
+
+  @media screen and (max-width: 768px) {
+    border-radius: 18px;
+    margin-top: 16px;
+  }
+}
+
+#arrow-section {
+  @media screen and (min-width: 768px) {
+    margin-left: 250px;
+  }
+}
+
+#recomended-plan {
+  position: absolute;
+  top: 0;
+  left: 34%;
+  color: #FFF;
+  background-color: #F79F2B;
+  border-radius: 0 0 5px 5px;
+  font-size: 10px;
+  padding: 2px 7px;
+}
+
+.pricing-table {
+  th, td {
+    border: 1px solid #A5A5A5;
+  }
+
+  td {
+    padding: 8px;
+    font-size: 18px;
+    font-family: 'Poppins-Medium';
+
+    &:nth-child(even) {
+      background-color: #F7F5F7;
+    }
+  }
+}
+
+#select-plan:checked ~ #month {
+  display: table;
+}
+
+#select-plan:checked ~ #trimestral {
+  display: none;
+}
+
+#select-plan:not(:checked) ~ #month {
+  display: none;
+}
+
+#select-plan:not(:checked) ~ #trimestral {
+  display: table;
+}
+
+#month_chats, #trimestral_chats {
+  width: 540px;
+}
+
+@media screen and (max-width: 767px) {
+  .pricing-table {
+    td {
+      font-size: 15px !important;
+
+      &:first-child {
+        max-width: 156px;
+        width: 156px;
+        font-size: 15px !important;
+      }
+    }
+  }
+
+  #month_chats, #trimestral_chats {
+    width: 220px;
+
+    & ~ div span {
+      margin: 0 !important;
+    }
+  }
+
+  #toggle-plan:checked {
+    & ~ table td:nth-child(3) {
+      display: none;
+    }
+
+    & ~ table th:nth-child(3) {
+      display: none;
+    }
+  }
+
+  #toggle-plan:not(:checked) {
+    & ~ table td:nth-child(2) {
+      display: none;
+    }
+
+    & ~ table th:nth-child(2) {
+      display: none;
+    }
+  }
+}
+
+.price-checkbox {
+  & ~ label {
+    vertical-align: middle;
+  }
+
+  & ~ label::before {
+    content: ' ';
+    vertical-align: middle;
+    width: 27px;
+    height: 25px;
+    display: inline-block;
+    background-repeat: no-repeat;
+    background-image: url(asset_path('price/unchecked.png'));
+  }
+
+  &:checked ~ label::before {
+    background-image: url(asset_path('price/checked.png'));
+  }
+}
+
+.in-place {
+  border: 0;
+  background-color: transparent;
+
+  &:focus {
+    border: 1px solid #cecece;
+    background-color: #FFF;
+  }
 }
 
 .base {
@@ -1182,8 +1381,6 @@ footer {
   }
 }
 
-
-
 @media (min-width: 1200px) {
   .cw-hero-heading {
     margin-top: 7rem;
@@ -1198,6 +1395,7 @@ footer {
   }
 }
 
-
-
-
+.text-label-hover:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
