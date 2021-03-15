@@ -42,6 +42,7 @@ Rails.application.routes.draw do
   get '/privacidad', to: 'pages#privacy', as: :privacy
   get '/terminos', to: 'pages#terms', as: :terms
   get '/whatsapp-crm', to: 'pages#whatsapp_crm', as: :whatsapp_crm
+  get 'precios', to: 'pages#price', as: :price
 
   get '/chatbots-whatsapp', to: 'pages#chatbots_whatsapp', as: :chatbots_whatsapp
 
