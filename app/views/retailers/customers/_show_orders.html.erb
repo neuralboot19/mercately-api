@@ -1,0 +1,123 @@
+<div class="table__item row middle-xs">
+  <div class="col-xs-4 col-sm-2 t-center">
+    <label for="order_items_<%= order.id %>" class="c-secondary">
+      Detalles
+      <i class="fas fa-caret-down"></i>
+    </label>
+  </div>
+  <div class="col-xs-5 col-sm-2 t-center">
+    <b class="cookie <%= cookie(order.status) %>"><%= Order.enum_translation(:status, order.status)  %></b>
+  </div>
+  <div class="col-xs-3 table__action-dots p-0 hide-on-md-and-up">
+    <label class="item__dropdown d-inline">
+      <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+            <i class="fas fa-eye mr-8"></i>
+            Ver
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+  <div class="col-xs-4 col-sm-2 t-center c-grey">
+    <div class="truncate">
+      <%= order.customer.full_names %>
+    </div>
+  </div>
+  <div class="col-xs-4 col-sm-2 t-center money">
+    $<%= order.total %>
+  </div>
+  <div class="col-xs-4 col-sm-3 t-center">
+    <%= show_date(order.created_at) %>
+  </div>
+  <div class="col-xs-12 hide-on-1080-and-down orders__actions col-sm-1 t-center">
+    <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+      <i class="fas fa-eye"></i>
+    <% end %>
+  </div>
+  <div class="hide-on-sm-and-down hide-on-2k m-auto">
+    <label class="item__dropdown dropdown d-inline">
+      <a class="dropdown__button midd" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
+            <i class="fas fa-eye mr-8"></i>
+            Ver
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+</div>
+<input type="checkbox" id="order_items_<%= order.id %>" class="toggle_order_items d-none"/>
+<div class="table box m-0 order_items">
+  <div class="table__header row hide-on-tablet-and-down center-sm pt-25">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-2">Producto</div>
+    <div class="col-sm-2">Cantidad</div>
+    <div class="col-sm-2">Precio</div>
+    <div class="col-sm-3">Sub-total</div>
+    <div class="col-sm-1"></div>
+  </div>
+  <% order.order_items.each do |oi| %>
+    <div class="table__item row middle-xs">
+      <div class="col-xs-3 col-sm-2">
+        <div class="products__img">
+          <% if oi.product.main_picture_id %>
+            <%= cl_image_tag("#{oi.product.images&.find(oi.product.main_picture_id)&.key}") %>
+          <% else %>
+            <%= cl_image_tag("#{oi.product.images&.first&.key}") %>
+          <% end %>
+        </div>
+      </div>
+      <div class="col-xs-9 col-sm-2 t-center">
+        <%= oi.product.title %>
+      </div>
+      <div class="col-xs-4 col-sm-2 t-center">
+        <span class="hide-on-md-and-up mr-5">Cantidad:</span>
+        <%= oi.quantity %>
+      </div>
+      <div class="col-xs-4 col-sm-2 t-center c-secondary">
+        <span class="hide-on-md-and-up mr-5">Precio:</span>
+        $<%= oi.unit_price %>
+      </div>
+      <div class="col-xs-4 col-sm-3 t-center c-secondary">
+        <span class="hide-on-md-and-up mr-5">Sub-total:</span>
+        $<%= oi.subtotal %>
+      </div>
+      <div class="col-sm-1 col-xs-12 t-center p-0">
+        <% if oi.product_variation %>
+          <label for="variation_<%= oi.id %>" class="variation_details c-secondary">
+            Detalles
+            <i class="fas fa-caret-down"></i>
+          </label>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-xs-12 px-26">
+      <div class="table__item row middle-xs">
+        <% if oi&.product_variation&.data&.[]('attribute_combinations') %>
+          <input type="checkbox" id="variation_<%= oi.id %>" class="toggle_variations d-none"/>
+          <table class="table_details table_details--underlined w-100 variations">
+            <tbody>
+              <% oi.product_variation.data['attribute_combinations'].each do |attr_comb| %>
+                <tr>
+                  <td class="table_details__descriptor"><%= attr_comb['name'] || attr_comb['id'] %>:</td>
+                  <td class="table_details__value"><%= attr_comb['value_name'] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

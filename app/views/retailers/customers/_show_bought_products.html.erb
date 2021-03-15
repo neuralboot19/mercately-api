@@ -1,0 +1,27 @@
+<div class="table__item row middle-xs">
+  <div class="col-xs-4 col-sm-1">
+    <div class="products__img">
+      <% if product.main_picture_id %>
+        <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}") %>
+      <% elsif product.images&.first&.key.present? %>
+        <%= cl_image_tag("#{product.images&.first&.key}") %>
+      <% else %>
+        <i class="fas fa-camera-retro fs-40 c-grey"></i>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-xs-7 col-sm-3 t-center"><%= product.title %></div>
+  <div class="col-xs-12 col-sm-4 t-center hide-on-tablet-and-down c-grey">
+    <%= product.category&.name %>
+  </div>
+  <div class="col-xs-12 col-sm-4">
+    <div class="box">
+      <div class="row">
+        <div class="col-xs-4 col-sm-6 item__descriptor">Ventas:</div>
+        <div class="col-xs-2 col-sm-6"><%= @customer.order_items_product(product) %></div>
+        <div class="col-xs-4 col-sm-6 item__descriptor">Ganancia:</div>
+        <div class="col-xs-2 col-sm-6">$<%= @customer.earned_by_product(product) %></div>
+      </div>
+    </div>
+  </div>
+</div>
