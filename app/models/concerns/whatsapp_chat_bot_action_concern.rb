@@ -388,7 +388,12 @@ module WhatsappChatBotActionConcern
         related_data = customer.customer_related_data
           .find_or_initialize_by(customer_related_field_id: action.customer_related_field_id)
 
-        related_data.data = value_to_save
+        customer_related_field = action.customer_related_field
+
+        # Buscamos el valor interno del campo dinamico tipo lista, para guardarlo.
+        # Solo en caso de ser tipo lista. Sino guardamos el valor.
+        related_data.data = customer_related_field&.list? ?
+          customer_related_field.get_list_option_key(value_to_save) : value_to_save
         related_data.save
       else
         # Si tiene asociado un campo existente en la tabla customers, se guarda alli.
@@ -734,7 +739,9 @@ module WhatsappChatBotActionConcern
 
       # Si lo hay, tomamos el valor de alli.
       if related.present?
-        customer.customer_related_data.find_by(customer_related_field_id: related.id)&.data.presence || ''
+        data = customer.customer_related_data.find_by(customer_related_field_id: related.id)&.data.presence || ''
+
+        related.list? ? related.get_list_option_value(data) : data
       elsif columns.include?(value)
         # Sino hay campo dinamico, pero si hay coincidencia con algun campo de la tabla customers, se toma
         customer.send(value)

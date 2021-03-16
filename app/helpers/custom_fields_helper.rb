@@ -17,7 +17,8 @@ module CustomFieldsHelper
     when 'date'
       form_object.date_field :data, class: 'input', value: form_object.object&.data
     when 'list'
-      form_object.select :data, options_for_select(customer_related_field.list_options, form_object.object&.data), class: 'input', multiple: true
+      form_object.select :data, options_for_select(customer_related_field.list_options.map { |l| [l.value, l.key] },
+        form_object.object&.data), class: 'input', multiple: true, include_blank: true
     end
   end
 end

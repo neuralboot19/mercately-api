@@ -14,26 +14,15 @@
             <%= f.select :field_type, field_types_list, { include_blank: false }, class: 'input validate-required' %>
             <i class="validation-msg"></i>
           </div>
-          <div class="col-sm-6"></div>
-          <div id="list_options" class="my-16 col-xs-12 col-sm-6" style="display: none;">
-            <%= f.label :list_options, 'Lista de opciones' %>
-            <% @customer_related_field.list_options.each do |opt| %>
-              <div class="row p-0 mb-6">
-                <div class="col-xs-11 p-0">
-                  <%= text_field_tag 'customer_related_field[list_options][]', opt, class: 'input validate-required mt-0' %>
-                  <i class="validation-msg"></i>
-                </div>
-                <div class="col-xs-1 t-center">
-                  <a class="btn btn--destroy destroy-option d-inline-block m-0">
-                    <i class="fas fa-times"></i>
-                  </a>
-                </div>
-              </div>
+          <div id="list_options" class="my-16 col-xs-12 col-sm-12" style="display: none;">
+            <%= f.label :list_options, 'Lista de opciones' %><br />
+            <small>El valor interno no podrá ser editado luego de su creación</small>
+            <%= f.fields_for :list_options, f.object.list_options do |l| %>
+              <%= render 'list_options_fields', f: l %>
             <% end %>
           </div>
-          <div class="col-sm-6"></div>
-          <div id="add_options" class="my-16 col-xs-12 col-sm-6" style="display: none;">
-            <a id="add_option_customer_related_field_list_options" href="#!">Agregar opción</a>
+          <div id="add_options" class="col-xs-12 col-sm-12" style="display: none;">
+            <a id="add_option_customer_related_field_list_options" href="#!" onclick="addListOption(<%= f.object.list_options.length > 0 ? f.object.list_options.length : 1 %>)">Agregar opción</a>
           </div>
         </div>
       </fieldset>
@@ -61,34 +50,17 @@
     <% if @customer_related_field.list? %>
       $('#list_options, #add_options').show();
     <% end %>
+
     $('#customer_related_field_field_type').on('change', function() {
       if (this.value === 'list') {
         $('#list_options, #add_options').show();
+        $('#list_options').find('.input').removeAttr('disabled');
       } else {
         $('#list_options, #add_options').hide();
+        $('#list_options').find('.input').attr('disabled', 'disabled');
       }
-    })
-    $('#add_option_customer_related_field_list_options').on('click', function(e) {
-      e.preventDefault();
-      $('#list_options').append(
-      `
-        <div class="row p-0 mb-6">
-          <div class="col-xs-11 p-0">
-            <%= text_field_tag "customer_related_field[list_options][]", nil, class: "input validate-required mt-0" %>
-            <i class="validation-msg"></i>
-          </div>
-          <div class="col-xs-1 t-center">
-            <a class="btn btn--destroy destroy-option d-inline-block m-0" onclick="this.closest('.row').remove();">
-              <i class="fas fa-times"></i>
-            </a>
-          </div>
-        </div>
-      `
-      )
-    });
-
-    $('.destroy-option').on('click', function() {
-      this.closest('.row').remove();
     })
   })
 </script>
+
+<script src="<%= asset_path 'retailers/customers/customers.js' %>" charset="utf-8"></script>
