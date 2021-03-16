@@ -1,0 +1,22 @@
+<% crd = CustomerRelatedDatum.find_by(customer: @customer, customer_related_field: crf) %>
+<div>
+  <label class="c-grey fs-14"><%= crf.name %>:</label>
+  <span class="c-secondary fs-14">
+    <% if crd %>
+      <% case crf.field_type %>
+      <% when 'boolean' %>
+        <% if crd.data == 'true' %>
+          Verdadero
+        <% elsif crd.data == 'false' %>
+          Falso
+        <% end %>
+      <% when 'date' %>
+        <% if crd.data.present? %>
+          <%= crd.data.to_date.strftime('%d/%m/%Y') %>
+        <% end %>
+      <% else %>
+        <%= crd.data %>
+      <% end %>
+    <% end %>
+  </span>
+</div>

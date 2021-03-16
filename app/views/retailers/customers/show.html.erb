@@ -1,9 +1,23 @@
+<style type="text/css" media="screen">
+fieldset {
+  border: 1px solid #DDD;
+}
+</style>
 <div class="container-fluid reduced-container-padding mb-16">
   <div class="card">
     <div class="container-fluid order">
       <div class="row">
         <div class="col-xs-12 col-md-6">
-          <h1 class="d-inline name">Cliente</h1>
+          <h1 class="d-inline name"><%= @customer.full_names.presence || @customer.whatsapp_name %></h1>
+          <div class="fz-14">
+            <%= @customer.email %>
+          </div>
+          <div class="fz-14">
+            <% if @customer.country_id.present? && @customer.phone.present? %>
+              <span class="mr-5"><%= @customer.emoji_flag %></span>
+            <% end %>
+            <%= @customer.phone %>
+          </div>
         </div>
         <div class="col-xs-12 col-md-6 t-right button-sm-and-down">
           <div class="mt-8">
@@ -23,105 +37,171 @@
       <div class="row">
         <div class="col-xs-12">
           <fieldset class="fieldset mt-16">
-            <legend>Información del cliente</legend>
+            <div class="border-bottom"></div>
             <div class="row box mt-25">
-              <div class="col-xs-12 col-md-6 px-0 product__info">
+              <div class="col-xs-12 col-md-4 px-0">
                 <input type="hidden" value="<%= @customer.id %>" id="karix-customer-id">
                 <div class="row">
-                  <div class="col-xs-12 col-sm-6">
-                    <label class="c-grey fs-14">Nombre:</label> <span class="c-secondary fs-14"><%= @customer.first_name %></span>
-                  </div>
-                  <div class="col-xs-12 col-sm-6">
-                    <label class="c-grey fs-14">Apellido:</label> <span class="c-secondary fs-14"><%= @customer.last_name %></span>
-                  </div>
-                </div>
-                <div class="row mt-25">
-                  <div class="col-xs-12 col-sm-6">
-                    <label class="c-grey fs-14">Email:</label> <span class="c-secondary fs-14"><%= @customer.email %></span>
-                  </div>
-                  <div class="col-xs-12 col-sm-6">
-                    <label class="c-grey fs-14">Teléfono:</label>
-                    <% if @customer.country_id.present? && @customer.phone.present? %>
-                      <span class="mr-5"><%= @customer.emoji_flag %></span>
-                    <% end %>
-                    <span class="c-secondary fs-14"><%= @customer.phone %></span><br />
-                    <% if can_send_whatsapp_notification?(current_retailer_user, @customer) %>
-                      <label
-                        for="modal--toggle"
-                        class="request-demo-label fz-15 ws-contact d-none"
-                        data-customer_id="<%= @customer.id %>"
-                        data-whatsapp_opt_in="<%= @customer.whatsapp_opt_in || false %>"
-                      >
-                      <i class="fab fa-whatsapp fz-16 mr-5"></i>
-                      Enviar Notificación
-                    <% end %>
-                  </div>
-                </div>
-                <div class="row mt-25">
-                  <div class="col-xs-12 col-sm-6">
-                    <label class="c-grey fs-14">Tipo de identificación:</label> <span class="c-secondary fs-14"><%= @customer.id_type %></span>
-                  </div>
-                  <div class="col-xs-12 col-sm-6">
-                    <label class="c-grey fs-14">Número de identificación:</label> <span class="c-secondary fs-14"><%= @customer.id_number %></span>
-                  </div>
-                </div>
-                <div class="row mt-25">
                   <div class="col-xs-12">
-                    <label class="c-grey fs-14">Dirección:</label> <span class="c-secondary fs-14"><%= @customer.address %><%= @customer.address.present? && @customer.city.present? ? ', ' + @customer.city : @customer.city %><%=
-                      @customer.city.present? && @customer.state.present? ? ', ' + @customer.state : @customer.state %><%= @customer.state.present? && @customer.zip_code.present? ? ', ' + @customer.zip_code : @customer.zip_code %>
-                    </span>
+                    <fieldset id="" class="">
+                      <legend><b>Información del cliente</b></legend>
+                      <div>
+                        <label class="c-grey fs-14">Nombre:</label> <span class="c-secondary fs-14"><%= @customer.first_name %></span>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Apellido:</label> <span class="c-secondary fs-14"><%= @customer.last_name %></span>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Email:</label> <span class="c-secondary fs-14"><%= @customer.email %></span>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Teléfono:</label>
+                        <% if @customer.country_id.present? && @customer.phone.present? %>
+                          <span class="mr-5"><%= @customer.emoji_flag %></span>
+                        <% end %>
+                        <span class="c-secondary fs-14"><%= @customer.phone %></span><br />
+                        <% if can_send_whatsapp_notification?(current_retailer_user, @customer) %>
+                          <label
+                            for="modal--toggle"
+                            class="request-demo-label fz-15 ws-contact d-none"
+                            data-customer_id="<%= @customer.id %>"
+                            data-whatsapp_opt_in="<%= @customer.whatsapp_opt_in || false %>"
+                            >
+                            <i class="fab fa-whatsapp fz-16 mr-5"></i>
+                            Enviar Notificación
+                          <% end %>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Tipo de identificación:</label> <span class="c-secondary fs-14"><%= @customer.id_type %></span>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Número de identificación:</label> <span class="c-secondary fs-14"><%= @customer.id_number %></span>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Dirección:</label>
+                        <span class="c-secondary fs-14">
+                          <%= @customer.address %><%= @customer.address.present? && @customer.city.present? ? ', ' + @customer.city : @customer.city %>
+                          <%= @customer.city.present? && @customer.state.present? ? ', ' + @customer.state : @customer.state %>
+                          <%= @customer.state.present? && @customer.zip_code.present? ? ', ' + @customer.zip_code : @customer.zip_code %>
+                        </span>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Notas:</label>
+                        <span class="c-secondary fs-14">
+                          <%= @customer.notes.to_s.gsub(/\n/, '<br/>').html_safe %>
+                        </span>
+                      </div>
+                      <div>
+                        <label class="c-grey fs-14">Etiquetas:</label>
+                        <span class="c-secondary fs-14 row">
+                          <% @customer.tags.each do |tag| %>
+                            <div class="mb-10 bottom-xs">
+                              <div class="customer-saved-tags">
+                                <%= tag.tag %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </span>
+                      </div>
+                    </fieldset>
                   </div>
                 </div>
-                <div class="row mt-25">
-                  <div class="col-xs-12">
-                    <label class="c-grey fs-14">Notas:</label>
-                    <span class="c-secondary fs-14">
-                      <%= @customer.notes %>
-                    </span>
+                <% if current_retailer.customer_related_fields.exists? %>
+                  <div class="row my-8">
+                    <div class="col-xs-12">
+                      <fieldset id="" class="">
+                        <legend><b>Campos personalizados</b></legend>
+                        <%= render partial: 'retailers/customers/custom_fields_show', collection: current_retailer.customer_related_fields, as: :crf %>
+                      </fieldset>
+                    </div>
                   </div>
-                </div>
-                <div class="row mt-25">
-                  <div class="col-xs-12">
-                    <label class="c-grey fs-14">Etiquetas:</label>
-                    <span class="c-secondary fs-14 row">
-                      <% @customer.tags.each do |tag| %>
-                        <div class="mb-10 bottom-xs">
-                          <div class="customer-saved-tags">
-                            <%= tag.tag %>
-                          </div>
-                        </div>
-                      <% end %>
-                    </span>
-                  </div>
-                </div>
+                <% end %>
               </div>
-              <div class="col-xs-12 col-md-6 px-0">
+              <div class="col-xs-12 col-md-8 px-0">
                 <div class="box">
                   <div class="row">
                     <div class="col-xs-12 card__module p-0">
-                      <div class="card__title"><i class="fas fa-money-bill-alt c-primary"></i> Finanzas</div>
-                      <div class="box">
-                        <div class="row card__submodule center-xs">
-                          <div class="col-xs-12 submodule col-sm-4">
-                            <h2><%= @customer.orders.success.count %></h2>
-                            <h6>Completadas</h6>
-                          </div>
-                          <div class="col-xs-12 submodule col-sm-4">
-                            <h2><%= @customer.orders.pending.count %></h2>
-                            <h6>Pendientes</h6>
-                          </div>
-                          <div class="col-xs-12 submodule col-sm-4">
-                            <h2><%= @customer.orders.cancelled.count %></h2>
-                            <h6>Canceladas</h6>
-                          </div>
-                        </div>
-                        <div class="row card__submodule middle-xs center-xs">
-                          <div class="col-xs-12">
-                            <div class="circle my-16">
-                              <h2>$<%= @customer.earnings %></h2>
-                              <h6>Ganancia</h6>
+                      <fieldset>
+                        <legend><b>Información financiera</b></legend>
+                        <div class="card__title">Órdenes</div>
+                        <div class="box">
+                          <div class="row center-xs">
+                            <div class="col-xs-12 submodule col-sm-4">
+                              <h2 class="m-0"><%= @customer.orders.success.count %></h2>
+                              <h6>Completadas</h6>
+                            </div>
+                            <div class="col-xs-12 submodule col-sm-4">
+                              <h2 class="m-0"><%= @customer.orders.pending.count %></h2>
+                              <h6>Pendientes</h6>
+                            </div>
+                            <div class="col-xs-12 submodule col-sm-4">
+                              <h2 class="m-0"><%= @customer.orders.cancelled.count %></h2>
+                              <h6>Canceladas</h6>
+                            </div>
+                            <div class="col-xs-12">
+                              <div class="border-bottom mt-16"></div>
+                              <div class="my-16">
+                                <h2 class="mb-0 c-green">$<%= @customer.earnings %></h2>
+                                <h6 class="mt-0">Ganancia</h6>
+                              </div>
                             </div>
                           </div>
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <div class="mt-8" style="border-bottom: 2px solid #DDD;">
+                        <div class="d-inline-block tab selected-tab">
+                          <label for="show_orders">
+                            Ventas
+                          </label>
+                        </div><div
+                                class="d-inline-block tab">
+                          <label for="show_bought_products">
+                            Productos
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-12">
+                      <div>
+                        <input type="radio" class="d-none check-toggler" name="toggle-tab" id="show_orders" checked/>
+                        <div class="show-on-check">
+                          <% if @customer.orders.present? %>
+                            <div class="table box mt-16">
+                              <div class="table__header row hide-on-tablet-and-down center-sm">
+                                <div class="col-sm-2"></div>
+                                <div class="col-sm-2">Estado</div>
+                                <div class="col-sm-2">Cliente</div>
+                                <div class="col-sm-2">Total de compra</div>
+                                <div class="col-sm-3">Fecha de compra</div>
+                                <div class="col-sm-1"></div>
+                              </div>
+                              <%= render partial: 'retailers/customers/show_orders', collection: @customer.orders, as: :order %>
+                            </div>
+                          <% else %>
+                            Este cliente no tiene órdenes de compra todavía.
+                          <% end %>
+                        </div>
+                      </div>
+                      <div>
+                        <input type="radio" class="d-none check-toggler" name="toggle-tab" id="show_bought_products">
+                        <div class="show-on-check">
+                          <% if @customer.bought_items.exists? %>
+                            <div class="table box mt-16">
+                              <div class="table__header row hide-on-tablet-and-down center-sm">
+                                <div class="col-sm-1">Imagen</div>
+                                <div class="col-sm-3">Producto</div>
+                                <div class="col-sm-4 hide-on-tablet-and-down">Categoría</div>
+                                <div class="col-sm-4">Finanzas</div>
+                              </div>
+                              <%= render partial: 'retailers/customers/show_bought_products', collection: @customer.bought_items, as: :product %>
+                            </div>
+                          <% else %>
+                            Este cliente no ha completado ninguna órden.
+                          <% end %>
                         </div>
                       </div>
                     </div>
@@ -132,204 +212,6 @@
           </fieldset>
         </div>
       </div>
-      <% if @customer.orders.present? %>
-        <div class="col-xs-12 divider mt-30"></div>
-        <div class="row">
-          <div class="col-xs-12">
-            <fieldset class="fieldset mt-16">
-            <legend>Ordenes</legend>
-              <div class="row">
-                <div class="col-xs-12">
-                  <div class="table box">
-                    <div class="table__header row hide-on-tablet-and-down center-sm">
-                      <div class="col-sm-1"></div>
-                      <div class="col-sm-3">Estado</div>
-                      <div class="col-sm-2">Cliente</div>
-                      <div class="col-sm-2">Total de compra</div>
-                      <div class="col-sm-3">Fecha de compra</div>
-                      <div class="col-sm-1"></div>
-                    </div>
-                    <% @customer.orders.each do |order| %>
-                      <div class="divider"></div>
-                      <div class="table__item row middle-xs">
-                        <div class="col-xs-4 col-sm-1 t-center">
-                          <label for="order_items_<%= order.id %>" class="c-secondary">
-                            Detalles
-                            <i class="fas fa-caret-down"></i>
-                          </label>
-                        </div>
-                        <div class="col-xs-5 col-sm-3 t-center">
-                          <b class="cookie <%= cookie(order.status) %>"><%= Order.enum_translation(:status, order.status)  %></b>
-                        </div>
-                        <div class="col-xs-3 table__action-dots p-0 hide-on-md-and-up">
-                          <label class="item__dropdown d-inline">
-                            <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
-                              <i class="fas fa-ellipsis-v m-auto c-black"></i>
-                            </a>
-
-                            <ul class="dropdown__menu">
-                              <li>
-                                <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
-                                  <i class="fas fa-eye mr-8"></i>
-                                  Ver
-                                <% end %>
-                              </li>
-                            </ul>
-                          </label>
-                        </div>
-                        <div class="col-xs-4 col-sm-2 t-center c-grey">
-                          <div class="truncate">
-                            <%= order.customer.full_names %>
-                          </div>
-                        </div>
-                        <div class="col-xs-4 col-sm-2 t-center money">
-                          $<%= order.total %>
-                        </div>
-                        <div class="col-xs-4 col-sm-3 t-center">
-                          <%= show_date(order.created_at) %>
-                        </div>
-                        <div class="col-xs-12 hide-on-1080-and-down orders__actions col-sm-1 t-center">
-                          <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
-                            <i class="fas fa-eye"></i>
-                          <% end %>
-                        </div>
-                        <div class="hide-on-sm-and-down hide-on-2k m-auto">
-                          <label class="item__dropdown dropdown d-inline">
-                            <a class="dropdown__button midd" tabindex="-1" href="#!">
-                              <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                            </a>
-
-                            <ul class="dropdown__menu">
-                              <li>
-                                <%= link_to retailers_order_path(current_retailer, order), class: 'c-black no-style' do %>
-                                  <i class="fas fa-eye mr-8"></i>
-                                  Ver
-                                <% end %>
-                              </li>
-                            </ul>
-                          </label>
-                        </div>
-                      </div>
-                      <input type="checkbox" id="order_items_<%= order.id %>" class="toggle_order_items d-none"/>
-                      <div class="table box m-0 order_items">
-                        <div class="table__header row hide-on-tablet-and-down center-sm pt-25">
-                          <div class="col-sm-1"></div>
-                          <div class="col-sm-3">Producto</div>
-                          <div class="col-sm-2">Cantidad</div>
-                          <div class="col-sm-2">Precio</div>
-                          <div class="col-sm-3">Sub-total</div>
-                          <div class="col-sm-1"></div>
-                        </div>
-                        <% order.order_items.each do |oi| %>
-                          <div class="table__item row middle-xs">
-                            <div class="col-xs-3 col-sm-1">
-                              <div class="products__img">
-                                <% if oi.product.main_picture_id %>
-                                  <%= cl_image_tag("#{oi.product.images&.find(oi.product.main_picture_id)&.key}") %>
-                                <% else %>
-                                  <%= cl_image_tag("#{oi.product.images&.first&.key}") %>
-                                <% end %>
-                              </div>
-                            </div>
-                            <div class="col-xs-9 col-sm-3 t-center">
-                              <%= oi.product.title %>
-                            </div>
-                            <div class="col-xs-4 col-sm-2 t-center">
-                              <span class="hide-on-md-and-up mr-5">Cantidad:</span>
-                              <%= oi.quantity %>
-                            </div>
-                            <div class="col-xs-4 col-sm-2 t-center c-secondary">
-                              <span class="hide-on-md-and-up mr-5">Precio:</span>
-                              $<%= oi.unit_price %>
-                            </div>
-                            <div class="col-xs-4 col-sm-3 t-center c-secondary">
-                              <span class="hide-on-md-and-up mr-5">Sub-total:</span>
-                              $<%= oi.subtotal %>
-                            </div>
-                            <div class="col-sm-1 col-xs-12 t-center p-0">
-                              <% if oi.product_variation %>
-                                <label for="variation_<%= oi.id %>" class="variation_details c-secondary">
-                                  Detalles
-                                  <i class="fas fa-caret-down"></i>
-                                </label>
-                              <% end %>
-                            </div>
-                          </div>
-                          <div class="col-xs-12 px-26">
-                            <div class="table__item row middle-xs">
-                              <% if oi&.product_variation&.data&.[]('attribute_combinations') %>
-                                <input type="checkbox" id="variation_<%= oi.id %>" class="toggle_variations d-none"/>
-                                <table class="table_details table_details--underlined w-100 variations">
-                                  <tbody>
-                                    <% oi.product_variation.data['attribute_combinations'].each do |attr_comb| %>
-                                      <tr>
-                                        <td class="table_details__descriptor"><%= attr_comb['name'] || attr_comb['id'] %>:</td>
-                                        <td class="table_details__value"><%= attr_comb['value_name'] %></td>
-                                      </tr>
-                                    <% end %>
-                                  </tbody>
-                                </table>
-                              <% end %>
-                            </div>
-                          </div>
-                        <% end %>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-          </div>
-        </div>
-      <% end %>
-      <% if @customer.bought_items.present? %>
-        <div class="col-xs-12 divider mt-30"></div>
-        <div class="row">
-          <div class="col-xs-12">
-            <fieldset class="fieldset mt-16">
-            <legend>Productos comprados</legend>
-              <div class="table box">
-                <div class="table__header row hide-on-tablet-and-down center-sm">
-                  <div class="col-sm-1">Imagen</div>
-                  <div class="col-sm-3">Producto</div>
-                  <div class="col-sm-4 hide-on-tablet-and-down">Categoría</div>
-                  <div class="col-sm-4">Finanzas</div>
-                </div>
-                <% @customer.bought_items.each do |product| %>
-                  <div class="divider"></div>
-                  <div class="table__item row middle-xs">
-                    <div class="col-xs-4 col-sm-1">
-                      <div class="products__img">
-                        <% if product.main_picture_id %>
-                          <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}") %>
-                        <% elsif product.images&.first&.key.present? %>
-                          <%= cl_image_tag("#{product.images&.first&.key}") %>
-                        <% else %>
-                          <i class="fas fa-camera-retro fs-40 c-grey"></i>
-                        <% end %>
-                      </div>
-                    </div>
-                    <div class="col-xs-7 col-sm-3 t-center"><%= product.title %></div>
-                    <div class="col-xs-12 col-sm-4 t-center hide-on-tablet-and-down c-grey">
-                      <%= product.category&.name %>
-                    </div>
-                    <div class="col-xs-12 col-sm-4">
-                      <div class="box">
-                        <div class="row">
-                          <div class="col-xs-4 col-sm-6 item__descriptor">Ventas:</div>
-                          <div class="col-xs-2 col-sm-6"><%= @customer.order_items_product(product) %></div>
-                          <div class="col-xs-4 col-sm-6 item__descriptor">Ganancia:</div>
-                          <div class="col-xs-2 col-sm-6">$<%= @customer.earned_by_product(product) %></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </fieldset>
-          </div>
-        </div>
-      <% end %>
     </div>
   </div>
 </div>
@@ -410,4 +292,19 @@
     $('#karix-template-edition').hide();
     $('.ws-contact').show();
   })
+</script>
+<script charset="utf-8">
+  $(function() {
+    function toggleTabs() {
+      if (document.getElementById('show_orders').checked) {
+        $('label[for="show_orders"]').parent().addClass('selected-tab');
+        $('label[for="show_bought_products"]').parent().removeClass('selected-tab');
+      } else {
+        $('label[for="show_orders"]').parent().removeClass('selected-tab');
+        $('label[for="show_bought_products"]').parent().addClass('selected-tab');
+      }
+    }
+    toggleTabs();
+    $('#show_orders, #show_bought_products').on('change', toggleTabs);
+  });
 </script>
