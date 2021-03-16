@@ -37,12 +37,11 @@ class Customer < ApplicationRecord
 
   before_validation :strip_whitespace
   before_validation :grab_country_on_import, if: -> { from_import_file }
-  before_validation :format_mexican_numbers, if: -> { country_id == 'MX' && from_api }
+  before_validation :format_phone_number
+  before_validation :format_mexican_numbers, if: -> { country_id == 'MX' }
   before_save :hs_active!, if: -> (obj) { obj.retailer.hubspot_integrated? && obj.hs_active.nil? && obj.retailer.all_customers_hs_integrated }
   before_save :update_valid_customer
-  before_save :format_phone_number
   before_save :calc_ws_notification_cost
-  before_save :format_mexican_numbers, if: -> { country_id == 'MX' && !from_api }
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
   after_create :create_hs_customer, if: :hs_active?
@@ -412,6 +411,7 @@ class Customer < ApplicationRecord
     def format_phone_number
       return unless phone.present? && ml_generated_phone.blank?
 
+      @not_formatted_phone = phone
       splitted_phone = split_phone
       prefix = splitted_phone&.[](0)
 
@@ -428,15 +428,12 @@ class Customer < ApplicationRecord
     def phone_uniqueness
       return true if meli_nickname.present? || meli_customer_id.present?
 
-      former_phone_number = self.phone
-      format_phone_number
-
       return if retailer.blank? || phone.blank?
 
-      phones_to_check = [self.phone, self.phone.gsub('+', ''), former_phone_number]
+      phones_to_check = [phone, phone.gsub('+', '')]
 
-      if retailer.customers.where(phone: phones_to_check).where.not(id: self.id || nil).present?
-        self.phone = former_phone_number
+      if retailer.customers.where(phone: phones_to_check).where.not(id: id || nil).exists?
+        self.phone = @not_formatted_phone
         errors.add(:base, 'Ya tienes un cliente registrado con este número de teléfono.')
       end
     end
