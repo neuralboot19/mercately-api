@@ -1,10 +1,9 @@
-import React, { Component } from "react";
-import ContentEditable from "react-contenteditable";
+import React, { Component, createRef } from "react";
 
 class EditableField extends Component {
   constructor(props) {
     super(props);
-    this.contentEditable = React.createRef();
+    this.contentEditable = createRef();
   }
 
   press = (evt) => {
@@ -16,12 +15,10 @@ class EditableField extends Component {
 
   render() {
     return (
-      <ContentEditable
-        innerRef={this.contentEditable}
-        html={this.props.content || ''}
-        disabled={false}
+      <input
+        ref={this.contentEditable}
+        value={this.props.content || ''}
         onChange={(e) => this.props.handleInputChange(e, this.props.targetName)}
-        tagName="div"
         className={this.props.givenClass ? this.props.givenClass : "editable_field"}
         onBlur={() => this.props.handleSubmit()}
         onKeyDown={this.press}
