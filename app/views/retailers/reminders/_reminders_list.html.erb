@@ -1,0 +1,42 @@
+<div class="divider"></div>
+<div class="table__item row middle-xs">
+  <div class="col-xs-12 col-sm-2">
+    <div class="t-center"><%= reminder.customer.full_names.presence || reminder.customer.whatsapp_name %></div>
+  </div>
+  <div class="col-xs-12 col-sm-2 c-grey">
+    <div class="t-center truncate"><%= reminder.customer.phone %></div>
+  </div>
+  <div class="col-xs-12 col-sm-3 c-grey">
+    <div class="truncate-js">
+      <%= reminder.template_text %>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-3 c-grey t-center">
+    <%= show_date reminder.send_at %>
+  </div>
+  <div class="col-xs-12 col-sm-2 t-center">
+    <div class="t-center">
+      <% case reminder.status %>
+      <% when 'scheduled' %>
+        <a class="cookie cookie--yellow fs-12 dropdown__button fw-bold no-style" tabindex="-1" href="#!">Pendiente <i class="fas fa-caret-down"></i></a>
+        <ul class="dropdown__menu">
+          <li class="t-left">
+            <%= link_to cancel_retailers_reminder_path(current_retailer, reminder),
+              method: :put,
+              class: 'c-black no-style',
+              data: { confirm: '¿Estás seguro de cancelar este recordatorio?' } do %>
+              <i class="fas fa-angle-right mr-8"></i>
+              Cancelar
+            <% end %>
+          </li>
+        </ul>
+      <% when 'sent' %>
+        <b class="cookie cookie--green fs-12" value="0">Envíado</b>
+      <% when 'cancelled' %>
+        <b class="cookie cookie--red fs-12" value="3">Cancelado</b>
+      <% when 'failed' %>
+        <b class="cookie cookie--red fs-12" value="3">Fallido</b>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -24,6 +24,7 @@ Rails.application.config.assets.precompile += %w(
   retailers/templates/templates.js
   retailers/questions/questions.js
   retailers/customers/customers.js
+  retailers/customers/reminders.js
   retailers/stripe/stripe.js
   retailers/paymentez/paymentez.js
   retailers/payment_plans/payment_plans.js

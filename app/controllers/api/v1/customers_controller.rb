@@ -39,6 +39,7 @@ class Api::V1::CustomersController < Api::ApiController
     render status: 200, json: {
       customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]),
       hubspot_integrated: @customer.retailer.hubspot_integrated?,
+      reminders: @customer.reminders.order(created_at: :desc),
       tags: current_retailer.available_customer_tags(@customer.id)
     }
   end

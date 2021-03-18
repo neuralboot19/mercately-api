@@ -67,6 +67,11 @@ Rails.application.routes.draw do
       get 'business_config', to: 'pages#business_config', as: :business_config
       get 'total_messages_stats', to: 'stats#total_messages_stats', as: :total_messages_stats
       resources :gs_templates
+      resources :reminders, only: %i[index] do
+        member do
+          put 'cancel', to: 'reminders#cancel'
+        end
+      end
       resources :products do
         member do
           put 'reactive', to: 'products#reactive_product', as: :reactivate_product
@@ -222,7 +227,11 @@ Rails.application.routes.draw do
       post 'customers/:id/add_tag', to: 'customers#add_tag', as: :add_tag
       put 'customers/:id/toggle_chat_bot', to: 'customers#toggle_chat_bot', as: :toggle_chat_bot
 
-      resources :reminders, only: :create
+      resources :reminders, only: :create do
+        member do
+          put 'cancel', to: 'reminders#cancel'
+        end
+      end
       patch 'mark_notification_as_read', to: 'agent_notifications#mark_as_read',  as: :mark_notification_as_read
       patch 'mark_by_customer_as_read', to: 'agent_notifications#mark_by_customer_as_read',  as: :mark_by_customer_as_read
       get 'notifications_list', to: 'agent_notifications#notifications_list'

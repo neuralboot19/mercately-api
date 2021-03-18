@@ -1,0 +1,143 @@
+<div>
+  <input type="checkbox" class="d-none modal--toggler" name="reminder-modal--toggle-index" id="reminder-modal--toggle-index" />
+  <div class="modal-index">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-xs-12 col-md-8 middle">
+          <label class="modal-index__background" for="reminder-modal--toggle-index"></label>
+          <div class="modal-index__window box p-4 h-unset mt-0" style="z-index: 1000;">
+            <label class="modalindex__close" for="reminder-modal--toggle-index">
+              <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
+            </label>
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="col-md-12">
+                  <h1 id="reminder-customer_name_index" class="d-inline name mb-10">Plantillas</h1>
+                  <input type="hidden" id="reminder-customer_id_index">
+                </div>
+                <div class="divider"></div>
+                <% if current_retailer.whatsapp_templates.active.exists? %>
+                  <div id="reminder-karix-templates-list">
+                    <% current_retailer.whatsapp_templates.active.each_with_index do |template, index| %>
+                      <div class="row">
+                        <div class="col-md-10">
+                          <p id="reminder-template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
+                          <p id="reminder-original-template-<%= index %>" class="d-none"><%= template.text %></p>
+                          <p id="reminder-template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
+                          <p id="reminder-gupshup-template-id-<%= index %>" class="d-none"><%= template.id %></p>
+                        </div>
+                        <div class="col-md-2">
+                          <button onClick="setReminderTemplate(<%= index %>)">Seleccionar</button>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <%= render "retailers/shared/no_templates" %>
+                <% end %>
+                <div id="reminder-karix-template-edition" class="col-xs-12" style="display: none;">
+                  <div id="reminder-karix-template-text">
+                  </div>
+                  <div id="send_reminder_at" class="row mt-30">
+                    <div class="col-md-12">
+                      <label class="mr-10">Horario de envío:</label>
+                      <input id="reminder-send_template_at"/>
+                    </div>
+                  </div>
+                  <div id="reminder-template-file">
+                    <br/>
+                    <input type="file" name="file" id="reminder-template_file"/>
+                  </div>
+                  <div class="row mt-30">
+                    <div class="col-md-6 t-right">
+                      <button onClick="cancelReminder()">Cancelar</button>
+                    </div>
+                    <div class="col-md-6 t-left">
+                      <button onClick="sendReminder()">Enviar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script charset="utf-8">
+  $(document).ready(function() {
+    document.querySelectorAll('.modal__toggler').forEach(function(mt) {
+      mt.onclick = function(e) {
+        <% if current_retailer.whatsapp_templates.active.exists? %>
+          document.getElementById('customer_name').innerHTML = mt.dataset.customer_full_names;
+        <% else %>
+          document.getElementById('customer_name').innerHTML = 'No tienes plantillas creadas';
+        <% end %>
+        document.getElementById('customer_notes').innerHTML = mt.dataset.customer_notes;
+      }
+    });
+
+    document.querySelectorAll('.reminder-ws-contact').forEach(function(mt) {
+      mt.onclick = function(e) {
+        mt = e.target;
+        document.getElementById('reminder-customer_name_index').innerHTML = mt.dataset.customer_full_names;
+        document.getElementById('reminder-customer_id_index').value = mt.dataset.customer_id;
+      }
+    });
+
+    $('#reminder-modal--toggle-index').on('change', function(e) {
+      $('body').toggleClass('o-hidden');
+    })
+
+    $('#karix-template-edition').hide();
+
+    $('#reminder-send_template_at').daterangepicker({
+      singleDatePicker: true,
+      showDropdowns: true,
+      timePicker: true,
+      autoApply: true,
+      timePicker24Hour: true,
+      timeZone: null,
+      minDate: new Date(),
+      linkedCalendars: false,
+      locale: {
+        format: 'YYYY/MM/DD HH:mm',
+        cancelLabel: 'Cancelar',
+        applyLabel: 'Aplicar',
+        fromLabel: 'Desde',
+        toLabel: 'Hasta',
+        customRangeLabel: 'Editar fecha',
+        weekLabel: 'Semana',
+        daysOfWeek: [
+          'Do',
+          'Lu',
+          'Ma',
+          'Mi',
+          'Ju',
+          'Vi',
+          'Sa'
+        ],
+        monthNames: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre'
+        ],
+        firstDay: 1
+      }
+    });
+  });
+</script>
+
+<script src="<%= asset_path 'retailers/customers/reminders.js' %>" charset="utf-8"></script>

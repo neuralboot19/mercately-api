@@ -84,6 +84,32 @@ export const updateCustomer = (id, body, token) => {
   };
 };
 
+export const cancelReminder = (reminderId) => {
+  const endpoint = `/api/v1/reminders/${reminderId}/cancel`;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "PUT",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*'
+      }
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_CUSTOMER', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
+          alert(error.response);
+        } else {
+          alert("An unexpected error occurred.");
+        }
+      });
+  };
+};
+
 /* Messages */
 
 export const fetchMessages = (id, page = 1) => {
