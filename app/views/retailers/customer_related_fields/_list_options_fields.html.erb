@@ -1,0 +1,15 @@
+<div class="row my-20">
+  <div class="col-xs-12 col-sm-5">
+    <%= f.label :key, 'Valor interno' %>
+    <%= f.text_field :key, class: 'input validate-required mt-0', readonly: true %>
+    <i class="validation-msg"></i>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <%= f.label :value, 'Valor a mostrar' %>
+    <%= f.text_field :value, class: 'input validate-required mt-0' %>
+    <i class="validation-msg"></i>
+  </div>
+  <div class="col-xs-12 col-sm-1 t-center mt-30">
+    <a class="btn btn--destroy destroy-option m-0" onclick="hideListOption(this)"><i class="fas fa-times"></i></a>
+  </div>
+</div>
