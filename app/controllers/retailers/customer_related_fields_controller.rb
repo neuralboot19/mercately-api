@@ -52,7 +52,10 @@ class Retailers::CustomerRelatedFieldsController < RetailersController
       params.require(:customer_related_field).permit(
         :name,
         :field_type,
-        list_options: []
+        list_options_attributes: [
+          :key,
+          :value
+        ]
       )
     end
 

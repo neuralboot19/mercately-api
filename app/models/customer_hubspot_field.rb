@@ -39,8 +39,10 @@ class CustomerHubspotField < ApplicationRecord
       valid_field = case hubspot_field.hubspot_type
                     when 'datetime', 'date'
                       ['datetime', 'date'].include? field_type
-                    when 'number', 'enumeration', 'phone_number'
+                    when 'number', 'phone_number'
                       ['integer', 'float'].include? field_type
+                    when 'enumeration'
+                      ['integer', 'float', 'list'].include? field_type
                     when 'bool'
                       field_type == 'boolean'
                     else

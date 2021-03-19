@@ -1,6 +1,7 @@
 var auxTemplate = [];
 var templateSelected = '';
 var templateType, gupshupTemplateId, templateParams = {};
+let globalListCounter;
 
 function setKarixTemplate(index) {
   templateType = $(`#template-type-${index}`).html();
@@ -170,6 +171,40 @@ function showSelectingTags(input) {
     tags: true,
     maximumInputLength: 20
   });
+}
+
+function addListOption(index) {
+  if (globalListCounter) {
+    globalListCounter++;
+  } else {
+    globalListCounter = index;
+  }
+
+  $('#list_options').append(
+  `
+    <div class="row my-20">
+      <div class="col-xs-12 col-sm-5">
+        <label for="customer_related_field_list_options_attributes_${globalListCounter}_key">Valor interno</label>
+        <input type="text" name="customer_related_field[list_options_attributes][${globalListCounter}][key]" class="input validate-required mt-0"
+          id="customer_related_field_list_options_attributes_${globalListCounter}_key" />
+        <i class="validation-msg"></i>
+      </div>
+      <div class="col-xs-12 col-sm-6">
+        <label for="customer_related_field_list_options_attributes_${globalListCounter}_value">Valor a mostrar</label>
+        <input type="text" name="customer_related_field[list_options_attributes][${globalListCounter}][value]" class="input validate-required mt-0"
+        id="customer_related_field_list_options_attributes_${globalListCounter}_value" />
+        <i class="validation-msg"></i>
+      </div>
+      <div class="col-xs-12 col-sm-1 t-center mt-30">
+        <a class="btn btn--destroy destroy-option m-0" onclick="hideListOption(this)"><i class="fas fa-times"></i></a>
+      </div>
+    </div>
+  `
+  );
+}
+
+function hideListOption(input) {
+  $(input).closest('.row').remove();
 }
 
 $(document).ready(function() {

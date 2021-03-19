@@ -50,7 +50,7 @@ const CustomField = ({
     let hash = { value: '', label: '' };
 
     return options.reduce((arr, elem) => {
-      hash = { value: elem, label: elem };
+      hash = { value: elem.key, label: elem.value };
 
       arr.push(hash);
 

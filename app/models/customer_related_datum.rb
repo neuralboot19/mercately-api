@@ -3,6 +3,12 @@ class CustomerRelatedDatum < ApplicationRecord
   belongs_to :customer_related_field
   after_commit :sync_hs, on: [:create, :update]
 
+  def get_list_value
+    return data unless customer_related_field.list?
+
+    customer_related_field.list_options.find { |l| l.key == data }&.value
+  end
+
   private
 
     def hubspot
