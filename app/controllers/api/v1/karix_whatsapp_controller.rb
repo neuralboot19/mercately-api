@@ -451,7 +451,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
           .update_all(status: 'read')
 
         # Aca se buscan todos los mensajes asociados al customer, tanto inbound como outbound
-        messages = @customer.gupshup_whatsapp_messages.where.not(status: 'error')
+        messages = @customer.gupshup_whatsapp_messages.allowed_messages
 
         messages = messages.order(created_at: :desc).page(params[:page])
         return messages

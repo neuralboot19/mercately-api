@@ -17,7 +17,7 @@ const MessageStatus = ({
   };
 
   return (
-    <div className="f-right">
+    <div className="f-right t-right">
       <MessageDateTime
         chatType={chatType}
         message={message}

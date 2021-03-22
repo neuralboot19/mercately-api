@@ -1020,6 +1020,10 @@ i {
     border-radius: 20px;
     padding: 6px 14px 6px 14px;
   }
+
+  &.error-message {
+    background-color: #ff0000ad !important;
+  }
 }
 
 .message-by-customer {
