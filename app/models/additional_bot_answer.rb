@@ -12,4 +12,12 @@ class AdditionalBotAnswer < ApplicationRecord
       "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{self.file.key}"
     end
   end
+
+  def file_type
+    return unless file.attached?
+    return 'image' if file.content_type.include?('image/')
+    return 'file' if file.content_type == 'application/pdf'
+
+    'video' if file.content_type.include?('video/')
+  end
 end

@@ -344,7 +344,7 @@ export const createTag = (id, body, token) => {
   };
 };
 
-export const toggleChatBot = (id, token) => {
+export const toggleChatBot = (id, body, token) => {
   const endpoint = `/api/v1/customers/${id}/toggle_chat_bot`;
   const csrfToken = token;
   return (dispatch) => {
@@ -356,7 +356,8 @@ export const toggleChatBot = (id, token) => {
         'X-CSRF-Token': csrfToken,
         'Content-Type': 'application/json',
         'Accept': 'application/json, text/plain, */*'
-      }
+      },
+      body: JSON.stringify(body)
     })
       .then((res) => res.json())
       .then(

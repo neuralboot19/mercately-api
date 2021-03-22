@@ -1,5 +1,6 @@
 class FacebookMessage < ApplicationRecord
   include AgentMessengerAssignmentConcern
+  include MessengerChatBotActionConcern
   belongs_to :facebook_retailer
   belongs_to :customer
   belongs_to :retailer_user, required: false
@@ -7,18 +8,20 @@ class FacebookMessage < ApplicationRecord
   validates_uniqueness_of :mid, allow_blank: true
 
   after_create :sent_by_retailer?
-  after_create :send_facebook_message
   after_create :assign_agent
-  after_save :broadcast_to_counter_channel
-  after_create :send_welcome_message
-  after_create :send_inactive_message
+  after_commit :send_welcome_message, on: :create
+  after_commit :send_inactive_message, on: :create
+  after_commit :send_facebook_message, on: :create
+  after_commit :broadcast_to_counter_channel, on: [:create, :update]
 
   scope :customer_unread, -> { where(date_read: nil, sent_by_retailer: false) }
   scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
   scope :unread, -> { where(date_read: nil) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
-  attr_accessor :file_url
+  delegate :retailer, to: :facebook_retailer
+
+  attr_accessor :file_url, :file_content_type
 
   private
 
@@ -32,7 +35,8 @@ class FacebookMessage < ApplicationRecord
       m = if text.present?
             Facebook::Messages.new(facebook_retailer).send_message(id_client, text)
           elsif file_data.present? || file_url.present?
-            Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename, file_url, file_type)
+            Facebook::Messages.new(facebook_retailer).send_attachment(id_client, file_data, filename, file_url,
+              file_type, file_content_type)
           end
       update_column(:mid, m['message_id'])
       import_facebook_message(m['message_id']) if file_data.present? || file_url.present?
@@ -57,10 +61,10 @@ class FacebookMessage < ApplicationRecord
     def send_inactive_message
       retailer = facebook_retailer.retailer
       inactive_message = retailer.messenger_inactive_message
-      before_last_message = customer.before_last_messenger_message
+      before_last_message_msn = customer.before_last_messenger_message
 
-      return unless inactive_message && sent_by_retailer == false && before_last_message &&
-                    send_message?(before_last_message, inactive_message)
+      return unless inactive_message && sent_by_retailer == false && before_last_message_msn &&
+                    send_message?(before_last_message_msn, inactive_message)
 
       send_messenger_notification(inactive_message.message)
     end
@@ -80,8 +84,8 @@ class FacebookMessage < ApplicationRecord
       )
     end
 
-    def send_message?(before_last_message, inactive_message)
-      hours = ((created_at - before_last_message.created_at) / 3600).to_i
+    def send_message?(before_last_message_msn, inactive_message)
+      hours = ((created_at - before_last_message_msn.created_at) / 3600).to_i
 
       hours >= inactive_message.interval
     end

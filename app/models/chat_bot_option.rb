@@ -67,6 +67,14 @@ class ChatBotOption < ApplicationRecord
     false
   end
 
+  def file_type
+    return unless file.attached?
+    return 'image' if file.content_type.include?('image/')
+    return 'file' if file.content_type == 'application/pdf'
+
+    'video' if file.content_type.include?('video/')
+  end
+
   private
 
     def set_position

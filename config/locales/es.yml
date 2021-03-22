@@ -103,6 +103,9 @@ es:
         on_failed_attempts:
           resend_options: Reenviar opciones del menú
           send_attempt_message: Enviar mensaje personalizado
+        platforms:
+          whatsapp: WhatsApp
+          messenger: Messenger
       customer_related_field:
         field_types:
           string: Texto
