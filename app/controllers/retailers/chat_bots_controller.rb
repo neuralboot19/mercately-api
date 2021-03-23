@@ -91,6 +91,7 @@ class Retailers::ChatBotsController < RetailersController
         :reactivate_after,
         :on_failed_attempt,
         :on_failed_attempt_message,
+        :platform,
         chat_bot_options_attributes: [
           :id,
           :text,

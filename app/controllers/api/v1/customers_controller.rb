@@ -183,7 +183,7 @@ class Api::V1::CustomersController < Api::ApiController
     else
       @customer.activate_chat_bot!
     end
-    send_notification('whatsapp')
+    send_notification(params[:chat_service])
 
     render status: 200, json: { customer: @customer }
   end

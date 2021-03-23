@@ -34,7 +34,7 @@ FactoryBot.define do
     sent_at { "2020-04-30 16:08:51" }
     delivered_at { "2020-04-30 16:08:51" }
     read_at { "" }
-    error_payload { Hash.new }
+    error_payload { nil }
     message_type { 'notification' }
 
     trait :inbound do

@@ -66,6 +66,14 @@
             </div>
           </div>
 
+          <div class="row w-100">
+            <div class="col-xs-12 col-md-6 mb-8 my-16">
+              <%= f.label :platform, 'Plataforma' %><br/>
+              <%= f.select :platform, platform_list(current_retailer), { include_blank: true }, class: 'input validate-required' %>
+              <i class="validation-msg"></i>
+            </div>
+          </div>
+
           <fieldset class="col-xs-12 fieldset my-16 pt-16 row">
             <legend>Opción Inicial del ChatBot</legend>
             <%= f.fields_for :chat_bot_options, (@chat_bot.chat_bot_options.first || ChatBotOption.new) do |cbo| %>

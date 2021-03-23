@@ -1,4 +1,4 @@
-module Whatsapp
+module ChatBots
   module EndpointsConnection
     def get(url, body, headers)
       url = URI(url)

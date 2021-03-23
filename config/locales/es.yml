@@ -103,6 +103,9 @@ es:
         on_failed_attempts:
           resend_options: Reenviar opciones del menú
           send_attempt_message: Enviar mensaje personalizado
+        platforms:
+          whatsapp: WhatsApp
+          messenger: Messenger
       customer_related_field:
         field_types:
           string: Texto
@@ -259,6 +262,8 @@ es:
       header:
         one: No se pudo guardar este/a %{model} porque se encontró 1 error
         other: No se pudo guardar este/a %{model} porque se encontraron %{count} errores
+    gupshup_errors:
+      not_existing_number: Número No Existe En WhatsApp
   helpers:
     select:
       prompt: Por favor seleccione

@@ -140,11 +140,11 @@ class Customer < ApplicationRecord
   end
 
   def unread_message?
-    self.unread_messenger_chat || facebook_messages.where(sent_from_mercately: false).last&.date_read.blank?
+    self.unread_messenger_chat || facebook_messages.where(sent_by_retailer: false).last&.date_read.blank?
   end
 
   def last_message_received_date
-    facebook_messages.where(sent_from_mercately: false).last.created_at
+    facebook_messages.where(sent_by_retailer: false).last.created_at
   end
 
   def range_earnings(start_date, end_date)

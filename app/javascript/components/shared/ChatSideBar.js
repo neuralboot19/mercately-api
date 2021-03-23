@@ -268,9 +268,7 @@ const ChatSideBar = ({
       // Assigned agents list is usually the shorter one. So we need to search for the item in this list first.
       removeCustomer(customer);
     } else {
-      if (chatType === 'whatsapp') {
-        setActiveChatBot(customer);
-      }
+      setActiveChatBot(customer);
       insertCustomer(customer);
     }
     setRemovedCustomerInfo(data);

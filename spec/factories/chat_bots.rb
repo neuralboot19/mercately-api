@@ -21,5 +21,13 @@ FactoryBot.define do
     trait :with_accented_trigger do
       trigger { 'Hóla TÉST' }
     end
+
+    trait :for_whatsapp do
+      platform { 0 }
+    end
+
+    trait :for_messenger do
+      platform { 1 }
+    end
   end
 end

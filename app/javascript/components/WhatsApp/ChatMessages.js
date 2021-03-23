@@ -674,7 +674,7 @@ class ChatMessages extends Component {
 
   divClasses = (message) => {
     let classes = message.direction === 'outbound'
-      ? 'message-by-retailer f-right'
+      ? 'message-by-retailer f-right' + (message.status === 'error' ? ' error-message' : '')
       : 'message-by-customer';
     classes += ' main-message-container';
     if (message.status === 'read'
@@ -696,7 +696,11 @@ class ChatMessages extends Component {
 
   toggleChatBot = (e) => {
     e.preventDefault();
-    this.props.toggleChatBot(this.props.currentCustomer, csrfToken);
+
+    const params = {
+      chat_service: 'whatsapp'
+    }
+    this.props.toggleChatBot(this.props.currentCustomer, params, csrfToken);
   }
 
   toggleLoadImages = () => {
@@ -1353,8 +1357,8 @@ function mapDispatch(dispatch) {
     setNoRead: (customerId, token) => {
       dispatch(setNoRead(customerId, token));
     },
-    toggleChatBot: (customerId, token) => {
-      dispatch(toggleChatBot(customerId, token));
+    toggleChatBot: (customerId, params, token) => {
+      dispatch(toggleChatBot(customerId, params, token));
     },
     sendWhatsAppBulkFiles: (id, body, token) => {
       dispatch(sendWhatsAppBulkFiles(id, body, token));

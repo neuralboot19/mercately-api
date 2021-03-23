@@ -809,7 +809,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       expect_any_instance_of(Api::V1::CustomersController).to receive(:send_notification).with('whatsapp')
       expect(customer.active_bot).to eq(true)
 
-      put api_v1_toggle_chat_bot_path(customer.id)
+      put api_v1_toggle_chat_bot_path(customer.id, params: { chat_service: 'whatsapp' })
     end
 
     it 'renders customer data with a status ok' do

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_19_165437) do
+ActiveRecord::Schema.define(version: 2021_03_08_181903) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -259,6 +259,7 @@ ActiveRecord::Schema.define(version: 2021_02_19_165437) do
     t.integer "reactivate_after"
     t.integer "on_failed_attempt"
     t.string "on_failed_attempt_message"
+    t.integer "platform"
     t.index ["retailer_id"], name: "index_chat_bots_on_retailer_id"
   end
 

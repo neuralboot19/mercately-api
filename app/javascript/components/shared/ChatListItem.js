@@ -21,7 +21,9 @@ class ChatListItem extends Component {
   }
 
   addBotPosition = () => {
-    if (this.props.customer.unread_whatsapp_chat === true || this.props.customer.unread_whatsapp_messages > 0 || this.props.customer["unread_whatsapp_message?"] === true) {
+    if (this.props.customer.unread_whatsapp_chat === true || this.props.customer.unread_whatsapp_messages > 0 ||
+      this.props.customer["unread_whatsapp_message?"] === true || this.props.customer.unread_messenger_chat === true ||
+      this.props.customer.unread_messenger_messages > 0 || this.props.customer["unread_message?"] === true) {
       return 'bot-position';
     }
 
@@ -31,6 +33,9 @@ class ChatListItem extends Component {
   messageStatusIcon = (message) => {
     let className;
     switch (message.status) {
+      case 'error':
+        className = 'exclamation-circle';
+        break;
       case 'sent':
         className = 'check stroke';
         break;
@@ -63,7 +68,7 @@ class ChatListItem extends Component {
       >
         <div className="profile__data row">
           {this.props.chatType === 'facebook' ? (
-              customer['unread_message?'] === true &&
+              (customer.unread_messenger_chat === true || customer.unread_messenger_messages > 0 || customer['unread_message?'] === true) &&
                 <div className="tooltip">
                   <b className="item__cookie item__cookie_whatsapp_messages notification">
                     {customer.unread_messenger_messages > 0 &&

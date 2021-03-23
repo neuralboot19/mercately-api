@@ -24,7 +24,7 @@ module Whatsapp::Gupshup::V1
 
       # Store the message as :failed
       gwm.status = :error
-      gwm.message_payload = params
+      gwm.error_payload = params
 
       gwm.with_advisory_lock(gwm.to_global_id.to_s) do
         gwm.save!
