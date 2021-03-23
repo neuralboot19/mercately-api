@@ -134,6 +134,39 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
     }.with_indifferent_access
   end
 
+  let(:number_not_exist_response) do
+    {
+      'app': 'MercatelyTest',
+      'timestamp': 1616513437223,
+      'version': 2,
+      'type': 'message-event',
+      'payload': {
+        'id': 'd6732472-6073-478b-9d16-8ab2e1b042e1',
+        'type': 'failed',
+        'destination': '58412054XXXX',
+        'payload': {
+          'code': 1002,
+          'reason': 'Number Does Not Exists On WhatsApp'
+        }
+      },
+      'gupshup_whatsapp': {
+        'app': 'MercatelyTest',
+        'timestamp': 1616513437223,
+        'version': 2,
+        'type': 'message-event',
+        'payload': {
+          'id': 'd6732472-6073-478b-9d16-8ab2e1b042e1',
+          'type': 'failed',
+          'destination': '58412054XXXX',
+          'payload': {
+            'code': 1002,
+            'reason': 'Number Does Not Exists On WhatsApp'
+          }
+        }
+      }
+    }.with_indifferent_access
+  end
+
   describe '#process_event!' do
     context 'when it is a message' do
       context 'with text type' do
@@ -163,6 +196,27 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
         expect {
           described_class.new(retailer, customer).process_event!(message_event_response)
         }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+  end
+
+  describe '#process_error!' do
+    context 'when the destination number does not exist on WhatsApp' do
+      let!(:message) do
+        create(:gupshup_whatsapp_message, customer: customer, retailer: retailer, gupshup_message_id:
+          'd6732472-6073-478b-9d16-8ab2e1b042e1', status: 'sent')
+      end
+
+      it 'saves the response error on error_payload attribute' do
+        expect(message.error_payload).to be_nil
+
+        expect do
+          described_class.new(retailer, customer).process_error!(number_not_exist_response)
+        end.to change(GupshupWhatsappMessage, :count).by(0)
+
+        error_payload = message.reload.error_payload
+        expect(error_payload).not_to be_nil
+        expect(error_payload.try(:[], 'payload').try(:[], 'payload').try(:[], 'code')).to eq(1002)
       end
     end
   end

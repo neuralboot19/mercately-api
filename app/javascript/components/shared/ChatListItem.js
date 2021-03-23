@@ -33,6 +33,9 @@ class ChatListItem extends Component {
   messageStatusIcon = (message) => {
     let className;
     switch (message.status) {
+      case 'error':
+        className = 'exclamation-circle';
+        break;
       case 'sent':
         className = 'check stroke';
         break;

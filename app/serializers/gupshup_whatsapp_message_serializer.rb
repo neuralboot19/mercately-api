@@ -152,4 +152,15 @@ class GupshupWhatsappMessageSerializer
 
     next message.try(:[], 'filename') || message.try(:[], 'payload').try(:[], 'payload').try(:[], 'filename')
   end
+
+  attribute :error_message do |object|
+    message = object.error_payload
+    error = message.try(:[], 'payload').try(:[], 'payload')
+    next '' unless error.present? && error['code'] == 1002
+
+    case error['code']
+    when 1002
+      I18n.t('errors.gupshup_errors.not_existing_number')
+    end
+  end
 end
