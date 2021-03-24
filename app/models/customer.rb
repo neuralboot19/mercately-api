@@ -18,6 +18,7 @@ class Customer < ApplicationRecord
   has_many :orders_cancelled, -> { cancelled }, class_name: 'Order', inverse_of: :customer
 
   has_many :questions, dependent: :destroy
+  has_many :reminders, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
@@ -88,6 +89,15 @@ class Customer < ApplicationRecord
   ransacker :sort_by_total do
     Arel.sql('coalesce((select sum(orders.total_amount) as total from orders where ' \
       'orders.customer_id = customers.id and orders.status = 1), 0)')
+  end
+
+  ransacker :full_name do |parent|
+    Arel::Nodes::NamedFunction.new('CONCAT_WS', [
+      Arel::Nodes.build_quoted(' '),
+      parent.table[:first_name],
+      parent.table[:last_name],
+      parent.table[:whatsapp_name]
+    ])
   end
 
   def self.public_fields

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_08_181903) do
+ActiveRecord::Schema.define(version: 2021_03_23_205615) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -771,6 +771,7 @@ ActiveRecord::Schema.define(version: 2021_03_08_181903) do
     t.integer "status", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "template_text"
     t.index ["customer_id"], name: "index_reminders_on_customer_id"
     t.index ["gupshup_whatsapp_message_id"], name: "index_reminders_on_gupshup_whatsapp_message_id"
     t.index ["karix_whatsapp_message_id"], name: "index_reminders_on_karix_whatsapp_message_id"
@@ -853,8 +854,6 @@ ActiveRecord::Schema.define(version: 2021_03_08_181903) do
     t.boolean "manage_team_assignment", default: false
     t.boolean "show_stats", default: false
     t.boolean "allow_voice_notes", default: true
-    t.boolean "show_calendar", default: false
-    t.boolean "allow_reminders", default: false
     t.integer "hubspot_match", default: 0
     t.datetime "hs_expires_in"
     t.string "hs_access_token"

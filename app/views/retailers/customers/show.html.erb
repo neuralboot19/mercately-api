@@ -61,15 +61,29 @@ fieldset {
                         <% end %>
                         <span class="c-secondary fs-14"><%= @customer.phone %></span><br />
                         <% if can_send_whatsapp_notification?(current_retailer_user, @customer) %>
-                          <label
-                            for="modal--toggle"
-                            class="request-demo-label fz-15 ws-contact d-none"
-                            data-customer_id="<%= @customer.id %>"
-                            data-whatsapp_opt_in="<%= @customer.whatsapp_opt_in || false %>"
-                            >
-                            <i class="fab fa-whatsapp fz-16 mr-5"></i>
-                            Enviar Notificación
-                          <% end %>
+                          <div>
+                            <label
+                                for="modal--toggle"
+                                class="request-demo-label ws-button dropdown__button no-style"
+                                data-customer_id="<%= @customer.id %>"
+                                data-whatsapp_opt_in="<%= @customer.whatsapp_opt_in || false %>"
+                                >
+                                <i class="fab fa-whatsapp fz-16 mr-5"></i>
+                                Enviar Notificación
+                            </label>
+                          </div>
+                          <div class="mt-8 mb-0">
+                            <label
+                                for="reminder-modal--toggle-index"
+                                class="request-demo-label reminder-ws-contact ws-button dropdown__button no-style"
+                                data-customer_full_names="<%= @customer.full_names.presence || @customer.whatsapp_name %>"
+                                data-customer_id="<%= @customer.id %>"
+                                data-whatsapp_opt_in="<%= @customer.whatsapp_opt_in || false %>">
+                                <i class="fab fa-whatsapp fz-16 mr-5"></i>
+                                Programar recordatorio
+                            </label>
+                          </div>
+                        <% end %>
                       </div>
                       <div>
                         <label class="c-grey fs-14">Tipo de identificación:</label> <span class="c-secondary fs-14"><%= @customer.id_type %></span>
@@ -162,6 +176,11 @@ fieldset {
                           <label for="show_bought_products">
                             Productos
                           </label>
+                        </div><div
+                                  class="d-inline-block tab">
+                          <label for="show_reminders">
+                            Recordatorios
+                          </label>
                         </div>
                       </div>
                     </div>
@@ -201,6 +220,25 @@ fieldset {
                             </div>
                           <% else %>
                             Este cliente no ha completado ninguna órden.
+                          <% end %>
+                        </div>
+                      </div>
+                      <div>
+                        <input type="radio" class="d-none check-toggler" name="toggle-tab" id="show_reminders">
+                        <div class="show-on-check">
+                          <% if @customer.reminders.exists? %>
+                            <div class="table box mt-16">
+                              <div class="table__header row hide-on-tablet-and-down center-sm">
+                                <div class="col-sm-2">Cliente</div>
+                                <div class="col-sm-2">Teléfono</div>
+                                <div class="col-sm-3">Mensaje</div>
+                                <div class="col-sm-3">Fecha de envío</div>
+                                <div class="col-sm-2">Estado</div>
+                              </div>
+                              <%= render partial: 'retailers/reminders/reminders_list', collection: @customer.reminders, as: :reminder %>
+                            </div>
+                          <% else %>
+                            No hay recordatorios programados.
                           <% end %>
                         </div>
                       </div>
@@ -281,6 +319,8 @@ fieldset {
   </div>
 </div>
 
+<%= render partial: 'retailers/customers/send_reminder', cached: true %>
+
 <script src="<%= asset_path 'retailers/customers/customers.js' %>" charset="utf-8"></script>
 
 <script charset="utf-8">
@@ -299,12 +339,18 @@ fieldset {
       if (document.getElementById('show_orders').checked) {
         $('label[for="show_orders"]').parent().addClass('selected-tab');
         $('label[for="show_bought_products"]').parent().removeClass('selected-tab');
-      } else {
+        $('label[for="show_reminders"]').parent().removeClass('selected-tab');
+      } else if (document.getElementById('show_bought_products').checked) {
         $('label[for="show_orders"]').parent().removeClass('selected-tab');
         $('label[for="show_bought_products"]').parent().addClass('selected-tab');
+        $('label[for="show_reminders"]').parent().removeClass('selected-tab');
+      } else if (document.getElementById('show_reminders').checked) {
+        $('label[for="show_orders"]').parent().removeClass('selected-tab');
+        $('label[for="show_bought_products"]').parent().removeClass('selected-tab');
+        $('label[for="show_reminders"]').parent().addClass('selected-tab');
       }
     }
     toggleTabs();
-    $('#show_orders, #show_bought_products').on('change', toggleTabs);
+    $('#show_orders, #show_bought_products, #show_reminders').on('change', toggleTabs);
   });
 </script>

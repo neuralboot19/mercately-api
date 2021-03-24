@@ -15,6 +15,7 @@ class Reminder < ApplicationRecord
 
   before_create :calculate_send_timezone
   after_create :generate_web_id
+  after_create :generate_template_text
 
   def to_param
     web_id
@@ -25,6 +26,14 @@ class Reminder < ApplicationRecord
   end
 
   private
+
+    def generate_template_text
+      txt = whatsapp_template.text.gsub(/[^\\]\*/).with_index do |match, i|
+        match.gsub(/\*/, content_params[i])
+      end
+      txt.gsub!(/\\\*/, '*')
+      update_column :template_text, txt
+    end
 
     def calculate_send_timezone
       time_zone = timezone.dup

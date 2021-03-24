@@ -30,8 +30,7 @@ const MessageFormIconsBar = (
     toggleFastAnswers,
     toggleLoadImages,
     toggleProducts,
-    openReminderConfigModal,
-    allowReminders
+    openReminderConfigModal
   }
 ) => (
   <div className="t-right mr-15">
@@ -64,9 +63,7 @@ const MessageFormIconsBar = (
             && <RecordAudioIcon onMobile={onMobile} recordAudio={recordAudio} />
           }
           <PickEmojiIcon onMobile={onMobile} toggleEmojiPicker={toggleEmojiPicker} />
-          {allowReminders &&
             <ReminderIcon onMobile={onMobile} openReminderConfigModal={openReminderConfigModal} />
-          }
           <div className="tooltip-top ml-15" />
           <SendButton handleSubmit={handleSubmit} onMobile={onMobile} />
         </div>

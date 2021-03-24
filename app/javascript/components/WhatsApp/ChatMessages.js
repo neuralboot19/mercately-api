@@ -1218,7 +1218,6 @@ class ChatMessages extends Component {
               <ClosedChannel
                 openModal={this.openModal}
                 openReminderConfigModal={this.openReminderConfigModal}
-                allowReminders={this.props.allowReminders}
               />
             ) : (
               this.canSendMessages()
@@ -1249,7 +1248,6 @@ class ChatMessages extends Component {
                   toggleLoadImages={this.toggleLoadImages}
                   toggleProducts={this.props.toggleProducts}
                   openReminderConfigModal={this.openReminderConfigModal}
-                  allowReminders={this.props.allowReminders}
                 />
               )
             )
@@ -1329,8 +1327,7 @@ function mapStateToProps(state) {
     errorSendMessageStatus: state.errorSendMessageStatus,
     errorSendMessageText: state.errorSendMessageText,
     customer: state.customer,
-    allowSendVoice: state.allowSendVoice,
-    allowReminders: state.allowReminders
+    allowSendVoice: state.allowSendVoice
   };
 }
 

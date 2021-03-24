@@ -575,7 +575,8 @@ h1 {
 
 #modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
 #event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal, input[name="modal--toggle"]:checked ~ .modal,
-#modal-agent--toggle:checked ~ .modal-agent {
+#modal-agent--toggle:checked ~ .modal-agent,
+.modal--toggler:checked ~ .modal-index {
   display: block;
 }
 
@@ -1346,7 +1347,7 @@ i {
   color: #000;
 }
 
-.ws-contact {
+.ws-button {
   border-radius: 10px;
   background-color: #5fc993;
   padding: 4px 8px;
@@ -1852,6 +1853,21 @@ i {
 
     label {
       color: $secondary-color !important;
+    }
+  }
+}
+
+.dropdown__menu--react {
+  width: 100px;
+  right: 100px;
+
+  li {
+    padding: 8px 8px;
+
+    a {
+      font-size: 12px;
+      margin: unset;
+      padding: unset;
     }
   }
 }

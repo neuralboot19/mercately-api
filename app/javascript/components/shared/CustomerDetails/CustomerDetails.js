@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  cancelReminder as cancelReminderAction,
   fetchCustomer as fetchCustomerAction,
   fetchCustomerFields as fetchCustomerFieldsAction,
   updateCustomer as updateCustomerAction,
@@ -18,6 +19,7 @@ import CustomerName from "./CustomerName";
 import TabSelector from "./TabSelector";
 import CustomerDetailsTabContent from "./CustomerDetailsTabContent";
 import CustomFieldsTabContent from "./CustomFieldsTabContent";
+import AutomationsTabContent from "./AutomationsTabContent";
 import IntegrationsTabContent from "./IntegrationsTabContent";
 
 const csrfToken = document.querySelector('[name=csrf-token]').content;
@@ -30,9 +32,11 @@ const CustomerDetails = ({
 }) => {
   const [state, setState] = useState({
     tags: [],
+    reminders: [],
     newTag: '',
     showUserDetails: 'block',
     showCustomFields: 'none',
+    showAutomationSettings: 'none',
     showIntegrationSettings: 'none',
     fieldDate: new Date()
   });
@@ -47,6 +51,10 @@ const CustomerDetails = ({
 
   const fetchCustomerFromRedux = (id) => {
     dispatch(fetchCustomerAction(id));
+  };
+
+  const cancelReminderFromRedux = (reminderId) => {
+    dispatch(cancelReminderAction(reminderId));
   };
 
   const updateCustomerFromRedux = (id, body, token) => {
@@ -79,6 +87,7 @@ const CustomerDetails = ({
 
   const customer = useSelector((reduxState) => reduxState.customer) || {};
   const tags = useSelector((reduxState) => reduxState.tags) || [];
+  const reminders = useSelector((reduxState) => reduxState.reminders) || [];
   const customerFields = useSelector((reduxState) => reduxState.customerFields);
   const customFields = useSelector((reduxState) => reduxState.customFields);
 
@@ -190,6 +199,12 @@ const CustomerDetails = ({
     updateCustomerFromRedux(customer.id, { customer: customerInfo }, csrfToken);
   };
 
+  const cancelReminder = (reminderId) => {
+    if (window.confirm('¿Estás seguro de cancelar este recordatorio?')) {
+      cancelReminderFromRedux(reminderId);
+    }
+  };
+
   const handleIdTypeChange = (option) => {
     setCustomerInfo({ ...customerInfo, ...{ id_type: option.value } });
   };
@@ -243,6 +258,7 @@ const CustomerDetails = ({
     setState({
       ...state,
       showUserDetails: 'block',
+      showAutomationSettings: 'none',
       showIntegrationSettings: 'none',
       showCustomFields: 'none'
     });
@@ -252,8 +268,19 @@ const CustomerDetails = ({
     setState({
       ...state,
       showCustomFields: 'block',
+      showAutomationSettings: 'none',
       showIntegrationSettings: 'none',
       showUserDetails: 'none'
+    });
+  };
+
+  const showAutomationSettings = () => {
+    setState({
+      ...state,
+      showUserDetails: 'none',
+      showCustomFields: 'none',
+      showAutomationSettings: 'block',
+      showIntegrationSettings: 'none'
     });
   };
 
@@ -262,6 +289,7 @@ const CustomerDetails = ({
       ...state,
       showUserDetails: 'none',
       showCustomFields: 'none',
+      showAutomationSettings: 'none',
       showIntegrationSettings: 'block'
     });
   };
@@ -279,9 +307,11 @@ const CustomerDetails = ({
       <TabSelector
         showUserDetails={state.showUserDetails}
         showCustomFields={state.showCustomFields}
+        showAutomationSettings={state.showAutomationSettings}
         showIntegrationSettings={state.showIntegrationSettings}
         onClickUserDetails={showUserDetails}
         onClickCustomerFields={showCustomFields}
+        onClickAutomationSettings={showAutomationSettings}
         onClickIntegrationSettings={showIntegrationSettings}
       />
       <CustomerDetailsTabContent
@@ -306,6 +336,11 @@ const CustomerDetails = ({
         customerFields={customerCustomFields}
         showCustomFields={state.showCustomFields}
         updateCustomerField={updateCustomerField}
+      />
+      <AutomationsTabContent
+        reminders={reminders}
+        cancelReminder={cancelReminder}
+        showAutomationSettings={state.showAutomationSettings}
       />
       <IntegrationsTabContent
         customer={customerInfo}

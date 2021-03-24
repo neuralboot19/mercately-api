@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 // eslint-disable-next-line import/no-unresolved
 import TemplateImg from 'images/dashboard/ilustracion-cel.png';
-import ReminderTemplateItem from './ReminderTemplateItem';
 import DatePicker, { registerLocale } from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import es from 'date-fns/locale/es';
-registerLocale('es', es)
+import ReminderTemplateItem from './ReminderTemplateItem';
+
+registerLocale('es', es);
 
 const customStyles = {
   content: {
@@ -22,19 +23,19 @@ const customStyles = {
 };
 
 function ReminderConfigModal({
-    acceptedFiles,
-    cancelTemplate,
-    getCleanTemplate,
-    isTemplateSelected,
-    onMobile,
-    screen,
-    selectTemplate,
-    submitReminder,
-    setTemplateType,
-    templates,
-    templateType,
-    isReminderConfigModalOpen,
-    toggleReminderConfigModal
+  acceptedFiles,
+  cancelTemplate,
+  getCleanTemplate,
+  isTemplateSelected,
+  onMobile,
+  screen,
+  selectTemplate,
+  submitReminder,
+  setTemplateType,
+  templates,
+  templateType,
+  isReminderConfigModalOpen,
+  toggleReminderConfigModal
 }) {
   const [startDate, setStartDate] = useState(new Date());
 
@@ -43,9 +44,7 @@ function ReminderConfigModal({
       <div className={onMobile ? "row mt-50" : "row"}>
         <div className="col-md-10">
           <p className={onMobile ? "fs-20 mt-0" : "fs-30 mt-0"}>
-            {
-              'Configurar recordatorio'
-            }
+            Configurar recordatorio
           </p>
         </div>
         <div className="col-md-2 t-right">
@@ -112,50 +111,50 @@ function ReminderConfigModal({
             }
           </div>
         )
-        : (
-          <div>
-            <div className="row">
-              <div className="col-md-12">
-                {`[${setTemplateType(templateType)}] `}
-                {screen}
-              </div>
-            </div>
-            {templateType !== 'text'
-                && (
-                  <div id="template-file" className="col-md-12">
-                    <br />
-                    <input type="file" name="file" id="template_file" accept={acceptedFiles} />
-                  </div>
-                )}
-            <div className="row mt-30">
-              <div className="col-md-12">
-                <label className="mr-10">Horario de envío:</label>
-                <DatePicker
-                  selected={startDate}
-                  onChange={date => setStartDate(date)}
-                  locale='es'
-                  timeCaption='Hora'
-                  showTimeSelect
-                  timeFormat='p'
-                  timeIntervals={1}
-                  dateFormat='Pp'
-                  id='send_template_at'
-                  minDate={new Date()}
-                />
-              </div>
-            </div>
-            <div className="row mt-30">
-              <div className="col-md-6 t-right">
-                <button type="button" onClick={() => cancelTemplate('reminders')}>Cancelar</button>
-              </div>
-              <div className="col-md-6 t-left">
-                <button type="button" onClick={() => submitReminder()}>Guardar</button>
-              </div>
-            </div>
+: (
+  <div>
+    <div className="row">
+      <div className="col-md-12">
+        {`[${setTemplateType(templateType)}] `}
+        {screen}
+      </div>
+    </div>
+    {templateType !== 'text'
+        && (
+          <div id="template-file" className="col-md-12">
+            <br />
+            <input type="file" name="file" id="template_file" accept={acceptedFiles} />
           </div>
         )}
+    <div className="row mt-30">
+      <div className="col-md-12">
+        <label className="mr-10">Horario de envío:</label>
+        <DatePicker
+          selected={startDate}
+          onChange={date => setStartDate(date)}
+          locale='es'
+          timeCaption='Hora'
+          showTimeSelect
+          timeFormat='p'
+          timeIntervals={1}
+          dateFormat='Pp'
+          id='send_template_at'
+          minDate={new Date()}
+        />
+      </div>
+    </div>
+    <div className="row mt-30">
+      <div className="col-md-6 t-right">
+        <button type="button" onClick={() => cancelTemplate('reminders')}>Cancelar</button>
+      </div>
+      <div className="col-md-6 t-left">
+        <button type="button" onClick={() => submitReminder()}>Guardar</button>
+      </div>
+    </div>
+  </div>
+)}
     </Modal>
-  );
+);
 };
 
 export default ReminderConfigModal;
