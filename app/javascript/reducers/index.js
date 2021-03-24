@@ -6,6 +6,7 @@ let initialState = {
   errorSendMessageStatus: null,
   errorSendMessageText: null,
   tags: [],
+  reminders: [],
   customerFields: [],
   customFields: []
 };
@@ -22,7 +23,13 @@ const reducer = (state = initialState, action) => {
         ...state,
         customer: action.data.customer,
         errors: action.data.errors,
+        reminders: action.data.reminders,
         tags: action.data.tags
+      }
+    case 'CREATE_REMINDER':
+      return {
+        ...state,
+        reminders: action.data.reminders
       }
     case 'SET_CUSTOMERS':
       return {
@@ -74,8 +81,7 @@ const reducer = (state = initialState, action) => {
         storageId: action.data.storage_id,
         agent_list: action.data.agent_list,
         filter_tags: action.data.filter_tags,
-        allowSendVoice: action.data.allow_send_voice,
-        allowReminders: action.data.allow_reminders
+        allowSendVoice: action.data.allow_send_voice
       }
     case 'SET_WHATSAPP_MESSAGES':
       var balance_error = { status: null, message: null };
@@ -96,8 +102,7 @@ const reducer = (state = initialState, action) => {
         recentInboundMessageDate: action.data.recent_inbound_message_date,
         customerId: action.data.customer_id,
         filter_tags: action.data.filter_tags,
-        allowSendVoice: action.data.allow_send_voice,
-        allowReminders: action.data.allow_reminders
+        allowSendVoice: action.data.allow_send_voice
       }
     case 'SET_WHATSAPP_TEMPLATES':
       return {

@@ -107,3 +107,12 @@ var getAjax = getAjax;
 function convertDateToUTC(date) {
   return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
 }
+
+$(document).ready(function () {
+  $readMoreJS.init({
+    target: '.truncate-js',
+    moreLink: 'Ver más',
+    lessLink: 'Ver menos',
+    linkClass: 'c-secondary'
+  });
+});

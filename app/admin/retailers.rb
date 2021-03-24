@@ -24,8 +24,6 @@ ActiveAdmin.register Retailer do
                 :manage_team_assignment,
                 :show_stats,
                 :allow_voice_notes,
-                :show_calendar,
-                :allow_reminders,
                 :allow_send_videos,
                 :allow_multiple_answers
 
@@ -106,8 +104,6 @@ ActiveAdmin.register Retailer do
       row :manage_team_assignment
       row :show_stats
       row :allow_voice_notes
-      row :show_calendar
-      row :allow_reminders
       row :allow_send_videos
       row :allow_multiple_answers
       row :created_at
@@ -337,7 +333,6 @@ ActiveAdmin.register Retailer do
       f.input :state
       f.input :zip_code
       f.input :phone_number
-      f.input :show_calendar
       f.input :unlimited_account
       f.input :whats_app_enabled
       f.input :karix_whatsapp_phone
@@ -355,7 +350,6 @@ ActiveAdmin.register Retailer do
       f.input :manage_team_assignment, label: 'Activar Asignación Automática'
       f.input :show_stats, label: 'Activar acceso total a estadísticas'
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
-      f.input :allow_reminders, label: 'Permitir configurar recordatorios'
       f.input :allow_send_videos, label: 'Permitir enviar videos'
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
     end

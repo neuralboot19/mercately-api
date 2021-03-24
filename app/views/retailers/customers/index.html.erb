@@ -1,3 +1,8 @@
+<style type="text/css" media="screen">
+.dropdown__menu.notifications {
+  right: unset;
+}
+</style>
 <div class="container-fluid reduced-container-padding mb-16">
   <div class="card">
     <div class="container-fluid index">
@@ -120,7 +125,7 @@
                     </ul>
                   </label>
                 </div>
-                <div class="col-xs-4 col-sm-2 c-grey">
+                <div class="col-xs-4 col-sm-2 c-grey t-center">
                   <div class="t-center truncate">
                     <% if customer.country_id.present? && customer.phone.present? %>
                       <span class="mr-5"><%= customer.emoji_flag %></span>
@@ -128,13 +133,34 @@
                     <%= customer.phone %>
                   </div>
                   <% if can_send_whatsapp_notification?(current_retailer_user, customer) %>
-                    <div class="t-center"><label for="modal--toggle-index" class="request-demo-label ws-contact"
-                      data-customer_full_names="<%= customer.full_names.presence || customer.whatsapp_name %>"
-                      data-customer_id="<%= customer.id %>"
-                      data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>"
-                      >
-                    <i class="fab fa-whatsapp fz-16 mr-5"></i>
-                    Enviar Notificación</label></div>
+                    <a class="request-demo-label ws-button dropdown__button no-style" href="#!">
+                      <i class="fab fa-whatsapp fz-16 mr-5"></i>
+                      Enviar Notificación
+                    </a>
+                    <ul class="dropdown__menu notifications">
+                      <li class="t-left">
+                        <label
+                          for="modal--toggle-index"
+                          class="ws-contact"
+                          data-customer_full_names="<%= customer.full_names.presence || customer.whatsapp_name %>"
+                          data-customer_id="<%= customer.id %>"
+                          data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>">
+                          <i class="fas fa-angle-right mr-8"></i>
+                          Enviar ahora
+                        </label>
+                      </li>
+                      <li class="t-left">
+                        <label
+                          for="reminder-modal--toggle-index"
+                          class="reminder-ws-contact"
+                          data-customer_full_names="<%= customer.full_names.presence || customer.whatsapp_name %>"
+                          data-customer_id="<%= customer.id %>"
+                          data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>">
+                          <i class="fas fa-angle-right mr-8"></i>
+                          Programar recordatorio
+                        </label>
+                      </li>
+                    </ul>
                   <% end %>
                 </div>
                 <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
@@ -266,56 +292,58 @@
   </div>
 </div>
 
-<input type="checkbox" class="d-none" name="modal--toggle-index" id="modal--toggle-index" />
-<div class="modal-index">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-xs-12 col-md-8 middle">
-        <label class="modal-index__background" for="modal--toggle-index"></label>
-        <div class="modal-index__window box p-4 h-unset mt-0" style="z-index: 1000;">
-          <label class="modalindex__close" for="modal--toggle-index">
-            <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
-          </label>
-          <div class="row">
-            <div class="col-xs-12">
-              <div class="col-md-12">
-                <h1 id="customer_name_index" class="d-inline name mb-10"></h1>
-                <input type="hidden" id="customer_id_index">
-              </div>
-              <div class="divider"></div>
-              <% if current_retailer.whatsapp_templates.active.exists? %>
-                <div id="karix-templates-list">
-                  <% current_retailer.whatsapp_templates.active.each_with_index do |template, index| %>
-                    <div class="row">
-                      <div class="col-md-10">
-                        <p id="template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
-                        <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
-                        <p id="template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
-                        <p id="gupshup-template-id-<%= index %>" class="d-none"><%= template.gupshup_template_id %></p>
+<div>
+  <input type="checkbox" class="d-none" name="modal--toggle-index" id="modal--toggle-index" />
+  <div class="modal-index">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-xs-12 col-md-8 middle">
+          <label class="modal-index__background" for="modal--toggle-index"></label>
+          <div class="modal-index__window box p-4 h-unset mt-0" style="z-index: 1000;">
+            <label class="modalindex__close" for="modal--toggle-index">
+              <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
+            </label>
+            <div class="row">
+              <div class="col-xs-12">
+                <div class="col-md-12">
+                  <h1 id="customer_name_index" class="d-inline name mb-10"></h1>
+                  <input type="hidden" id="customer_id_index">
+                </div>
+                <div class="divider"></div>
+                <% if current_retailer.whatsapp_templates.active.exists? %>
+                  <div id="karix-templates-list">
+                    <% current_retailer.whatsapp_templates.active.each_with_index do |template, index| %>
+                      <div class="row">
+                        <div class="col-md-10">
+                          <p id="template-<%= index %>">[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
+                          <p id="original-template-<%= index %>" class="d-none"><%= template.text %></p>
+                          <p id="template-type-<%= index %>" class="d-none"><%= template.template_type %></p>
+                          <p id="gupshup-template-id-<%= index %>" class="d-none"><%= template.gupshup_template_id %></p>
+                        </div>
+                        <div class="col-md-2">
+                          <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>
+                        </div>
                       </div>
-                      <div class="col-md-2">
-                        <button onClick="setKarixTemplate(<%= index %>)">Seleccionar</button>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              <% else %>
-                <%= render "retailers/shared/no_templates" %>
-              <% end %>
-              <div id="karix-template-edition" class="col-xs-12">
-                <div id="karix-template-text">
-                </div>
-                <div id="template-file">
-                  <br/>
-                  <input type="file" name="file" id="template_file"/>
-                </div>
-                <div class="row mt-30">
-                  <div class="col-md-6 t-right">
-                    <button onClick="cancelTemplate()">Cancelar</button>
+                    <% end %>
                   </div>
-                  <div class="col-md-6 t-left">
-                    <button onClick="sendTemplate()">Enviar</button>
+                <% else %>
+                  <%= render "retailers/shared/no_templates" %>
+                <% end %>
+                <div id="karix-template-edition" class="col-xs-12">
+                  <div id="karix-template-text">
+                  </div>
+                  <div id="template-file">
+                    <br/>
+                    <input type="file" name="file" id="template_file"/>
+                  </div>
+                  <div class="row mt-30">
+                    <div class="col-md-6 t-right">
+                      <button onClick="cancelTemplate()">Cancelar</button>
+                    </div>
+                    <div class="col-md-6 t-left">
+                      <button onClick="sendTemplate()">Enviar</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -326,6 +354,8 @@
     </div>
   </div>
 </div>
+
+<%= render partial: 'retailers/customers/send_reminder', cached: true %>
 
 <script charset="utf-8">
   document.addEventListener("DOMContentLoaded", function() {

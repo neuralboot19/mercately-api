@@ -3,9 +3,11 @@ import React from 'react';
 const TabSelector = ({
   showUserDetails,
   showCustomFields,
+  showAutomationSettings,
   showIntegrationSettings,
   onClickUserDetails,
   onClickCustomerFields,
+  onClickAutomationSettings,
   onClickIntegrationSettings
 }) => {
   const tabIconStyles = {
@@ -27,7 +29,7 @@ const TabSelector = ({
     <div className="box px-5">
       <div className="row">
         <div
-          className="col-xs-4 t-center py-5"
+          className="col-xs-3 t-center py-5"
           style={showUserDetails === 'block' ? tabStyles.active : tabStyles.inactive}
         >
           <div className="tooltip-top">
@@ -41,7 +43,7 @@ const TabSelector = ({
         </div>
 
         <div
-          className="col-xs-4 t-center py-5"
+          className="col-xs-3 t-center py-5"
           style={showCustomFields === 'block' ? tabStyles.active : tabStyles.inactive}
         >
           <div className="tooltip-top">
@@ -54,7 +56,20 @@ const TabSelector = ({
           </div>
         </div>
         <div
-          className="col-xs-4 t-center py-5"
+          className="col-xs-3 t-center py-5"
+          style={showAutomationSettings === 'block' ? tabStyles.active : tabStyles.inactive}
+        >
+          <div className="tooltip-top">
+            <i
+              className="m-10 fas fa-robot cursor-pointer"
+              style={showAutomationSettings === 'block' ? tabIconStyles.active : tabIconStyles.inactive}
+              onClick={onClickAutomationSettings}
+            />
+            <div className="tooltiptext bottom-100">Automatizaciones</div>
+          </div>
+        </div>
+        <div
+          className="col-xs-3 t-center py-5"
           style={showIntegrationSettings === 'block' ? tabStyles.active : tabStyles.inactive}
         >
           <div className="tooltip-top">
