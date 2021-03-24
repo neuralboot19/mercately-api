@@ -1,0 +1,56 @@
+<div class="divider"></div>
+<div class="table__item row middle-xs">
+  <div class="col-xs-2">
+    <%= campaign.name %>
+  </div>
+  <div class="col-xs-2 t-center">
+    <%= campaign.contact_group.name %>
+  </div>
+  <div class="col-sm-1 t-center"><%= campaign.contact_group.customers.count %></div>
+  <% if current_retailer.karix_integrated? %>
+    <div class="col-sm-1 t-center"><%= campaign.karix_whatsapp_messages.sent.count %></div>
+    <div class="col-sm-1 t-center"><%= campaign.karix_whatsapp_messages.delivered.count %></div>
+    <div class="col-sm-1 t-center"><%= campaign.karix_whatsapp_messages.read.count %></div>
+  <% else %>
+    <div class="col-sm-1 t-center"><%= campaign.gupshup_whatsapp_messages.sent.count %></div>
+    <div class="col-sm-1 t-center"><%= campaign.gupshup_whatsapp_messages.delivered.count %></div>
+    <div class="col-sm-1 t-center"><%= campaign.gupshup_whatsapp_messages.read.count %></div>
+  <% end %>
+  <div class="col-sm-1 t-center">
+    <% if campaign.sent? %>
+      $<%= campaign.cost %>
+    <% else %>
+      <div class="tooltip">
+        $<%= campaign.estimated_cost %>
+        <i class="fas fa-exclamation-circle"></i>
+        <div class="tooltiptext--black tooltiptext tooltiptext--right">Costo apróximado, obtendrás el costo real cuando la campaña se envíe.</div>
+      </div>
+    <% end %>
+  </div>
+  <div class="col-sm-2 t-center"><%= show_date campaign.send_at.localtime %></div>
+  <div class="col-sm-1 p-0">
+    <div class="t-center">
+      <% case campaign.status %>
+      <% when 'pending' %>
+        <a class="cookie cookie--yellow px-8 fs-12 dropdown__button fw-bold no-style" tabindex="-1" href="#!">Pendiente <i class="fas fa-caret-down"></i></a>
+        <ul class="dropdown__menu">
+          <li class="t-left">
+            <%= link_to cancel_retailers_campaign_path(current_retailer, campaign),
+              method: :put,
+              class: 'c-black no-style',
+              data: { confirm: '¿Estás seguro de cancelar esta campaña?' } do %>
+              <i class="fas fa-angle-right mr-8"></i>
+              Cancelar
+            <% end %>
+          </li>
+        </ul>
+      <% when 'sent' %>
+        <b class="cookie cookie--green fs-12" value="0">Envíado</b>
+      <% when 'cancelled' %>
+        <b class="cookie cookie--red fs-12" value="3">Cancelado</b>
+      <% when 'failed' %>
+        <b class="cookie cookie--red fs-12" value="3">Fallido</b>
+      <% end %>
+    </div>
+  </div>
+</div>

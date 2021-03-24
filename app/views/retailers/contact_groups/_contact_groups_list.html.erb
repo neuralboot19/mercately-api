@@ -1,0 +1,105 @@
+<div class="divider"></div>
+<div class="table__item row middle-xs">
+  <div class="col-xs-4 col-sm-5">
+    <%= contact_group.name %>
+  </div>
+  <div class="col-xs-4 col-sm-5 t-center">
+    <%= contact_group.customers.count %>
+  </div>
+  <div class="hide-on-md-and-up hide-on-2k m-auto">
+    <label class="item__dropdown dropdown d-inline">
+      <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to edit_retailers_contact_group_path(current_retailer, contact_group), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+        <li>
+          <% if contact_group.campaigns.exists? %>
+            <%= link_to archive_retailers_contact_group_path(current_retailer, contact_group),
+              class: 'c-red no-style',
+              method: :put,
+              data: { confirm: '¿Estás seguro de archivar este grupo? (Las campañas asociadas se cancelarán)' } do %>
+              <i class="fas fa-trash-alt mr-8"></i>
+              Archivar
+            <% end %>
+          <% else %>
+            <%= link_to retailers_contact_group_path(current_retailer, contact_group), class: 'c-red no-style', method: :delete, data: { confirm: '¿Estás seguro de eliminar este grupo?' } do %>
+              <i class="fas fa-trash-alt mr-8"></i>
+              Eliminar
+            <% end %>
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+  <div class="hide-on-1080-and-down col-sm-1">
+    <label class="item__dropdown dropdown d-inline">
+      <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to edit_retailers_contact_group_path(current_retailer, contact_group), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+        <li>
+          <% if contact_group.campaigns.exists? %>
+            <%= link_to archive_retailers_contact_group_path(current_retailer, contact_group),
+              class: 'c-red no-style',
+              method: :put,
+              data: { confirm: '¿Estás seguro de archivar este grupo? (Las campañas asociadas se cancelarán)' } do %>
+              <i class="fas fa-trash-alt mr-8"></i>
+              Archivar
+            <% end %>
+          <% else %>
+            <%= link_to retailers_contact_group_path(current_retailer, contact_group), class: 'c-red no-style', method: :delete, data: { confirm: '¿Estás seguro de eliminar este grupo?' } do %>
+              <i class="fas fa-trash-alt mr-8"></i>
+              Eliminar
+            <% end %>
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+  <div class="hide-on-sm-and-down hide-on-2k m-auto">
+    <label class="item__dropdown dropdown d-inline">
+      <a class="dropdown__button midd" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to edit_retailers_contact_group_path(current_retailer, contact_group), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+        <li>
+          <% if contact_group.campaigns.exists? %>
+            <%= link_to archive_retailers_contact_group_path(current_retailer, contact_group),
+              class: 'c-red no-style',
+              method: :put,
+              data: { confirm: '¿Estás seguro de archivar este grupo? (Las campañas asociadas se cancelarán)' } do %>
+              <i class="fas fa-trash-alt mr-8"></i>
+              Archivar
+            <% end %>
+          <% else %>
+            <%= link_to retailers_contact_group_path(current_retailer, contact_group), class: 'c-red no-style', method: :delete, data: { confirm: '¿Estás seguro de eliminar este grupo?' } do %>
+              <i class="fas fa-trash-alt mr-8"></i>
+              Eliminar
+            <% end %>
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+</div>

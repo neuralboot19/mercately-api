@@ -5,6 +5,7 @@ import { createBrowserHistory } from 'history';
 
 import Chat from './components/chat';
 import WhatsAppChat from './components/WhatsApp';
+import ContactGroup from './components/ContactGroup';
 
 const customHistory = createBrowserHistory();
 
@@ -20,6 +21,16 @@ const AppRoutes = ({ store }) => (
         exact
         path="/retailers/:slug/whatsapp_chats"
         component={WhatsAppChat}
+      />
+      <Route
+        exact
+        path="/retailers/:slug/contact_groups/new"
+        component={ContactGroup}
+      />
+      <Route
+        exact
+        path="/retailers/:slug/contact_groups/:id/edit"
+        component={ContactGroup}
       />
     </Router>
   </Provider>

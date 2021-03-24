@@ -1,0 +1,147 @@
+<div class="container-fluid reduced-container-padding mb-16 page-container">
+  <div class="container-fluid products">
+    <div class="row">
+      <div class="col-xs-12 col-md-4 mb-15 p-0">
+        <%= link_to retailers_campaigns_path(current_retailer), class: 'back-link m-0' do %>
+          <i class="fas fa-caret-left mr-5"></i>
+          Campañas
+        <% end %>
+        <h1 class="ml-0 form-container_header-title">Crear campaña</h1>
+      </div>
+      <div class="col-xs-12 p-0">
+        <div class="box p-relative card-box form-container_card">
+          <% if @campaign.whatsapp_template_id || params[:whatsapp_template_id] %>
+            <%= form_for [:retailers, @campaign], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
+              <%= hidden_field_tag :timezone, Time.now.localtime.formatted_offset %>
+              <%= f.hidden_field :whatsapp_template_id, value: @campaign.whatsapp_template_id || params[:whatsapp_template_id] %>
+              <div class="box">
+                <fieldset class="fieldset-to-replace fieldset row">
+                  <h3 class="form-container_sub-title mt-0 ml-8">Información de la campaña</h3>
+                  <div class="my-16 col-xs-12">
+                    <%= f.label :name, 'Nombre' %>
+                    <%= f.text_field :name, class: 'input validate-required', autofocus: true %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="my-16 col-xs-12">
+                    <%= f.label :send_at, 'Fecha de envío' %>
+                    <%= f.text_field :send_at, class: 'input validate-required' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="my-16 col-xs-12">
+                    <%= f.label :contact_group_id, 'Grupo de clientes' %>
+                    <%= f.select :contact_group_id, current_retailer.contact_groups.not_archived.pluck(:name, :id), { include_blank: false }, class: 'input validate-required' %>
+                    <i class="validation-msg"></i>
+                  </div>
+                  <div class="my-16 col-xs-12 p-relative">
+                    <label class="d-block">Texto de la plantilla</label>
+                    <%= template_text(@whatsapp_template.clean_template) %>
+                  </div>
+                  <% if @whatsapp_template.file? %>
+                    <div class="my-16 col-xs-12">
+                      <%= f.label :file, 'Archivo' %>
+                      <%= f.file_field :file, required: true, class: 'input validate-required' %>
+                      <i class="validation-msg"></i>
+                    </div>
+                  <% end %>
+                </fieldset>
+                <div class="my-16 t-right hide-on-xs">
+                  <%= link_to 'Cancelar', retailers_campaigns_path(current_retailer), class: 'cancel-link mr-30' %>
+                  <%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
+                </div>
+                <div class="hide-on-xs-and-up t-center my-16">
+                  <div><%= f.submit 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %></div>
+                  <div class="mt-20"><%= link_to 'Cancelar', retailers_campaigns_path(current_retailer), class: 'cancel-link' %></div>
+                </div>
+              </div>
+            <% end %>
+          <% else %>
+            <fieldset class="fieldset-to-replace fieldset row">
+              <h3 class="form-container_sub-title mt-0 ml-8">Selecciona una plantilla para la campaña</h3>
+              <div class="my-16 col-xs-12">
+                <% if current_retailer.whatsapp_templates.active.exists? %>
+                  <div id="karix-templates-list">
+                    <% current_retailer.whatsapp_templates.active.each_with_index do |template| %>
+                      <div class="divider"></div>
+                      <div class="row middle-xs">
+                        <div class="col-md-10">
+                          <p>[<%= whatsapp_template_type(template.template_type) %>] <%= template.clean_template %></p>
+                        </div>
+                        <div class="col-md-2">
+                          <%= link_to new_retailers_campaign_path(whatsapp_template_id: template.id), class: 'btn btn--cta' do %>
+                            Seleccionar
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <%= render "retailers/shared/no_templates" %>
+                <% end %>
+              </div>
+            </fieldset>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script charset="utf-8">
+  $(function() {
+    $('#campaign_send_at').daterangepicker({
+      singleDatePicker: true,
+      showDropdowns: true,
+      timePicker: true,
+      autoApply: true,
+      timePicker24Hour: true,
+      timeZone: null,
+      minDate: new Date(),
+      linkedCalendars: false,
+      locale: {
+        format: 'YYYY/MM/DD HH:mm',
+        cancelLabel: 'Cancelar',
+        applyLabel: 'Aplicar',
+        fromLabel: 'Desde',
+        toLabel: 'Hasta',
+        customRangeLabel: 'Editar fecha',
+        weekLabel: 'Semana',
+        daysOfWeek: [
+          'Do',
+          'Lu',
+          'Ma',
+          'Mi',
+          'Ju',
+          'Vi',
+          'Sa'
+        ],
+        monthNames: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre'
+        ],
+        firstDay: 1
+      }
+    });
+  });
+
+  function insertDynamicFieldInput(value, input) {
+    var parent = $(input).parent().parent();
+    inputVal = parent.find('input').val();
+    if (inputVal) {
+      parent.find('input').val(`${inputVal} {{${value}}}`);
+    } else {
+      parent.find('input').val(`${inputVal}{{${value}}}`);
+    }
+  }
+</script>
+
+<script src="<%= asset_path 'retailers/chat_bots/chat_bots.js' %>" charset="utf-8"></script>

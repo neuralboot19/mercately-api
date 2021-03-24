@@ -41,6 +41,20 @@ const reducer = (state = initialState, action) => {
         agent_list: action.data.agent_list,
         filter_tags: action.data.filter_tags
       }
+    case 'SET_SELECTED_CUSTOMERS':
+      return {
+        ...state,
+        selectedCustomers: action.data.customers,
+        totalSelectedCustomersPages: action.data.total_customers
+      }
+    case 'SET_SELECTED_CUSTOMER_IDS':
+      return {
+        ...state,
+        contactGroupName: action.data.name,
+        selectedCustomers: action.data.customers,
+        selectedCustomerIds: action.data.customer_ids,
+        totalSelectedCustomersPages: action.data.total_customers
+      }
     case 'SET_CUSTOM_FIELDS':
       return {
         ...state,
@@ -168,6 +182,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         customer: action.data.customer
+      }
+    case 'SET_CONTACT_GROUP_ERRORS':
+      return {
+        ...state,
+        nameValidationText: action.data.errors.name?.shift(),
+        customersValidationText: action.data.errors.customer_ids?.shift()
       }
     default:
       return state;

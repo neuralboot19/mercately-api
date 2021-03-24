@@ -1,0 +1,26 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+      La importación y creación del grupo de clientes ha fallado por las siguientes razones:
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        <ul>
+          <% @errors.each do |err| %>
+            <li class="py-5"><%= err %></li>
+          <% end %>
+        </ul>
+      </p>
+    </div>
+
+    <%= render "shared/emails/footer" %>
+  </div>
+</div>

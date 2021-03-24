@@ -8,6 +8,7 @@ class GupshupWhatsappMessage < ApplicationRecord
 
   belongs_to :retailer
   belongs_to :customer
+  belongs_to :campaign, required: false
   belongs_to :retailer_user, required: false
   has_one :reminder
 

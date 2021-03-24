@@ -36,8 +36,9 @@ module Customers
 
           phone = row[:phone]&.strip
           email = row[:email]&.strip
+          plus_phone = phone.to_s.first == '+' ? phone : "+#{phone}"
 
-          customer = retailer.customers.find_by(phone: phone) if phone.present?
+          customer = retailer.customers.find_by(phone: plus_phone) if phone.present?
           customer ||= retailer.customers.find_by(email: email) if email.present?
           customer ||= Customer.new
 

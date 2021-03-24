@@ -43,4 +43,17 @@ class RetailerMailer < ApplicationMailer
 
     mail to: retailer_user.email, subject: 'Importación de Clientes Completa'
   end
+
+  def imported_contact_group(retailer_user, contact_group, errors)
+    @contact_group = contact_group
+    @errors = errors
+
+    mail to: retailer_user.email, subject: 'Importación y creación de grupo de clientes completa'
+  end
+
+  def failed_import(retailer_user, errors)
+    @errors = errors
+
+    mail to: retailer_user.email, subject: 'La importación de clientes ha fallado'
+  end
 end

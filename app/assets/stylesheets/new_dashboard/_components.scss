@@ -515,15 +515,27 @@ h1 {
 
 .pagination {
 
-  a{
+  a {
     color: $secondary-color;
   }
 
-  span.current {
-    color: #000;
+  li {
+    display: inline-block;
   }
 
-  a, span.current, span.gap {
+  .current a {
+    color: #000 !important;
+
+    &:hover {
+      cursor: default;
+    }
+  }
+
+  .disabled {
+    display: none;
+  }
+
+  a, .current, .gap {
     padding: 14px;
     line-height: 38px;
     text-decoration: none;
@@ -653,6 +665,17 @@ h1 {
   top: 0px;
   left: 70px;
 
+  &.tooltiptext--right {
+    top: -75px;
+    left: 110%;
+  }
+
+  &.tooltiptext--black {
+    background-color: #000;
+    border-color: #000;
+    color: #fff;
+  }
+
   /* Fade in tooltip */
   opacity: 0;
   transition: opacity 0.3s;
@@ -685,6 +708,10 @@ h1 {
   border-width: 7px;
   border-style: solid;
   border-color: transparent #FFF transparent transparent;
+}
+
+.tooltip .tooltiptext--black::after {
+  border-color: transparent #000 transparent transparent;
 }
 
 .tooltip::after {
@@ -1870,4 +1897,13 @@ i {
       padding: unset;
     }
   }
+}
+
+.separator {
+  border-top: 1px solid #ebebeb;
+}
+
+.input-border {
+  border: 1px solid #ddd;
+  border-radius: 5px;
 }

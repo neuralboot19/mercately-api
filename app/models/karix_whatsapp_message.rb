@@ -8,6 +8,7 @@ class KarixWhatsappMessage < ApplicationRecord
 
   belongs_to :retailer
   belongs_to :customer
+  belongs_to :campaign, required: false
   belongs_to :retailer_user, required: false
   has_one :reminder
 
@@ -15,6 +16,9 @@ class KarixWhatsappMessage < ApplicationRecord
   scope :notification_messages, -> { where(message_type: 'notification').where.not(status: 'failed') }
   scope :conversation_messages, -> { where(message_type: 'conversation').where.not(status: 'failed') }
   scope :unread, -> { where.not(status: 'read') }
+  scope :sent, -> { where(status: 'sent') }
+  scope :delivered, -> { where(status: 'delivered') }
+  scope :read, -> { where(status: 'read') }
 
   after_create :apply_cost
 

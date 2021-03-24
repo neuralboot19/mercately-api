@@ -1,0 +1,23 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color">Hola <%= @retailer_user.full_name %>, te saluda el equipo de Mercately.</p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+      Te escribimos para avisarte que la campaña "<%= @campaign.name %>" tiene
+      un costo de $<%= @campaign.estimated_cost %>.
+      Debes agregar $<%= @campaign.estimated_cost - @retailer.ws_balance %> cantidad de saldo.
+      Para poder enviar tu campaña agrega saldo <%= link_to 'aquí', retailers_payment_plans_url(@retailer) %>
+      </p>
+    </div>
+
+    <%= render "shared/emails/footer" %>
+  </div>
+</div>

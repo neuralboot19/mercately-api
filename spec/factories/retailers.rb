@@ -21,6 +21,10 @@ FactoryBot.define do
       association :retailer_user
     end
 
+    trait :with_admin do
+      association :retailer_user, factory: [:retailer_user, :admin]
+    end
+
     trait :whatsapp_enabled do
       whats_app_enabled { true }
     end

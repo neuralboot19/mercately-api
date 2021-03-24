@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
 
   private
 
+    def not_found
+      redirect_to(root_path) && return
+    end
+
     def layout_by_resource
       if devise_controller?
         'devise'
