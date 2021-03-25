@@ -28,6 +28,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   before_create :set_message_type
   after_save :apply_cost
   after_save :update_reminder
+  after_save :notify_error_to_slack, if: :saved_change_to_status?
 
   def type
     message_payload.try(:[], 'payload').try(:[], 'type') || message_payload['type']
@@ -57,5 +58,31 @@ class GupshupWhatsappMessage < ApplicationRecord
       return unless reminder.present?
 
       reminder.failed! if status == 'error'
+    end
+
+    def notify_error_to_slack
+      return unless status == 'error' && error_payload.present? && ENV['ENVIRONMENT'] == 'production'
+
+      country_id = customer.country_id
+      if country_id.blank?
+        parse_destination = Phonelib.parse(destination)
+        country_id = parse_destination&.country
+      end
+
+      return unless country_id == 'MX'
+
+      payload = error_payload.try(:[], 'payload').try(:[], 'payload')
+      return unless payload.present?
+
+      slack_client = Slack::Notifier.new ENV['SLACK_MSG_ERROR'], channel: '#ws-messages-errors'
+
+      slack_client.ping([
+        "Retailer: (#{retailer.id}) #{retailer.name}",
+        "Cliente: (#{customer.id}) #{customer.full_names.presence || customer.whatsapp_name}",
+        "Teléfono destino: #{destination}",
+        "ID del mensaje: #{id}",
+        "Código del error: #{payload['code']}",
+        "Razón del error: #{payload['reason']}"
+      ].join("\n"))
     end
 end
