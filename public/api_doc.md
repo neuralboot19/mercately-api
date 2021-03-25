@@ -15,7 +15,7 @@ Documentation of agents resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 4664752ff1ddb1ea20ee77e909a024c2
+            Api-Key: f1595c50b515562f379c758fb23c8e1a
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
@@ -29,7 +29,7 @@ Documentation of agents resources
             {
               "agents": [
                 {
-                  "id": 10692,
+                  "id": 873,
                   "first_name": "Agent",
                   "last_name": "Example",
                   "email": "agent@example.com",
@@ -44,18 +44,127 @@ Documentation of agents resources
 ## Customers [/retailers/api/v1/customers/:id]
 Documentation of customer resources
 
-### Update a customer [PUT /retailers/api/v1/customers/{id}]
+### Get all customers [GET /retailers/api/v1/customers]
 
-+ Parameters
-    + id: `15122` (number, required)
 
-+ Request updates a customer
-**PUT**&nbsp;&nbsp;`/retailers/api/v1/customers/15122`
++ Request returns all customers
+**GET**&nbsp;&nbsp;`/retailers/api/v1/customers?page=1`
 
     + Headers
 
             Slug: test-connection
-            Api-Key: 4d2429b0b937cf7c951d36ac84d35fec
+            Api-Key: 63d3ca402b3778fc88a6dfef64b958ba
+            Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+
++ Response 200
+
+    + Headers
+
+            Content-Type: application/json; charset=utf-8
+
+    + Body
+
+            {
+              "results": 1,
+              "total_pages": 1,
+              "customers": [
+                {
+                  "id": "1050kectb1180",
+                  "first_name": "Samuel",
+                  "last_name": "Flórez",
+                  "email": "leopoldohickle@von.info",
+                  "phone": "+593670130924",
+                  "meli_customer_id": null,
+                  "meli_nickname": null,
+                  "id_type": "ruc",
+                  "id_number": "566-40-8795",
+                  "address": "Paseo Julio César 7 Puerta 101",
+                  "city": "Quito",
+                  "state": "Pichincha",
+                  "zip_code": "170207",
+                  "country_id": "EC",
+                  "notes": null,
+                  "whatsapp_opt_in": false,
+                  "whatsapp_name": null,
+                  "tags": [
+                    {
+                      "tag": "Test tag",
+                      "web_id": "1050zbkar52"
+                    }
+                  ],
+                  "custom_fields": [
+                    {
+                      "field_name": "asperiores",
+                      "field_content:": "Test Field"
+                    }
+                  ]
+                }
+              ]
+            }
+
+### Get a customer [GET /retailers/api/v1/customers/{id}]
+
++ Parameters
+    + id: `1051ndelr1181` (string, required)
+
++ Request returns a customer
+**GET**&nbsp;&nbsp;`/retailers/api/v1/customers/1051ndelr1181`
+
+    + Headers
+
+            Slug: test-connection
+            Api-Key: f0ee77388af5a5e8b661dd3d2f6fb8a2
+            Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
+
++ Response 200
+
+    + Headers
+
+            Content-Type: application/json; charset=utf-8
+
+    + Body
+
+            {
+              "message": "Customer found successfully",
+              "customer": {
+                "id": "1051ndelr1181",
+                "first_name": "Josefina",
+                "last_name": "Gil",
+                "email": "mickey@tromp.co",
+                "phone": "+593695.221.618",
+                "meli_customer_id": null,
+                "meli_nickname": null,
+                "id_type": "ruc",
+                "id_number": "094-42-0660",
+                "address": "Huerta Eloisa 69",
+                "city": "Quito",
+                "state": "Pichincha",
+                "zip_code": "170207",
+                "country_id": "EC",
+                "notes": null,
+                "whatsapp_opt_in": false,
+                "whatsapp_name": null,
+                "tags": [
+            
+                ],
+                "custom_fields": [
+            
+                ]
+              }
+            }
+
+### Update a customer [PUT /retailers/api/v1/customers/{id}]
+
++ Parameters
+    + id: `1052uzjkd1182` (string, required)
+
++ Request updates a customer
+**PUT**&nbsp;&nbsp;`/retailers/api/v1/customers/1052uzjkd1182`
+
+    + Headers
+
+            Slug: test-connection
+            Api-Key: 37cd63092294bb22d25bc625d44dc1bb
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -76,18 +185,18 @@ Documentation of customer resources
             }
 
 + Request assigns the customer to an agent
-**PUT**&nbsp;&nbsp;`/retailers/api/v1/customers/15123`
+**PUT**&nbsp;&nbsp;`/retailers/api/v1/customers/1053riyho1183`
 
     + Headers
 
             Slug: test-connection
-            Api-Key: 98e48c03de3dec1169c80050a4cfffd9
+            Api-Key: 544d00e6ba2b49f263c875b84c8f4801
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
     + Body
 
-            customer[first_name]=Juan&customer[last_name]=Campos&customer[email]=juan%40email.com&customer[phone]=%2B12036534789&customer[notes]=New+notes&customer[address]=Calle+5&customer[city]=Fort+Worth&customer[state]=TX&customer[zip_code]=76106&customer[agent_id]=10689
+            customer[first_name]=Juan&customer[last_name]=Campos&customer[email]=juan%40email.com&customer[phone]=%2B12036534789&customer[notes]=New+notes&customer[address]=Calle+5&customer[city]=Fort+Worth&customer[state]=TX&customer[zip_code]=76106&customer[agent_id]=870
 
 + Response 200
 
@@ -116,7 +225,7 @@ Documentation of Messenger conversations
     + Headers
 
             Slug: test-connection
-            Api-Key: 4bc4c7199a199a6c584d324cac2d2f69
+            Api-Key: 60d08e595be00488df2810cc22c69ca7
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
@@ -133,33 +242,33 @@ Documentation of Messenger conversations
               "messenger_conversations": [
                 {
                   "id": null,
-                  "customer_id": 15125,
+                  "customer_id": 1185,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T19:11:53.637Z",
-                  "first_name": "Esteban",
-                  "last_name": "Bermúdez",
-                  "email": "thomasina@boehm.net",
-                  "agent_id": 10690
+                  "last_interaction": "2021-03-24T21:24:31.596Z",
+                  "first_name": "Conchita",
+                  "last_name": "Vélez",
+                  "email": "zoilagaylord@mohr.info",
+                  "agent_id": 871
                 },
                 {
                   "id": null,
-                  "customer_id": 15126,
+                  "customer_id": 1186,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T14:11:53.601Z",
-                  "first_name": "Inés",
-                  "last_name": "Rosado",
-                  "email": "kareembartell@labadie.info",
+                  "last_interaction": "2021-03-24T16:24:31.582Z",
+                  "first_name": "José Emilio",
+                  "last_name": "Chávez",
+                  "email": "elviramarvin@mann.io",
                   "agent_id": null
                 },
                 {
                   "id": null,
-                  "customer_id": 15124,
+                  "customer_id": 1184,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T10:11:53.467Z",
-                  "first_name": "Elsa",
-                  "last_name": "Narváez",
-                  "email": "catarinawhite@batz.biz",
-                  "agent_id": 10690
+                  "last_interaction": "2021-03-24T12:24:31.543Z",
+                  "first_name": "José Luis",
+                  "last_name": "Velasco",
+                  "email": "beverly@mohrhickle.com",
+                  "agent_id": 871
                 }
               ]
             }
@@ -170,7 +279,7 @@ Documentation of Messenger conversations
     + Headers
 
             Slug: test-connection
-            Api-Key: 0deb90b1d23213580a4ef3c0980891b4
+            Api-Key: 0eaca46009a398203ab9ea8903062bd7
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
@@ -187,12 +296,12 @@ Documentation of Messenger conversations
               "messenger_conversations": [
                 {
                   "id": null,
-                  "customer_id": 15129,
+                  "customer_id": 1189,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T14:11:53.809Z",
-                  "first_name": "Mercedes",
-                  "last_name": "Gracia",
-                  "email": "tomas@stokesbrekke.net",
+                  "last_interaction": "2021-03-24T16:24:31.674Z",
+                  "first_name": "Pedro",
+                  "last_name": "Vázquez",
+                  "email": "elayne@haley.io",
                   "agent_id": null
                 }
               ]
@@ -213,7 +322,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 7edb1879cc5950b74fe33c48238caf12
+            Api-Key: b22b147de6698a88819c6b3183df3325
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -243,7 +352,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 06ad5d7c6aea27e4b15aef1a39148ea6
+            Api-Key: c1b0e3bb56dd9f92867fb5b3b4022ded
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -273,7 +382,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 57f361db56c491d1f8f9fb0c230cbdd7
+            Api-Key: 23e8bf622d81451b1abaa9c88d1fd508
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -303,7 +412,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: a70d29cc022ece8218481b264e542695
+            Api-Key: 37ceadb4f4149af17d38a546568a10d6
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -330,7 +439,7 @@ Documentation of notifications resources
                 "status": "submitted",
                 "destination": "+593999999999",
                 "country": "EC",
-                "created_time": "2021-03-04T11:11:56.605-04:00",
+                "created_time": "2021-03-25T12:24:32.818-05:00",
                 "error": null
               }
             }
@@ -341,13 +450,13 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: ca53f0b87d12e5d4f3c0d04712a6c4ba
+            Api-Key: d2e34524de508669b4a7d0f90d4489c2
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
     + Body
 
-            phone_number=%2B593999999999&internal_id=997dd550-c8d8-4bf7-ad98-a5ac4844a1ed&template_params[]=test+1&template_params[]=test+2&template_params[]=test+3&agent_id=10715
+            phone_number=%2B593999999999&internal_id=997dd550-c8d8-4bf7-ad98-a5ac4844a1ed&template_params[]=test+1&template_params[]=test+2&template_params[]=test+3&agent_id=896
 
 + Response 200
 
@@ -368,7 +477,7 @@ Documentation of notifications resources
                 "status": "submitted",
                 "destination": "+593999999999",
                 "country": "EC",
-                "created_time": "2021-03-04T11:11:56.719-04:00",
+                "created_time": "2021-03-25T12:24:32.866-05:00",
                 "error": null
               }
             }
@@ -379,7 +488,7 @@ Documentation of notifications resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 6c9de1a3020b07d12eab8a355c389f43
+            Api-Key: 8f395d51e922414611e0850ab41921ae
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
             Content-Type: application/x-www-form-urlencoded
 
@@ -406,7 +515,7 @@ Documentation of notifications resources
                 "status": "submitted",
                 "destination": "+593999999999",
                 "country": "EC",
-                "created_time": "2021-03-04T11:11:56.808-04:00",
+                "created_time": "2021-03-25T12:24:32.905-05:00",
                 "error": null
               }
             }
@@ -426,7 +535,7 @@ Documentation of WhatsApp conversations
     + Headers
 
             Slug: test-connection
-            Api-Key: b1da585ac40775295e2504583ad8973b
+            Api-Key: 0a169c58c2f196aace477af6adb0fd8a
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
@@ -443,36 +552,36 @@ Documentation of WhatsApp conversations
               "whatsapp_conversations": [
                 {
                   "id": null,
-                  "customer_id": 15131,
+                  "customer_id": 1191,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T19:11:54.194Z",
-                  "first_name": "Isabel",
-                  "last_name": "Villareal",
-                  "email": "hattie@welch.com",
+                  "last_interaction": "2021-03-24T21:24:31.854Z",
+                  "first_name": "Clara",
+                  "last_name": "Henríquez",
+                  "email": "robertfisher@lang.name",
                   "phone": "+593789584759",
-                  "agent_id": 10693
+                  "agent_id": 874
                 },
                 {
                   "id": null,
-                  "customer_id": 15132,
+                  "customer_id": 1192,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T14:11:54.160Z",
-                  "first_name": "Gerardo",
-                  "last_name": "Cano",
-                  "email": "stephen@schmidt.com",
+                  "last_interaction": "2021-03-24T16:24:31.838Z",
+                  "first_name": "Jesús",
+                  "last_name": "Lara",
+                  "email": "regeniasmith@dickijenkins.io",
                   "phone": "+593452365897",
                   "agent_id": null
                 },
                 {
                   "id": null,
-                  "customer_id": 15130,
+                  "customer_id": 1190,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T10:11:54.050Z",
-                  "first_name": "Esteban",
-                  "last_name": "Manzanares",
-                  "email": "elwood@vandervort.info",
+                  "last_interaction": "2021-03-24T12:24:31.784Z",
+                  "first_name": "Mariano",
+                  "last_name": "Cotto",
+                  "email": "arnulfobednar@lueilwitzjacobson.info",
                   "phone": "+593123458475",
-                  "agent_id": 10693
+                  "agent_id": 874
                 }
               ]
             }
@@ -483,7 +592,7 @@ Documentation of WhatsApp conversations
     + Headers
 
             Slug: test-connection
-            Api-Key: 99880e33d17b4c91a0516cb5b2cf9cf8
+            Api-Key: 4399eabf5a61fc7c46979c04ff5d0913
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
@@ -500,12 +609,12 @@ Documentation of WhatsApp conversations
               "whatsapp_conversations": [
                 {
                   "id": null,
-                  "customer_id": 15135,
+                  "customer_id": 1195,
                   "message_count": 1,
-                  "last_interaction": "2021-03-03T14:11:54.361Z",
-                  "first_name": "Mario",
-                  "last_name": "Hurtado",
-                  "email": "adam@kohler.co",
+                  "last_interaction": "2021-03-24T16:24:31.942Z",
+                  "first_name": "Patricio",
+                  "last_name": "Porras",
+                  "email": "edwardokunde@mraztowne.biz",
                   "phone": "+593452365897",
                   "agent_id": null
                 }
@@ -527,7 +636,7 @@ Documentation of whatsapp templates resources
     + Headers
 
             Slug: test-connection
-            Api-Key: 3a1349361c4db46b88a7ef5269ac6ef0
+            Api-Key: afd1d3119d197ea8ce615e285bcb2739
             Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
 
 + Response 200
