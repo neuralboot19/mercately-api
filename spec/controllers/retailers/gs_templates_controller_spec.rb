@@ -42,7 +42,8 @@ RSpec.describe Retailers::GsTemplatesController, type: :controller do
 
       it 'redirects to the index' do
         post :create, params: { slug: retailer_user.retailer.slug, gs_template: valid_attributes }
-        expect(response).to redirect_to(retailers_gs_templates_path(retailer_user.retailer))
+        expect(response).to redirect_to(retailers_gs_templates_path(retailer_user.retailer, q:
+          { 's': 'created_at desc' }))
       end
     end
 

@@ -1,0 +1,93 @@
+let trackVariables = {};
+let currentText = '';
+
+function updateExample(text) {
+  currentText = text;
+  textArray = text.split(/({{[1-9]+[0-9]*}})/g);
+  let el = $('#template-example');
+  el.html('');
+
+  if (!textArray) {
+    $('#gs_template_example').html('');
+
+    return;
+  }
+
+  if (!trackVariables || Object.keys(trackVariables).length === 0) loadVariables();
+
+  textArray.map((key, index) => {
+    if (/{{[1-9]+[0-9]*}}/.test(key)) {
+      let value = '';
+      const id = getId(key);
+
+      if (trackVariables[id]) value = trackVariables[id];
+
+      el.append(
+        `<input id="${id}"
+          value="${value}"
+          onkeyup="saveVariable(this)"
+          required="true"
+        />`);
+    } else {
+      el.append(key);
+    }
+  });
+
+  updateExampleText();
+}
+
+function saveVariable(input) {
+  trackVariables[input.id] = input.value;
+
+  updateExampleText();
+}
+
+function updateExampleText() {
+  let example = $('#gs_template_example');
+  example.html('');
+
+  textArray.map((key, index) => {
+    if (/{{[1-9]+[0-9]*}}/.test(key)) {
+      let value = '';
+      const id = getId(key);
+
+      if (trackVariables[id]) value = trackVariables[id];
+
+      $(`input[id=${id}]`).val(value);
+      example.append(`[${value}]`);
+    } else {
+      example.append(key);
+    }
+  });
+}
+
+function getId(key) {
+  return key.replaceAll('{{', '').replaceAll('}}', '');
+}
+
+function loadVariables() {
+  trackVariables = {};
+  const example = $('#gs_template_example').val();
+
+  if (!example || !currentText) return;
+
+  const originalVars = currentText.match(/{{[1-9]+[0-9]*}}|\[(.|\n)*?\]/g);
+  const exampleVars = example.match(/{{[1-9]+[0-9]*}}|\[(.|\n)*?\]/g);
+
+  if (!originalVars || !exampleVars) return;
+
+  let id;
+  originalVars.map((key, index) => {
+    if (/{{[1-9]+[0-9]*}}/.test(key)) {
+      id = getId(key);
+
+      if (!exampleVars[index]) {
+        trackVariables[id] = '';
+      } else if (exampleVars[index].lenght === 2) {
+        trackVariables[id] = '';
+      } else {
+        trackVariables[id] = exampleVars[index].slice(1, -1);
+      }
+    }
+  });
+}
