@@ -106,7 +106,7 @@ class MessageForm extends Component {
     const input = $('#divMessage');
     const txt = input.html();
 
-    return txt.replace(/<br>/g, "\n");
+    return txt.replace(/<br>/g, "\n").replace(/\&amp;/g, '&');
   }
 
   selectionPresent = () => this.props.objectPresence()
