@@ -1,6 +1,28 @@
 module Retailers::Api::V1
   class CustomersController < Retailers::Api::V1::ApiController
-    before_action :find_customer, only: :update
+    before_action :check_ownership, only: [:show, :update]
+    before_action :set_customer, only: [:show, :update]
+
+    def index
+      results = current_retailer.customers.count
+      page = params[:page] ? params[:page] : 1
+      per_page = 100
+      total_pages = (results / per_page) + 1
+      customers = current_retailer.customers.page(page.to_i).per(per_page)
+
+      render status: 200, json: {
+        results: results,
+        total_pages: total_pages,
+        customers: serialize_customers(customers),
+      }
+    end
+
+    def show
+      render status: 200, json: {
+        message: "Customer found successfully",
+        customer: Retailers::Api::V1::CustomerSerializer.new(@customer, include: [:tags, :customer_related_data]).as_json
+      }
+    end
 
     def update
       if @customer.update(customer_attributes)
@@ -17,11 +39,23 @@ module Retailers::Api::V1
 
     private
 
-      def find_customer
-        @customer = current_retailer.customers.find_by(id: params[:id])
+      def check_ownership
+        customer = Customer.find_by(web_id: params[:id])
+        render status: 404, json: { message: "Customer not found" } unless customer && current_retailer.customers.exists?(customer.id)
+      end
+
+      def set_customer
+        @customer = current_retailer.customers.find_by(web_id: params[:id])
         unless @customer
           render status: 404, json: { message: "Customer not found" }
         end
+      end
+
+      def serialize_customers(customers)
+        ActiveModelSerializers::SerializableResource.new(
+          customers, include: [:tags, :customer_related_data],
+          each_serializer: Retailers::Api::V1::CustomerSerializer
+        ).as_json
       end
 
       def customer_attributes

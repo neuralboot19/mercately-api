@@ -12,6 +12,14 @@ module ApiDoc
       end
 
       # define data for specific action
+      document :index do
+        action 'Get all customers'
+      end
+
+      document :show do
+        action 'Get a customer'
+      end
+
       document :update do
         action 'Update a customer'
       end
