@@ -36,6 +36,12 @@ class Customer < ApplicationRecord
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: -> (obj) { !obj.hs_active }
   validate :phone_uniqueness
 
+  # Only API validations
+  validates :first_name, presence: true, if: -> { api_created? }
+  validates :last_name, presence: true, if: -> { api_created? }
+  validate :valid_api_creation, if: -> { api_created? }
+  validates :email, :uniqueness => { :scope => :retailer_id }, allow_blank: true, if: -> { api_created? }
+
   before_validation :strip_whitespace
   before_validation :grab_country_on_import, if: -> { from_import_file }
   before_validation :format_phone_number
@@ -453,6 +459,12 @@ class Customer < ApplicationRecord
 
       self.send_for_opt_in = true
       self.whatsapp_opt_in = false
+    end
+
+    def valid_api_creation
+      if phone.blank? && email.blank?
+        errors.add(:base, 'Numero o email deben estar presentes.')
+      end
     end
 
     def verify_opt_in

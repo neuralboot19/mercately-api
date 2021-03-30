@@ -16,6 +16,10 @@ module ApiDoc
         action 'Get all customers'
       end
 
+      document :create do
+        action 'Create a customer'
+      end
+
       document :show do
         action 'Get a customer'
       end
