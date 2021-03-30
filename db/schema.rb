@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_05_155944) do
+ActiveRecord::Schema.define(version: 2021_03_29_194957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -351,6 +351,7 @@ ActiveRecord::Schema.define(version: 2021_04_05_155944) do
     t.boolean "hs_active"
     t.string "hs_id"
     t.boolean "api_created", default: false
+    t.string "number_to_use"
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
   end
