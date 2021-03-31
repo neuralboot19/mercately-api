@@ -51,7 +51,7 @@ class Retailers::SettingsController < RetailersController
   end
 
   def set_admin_team_member
-    if @user.update_attributes(
+    if @user.update_columns(
       retailer_admin: true,
       retailer_supervisor: false,
     )
@@ -64,7 +64,7 @@ class Retailers::SettingsController < RetailersController
   end
 
   def set_agent_team_member
-    if @user.update_attributes(
+    if @user.update_columns(
       retailer_admin: false,
       retailer_supervisor: false
     )
@@ -77,7 +77,7 @@ class Retailers::SettingsController < RetailersController
   end
 
   def set_supervisor_team_member
-    if @user.update_attributes(
+    if @user.update_columns(
       retailer_admin: false,
       retailer_supervisor: true
     )
@@ -117,12 +117,12 @@ class Retailers::SettingsController < RetailersController
   end
 
   def reactive_team_member
-    if @user.update_column(:removed_from_team, false)
+    if @user.update_attribute(:removed_from_team, false)
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
                     notice: 'Usuario reactivado con éxito.'
     else
       redirect_back fallback_location: retailers_dashboard_path(@retailer),
-                    notice: 'Error al reactivar usuario.'
+                    notice: @user.errors.full_messages.join(', ')
     end
   end
 

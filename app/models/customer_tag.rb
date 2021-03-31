@@ -2,6 +2,8 @@ class CustomerTag < ApplicationRecord
   belongs_to :tag
   belongs_to :customer
 
+  validates :tag, uniqueness: { scope: :customer, message: 'Etiqueta ya está asignada al cliente.' }
+
   after_commit :sync_tags, on: :create
   after_commit :remove_hs_value, on: :destroy
 

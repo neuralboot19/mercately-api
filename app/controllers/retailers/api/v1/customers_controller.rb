@@ -17,6 +17,24 @@ module Retailers::Api::V1
       }
     end
 
+    def create
+      @customer = current_retailer.customers.new(customer_attributes)
+      @customer.api_created = true
+
+      if @customer.save
+        assign_agent(@customer, params)
+        assign_tags(@customer, params)
+        render status: 200, json: {
+          message: "Customer created successfully",
+          customer: Retailers::Api::V1::CustomerSerializer.new(@customer, include: [:tags, :customer_related_data]).as_json
+        }
+      else
+        render status: 302, json: {
+          errors: @customer.errors.full_messages
+        }
+      end
+    end
+
     def show
       render status: 200, json: {
         message: "Customer found successfully",
@@ -25,6 +43,7 @@ module Retailers::Api::V1
     end
 
     def update
+      assign_tags(@customer, params)
       if @customer.update(customer_attributes)
         assign_agent(@customer, params)
         render status: 200, json: {
@@ -73,6 +92,7 @@ module Retailers::Api::V1
       end
 
       def assign_agent(customer, params)
+
         return unless customer.present? && params[:customer][:agent_id].present?
 
         agent = current_retailer.retailer_users.find_by_id(params[:customer][:agent_id])
@@ -81,6 +101,22 @@ module Retailers::Api::V1
         assigned_agent = AgentCustomer.find_or_initialize_by(customer_id: customer.id)
         assigned_agent.retailer_user_id = agent.id
         assigned_agent.save
+      end
+
+      def assign_tags(customer, params)
+        return unless customer.present? && params[:customer][:tags].present?
+
+        tags = params[:customer][:tags]
+        tags.each do |tag|
+          c_tag = current_retailer.tags.find_by(tag: tag['name'])
+          if c_tag
+            customer.customer_tags.create(tag_id: c_tag.id ) if [true, 'true'].include? tag['value']
+            if [false, 'false'].include? tag['value']
+              d_tag = customer.customer_tags.find_by(tag_id: c_tag.id)
+              d_tag.delete if d_tag
+            end
+          end
+        end
       end
   end
 end

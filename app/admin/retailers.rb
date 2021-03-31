@@ -25,7 +25,8 @@ ActiveAdmin.register Retailer do
                 :show_stats,
                 :allow_voice_notes,
                 :allow_send_videos,
-                :allow_multiple_answers
+                :allow_multiple_answers,
+                :max_agents
 
   filter :name
   filter :slug
@@ -106,6 +107,7 @@ ActiveAdmin.register Retailer do
       row :allow_voice_notes
       row :allow_send_videos
       row :allow_multiple_answers
+      row :max_agents
       row :created_at
       row :updated_at
     end
@@ -344,6 +346,7 @@ ActiveAdmin.register Retailer do
       f.input :gupshup_phone_number
       f.input :gupshup_src_name
       f.input :gupshup_api_key
+      f.input :max_agents
       f.input :ecu_charges, label: 'Hace pagos en Ecuador'
       f.input :int_charges, label: 'Hace pagos Internacionales'
       f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'

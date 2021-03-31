@@ -9,45 +9,49 @@
           </div>
 
           <% unless current_retailer_user.agent? %>
-            <%= form_for @user, url: invite_team_member_path(current_retailer), html: { class: 'validate-form p-0' } do |f| %>
-              <fieldset class="row fieldset mt-16">
-                <div class="col-md m-16">
-                  <%= f.label :email %>
-                  <%= f.text_field :email, class: 'input validate-email validate-required' %>
-                  <i class="validation-msg"></i>
-                </div>
-                <div class="col-md m-16">
-                  <%= f.label 'Nombre' %>
-                  <%= f.text_field :first_name, class: 'input validate-required' %>
-                  <i class="validation-msg"></i>
-                </div>
-                <div class="col-md m-16">
-                  <%= f.label 'Apellido' %>
-                  <%= f.text_field :last_name, class: 'input validate-required' %>
-                  <i class="validation-msg"></i>
-                </div>
-
-                <div class="col-md-4 m-16">
-                  <%= f.label 'Rol' %> <label for="modal--toggle" class="c-secondary modal__toggler"><i class="fas fa-info-circle fs-15"></i></label> <br>
-                  <%= f.radio_button :retailer_agent, 'retailer_agent', name: 'retailer_user[role]', checked: true, class: 'check-toggler' %> Agente<br>
-                  <div class="pl-18 show-on-check">
-                    <%= f.radio_button :only_assigned, false, checked: true %>
-                    <%= f.label :only_assigned_false, 'Puede ver chats disponibles' %>
+            <% if RetailerUser.active_and_pending_agents(current_retailer.id).size < current_retailer.max_agents %>
+              <%= form_for @user, url: invite_team_member_path(current_retailer), html: { class: 'validate-form p-0' } do |f| %>
+                <fieldset class="row fieldset mt-16">
+                  <div class="col-md m-16">
+                    <%= f.label :email %>
+                    <%= f.text_field :email, class: 'input validate-email validate-required' %>
+                    <i class="validation-msg"></i>
                   </div>
-                  <div class="pl-18 show-on-check">
-                    <%= f.radio_button :only_assigned, true %>
-                    <%= f.label :only_assigned_true, 'Puede ver solo los chats asignados' %>
+                  <div class="col-md m-16">
+                    <%= f.label 'Nombre' %>
+                    <%= f.text_field :first_name, class: 'input validate-required' %>
+                    <i class="validation-msg"></i>
                   </div>
-                  <% [:retailer_admin, :retailer_supervisor].each do |role| %>
-                    <% role_label = role == :retailer_admin ? 'Administrador' : 'Supervisor' %>
-                    <%= f.radio_button role, role.to_s, name: 'retailer_user[role]' %> <%= role_label %><br>
-                  <% end %>
-                </div>
+                  <div class="col-md m-16">
+                    <%= f.label 'Apellido' %>
+                    <%= f.text_field :last_name, class: 'input validate-required' %>
+                    <i class="validation-msg"></i>
+                  </div>
 
-              </fieldset>
-              <div class="col-xs-12 m-16">
-                <%= f.submit 'Enviar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
-              </div>
+                  <div class="col-md-4 m-16">
+                    <%= f.label 'Rol' %> <label for="modal--toggle" class="c-secondary modal__toggler"><i class="fas fa-info-circle fs-15"></i></label> <br>
+                    <%= f.radio_button :retailer_agent, 'retailer_agent', name: 'retailer_user[role]', checked: true, class: 'check-toggler' %> Agente<br>
+                    <div class="pl-18 show-on-check">
+                      <%= f.radio_button :only_assigned, false, checked: true %>
+                      <%= f.label :only_assigned_false, 'Puede ver chats disponibles' %>
+                    </div>
+                    <div class="pl-18 show-on-check">
+                      <%= f.radio_button :only_assigned, true %>
+                      <%= f.label :only_assigned_true, 'Puede ver solo los chats asignados' %>
+                    </div>
+                    <% [:retailer_admin, :retailer_supervisor].each do |role| %>
+                      <% role_label = role == :retailer_admin ? 'Administrador' : 'Supervisor' %>
+                      <%= f.radio_button role, role.to_s, name: 'retailer_user[role]' %> <%= role_label %><br>
+                    <% end %>
+                  </div>
+
+                </fieldset>
+                <div class="col-xs-12 m-16">
+                  <%= f.submit 'Enviar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+                </div>
+              <% end %>
+            <% else %>
+              <p>Tu plan no permite más agentes, si deseas adquirir más, por favor comunícate con <a href="mailto:hola@mercately.com">hola@mercately.com</a></p>
             <% end %>
           <% end %>
         </div>
@@ -130,6 +134,8 @@
                       <span class="c-green"><%= 'Aceptado' %></span>
                     <% elsif member.invitation_token.present? && member.invitation_accepted_at.blank? %>
                       <span class="c-secondary"><%= 'Invitado' %></span>
+                    <% else %>
+                      <span class="c-green"><%= 'Aceptado' %></span>
                     <% end %>
                   </div>
                 </div>
@@ -162,40 +168,46 @@
                             Remover
                           <% end %>
                         </li>
-                        <li>
-                          <% if member.retailer_admin %>
+                        <% if member.retailer_admin %>
+                          <li>
                             <%= link_to set_agent_team_member_path(current_retailer, user: member), method: :post, class: 'c-green no-style', data: { confirm: '¿Estás seguro de convertir este administrador en agente?' } do %>
                               <i class="fas fa-user mr-8"></i>
                               Hacer Agente
                             <% end %>
+                          </li>
+                          <li>
                             <%= link_to set_supervisor_team_member_path(current_retailer, user: member), method: :post, class: 'c-green no-style', data: { confirm: '¿Estás seguro de convertir este administrador en supervisor?' } do %>
-                              </li><li>
                               <i class="fas fa-user mr-8"></i>
                               Hacer Supervisor
                             <% end %>
-                          <% elsif member.retailer_supervisor %>
+                          </li>
+                        <% elsif member.retailer_supervisor %>
+                          <li>
                             <%= link_to set_agent_team_member_path(current_retailer, user: member), method: :post, class: 'c-green no-style', data: { confirm: '¿Estás seguro de convertir este supervisor en agente?' } do %>
                               <i class="fas fa-user mr-8"></i>
                               Hacer Agente
                             <% end %>
+                          </li>
+                          <li>
                             <%= link_to set_admin_team_member_path(current_retailer, user: member), method: :post, class: 'c-green no-style', data: { confirm: '¿Estás seguro de convertir este supervisor en administrador?' } do %>
-                              </li><li>
                               <i class="fas fa-user-cog mr-8"></i>
                               Hacer Administrador
                             <% end %>
-                          <% else %>
+                          </li>
+                        <% else %>
+                          <li>
                             <%= link_to set_admin_team_member_path(current_retailer, user: member), method: :post, class: 'c-green no-style', data: { confirm: '¿Estás seguro de convertir este agente en administrador?' } do %>
-                              </li><li>
                               <i class="fas fa-user-cog mr-8"></i>
                               Hacer Administrador
                             <% end %>
+                          </li>
+                          <li>
                             <%= link_to set_supervisor_team_member_path(current_retailer, user: member), method: :post, class: 'c-green no-style', data: { confirm: '¿Estás seguro de convertir este agente en supervisor?' } do %>
-                              </li><li>
                               <i class="fas fa-user mr-8"></i>
                               Hacer Supervisor
                             <% end %>
-                          <% end %>
-                        </li>
+                          </li>
+                        <% end %>
                       <% end %>
                     </ul>
                   </label>

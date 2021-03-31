@@ -18,6 +18,7 @@ class RetailerUser < ApplicationRecord
   validates :agree_terms, presence: true
   validates :email, presence: true, uniqueness: true
 
+  before_save :max_agents_limit
   before_save :set_only_assigned
 
   accepts_nested_attributes_for :retailer
@@ -25,6 +26,7 @@ class RetailerUser < ApplicationRecord
   attr_reader :raw_invitation_token
 
   scope :all_customers, -> { where(only_assigned: false) }
+  scope :active_and_pending_agents, -> (retailer_id) { where(retailer_id: retailer_id, removed_from_team: false) }
 
   def self.from_omniauth(auth, retailer_user, permissions, connection_type)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
@@ -118,5 +120,14 @@ class RetailerUser < ApplicationRecord
 
     def set_only_assigned
       self.only_assigned = false unless agent?
+    end
+
+    def max_agents_limit
+      return unless new_record? || (removed_from_team_changed? && removed_from_team == false)
+
+      if RetailerUser.active_and_pending_agents(retailer_id).size >= retailer.max_agents
+        errors.add(:base, 'Límite máximo de agentes alcanzado')
+        throw(:abort)
+      end
     end
 end
