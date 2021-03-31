@@ -15,6 +15,7 @@ FactoryBot.define do
     ws_conversation_cost { 0.005 }
     unlimited_account { false }
     hs_expires_in { 6.hours.from_now }
+    max_agents { 10 }
 
     trait :with_retailer_user do
       association :retailer_user

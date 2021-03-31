@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Retailers::SettingsController, type: :controller do
-  let(:retailer_user) { create(:retailer_user, :with_retailer, first_name: '', last_name: '' ) }
+  let(:retailer) { create(:retailer, max_agents: 3) }
+  let(:retailer_user) { create(:retailer_user, retailer: retailer, first_name: '', last_name: '' ) }
 
   before do
     sign_in retailer_user
@@ -142,7 +143,7 @@ RSpec.describe Retailers::SettingsController, type: :controller do
     end
 
     it 'redirects to dashboard if an exception occurs' do
-      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
+      allow_any_instance_of(RetailerUser).to receive(:update_columns).and_return(false)
       member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false )
 
       post :set_admin_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
@@ -172,7 +173,7 @@ RSpec.describe Retailers::SettingsController, type: :controller do
 
     it 'redirects to dashboard if an exception occurs' do
       member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: true )
-      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
+      allow_any_instance_of(RetailerUser).to receive(:update_columns).and_return(false)
 
       post :set_agent_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
 
@@ -202,7 +203,7 @@ RSpec.describe Retailers::SettingsController, type: :controller do
     it 'can not set a supervisor when raise an error' do
       member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false, retailer_supervisor: false )
 
-      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
+      allow_any_instance_of(RetailerUser).to receive(:update_columns).and_return(false)
       post :set_supervisor_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
       expect(response).to redirect_to(retailers_dashboard_path(retailer_user.retailer.slug))
       expect(flash[:notice]).to be_present
@@ -211,7 +212,7 @@ RSpec.describe Retailers::SettingsController, type: :controller do
 
     it 'redirects to dashboard if an exception occurs' do
       member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: true )
-      allow_any_instance_of(RetailerUser).to receive(:update_attributes).and_return(false)
+      allow_any_instance_of(RetailerUser).to receive(:update_columns).and_return(false)
 
       post :set_agent_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
 
@@ -272,22 +273,33 @@ RSpec.describe Retailers::SettingsController, type: :controller do
   end
 
   describe '#reactive_team_member' do
-    it 'reactive member from team' do
-      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false )
+    context 'when the retailer has not reached the limit of agents' do
+      it 'reactives member from team' do
+        member = create(:retailer_user, retailer: retailer, retailer_admin: false, removed_from_team: true )
 
-      post :reactive_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
-      expect(member.reload.removed_from_team).to eq(false)
+        post :reactive_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+        expect(member.reload.removed_from_team).to eq(false)
+      end
     end
 
-    it 'redirects to dashboard if an exception occurs' do
-      allow_any_instance_of(RetailerUser).to receive(:update_column).and_return(false)
-      member = create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false )
+    context 'when the retailer has reached the limit of agents' do
+      let(:member1) { create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false) }
+      let(:member2) do
+        create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false, removed_from_team: true)
+      end
+      let(:member) { create(:retailer_user, retailer: retailer_user.retailer, retailer_admin: false) }
 
-      post :reactive_team_member, params: { slug: retailer_user.retailer.slug, user: member.id }
+      it 'redirects to dashboard if an exception occurs' do
+        member1
+        member2
+        member
 
-      expect(response).to redirect_to(retailers_dashboard_path(retailer_user.retailer.slug))
-      expect(flash[:notice]).to be_present
-      expect(flash[:notice]).to match(/Error al reactivar usuario..*/)
+        post :reactive_team_member, params: { slug: retailer_user.retailer.slug, user: member2.id }
+
+        expect(response).to redirect_to(retailers_dashboard_path(retailer_user.retailer.slug))
+        expect(flash[:notice]).to be_present
+        expect(flash[:notice]).to match(/Límite máximo de agentes alcanzado/)
+      end
     end
   end
 end
