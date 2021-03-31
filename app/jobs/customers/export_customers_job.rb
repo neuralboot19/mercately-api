@@ -9,7 +9,7 @@ module Customers
 
       active_customers = filtered_customers(@retailer_user.agent?, params)
       active_customers.order(created_at: :desc) if params[:q] && params[:q]&.[](:s).blank?
-      q = active_customers.ransack(params[:q]&.except(:customer_tags_tag_id_in))
+      q = active_customers.includes(:tags).ransack(params[:q]&.except(:customer_tags_tag_id_in))
       customers = q.result
 
       RetailerMailer.export_customers(@retailer, @retailer_user.email, Customer.to_csv(customers)).deliver_now
