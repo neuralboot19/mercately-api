@@ -57,6 +57,7 @@ module Retailers::Api::V1
 
         customer = message.customer
         assign_agent(customer, params)
+        assign_tags(customer, params)
 
         agent = customer.agent
         agents = agent.present? ? [agent] : current_retailer.retailer_users.all_customers.to_a
@@ -70,6 +71,7 @@ module Retailers::Api::V1
           return unless customer&.whatsapp_opt_in
 
         assign_agent(customer, params)
+        assign_tags(customer, params)
 
         gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, customer)
         type = true?(params[:template]) ? 'template' : 'text'
@@ -166,6 +168,22 @@ module Retailers::Api::V1
         assigned_agent = AgentCustomer.find_or_initialize_by(customer_id: customer.id)
         assigned_agent.retailer_user_id = agent.id
         assigned_agent.save
+      end
+
+      def assign_tags(customer, params)
+        return unless customer.present? && params[:tags].present?
+
+        tags = params[:tags]
+        tags.each do |tag|
+          c_tag = current_retailer.tags.find_by(tag: tag['name'])
+          if c_tag
+            customer.customer_tags.create(tag_id: c_tag.id) if [true, 'true'].include? tag['value']
+            if [false, 'false'].include? tag['value']
+              d_tag = customer.customer_tags.find_by(tag_id: c_tag.id)
+              d_tag.delete if d_tag
+            end
+          end
+        end
       end
   end
 end

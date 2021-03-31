@@ -525,7 +525,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
             post '/retailers/api/v1/whatsapp/send_notification_by_id',
             params: {
               phone_number: '+593999999999'
-            },
+            }, as: :json,
             headers: {
               'Slug': slug,
               'Api-Key': api_key
@@ -544,7 +544,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
             params: {
               phone_number: '+593999999999',
               internal_id: 'xxxxxxxxxxxxxxx'
-            },
+            }, as: :json,
             headers: {
               'Slug': slug,
               'Api-Key': api_key
@@ -570,7 +570,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                 phone_number: '+593999999999',
                 internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
                 template_params: ['test 1', 'test 2']
-              },
+              }, as: :json,
               headers: {
                 'Slug': slug,
                 'Api-Key': api_key
@@ -638,7 +638,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                 phone_number: '+593999999999',
                 internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
                 template_params: ['test 1', 'test 2', 'test 3']
-              },
+              }, as: :json,
               headers: {
                 'Slug': slug,
                 'Api-Key': api_key
@@ -662,7 +662,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                     internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
                     template_params: ['test 1', 'test 2', 'test 3'],
                     agent_id: agent.id
-                  },
+                  }, as: :json,
                   headers: {
                     'Slug': slug,
                     'Api-Key': api_key
@@ -674,6 +674,38 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                 body = JSON.parse(response.body)
                 expect(body['message']).to eq('Ok')
                 expect(body['info']['status']).to eq('submitted')
+            end
+          end
+
+          context 'when tags are sent.' do
+            let(:tag){ create(:tag, retailer: retailer ) }
+            let(:agent) { create(:retailer_user, retailer: retailer) }
+
+            it 'sends the notification and include tags', :dox do
+              expect {
+                post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                  params: {
+                    phone_number: '+593999999999',
+                    internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                    template_params: ['test 1', 'test 2', 'test 3'],
+                    agent_id: agent.id,
+                    tags: [
+                      name: tag.tag,
+                      value: true
+                    ]
+                  },
+                  headers: {
+                    'Slug': slug,
+                    'Api-Key': api_key
+                  }, as: :json
+                }.to change{ AgentCustomer.count }.by(1)
+
+                expect(response.code).to eq('200')
+
+                body = JSON.parse(response.body)
+                expect(body['message']).to eq('Ok')
+                expect(body['info']['status']).to eq('submitted')
+                expect(Customer.find_by(phone: "+593999999999").tags.count).to eq(1)
             end
           end
 
@@ -694,7 +726,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                   state: 'Customer state',
                   zip_code: '12345',
                   notes: 'Notes related to the customer',
-                },
+                }, as: :json,
                 headers: {
                   'Slug': slug,
                   'Api-Key': api_key
