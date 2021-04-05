@@ -423,7 +423,7 @@ module ChatBots
     def time_to_reactivate?(last_interaction, chat_bot)
       return false unless chat_bot.reactivate_after.present?
 
-      if ((@origin_instance.created_at - last_interaction.created_at) / 3600).to_i >= chat_bot.reactivate_after
+      if ((@origin_instance.created_at - last_interaction.created_at) / 3600) >= chat_bot.reactivate_after
         # Si el customer tenia un bot activo, lo desactiva, ya que paso el tiempo de reactivacion
         # y se le debe activar de nuevo desde el inicio.
         @customer.deactivate_chat_bot!
@@ -441,7 +441,7 @@ module ChatBots
       chat_bot = @customer.chat_bot
 
       chat_bot && chat_bot.reactivate_after.present? && before_last_message &&
-        (((@origin_instance.created_at - before_last_message.created_at) / 3600).to_i >= chat_bot.reactivate_after)
+        (((@origin_instance.created_at - before_last_message.created_at) / 3600) >= chat_bot.reactivate_after)
     end
 
     # Se selecciona la opcion a la cual se le van a ejecutar las acciones.

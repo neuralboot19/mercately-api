@@ -16,7 +16,8 @@ class ChatBot < ApplicationRecord
 
   accepts_nested_attributes_for :chat_bot_options, reject_if: :all_blank, allow_destroy: true
 
-  INTERVALS = [['12 horas', 12], ['24 horas', 24], ['48 horas', 48], ['72 horas', 72]].freeze
+  INTERVALS = [['30 minutos', 0.5], ['1 hora', 1.0], ['2 horas', 2.0], ['4 horas', 4.0], ['8 horas', 8.0],
+    ['10 horas', 10.0], ['12 horas', 12.0], ['24 horas', 24.0], ['48 horas', 48.0], ['72 horas', 72.0]].freeze
 
   scope :enabled_ones, -> { where(enabled: true) }
 
