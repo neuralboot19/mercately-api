@@ -12,7 +12,7 @@ FactoryBot.define do
     ws_balance { 5 }
     ws_next_notification_balance { 1.5 }
     ws_notification_cost { 0.0672 }
-    ws_conversation_cost { 0.005 }
+    ws_conversation_cost { 0.0 }
     unlimited_account { false }
     hs_expires_in { 6.hours.from_now }
     max_agents { 10 }

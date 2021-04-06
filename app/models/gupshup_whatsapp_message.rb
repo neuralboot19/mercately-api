@@ -48,6 +48,8 @@ class GupshupWhatsappMessage < ApplicationRecord
       new_cost = if status != 'error' && aux_cost.zero?
                    customer.send("ws_#{message_type}_cost")
                  elsif status == 'error' && !aux_cost.zero?
+                   retailer.refund_message_cost(aux_cost)
+
                    0
                  end
 

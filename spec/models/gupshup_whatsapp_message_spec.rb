@@ -506,48 +506,54 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
   end
 
   describe '#apply_cost' do
-    let(:retailer) { create(:retailer, :gupshup_integrated) }
+    let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 10.0) }
 
     context 'when the message status is not error' do
-      let(:message) { build(:gupshup_whatsapp_message, retailer: retailer) }
+      context 'when the message cost is not zero' do
+        let(:message) { build(:gupshup_whatsapp_message, :outbound, :notification, retailer: retailer) }
 
-      context 'when the message cost is zero' do
-        it 'assigns the retailer conversation/notification cost to the message' do
+        it 'assigns the customer conversation/notification cost to the message' do
           expect(message.cost).to be nil
           message.save
-          expect(message.reload.cost).to eq(retailer.send("ws_#{message.message_type}_cost"))
+          expect(message.reload.cost).to eq(message.customer.ws_notification_cost)
+          expect(retailer.reload.ws_balance).to eq(10.0 - message.cost)
         end
       end
 
-      context 'when the message cost is not zero' do
+      context 'when the message cost is zero' do
+        let(:message) { build(:gupshup_whatsapp_message, :outbound, :conversation, retailer: retailer) }
+
         it 'does not change the message cost' do
-          expect(message.cost).to be nil
-          message.cost = 0.05
+          expect(message.cost).to be_nil
           message.save
-          expect(message.reload.cost).to eq(0.05)
+          expect(message.reload.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(10.0)
         end
       end
     end
 
     context 'when the message status is error' do
-      let(:message) do
-        build(:gupshup_whatsapp_message, retailer: retailer, status: 'error', cost: 0.05)
-      end
-
       context 'when the message cost is not zero' do
+        let(:message) { create(:gupshup_whatsapp_message, :outbound, :notification, retailer: retailer) }
+
         it 'sets the message cost to zero' do
-          expect(message.cost).to eq(0.05)
-          message.save
-          expect(message.reload.cost).to eq(0)
+          expect(message.cost).to eq(message.customer.ws_notification_cost)
+          expect(retailer.ws_balance).to eq(10.0 - message.customer.ws_notification_cost)
+          message.update(status: 'error')
+          expect(message.reload.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(10.0)
         end
       end
 
       context 'when the message cost is zero' do
+        let(:message) { create(:gupshup_whatsapp_message, :outbound, :conversation, retailer: retailer) }
+
         it 'does not change the message cost' do
-          message.cost = 0
-          expect(message.cost).to eq(0)
-          message.save
-          expect(message.reload.cost).to eq(0)
+          expect(message.cost).to eq(message.customer.ws_conversation_cost)
+          expect(retailer.ws_balance).to eq(10.0 - message.customer.ws_conversation_cost)
+          message.update(status: 'error')
+          expect(message.reload.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(10.0)
         end
       end
     end

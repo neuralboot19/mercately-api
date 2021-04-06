@@ -222,6 +222,10 @@ class Retailer < ApplicationRecord
     hubspot.contact_properties.pluck('name')
   end
 
+  def refund_message_cost(cost)
+    update_column(:ws_balance, ws_balance + cost.to_f)
+  end
+
   private
 
     def save_free_plan
