@@ -151,3 +151,6 @@ gem 'roo', '~> 2.8.0'
 # Hubspot
 gem 'hubspot-ruby', '~> 0.9.0'
 gem 'activerecord-import', '~> 1.0', '>= 1.0.6'
+
+# Exporting files
+gem 'caxlsx'

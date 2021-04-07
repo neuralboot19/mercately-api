@@ -12,7 +12,16 @@ module Customers
       q = active_customers.includes(:tags).ransack(params[:q]&.except(:customer_tags_tag_id_in))
       customers = q.result
 
-      RetailerMailer.export_customers(@retailer, @retailer_user.email, Customer.to_csv(customers)).deliver_now
+      file = if params[:type] == 'csv'
+               Customer.to_csv(customers)
+             elsif params[:type] == 'excel'
+               Customer.to_excel(customers, @retailer_user.id)
+
+               File.read(Rails.root.join('public', "export-customers-#{@retailer_user.id}.xlsx"))
+             end
+
+      RetailerMailer.export_customers(@retailer, @retailer_user.email, file, params[:type]).deliver_now
+      File.delete(Rails.root.join('public', "export-customers-#{@retailer_user.id}.xlsx")) if params[:type] == 'excel'
     end
 
     def agent_ids(is_agent, params)

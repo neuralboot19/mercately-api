@@ -127,6 +127,7 @@ class Retailers::CustomersController < RetailersController
 
     def export_params
       params.permit(
+        :type,
         q: [
           :first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont,
           :s,
