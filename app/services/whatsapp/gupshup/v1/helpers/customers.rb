@@ -18,9 +18,11 @@ module Whatsapp::Gupshup::V1::Helpers
       end
 
       customer = retailer.customers.find_by(phone: phone_to_find)
+      original_phone = phone_to_find.dup
 
       if customer.blank? && country == 'MX' && phone_to_find[3] != '1'
         phone_to_find = phone_to_find.insert(3, '1')
+        add_number = phone_to_find != original_phone
         customer = retailer.customers.find_by(phone: phone_to_find)
       end
 
@@ -29,6 +31,7 @@ module Whatsapp::Gupshup::V1::Helpers
       customer.whatsapp_name = whatsapp_name if whatsapp_name
 
       customer.country_id = country
+      customer.number_to_use = original_phone if add_number
 
       customer.save!
       customer
