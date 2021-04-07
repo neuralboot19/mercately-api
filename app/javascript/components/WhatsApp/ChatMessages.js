@@ -470,6 +470,7 @@ class ChatMessages extends Component {
     data.append('file_data', file);
     data.append('template', false);
     this.handleSubmitImg(el, data);
+    $('#attach-file').val('');
   }
 
   fileType = (type) => {
