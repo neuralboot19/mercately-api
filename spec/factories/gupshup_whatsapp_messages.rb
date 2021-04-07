@@ -46,7 +46,7 @@ FactoryBot.define do
     end
 
     trait :notification do
-      message_payload { { 'isHSM': 'true' } }
+      message_payload { { 'isHSM': 'true', 'type': 'text' } }
       message_type { 'notification' }
     end
 
