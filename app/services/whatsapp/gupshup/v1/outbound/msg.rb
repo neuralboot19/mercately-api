@@ -5,7 +5,7 @@ module Whatsapp::Gupshup::V1
     TEMPLATE_URL = "#{GUPSHUP_BASE_URL}/template/msg"
 
     def send_message(options)
-      @phone_number = @customer.phone_number(false)
+      @phone_number = options[:retry] ? @customer.phone_number_to_use(false) : @customer.phone_number(false)
       @options = options
 
       # Prepares the body depending on the type of message to send

@@ -77,6 +77,7 @@ class MessageForm extends Component {
     const data = new FormData();
     data.append('file_data', file);
     this.props.handleSubmitImg(el, data);
+    $('#attach-file').val('');
   }
 
   onKeyPress = (e) => {

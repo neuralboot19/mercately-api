@@ -21,6 +21,8 @@ class KarixWhatsappMessage < ApplicationRecord
 
     def apply_cost
       self.cost = if status == 'failed'
+                    retailer.refund_message_cost(cost)
+
                     0
                   else
                     retailer.send("ws_#{message_type}_cost")

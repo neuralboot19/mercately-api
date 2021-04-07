@@ -153,6 +153,14 @@ class GupshupWhatsappMessageSerializer
     next message.try(:[], 'filename') || message.try(:[], 'payload').try(:[], 'payload').try(:[], 'filename')
   end
 
+  attribute :error_code do |object|
+    message = object.error_payload
+    error = message.try(:[], 'payload').try(:[], 'payload')
+    next '' unless error.present?
+
+    error['code']
+  end
+
   attribute :error_message do |object|
     message = object.error_payload
     error = message.try(:[], 'payload').try(:[], 'payload')

@@ -1,6 +1,6 @@
 module NotificationsHelper
   def customer_name(customer)
-    (customer.full_names.presence || customer.whatsapp_name.presence || customer.phone).truncate(16)
+    (customer.full_names.presence || customer.whatsapp_name.presence || customer.phone)&.truncate(16)
   end
 
   def chat_type_icon(chat_type)

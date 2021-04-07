@@ -115,7 +115,9 @@ class ChatMessages extends Component {
 
   addArrivingMessage = (currentMessages, newMessage) => {
     // First remove message without Id to avoid duplication
-    let newMessagesArray = currentMessages.filter((message) => message.id);
+    // Also remove messages with error, only keep those with error code 1002 (Number Does Not Exists On WhatsApp)
+    let newMessagesArray = currentMessages.filter((message) => message.id &&
+      ((message.error_code === '' || !message.error_code) || message.error_code === 1002));
     // Then find and replace element if it exists
     const index = currentMessages.findIndex((el) => (
       el.id === newMessage.id
@@ -468,6 +470,7 @@ class ChatMessages extends Component {
     data.append('file_data', file);
     data.append('template', false);
     this.handleSubmitImg(el, data);
+    $('#attach-file').val('');
   }
 
   fileType = (type) => {

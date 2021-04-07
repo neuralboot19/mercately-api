@@ -506,48 +506,54 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
   end
 
   describe '#apply_cost' do
-    let(:retailer) { create(:retailer, :gupshup_integrated) }
+    let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 10.0) }
 
     context 'when the message status is not error' do
-      let(:message) { build(:gupshup_whatsapp_message, retailer: retailer) }
+      context 'when the message cost is not zero' do
+        let(:message) { build(:gupshup_whatsapp_message, :outbound, :notification, retailer: retailer) }
 
-      context 'when the message cost is zero' do
-        it 'assigns the retailer conversation/notification cost to the message' do
+        it 'assigns the customer conversation/notification cost to the message' do
           expect(message.cost).to be nil
           message.save
-          expect(message.reload.cost).to eq(retailer.send("ws_#{message.message_type}_cost"))
+          expect(message.reload.cost).to eq(message.customer.ws_notification_cost)
+          expect(retailer.reload.ws_balance).to eq(10.0 - message.cost)
         end
       end
 
-      context 'when the message cost is not zero' do
+      context 'when the message cost is zero' do
+        let(:message) { build(:gupshup_whatsapp_message, :outbound, :conversation, retailer: retailer) }
+
         it 'does not change the message cost' do
-          expect(message.cost).to be nil
-          message.cost = 0.05
+          expect(message.cost).to be_nil
           message.save
-          expect(message.reload.cost).to eq(0.05)
+          expect(message.reload.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(10.0)
         end
       end
     end
 
     context 'when the message status is error' do
-      let(:message) do
-        build(:gupshup_whatsapp_message, retailer: retailer, status: 'error', cost: 0.05)
-      end
-
       context 'when the message cost is not zero' do
+        let(:message) { create(:gupshup_whatsapp_message, :outbound, :notification, retailer: retailer) }
+
         it 'sets the message cost to zero' do
-          expect(message.cost).to eq(0.05)
-          message.save
-          expect(message.reload.cost).to eq(0)
+          expect(message.cost).to eq(message.customer.ws_notification_cost)
+          expect(retailer.ws_balance).to eq(10.0 - message.customer.ws_notification_cost)
+          message.update(status: 'error')
+          expect(message.reload.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(10.0)
         end
       end
 
       context 'when the message cost is zero' do
+        let(:message) { create(:gupshup_whatsapp_message, :outbound, :conversation, retailer: retailer) }
+
         it 'does not change the message cost' do
-          message.cost = 0
-          expect(message.cost).to eq(0)
-          message.save
-          expect(message.reload.cost).to eq(0)
+          expect(message.cost).to eq(message.customer.ws_conversation_cost)
+          expect(retailer.ws_balance).to eq(10.0 - message.customer.ws_conversation_cost)
+          message.update(status: 'error')
+          expect(message.reload.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(10.0)
         end
       end
     end
@@ -772,6 +778,413 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
 
       it 'returns nil' do
         expect(message.send(:assign_agent)).to be_nil
+      end
+    end
+  end
+
+  describe '#retry_message' do
+    let(:retailer) { create(:retailer, :gupshup_integrated) }
+    let(:customer) { create(:customer, retailer: retailer, phone: '+5215599999999', country_id: 'MX') }
+    let(:net_response) { Net::HTTPOK.new(1.0, '200', 'OK') }
+    let(:customer_to_use) do
+      create(:customer, retailer: retailer, phone: '+5215599999999', number_to_use: '+525599999999', country_id: 'MX')
+    end
+
+    let(:ok_body_response) do
+      {
+        'status': 'submitted',
+        'messageId': 'c011a9c0-051d-4e01-a130-7b12903decb8'
+      }.to_json
+    end
+
+    let(:error_response_1005) do
+      {
+        'app': 'MercatelyTest',
+        'timestamp': 1617133991906,
+        'version': 2,
+        'type': 'message-event',
+        'payload': {
+          'id': 'e0058485-4fa3-415f-b299-d47274e2017f',
+          'type': 'failed',
+          'destination': '5215599999999',
+          'payload': {
+            'code': 1005,
+            'reason': 'Message sending failed as user is inactive for session message and template did not match'
+          }
+        }
+      }
+    end
+
+    let(:error_response_1002) do
+      {
+        'app': 'MercatelyTest',
+        'timestamp': 1617133991906,
+        'version': 2,
+        'type': 'message-event',
+        'payload': {
+          'id': 'e0058485-4fa3-415f-b299-d47274e2017f',
+          'type': 'failed',
+          'destination': '5215599999999',
+          'payload': {
+            'code': 1002,
+            'reason': 'Number Does Not Exists On WhatsApp'
+          }
+        }
+      }
+    end
+
+    let(:text_payload) do
+      {
+        'isHSM': 'false',
+        'type': 'text',
+        'text': 'Test'
+      }
+    end
+
+    let(:template_payload) do
+      {
+        'isHSM': 'true',
+        'type': 'text',
+        'text': 'Your OTP for 1 is 2. This is valid for 3.',
+        'id': '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+        'params': [
+          '1',
+          '2',
+          '3'
+        ]
+      }
+    end
+
+    let(:document_payload) do
+      {
+        'type': 'file',
+        'url': 'https://res.cloudinary.com/dhhrdm74a/raw/upload/v1617135241/' \
+          'Informacio%CC%81n%20para%20el%20registro%20de%20la%20empresa%20%281%29.docx',
+        'filename': 'informacion-para-el-registro-de-la-empresa-1'
+      }
+    end
+
+    let(:document_template_payload) do
+      {
+        'isHSM': 'true',
+        'type': 'file',
+        'url': 'https://res.cloudinary.com/dhhrdm74a/raw/upload/v1606413278/nvpot3kncgybpncukoo0.pdf',
+        'caption': 'Estimado Henry cómo estás? 🙋 Te saluda Elvis de AutoSeguro, gracias por utilizar nuestro ' \
+          'servicio.\n\nNos habías solicitado una cotización para el Seguro de Tu Auto🚘 que incluye la cobertura ' \
+          'de Amparo Patrimonial <U+200D>😮!\n\nEnviamos al correo registrado 📩. Si en el caso que no la pudiste ' \
+          'mirar 👀, aquí te la hacemos llegar.\n\nAhora Si Tu Auto Va a Estar 100% PROTEGIDO..! 💯\n\nEs una muy ' \
+          'buena oportunidad, si realmente quieres sentirte seguro.\n\nRecuerda que la puedes pagar hasta 12 meses ' \
+          'SIN INTERESES.👌\n\nSi tienes alguna duda o pregunta escríbeme, estoy aquí para ayudarte.\n\nSaludos ' \
+          'Cordiales. 🙂',
+        'filename': 'notas-para-tareas-comunes.pdf'
+      }
+    end
+
+    let(:image_payload) do
+      {
+        'type': 'image',
+        'originalUrl': 'https://res.cloudinary.com/dhhrdm74a/image/upload/v1617135467/sr68x4ubgkhfdf1dwljj.png',
+        'previewUrl': 'https://res.cloudinary.com/dhhrdm74a/image/upload/v1617135467/sr68x4ubgkhfdf1dwljj.png',
+        'caption': ''
+      }
+    end
+
+    let(:image_with_caption_payload) do
+      {
+        'type': 'image',
+        'originalUrl': 'https://res.cloudinary.com/dhhrdm74a/image/upload/FeCgH7dy8Fe6nGWbWVsVuX3L',
+        'previewUrl': 'https://res.cloudinary.com/dhhrdm74a/image/upload/FeCgH7dy8Fe6nGWbWVsVuX3L',
+        'caption': 'Caption de ejemplo.\\n\\nCon saltos de linea para probar el pre-line nuevo de las divisiones.' \
+          '\\n\\nBye!'
+      }
+    end
+
+    let(:location_payload) do
+      {
+        'type': 'location',
+        'longitude': -67.5894155,
+        'latitude': 10.2546799
+      }
+    end
+
+    let(:audio_payload) do
+      {
+        'type': 'audio',
+        'url': 'https://res.cloudinary.com/dhhrdm74a/video/upload/v1617136125/cu12du9kppdapj1q0hyl.aac'
+      }
+    end
+
+    context 'when the message status is not error' do
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer,
+          message_payload: text_payload)
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when the message is not outbound' do
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :inbound, retailer: retailer, customer: customer,
+          message_payload: text_payload, status: 'error')
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when the customer is not from Mexico' do
+      let(:ve_customer) { create(:customer, retailer: retailer, phone: '+584125558899', country_id: 'VE') }
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: ve_customer,
+          message_payload: text_payload, status: 'error')
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when the message error_payload is blank' do
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer,
+          message_payload: text_payload, status: 'error')
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when the message error_payload is present but is not the error code 1005' do
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer,
+          message_payload: text_payload, status: 'error', error_payload: error_response_1002)
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when the customer does not have number to use' do
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer,
+          message_payload: text_payload, status: 'error', error_payload: error_response_1002)
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when the customer has number to use but it is equal to the phone number' do
+      let(:same_customer) do
+        create(:customer, retailer: retailer, phone: '+5215599999999', number_to_use: '+5215599999999',
+          country_id: 'MX')
+      end
+
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: same_customer,
+          message_payload: text_payload, status: 'error', error_payload: error_response_1005)
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when the message destination is equal to the number to use' do
+      let(:same_customer) do
+        create(:customer, retailer: retailer, phone: '+5215599999999', number_to_use: '+525599999999',
+          country_id: 'MX')
+      end
+
+      let!(:gsm) do
+        create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: same_customer,
+          message_payload: text_payload, status: 'error', error_payload: error_response_1005)
+      end
+
+      it 'does not retry sending the message to the auxiliar number' do
+        expect {
+          gsm.send(:retry_message)
+        }.to change(GupshupWhatsappMessage, :count).by(0)
+      end
+    end
+
+    context 'when all the requirements are fullfiled' do
+      before do
+        allow_any_instance_of(Whatsapp::Gupshup::V1::Base).to receive(:post).and_return(net_response)
+        allow_any_instance_of(Net::HTTPOK).to receive(:read_body).and_return(ok_body_response)
+      end
+
+      context 'when it is a text message' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: text_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
+      end
+
+      context 'when it is a template message' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: template_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
+      end
+
+      context 'when it is a document message' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: document_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
+      end
+
+      context 'when it is a document message as template' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: document_template_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
+      end
+
+      context 'when it is an image message' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: image_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
+      end
+
+      context 'when it is an image message with caption' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: image_with_caption_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
+      end
+
+      context 'when it is a location message' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: location_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
+      end
+
+      context 'when it is an audio message' do
+        let!(:gsm) do
+          create(:gupshup_whatsapp_message, :outbound, retailer: retailer, customer: customer_to_use,
+            message_payload: audio_payload, status: 'error', error_payload: error_response_1005,
+            destination: customer_to_use.phone_number(false))
+        end
+
+        it 'sends the message to the auxiliar number' do
+          expect {
+            gsm.send(:retry_message)
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          last_message = GupshupWhatsappMessage.last
+
+          expect(gsm.message_payload).to eq(last_message.message_payload)
+          expect(last_message.destination).to eq(customer_to_use.phone_number_to_use(false))
+        end
       end
     end
   end

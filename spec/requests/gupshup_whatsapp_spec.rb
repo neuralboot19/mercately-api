@@ -124,6 +124,18 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
           expect(response.code).to eq('200')
           expect(Customer.last.phone).to eq '+5215599999999'
         end
+
+        it 'saves the original phone as number to use' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(1)
+
+          expect(response.code).to eq('200')
+          expect(Customer.last.number_to_use).to eq '+525599999999'
+        end
       end
 
       context 'when 521 mexican number' do
@@ -163,6 +175,18 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
           expect(response.code).to eq('200')
           expect(Customer.last.phone).to eq '+5215599999999'
         end
+
+        it 'does not save the original phone' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(1)
+
+          expect(response.code).to eq('200')
+          expect(Customer.last.number_to_use).to be_nil
+        end
       end
 
       context 'when not mexican number' do
@@ -176,6 +200,18 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
           expect(response.code).to eq('200')
           expect(Customer.last.phone).to eq '+593998377063'
+        end
+
+        it 'does not save the original phone' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(1)
+
+          expect(response.code).to eq('200')
+          expect(Customer.last.number_to_use).to be_nil
         end
       end
 
@@ -205,17 +241,28 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
           }
         end
 
+        let!(:customer) { create(:customer, retailer: retailer, phone: '+5215599999999', country_id: 'MX') }
+
         it 'does not create a new customer' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
-          expect {
-            post '/gupshup/ws',
-            params: gupshup_inbound_payload
-          }.to change(Customer, :count).by(1)
 
           expect {
             post '/gupshup/ws',
             params: gupshup_inbound_payload
           }.to change(Customer, :count).by(0)
+        end
+
+        it 'saves the original phone as number to use' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+
+          expect(customer.number_to_use).to be_nil
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(0)
+
+          expect(customer.reload.number_to_use).to eq('+525599999999')
         end
       end
 

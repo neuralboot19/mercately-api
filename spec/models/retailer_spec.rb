@@ -510,4 +510,14 @@ RSpec.describe Retailer, type: :model do
       end
     end
   end
+
+  describe '#refund_message_cost' do
+    let(:retailer) { create(:retailer, ws_balance: 15.0) }
+
+    it 'adds the amount passed to the ws balance' do
+      expect(retailer.ws_balance).to eq(15.0)
+      retailer.refund_message_cost(0.5)
+      expect(retailer.reload.ws_balance).to eq(15.5)
+    end
+  end
 end

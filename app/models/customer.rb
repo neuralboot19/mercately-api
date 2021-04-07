@@ -2,6 +2,7 @@ class Customer < ApplicationRecord
   include WebIdGenerateableConcern
   include PhoneNumberConcern
   include ImportCustomersConcern
+  include ExportCustomersConcern
 
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
@@ -216,25 +217,6 @@ class Customer < ApplicationRecord
 
   def to_param
     web_id
-  end
-
-  def self.to_csv(customers)
-    attributes = %w[first_name last_name whatsapp_name email phone id_type id_number]
-    tags = customers.present? ? customers.first.retailer.tags.order(id: :asc) : {}
-
-    CSV.generate(headers: true) do |csv|
-      csv << attributes + tags.map(&:tag)
-
-      customers.each do |customer|
-        data = attributes.map { |attr| customer.send(attr) }
-
-        tags.each do |t|
-          data << (customer.tags.include?(t) ? 'X' : '')
-        end
-
-        csv << data
-      end
-    end
   end
 
   def assigned_agent
