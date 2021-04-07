@@ -11,11 +11,19 @@ class RetailerMailer < ApplicationMailer
     mail to: user.email, subject: "#{@user.retailer.name} te ha invitado a su equipo en Mercately"
   end
 
-  def export_customers(retailer, retailer_email, csv_file)
+  def export_customers(retailer, retailer_email, file, type)
     @retailer = retailer
     @retailer_email = retailer_email
 
-    attachments['customers.csv'] = { mime_type: 'text/csv', content: csv_file }
+    if type == 'csv'
+      content_type = 'text/csv'
+      extension = 'csv'
+    elsif type == 'excel'
+      content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      extension = 'xlsx'
+    end
+
+    attachments["Customers.#{extension}"] = { mime_type: content_type, content: file }
     mail to: retailer_email, subject: 'Mercately Exportación de Clientes Completa'
   end
 
