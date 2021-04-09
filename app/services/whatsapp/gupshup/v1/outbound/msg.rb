@@ -220,7 +220,9 @@ module Whatsapp::Gupshup::V1
           source: @retailer.phone_number,
           destination: @phone_number,
           channel: 'whatsapp',
-          retailer_user: retailer_user
+          retailer_user: retailer_user,
+          message_identifier: @index ?
+            @options[:params][:message_identifiers][@index] : @options[:params][:message_identifier]
         )
 
         if response_status.to_i == 200

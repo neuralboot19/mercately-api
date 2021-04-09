@@ -157,7 +157,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
         message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
         message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0],
-                                                                 current_retailer_user)
+                                                                 current_retailer_user, params[:message_identifier])
         message.save
 
         unless has_agent
@@ -341,8 +341,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         when 'all'
           customers
         when 'not_assigned'
-          customer_ids = AgentCustomer.all.pluck(:customer_id)
-          customers = customers.where('customers.id NOT IN (?)', customer_ids)
+          # customer_ids = AgentCustomer.all.pluck(:customer_id)
+          # customers = customers.where('customers.id NOT IN (?)', customer_ids)
+          customers
         else
           customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).pluck(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
@@ -392,7 +393,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
         message = current_retailer.karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
         message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0],
-                                                                 current_retailer_user)
+                                                                 current_retailer_user, params[:message_identifier])
         message.save
 
         agents = customer.agent.present? && has_agent ? [customer.agent] : current_retailer.retailer_users

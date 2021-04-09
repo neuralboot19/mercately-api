@@ -1,7 +1,7 @@
 module Whatsapp
   module Karix
     class Messages
-      def assign_message(message, retailer, ws_data, retailer_user = nil)
+      def assign_message(message, retailer, ws_data, retailer_user = nil, message_identifier = nil)
         customer = ws_customer_service.save_customer(retailer, ws_data)
 
         message.attributes = { account_uid: ws_data['account_uid'], source: ws_data['source'], destination:
@@ -19,7 +19,8 @@ module Whatsapp
           ws_data['direction'], channel: ws_data['channel'], error_code: ws_data['error']&.[]('code'), error_message:
           ws_data['error']&.[]('message'), message_type:
           ws_data['channel_details']&.[]('whatsapp')&.[]('type'), customer_id: customer&.id, retailer_user_id:
-          message.retailer_user&.id || retailer_user&.id }
+          message.retailer_user&.id || retailer_user&.id, message_identifier:
+          message.message_identifier.presence || message_identifier }
 
         message
       end
@@ -107,7 +108,8 @@ module Whatsapp
 
             message = args[:retailer].karix_whatsapp_messages.find_or_initialize_by(uid: response['objects'][0]['uid'])
             message = karix_helper.ws_message_service.assign_message(message, args[:retailer], response['objects'][0],
-                                                                    args[:retailer_user])
+                                                                    args[:retailer_user],
+                                                                    args[:params][:message_identifiers][index])
             message.save
             sent = true
           end
