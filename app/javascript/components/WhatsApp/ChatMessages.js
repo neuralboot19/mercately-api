@@ -27,6 +27,7 @@ import MobileTopChatBar from '../shared/MobileTopChatBar';
 import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
 import ReminderConfigModal from './ReminderConfigModal';
 import Lightbox from 'react-image-lightbox';
+import { v4 as uuidv4 } from 'uuid';
 import 'react-image-lightbox/style.css';
 
 let currentCustomer = 0;
@@ -114,20 +115,21 @@ class ChatMessages extends Component {
   }
 
   addArrivingMessage = (currentMessages, newMessage) => {
-    // First remove message without Id to avoid duplication
-    // Also remove messages with error, only keep those with error code 1002 (Number Does Not Exists On WhatsApp)
-    let newMessagesArray = currentMessages.filter((message) => message.id &&
-      ((message.error_code === '' || !message.error_code) || message.error_code === 1002));
+    // Remove messages with error, only keep those with error code 1002 (Number Does Not Exists On WhatsApp)
+    let newMessagesArray = currentMessages.filter((message) => !message.error_code || message.error_code === 1002);
     // Then find and replace element if it exists
     const index = currentMessages.findIndex((el) => (
-      el.id === newMessage.id
+      el.id === newMessage.id || (newMessage.message_identifier && el.message_identifier === newMessage.message_identifier)
     ));
+
     if (index === -1) {
       newMessagesArray = newMessagesArray.concat(newMessage);
     } else {
-      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id) ? newMessage : message));
+      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id ||
+        (newMessage.message_identifier && message.message_identifier === newMessage.message_identifier)) ? newMessage : message));
     }
-    return newMessagesArray.sort(this.sortMessages());
+
+    return newMessagesArray;
   }
 
   updateChat = (data) => {
@@ -147,18 +149,6 @@ class ChatMessages extends Component {
       }
     }
   }
-
-  sortMessages = () => (
-    (a, b) => {
-      if (moment(a.created_time) === moment(b.created_time)) {
-        return 0;
-      }
-      if (moment(a.created_time) > moment(b.created_time)) {
-        return 1;
-      }
-      return -1;
-    }
-  )
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(newProps) {
@@ -276,8 +266,9 @@ class ChatMessages extends Component {
       e.preventDefault();
     }
 
+    const uuid = uuidv4();
     const text = {
-      message, customer_id: this.props.currentCustomer, template: isTemplate, type: 'text'
+      message, customer_id: this.props.currentCustomer, template: isTemplate, type: 'text', message_identifier: uuid
     };
 
     if (isTemplate) {
@@ -295,7 +286,8 @@ class ChatMessages extends Component {
         content_text: message,
         direction: 'outbound',
         status: 'enqueued',
-        created_time: new Date()
+        created_time: new Date(),
+        message_identifier: uuid
       }),
       new_message: true
     }), () => {
@@ -362,10 +354,13 @@ class ChatMessages extends Component {
 
   sendImages = () => {
     const insertedMessages = [];
+    let uuid;
     const data = new FormData();
     data.append('template', false);
     this.state.loadedImages.forEach((image) => {
+      uuid = uuidv4();
       data.append('file_data[]', image);
+      data.append('message_identifiers[]', uuid);
 
       const url = URL.createObjectURL(image);
       const type = this.fileType(image.type);
@@ -377,7 +372,8 @@ class ChatMessages extends Component {
         content_media_url: url,
         direction: 'outbound',
         content_media_caption: caption,
-        created_time: new Date()
+        created_time: new Date(),
+        message_identifier: uuid
       });
     });
 
@@ -398,6 +394,7 @@ class ChatMessages extends Component {
     let type;
     let caption;
     let filename;
+    const uuid = uuidv4(); 
     const input = $('#divMessage');
     const data = new FormData();
 
@@ -412,7 +409,9 @@ class ChatMessages extends Component {
       data.append('url', url);
       data.append('type', 'file');
       data.append('caption', caption);
+      data.append('message_identifier', uuid);
     } else if (fileData && fileData.get('template') === 'true') {
+      fileData.append('message_identifier', uuid);
       const auxFile = fileData.get('file_data');
 
       url = URL.createObjectURL(auxFile);
@@ -420,6 +419,7 @@ class ChatMessages extends Component {
       filename = type === 'document' ? auxFile.name : null;
       caption = fileData.get('caption');
     } else {
+      fileData.append('message_identifier', uuid);
       url = URL.createObjectURL(el.files[0]);
       type = this.fileType(el.files[0].type);
       filename = type === 'document' ? el.files[0].name : null;
@@ -435,7 +435,8 @@ class ChatMessages extends Component {
           direction: 'outbound',
           content_media_caption: caption,
           filename,
-          created_time: new Date()
+          created_time: new Date(),
+          message_identifier: uuid
         }
       ),
       new_message: true,
@@ -810,12 +811,14 @@ class ChatMessages extends Component {
   }
 
   sendLocation = (position) => {
+    const uuid = uuidv4();
     const params = {
       longitude: position.lng,
       latitude: position.lat,
       customer_id: this.props.currentCustomer,
       template: false,
-      type: 'location'
+      type: 'location',
+      message_identifier: uuid
     };
 
     this.setState((prevState) => ({
@@ -825,7 +828,8 @@ class ChatMessages extends Component {
         content_location_longitude: params.longitude,
         direction: 'outbound',
         status: 'enqueued',
-        created_time: new Date()
+        created_time: new Date(),
+        message_identifier: uuid
       }),
       new_message: true,
       showMap: false
@@ -951,10 +955,12 @@ class ChatMessages extends Component {
   }
 
   sendAudio = (blob, url, stream) => {
+    const uuid = uuidv4();
     const data = new FormData();
     data.append('template', false);
     data.append('file_data', blob);
     data.append('type', 'audio');
+    data.append('message_identifier', uuid);
 
     this.setState((prevState) => ({
       messages: prevState.messages.concat(
@@ -963,7 +969,8 @@ class ChatMessages extends Component {
           content_media_type: 'audio',
           content_media_url: url,
           direction: 'outbound',
-          created_time: new Date()
+          created_time: new Date(),
+          message_identifier: uuid
         }
       )
     }), () => {

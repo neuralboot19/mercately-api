@@ -3,7 +3,7 @@ class KarixWhatsappMessageSerializer < ActiveModel::Serializer
              :content_media_type, :content_location_longitude,
              :content_location_latitude, :content_location_label, :content_location_address, :created_time,
              :sent_time, :delivered_time, :updated_time, :status, :direction, :channel, :error_code, :error_message,
-             :content_media_url, :filename, :content_media_caption
+             :message_identifier, :content_media_url, :filename, :content_media_caption
 
   def content_media_url
     object.content_media_url&.gsub('http:', 'https:')
