@@ -341,8 +341,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         when 'all'
           customers
         when 'not_assigned'
-          customer_ids = AgentCustomer.all.pluck(:customer_id)
-          customers = customers.where('customers.id NOT IN (?)', customer_ids)
+          # customer_ids = AgentCustomer.all.pluck(:customer_id)
+          # customers = customers.where('customers.id NOT IN (?)', customer_ids)
+          customers
         else
           customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).pluck(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
