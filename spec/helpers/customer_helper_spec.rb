@@ -16,7 +16,7 @@ RSpec.describe CustomerHelper, type: :helper do
     let(:retailer_user_admin) { create(:retailer_user, :admin, retailer: retailer) }
     let(:retailer_user_agent) { create(:retailer_user, :agent, retailer: retailer) }
     let(:retailer_user_with_customer) { create(:retailer_user, :agent, retailer: retailer) }
-    let(:customer) { create(:customer) }
+    let(:customer) { create(:customer, retailer: retailer) }
 
     let(:agent_customer) do
       create(:agent_customer, retailer_user: retailer_user_with_customer, customer: customer)
@@ -109,8 +109,8 @@ RSpec.describe CustomerHelper, type: :helper do
           agent_customer.customer.phone = '+593123456789'
           retailer_user_with_customer.retailer.whats_app_enabled = true
           retailer_user_with_customer.retailer.karix_whatsapp_phone = '+593123456789'
-          retailer_user_admin.retailer.karix_account_uid = 'MyKarixUid'
-          retailer_user_admin.retailer.karix_account_token = 'MyKarixToken'
+          retailer_user_with_customer.retailer.karix_account_uid = 'MyKarixUid'
+          retailer_user_with_customer.retailer.karix_account_token = 'MyKarixToken'
 
           expect(helper.can_send_whatsapp_notification?(retailer_user_with_customer,
             agent_customer.customer)).to be true

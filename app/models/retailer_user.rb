@@ -85,7 +85,8 @@ class RetailerUser < ApplicationRecord
   end
 
   def customers
-    a_customers + retailer.customers.where.not(id: AgentCustomer.select(:customer_id))
+    Customer.joins("LEFT JOIN agent_customers ac ON ac.customer_id = customers.id")
+      .where("(ac.retailer_user_id = ? OR ac.retailer_user_id is NULL) AND customers.retailer_id = ?", id, retailer_id)
   end
 
   def storage_id
