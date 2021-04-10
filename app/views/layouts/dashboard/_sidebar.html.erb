@@ -47,6 +47,12 @@
           </li>
         </ul>
       </li>
+      <% if current_retailer.has_funnels %>
+        <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_dashboard_path(current_retailer)) %>">
+          <i class="item__icon far fa-handshake"></i>
+          <%= link_to 'Negociaciones', retailers_funnels_path(current_retailer), class: 'item__name no-style' %>
+        </li>
+      <% end %>
       <% if current_retailer.whatsapp_integrated? %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_campaigns_path(current_retailer)) %>">
           <i class="item__icon fas fa-comments"></i>
@@ -221,6 +227,16 @@
             </div>
           </div>
         </li>
+        <% if current_retailer.has_funnels %>
+          <li class="menu__item">
+            <div class="tooltip">
+              <%= link_to retailers_funnels_path(current_retailer), class: 'item__name no-style' do %>
+                <i class="far fa-handshake c-secondary fs-25 mb-10"></i>
+              <% end %>
+              <div class="tooltiptext">Negociaciones</div>
+            </div>
+          </li>
+        <% end %>
         <% if current_retailer.whatsapp_integrated? %>
           <li class="menu__item">
             <div class="tooltip">

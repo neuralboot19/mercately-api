@@ -1,0 +1,210 @@
+/****************************** Funnel Headers ********************************************/
+
+.funnel_holder {
+  min-width: fit-content !important;
+}
+
+.column-header {
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  flex-direction: row;
+  position: relative;
+  height: 60px;
+  border-bottom: 1px solid rgb(238, 238, 238);
+  border-top: 1px solid rgb(238, 238, 238);
+}
+
+.column-header .add {
+  position: absolute;
+  top: 3px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #00B4FF;
+  color: #00B4FF;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: text-top;
+  line-height: 20px;
+}
+
+.column-header .erase {
+  position: absolute;
+  top: 3px;
+  right: 37px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid red;
+  color: red;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: text-top;
+  line-height: 20px;
+}
+
+.column-header .erase i {
+  font-size: 13px;
+}
+
+.column-header .add i {
+  font-size: 13px;
+}
+
+.tooltiptext-column {
+  visibility: hidden;
+  width: 115px;
+  background-color: #555;
+  border: 1px solid #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 5px;
+  position: absolute;
+  z-index: 1;
+  top: -45px;
+  right: -50px;
+  max-width: unset;
+  font-size: 12px;
+}
+
+.tooltip-top-column {
+  position: inherit;
+  display: block;
+}
+
+.tooltip-top-column .tooltiptext-column::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip-top-column:hover .tooltiptext-column {
+  visibility: visible;
+}
+
+.funnel-btn {
+  background-color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.funnel-input {
+  color: #888888;
+  font-size: 13px;
+  font-weight: 300;
+  height: 36px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;
+  padding: 0;
+  transition: border-color .15s linear,box-shadow .15s linear;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  width: 100%;
+}
+
+.funnel-input-error {
+  font-size: 10px;
+  color: red;
+}
+
+.funnel-btn:focus {
+  outline: none;
+}
+
+.tooltiptext-column-erase {
+  visibility: hidden;
+  width: 115px;
+  background-color: #555;
+  border: 1px solid #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 5px;
+  position: absolute;
+  z-index: 1;
+  top: -70px;
+  right: -50px;
+  max-width: unset;
+  font-size: 12px;
+}
+
+.tooltip-top-column-erase {
+  position: inherit;
+  display: block;
+}
+
+
+.tooltip-top-column-erase .tooltiptext-column-erase::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+
+.tooltip-top-column-erase:hover .tooltiptext-column-erase {
+  visibility: visible;
+}
+
+.column-header .column-title {
+  width: 100%;
+  overflow: hidden;
+}
+
+.column-header .column-title:hover {
+  overflow: auto;
+}
+
+.arrow {
+  margin-top: 7px;
+}
+
+.column-title h1 {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 0.75px;
+  margin: 0 0 0 15px;
+}
+
+.column-title-content p {
+  margin: 0;
+  font-size: 12px;
+  margin-left: 15px;
+}
+
+.funnel-content-name {
+  font-size: 14px;
+  margin: 0 0 5px 0;
+}
+
+.funnel-content {
+  color: #646464;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  margin: 0 0 5px 0;
+  font-size: 12px;
+}
+
+.funnel-content-client {
+  color: #00B4FF !important;
+  font-size: 14px;
+  margin: 0;
+}
+
+.funnel-client-whatsapp {
+  width: 25px;
+}

@@ -16,7 +16,8 @@ let initialState = {
   reminders: [],
   customerFields: [],
   customFields: [],
-  loadingMoreCustomers: false
+  loadingMoreCustomers: false,
+  funnelSteps: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -218,6 +219,92 @@ const reducer = (state = initialState, action) => {
         ...state,
         loadingMoreCustomers: false
       };
+        case 'GET_FUNNELS':
+      return {
+        ...state,
+        funnelSteps: action.data.funnelSteps,
+        fetching_funnels: true,
+      }
+    case 'SET_FUNNEL_DEAL':
+      return {
+        ...state,
+      }
+    case 'CLEAR_FUNNELS':
+      return {
+        ...state,
+        fetching_funnels: false,
+      }
+    case 'CLEAR_NEW_DEAL':
+      return {
+        ...state,
+        newDealSuccess: false,
+      }
+    case 'SET_NEW_DEAL':
+      if (Object.keys(action.data).length > 0) {
+        return {
+          ...state,
+          newDealSuccess: true,
+          funnelSteps: {
+            ...state.funnelSteps,
+            deals: {
+              ...state.funnelSteps.deals,
+              [action.data.deal.id]: action.data.deal
+            },
+            columns: {
+              ...state.funnelSteps.columns,
+              [action.column]: {
+                ...state.funnelSteps.columns[action.column],
+                deals: state.funnelSteps.columns[action.column].deals + 1,
+                dealIds: [action.data.deal.id].concat(state.funnelSteps.columns[action.column].dealIds)
+              }
+            }
+          },
+          fetching_funnels: true,
+        };
+      }
+    case 'SET_NEW_STEP':
+      if (Object.keys(action.data).length > 0) {
+        let new_steps = Object.assign(state.funnelSteps.columns, {[action.data.step.id]: action.data.step});
+        return {
+        ...state,
+          newStepSuccess: true,
+          funnelSteps: {
+            ...state.funnelSteps,
+            columnOrder: state.funnelSteps.columnOrder.concat(action.data.step.id),
+            columns: new_steps
+          },
+          fetching_funnels: true,
+        };
+      } else {
+        return {
+          ...state
+        };
+      }
+    case 'CLEAR_NEW_STEP':
+      return {
+        ...state,
+        newStepSuccess: false,
+      }
+    case 'ERASE_DEAL_STEP':
+      if (Object.keys(action.data).length > 0) {
+        let new_columns = Object.assign({}, state.funnelSteps.columns);
+        delete(new_columns[action.column])
+        return {
+          ...state,
+          funnelSteps: {
+            ...state.funnelSteps,
+            columnOrder: state.funnelSteps.columnOrder.filter(function(step) {
+              return step !== action.column
+            }),
+            columns: new_columns
+          },
+          fetching_funnels: true,
+        };
+      }
+    case "LOAD_DATA_FAILURE":
+      return {
+        ...state
+      }
     default:
       return state;
   }
