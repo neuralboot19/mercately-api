@@ -7,9 +7,9 @@ class Api::V1::CustomersController < Api::ApiController
 
   def index
     customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
-                  current_retailer.customers
+                  current_retailer.customers.facebook_customers.active
                 elsif current_retailer_user.agent?
-                  current_retailer_user.customers
+                  current_retailer_user.customers.facebook_customers.active
                 end
 
     @customers = customer_list(customers)
@@ -218,14 +218,11 @@ class Api::V1::CustomersController < Api::ApiController
     def customer_list(customers)
       return nil unless customers.present?
 
-      customers = customers.facebook_customers
-                  .active
-                  .select('customers.*, max(facebook_messages.created_at) as recent_message_date')
-                  .joins(:facebook_messages)
+      customers = customers.select('customers.*, customers.last_chat_interaction as recent_message_date')
 
       if params[:type].present?
         customers = if ['no_read', 'read'].include?(params[:type])
-                      customers.where(
+                      customers.joins(:facebook_messages).where(
                         "facebook_messages.date_read IS
                         #{params[:type] == 'read' ? 'NOT ' : ''}NULL
                         OR customers.unread_messenger_chat = true"
@@ -243,7 +240,7 @@ class Api::V1::CustomersController < Api::ApiController
           customers = customers.joins("LEFT JOIN agent_customers agc ON agc.customer_id = customers.id")
             .where("agc.retailer_user_id is NULL AND customers.retailer_id = ?", current_retailer.id)
         else
-          customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).pluck(:customer_id)
+          customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).select(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
         end
       end
@@ -253,7 +250,7 @@ class Api::V1::CustomersController < Api::ApiController
         when 'all'
           customers
         else
-          customer_ids = CustomerTag.where(tag_id: params[:tag]).pluck(:customer_id)
+          customer_ids = CustomerTag.where(tag_id: params[:tag]).select(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
         end
       end
@@ -268,7 +265,7 @@ class Api::V1::CustomersController < Api::ApiController
       end
 
       if current_retailer_user.only_assigned? && current_retailer_user.agent?
-        customer_ids = current_retailer_user.a_customers.pluck(:id)
+        customer_ids = current_retailer_user.a_customers.select(:id)
         customers = customers.where(id: customer_ids)
       end
       customers = customers.group('customers.id')

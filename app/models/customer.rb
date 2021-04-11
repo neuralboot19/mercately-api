@@ -64,6 +64,7 @@ class Customer < ApplicationRecord
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :out_of_range, -> (start_date, end_date) { where.not(created_at: start_date..end_date) }
   scope :facebook_customers, -> { where.not(psid: nil) }
+  scope :active_whatsapp, -> { where(ws_active: true) }
   scope :by_search_text, (lambda do |search_text|
     where("CONCAT(REPLACE(lower(customers.first_name), '\s', ''),
                   REPLACE(lower(customers.last_name), '\s', ''),

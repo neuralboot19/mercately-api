@@ -4,6 +4,7 @@ class KarixWhatsappMessage < ApplicationRecord
   include WhatsappAutomaticAnswerConcern
   include WhatsappChatBotActionConcern
   include PushNotificationable
+  include CustomerActiveWhatsappConcern
 
   belongs_to :retailer
   belongs_to :customer

@@ -13,6 +13,7 @@ class FacebookMessage < ApplicationRecord
   after_commit :send_inactive_message, on: :create
   after_commit :send_facebook_message, on: :create
   after_commit :broadcast_to_counter_channel, on: [:create, :update]
+  after_commit :set_last_interaction, on: :create
 
   scope :customer_unread, -> { where(date_read: nil, sent_by_retailer: false) }
   scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
@@ -96,5 +97,9 @@ class FacebookMessage < ApplicationRecord
 
     def facebook_service
       Facebook::Messages.new(facebook_retailer)
+    end
+
+    def set_last_interaction
+      customer.update_column(:last_chat_interaction, created_at)
     end
 end
