@@ -11,8 +11,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
                   current_retailer.customers
                 elsif current_retailer_user.agent?
-                  filtered_customers = current_retailer_user.customers
-                  Customer.where(id: filtered_customers.pluck(:id))
+                  current_retailer_user.customers
                 end
 
     @customers = customer_list(customers)
@@ -341,9 +340,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         when 'all'
           customers
         when 'not_assigned'
-          # customer_ids = AgentCustomer.all.pluck(:customer_id)
-          # customers = customers.where('customers.id NOT IN (?)', customer_ids)
-          customers
+          customers = customers.joins("LEFT JOIN agent_customers agc ON agc.customer_id = customers.id")
+            .where("agc.retailer_user_id is NULL AND customers.retailer_id = ?", current_retailer.id)
         else
           customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).pluck(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
