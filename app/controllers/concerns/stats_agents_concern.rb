@@ -115,12 +115,11 @@ module StatsAgentsConcern
   end
 
   def total_agent_stats_msn
-    agents = current_retailer.retailer_users
     @agent_stats_msn = []
+    return if agents_ids_msn.blank?
 
-    agents_ids_msn.each do |id|
-      ru = agents.map { |ag| ag if ag.id == id }.compact.first
-
+    current_retailer.retailer_users.where(id: agents_ids_msn).find_each do |ru|
+      id = ru.id
       @agent_stats_msn << {
         name: ru.full_name.presence || ru.email,
         chats_assigned: @total_agent_chats_assigned_msn[id] || 0,
@@ -144,17 +143,16 @@ module StatsAgentsConcern
   end
 
   def total_agent_stats_ws
-    agents = current_retailer.retailer_users
     @agent_stats_ws = []
+    return if agents_ids_ws.blank?
 
-    agents_ids_ws.each do |id|
-      ru = agents.map { |ag| ag if ag.id == id  }.compact.first
-
+    current_retailer.retailer_users.where(id: agents_ids_ws).find_each do |ru|
+      id = ru.id
       @agent_stats_ws << {
         name: ru.full_name.presence || ru.email,
         chats_assigned: @total_agent_chats_assigned_ws[id] || 0,
         chats_answered: @total_agent_chats_answered_ws[id] || 0,
-        chats_not_answered: (@total_agent_chats_assigned_ws[id] || 0 ) - (@total_agent_chats_answered_ws[id] || 0),
+        chats_not_answered: (@total_agent_chats_assigned_ws[id] || 0) - (@total_agent_chats_answered_ws[id] || 0),
         messages_sent: @total_agent_messages_ws[id] || 0,
         customers: agent_total_customers_ws(id),
         prospects: @total_agent_prospects_ws[id] || 0,
@@ -164,7 +162,7 @@ module StatsAgentsConcern
   end
 
   def agents_ids_ws
-    (@total_agent_messages_ws.keys + @total_agent_currents_ws.keys +  @total_agent_chats_assigned_ws.keys +
+    (@total_agent_messages_ws.keys + @total_agent_currents_ws.keys + @total_agent_chats_assigned_ws.keys +
       @total_agent_prospects_ws.keys).compact.uniq
   end
 
@@ -174,15 +172,14 @@ module StatsAgentsConcern
 
 
   def total_agent_stats
-    agents = current_retailer.retailer_users
     @agent_stats = []
+    return if agents_ids.blank?
 
-    agents_ids.each do |id|
-      ru = agents.map { |ag| ag if ag.id == id  }.compact.first
-
+    current_retailer.retailer_users.where(id: agents_ids).find_each do |ru|
+      id = ru.id
       @agent_stats << {
         name: ru.full_name.presence || ru.email,
-        chats_assigned: (@total_agent_chats_assigned_msn[id] || 0 ) + (@total_agent_chats_assigned_ws[id] || 0),
+        chats_assigned: (@total_agent_chats_assigned_msn[id] || 0) + (@total_agent_chats_assigned_ws[id] || 0),
         chats_answered: (@total_agent_chats_answered_msn[id] || 0) + (@total_agent_chats_answered_ws[id] || 0),
         chats_not_answered: total_chats_not_answered(id),
         messages_sent: (@total_agent_messages_msn[id] || 0) + (@total_agent_messages_ws[id] || 0),
