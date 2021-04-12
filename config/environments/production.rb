@@ -111,6 +111,7 @@ Rails.application.configure do
 
   Raven.configure do |config|
     config.dsn = ENV['SENTRY_DSN']
+    config.ssl_ca_file = '/etc/nginx/ssl/mercately_cert.pem'
   end
 
   config.secret_key_base = ENV['SECRET_KEY_BASE']
