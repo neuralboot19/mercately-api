@@ -170,17 +170,17 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         end
       end
 
-      # context 'when the agent filter is "not_assigned"' do
-      #   let!(:agent_customer) {create(:agent_customer, customer: customer1, retailer_user: retailer_user)}
+      context 'when the agent filter is "not_assigned"' do
+        let!(:agent_customer) {create(:agent_customer, customer: customer1, retailer_user: retailer_user)}
 
-      #   it 'responses customers with not agent assigned' do
-      #     get api_v1_customers_path, params: { agent: 'not_assigned' }
-      #     body = JSON.parse(response.body)
+        it 'responses customers with not agent assigned' do
+          get api_v1_customers_path, params: { agent: 'not_assigned' }
+          body = JSON.parse(response.body)
 
-      #     expect(response).to have_http_status(:ok)
-      #     expect(body['customers'].count).to eq(1)
-      #   end
-      # end
+          expect(response).to have_http_status(:ok)
+          expect(body['customers'].count).to eq(1)
+        end
+      end
 
       context 'when the agent filter is not "all"' do
         let(:agent) { create(:retailer_user, :agent, retailer: retailer) }
@@ -277,6 +277,11 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       context 'when is received in descending order' do
+        before do
+          create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer1, date_read: Date.today)
+          create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer2, date_read: Date.today)
+        end
+
         it 'responses customers ordered by facebook_messages.created_at in descending order' do
           get api_v1_customers_path, params: { order: 'received_desc' }
 

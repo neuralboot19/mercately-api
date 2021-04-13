@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_08_180749) do
+ActiveRecord::Schema.define(version: 2021_04_11_194936) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -352,8 +352,13 @@ ActiveRecord::Schema.define(version: 2021_04_08_180749) do
     t.string "hs_id"
     t.boolean "api_created", default: false
     t.string "number_to_use"
+    t.boolean "ws_active", default: false
+    t.datetime "last_chat_interaction"
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
+    t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
+    t.index ["psid"], name: "index_customers_on_psid"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
+    t.index ["ws_active"], name: "index_customers_on_ws_active"
   end
 
   create_table "facebook_catalogs", force: :cascade do |t|
