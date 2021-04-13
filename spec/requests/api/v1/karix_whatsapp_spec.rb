@@ -188,6 +188,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       context 'when the retailer user does not have customers' do
         before do
           retailer.karix_whatsapp_messages.delete_all
+          retailer.customers.update_all(ws_active: false)
         end
 
         it 'fails, a 404 Error will be responsed' do
@@ -341,6 +342,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       context 'when the retailer user does not have customers' do
         before do
           retailer.karix_whatsapp_messages.delete_all
+          retailer.customers.update_all(ws_active: false)
         end
 
         it 'fails, a 404 Error will be responsed' do

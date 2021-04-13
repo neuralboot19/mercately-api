@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V1::KarixWhatsappController < Api::ApiController
   before_action :authenticate_retailer_user!, except: :save_message
 
@@ -9,9 +11,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
   def index
     customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
-                  current_retailer.customers
+                  current_retailer.customers.active_whatsapp
                 elsif current_retailer_user.agent?
-                  current_retailer_user.customers
+                  current_retailer_user.customers.active_whatsapp
                 end
 
     @customers = customer_list(customers)
@@ -308,24 +310,17 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     def customer_list(customers)
       return nil unless customers.present?
 
-      if current_retailer.karix_integrated?
-        customers = customers.select("customers.*, max(karix_whatsapp_messages.created_time) as recent_message_date")
-                 .joins(:karix_whatsapp_messages)
-                 .where.not(karix_whatsapp_messages: { account_uid: nil })
-      elsif current_retailer.gupshup_integrated?
-        customers = customers.select("customers.*, max(gupshup_whatsapp_messages.created_at) as recent_message_date")
-                 .joins(:gupshup_whatsapp_messages)
-                 .where.not(gupshup_whatsapp_messages: { gupshup_message_id: nil })
-      end
+      customers = customers.select('customers.*, customers.last_chat_interaction as recent_message_date')
 
       integration = current_retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
       if params[:type].present?
         customers = case params[:type]
                     when 'no_read'
-                      customers.where("(#{integration}.status != ? AND #{integration}.direction = 'inbound')
-                                       OR customers.unread_whatsapp_chat = true", current_retailer.karix_integrated? ? 'read' : 5)
+                      customers.joins(integration.to_sym)
+                      .where("(#{integration}.status != ? AND #{integration}.direction = 'inbound')
+                            OR customers.unread_whatsapp_chat = true", current_retailer.karix_integrated? ? 'read' : 5)
                     when 'read'
-                      customers.where(
+                      customers.joins(integration.to_sym).where(
                         "(#{integration}.status = ? AND #{integration}.direction = 'inbound')
                         AND customers.unread_whatsapp_chat = false",
                         current_retailer.karix_integrated? ? 'read' : 5
@@ -343,7 +338,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
           customers = customers.joins("LEFT JOIN agent_customers agc ON agc.customer_id = customers.id")
             .where("agc.retailer_user_id is NULL AND customers.retailer_id = ?", current_retailer.id)
         else
-          customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).pluck(:customer_id)
+          customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).select(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
         end
       end
@@ -353,7 +348,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         when 'all'
           customers
         else
-          customer_ids = CustomerTag.where(tag_id: params[:tag]).pluck(:customer_id)
+          customer_ids = CustomerTag.where(tag_id: params[:tag]).select(:customer_id)
           customers = customers.where('customers.id IN (?)', customer_ids)
         end
       end
@@ -369,7 +364,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       end
 
       if current_retailer_user.only_assigned? && !(current_retailer_user.retailer_supervisor || current_retailer_user.retailer_admin)
-        customer_ids = current_retailer_user.a_customers.pluck(:id)
+        customer_ids = current_retailer_user.a_customers.select(:id)
         customers = customers.where(id: customer_ids)
       end
       customers = customers.group('customers.id')
