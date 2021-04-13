@@ -73,7 +73,7 @@ class GoogleMap extends Component {
 
   render() {
     return (
-      <Modal isOpen={this.props.showMap} style={customStyles}>
+      <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showMap} style={customStyles}>
         <div className={this.props.onMobile ? "row mt-50 mb-15" : "row mb-15" }>
           <div className="col-md-10">
             <p className={this.props.onMobile ? "fs-20 my-0" : "fs-30 my-0" }>Selecciona la ubicación</p>

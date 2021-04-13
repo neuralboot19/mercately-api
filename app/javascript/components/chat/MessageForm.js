@@ -81,7 +81,8 @@ class MessageForm extends Component {
   }
 
   onKeyPress = (e) => {
-    if (e.which === 13) {
+    if (e.which === 13 && e.shiftKey && e.target.innerText.trim() === "") e.preventDefault();
+    if (e.which === 13 && !e.shiftKey) {
       e.preventDefault();
       this.handleSubmit(e);
     }
