@@ -6,6 +6,7 @@ import RepliedDocumentMessage from './RepliedDocumentMessage';
 import RepliedLocationMessage from './RepliedLocationMessage';
 import RepliedContactMessage from './RepliedContactMessage';
 import RepliedVideoMessage from './RepliedVideoMessage';
+import RepliedStickerMessage from './RepliedStickerMessage';
 
 const RepliedMessage = ({
   chatType,
@@ -39,6 +40,11 @@ const RepliedMessage = ({
   );
 
   const isContact = () => message.data.attributes.content_type === 'contact';
+
+  const isSticker = () => (
+    message.data.attributes.content_type === 'media'
+    && message.data.attributes.content_media_type === 'sticker'
+  );
 
   return (
     <div className="replied-message mb-10">
@@ -90,6 +96,13 @@ const RepliedMessage = ({
           contact={contact}
         />
       ))}
+      {isSticker()
+      && (
+        <RepliedStickerMessage
+          mediaUrl={message.data.attributes.content_media_url}
+          onClick={openImage}
+        />
+      )}
     </div>
   );
 };

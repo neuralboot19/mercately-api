@@ -108,6 +108,7 @@ module KarixNotificationHelper
     return 'Audio' if ['audio', 'voice'].include?(message.content_media_type)
     return 'Ubicación' if message.content_type == 'location'
     return 'Contacto' if message.content_type == 'contact'
+    return 'Sticker' if message.content_type == 'sticker'
     message.content_text
   end
 end
