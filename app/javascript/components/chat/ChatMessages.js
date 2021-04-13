@@ -626,7 +626,6 @@ class ChatMessages extends Component {
             this.canSendMessages() &&
               <div className="col-xs-12 chat-input">
                 <MessageForm
-                  currentCustomer={this.props.currentCustomer}
                   handleSubmitMessage={this.handleSubmitMessage}
                   handleSubmitImg={this.handleSubmitImg}
                   toggleFastAnswers={this.toggleFastAnswers}
