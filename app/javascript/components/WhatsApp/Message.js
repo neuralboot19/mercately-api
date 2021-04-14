@@ -7,6 +7,7 @@ import DocumentMessage from '../shared/messages/DocumentMessage';
 import LocationMessage from '../shared/messages/LocationMessage';
 import ImageMessage from '../shared/messages/ImageMessage';
 import VideoMessage from '../shared/messages/VideoMessage';
+import StickerMessage from './messages/StickerMessage';
 
 class Message extends Component {
   downloadFile = (e, fileUrl, filename) => {
@@ -88,6 +89,15 @@ class Message extends Component {
           <ContactMessage
             message={this.props.message}
             handleMessageEvents={this.props.handleMessageEvents}
+          />
+        )}
+        {this.props.message.content_type === 'media'
+        && this.props.message.content_media_type === 'sticker'
+        && (
+          <StickerMessage
+            handleMessageEvents={this.props.handleMessageEvents}
+            message={this.props.message}
+            onClick={this.props.openImage}
           />
         )}
       </div>

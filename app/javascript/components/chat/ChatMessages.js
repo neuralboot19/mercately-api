@@ -454,13 +454,13 @@ class ChatMessages extends Component {
   }
 
   setFocus = (position) => {
-    if (!this.canSendMessages())
+    if (!this.canSendMessages()) {
       return true;
-
-    let node = document.getElementById("divMessage");
+    }
+    const node = document.getElementById("divMessage");
     let caret = 0;
-    let input = $(node);
-    let text = input.text();
+    const input = $(node);
+    const text = input.text();
 
     node.focus();
 
@@ -471,12 +471,18 @@ class ChatMessages extends Component {
     }
 
     if (caret > 0) {
-      let textNode = node.firstChild;
-      let range = document.createRange();
-      range.setStart(textNode, caret);
-      range.setEnd(textNode, caret);
+      const range = document.createRange();
+      let dynamicCaret = caret;
+      node.childNodes.forEach((textNode) => {
+        if (dynamicCaret <= textNode.length) {
+          range.setStart(textNode, dynamicCaret);
+          range.setEnd(textNode, dynamicCaret);
+          return;
+        }
+        dynamicCaret -= textNode.length;
+      });
 
-      let sel = window.getSelection();
+      const sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
     }
@@ -526,7 +532,10 @@ class ChatMessages extends Component {
   }
 
   getCaretPosition = () => {
-    let sel, range, editableDiv = document.getElementById('divMessage');
+    let sel;
+    let range;
+    const editableDiv = document.getElementById('divMessage');
+    editableDiv.normalize();
 
     if (window.getSelection) {
       sel = window.getSelection();
@@ -617,7 +626,6 @@ class ChatMessages extends Component {
             this.canSendMessages() &&
               <div className="col-xs-12 chat-input">
                 <MessageForm
-                  currentCustomer={this.props.currentCustomer}
                   handleSubmitMessage={this.handleSubmitMessage}
                   handleSubmitImg={this.handleSubmitImg}
                   toggleFastAnswers={this.toggleFastAnswers}

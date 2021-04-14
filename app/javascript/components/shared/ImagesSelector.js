@@ -32,7 +32,7 @@ class ImagesSelector extends Component {
 
   render() {
     return (
-      <Modal isOpen={this.props.showLoadImages} style={customStyles}>
+      <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showLoadImages} style={customStyles}>
         <div className={this.props.onMobile ? "row mt-50" : "row" }>
           <div className="col-md-10">
             <p className={this.props.onMobile ? "fs-20 mt-0" : "fs-30 mt-0" }>Imágenes</p>

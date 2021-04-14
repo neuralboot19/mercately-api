@@ -225,13 +225,15 @@ class ChatMessages extends Component {
   }
 
   onKeyPress = (e) => {
-    if (e.which === 13) {
+    if (e.which === 13 && e.shiftKey && e.target.innerText.trim() === "") e.preventDefault();
+    if (e.which === 13 && !e.shiftKey) {
       e.preventDefault();
       this.handleSubmit(e);
     }
   }
 
   handleSubmit = (e) => {
+    e.persist();
     this.setState({
       showEmojiPicker: false
     });
@@ -295,8 +297,6 @@ class ChatMessages extends Component {
       this.scrollToBottom();
     });
   }
-
-
 
   removeFromMessagesByTextContent = (text, id) => {
     const { messages } = this.state;
@@ -394,7 +394,7 @@ class ChatMessages extends Component {
     let type;
     let caption;
     let filename;
-    const uuid = uuidv4(); 
+    const uuid = uuidv4();
     const input = $('#divMessage');
     const data = new FormData();
 
@@ -487,7 +487,9 @@ class ChatMessages extends Component {
       return 'audio';
     } if (type.includes('video/') || type === 'video') {
       return 'video';
-    }
+    } if (type === 'sticker') {
+      return 'sticker';
+    } 
     return null;
   }
 
@@ -687,7 +689,7 @@ class ChatMessages extends Component {
     }
     if (['voice', 'audio'].includes(this.fileType(message.content_media_type))) {
       classes += ' video-audio no-background';
-    } else if (['image', 'video'].includes(this.fileType(message.content_media_type))) {
+    } else if (['image', 'video', 'sticker'].includes(this.fileType(message.content_media_type))) {
       classes += ' no-background media-container';
     }
     return classes;
@@ -775,10 +777,16 @@ class ChatMessages extends Component {
     }
 
     if (caret > 0) {
-      const textNode = node.firstChild;
       const range = document.createRange();
-      range.setStart(textNode, caret);
-      range.setEnd(textNode, caret);
+      let dynamicCaret = caret;
+      node.childNodes.forEach((textNode) => {
+        if (dynamicCaret <= textNode.length) {
+          range.setStart(textNode, dynamicCaret);
+          range.setEnd(textNode, dynamicCaret);
+          return;
+        }
+        dynamicCaret -= textNode.length;
+      });
 
       const sel = window.getSelection();
       sel.removeAllRanges();
@@ -1005,8 +1013,10 @@ class ChatMessages extends Component {
   }
 
   getCaretPosition = () => {
-    let sel; let range; const
-      editableDiv = document.getElementById('divMessage');
+    let sel;
+    let range;
+    const editableDiv = document.getElementById('divMessage');
+    editableDiv.normalize();
 
     if (window.getSelection) {
       sel = window.getSelection();
