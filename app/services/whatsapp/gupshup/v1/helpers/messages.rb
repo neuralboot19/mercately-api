@@ -185,6 +185,7 @@ module Whatsapp::Gupshup::V1::Helpers
         return 'Audio' if ['audio', 'voice'].include?(message.type)
         return 'Ubicación' if message.type == 'location'
         return 'Contacto' if message.type == 'contact'
+        return 'Sticker' if message.type == 'sticker'
         message.message_payload['payload'].try(:[], 'payload').try(:[], 'text') || message.message_payload['text']
       end
   end

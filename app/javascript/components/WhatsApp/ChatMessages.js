@@ -487,7 +487,9 @@ class ChatMessages extends Component {
       return 'audio';
     } if (type.includes('video/') || type === 'video') {
       return 'video';
-    }
+    } if (type === 'sticker') {
+      return 'sticker';
+    } 
     return null;
   }
 
@@ -687,7 +689,7 @@ class ChatMessages extends Component {
     }
     if (['voice', 'audio'].includes(this.fileType(message.content_media_type))) {
       classes += ' video-audio no-background';
-    } else if (['image', 'video'].includes(this.fileType(message.content_media_type))) {
+    } else if (['image', 'video', 'sticker'].includes(this.fileType(message.content_media_type))) {
       classes += ' no-background media-container';
     }
     return classes;
