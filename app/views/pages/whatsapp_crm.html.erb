@@ -449,19 +449,26 @@ dinero' %>
                   </div>
                   <div class="mt-8 mb-12">
                     <%= label_tag :employee_quantity, 'Cantidad de empleados' %>
-                    <%= text_field_tag :employee_quantity, nil, class: 'input h-unset' %>
+                    <%= text_field_tag :employee_quantity, nil, class: 'input h-unset w-100 only-numbers' %>
                   </div>
-                  <div class="mt-8 mb-12">
-                    <%= label_tag :phone, 'Teléfono*' %>
-                    <%= text_field_tag :phone, nil, class: 'input width-100 validate-required', placeholder: '098-333-4444' %>
-                    <i class="validation-msg"></i>
+                  <div class="row">
+                    <div class="mt-8 mb-12 col-xs-6 col-md-6">
+                      <%= label_tag :country, 'Código del País*' %>
+                      <%= country_select("country", nil, { format: :with_country_code, include_blank: true }, class: 'input w-100 validate-required') %>
+                      <i class="validation-msg"></i>
+                    </div>
+                    <div class="mt-8 mb-12 col-xs-6 col-md-6 pl-0">
+                      <%= label_tag :phone, 'Teléfono*' %>
+                      <%= text_field_tag :phone, nil, class: 'input width-100 validate-required only-numbers', placeholder: '098-333-4444' %>
+                      <i class="validation-msg"></i>
+                    </div>
                   </div>
                   <div class="mt-8 mb-12">
                     <%= label_tag :message, 'Mensaje*' %>
                     <%= text_area_tag :message, nil, class: 'input width-100 h-unset validate-required', min: 40 %>
                     <i class="validation-msg"></i>
                   </div>
-                  <div class="mt-8 mb-12 pr-3">
+                  <div class="mt-8 mb-12">
                     <%= label_tag :problem_to_resolve, '¿Que deseas resolver con Mercately?' %>
                     <select name="problem_to_resolve" id="problem_to_resolve" class="input h-unset w-100 validate-required">
                       <option disabled selected value="" hidden></option>
@@ -505,5 +512,15 @@ dinero' %>
     $('#modal--toggle').on('change', function(e) {
       $('body').toggleClass('o-hidden');
     })
+
+    window.addEventListener('load', () => {
+      const inputs = document.querySelectorAll('.only-numbers');
+
+      inputs.forEach((elem) => {
+        elem.addEventListener('keypress', (event) => {
+          onlyNumber(event);
+        });
+      });
+    });
   })
 </script>

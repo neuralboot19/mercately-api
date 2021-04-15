@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_11_194936) do
+ActiveRecord::Schema.define(version: 2021_04_21_202809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -359,6 +359,20 @@ ActiveRecord::Schema.define(version: 2021_04_11_194936) do
     t.index ["psid"], name: "index_customers_on_psid"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
     t.index ["ws_active"], name: "index_customers_on_ws_active"
+  end
+
+  create_table "demo_request_leads", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.string "company"
+    t.integer "employee_quantity"
+    t.string "country"
+    t.string "phone"
+    t.string "message"
+    t.string "problem_to_resolve"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "facebook_catalogs", force: :cascade do |t|

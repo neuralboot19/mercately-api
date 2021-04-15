@@ -6,7 +6,15 @@ RSpec.describe 'Pages', type: :request do
       get '/'
       expect(response).to render_template(:index)
 
-      post '/request_demo', params: { name: 'John Doe', email: 'john@doe.com', phone: '098-333-4444' }
+      post '/request_demo', params: {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        company: 'Test',
+        country: 'EC',
+        phone: '098-333-4444',
+        message: 'Test',
+        problem_to_resolve: 'Test'
+      }
       expect(ActionMailer::Base.deliveries.size).to eq 1
       expect(response).to redirect_to('/')
 
@@ -20,7 +28,17 @@ RSpec.describe 'Pages', type: :request do
         get '/'
         expect(response).to render_template(:index)
 
-        post '/request_demo', params: { name: 'John Doe', email: 'john@doe.com', phone: '098-333-4444' , 'from-ws-crm': true , 'g-recaptcha-response': 'schedule'}
+        post '/request_demo', params: {
+          name: 'John Doe',
+          email: 'john@doe.com',
+          company: 'Test',
+          country: 'EC',
+          phone: '098-333-4444',
+          message: 'Test',
+          problem_to_resolve: 'Test',
+          'from-ws-crm': true,
+          'g-recaptcha-response': 'schedule'
+        }
         expect(ActionMailer::Base.deliveries.size).to eq 1
         expect(response).to redirect_to whatsapp_crm_path
 
@@ -34,9 +52,18 @@ RSpec.describe 'Pages', type: :request do
         expect(response).to render_template(:index)
         expect_any_instance_of(PagesController).to receive(:verify_recaptcha).and_return(false)
 
-        post '/request_demo', params: { name: 'John Doe', email: 'john@doe.com', phone: '098-333-4444' ,'from-ws-crm': true   }
+        post '/request_demo', params: {
+          name: 'John Doe',
+          email: 'john@doe.com',
+          company: 'Test',
+          country: 'EC',
+          phone: '098-333-4444',
+          message: 'Test',
+          problem_to_resolve: 'Test',
+          'from-ws-crm': true
+        }
         expect(assigns(:show_checkbox_recaptcha)).to eq(true)
-        expect(response).to render_template(:whatsapp_crm)
+        expect(response).to redirect_to(whatsapp_crm_path)
       end
     end
 
@@ -45,9 +72,17 @@ RSpec.describe 'Pages', type: :request do
       expect(response).to render_template(:index)
       expect_any_instance_of(PagesController).to receive(:verify_recaptcha).and_return(false)
 
-      post '/request_demo', params: { name: 'John Doe', email: 'john@doe.com', phone: '098-333-4444'  }
+      post '/request_demo', params: {
+        name: 'John Doe',
+        email: 'john@doe.com',
+        company: 'Test',
+        country: 'EC',
+        phone: '098-333-4444',
+        message: 'Test',
+        problem_to_resolve: 'Test'
+      }
       expect(assigns(:show_checkbox_recaptcha)).to eq(true)
-      expect(response).to render_template(:index)
+      expect(response).to redirect_to(root_path)
     end
   end
 end

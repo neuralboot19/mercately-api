@@ -72,12 +72,19 @@
                   </div>
                   <div class="mt-8 mb-12">
                     <%= label_tag :employee_quantity, 'Cantidad de empleados' %>
-                    <%= text_field_tag :employee_quantity, nil, class: 'input h-unset' %>
+                    <%= text_field_tag :employee_quantity, nil, class: 'input h-unset only-numbers' %>
                   </div>
-                  <div class="mt-8 mb-12">
-                    <%= label_tag :phone, 'Teléfono*' %>
-                    <%= text_field_tag :phone, nil, class: 'input validate-required', placeholder: '098-333-4444' %>
-                    <i class="validation-msg"></i>
+                  <div class="row">
+                    <div class="mt-8 mb-12 col-xs-6 col-md-6 pr-0">
+                      <%= label_tag :country, 'Código del País*' %>
+                      <%= country_select("country", nil, { format: :with_country_code, include_blank: true }, class: 'input validate-required') %>
+                      <i class="validation-msg"></i>
+                    </div>
+                    <div class="mt-8 mb-12 col-xs-6 col-md-6 pl-0">
+                      <%= label_tag :phone, 'Teléfono*' %>
+                      <%= text_field_tag :phone, nil, class: 'input validate-required only-numbers', placeholder: '098-333-4444' %>
+                      <i class="validation-msg"></i>
+                    </div>
                   </div>
                   <div class="mt-8 mb-12">
                     <%= label_tag :message, 'Mensaje*' %>
@@ -128,5 +135,15 @@
     $('#modal--toggle').on('change', function(e) {
       $('body').toggleClass('o-hidden');
     })
+
+    window.addEventListener('load', () => {
+      const inputs = document.querySelectorAll('.only-numbers');
+
+      inputs.forEach((elem) => {
+        elem.addEventListener('keypress', (event) => {
+          onlyNumber(event);
+        });
+      });
+    });
   })
 </script>
