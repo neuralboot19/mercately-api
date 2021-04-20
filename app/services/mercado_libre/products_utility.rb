@@ -210,11 +210,11 @@ module MercadoLibre
 
     def new_product_has_parent?(product, product_info)
       product.new_record? && product_info['parent_item_id'].present? &&
-        Product.exists?(meli_product_id: product_info['parent_item_id'])
+        Product.unscoped.exists?(meli_product_id: product_info['parent_item_id'])
     end
 
     def search_product(product, retailer, product_info, new_product_with_parent)
-      return Product.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
+      return Product.unscoped.find_or_initialize_by(meli_product_id: product_info['parent_item_id']) if
         new_product_with_parent
 
       aux_product = retailer.products.where('meli_parent @> ?', [{ 'parent': product_info['id'] }].to_json).first if

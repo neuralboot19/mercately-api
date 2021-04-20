@@ -47,19 +47,19 @@ class Retailer < ApplicationRecord
   validates :slug, uniqueness: true
 
   before_validation :gupshup_src_name_to_nil
-  after_save :generate_slug, if: :saved_change_to_name?
-  after_save :add_sales_channel
   before_create :format_phone_number
+  before_save :set_ml_domain, if: :will_save_change_to_ml_site?
   after_create :save_free_plan
   after_create :send_to_mailchimp
-  before_create :format_phone_number
   after_update :import_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
+  after_save :generate_slug, if: :saved_change_to_name?
+  after_save :add_sales_channel
 
   validates :slug,
             exclusion: { in: %w(www),
             message: "%{value} is reserved." }
 
-  enum id_type: %i[cedula pasaporte ruc]
+  enum id_type: %i[cedula pasaporte ruc rut]
   enum hubspot_match: %i[phone_or_email phone email], _prefix: true
 
   def facebook_unread_messages
@@ -268,5 +268,14 @@ class Retailer < ApplicationRecord
 
     def hubspot
       @hubspot = HubspotService::Api.new(hs_access_token)
+    end
+
+    def set_ml_domain
+      self.ml_domain = case ml_site
+                       when 'MLC'
+                         'cl'
+                       else
+                         'com.ec'
+                       end
     end
 end

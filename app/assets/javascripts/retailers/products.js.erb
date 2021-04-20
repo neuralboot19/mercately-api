@@ -593,7 +593,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   productId = document.getElementById('product_id').value;
 
-  if (!productId) {
+  if (!productId && childs_select) {
     getAjax(`${window.location.origin}/categories`, function(data) {
       var json = JSON.parse(data);
 

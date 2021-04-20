@@ -95,7 +95,7 @@ class Retailers::ProductsController < RetailersController
     render json: {
       product: @product,
       variations: @product.product_variations,
-      template: @product.category.clean_template_variations
+      template: @product.category&.clean_template_variations
     }
   end
 

@@ -37,7 +37,7 @@
               <div class="box">
                 <div class="row">
                   <% if @retailer.meli_retailer && (@product.new_record? || @product.meli_product_id.blank?) && @product.status != 'archived' &&
-                      @retailer.incomplete_meli_profile? == false %>
+                      @retailer.incomplete_meli_profile? == false && @retailer.ml_site == 'MEC' %>
                     <div class="col-xs-12 pl-0 col-sm-6 my-16">
                       <%= f.label :upload_product, 'Publicar producto en MercadoLibre' %><br/>
                       <% if @product.new_record? %>

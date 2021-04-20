@@ -92,14 +92,16 @@
         <div class="col-xs-12 col-sm-7 mt-40">
           <div class="t-center mb-10">Productos más vendidos</div>
           <div class="dash-products-clients-container">
+            <!--
             <div class="row col-xs-12 col-sm-12 dashboard-tabs px-0">
-              <div id="dash-products-tab" class="col-xs-12 col-sm-6 tab-links t-center py-10 selected-tab">
+              <div id="dash-products-tab" class="col-xs-12 tab-links t-center py-10 selected-tab">
                 Productos
               </div>
               <div id="dash-categories-tab" class="col-xs-12 col-sm-6 tab-links t-center py-10">
                 Categorías
               </div>
             </div>
+            -->
             <div id="dash-products-content" class="col-xs-12 col-sm-12 tabs-content">
               <div class="row">
                 <div class="col-xs-12 col-sm-12 mt-10">
@@ -260,17 +262,19 @@
 
     $('#dash-products-tab').on('click', function() {
       $('#dash-products-tab').addClass('selected-tab');
-      $('#dash-categories-tab').removeClass('selected-tab');
+      // $('#dash-categories-tab').removeClass('selected-tab');
       $('#dash-products-content').show();
       $('#dash-categories-content').hide();
     });
 
+      /*
     $('#dash-categories-tab').on('click', function() {
       $('#dash-categories-tab').addClass('selected-tab');
       $('#dash-products-tab').removeClass('selected-tab');
       $('#dash-products-content').hide();
       $('#dash-categories-content').show();
     });
+     */
 
     $('#date-picker-container, #search_range').on('click', function() {
       $('#search_range').data('daterangepicker').toggle();

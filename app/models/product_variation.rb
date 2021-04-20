@@ -8,6 +8,11 @@ class ProductVariation < ApplicationRecord
 
   scope :all_variations, -> (product_id) { unscope(:where).where(product_id: product_id) }
 
+  def product
+    @product ||= super
+    @product ||= Product.unscoped.find_by(id: product_id)
+  end
+
   def update_data(ml_data)
     variation_ids = ml_data['variations'].map { |var| var['id'] }.compact
     current_variation_ids = product.product_variations.pluck(:variation_meli_id).compact

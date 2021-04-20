@@ -1,6 +1,7 @@
 class CategoriesController < ApplicationController
   def roots
-    @roots = Category.active.roots.order(:name)
+    ml_site = current_retailer_user.retailer.ml_site
+    @roots = Category.active.roots.where("meli_id LIKE '#{ml_site}%'").order(:name)
     render json: { roots: @roots }
   end
 

@@ -22,6 +22,11 @@ class OrderItem < ApplicationRecord
     quantity * unit_price
   end
 
+  def product
+    @product ||= super
+    @product ||= Product.unscoped.find_by(id: product_id)
+  end
+
   private
 
     # TODO: Move to service

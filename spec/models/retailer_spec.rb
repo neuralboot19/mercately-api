@@ -5,7 +5,7 @@ RSpec.describe Retailer, type: :model do
   subject(:retailer) { build(:retailer) }
 
   describe 'enums' do
-    it { is_expected.to define_enum_for(:id_type).with_values(%i[cedula pasaporte ruc]) }
+    it { is_expected.to define_enum_for(:id_type).with_values(%i[cedula pasaporte ruc rut]) }
   end
 
   describe 'associations' do

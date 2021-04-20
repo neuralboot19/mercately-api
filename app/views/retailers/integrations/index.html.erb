@@ -24,7 +24,7 @@
                 <li>Recibe y envía mensajes directos desde Mercately a Facebook Messenger.</li>
                 <li>Utiliza nuestras plantillas para agilizar tus conversaciones.</li>
                 <li>Conoce a tus clientes más a fondo con nuestro CRM.</li>
-                <li>Responde a los chats y comentarios de Mercadolibre más rápido mediantes nuestras plantillas.</li>
+                <li>Responde a los chats y comentarios de Mercadolibre más rápido mediante nuestras plantillas.</li>
                 <li>Inicia conversaciones efectivas con tus clientes por medio de nuestras <strong>campañas de Facebook Messenger</strong>.</li>
               </ul>
             </div>
@@ -44,7 +44,7 @@
               Conecta tu tienda de Mercado Libre con Mercately y accede a las siguientes funcionalidades:<br/>
               <ul class="t-justify mx-12 pb-45">
                 <li>Recibe órdenes directamente de Mercadolibre o crea órdenes de tu tienda física. Olvídate de sincronizar tu inventario con cada orden y recibe más información de tus clientes.</li>
-                <li>Responde a los chats y comentarios de Mercadolibre más rápido mediantes nuestras plantillas.</li>
+                <li>Responde a los chats y comentarios de Mercadolibre más rápido mediante nuestras plantillas.</li>
               </ul>
             </div>
           </div>
@@ -52,7 +52,7 @@
             <% if current_retailer.meli_retailer %>
               <p class="c-green fs-18 fs-sm-and-down-12">Conectado con Mercado Libre Exitosamente</p>
             <% else %>
-              <%= link_to 'Conectar con Mercado Libre', ec_auth_url, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
+              <%= link_to 'Conectar con Mercado Libre', ml_auth_url(current_retailer), class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
             <% end %>
           </div>
         </div>
