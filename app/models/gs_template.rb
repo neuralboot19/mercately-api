@@ -2,10 +2,11 @@ class GsTemplate < ApplicationRecord
   belongs_to :retailer
 
   validates_presence_of :label, :key, :category, :text, :example, :language
-  validates_length_of :text, maximum: 1024, too_long: 'Máximo 1024 caracteres (sin contar variables)',
-    if: -> (obj) { obj.label.gsub(/{{\d}}/, '').length > 1024 }
+  validates_length_of :text, maximum: 1024, message: 'Texto de la plantilla muy largo. ' \
+    'Máximo 1024 caracteres (sin contar variables)'
+  validates :label, uniqueness: { scope: :retailer_id, message: 'Etiqueta ya está en uso' }
+
   validate :vars_repeated?
-  validate :example_match?
 
   before_create :format_label
   after_create :send_submitted_email, if: :pending?
@@ -35,29 +36,18 @@ class GsTemplate < ApplicationRecord
       GsTemplateMailer.submitted(id).deliver_now
     end
 
-    def example_match?
-      return true if text.gsub(/{{\d}}/, '') == example.gsub(/\[.*?\]/, '')
-
-      errors.add(:base, 'El texto y el ejemplo no coinciden')
-    end
-
     def format_label
       label.downcase!
       label.gsub!(/ /, '_')
       label.gsub!(/[^a-z0-9_]/, '')
     end
 
+    # Se buscan variables repetidas
     def vars_repeated?
-      repeated = false
-      (1..100).each do |n|
-        # Si no hay mas variables por revisar, salimos del metodo
-        return if text.scan(/\{\{#{n}\}\}/).length.zero?
-        # Si hay mas de una variable con el mismo identificador se rompe el bucle
-        repeated = true if text.scan(/\{\{#{n}\}\}/).length > 1
-        break if repeated
-      end
+      vars = text.scan(/({{[1-9]+[0-9]*}})/).flatten
+      counts = vars.group_by(&:itself).transform_values(&:count)
+      return false unless counts.map { |k, v| v > 1 }.any?
 
-      # Y se a;ade el error
-      errors.add(:base, 'Hay variables repetidas') if repeated
+      errors.add(:base, 'Hay variables repetidas')
     end
 end

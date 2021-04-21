@@ -16,7 +16,8 @@ class Retailers::GsTemplatesController < RetailersController
     @gs_template = current_retailer.gs_templates.new(gs_template_params)
 
     if @gs_template.save
-      redirect_to retailers_gs_templates_path(current_retailer), notice: 'Plantilla creada con éxito.'
+      redirect_to retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), notice:
+        'Plantilla creada con éxito.'
     else
       render :new
     end

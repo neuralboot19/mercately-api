@@ -58,9 +58,9 @@
             </i>
           </div>
           <div class="my-16 col-xs-12 col-md-6">
-            <%= f.label :example, 'Ejemplo de la plantilla' %>
-            <%= f.text_area :example, class: 'input mh-100 validate-required h-unset' %>
-            <i class="validation-msg"></i>
+            <%= f.label 'Ejemplo de la plantilla' %>
+            <%= f.text_area :example, class: 'd-none' %>
+            <div id="template-example" class="template-example-container text-pre-line"></div>
             <i class="subtitle">
               (Un mensaje de muestra debe ser un mensaje completo que reemplace el marcador de posición dado en la plantilla con una palabra / declaración / números / caracteres especiales significativos.)
               <br/>
@@ -91,7 +91,12 @@
 </script>
 <script type="text/javascript">
   $(document).ready(function() {
-    $("#gs_template_text").emojioneArea();
-    $("#gs_template_example").emojioneArea();
+    let el = $("#gs_template_text").emojioneArea();
+
+    el[0].emojioneArea.on("keyup emojibtn.click ready", function() {
+      updateExample(el[0].emojioneArea.getText());
+    });
   });
 </script>
+
+<script src="<%= asset_path 'retailers/gs_templates/gs_templates.js' %>" charset="utf-8"></script>
