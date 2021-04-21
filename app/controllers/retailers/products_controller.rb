@@ -56,8 +56,9 @@ class Retailers::ProductsController < RetailersController
     if @product.save
       @product.update_main_picture
       @product.reload
-      post_product_to_ml
-      post_product_to_facebook
+      @product.upload_variations(action_name, @variations)
+      # post_product_to_ml
+      # post_product_to_facebook
       redirect_to retailers_product_path(@retailer, @product), notice: notice_to_show
     else
       render :new
@@ -78,9 +79,10 @@ class Retailers::ProductsController < RetailersController
 
     if @product.update(product_params)
       # Actualiza la imagen principal y maneja el borrado de las imagenes de ser necesario
+      @product.upload_variations(action_name, @variations)
       after_update_product
-      update_meli_info
-      update_facebook_product
+      # update_meli_info
+      # update_facebook_product
       redirect_to retailers_product_path(@retailer, @product), notice: notice_to_show_update
     else
       render :edit

@@ -6,7 +6,7 @@ class Retailers::OrdersController < RetailersController
   before_action :process_customer, only: [:create, :update]
 
   def index
-    @orders = Order.includes(products: :product_variations).retailer_orders(current_retailer.id, params['status'])
+    @orders = Order.retailer_orders(current_retailer.id, params['status'])
       .order('created_at desc').page(params[:page])
   end
 

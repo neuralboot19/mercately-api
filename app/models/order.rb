@@ -7,14 +7,14 @@ class Order < ApplicationRecord
   belongs_to :retailer_user, required: false
   belongs_to :sales_channel, required: false
   has_many :order_items, inverse_of: :order, dependent: :destroy
-  has_many :products, through: :order_items
+  has_many :products, -> (obj) { unscope(:where).where(order_items: { order_id: obj.id }) }, through: :order_items
   has_many :messages
 
   validates :feedback_message, length: { maximum: 160 }, if: :feedback_message?
 
   before_save :set_positive_rating, if: :will_save_change_to_status?
   before_update :set_old_status, if: :will_save_change_to_status?
-  after_update :adjust_ml_stock, if: :saved_change_to_status?
+  after_update :adjust_stock, if: :saved_change_to_status?
   after_create :generate_web_id
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
@@ -67,12 +67,12 @@ class Order < ApplicationRecord
 
   private
 
-    def adjust_ml_stock
+    def adjust_stock
       if from_pending_to_cancelled?
         update_items
-        push_feedback if feedback_reason.present?
+        # push_feedback if feedback_reason.present?
       elsif from_pending_to_success?
-        push_feedback
+        # push_feedback
       elsif from_success_to_cancelled?
         update_items
       end
@@ -113,8 +113,8 @@ class Order < ApplicationRecord
           product.update(sold_quantity: new_sold_quantity)
         end
 
-        update_ml(product) if from_success_to_cancelled?
-        product.update_status_publishment(true)
+        # update_ml(product) if from_success_to_cancelled?
+        # product.update_status_publishment(true)
       end
     end
 

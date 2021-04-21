@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-xs-12 col-md-6">
         <h1 class="my-0"><%= @product.title %></h1>
-        <div class="product__categories mt-0"><%= @product.category.name %></div>
+        <div class="product__categories mt-0"><%# @product.category.name %>&nbsp;</div>
       </div>
       <div class="col-xs-12 col-md-6 mt-16 t-right button-sm-and-down">
         <%= link_to retailers_products_path(current_retailer, q: { 'status_eq': @product.status == 'active' ? '0' : '1', 's': 'created_at desc' }), class: 'btn btn--cta' do %>
@@ -69,6 +69,16 @@
               </div>
             </div>
           </div>
+          <% if @product.url.present? %>
+            <div class="row">
+              <div class="col-xs-12 c-gray-label my-8">URL:</div>
+              <div class="col-xs-12">
+                <div class="p-16 c-grey t-justify">
+                  <%= link_to @product.url, @product.url, target: :_blank %>
+                </div>
+              </div>
+            </div>
+          <% end %>
           <% if @product.code.present? %>
             <div class="row">
               <div class="col-xs-12 c-gray-label my-8">Código:</div>
@@ -80,7 +90,8 @@
             </div>
           <% end %>
 
-          <% if current_retailer.facebook_catalog&.connected? %>
+          <%# if current_retailer.facebook_catalog&.connected? %>
+          <% if false %>
             <div class="row info__details">
               <div class="col-xs-12 c-gray-label my-8">Características de Facebook:</div>
               <div class="col-xs-12 col-sm-12">
@@ -99,25 +110,27 @@
           <% end %>
 
           <div class="row info__details">
-            <% if current_retailer.meli_retailer %>
-              <div class="col-xs-12 c-gray-label my-8">Características de Mercado Libre:</div>
-            <% else %>
-              <div class="col-xs-12 c-gray-label my-8">Características:</div>
+            <%# if current_retailer.meli_retailer %>
+              <%# <div class="col-xs-12 c-gray-label my-8">Características de Mercado Libre:</div> %>
+            <%# else %>
+              <%# <div class="col-xs-12 c-gray-label my-8">Características:</div> %>
+            <%# end %>
+            <% if false %>
+              <div class="col-xs-12 col-sm-12">
+                <table class="table_details w-100">
+                  <% @product.editable_attributes.each do |attribute| %>
+                    <tr>
+                      <td class="table_details__descriptor">
+                        <%= attribute["name"] || attribute["id"] %>
+                      </td>
+                      <td class="table_details__value">
+                        <%= attribute["value_name"] %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </table>
+              </div>
             <% end %>
-            <div class="col-xs-12 col-sm-12">
-              <table class="table_details w-100">
-                <% @product.editable_attributes.each do |attribute| %>
-                  <tr>
-                    <td class="table_details__descriptor">
-                      <%= attribute["name"] || attribute["id"] %>
-                    </td>
-                    <td class="table_details__value">
-                      <%= attribute["value_name"] %>
-                    </td>
-                  </tr>
-                <% end %>
-              </table>
-            </div>
             <% if @product.product_variations.present? %>
               <div class="col-xs-12 c-gray-label my-8">Variaciones:</div>
               <div class="col-xs-12 col-sm-12">
@@ -198,7 +211,8 @@
                 </div>
               </div>
             </div>
-            <% if @product.meli_product_id %>
+            <%# if @product.meli_product_id %>
+            <% if false %>
               <div class="col-xs-12 card__module">
                 <div class="card__title"><%= image_tag 'dashboard/ml_logo.png', class: 'h-18 w-23' %> Mercado Libre Info</div>
                 <div class="box">
@@ -249,7 +263,8 @@
                 </div>
               </div>
             <% end %>
-            <% if @product.facebook_product_id %>
+            <%# if @product.facebook_product_id %>
+            <% if false %>
               <div class="col-xs-12 card__module">
                 <div class="card__title"><i class="fab fa-facebook c-secondary"></i> Facebook Info</div>
                 <div class="box">

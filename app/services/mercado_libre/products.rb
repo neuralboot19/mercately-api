@@ -209,7 +209,7 @@ module MercadoLibre
 
         pull_images(product, product_info['pictures'])
 
-        product.update_facebook_product
+        # product.update_facebook_product
         @ml_questions.import_inherited_questions(product) if new_product_with_parent
       end
 

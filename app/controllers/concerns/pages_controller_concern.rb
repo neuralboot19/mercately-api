@@ -46,7 +46,7 @@ module PagesControllerConcern
       .where(
         id: category_ids,
         products: { retailer_id: current_retailer.id },
-        orders: { status: 1, created_at:@start_date.to_datetime..@end_date.to_datetime }
+        orders: { status: 1, created_at: @start_date.to_datetime..@end_date.to_datetime }
       ).group(:id).order(Arel.sql('sum(order_items.quantity * order_items.unit_price) desc'))
   end
 
@@ -55,7 +55,7 @@ module PagesControllerConcern
     q = {
       orders_status_eq: 1,
       orders_created_at_gteq: @start_date,
-      orders_created_at_lteq:@end_date,
+      orders_created_at_lteq: @end_date,
       s: 'sort_by_total desc'
     }
     @best_clients = current_retailer.customers.ransack(q).result.group('customers.id').limit(10)
