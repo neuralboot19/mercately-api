@@ -104,7 +104,7 @@
         <ul class="submenu no-style">
           <% if current_retailer.whatsapp_integrated? %>
             <li class="submenu__item">
-              <%= link_to 'Plantillas de WhatsApp', retailers_gs_templates_path(current_retailer), class: 'item__name no-style' %>
+              <%= link_to 'Plantillas de WhatsApp', retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
             </li>
           <% end %>
           <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer %>
@@ -283,7 +283,7 @@
               <div class="divider"></div>
               <% if current_retailer.whatsapp_integrated? %>
                 <div>
-                  <%= link_to retailers_gs_templates_path(current_retailer), class: 'c-secondary no-style' do %>
+                  <%= link_to retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'c-secondary no-style' do %>
                     Plantillas de WhatsApp
                   <% end %>
                 </div>

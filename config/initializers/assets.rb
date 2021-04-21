@@ -40,5 +40,6 @@ Rails.application.config.assets.precompile += %w(
   vendor/assets
   fullcalendar/main.css
   full_calendar.css
+  retailers/gs_templates/gs_templates.js
 )
 Rails.application.config.assets.css_compressor = :sass
