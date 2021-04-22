@@ -18,7 +18,7 @@
               <div class="row">
                 <div class="col-xs-12 px-0 fs-14 no-style-filter">Filtrar por:</div>
                 <div class="col-xs-12 col-sm-2 px-0 fs-14 no-style-filter">Fecha de envío:</div>
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                <div class="col-xs-12 col-sm-4 mt-5 fs-14 no-style-filter p-relative">
                   <div id="date-picker-container" class="select-range" style="width: 190px;">
                     <%= f.text_field :range, value: 'Seleccionar', readonly: true, data: { behavior: 'daterangepicker' } %>
                     <i id="clear_range" class="fas fa-times c-secondary mr-4 cursor-pointer"></i>
@@ -27,7 +27,7 @@
                 </div>
 
                 <div class="col-xs-12 col-sm-2 mt-5 pl-0 fs-14 no-style-filter t-right ordering-label">Estado:</div>
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                <div class="col-xs-12 col-sm-4 mt-5 fs-14 no-style-filter p-relative">
                   <%= select_tag 'q[status_eq]', raw(%Q{
                     <option #{'selected' if params[:q]&.[](:status_eq).blank?} value="none">Todo</option>
                     <option #{'selected' if params[:q]&.[](:status_eq) == '0'} value="0">Pendientes</option>
@@ -39,14 +39,24 @@
               </div>
               <div class="row">
                 <div class="col-xs-12 col-sm-2 px-0 fs-14 no-style-filter">Nombre del cliente:</div>
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                <div class="col-xs-12 col-sm-4 mt-5 fs-14 no-style-filter p-relative">
                   <%= f.text_field :customer_full_name_cont, placeholder: 'Nombre del cliente', value: params[:q]&.[](:customer_full_name_cont), class: 'input search-field' %>
+                </div>
+                <div class="col-xs-12 col-sm-2 px-0 fs-14 t-right no-style-filter ordering-label">Teléfono del cliente:</div>
+                <div class="col-xs-12 col-sm-4 mt-5 fs-14 no-style-filter p-relative">
+                  <%= f.text_field :customer_phone_cont, placeholder: 'Teléfono del cliente', value: params[:q]&.[](:customer_phone_cont), class: 'input search-field' %>
                 </div>
               </div>
               <div class="row">
-                <div class="col-xs-12 col-sm-2 px-0 fs-14 no-style-filter">Teléfono del cliente:</div>
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.text_field :customer_phone_cont, placeholder: 'Teléfono del cliente', value: params[:q]&.[](:customer_phone_cont), class: 'input search-field' %>
+                <div class="col-xs-12 col-sm-2 px-0 fs-14 no-style-filter">Agente:</div>
+                <div class="col-xs-12 col-sm-4 mt-5 fs-14 no-style-filter p-relative">
+                  <%= f.select :customer_agent_id_eq, current_retailer.retailer_users.map{ |ru| [ru.full_name.presence || 'Administrador', ru.id] },
+                    { include_blank: true }, value: params[:q]&.[](:customer_agent_id_eq), class: 'input search-field' %>
+                </div>
+                <div class="col-xs-12 col-sm-2 px-0 fs-14 t-right no-style-filter ordering-label">Remitente:</div>
+                <div class="col-xs-12 col-sm-4 mt-5 fs-14 no-style-filter p-relative">
+                  <%= f.select :retailer_user_id_eq, current_retailer.retailer_users.map{ |ru| [ru.full_name.presence || 'Administrador', ru.id] },
+                    { include_blank: true }, value: params[:q]&.[](:retailer_user_id_eq), class: 'input search-field' %>
                 </div>
               </div>
               <div class="row">

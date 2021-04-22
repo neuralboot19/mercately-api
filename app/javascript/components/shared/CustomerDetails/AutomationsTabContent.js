@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import ShowMoreText from 'react-show-more-text';
 
 const AutomationsTabContent = ({
@@ -51,6 +52,9 @@ const AutomationsTabContent = ({
                 >
                   {reminder.template_text}
                 </ShowMoreText>
+                <span className="c-grey">
+                  {moment(reminder.send_at_timezone).format('DD/MM/YYYY h:mm a')}
+                </span>
               </div>
               <div className="col-xs-6 t-center p-0">
                 {reminderStatus(reminder)}
