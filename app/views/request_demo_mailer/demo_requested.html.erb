@@ -1,14 +1,16 @@
 <b>Nombre:</b><br/>
-<%= @name %><br/>
+<%= @demo_request_lead.name %><br/>
 <b>Email:</b><br/>
-<%= @email %><br/>
+<%= @demo_request_lead.email %><br/>
 <b>Empresa:</b><br/>
-<%= @company %><br/>
-<b>Teléfono:</b><br/>
-<%= @phone %><br/>
-<b>Mensaje:</b><br/>
-<%= @message %><br/>
+<%= @demo_request_lead.company %><br/>
 <b>Cantidad de empleados:</b><br/>
-<%= @employee_quantity %><br/>
+<%= @demo_request_lead.employee_quantity %><br/>
+<b>País:</b><br/>
+<%= @demo_request_lead.country_selected&.name %><br/>
+<b>Teléfono:</b><br/>
+<%= @demo_request_lead.phone %><br/>
+<b>Mensaje:</b><br/>
+<%= @demo_request_lead.message %><br/>
 <b>¿Que deseas resolver con Mercately?:</b><br/>
-<%= @problem_to_resolve %>
+<%= @demo_request_lead.problem_to_resolve %>

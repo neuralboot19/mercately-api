@@ -53,7 +53,18 @@ class PagesController < ApplicationController
                         verify_recaptcha(secret_key: ENV['RECAPTCHA_SECRET_KEY_V2'])
                       end
     if recaptcha_valid
-      RequestDemoMailer.demo_requested(params.to_unsafe_h).deliver_now
+      demo_request_lead = DemoRequestLead.create(
+        name: params[:name],
+        email: params[:email],
+        company: params[:company],
+        employee_quantity: params[:employee_quantity],
+        country: params[:country].is_a?(Array) ? params[:country][0] : params[:country],
+        phone: params[:phone],
+        message: params[:message],
+        problem_to_resolve: params[:problem_to_resolve]
+      )
+
+      RequestDemoMailer.demo_requested(demo_request_lead).deliver_now if demo_request_lead.persisted?
 
       if params['from-ws-crm'].present?
         ahoy.track('WA CRM Request Demo button', {
@@ -78,9 +89,9 @@ class PagesController < ApplicationController
       @show_checkbox_recaptcha = true
 
       if params['from-ws-crm'].present?
-        render :whatsapp_crm, layout: 'new_pages', notice: 'El reCAPTCHA ha fallado, por favor intenta de nuevo'
+        redirect_to whatsapp_crm_path, notice: 'El reCAPTCHA ha fallado, por favor intenta de nuevo'
       else
-        render :index, notice: 'El reCAPTCHA ha fallado, por favor intenta de nuevo'
+        redirect_to root_path, notice: 'El reCAPTCHA ha fallado, por favor intenta de nuevo'
       end
     end
   end
