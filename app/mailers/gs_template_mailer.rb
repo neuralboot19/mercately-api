@@ -1,25 +1,25 @@
 class GsTemplateMailer < ApplicationMailer
-  def accepted(id)
+  def accepted(id, retailer_user)
     @gs_template = GsTemplate.find(id)
-    @retailer = @gs_template.retailer
+    @retailer_user = retailer_user
 
-    mail to: @retailer.admins.pluck(:email),
-      subject: 'Plantilla aceptada'
+    mail to: @retailer_user.email,
+         subject: 'Plantilla aceptada'
   end
 
-  def submitted(id)
+  def submitted(id, retailer_user)
     @gs_template = GsTemplate.find(id)
-    @retailer = @gs_template.retailer
+    @retailer_user = retailer_user
 
-    mail to: @gs_template.retailer.admins.pluck(:email),
-      subject: 'Plantilla enviada a revisión'
+    mail to: @retailer_user.email,
+         subject: 'Plantilla enviada a revisión'
   end
 
-  def rejected(id)
+  def rejected(id, retailer_user)
     @gs_template = GsTemplate.find(id)
-    @retailer = @gs_template.retailer
+    @retailer_user = retailer_user
 
-    mail to: @gs_template.retailer.admins.pluck(:email),
-      subject: 'Plantilla rechazada'
+    mail to: @retailer_user.email,
+         subject: 'Plantilla rechazada'
   end
 end
