@@ -25,15 +25,21 @@ class GsTemplate < ApplicationRecord
   private
 
     def send_accepted_email
-      GsTemplateMailer.accepted(id).deliver_now
+      RetailerUser.active_admins(retailer.id).each do |ru|
+        GsTemplateMailer.accepted(id, ru).deliver_now
+      end
     end
 
     def send_rejected_email
-      GsTemplateMailer.rejected(id).deliver_now
+      RetailerUser.active_admins(retailer.id).each do |ru|
+        GsTemplateMailer.rejected(id, ru).deliver_now
+      end
     end
 
     def send_submitted_email
-      GsTemplateMailer.submitted(id).deliver_now
+      RetailerUser.active_admins(retailer.id).each do |ru|
+        GsTemplateMailer.submitted(id, ru).deliver_now
+      end
     end
 
     def format_label
