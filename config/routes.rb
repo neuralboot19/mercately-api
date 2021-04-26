@@ -293,7 +293,9 @@ Rails.application.routes.draw do
 
   # Blog
   get '/blog', to: 'blogs#index', as: :blog
+  get '/blog/innovacion', to: 'blogs#innovation', as: :blog_innovation
   get '/blog/:id', to: 'blogs#show', as: :blog_content
+  get '/blog/innovacion/:id', to: 'blogs#innovation_content', as: :blog_innovation_content
 
 
 
