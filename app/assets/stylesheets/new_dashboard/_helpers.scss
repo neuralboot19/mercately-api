@@ -655,3 +655,12 @@ label:hover, a:hover, button:hover {
 .border-bottom {
   border-bottom: 1px solid #DDD;
 }
+
+.t-capitalize:first-letter, .capitalize:first-letter {
+  text-transform: capitalize;
+}
+
+.bordered-box {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}

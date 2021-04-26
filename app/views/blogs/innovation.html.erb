@@ -1,0 +1,73 @@
+<div class="blog-hero-holder">
+  <div class="blog-hero-content">
+
+    <div class="container">
+      <h1>Aprende todo sobre Comercio Conversacional y Chatbots</h1>
+      <h2 class="collectionHeader-description js-collectionDescription u-foreground u-baseColor--textNormal u-contentSansRegular u-fontSize24 u-xs-fontSize18">Bienvenido al Blog de Mercately donde encontrarás todo acerca de Chatbots, Ecommerce y Mensajería </h2>
+    </div>
+
+    <div class="blog-landing-list">
+      <li class="">
+        <%= link_to "📲 WhatsApp", blog_category_path("whatsApp") %>
+      </li>
+      <li class="">
+        <%= link_to "🤖 Chatbots", blog_category_path("chatbots") %>
+      </li>
+      <li class="">
+        <%= link_to "🛒Ecommerce", blog_category_path("ecommerce") %>
+      </li>
+      <li class="">
+        <%= link_to "💡 Innovación", blog_innovation_path %>
+      </li>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="post-entries-container">
+    <div class="row">
+      <% @documents.each_with_index do |doc, index| %>
+        <% if index == 9 %>
+          <div class="post-sell">
+
+            <p>Mejora tu servicio al cliente y automatiza tus procesos de mensajería por WhatsApp y Messenger.
+              <br /> <br />
+              <span>
+                <a class="post-sell-cta" href="https://mercately.com/" rel="nofollow noopener" target="_blank">👉¡Empieza a automatizar hoy mismo!</a>
+              </span>
+            <p>
+          </div>
+        <% end %>
+        <div class="col-md-4 blog_grid_post_style">
+          <div class="post-entry-wrapper">
+            <div class="entry-image-post-thumb">
+              <%= link_to blog_innovation_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
+              <img src="<%= doc['funcionalidades.blog_index_image']&.url %>" class="post-entry-img" alt="">
+              <div class="background_over_image"></div>
+              <% end %>
+              <span class="post-entry-category">
+                <a class="category-link" style="background:#36c942" href="#">
+                  <%= doc['funcionalidades.category']&.as_text() %>
+                </a>
+              </span>
+            </div>
+            <div class="post-entry-content">
+              <h3 class="post-entry-title">
+                <%= link_to blog_innovation_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
+                  <%=  doc['funcionalidades.blog_title'].as_text() %>
+                <% end %>
+              </h3>
+              <div class="">
+                <span class="post-entry-date"><i class="far fa-clock"></i>
+                  <%= doc['funcionalidades.publish_date']&.value&.to_date %></span>
+              </div>
+              <div class="content-post-entry-grid">
+                <%= doc['funcionalidades.blog_previos_content']&.as_html(link_resolver())&.html_safe %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% end %>
+    </div>
+  </div>
+</div>

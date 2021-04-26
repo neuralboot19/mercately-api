@@ -1,0 +1,21 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color">Hola <%= @retailer_user.full_name %>, te saluda el equipo de Mercately.</p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        La campaña "<%= @campaign.name %>" no pudo ser envíada debido a que no cuentas con el saldo suficiente.
+        Por favor, realiza una recarga de saldo <%= link_to 'aquí', retailers_payment_plans_url(@retailer) %> y vuelve a crear la campaña.
+      </p>
+    </div>
+
+    <%= render "shared/emails/footer" %>
+  </div>
+</div>

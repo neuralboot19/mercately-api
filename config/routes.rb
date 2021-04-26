@@ -66,6 +66,23 @@ Rails.application.routes.draw do
       get 'business_config', to: 'pages#business_config', as: :business_config
       get 'total_messages_stats', to: 'stats#total_messages_stats', as: :total_messages_stats
       resources :gs_templates
+      resources :campaigns, only: %i[index new create] do
+        member do
+          put 'cancel', to: 'campaigns#cancel'
+        end
+      end
+      resources :contact_groups, only: %i[index new edit destroy] do
+        collection do
+          get 'import', to: 'contact_groups#import'
+          post 'bulk_import', to: 'contact_groups#bulk_import'
+        end
+
+        member do
+          put 'archive', to: 'contact_groups#archive'
+          get 'import_update', to: 'contact_groups#import_update'
+          post 'bulk_update', to: 'contact_groups#bulk_update'
+        end
+      end
       resources :reminders, only: %i[index] do
         member do
           put 'cancel', to: 'reminders#cancel'
@@ -226,6 +243,17 @@ Rails.application.routes.draw do
       post 'customers/:id/add_tag', to: 'customers#add_tag', as: :add_tag
       put 'customers/:id/toggle_chat_bot', to: 'customers#toggle_chat_bot', as: :toggle_chat_bot
 
+      resources :tags, only: :index
+      resources :contact_groups, only: %i[create update] do
+        collection do
+          get 'customers', to: 'contact_groups#customers'
+        end
+        member do
+          get 'unselected_customers', to: 'contact_groups#unselected_customers'
+          get 'selected_customers', to: 'contact_groups#selected_customers'
+        end
+      end
+
       resources :reminders, only: :create do
         member do
           put 'cancel', to: 'reminders#cancel'
@@ -293,7 +321,9 @@ Rails.application.routes.draw do
 
   # Blog
   get '/blog', to: 'blogs#index', as: :blog
+  get '/blog/innovacion', to: 'blogs#innovation', as: :blog_innovation
   get '/blog/:id', to: 'blogs#show', as: :blog_content
+  get '/blog/innovacion/:id', to: 'blogs#innovation_content', as: :blog_innovation_content
 
 
 

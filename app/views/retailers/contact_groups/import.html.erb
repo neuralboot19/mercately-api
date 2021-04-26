@@ -1,0 +1,40 @@
+<div class="container-fluid reduced-container-padding mb-16">
+  <div class="card">
+    <div class="container-fluid order">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <h1 class="d-inline name">Importar Clientes</h1>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid products">
+      <div class="row">
+        <div class="col-xs-12">
+          <p>Para importar un grupo de clientes desde un archivo Excel, debe crear un archivo en formato CSV (.csv) separado por comas, o Excel (.xlsx), con los siguientes datos:</p>
+          <ul>
+            <li><strong>First Name:</strong> Primer(os) Nombre(s)</li>
+            <li><strong>Last Name:</strong> Apellido(s)</li>
+            <li><strong>Email:</strong> Correo Electrónico <strong>(Puede estar vacío, pero, no puede estar repetido)</strong></li>
+            <li><strong>Phone:</strong> Número de teléfono de WhatsApp en formato internacional, ejemplo <strong>+593994455678 (Puede estar vacío, pero, no puede estar repetido)</strong></li>
+          </ul>
+          <p>Para guardar correctamente los datos, no debe existir campos vacíos y el número de teléfono debe llevar el código del país.</p>
+          <p>Usted puede descargarse esta plantilla <a href="/customers.xlsx" download>en formato Excel</a> o <a href="/customers.csv" download>en formato CSV</a> de ejemplo.</p>
+            <%= form_tag(bulk_import_retailers_contact_groups_path(current_retailer), multipart: true) do %>
+              <div>
+                <%= label_tag :name, 'Nombre del grupo de clientes' %>
+                <%= text_field_tag :name, nil, class: 'input validate-required', required: true %>
+              </div>
+              <div>
+                <label for="file">Seleccionar archivo:</label>
+                <br/>
+                <%= file_field_tag 'csv_file', accept: 'text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', required: true %>
+              </div>
+              <div>
+                <%= submit_tag 'Importar Contactos', class: 'btn-btn btn-submit' %>
+              </div>
+            <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

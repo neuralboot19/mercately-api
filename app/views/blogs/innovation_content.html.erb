@@ -1,0 +1,133 @@
+<% content_for :meta_title, "#{@document['funcionalidades.meta_title']&.as_text()}" %>
+<% content_for :meta_description, @document['funcionalidades.meta_description']&.as_text() %>
+<% content_for :og_type, "#{@document['funcionalidades.og_type']&.as_text()}" %>
+<% content_for :og_title, @document['funcionalidades.og_title']&.as_text() %>
+<% content_for :og_url, "#{@document['funcionalidades.og_url']&.as_text()}" %>
+<% content_for :og_image, @document['funcionalidades.og_image']&.url %>
+
+<div class="inner-blog">
+  <div class="inner-blog-landing-wrapper">
+    <div class="inner-blog-landing" style="background-image: url(<%= @document['funcionalidades.blog_main_image'].url %>)">
+    </div>
+    <div class="single_post_entry_content">
+      <span class="meta-category-small">
+        <a class="single-post-entry-category" href="#">
+          <%= @document['funcionalidades.category'].as_text() %>
+        </a>
+      </span>
+      <h1 class="single-post-title-main">
+        <%= @document['funcionalidades.blog_title'].as_text() %>
+      </h1>
+      <span class="single-post-meta-wrapper">
+        <span class="single-post-date">
+          <i class="far fa-clock"></i>
+          <%= @document['funcionalidades.publish_date'].value.to_date %>
+        </span>
+      </span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="container ">
+  <div class="row">
+
+    <div class='col-md-2 sticky-content'>
+
+      <div class="icon-wrapper">
+        <p>Comparte</p>
+        <a target="_blank" href=<%= "https://wa.me/?text=https://mercately.com#{request.path}" %>>
+          <i class="fab fa-whatsapp fa-4x icon-3d"></i><br/>
+        </a>
+        <a target="_blank" href=<%= "https://www.facebook.com/sharer/sharer.php?u=https://mercately.com#{request.path}" %> >
+          <i class="fab fa-facebook fa-4x icon-3d"></i><br/>
+        </a>
+        <a target="_blank" href=<%= "https://twitter.com/intent/tweet?text=https://mercately.com#{request.path}" %>>
+          <i class="fab fa-twitter  fa-4x icon-3d"></i><br/>
+        </a>
+        <a target="_blank" href=<%= "https://www.linkedin.com/shareArticle?mini=true&url=https://mercately.com#{request.path}&title=#{@document['funcionalidades.blog_title'].as_text()}&summary=&source=" %>>
+          <i class="fab fa-linkedin fa-4x icon-3d"></i><br/>
+        </a>
+      </div>
+
+      <div class="icon-wrapper-mobile">
+        <p>Comparte</p>
+        <a target="_blank" href=<%= "https://wa.me/?text=https://mercately.com#{request.path}" %>>
+          <i class="fab fa-whatsapp fa-4x icon-3d"></i>
+        </a>
+        <a target="_blank" href=<%= "https://www.facebook.com/sharer/sharer.php?u=https://mercately.com#{request.path}" %> >
+          <i class="fab fa-facebook fa-4x icon-3d"></i>
+        </a>
+        <a target="_blank" href=<%= "https://twitter.com/intent/tweet?text=https://mercately.com#{request.path}" %>>
+          <i class="fab fa-twitter  fa-4x icon-3d"></i>
+        </a>
+        <a target="_blank" href=<%= "https://www.linkedin.com/shareArticle?mini=true&url=https://mercately.com#{request.path}&title=#{@document['funcionalidades.blog_title'].as_text()}&summary=&source=" %>>
+          <i class="fab fa-linkedin fa-4x icon-3d"></i>
+        </a>
+      </div>
+
+    </div>
+    <div class="col-md-8">
+      <div class="entry-blog-content-wrapper">
+        <%=  @document['funcionalidades.blog_content'].as_html(link_resolver()).html_safe %>
+        <div class="tag-container">
+          <% @document.tags.each do |tag| %>
+            <% tag_name = tag != "whatsapp-business-api" ? tag : 'WhatsApp Business Api' %>
+            <span><%= link_to tag_name, blog_tags_path(tag.downcase) %></span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class='entry-blog-ad'>
+        <p class="entry-blog-ad-title">Vende más por WhatsApp</p>
+        <p>Automatiza tu negocio con Mercately </p>
+
+        <p class="">
+          <a class="entry-blog-ad-link" href="https://mercately.com/" target="_blank">
+            👉 ¡Empieza a automatizar hoy mismo!
+          </a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<div class="container">
+  <hr>
+  <p class="related-articles">Articulos relacionados</p>
+  <div class="row">
+    <% @documents.each_with_index do |doc, index| %>
+      <div class="col-md-4 blog_grid_post_style">
+        <div class="post-entry-wrapper">
+          <div class="entry-image-post-thumb">
+            <%= link_to blog_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
+            <img src="<%= doc['funcionalidades.blog_index_image']&.url %>" class="post-entry-img" alt="">
+            <div class="background_over_image"></div>
+            <% end %>
+            <span class="post-entry-category">
+              <a class="category-link" style="background:#36c942" href="#">
+                <%= doc['funcionalidades.category']&.as_text() %>
+              </a>
+            </span>
+          </div>
+          <div class="post-entry-content">
+            <h3 class="post-entry-title">
+              <%= link_to blog_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
+                <%=  doc['funcionalidades.blog_title'].as_text() %>
+              <% end %>
+            </h3>
+            <div class="">
+              <span class="post-entry-date"><i class="far fa-clock"></i>
+                <%= doc['funcionalidades.publish_date']&.value&.to_date %></span>
+            </div>
+            <div class="content-post-entry-grid">
+              <%= doc['funcionalidades.blog_previos_content']&.as_html(link_resolver())&.html_safe %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
