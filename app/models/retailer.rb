@@ -37,6 +37,8 @@ class Retailer < ApplicationRecord
   has_many :customer_related_fields
   has_many :calendar_events, dependent: :destroy
   has_many :reminders, dependent: :destroy
+  has_many :contact_groups, dependent: :destroy
+  has_many :campaigns, dependent: :destroy
 
   has_many :hubspot_fields
   has_many :customer_hubspot_fields

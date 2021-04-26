@@ -1,0 +1,4 @@
+Hola <%= @retailer_user.full_name %>, te saluda el equipo de Mercately.
+Tenemos buenas noticias. La campaña:
+<%= @campaign.name %>
+¡Ha sido envíada satisfactoriamente! Puedes ver los detalles <%= link_to 'aquí', retailers_campaigns_url(@retailer) %>

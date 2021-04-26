@@ -1,0 +1,32 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 gretting-container fw-bold">
+      <p class="greeting-color">Hola <%= @retailer_user.full_name %>, te saluda el equipo de Mercately.</p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+      Tenemos buenas noticias. La campaña:
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 t-color lg-14">
+      <%= @campaign.name %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-15 p-color">
+      ¡Ha sido envíada satisfactoriamente! Puedes ver los detalles <%= link_to 'aquí', retailers_campaigns_url(@retailer) %>
+      </p>
+    </div>
+
+    <%= render "shared/emails/footer" %>
+  </div>
+</div>

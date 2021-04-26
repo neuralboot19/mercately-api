@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 2021_04_21_202809) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "adminpack"
   enable_extension "plpgsql"
 
   create_table "action_tags", force: :cascade do |t|
@@ -183,6 +184,26 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.index ["retailer_user_id"], name: "index_calendar_events_on_retailer_user_id"
   end
 
+  create_table "campaigns", force: :cascade do |t|
+    t.string "name"
+    t.text "template_text"
+    t.integer "status", default: 0
+    t.datetime "send_at"
+    t.jsonb "content_params"
+    t.bigint "whatsapp_template_id"
+    t.bigint "contact_group_id"
+    t.bigint "retailer_id"
+    t.string "web_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.float "cost", default: 0.0
+    t.string "reason"
+    t.index ["contact_group_id"], name: "index_campaigns_on_contact_group_id"
+    t.index ["retailer_id"], name: "index_campaigns_on_retailer_id"
+    t.index ["web_id"], name: "index_campaigns_on_web_id"
+    t.index ["whatsapp_template_id"], name: "index_campaigns_on_whatsapp_template_id"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name"
     t.string "meli_id"
@@ -263,6 +284,27 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.index ["retailer_id"], name: "index_chat_bots_on_retailer_id"
   end
 
+  create_table "contact_group_customers", force: :cascade do |t|
+    t.bigint "contact_group_id"
+    t.bigint "customer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contact_group_id"], name: "index_contact_group_customers_on_contact_group_id"
+    t.index ["customer_id"], name: "index_contact_group_customers_on_customer_id"
+  end
+
+  create_table "contact_groups", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "name"
+    t.string "web_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "imported", default: false
+    t.boolean "archived", default: false
+    t.index ["retailer_id"], name: "index_contact_groups_on_retailer_id"
+    t.index ["web_id"], name: "index_contact_groups_on_web_id"
+  end
+
   create_table "customer_bot_options", force: :cascade do |t|
     t.bigint "customer_id"
     t.bigint "chat_bot_option_id"
@@ -290,7 +332,6 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.string "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "selected_options", default: []
     t.index ["customer_id"], name: "index_customer_related_data_on_customer_id"
     t.index ["customer_related_field_id"], name: "index_customer_related_data_on_customer_related_field_id"
   end
@@ -336,6 +377,7 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
+    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -350,8 +392,8 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.float "ws_notification_cost", default: 0.0672
     t.boolean "hs_active"
     t.string "hs_id"
-    t.boolean "api_created", default: false
     t.string "number_to_use"
+    t.boolean "api_created", default: false
     t.boolean "ws_active", default: false
     t.datetime "last_chat_interaction"
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
@@ -455,6 +497,8 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.bigint "retailer_user_id"
     t.float "cost"
     t.string "message_identifier"
+    t.bigint "campaign_id"
+    t.index ["campaign_id"], name: "index_gupshup_whatsapp_messages_on_campaign_id"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
     t.index ["retailer_id"], name: "index_gupshup_whatsapp_messages_on_retailer_id"
@@ -507,6 +551,8 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.bigint "retailer_user_id"
     t.float "cost"
     t.string "message_identifier"
+    t.bigint "campaign_id"
+    t.index ["campaign_id"], name: "index_karix_whatsapp_messages_on_campaign_id"
     t.index ["customer_id"], name: "index_karix_whatsapp_messages_on_customer_id"
     t.index ["retailer_id"], name: "index_karix_whatsapp_messages_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_karix_whatsapp_messages_on_retailer_user_id"
@@ -814,6 +860,10 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -824,10 +874,6 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -865,10 +911,10 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
     t.string "gupshup_phone_number"
     t.string "gupshup_src_name"
+    t.string "karix_account_uid"
+    t.string "karix_account_token"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
@@ -882,11 +928,12 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.string "hs_access_token"
     t.string "hs_refresh_token"
     t.boolean "all_customers_hs_integrated", default: true
-    t.boolean "hs_tags", default: false
     t.boolean "allow_send_videos", default: false
-    t.string "hs_id"
+    t.boolean "hs_tags", default: false
     t.boolean "allow_multiple_answers", default: false
+    t.string "hs_id"
     t.integer "max_agents", default: 2
+    t.boolean "campaings_access", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -984,7 +1031,13 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
   add_foreign_key "agent_notifications", "retailer_users"
   add_foreign_key "calendar_events", "retailer_users"
   add_foreign_key "calendar_events", "retailers"
+  add_foreign_key "campaigns", "contact_groups"
+  add_foreign_key "campaigns", "retailers"
+  add_foreign_key "campaigns", "whatsapp_templates"
   add_foreign_key "chat_bot_actions", "chat_bot_options", column: "jump_option_id"
+  add_foreign_key "contact_group_customers", "contact_groups"
+  add_foreign_key "contact_group_customers", "customers"
+  add_foreign_key "contact_groups", "retailers"
   add_foreign_key "customer_hubspot_fields", "hubspot_fields"
   add_foreign_key "customer_hubspot_fields", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"

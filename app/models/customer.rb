@@ -31,6 +31,8 @@ class Customer < ApplicationRecord
   has_many :customer_bot_options, dependent: :destroy
   has_many :chat_bot_options, through: :customer_bot_options
   has_many :customer_related_data, dependent: :destroy
+  has_many :contact_group_customers
+  has_many :contact_groups, through: :contact_group_customers
 
   validates_uniqueness_of :psid, allow_blank: true
   validates_presence_of :email, if: :hs_active?
@@ -50,6 +52,7 @@ class Customer < ApplicationRecord
   before_save :hs_active!, if: -> (obj) { obj.retailer.hubspot_integrated? && obj.hs_active.nil? && obj.retailer.all_customers_hs_integrated }
   before_save :update_valid_customer
   before_save :calc_ws_notification_cost
+  before_save :save_wa_name
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :verify_opt_in
   after_create :create_hs_customer, if: :hs_active?
@@ -78,6 +81,8 @@ class Customer < ApplicationRecord
   end)
 
   accepts_nested_attributes_for :customer_related_data, reject_if: :all_blank, allow_destroy: true
+
+  ransack_alias :name_phone_email, :first_name_or_last_name_or_phone_or_email_or_whatsapp_name
 
   ransacker :sort_by_completed_orders do
     Arel.sql('coalesce((select count(orders.id) as total from orders where ' \
@@ -125,8 +130,14 @@ class Customer < ApplicationRecord
     ]
   end
 
+  def name
+    full_names.presence || whatsapp_name
+  end
+
   def full_names
-    "#{first_name} #{last_name}"
+    return "#{first_name} #{last_name}" if last_name.present?
+
+    first_name
   end
 
   def earnings
@@ -555,5 +566,13 @@ class Customer < ApplicationRecord
 
     def format_mexican_numbers
       self.phone = phone.insert(3, '1') if phone[3] != '1'
+    end
+
+    def save_wa_name
+      return if first_name.present? || whatsapp_name.blank?
+
+      partition_name = whatsapp_name.partition(' ')
+      self.first_name = partition_name.first
+      self.last_name = partition_name.last
     end
 end

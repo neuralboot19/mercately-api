@@ -35,7 +35,7 @@ FactoryBot.define do
     end
 
     trait :able_to_start_bots do
-      allow_start_bots {true}
+      allow_start_bots { true }
     end
 
     trait :opted_in do

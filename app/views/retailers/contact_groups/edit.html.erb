@@ -1,0 +1,22 @@
+<div class="container-fluid reduced-container-padding mb-16 page-container">
+  <div class="container-fluid products">
+    <div class="row">
+      <div class="col-xs-12 col-md-4 mb-15 p-0">
+        <%= link_to retailers_contact_groups_path(current_retailer), class: 'back-link m-0' do %>
+          <i class="fas fa-caret-left mr-5"></i>
+          Grupos de clientes
+        <% end %>
+        <h1 class="ml-0 form-container_header-title">Editar grupo de clientes</h1>
+      </div>
+      <div class="col-xs-12 p-0">
+        <!-- Display a message if JS has been disabled on the browser. -->
+        <noscript>If you're seeing this message, that means
+          <strong>JavaScript has been disabled on your browser</strong>, please
+          <strong>enable JS</strong> to make this app work.
+        </noscript>
+        <%= javascript_packs_with_chunks_tag 'application' %>
+        <div id="react_content"></div>
+      </div>
+    </div>
+  </div>
+</div>
