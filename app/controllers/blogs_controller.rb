@@ -22,6 +22,26 @@ class BlogsController < ApplicationController
     @documents = response.results
   end
 
+  def innovation
+    api = Prismic.api(@url, @token)
+    response = api.query(Prismic::Predicates.at("document.type", "funcionalidades"),
+       { "pageSize" => 100, "orderings" => "[document.first_publication_date desc]"})
+    @documents = response.results
+  end
+
+  def innovation_content
+
+    api = Prismic.api(@url, @token)
+    @document = api.getByUID("funcionalidades", params[:id])
+
+    response = api.query([
+      Prismic::Predicates.at("document.type", "funcionalidades"),
+      Prismic::Predicates.at("my.funcionalidades.category", @document.fragments['category']&.value)],
+      { "pageSize" => 6, "orderings" => "[document.first_publication_date desc]"}
+    )
+    @documents = response.results
+  end
+
   def category
     api = Prismic.api(@url, @token)
     category_id = params[:id]
