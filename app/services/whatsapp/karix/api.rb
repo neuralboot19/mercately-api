@@ -76,16 +76,13 @@ module Whatsapp
           timestamp: timestamp
         }
 
-        public_id = File.basename(file.original_filename) if resource_type == 'document'
-        public_id = public_id.strip.gsub(/[?&#%<>\\]/, '').gsub(/^\/|\/$/, '') if public_id.present?
-
         Cloudinary::Uploader.upload(
           file,
-          public_id: public_id,
           api_key: ENV['CLOUDINARY_API_KEY'],
           timestamp: timestamp,
           signature: Cloudinary::Utils.api_sign_request(params_to_sign, ENV['CLOUDINARY_API_SECRET']),
-          resource_type: cloudinary_resource_type(resource_type)
+          resource_type: cloudinary_resource_type(resource_type),
+          use_filename: true
         )
       end
 
