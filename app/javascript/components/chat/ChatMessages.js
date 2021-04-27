@@ -139,7 +139,8 @@ class ChatMessages extends Component {
   }
 
   componentWillReceiveProps(newProps){
-    if (newProps.messages !== this.props.messages) {
+    if (newProps.messages !== this.props.messages && newProps.messages.length > 0 &&
+      this.props.currentCustomer === newProps.messages[0].customer_id) {
       this.setState({
         new_message: false,
         messages: newProps.messages.concat(this.state.messages),

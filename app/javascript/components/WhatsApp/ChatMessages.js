@@ -152,7 +152,8 @@ class ChatMessages extends Component {
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(newProps) {
-    if (newProps.messages !== this.props.messages) {
+    if (newProps.messages !== this.props.messages && newProps.messages.length > 0 &&
+      this.props.currentCustomer === newProps.messages[0].customer_id) {
       const rDate = moment(newProps.recentInboundMessageDate).local();
       this.setState((prevState) => ({
         new_message: false,
