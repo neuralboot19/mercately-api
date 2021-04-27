@@ -85,7 +85,7 @@ class GupshupWhatsappMessage < ApplicationRecord
       return unless direction == 'outbound' && mexican_error?
 
       error = error_payload.try(:[], 'payload').try(:[], 'payload')
-      return unless error.present? && error['code'] == 1005 && customer.number_to_use.present? &&
+      return unless error.present? && error['code'].in?([1005, 1006, 1007, 1008]) && customer.number_to_use.present? &&
         customer.phone != customer.number_to_use && destination != customer.phone_number_to_use(false)
 
       msg_service = Whatsapp::Gupshup::V1::Outbound::Msg.new(retailer, customer)
