@@ -90,6 +90,18 @@ export const fetchWhatsAppMessages = (id, page = 1) => {
   };
 };
 
+export const setLastMessages = (customerDetails) => (
+  (dispatch) => dispatch({
+    type: "SET_LAST_MESSAGES",
+    data: {
+      messages: customerDetails.last_messages.messages,
+      totalPages: customerDetails.last_messages.total_pages,
+      handleMessageEvents: customerDetails['handle_message_events?'],
+      recentInboundMessageDate: customerDetails.recent_inbound_message_date
+    }
+  })
+);
+
 export const sendWhatsAppImg = (id, body, token) => {
   const endpoint = `/api/v1/karix_whatsapp_send_file/${id}`;
   const csrfToken = token;
