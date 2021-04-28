@@ -420,7 +420,8 @@ class Customer < ApplicationRecord
     def update_valid_customer
       return if valid_customer?
 
-      self.valid_customer = first_name.present? || last_name.present? || email.present? || whatsapp_name.present?
+      self.valid_customer = first_name.present? || last_name.present? || email.present? || whatsapp_name.present? ||
+        psid.present?
     end
 
     def strip_whitespace
