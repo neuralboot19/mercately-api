@@ -5,20 +5,26 @@ module Facebook
     end
 
     def import(psid)
-      return Customer.find_by(psid: psid) if Customer.exists?(psid: psid)
+      @customer = Customer.find_by(psid: psid)
+      return @customer unless @customer.blank? || @customer.first_name.blank? || @customer.last_name.blank?
 
       url = prepare_person_url(psid)
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn)
       save(response, psid) if response
+
+      @customer
     end
 
     def save(response, psid)
-      Customer.create_with(
-        retailer: @facebook_retailer.retailer,
-        first_name: response['first_name'],
-        last_name: response['last_name']
-      ).find_or_create_by(psid: psid)
+      if @customer.present?
+        @customer.update_attributes(first_name: response['first_name'], last_name: response['last_name'])
+      else
+        # Hago el find para hacer un chequeo previo en la DB por si ya existe, en caso de mucha concurrencia.
+        @customer = Customer.find_or_create_by(psid: psid)
+        @customer.update_attributes(retailer: @facebook_retailer.retailer, first_name: response['first_name'],
+          last_name: response['last_name'])
+      end
     end
 
     private
