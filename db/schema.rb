@@ -789,8 +789,8 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.string "manufacturer_part_number"
     t.string "gtin"
     t.string "brand"
-    t.string "url"
     t.boolean "connected_to_facebook", default: false
+    t.string "url"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["facebook_product_id"], name: "index_products_on_facebook_product_id", unique: true, where: "(facebook_product_id IS NOT NULL)"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"

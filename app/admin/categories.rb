@@ -31,7 +31,7 @@ ActiveAdmin.register Category do
     end
 
     panel 'Productos' do
-      products = Product.where(category_id: category.id)
+      products = Product.unscoped.where(category_id: category.id)
       table_for products do
         column :id
         column(:title) { |pro| link_to pro.title, admin_product_path(pro.id) }

@@ -241,6 +241,7 @@ body {
                 <label for="month_hs_checkbox_plus" class="m-0"></label>
               </td>
             </tr>
+            <!--
             <tr>
               <td>MercadoLibre (productos) <span class="fw-bold">$</span><span class="fw-bold ml-price">10</span></td>
               <td class="t-center">
@@ -252,6 +253,7 @@ body {
                 <label for="month_ml_checkbox_plus" class="m-0"></label>
               </td>
             </tr>
+            -->
             <tr>
               <td class="fw-bold fz-20 c-primary">Chatbots</td>
               <td></td>
@@ -507,6 +509,7 @@ body {
                 <label for="trimestral_hs_checkbox_plus" class="m-0"></label>
               </td>
             </tr>
+            <!--
             <tr>
               <td>MercadoLibre (productos) <span class="fw-bold">$</span><span class="fw-bold ml-price">10</span></td>
               <td class="t-center">
@@ -518,6 +521,7 @@ body {
                 <label for="trimestral_ml_checkbox_plus" class="m-0"></label>
               </td>
             </tr>
+            -->
             <tr>
               <td class="fw-bold fz-20 c-secondary">Chatbots</td>
               <td></td>
@@ -816,9 +820,9 @@ body {
     function calcTotalPrice() {
       let subTotal = parseInt($('#month .price').text()) + parseInt($('#month .user-price').text()) * parseInt($('#month-users').val());
       let subTotalPlus = parseInt($('#month .plus-price').text()) + parseInt($('#month .user-price').text()) * parseInt($('#month-users-plus').val());
-      if (document.getElementById('month_ml_checkbox').checked) subTotal += parseInt($('#month .ml-price').text());
+      // if (document.getElementById('month_ml_checkbox').checked) subTotal += parseInt($('#month .ml-price').text());
       if (document.getElementById('month_hs_checkbox').checked) subTotal += parseInt($('#month .hs-price').text());
-      if (document.getElementById('month_ml_checkbox_plus').checked) subTotalPlus += parseInt($('#month .ml-price').text());
+      // if (document.getElementById('month_ml_checkbox_plus').checked) subTotalPlus += parseInt($('#month .ml-price').text());
       if (document.getElementById('month_hs_checkbox_plus').checked) subTotalPlus += parseInt($('#month .hs-price').text());
       if (document.getElementById('month_chatbot_checkbox').checked) {
         $('#month_chatbot_section').show();
@@ -879,7 +883,8 @@ body {
     $('#month-users-plus').on('change', function() {
       calcIncludedUsers('#month-users-plus', '#month .included-users-plus', '#month .user-total-plus');
     });
-    $('#month_hs_checkbox, #month_hs_checkbox_plus, #month_ml_checkbox, #month_chats, #month_chatbot_checkbox, #month_ml_checkbox_plus').on('change', calcTotalPrice);
+    // $('#month_hs_checkbox, #month_hs_checkbox_plus, #month_ml_checkbox, #month_chats, #month_chatbot_checkbox, #month_ml_checkbox_plus').on('change', calcTotalPrice);
+    $('#month_hs_checkbox, #month_hs_checkbox_plus, #month_chats, #month_chatbot_checkbox').on('change', calcTotalPrice);
   });
 </script>
 <script charset="utf-8">
@@ -916,9 +921,9 @@ body {
     function calcTotalPrice() {
       let subTotal = parseInt($('#trimestral .price').text()) + (3 * parseInt($('#trimestral .user-price').text())) * parseInt($('#trimestral-users').val());
       let subTotalPlus = parseInt($('#trimestral .plus-price').text()) + (3 * parseInt($('#trimestral .user-price').text())) * parseInt($('#trimestral-users-plus').val());
-      if (document.getElementById('trimestral_ml_checkbox').checked) subTotal += 3 * parseInt($('#trimestral .ml-price').text());
+      // if (document.getElementById('trimestral_ml_checkbox').checked) subTotal += 3 * parseInt($('#trimestral .ml-price').text());
       if (document.getElementById('trimestral_hs_checkbox').checked) subTotal += 3 * parseInt($('#trimestral .hs-price').text());
-      if (document.getElementById('trimestral_ml_checkbox_plus').checked) subTotalPlus += 3 * parseInt($('#trimestral .ml-price').text());
+      // if (document.getElementById('trimestral_ml_checkbox_plus').checked) subTotalPlus += 3 * parseInt($('#trimestral .ml-price').text());
       if (document.getElementById('trimestral_hs_checkbox_plus').checked) subTotalPlus += 3 * parseInt($('#trimestral .hs-price').text());
       if (document.getElementById('trimestral_chatbot_checkbox').checked) {
         $('#trimestral_chatbot_section').show();
@@ -979,7 +984,8 @@ body {
     $('#trimestral-users-plus').on('change', function() {
       calcIncludedUsers('#trimestral-users-plus', '#trimestral .included-users-plus', '#trimestral .user-total-plus');
     });
-    $('#trimestral_hs_checkbox, #trimestral_hs_checkbox_plus, #trimestral_ml_checkbox, #trimestral_chats, #trimestral_chatbot_checkbox, #trimestral_ml_checkbox_plus').on('change', calcTotalPrice);
+    // $('#trimestral_hs_checkbox, #trimestral_hs_checkbox_plus, #trimestral_ml_checkbox, #trimestral_chats, #trimestral_chatbot_checkbox, #trimestral_ml_checkbox_plus').on('change', calcTotalPrice);
+    $('#trimestral_hs_checkbox, #trimestral_hs_checkbox_plus, #trimestral_chats, #trimestral_chatbot_checkbox').on('change', calcTotalPrice);
   });
 </script>
 <script charset="utf-8">

@@ -25,6 +25,11 @@ class Question < ApplicationRecord
     web_id
   end
 
+  def product
+    @product ||= super
+    @product ||= Product.unscoped.find_by(id: product_id)
+  end
+
   private
 
     def ml_answer_question

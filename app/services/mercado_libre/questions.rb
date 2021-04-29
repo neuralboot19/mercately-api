@@ -17,7 +17,7 @@ module MercadoLibre
       customer = MercadoLibre::Customers.new(@retailer).import(question_info['from']['id'])
       question = Question.find_or_initialize_by(meli_id: question_info['id'])
       new_question = question.new_record?
-      product = Product.find_by(meli_product_id: question_info['item_id']) || MercadoLibre::Products.new(@retailer)
+      product = Product.unscoped.find_by(meli_product_id: question_info['item_id']) || MercadoLibre::Products.new(@retailer)
         .import_product([question_info['item_id']]).first
 
       return unless product.present?

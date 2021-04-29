@@ -7,7 +7,7 @@ class Product < ApplicationRecord
   paginates_per 50
 
   belongs_to :retailer
-  belongs_to :category
+  belongs_to :category, optional: true
   has_many :order_items
   has_many :orders, through: :order_items
   has_many :questions
@@ -17,15 +17,16 @@ class Product < ApplicationRecord
   validates :title, presence: true
   validates :price, presence: true
   validates :code, uniqueness: { scope: :retailer_id, message: 'Código ya está en uso.' }, allow_blank: true
+  validates_format_of :url, with: /\A(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/x, allow_blank: true
   validate :check_variations
   validate :check_images
   validate :check_main_image
-  validate :url_format
+  # validate :url_format
 
   before_update :assign_main_picture
   before_save :nullify_code
   after_create :generate_web_id
-  after_save :update_facebook_inventory, if: :saved_change_to_available_quantity?
+  # after_save :update_facebook_inventory, if: :saved_change_to_available_quantity?
 
   enum buying_mode: %i[buy_it_now classified]
   enum condition: %i[new_product used not_specified]
@@ -46,6 +47,11 @@ class Product < ApplicationRecord
     Arel.sql('coalesce((select count(distinct(order_items.id)) as total from order_items, orders where ' \
       'orders.id = order_items.order_id and orders.status = 1 and ' \
       'order_items.product_id = products.id), 0)')
+  end
+
+  def self.default_scope
+    where(Product.arel_table[:created_at].lt(DateTime.new(2021, 4, 29)))
+      .or(from_mercately.where(Product.arel_table[:created_at].gt(DateTime.new(2021, 4, 29))))
   end
 
   def attach_image(url, filename, index = -1)
@@ -103,7 +109,7 @@ class Product < ApplicationRecord
     end
 
     reload
-    upload_variations_to_ml if able_to_send_to_ml?
+    # upload_variations_to_ml if able_to_send_to_ml?
   end
 
   def delete_images(delete_images, variations, past_meli_status)
@@ -170,9 +176,9 @@ class Product < ApplicationRecord
   end
 
   def include_before_bids_info?
-    Order.joins(:products)
+    !orders
       .where('meli_order_id IS NOT NULL AND feedback_message IS NOT NULL')
-      .where(feedback_reason: nil, status: 2, products: { id: id }).first.blank?
+      .where(feedback_reason: nil, status: 2).exists?
   end
 
   # Chequea si el producto tiene imagenes o no

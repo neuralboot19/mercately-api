@@ -3,10 +3,12 @@ task update_categories: :environment do
   puts 'Downloading categories'
   ActiveRecord::Base.transaction do
     @ml_array = []
-    faraday_request_get('https://api.mercadolibre.com/sites/MEC/categories').each do |res|
-      father = Category.find_or_create_by(meli_id: res['id'])
-      father.update(name: res['name'])
-      ml_category_import(father, res['id'])
+    ['MEC', 'MLC'].each do |ml_site|
+      faraday_request_get("https://api.mercadolibre.com/sites/#{ml_site}/categories").each do |res|
+        father = Category.find_or_create_by(meli_id: res['id'])
+        father.update(name: res['name'])
+        ml_category_import(father, res['id'])
+      end
     end
   end
   puts 'Done.'
@@ -14,6 +16,7 @@ task update_categories: :environment do
   ActiveRecord::Base.transaction do
     Product.where.not(meli_product_id: nil).each do |product|
       next unless product.retailer.meli_retailer
+
       MercadoLibre::Products.new(product.retailer).pull_update(product.meli_product_id)
     end
 

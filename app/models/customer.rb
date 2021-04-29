@@ -215,7 +215,7 @@ class Customer < ApplicationRecord
 
   def bought_items
     product_ids = OrderItem.where(order_id: orders.success.pluck(:id)).pluck(:product_id).uniq
-    Product.where(id: product_ids)
+    Product.unscoped.where(id: product_ids)
   end
 
   def order_items_product(product)

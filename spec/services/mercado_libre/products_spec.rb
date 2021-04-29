@@ -198,7 +198,7 @@ RSpec.describe MercadoLibre::Products, vcr: true do
 
     it 'imports the retailer products from ML' do
       VCR.use_cassette('products/items') do
-        expect { products_service.search_items }.to change(Product, :count).by(total_active_items)
+        expect { products_service.search_items }.to change(Product.unscoped, :count).by(total_active_items)
       end
     end
   end
@@ -247,7 +247,7 @@ RSpec.describe MercadoLibre::Products, vcr: true do
         VCR.use_cassette('products/pull_update_and_creates_item') do
           meli_id = product.meli_product_id
           product.destroy
-          expect { products_service.pull_update(meli_id) }.to change(Product, :count).by(1)
+          expect { products_service.pull_update(meli_id) }.to change(Product.unscoped, :count).by(1)
         end
       end
     end
@@ -305,7 +305,7 @@ RSpec.describe MercadoLibre::Products, vcr: true do
           .and_return(product_description)
         allow(Connection).to receive(:get_request).and_return(product_response)
 
-        expect { products_service.pull_update(product_response['id']) }.to change(Product, :count).by(0)
+        expect { products_service.pull_update(product_response['id']) }.to change(Product.unscoped, :count).by(0)
       end
     end
 
@@ -321,7 +321,7 @@ RSpec.describe MercadoLibre::Products, vcr: true do
         allow(Connection).to receive(:get_request).and_return(product_response)
 
         product_response['price'] = 150
-        expect { products_service.pull_update(product_response['id']) }.to change(Product, :count).by(1)
+        expect { products_service.pull_update(product_response['id']) }.to change(Product.unscoped, :count).by(1)
       end
     end
   end
@@ -467,14 +467,14 @@ RSpec.describe MercadoLibre::Products, vcr: true do
 
     context 'when the price of the product is null' do
       it 'does not save the product' do
-        expect { products_service.save_product(product_response, product_description) }.to change(Product, :count).by(0)
+        expect { products_service.save_product(product_response, product_description) }.to change(Product.unscoped, :count).by(0)
       end
     end
 
     context 'when the price of the product is not null' do
       it 'saves the product' do
         product_response['price'] = 150
-        expect { products_service.save_product(product_response, product_description) }.to change(Product, :count).by(1)
+        expect { products_service.save_product(product_response, product_description) }.to change(Product.unscoped, :count).by(1)
       end
     end
   end
