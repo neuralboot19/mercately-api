@@ -18,7 +18,7 @@
     <script src="https://code.jquery.com/jquery-2.2.0.min.js" type="text/javascript"></script>
     <%= javascript_include_tag 'application' %>
     <%= javascript_tag do %>
-      var roomId = <%= session[:room_id] %>;
+      var roomId = <%= current_retailer_user&.id || session&.[](:room_id) %>;
       var ENV = {
         ENVIRONMENT: "<%= ENV['ENVIRONMENT'] %>",
         PORT: "<%= ENV['PORT'] %>",
