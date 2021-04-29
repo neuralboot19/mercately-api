@@ -48,7 +48,7 @@
               <div class="col-sm-2">Notas</div>
               <div class="col-sm-1"></div>
             </div>
-            <%= render partial: "sale", collection: @orders, as: :order %>
+            <%= render partial: "sale", collection: @orders, as: :order, cached: true %>
             <div class="row middle-xs center-xs">
               <div class="col-xs-12">
                 <%= paginate @orders %>

@@ -1,11 +1,17 @@
 class ProductVariation < ApplicationRecord
-  default_scope -> { where('product_variations.status = 0') }
-  scope :all_variations, -> (product_id) { unscope(:where).where(product_id: product_id) }
+  default_scope -> { active }
 
   belongs_to :product
   has_many :order_items
 
   enum status: %w[active inactive]
+
+  scope :all_variations, -> (product_id) { unscope(:where).where(product_id: product_id) }
+
+  def product
+    @product ||= super
+    @product ||= Product.unscoped.find_by(id: product_id)
+  end
 
   def update_data(ml_data)
     variation_ids = ml_data['variations'].map { |var| var['id'] }.compact

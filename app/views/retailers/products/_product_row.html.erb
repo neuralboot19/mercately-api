@@ -1,0 +1,157 @@
+<div class="divider"></div>
+<div class="table__item row middle-xs">
+  <div class="col-xs-4 col-sm-2">
+    <div class="products__img">
+      <% if product.main_picture_id %>
+        <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}") %>
+      <% elsif product.images&.first&.key.present? %>
+        <%= cl_image_tag("#{product.images&.first&.key}") %>
+      <% else %>
+        <i class="fas fa-camera-retro fs-40 c-grey"></i>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-xs-7 col-sm-4 t-center"><%= product.title %></div>
+  <div class="col-xs-1 table__action-dots p-0 hide-on-md-and-up">
+    <label class="item__dropdown d-inline">
+      <a class="dropdown__button middle" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to retailers_product_path(current_retailer, product), class: 'c-black no-style' do %>
+            <i class="fas fa-eye mr-8"></i>
+            Ver
+          <% end %>
+        </li>
+        <li>
+          <%= link_to edit_retailers_product_path(current_retailer, product), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+  <!--
+  <div class="col-xs-12 col-sm-2 t-center hide-on-tablet-and-down c-grey">
+    <%# product.category&.name %>
+  </div>
+  -->
+  <% if false %>
+    <div class="col-xs-12 col-sm-3 hide-on-sm-and-down t-center">
+      <% if current_retailer.meli_retailer %>
+        <div class="box mb-20">
+          <div class="row">
+            <div class="col-xs-2 col-sm-12 p-relative">
+              <%= image_tag 'dashboard/ml_logo.png', class: 'h-15 w-20 mr-10' %>
+              <% if product.meli_product_id.present? %>
+                <b class="cookie <%= cookie(product.meli_status) %>">
+                  <% if current_retailer.incomplete_meli_profile? == false && manual_statuses(product).size > 0 && product.status != 'archived' %>
+                    <a class="dropdown__button" tabindex="-1" href="#!"><%= Product.enum_translation(:meli_status, product.meli_status) %>  <i class="fas fa-caret-down"></i></a>
+                    <ul class="dropdown__menu">
+                      <% manual_statuses(product).each do |s| %>
+                        <li class="t-left">
+                          <%= link_to update_meli_status_retailers_product_path(current_retailer, product, status: s[:status]), method: :put, class: 'c-black no-style', data: { confirm: '¿Estás seguro de cambiar el estado de la publicación en MercadoLibre?' } do %>
+                            <i class="fas fa-angle-right mr-8"></i>
+                            <%= s[:label] %>
+                          <% end %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% else %>
+                    <%= Product.enum_translation(:meli_status, product.meli_status) %>
+                  <% end %>
+                </b>
+              <% else %>
+                <b class="cookie <%= cookie('not_published') %>">No publicado</b>
+              <% end %>
+            </div>
+            <% if product.meli_product_id.blank? && product.status != 'archived' && current_retailer.incomplete_meli_profile? == false && current_retailer.ml_site == 'MEC' %>
+              <div class="col-xs-6 col-sm-12 mt-10">
+                <%= link_to retailers_upload_product_to_ml_path(current_retailer, product), method: :put, data: { confirm: '¿Estás seguro de publicar el producto?' }, class: 'btn btn--cta fs-10 p-5' do %>
+                  Publicar en MercadoLibre
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      <% if current_retailer.facebook_catalog&.connected? %>
+        <div class="box">
+          <div class="row">
+            <div class="col-xs-2 col-sm-12 p-relative">
+              <i class="fab fa-facebook c-secondary fs-17 mr-10"></i>
+              <% if product.facebook_product_id.present? %>
+                <b class="cookie <%= cookie('active') %>">
+                  Disponible
+                </b>
+              <% else %>
+                <b class="cookie <%= cookie('closed') %>">No disponible</b>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <div class="col-xs-12 col-sm-3">
+    <div class="box">
+      <div class="row">
+        <div class="col-xs-4 col-sm-6 item__descriptor">Ventas:</div>
+        <div class="col-xs-2 col-sm-6"><%= successfull_order_items_count(product) %></div>
+        <div class="col-xs-4 col-sm-6 item__descriptor">Precio:</div>
+        <div class="col-xs-2 col-sm-6">$<%= product.price %></div>
+        <div class="col-xs-4 col-sm-6 item__descriptor">Ganancia:</div>
+        <div class="col-xs-2 col-sm-6">$<%= product.earned %></div>
+        <div class="col-xs-4 col-sm-6 hide-on-pc item__descriptor">Disponible:</div>
+        <div class="col-xs-2 col-sm-6 hide-on-pc"><%= product.available_quantity %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-2 t-center hide-on-sm-and-down">
+    <% if product.code.present? %>
+      Código: <b class="fs-12"><%= product.code %></b>
+      <br/>
+    <% end %>
+    Disponible: <b class="<%= product.available_quantity >= 0 ? 'c-green' : 'c-red' %>"><%= product.available_quantity %></b>
+  </div>
+  <div class="hide-on-sm-and-down m-auto">
+    <label class="item__dropdown d-inline">
+      <a class="dropdown__button middle" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to retailers_product_path(current_retailer, product), class: 'c-black no-style' do %>
+            <i class="fas fa-eye mr-8"></i>
+            Ver
+          <% end %>
+        </li>
+        <li>
+          <%= link_to edit_retailers_product_path(current_retailer, product), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+        <% if product.status_archived? %>
+          <li>
+            <%= link_to reactivate_product_retailers_product_path(current_retailer, product), method: :put, class: 'c-green no-style' do %>
+              <i class="fas fa-check mr-8"></i>
+              Reactivar
+            <% end %>
+          </li>
+        <% else %>
+          <li>
+            <%= link_to retailers_archive_product_path(current_retailer, product), method: :put, class: 'c-red no-style', data: { confirm: '¿Estás seguro de archivar este producto?' } do %>
+              <i class="fas fa-trash-alt mr-8"></i>
+              Archivar
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </label>
+  </div>
+</div>

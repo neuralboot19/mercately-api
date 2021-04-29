@@ -26,7 +26,9 @@ ActiveAdmin.register Retailer do
                 :allow_voice_notes,
                 :allow_send_videos,
                 :allow_multiple_answers,
-                :max_agents
+                :max_agents,
+                :ml_domain,
+                :ml_site
 
   filter :name
   filter :slug
@@ -108,6 +110,8 @@ ActiveAdmin.register Retailer do
       row :allow_send_videos
       row :allow_multiple_answers
       row :max_agents
+      row :ml_domain
+      row :ml_site
       row :created_at
       row :updated_at
     end
@@ -337,6 +341,8 @@ ActiveAdmin.register Retailer do
       f.input :phone_number
       f.input :unlimited_account
       f.input :whats_app_enabled
+      f.input :ml_site, as: :select, collection: [['Ecuador', 'MEC'], ['Chile', 'MLC']]
+      f.input :ml_domain
       f.input :karix_whatsapp_phone
       f.input :karix_account_uid
       f.input :karix_account_token

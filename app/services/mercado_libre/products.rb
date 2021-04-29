@@ -110,7 +110,7 @@ module MercadoLibre
     end
 
     def update(product_info, from_order = false)
-      product = Product.find_or_initialize_by(meli_product_id: product_info['id'])
+      product = Product.unscoped.find_or_initialize_by(meli_product_id: product_info['id'])
       new_product_with_parent = @utility.new_product_has_parent?(product, product_info)
 
       product = @utility.search_product(product, @retailer, product_info, new_product_with_parent)
@@ -118,7 +118,7 @@ module MercadoLibre
 
       product.with_lock do
         return if product_info['status'] == 'closed' &&
-                  Product.find_by(meli_product_id: product_info['id']).blank? &&
+          Product.unscoped.find_by(meli_product_id: product_info['id']).blank? &&
                   from_order == false
 
         category = @ml_categories.import_category(product_info['category_id'])
@@ -209,7 +209,7 @@ module MercadoLibre
 
         pull_images(product, product_info['pictures'])
 
-        product.update_facebook_product
+        # product.update_facebook_product
         @ml_questions.import_inherited_questions(product) if new_product_with_parent
       end
 

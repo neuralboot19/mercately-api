@@ -8,11 +8,11 @@ class OrderItem < ApplicationRecord
   before_destroy :replace_stock, prepend: true
   before_destroy -> { catch_total('destroy') }
   before_save -> { catch_total('save') }
-  after_update :update_ml_stock, if: :saved_change_to_quantity?
+  # after_update :update_ml_stock, if: :saved_change_to_quantity?
   after_save :update_order_total
   after_destroy :update_order_total
   after_create :subtract_stock
-  after_create -> { update_ml_stock('create') }
+  # after_create -> { update_ml_stock('create') }
 
   delegate :meli_product_id, to: :product
 
@@ -20,6 +20,11 @@ class OrderItem < ApplicationRecord
 
   def subtotal
     quantity * unit_price
+  end
+
+  def product
+    @product ||= super
+    @product ||= Product.unscoped.find_by(id: product_id)
   end
 
   private
@@ -54,7 +59,7 @@ class OrderItem < ApplicationRecord
         product.update(sold_quantity: new_sold_quantity) unless subtract_sold_quantity?
       end
 
-      product.update_status_publishment(true)
+      # product.update_status_publishment(true)
     end
 
     def adjust_stock
@@ -71,7 +76,7 @@ class OrderItem < ApplicationRecord
           quantity_was + quantity)
       end
 
-      product.update_status_publishment(true)
+      # product.update_status_publishment(true)
     end
 
     def update_order_total
@@ -93,8 +98,8 @@ class OrderItem < ApplicationRecord
           quantity, sold_quantity: product.sold_quantity.to_i - quantity)
       end
 
-      update_ml_stock
-      product.update_status_publishment(true)
+      # update_ml_stock
+      # product.update_status_publishment(true)
     end
 
     # TODO: Refactorizar para obtener el total desde la orden
