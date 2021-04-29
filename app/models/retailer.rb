@@ -54,6 +54,7 @@ class Retailer < ApplicationRecord
   after_update :import_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
   after_save :generate_slug, if: :saved_change_to_name?
   after_save :add_sales_channel
+  after_save :update_gupshup_info, if: :saved_change_to_gupshup_src_name?
 
   validates :slug,
             exclusion: { in: %w(www),
@@ -282,5 +283,21 @@ class Retailer < ApplicationRecord
                        else
                          'com.ec'
                        end
+    end
+
+    def update_gupshup_info
+      if gupshup_src_name.blank?
+        update(gupshup_app_id: nil, gupshup_app_token: nil)
+      else
+        aux_app_id = gs_service_api.set_app_id(gupshup_src_name)
+        return unless aux_app_id.present?
+
+        aux_app_token = gs_service_api.set_app_token(aux_app_id)
+        update(gupshup_app_id: aux_app_id, gupshup_app_token: aux_app_token)
+      end
+    end
+
+    def gs_service_api
+      @gs_service_api ||= GupshupPartners::Api.new
     end
 end
