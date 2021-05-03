@@ -20,8 +20,9 @@ class Retailers::MessagesController < RetailersController
   end
 
   def question
-    @question = Question.includes(:product).where(id: params[:question_id], products:
-      { retailer_id: current_retailer.id }).first
+    @question = Question.joins('INNER JOIN products ON products.id = questions.product_id')
+      .where('questions.id = ? AND products.retailer_id = ?', params[:question_id], current_retailer.id)
+      .first
 
     product = @question.product
     url = "http://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/"
@@ -104,10 +105,9 @@ class Retailers::MessagesController < RetailersController
   end
 
   def questions_list
-    @questions = Question.joins(:customer, :product).where(meli_question_type: :from_product, products:
-      {
-        retailer_id: current_retailer.id
-      }).select('questions.*, customers.first_name, customers.last_name, customers.meli_nickname')
+    @questions = Question.joins('INNER JOIN customers ON customers.id = questions.customer_id INNER JOIN products ON products.id = questions.product_id')
+      .where('questions.meli_question_type = 1 AND products.retailer_id = ?', current_retailer.id)
+      .select('questions.*, customers.first_name, customers.last_name, customers.meli_nickname')
       .order('questions.date_read IS NOT NULL, questions.created_at DESC').page(params[:page])
 
     render json: { questions: @questions, total: @questions.total_pages }
