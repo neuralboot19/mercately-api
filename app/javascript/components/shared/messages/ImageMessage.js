@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import MediaMessageStatus from '../MediaMessageStatus';
+import checkForUrls from "../../../util/urlUtil";
 
 function ImageMessage({
   chatType,
@@ -69,7 +70,7 @@ function ImageMessage({
           />
         </div>
         {message.content_media_caption
-        && (<div className="media-caption text-pre-line">{message.content_media_caption}</div>)}
+        && (<div className="media-caption text-pre-line" dangerouslySetInnerHTML={{ __html: checkForUrls(message.content_media_caption) }} />)}
       </div>
     </div>
   );

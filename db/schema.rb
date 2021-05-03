@@ -934,6 +934,8 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.string "hs_id"
     t.integer "max_agents", default: 2
     t.boolean "campaings_access", default: false
+    t.string "ml_domain", default: "com.ec"
+    t.string "ml_site", default: "MEC"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
