@@ -1010,12 +1010,12 @@ i {
 .message-by-retailer {
   background: #3d8bfc !important;
   color: #FFF;
-
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 
   .img-holder {
     text-align: right;
   }
-
 
   &.read-message {
     background-color: #00A652 !important;
@@ -1052,10 +1052,18 @@ i {
   &.error-message {
     background-color: #ff0000ad !important;
   }
+
+  .media-caption {
+    a {
+      color: initial;
+    }
+  }
 }
 
 .message-by-customer {
   min-width: 35%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 
   .caption {
     background: #F1F0F0;

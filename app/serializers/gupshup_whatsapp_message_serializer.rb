@@ -133,9 +133,12 @@ class GupshupWhatsappMessageSerializer
   attribute :replied_message do |object|
     message = object.message_payload
     id = message.try(:[], 'payload').try(:[], 'context').try(:[], 'id')
+    gs_id = message.try(:[], 'payload').try(:[], 'context').try(:[], 'gsId')
     next unless id.present?
 
-    replied = GupshupWhatsappMessage.find_by_whatsapp_message_id(id)
+    replied = GupshupWhatsappMessage.find_by_whatsapp_message_id(id).presence ||
+      GupshupWhatsappMessage.find_by_gupshup_message_id(gs_id)
+
     next unless replied
 
     JSON.parse(

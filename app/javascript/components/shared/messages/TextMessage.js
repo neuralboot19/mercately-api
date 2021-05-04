@@ -1,5 +1,6 @@
 import React from 'react';
 import MessageStatus from '../MessageStatus';
+import checkForUrls from "../../../util/urlUtil";
 
 const TextMessage = ({ chatType, handleMessageEvents, message }) => {
   const formatText = (text) => text?.replace(/~([^~\n]*[^~\s])~/g, '<s>$1</s>')
@@ -9,6 +10,7 @@ const TextMessage = ({ chatType, handleMessageEvents, message }) => {
 
   let messageText = chatType === "whatsapp" ? message.content_text : message.text;
   messageText = formatText(messageText);
+  messageText = checkForUrls(messageText);
 
   return (
     <div className="text-pre-line">

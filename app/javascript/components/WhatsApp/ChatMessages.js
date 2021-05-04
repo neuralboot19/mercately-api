@@ -491,7 +491,7 @@ class ChatMessages extends Component {
       return 'video';
     } if (type === 'sticker') {
       return 'sticker';
-    } 
+    }
     return null;
   }
 

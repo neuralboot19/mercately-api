@@ -1,8 +1,10 @@
 import React from 'react';
 import MediaMessageStatus from '../MediaMessageStatus';
+import checkForUrls from "../../../util/urlUtil";
 
 const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
   const url = chatType === "whatsapp" ? message.content_media_url : message.url;
+
   return (
     <div>
       <div className="video-content">
@@ -17,7 +19,7 @@ const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
         />
       </div>
       {message.content_media_caption
-      && (<div className="media-caption text-pre-line">{message.content_media_caption}</div>)}
+      && (<div className="media-caption text-pre-line" dangerouslySetInnerHTML={{ __html: checkForUrls(message.content_media_caption) }} />)}
     </div>
   );
 };
