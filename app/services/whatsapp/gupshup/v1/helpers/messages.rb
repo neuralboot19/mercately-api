@@ -138,10 +138,6 @@ module Whatsapp::Gupshup::V1::Helpers
       end
     end
 
-    def serialize_gupshup_messages
-      JSON.parse(serialize_message)['data'].pluck('attributes')
-    end
-
     private
 
       def redis

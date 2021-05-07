@@ -12,8 +12,7 @@ import {
   setNoRead,
   setWhatsAppMessageAsRead,
   toggleChatBot,
-  createReminder,
-  setLastMessages
+  createReminder
 } from '../../actions/whatsapp_karix';
 import ImagesSelector from '../shared/ImagesSelector';
 import GoogleMap from '../shared/Map';
@@ -105,11 +104,7 @@ class ChatMessages extends Component {
       selectedFastAnswer: null
     }, () => {
       justMounted = true;
-      if (this.props.customerDetails.last_messages) {
-        this.props.setLastMessages(this.props.customerDetails.last_messages);
-      } else {
-        this.props.fetchWhatsAppMessages(id);
-      }
+      this.props.fetchWhatsAppMessages(id);
     });
 
     this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
@@ -216,11 +211,7 @@ class ChatMessages extends Component {
         selectedProduct: null,
         selectedFastAnswer: null
       }, () => {
-        if (this.props.customerDetails.last_messages) {
-          this.props.setLastMessages(this.props.customerDetails.last_messages);
-        } else {
-          this.props.fetchWhatsAppMessages(id);
-        }
+        this.props.fetchWhatsAppMessages(id);
       });
 
       this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
@@ -1369,9 +1360,6 @@ function mapDispatch(dispatch) {
     },
     fetchWhatsAppMessages: (id, page = 1) => {
       dispatch(fetchWhatsAppMessages(id, page));
-    },
-    setLastMessages: (messages) => {
-      dispatch(setLastMessages(messages));
     },
     sendWhatsAppImg: (id, body, token) => {
       dispatch(sendWhatsAppImg(id, body, token));

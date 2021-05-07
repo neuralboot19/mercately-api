@@ -83,13 +83,6 @@ module Whatsapp
                                     args[:customer].agent_customer)
       end
 
-      def serialize_karix_messages(messages)
-        ActiveModelSerializers::SerializableResource.new(
-          messages,
-          each_serializer: KarixWhatsappMessageSerializer
-        ).as_json
-      end
-
       private
 
         def catch_status(message, status)

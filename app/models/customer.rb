@@ -194,23 +194,6 @@ class Customer < ApplicationRecord
     last_message.status != 'read'
   end
 
-  def last_messages
-    if retailer.karix_integrated?
-      msgs = karix_whatsapp_messages.where.not(status: 'failed').order(created_time: :desc).page(1)
-      {
-        messages: Whatsapp::Karix::Messages.new.serialize_karix_messages(msgs).to_a.reverse,
-        total_pages: msgs.total_pages
-      }
-    else
-      msgs = gupshup_whatsapp_messages.allowed_messages.order(created_at: :desc).page(1)
-      Whatsapp::Gupshup::V1::Helpers::Messages.new(msgs).serialize_gupshup_messages.reverse
-      {
-        messages: Whatsapp::Gupshup::V1::Helpers::Messages.new(msgs).serialize_gupshup_messages.reverse,
-        total_pages: msgs.total_pages
-      }
-    end
-  end
-
   def unread_whatsapp_messages
     messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
     self.send(messages).unread.where(direction: 'inbound').count
