@@ -42,5 +42,31 @@ RSpec.describe Campaign, type: :model do
       customer = campaign.contact_group.customers.first
       expect(campaign.customer_details_template(customer)).to eq "Hi #{customer.first_name}. Welcome to our WhatsApp. We will be here for any question."
     end
+
+    context 'when not column on customer table' do
+      it 'replaces {{\w}} with custom fields data' do
+        campaign.update_column(
+          :template_text,
+          'Hi {{first_name}}. Welcome to our WhatsApp. We will be here for any {{custom_field}}.'
+        )
+        customer = campaign.contact_group.customers.first
+        crd = customer.customer_related_data.create(
+          data: 'ask',
+          customer_related_field: CustomerRelatedField.new(retailer: campaign.retailer, name: 'custom_field')
+        )
+        expect(campaign.customer_details_template(customer)).to eq "Hi #{customer.first_name}. Welcome to our WhatsApp. We will be here for any #{crd.data}."
+      end
+
+      context 'when customer has no data' do
+        it 'replaces {{\w}} with blank space' do
+          campaign.update_column(
+            :template_text,
+            'Hi {{first_name}}. Welcome to our WhatsApp. We will be here for any {{custom_field}}.'
+          )
+          customer = campaign.contact_group.customers.first
+          expect(campaign.customer_details_template(customer)).to eq "Hi #{customer.first_name}. Welcome to our WhatsApp. We will be here for any  ."
+        end
+      end
+    end
   end
 end

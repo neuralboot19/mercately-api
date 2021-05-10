@@ -8,7 +8,7 @@ FactoryBot.define do
       "Campaña #{n}"
     end
     send_at { 2.minutes.from_now }
-    content_params { ['{{first_name}}'] }
+    content_params { ['{{first_name}}', '{{custom_field}}'] }
 
     trait :with_sent_messages do
       after(:build) do |campaign|
