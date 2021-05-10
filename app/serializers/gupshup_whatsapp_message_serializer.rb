@@ -134,12 +134,15 @@ class GupshupWhatsappMessageSerializer
     message = object.message_payload
     id = message.try(:[], 'payload').try(:[], 'context').try(:[], 'id')
     gs_id = message.try(:[], 'payload').try(:[], 'context').try(:[], 'gsId')
-    next unless id.present?
+    next unless id.present? || gs_id.present?
 
-    replied = GupshupWhatsappMessage.find_by_whatsapp_message_id(id).presence ||
-      GupshupWhatsappMessage.find_by_gupshup_message_id(gs_id)
+    customer = Customer.find_by(id: object.customer_id)
+    next unless customer.present?
 
-    next unless replied
+    replied = customer.gupshup_whatsapp_messages.find_by_whatsapp_message_id(id).presence ||
+      customer.gupshup_whatsapp_messages.find_by_gupshup_message_id(gs_id)
+
+    next unless replied.present?
 
     JSON.parse(
       GupshupWhatsappMessageSerializer.new(
