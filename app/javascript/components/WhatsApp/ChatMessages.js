@@ -157,7 +157,8 @@ class ChatMessages extends Component {
       const rDate = moment(newProps.recentInboundMessageDate).local();
       this.setState((prevState) => ({
         new_message: false,
-        messages: newProps.messages.concat(prevState.messages),
+        // eslint-disable-next-line no-undef
+        messages: _.uniqWith(newProps.messages.concat(prevState.messages), _.isEqual),
         load_more: false,
         can_write: moment().local().diff(rDate, 'hours') < 24
       }), () => {
@@ -490,7 +491,7 @@ class ChatMessages extends Component {
       return 'video';
     } if (type === 'sticker') {
       return 'sticker';
-    } 
+    }
     return null;
   }
 

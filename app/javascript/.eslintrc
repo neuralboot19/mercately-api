@@ -51,6 +51,7 @@
         "no-use-before-define": "off",
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
-        "react/self-closing-comp": "off"
+        "react/self-closing-comp": "off",
+        "no-cond-assign": ["error", "except-parens"]
     }
 }

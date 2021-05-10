@@ -1,4 +1,5 @@
 import React from 'react';
+import checkForUrls from "../../../../util/urlUtil";
 
 const ReplyTextMessage = ({ text }) => {
   const formatText = (baseText) => baseText?.replace(/~([^~\n]*[^~\s])~/g, '<s>$1</s>')
@@ -6,12 +7,11 @@ const ReplyTextMessage = ({ text }) => {
     .replace(/\*([^*\n]*[^*\s])\*/g, '<b>$1</b>')
     .replace(/`{3}([^`\n]*[^`\s])`{3}/g, '<pre class="d-inline-block">$1</pre>');
 
-  const messageText = formatText(text);
+  let messageText = formatText(text);
+  messageText = checkForUrls(messageText);
 
   return (
-    <span className="text text-pre-line">
-      {messageText}
-    </span>
+    <div className="text text-pre-line" dangerouslySetInnerHTML={{ __html: messageText }} />
   );
 };
 

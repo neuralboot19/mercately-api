@@ -141,9 +141,11 @@ class ChatMessages extends Component {
   componentWillReceiveProps(newProps){
     if (newProps.messages !== this.props.messages && newProps.messages.length > 0 &&
       this.props.currentCustomer === newProps.messages[0].customer_id) {
+      const concatArray = newProps.messages.concat(this.state.messages);
       this.setState({
         new_message: false,
-        messages: newProps.messages.concat(this.state.messages),
+        // eslint-disable-next-line no-undef
+        messages: _.uniqWith(concatArray, _.isEqual),
         load_more: false,
       })
     }
