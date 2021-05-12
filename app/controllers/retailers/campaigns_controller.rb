@@ -36,6 +36,14 @@ class Retailers::CampaignsController < RetailersController
 
   # PUT retailers/:slug/campaigns/:id/cancel
   def cancel
+    if @campaign.processing?
+      redirect_to(
+        retailers_campaigns_path(current_retailer),
+        notice: 'La campaña se está procesando, no puedes cancelarla'
+      )
+      return
+    end
+
     @campaign.cancelled!
 
     redirect_to retailers_campaigns_path(current_retailer)

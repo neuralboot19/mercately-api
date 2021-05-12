@@ -1,8 +1,10 @@
 module Campaigns
   class WhatsappTemplates
     def execute
-      current_time = Time.now
-      Campaign.includes(contact_group: :customers).pending.where(send_at: current_time..current_time + 1.minute).each do |c|
+      campaigns = Campaign.pending.where(send_at: 2.minutes.ago..1.minute.from_now)
+      campaign_ids = campaigns.ids
+      campaigns.update_all status: :processing
+      Campaign.includes(contact_group: :customers).where(id: campaign_ids).each do |c|
         if c.retailer.ws_balance < c.estimated_cost
           c.update(reason: :insufficient_balance, status: :failed)
           next

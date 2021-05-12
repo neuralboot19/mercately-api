@@ -17,7 +17,7 @@ class Campaign < ApplicationRecord
   after_update :success, if: :sent?
   after_update :send_reason, if: :failed?
 
-  enum status: %i[pending sent cancelled failed]
+  enum status: %i[pending sent cancelled failed processing]
 
   def to_param
     web_id
@@ -40,7 +40,7 @@ class Campaign < ApplicationRecord
     template_text.gsub(/{{\w*}}/) do |match|
       vars = match.gsub(/\w+/) do |method|
         if method.in?(Customer.public_fields)
-          customer.send method
+          customer.send(method)&.presence || ' '
         else
           crf = retailer.customer_related_fields.find_by(identifier: method)
           next ' ' if crf.nil?
