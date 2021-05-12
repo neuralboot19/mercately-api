@@ -30,7 +30,7 @@ class ChatBot < ApplicationRecord
     def any_interaction_unique
       return unless any_interaction == true
 
-      cb_aux = retailer.chat_bots.where(any_interaction: true)
+      cb_aux = retailer.chat_bots.where(any_interaction: true, platform: platform)
       exist_other = if new_record?
                       cb_aux.exists?
                     else
