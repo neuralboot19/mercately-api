@@ -62,8 +62,8 @@ class Retailer < ApplicationRecord
   enum id_type: %i[cedula pasaporte ruc rut]
   enum hubspot_match: %i[phone_or_email phone email], _prefix: true
 
-  def facebook_unread_messages
-    facebook_retailer&.facebook_unread_messages
+  def facebook_unread_messages(retailer_user)
+    facebook_retailer&.facebook_unread_messages(retailer_user)
   end
 
   def to_param
@@ -98,26 +98,25 @@ class Retailer < ApplicationRecord
       .where(direction: 'inbound', customers: { retailer_id: id })
     return messages if retailer_user.admin? || retailer_user.supervisor?
 
-    customer_ids = messages.pluck(:customer_id).compact
-    remove_customer_ids = AgentCustomer.where(customer_id: customer_ids).where.not(retailer_user_id: retailer_user.id)
-      .pluck(:customer_id).compact
-    customer_ids -= remove_customer_ids
-
-    messages.where(customer_id: customer_ids)
+    if retailer_user.only_assigned?
+      messages.includes(customer: :agent_customer).where(agent_customers: { retailer_user_id: retailer_user.id })
+    else
+      messages.includes(customer: :agent_customer)
+        .where(agent_customers: { retailer_user_id: [retailer_user.id, nil] })
+    end
   end
 
   def gupshup_unread_whatsapp_messages(retailer_user)
     messages = gupshup_whatsapp_messages.includes(:customer).where.not(status: 'read', whatsapp_message_id: nil)
       .where(direction: 'inbound', customers: { retailer_id: id })
     return messages if retailer_user.admin? || retailer_user.supervisor?
-    customer_ids = messages.pluck(:customer_id).compact
-    remove_customer_ids = AgentCustomer.where(customer_id: customer_ids)
-                                       .where.not(retailer_user_id: retailer_user.id)
-                                       .pluck(:customer_id)
-                                       .compact
-    customer_ids -= remove_customer_ids
 
-    messages.where(customer_id: customer_ids)
+    if retailer_user.only_assigned?
+      messages.includes(customer: :agent_customer).where(agent_customers: { retailer_user_id: retailer_user.id })
+    else
+      messages.includes(customer: :agent_customer)
+        .where(agent_customers: { retailer_user_id: [retailer_user.id, nil] })
+    end
   end
 
   def incomplete_meli_profile?
