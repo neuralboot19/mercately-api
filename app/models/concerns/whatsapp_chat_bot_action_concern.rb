@@ -33,8 +33,18 @@ module WhatsappChatBotActionConcern
     # Se revisa el texto a enviar, por si tiene variables, sustituirlas por el valor real
     params[:message] = chat_bot_service.replace_message_variables(params[:message])
 
+    # En caso de que sea un intento fallido y hayan respuestas adicionales, las opciones a
+    # seleccionar se insertan en la respuesta original, ya que las adicionales no se envian
+    # en intentos fallidos.
+    if failed_attempt && chat_bot_option.chat_bot.on_failed_attempt == 'resend_options' &&
+      chat_bot_option.has_additional_answers_filled?
+      params[:message] = chat_bot_service.append_options_to_message(chat_bot_option, params[:message])
+    end
+
     # Recopila la informacion del adjunto para enviar
-    params = attachment_data(chat_bot_option, nil, params) if chat_bot_option.file.attached?
+    if chat_bot_option.file.attached? && !failed_attempt && !error_exit
+      params = attachment_data(chat_bot_option, nil, params)
+    end
 
     send_bot_message(params)
   end
