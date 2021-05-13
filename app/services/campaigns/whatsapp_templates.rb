@@ -38,7 +38,7 @@ module Campaigns
 
         params = {
           gupshup_template_id: template.gupshup_template_id,
-          template_params: campaign.content_params,
+          template_params: campaign.customer_content_params(customer),
           type: has_file ? 'file' : 'template'
         }
 

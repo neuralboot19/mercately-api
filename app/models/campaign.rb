@@ -53,6 +53,29 @@ class Campaign < ApplicationRecord
     end
   end
 
+  def customer_content_params(customer)
+    replaced_params = []
+
+    content_params.each do |cp|
+      replaced_params << cp.gsub(/{{\w*}}/) do |match|
+        vars = match.gsub(/\w+/) do |method|
+          if method.in?(Customer.public_fields)
+            customer.send(method)&.presence || ' '
+          else
+            crf = retailer.customer_related_fields.find_by(identifier: method)
+            next ' ' if crf.nil?
+
+            crf.customer_related_data.find_by(customer: customer)&.data || ' '
+          end
+        end
+
+        vars.gsub!(/{|}/, '')
+      end
+    end
+
+    replaced_params
+  end
+
   private
 
     def generate_template_text
