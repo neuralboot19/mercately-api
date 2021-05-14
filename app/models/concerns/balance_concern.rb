@@ -52,8 +52,13 @@ module BalanceConcern
       send_running_out_balance_email if will_send_notification
     end
 
+    # Sends a running out balance notification email
     def send_running_out_balance_email
-      # Sends a running out balance notification email
-      RetailerMailer.running_out_balance(self.retailer).deliver_now
+      emails = retailer.admins.pluck(:email) + retailer.supervisors.pluck(:email)
+      return unless emails.compact.present?
+
+      emails.each do |email|
+        RetailerMailer.running_out_balance(retailer, email).deliver_now
+      end
     end
 end
