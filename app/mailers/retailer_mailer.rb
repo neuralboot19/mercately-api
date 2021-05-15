@@ -33,9 +33,9 @@ class RetailerMailer < ApplicationMailer
     mail to: agent_customer.retailer_user.email, subject: 'Nuevo chat asignado'
   end
 
-  def running_out_balance(retailer)
+  def running_out_balance(retailer, email)
     @retailer = retailer
-    mail to: retailer.admins.pluck(:email), subject: 'Su saldo está a punto de terminarse'
+    mail to: email, subject: 'Su saldo está a punto de terminarse'
   end
 
   def imported_customers(retailer_user, errors)
