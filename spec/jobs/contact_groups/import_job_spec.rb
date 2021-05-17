@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'sidekiq/testing'
 Sidekiq::Testing.inline!
 
-RSpec.describe Customers::ImportCustomersJob, type: :job do
+RSpec.describe ContactGroups::ImportJob, type: :job do
   let(:retailer) { create(:retailer) }
   let(:retailer_user) { create(:retailer_user, :admin, retailer: retailer) }
 
@@ -12,14 +12,14 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
         copy_file('spec/fixtures/duplicated_data_in_customers.csv')
 
         expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
+          ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+            'text/csv', 'Test contact group')
         end.to change(Customer, :count).by(0)
 
         mail = ActionMailer::Base.deliveries.last
         expect(mail.to).to eq([retailer_user.email])
         expect(mail.body.encoded).to include('Este tel')
-        expect(mail.body.encoded).to include('duplicado en su archivo')
+        expect(mail.body.encoded).to include('duplicado')
       end
     end
 
@@ -28,14 +28,14 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
         copy_file('spec/fixtures/duplicated_data_in_customers.csv')
 
         expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
+          ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+            'text/csv', 'Test contact group')
         end.to change(Customer, :count).by(0)
 
         mail = ActionMailer::Base.deliveries.last
         expect(mail.to).to eq([retailer_user.email])
         expect(mail.body.encoded).to include('Este email')
-        expect(mail.body.encoded).to include('duplicado en su archivo')
+        expect(mail.body.encoded).to include('duplicado')
       end
     end
 
@@ -44,8 +44,8 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
         copy_file('spec/fixtures/duplicated_data_in_customers.csv')
 
         expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
+          ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+            'text/csv', 'Test contact group')
         end.to change(Customer, :count).by(0)
 
         mail = ActionMailer::Base.deliveries.last
@@ -59,8 +59,8 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
         copy_file('spec/fixtures/invalid_data_customers.csv')
 
         expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
+          ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+            'text/csv', 'Test contact group')
         end.to change(Customer, :count).by(2)
 
         mail = ActionMailer::Base.deliveries.last
@@ -74,8 +74,8 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
         copy_file('spec/fixtures/invalid_data_customers.csv')
 
         expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
+          ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+            'text/csv', 'Test contact group')
         end.to change(Customer, :count).by(2)
 
         mail = ActionMailer::Base.deliveries.last
@@ -91,8 +91,8 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
         copy_file('spec/fixtures/customers.csv')
 
         expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
+          ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+            'text/csv', 'Test contact group')
         end.to change(Customer, :count).by(1)
 
         mail = ActionMailer::Base.deliveries.last
@@ -102,31 +102,58 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
     end
 
     context 'when the row is filled well in the file' do
-      context 'when it is a csv file' do
-        it 'imports the row' do
-          copy_file('spec/fixtures/customers.csv')
+      context 'when the contact group does not exist yet' do
+        context 'when it is a csv file' do
+          it 'imports the row and creates the contact group' do
+            copy_file('spec/fixtures/customers.csv')
 
-          expect do
-            Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-              'text/csv')
-          end.to change(Customer, :count).by(2)
+            expect(retailer.contact_groups.count).to eq(0)
+            expect do
+              ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+                'text/csv', 'Test contact group')
+            end.to change(Customer, :count).by(2)
 
-          mail = ActionMailer::Base.deliveries.last
-          expect(mail.to).to eq([retailer_user.email])
+            mail = ActionMailer::Base.deliveries.last
+            expect(mail.to).to eq([retailer_user.email])
+            expect(retailer.contact_groups.count).to eq(1)
+          end
+        end
+
+        context 'when it is an excel file' do
+          it 'imports the row and creates the contact group' do
+            copy_file('spec/fixtures/customers.xlsx', 'xlsx')
+
+            expect(retailer.contact_groups.count).to eq(0)
+            expect do
+              ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.xlsx", retailer_user.id,
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'Test contact group')
+            end.to change(Customer, :count).by(2)
+
+            mail = ActionMailer::Base.deliveries.last
+            expect(mail.to).to eq([retailer_user.email])
+            expect(retailer.contact_groups.count).to eq(1)
+          end
         end
       end
 
-      context 'when it is an excel file' do
-        it 'imports the row' do
+      context 'when the contact group already exists' do
+        let!(:contact_group) { create(:contact_group, :with_customers, retailer: retailer) }
+
+        it 'imports the row and updates the current contact group' do
           copy_file('spec/fixtures/customers.xlsx', 'xlsx')
 
+          expect(retailer.contact_groups.count).to eq(1)
+          expect(contact_group.customers.count).to eq(3)
           expect do
-            Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.xlsx", retailer_user.id,
-              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.xlsx", retailer_user.id,
+              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', contact_group.name,
+              contact_group.id)
           end.to change(Customer, :count).by(2)
 
           mail = ActionMailer::Base.deliveries.last
           expect(mail.to).to eq([retailer_user.email])
+          expect(retailer.contact_groups.count).to eq(1)
+          expect(contact_group.customers.count).to eq(5)
         end
       end
 
@@ -139,8 +166,8 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
           copy_file('spec/fixtures/custom_fields.csv')
 
           expect do
-            Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-              'text/csv')
+            ContactGroups::ImportJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
+              'text/csv', 'Test contact group')
           end.to change(Customer, :count).by(2)
 
           mail = ActionMailer::Base.deliveries.last
