@@ -156,7 +156,8 @@ class GupshupWhatsappMessageSerializer
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless type == 'file'
 
-    next message.try(:[], 'filename') || message.try(:[], 'payload').try(:[], 'payload').try(:[], 'filename')
+    next message.try(:[], 'filename') || message.try(:[], 'payload').try(:[], 'payload').try(:[], 'filename') ||
+      message.try(:[], 'payload').try(:[], 'payload').try(:[], 'name')
   end
 
   attribute :error_code do |object|

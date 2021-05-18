@@ -291,7 +291,9 @@ module Whatsapp::Gupshup::V1
         return 'video' if content_type.include?('video')
 
         'document' if ['application/pdf', 'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/vnd.ms-excel'].include?(content_type)
       end
 
       def check_type_on_url

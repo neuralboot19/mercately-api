@@ -91,7 +91,9 @@ module Whatsapp
         return unless content_type.present?
         return 'image' if content_type.include?('image')
         return 'document' if ['application/pdf', 'application/msword',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].include?(content_type)
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'application/vnd.ms-excel'].include?(content_type)
       end
 
       def cloudinary_resource_type(resource_type)
