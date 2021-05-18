@@ -18,6 +18,31 @@
             <li><strong>Phone:</strong> Número de teléfono de WhatsApp en formato internacional, ejemplo <strong>+593994455678 (Puede estar vacío, pero, no puede estar repetido)</strong></li>
           </ul>
           <p>Para guardar correctamente los datos, no debe existir campos vacíos y el número de teléfono debe llevar el código del país.</p>
+
+          <p>También es posible importar los campos personalizados si lo desea, estos campos son opcionales.
+            Para esto debe colocar los identificadores de los campos que desee en las columnas siguientes a <strong>Phone</strong>. Por ejemplo:</p>
+
+          <p>Tenemos un campo personalizado llamado <strong>Fecha de nacimiento</strong>, el cual es de tipo Fecha. Su identificador sería
+            <strong>fecha_de_nacimiento</strong>. Entonces en la columna <strong>fecha_de_nacimiento</strong> colocaría la fecha correspondiente
+            de cada cliente a ser guardado en el archivo, en alguno de los siguientes formatos:</p>
+
+          <ul>
+            <li><strong>DD/MM/YYYY o DD-MM-YYYY</strong></li>
+            <li><strong>MM/DD/YYYY o MM-DD-YYYY</strong></li>
+            <li><strong>YYYY/MM/DD o YYYY-MM-DD</strong></li>
+          </ul>
+
+          <p>Si se trata de un campo Verdadero o Falso, los valores permitidos son <strong>true</strong> para Verdadero y <strong>false</strong> para Falso.</p>
+          <p>Cuando es un campo de tipo Lista, debemos colocar el <strong>Valor interno</strong> a ser guardado. Si tenemos un campo llamado <strong>Zona</strong>, cuyo identificador es
+            <strong>zona</strong>. Y tiene los siguientes valores:</p>
+
+          <ul>
+            <li><strong>Valor interno:</strong> guayaquil, <strong>Valor a mostrar:</strong> Guayaquil</li>
+            <li><strong>Valor interno:</strong> quito, <strong>Valor a mostrar:</strong> Quito</li>
+          </ul>
+
+          <p>Entonces se debe colocar en la columna correspondiente a <strong>zona</strong> el valor <strong>guayaquil</strong> o <strong>quito</strong>.</p>
+
           <p>Usted puede descargarse esta plantilla <a href="/customers.xlsx" download>en formato Excel</a> o <a href="/customers.csv" download>en formato CSV</a> de ejemplo.</p>
             <%= form_tag(bulk_update_retailers_contact_group_path(current_retailer, @contact_group), multipart: true) do %>
               <div>

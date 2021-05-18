@@ -42,9 +42,17 @@ module Customers
           customer ||= retailer.customers.find_by(email: email) if email.present?
           customer ||= Customer.new
 
-          customer.assign_attributes(row.except(:row_number))
+          exceptions = row.keys.compact.map(&:strip) - (Customer.public_fields + %w[retailer_id valid_customer])
+          exceptions += [nil]
+
+          customer.assign_attributes(row.except(*exceptions))
           customer.from_import_file = true
           customer.save!
+
+          related_fields = retailer.customer_related_fields.where(identifier: exceptions)
+          next unless related_fields.present?
+
+          import_service.save_related_data(customer, related_fields, row)
         rescue => e
           @errors[:errors] << error_message(row[:row_number], e.message)
         end
@@ -58,10 +66,10 @@ module Customers
       def parse_file(retailer, file_path, file_type)
         parsed_file(file_path, file_type).map.with_index do |row, index|
           # Replace all headers with the actual field name
-          row.to_h.keys.each do |k|
-            if CSV_ATTRIBUTES[k].present?
+          row.to_h.keys.compact.each do |k|
+            if CSV_ATTRIBUTES[k.strip].present?
               value = row.delete(k)[1]
-              row[CSV_ATTRIBUTES[k]] = value
+              row[CSV_ATTRIBUTES[k.strip]] = value
             end
           end
 
@@ -75,6 +83,7 @@ module Customers
           @emails_in_csv.merge!("#{email}": true) if email.present?
 
           row = row.to_h.with_indifferent_access
+          row = row.except(nil).transform_keys { |k| k.strip }
 
           row[:row_number] = index
           row[:retailer_id] = retailer.id
@@ -158,6 +167,10 @@ module Customers
 
         file = file.gsub(';', ',')
         CSV.parse(file, options)
+      end
+
+      def import_service
+        Jobs::ImportCustomers.new
       end
   end
 end

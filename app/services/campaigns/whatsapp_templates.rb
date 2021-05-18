@@ -2,6 +2,8 @@ module Campaigns
   class WhatsappTemplates
     def execute
       campaigns = Campaign.pending.where(send_at: 2.minutes.ago..1.minute.from_now)
+      return unless campaigns.exists?
+
       campaign_ids = campaigns.ids
       campaigns.update_all status: :processing
       Campaign.includes(contact_group: :customers).where(id: campaign_ids).each do |c|

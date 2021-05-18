@@ -75,7 +75,7 @@ module ImportContactGroupsConcern
           return
         end
 
-        file_headers = file_data.headers
+        file_headers = file_data.headers.compact.map(&:strip)
         return unless right_headers?(file_headers)
 
         file_data
