@@ -34,6 +34,7 @@ module MercadoLibre
 
         id_type = customer_info['identification']&.[]('type')
         id_type.downcase! if id_type.present?
+        id_type = 'otro' unless Customer.id_types.keys.include?(id_type)
 
         customer.update_attributes!(
           meli_customer_id: meli_customer.id,
