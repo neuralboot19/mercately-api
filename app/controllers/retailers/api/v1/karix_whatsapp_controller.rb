@@ -44,8 +44,11 @@ module Retailers::Api::V1
     private
 
       def send_karix_notification(params)
+        set_response(500, 'Error', { message: 'No fue posible verificar el número de destino' }.to_json) and
+          return unless @customer.present?
+
         karix_helper = KarixNotificationHelper
-        response = karix_helper.ws_message_service.send_message(current_retailer, nil, params, 'text')
+        response = karix_helper.ws_message_service.send_message(current_retailer, @customer, params, 'text')
 
         is_error = response['error'].present? || response['objects'][0]['status'] == 'failed'
         error = response['error'] || response['objects'][0]['error']
@@ -55,25 +58,23 @@ module Retailers::Api::V1
         message = karix_helper.ws_message_service.assign_message(message, current_retailer, response['objects'][0])
         message.save
 
-        customer = message.customer
-        assign_agent(customer, params)
-        assign_tags(customer, params)
+        assign_agent(@customer, params)
+        assign_tags(@customer, params)
 
-        agent = customer.agent
+        agent = @customer.agent
         agents = agent.present? ? [agent] : current_retailer.retailer_users.all_customers.to_a
-        karix_helper.broadcast_data(current_retailer, agents, message, customer.agent_customer)
+        karix_helper.broadcast_data(current_retailer, agents, message, @customer.agent_customer)
         set_response(200, 'Ok', format_response(response['objects'][0]))
       end
 
       def send_gupshup_notification(params)
-        customer = find_customer(params[:phone_number].strip)
         set_response(500, 'Error', { message: 'No fue posible verificar el número de destino' }.to_json) &&
-          return unless customer&.whatsapp_opt_in
+          return unless @customer&.whatsapp_opt_in
 
-        assign_agent(customer, params)
-        assign_tags(customer, params)
+        assign_agent(@customer, params)
+        assign_tags(@customer, params)
 
-        gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, customer)
+        gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, @customer)
         type = true?(params[:template]) ? 'template' : 'text'
 
         response = gws.send_message(type: type, params: params)
@@ -86,8 +87,8 @@ module Retailers::Api::V1
             },
             direction: 'outbound',
             status: response[:body]['status'],
-            destination: customer&.phone,
-            country: customer&.country_id,
+            destination: @customer&.phone,
+            country: @customer&.country_id,
             created_time: Time.now,
             error: nil
           }
@@ -103,10 +104,18 @@ module Retailers::Api::V1
       end
 
       def validate_balance
-        is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
+        set_response(400, 'Error: Missing phone number') and return unless params[:phone_number].present?
 
+        @customer = find_customer(params[:phone_number].strip)
+        unless @customer&.persisted?
+          render status: 404, json: { message: 'Error: Customer not found', errors:
+            @customer.errors.full_messages.join(', ') }
+          return
+        end
+
+        is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
         return if current_retailer.unlimited_account && is_template == false
-        return if current_retailer.positive_balance?
+        return if current_retailer.positive_balance?(@customer)
 
         render status: 401, json: { message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
                                               'por favor, contáctese con su agente de ventas para recargar su saldo' }

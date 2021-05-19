@@ -154,8 +154,14 @@ class Retailer < ApplicationRecord
     retailer_users.where(retailer_supervisor: true)
   end
 
-  def positive_balance?
-    ws_balance >= 0.0672
+  def positive_balance?(customer)
+    return true if customer.is_chat_open?
+
+    if karix_integrated?
+      ws_balance >= ws_notification_cost
+    elsif gupshup_integrated?
+      ws_balance >= customer.ws_notification_cost
+    end
   end
 
   def notification_messages

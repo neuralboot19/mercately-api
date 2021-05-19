@@ -1188,4 +1188,89 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
       end
     end
   end
+
+  describe '#substract_from_balance' do
+    context 'when the retailer has an unlimited account' do
+      context 'when inbound messages' do
+        let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 5, unlimited_account: true) }
+        let(:message) { create(:gupshup_whatsapp_message, :inbound, retailer: retailer) }
+
+        it 'does not charge cost to balance' do
+          expect(message.cost).to be_nil
+          expect(retailer.reload.ws_balance).to eq(5.0)
+        end
+      end
+
+      context 'when conversation messages' do
+        let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 5, unlimited_account: true) }
+        let(:message) { create(:gupshup_whatsapp_message, :outbound, :conversation, retailer: retailer) }
+
+        it 'does not charge cost to balance' do
+          expect(message.cost).to be_nil
+          expect(retailer.reload.ws_balance).to eq(5.0)
+        end
+      end
+    end
+
+    context 'when the retailer does not have an unlimited account' do
+      context 'when inbound messages' do
+        let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 5) }
+        let(:message) { create(:gupshup_whatsapp_message, :inbound, retailer: retailer) }
+
+        it 'does not charge cost to balance' do
+          expect(message.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(5.0)
+        end
+      end
+
+      context 'when conversation messages' do
+        let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 5) }
+        let(:message) { create(:gupshup_whatsapp_message, :outbound, :conversation, retailer: retailer) }
+
+        it 'does not charge cost to balance' do
+          expect(message.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(5.0)
+        end
+      end
+    end
+
+    context 'when the message is of notification type' do
+      let(:retailer) { create(:retailer, :gupshup_integrated, ws_balance: 5, unlimited_account: true) }
+      let(:customer) { create(:customer, retailer: retailer, ws_notification_cost: 0.0565) }
+
+      context 'when the chat is open' do
+        let!(:inbound_message) do
+          create(:gupshup_whatsapp_message, :inbound, :conversation, retailer: retailer, customer: customer,
+            created_at: Time.now - 10.hours)
+        end
+
+        let(:message) do
+          create(:gupshup_whatsapp_message, :outbound, :notification, retailer: retailer, customer: customer,
+            created_at: Time.now)
+        end
+
+        it 'does not charge cost to balance' do
+          expect(message.cost).to eq(0.0)
+          expect(retailer.reload.ws_balance).to eq(5.0)
+        end
+      end
+
+      context 'when the chat is closed' do
+        let!(:inbound_message) do
+          create(:gupshup_whatsapp_message, :inbound, :conversation, retailer: retailer, customer: customer,
+            created_at: Time.now - 30.hours)
+        end
+
+        let(:message) do
+          create(:gupshup_whatsapp_message, :outbound, :notification, retailer: retailer, customer: customer,
+            created_at: Time.now)
+        end
+
+        it 'charges cost to balance' do
+          expect(message.cost).to eq(0.0565)
+          expect(retailer.reload.ws_balance).to eq(4.9435)
+        end
+      end
+    end
+  end
 end

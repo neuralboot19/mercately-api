@@ -18,25 +18,15 @@ module BalanceConcern
       when 'GupshupWhatsappMessage'
         return unless status != 'error'
 
-        if direction == 'outbound'
-          if message_payload['type'] == 'text'
-            cost_type_message = if message_payload['isHSM'] == 'true'
-                                  update(cost: customer.ws_notification_cost)
-                                  'notification'
-                                else
-                                  'conversation'
-                                end
-          else
-            cost_type_message = 'conversation'
-          end
-        elsif direction == 'inbound'
-          cost_type_message = 'conversation'
-        end
+        cost_type_message = 'conversation'
+        cost_type_message = 'notification' if message_payload['isHSM'] == 'true'
 
         amount = customer.send("ws_#{cost_type_message}_cost")
       end
 
-      retailer.ws_balance -= amount
+      chat_open = customer.is_chat_open?
+      update_cost(amount, chat_open)
+      retailer.ws_balance -= amount unless chat_open
 
       if retailer.ws_balance <= retailer.ws_next_notification_balance &&
          retailer.ws_next_notification_balance > 0 &&
@@ -60,5 +50,15 @@ module BalanceConcern
       emails.each do |email|
         RetailerMailer.running_out_balance(retailer, email).deliver_now
       end
+    end
+
+    def update_cost(amount, chat_open)
+      self.cost = if chat_open
+                    0
+                  else
+                    amount
+                  end
+
+      save
     end
 end

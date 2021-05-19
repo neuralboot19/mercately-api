@@ -1029,4 +1029,56 @@ RSpec.describe Customer, type: :model do
       end
     end
   end
+
+  describe '#is_chat_open?' do
+    context 'when the customer has an inbound message minor to 24 hours' do
+      let(:customer) { create(:customer) }
+      let!(:inbound_message) do
+        create(:gupshup_whatsapp_message, :inbound, :conversation, customer: customer, created_at: Time.now - 10.hours)
+      end
+
+      it 'returns true' do
+        expect(customer.is_chat_open?).to be true
+      end
+    end
+
+    context 'when the customer does not have inbound messages' do
+      let(:customer) { create(:customer) }
+
+      it 'returns false' do
+        expect(customer.is_chat_open?).to be false
+      end
+    end
+
+    context 'when the customer has an inbound message older than 24 hours' do
+      let(:customer) { create(:customer) }
+      let!(:inbound_message) do
+        create(:gupshup_whatsapp_message, :inbound, :conversation, customer: customer, created_at: Time.now - 30.hours)
+      end
+
+      it 'returns false' do
+        expect(customer.is_chat_open?).to be false
+      end
+    end
+  end
+
+  describe '#calc_ws_notification_cost' do
+    country_codes = JSON.parse(File.read("#{Rails.public_path}/json/all_countries_price.json"))
+
+    context 'when the customer has country' do
+      let!(:customer) { create(:customer, phone: '+593123456789', country_id: 'EC') }
+
+      it 'sets the notification cost belonging to that country' do
+        expect(customer.ws_notification_cost).to eq(country_codes['EC'])
+      end
+    end
+
+    context 'when the customer does not have country' do
+      let!(:customer) { create(:customer, phone: '+593123456789', country_id: nil) }
+
+      it 'sets the default notification cost' do
+        expect(customer.ws_notification_cost).to eq(country_codes['Others'])
+      end
+    end
+  end
 end
