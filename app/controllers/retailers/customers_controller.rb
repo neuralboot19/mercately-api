@@ -212,6 +212,7 @@ class Retailers::CustomersController < RetailersController
           })
       end
 
+      customers = filter_by_groups(customers)
       filter_by_tags(customers)
     end
 
@@ -235,6 +236,15 @@ class Retailers::CustomersController < RetailersController
       ).group('customers.id').count('distinct customer_tags.tag_id').map { |c| c.first if c.second == size }
 
       customers.where(id: cust_ids)
+    end
+
+    def filter_by_groups(customers)
+      contact_group_id = params[:q]&.[](:contact_group_id)
+      return customers if contact_group_id.blank?
+
+      group_id = contact_group_id.to_i
+      customers.joins("INNER JOIN contact_group_customers cgc ON cgc.customer_id = customers.id")
+        .where("cgc.contact_group_id = ?", group_id)
     end
 
     def init_custom_fields
