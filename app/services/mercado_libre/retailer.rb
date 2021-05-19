@@ -6,8 +6,10 @@ module MercadoLibre
     end
 
     def save_retailer(identification, address, phone)
+      id_type = identification['type']&.downcase
+      id_type = 'otro' unless @retailer.class.id_types.keys.include?(id_type)
       @retailer.update(
-        id_number: identification['number'], id_type: identification['type']&.downcase,
+        id_number: identification['number'], id_type: id_type,
         address: address['address'], city: address['city'], state: address['state'], zip_code: address['zip_code'],
         phone_number: phone['number'], phone_verified: phone['verified']
       )

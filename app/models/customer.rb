@@ -59,7 +59,7 @@ class Customer < ApplicationRecord
   after_create :generate_web_id
   after_update :sync_hs, if: :hs_active?
 
-  enum id_type: %i[cedula pasaporte ruc]
+  enum id_type: %i[cedula pasaporte ruc rut otro]
 
   attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file, :from_api
 
