@@ -59,7 +59,7 @@ class Retailer < ApplicationRecord
             exclusion: { in: %w(www),
             message: "%{value} is reserved." }
 
-  enum id_type: %i[cedula pasaporte ruc rut]
+  enum id_type: %i[cedula pasaporte ruc rut otro]
   enum hubspot_match: %i[phone_or_email phone email], _prefix: true
 
   def facebook_unread_messages
