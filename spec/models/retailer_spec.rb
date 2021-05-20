@@ -143,37 +143,148 @@ RSpec.describe Retailer, type: :model do
   describe '#karix_unread_whatsapp_messages' do
     subject(:retailer) { create(:retailer) }
 
-    let(:customer_one) { create(:customer, retailer: retailer) }
-    let(:customer_two) { create(:customer, retailer: retailer) }
-    let(:retailer_user_admin) { create(:retailer_user, :admin, retailer: retailer) }
-    let(:retailer_user_agent) { create(:retailer_user, :agent, retailer: retailer) }
+    let(:customer) { create(:customer, retailer: retailer) }
+    let(:admin) { create(:retailer_user, :admin, retailer: retailer) }
+    let(:supervisor) { create(:retailer_user, :supervisor, retailer: retailer) }
+    let(:agent_all) { create(:retailer_user, :agent, retailer: retailer, only_assigned: false) }
+    let(:agent_only_assigned) { create(:retailer_user, :agent, retailer: retailer, only_assigned: true) }
 
-    let!(:agent_customer_one) do
-      create(:agent_customer, retailer_user: retailer_user_admin, customer: customer_one)
+    let(:customer_admin) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_admin) { create(:agent_customer, customer: customer_admin, retailer_user: admin) }
+    let(:customer_supervisor) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_supervisor) do
+      create(:agent_customer, customer: customer_supervisor, retailer_user: supervisor)
     end
 
-    let(:agent_customer_two) do
-      create(:agent_customer, retailer_user: retailer_user_agent, customer: customer_two)
+    let(:customer_agent_all) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_agent_all) { create(:agent_customer, customer: customer_agent_all, retailer_user: agent_all) }
+    let(:customer_only_assigned) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_only_assigned) do
+      create(:agent_customer, customer: customer_only_assigned, retailer_user: agent_only_assigned)
+    end
+
+    let!(:messages_admin) do
+      create_list(:karix_whatsapp_message, 2, :inbound, retailer: retailer, customer: customer_admin, status:
+        'delivered')
+    end
+
+    let!(:messages_supervisor) do
+      create_list(:karix_whatsapp_message, 4, :inbound, retailer: retailer, customer: customer_supervisor, status:
+        'delivered')
+    end
+
+    let!(:messages_agent_all) do
+      create_list(:karix_whatsapp_message, 3, :inbound, retailer: retailer, customer: customer_agent_all, status:
+        'delivered')
+    end
+
+    let!(:message_agent_only_assigned) do
+      create(:karix_whatsapp_message, :inbound, retailer: retailer, customer: customer_only_assigned, status:
+        'delivered')
+    end
+
+    let!(:messages_not_assigned) do
+      create_list(:karix_whatsapp_message, 3, :inbound, retailer: retailer, customer: customer, status:
+        'delivered')
     end
 
     before do
       allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
-
-      create_list(:karix_whatsapp_message, 3, retailer: retailer, customer: customer_one, status:
-        'delivered', direction: 'inbound')
-      create_list(:karix_whatsapp_message, 2, retailer: retailer, customer: customer_two, status:
-        'delivered', direction: 'inbound')
     end
 
     context 'when the retailer user is an admin' do
-      it 'returns all the messages of all customers' do
-        expect(retailer.karix_unread_whatsapp_messages(retailer_user_admin).count).to eq(5)
+      it 'counts all the unread messages' do
+        expect(retailer.karix_unread_whatsapp_messages(admin).size).to eq(13)
       end
     end
 
-    context 'when the retailer user is not an admin' do
-      it 'returns only the messages of customers assigned to it' do
-        expect(retailer.karix_unread_whatsapp_messages(agent_customer_two.retailer_user).count).to eq(2)
+    context 'when the retailer user is a supervisor' do
+      it 'counts all the unread messages' do
+        expect(retailer.karix_unread_whatsapp_messages(supervisor).size).to eq(13)
+      end
+    end
+
+    context 'when the retailer user is an agent that can see only assigned chats' do
+      it 'counts the unread messages that only belong to that agent' do
+        expect(retailer.karix_unread_whatsapp_messages(agent_only_assigned).size).to eq(1)
+      end
+    end
+
+    context 'when the retailer user is an agent that can see assigned and not assigned chats' do
+      it 'counts the unread messages that belong to that agent and not assigned ones' do
+        expect(retailer.karix_unread_whatsapp_messages(agent_all).size).to eq(6)
+      end
+    end
+  end
+
+  describe '#gupshup_unread_whatsapp_messages' do
+    subject(:retailer) { create(:retailer) }
+
+    let(:customer) { create(:customer, retailer: retailer) }
+    let(:admin) { create(:retailer_user, :admin, retailer: retailer) }
+    let(:supervisor) { create(:retailer_user, :supervisor, retailer: retailer) }
+    let(:agent_all) { create(:retailer_user, :agent, retailer: retailer, only_assigned: false) }
+    let(:agent_only_assigned) { create(:retailer_user, :agent, retailer: retailer, only_assigned: true) }
+
+    let(:customer_admin) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_admin) { create(:agent_customer, customer: customer_admin, retailer_user: admin) }
+    let(:customer_supervisor) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_supervisor) do
+      create(:agent_customer, customer: customer_supervisor, retailer_user: supervisor)
+    end
+
+    let(:customer_agent_all) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_agent_all) { create(:agent_customer, customer: customer_agent_all, retailer_user: agent_all) }
+    let(:customer_only_assigned) { create(:customer, retailer: retailer) }
+    let!(:agent_customer_only_assigned) do
+      create(:agent_customer, customer: customer_only_assigned, retailer_user: agent_only_assigned)
+    end
+
+    let!(:messages_admin) do
+      create_list(:gupshup_whatsapp_message, 2, :inbound, retailer: retailer, customer: customer_admin, status: 4)
+    end
+
+    let!(:messages_supervisor) do
+      create_list(:gupshup_whatsapp_message, 4, :inbound, retailer: retailer, customer: customer_supervisor, status: 4)
+    end
+
+    let!(:messages_agent_all) do
+      create_list(:gupshup_whatsapp_message, 3, :inbound, retailer: retailer, customer: customer_agent_all, status: 4)
+    end
+
+    let!(:message_agent_only_assigned) do
+      create(:gupshup_whatsapp_message, :inbound, retailer: retailer, customer: customer_only_assigned, status: 4)
+    end
+
+    let!(:messages_not_assigned) do
+      create_list(:gupshup_whatsapp_message, 3, :inbound, retailer: retailer, customer: customer, status: 4)
+    end
+
+    before do
+      allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
+    end
+
+    context 'when the retailer user is an admin' do
+      it 'counts all the unread messages' do
+        expect(retailer.gupshup_unread_whatsapp_messages(admin).size).to eq(13)
+      end
+    end
+
+    context 'when the retailer user is a supervisor' do
+      it 'counts all the unread messages' do
+        expect(retailer.gupshup_unread_whatsapp_messages(supervisor).size).to eq(13)
+      end
+    end
+
+    context 'when the retailer user is an agent that can see only assigned chats' do
+      it 'counts the unread messages that only belong to that agent' do
+        expect(retailer.gupshup_unread_whatsapp_messages(agent_only_assigned).size).to eq(1)
+      end
+    end
+
+    context 'when the retailer user is an agent that can see assigned and not assigned chats' do
+      it 'counts the unread messages that belong to that agent and not assigned ones' do
+        expect(retailer.gupshup_unread_whatsapp_messages(agent_all).size).to eq(6)
       end
     end
   end
