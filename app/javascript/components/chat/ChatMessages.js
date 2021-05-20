@@ -274,7 +274,9 @@ class ChatMessages extends Component {
     } else if (file_type.includes('image/') || file_type === 'image') {
       return 'image';
     } else if (['application/pdf', 'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'].includes(file_type) ||
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'].includes(file_type) ||
       file_type === 'file') {
         return 'file';
     } else if (file_type.includes('audio/') || file_type === 'audio') {

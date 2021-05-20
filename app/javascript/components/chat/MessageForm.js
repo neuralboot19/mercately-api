@@ -51,9 +51,11 @@ const MessageForm = ({
     if (![
       'application/pdf',
       'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'
     ].includes(file.type)) {
-      alert('Error: El archivo debe ser de tipo PDF o Word');
+      alert('Error: El archivo debe ser de tipo PDF, Excel o Word');
       return;
     }
 
