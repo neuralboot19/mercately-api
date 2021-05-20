@@ -1,4 +1,6 @@
 const checkForUrls = (text) => {
+  if (!text) return;
+
   const expression = /(https?:\/\/)?[\w\-~]+(\.[a-zA-Z\-~]+)+(\/[\w\-~@:%]*)*(\.[a-zA-Z\-~]+)*(#[\w-]*)?(\?[^\s]*)?/gi;
   const regex = new RegExp(expression);
   let match = '';

@@ -6,7 +6,10 @@ const AttachedFile = ({ handleFileSubmit }) => (
     className="d-none"
     type="file"
     name="messageFile"
-    accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    accept={"application/pdf, application/msword, "
+    + "application/vnd.openxmlformats-officedocument.wordprocessingml.document, "
+    + "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, "
+    + "application/vnd.ms-excel"}
     onChange={(e) => handleFileSubmit(e)}
   />
 );
