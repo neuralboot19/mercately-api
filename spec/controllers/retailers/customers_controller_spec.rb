@@ -294,6 +294,28 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         end
       end
     end
+
+    context 'when filters include groups' do
+      let(:retailer) { create(:retailer) }
+      let(:retailer_user) { create(:retailer_user, retailer: retailer) }
+      let!(:contact_group) { create(:contact_group, :with_customers, retailer: retailer) }
+
+      before do
+        sign_in retailer_user
+      end
+
+      context 'when group is selected' do
+        it 'returns only the customers belonging to all tags sent' do
+          get :index, params: {
+            slug: retailer.slug,
+            q: { contact_group_id: contact_group.id }
+          }
+
+          expect(response).to have_http_status(:ok)
+          expect(assigns(:customers).count).to eq(3)
+        end
+      end
+    end
   end
 
   describe 'GET #show' do
