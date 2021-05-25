@@ -1569,3 +1569,15 @@
 #customers, #selected_customers {
   min-height: 375px;
 }
+
+.remove-filters {
+  position: absolute;
+  color: #F00;
+  cursor: pointer;
+  right: 0px;
+  bottom: 0px;
+
+  span {
+    text-decoration: underline;
+  }
+}
