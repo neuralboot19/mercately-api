@@ -432,6 +432,13 @@ class Customer < ApplicationRecord
     end
   end
 
+  def is_chat_open?
+    last_message_date = recent_inbound_message_date
+    return false unless last_message_date.present?
+
+    ((Time.now - last_message_date) / 3600) < 24
+  end
+
   private
 
     def update_valid_customer
@@ -520,11 +527,11 @@ class Customer < ApplicationRecord
     def calc_ws_notification_cost
       country_codes = JSON.parse(File.read("#{Rails.public_path}/json/all_countries_price.json"))
       price = country_codes[country_id]
-      if price.nil?
-        country_codes['Others']
-      else
-        self.ws_notification_cost = price
-      end
+      self.ws_notification_cost = if price.nil?
+                                    country_codes['Others']
+                                  else
+                                    price
+                                  end
     end
 
     def grab_country_on_import

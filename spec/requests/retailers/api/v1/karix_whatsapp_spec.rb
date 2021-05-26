@@ -265,7 +265,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         end
       end
 
-      it 'responses a 500 Internal Server Error response if phone_number NOT present' do
+      it 'responses a 400 Bad Request response if phone_number NOT present' do
         # Making the request
         post '/retailers/api/v1/whatsapp/send_notification',
             params: {
@@ -276,10 +276,10 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
               'Slug': slug,
               'Api-Key': api_key
             }
-        expect(response.code).to eq('500')
+        expect(response.code).to eq('400')
 
         body = JSON.parse(response.body)
-        expect(body['message']).to eq('Error: Missing phone number and/or message and/or template')
+        expect(body['message']).to eq('Error: Missing phone number')
       end
 
       it 'responses a 500 Internal Server Error response if message NOT present' do
@@ -519,7 +519,34 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         }.with_indifferent_access
       end
 
+      let(:service_response) { { code: '202' } }
+
+      before do
+        allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
+          .and_return(gupshup_successful_response)
+        allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
+          .and_return(service_response)
+      end
+
       context 'when sending by template ID' do
+        context 'when phone_number is not sent' do
+          it 'returns 400 - Bad Request', :dox do
+            post '/retailers/api/v1/whatsapp/send_notification_by_id',
+            params: {
+              internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed'
+            }, as: :json,
+            headers: {
+              'Slug': slug,
+              'Api-Key': api_key
+            }
+
+            expect(response.code).to eq('400')
+
+            body = JSON.parse(response.body)
+            expect(body['message']).to eq('Error: Missing phone number')
+          end
+        end
+
         context 'when all the parameters are not sent' do
           it 'returns 400 - Bad Request', :dox do
             post '/retailers/api/v1/whatsapp/send_notification_by_id',
@@ -584,15 +611,6 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
           end
 
           context 'when the template does not have editable fields' do
-            let(:service_response) { { code: '202' } }
-
-            before do
-              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
-                .and_return(gupshup_successful_response)
-              allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
-                .and_return(service_response)
-            end
-
             let!(:template) do
               create(:whatsapp_template, :with_formatting_asterisks, retailer: retailer, gupshup_template_id:
                 '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed')
@@ -619,17 +637,9 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
         end
 
         context 'when all needed template params are sent' do
-          let(:service_response) { { code: '202' } }
           let!(:template) do
             create(:whatsapp_template, retailer: retailer, gupshup_template_id:
               '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed', text: 'Your OTP for * is *. This is valid for *.')
-          end
-
-          before do
-            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:send_message)
-              .and_return(gupshup_successful_response)
-            allow_any_instance_of(Whatsapp::Gupshup::V1::Outbound::Users).to receive(:opt_in)
-              .and_return(service_response)
           end
 
           it 'sends the notification', :dox do
@@ -778,6 +788,109 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
                 expect(customer.first_name).to eq('Test')
                 expect(customer.last_name).to eq('Last Name')
                 expect(customer.notes).to eq('Test')
+              end
+            end
+
+            context 'when some customer attribute is wrong' do
+              context 'when the customer already exists' do
+                context 'when the customer is opted-in' do
+                  let!(:customer) do
+                    create(:customer, retailer: retailer, first_name: 'Test', notes: 'Test', phone: '+593999999999',
+                      whatsapp_opt_in: true, email: nil)
+                  end
+
+                  it 'does not update that specific attribute and sends the notification' do
+                    post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                    params: {
+                      phone_number: '+593999999999',
+                      internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                      template_params: ['test 1', 'test 2', 'test 3'],
+                      last_name: 'Last Name',
+                      email: 'email@',
+                      address: 'Customer address',
+                      city: 'Customer city',
+                      state: 'Customer state',
+                      zip_code: '12345',
+                      notes: '',
+                    },
+                    headers: {
+                      'Slug': slug,
+                      'Api-Key': api_key
+                    }
+
+                    expect(response.code).to eq('200')
+
+                    body = JSON.parse(response.body)
+                    expect(body['message']).to eq('Ok')
+                    expect(body['info']['status']).to eq('submitted')
+
+                    customer = Customer.last
+                    expect(customer.email).to be_nil
+                  end
+                end
+
+                context 'when the customer is not opted-in yet' do
+                  let!(:customer) do
+                    create(:customer, retailer: retailer, first_name: 'Test', notes: 'Test', phone: '+593999999999',
+                      email: nil)
+                  end
+
+                  it 'does not update that specific attribute and does not send the notification' do
+                    post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                    params: {
+                      phone_number: '+593999999999',
+                      internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                      template_params: ['test 1', 'test 2', 'test 3'],
+                      last_name: 'Last Name',
+                      email: 'email@',
+                      address: 'Customer address',
+                      city: 'Customer city',
+                      state: 'Customer state',
+                      zip_code: '12345',
+                      notes: '',
+                    },
+                    headers: {
+                      'Slug': slug,
+                      'Api-Key': api_key
+                    }
+
+                    expect(response.code).to eq('500')
+
+                    body = JSON.parse(response.body)
+                    expect(body['message']).to eq('Error')
+                    expect(body['info']['message']).to eq('No fue posible verificar el número de destino')
+                  end
+                end
+              end
+
+              context 'when the customer does not exist yet' do
+                it 'does not create the customer and does not send the notification' do
+                  expect {
+                    post '/retailers/api/v1/whatsapp/send_notification_by_id',
+                    params: {
+                      phone_number: '+593999999999',
+                      internal_id: '997dd550-c8d8-4bf7-ad98-a5ac4844a1ed',
+                      template_params: ['test 1', 'test 2', 'test 3'],
+                      last_name: 'Last Name',
+                      email: 'email@',
+                      address: 'Customer address',
+                      city: 'Customer city',
+                      state: 'Customer state',
+                      zip_code: '12345',
+                      notes: '',
+                    },
+                    headers: {
+                      'Slug': slug,
+                      'Api-Key': api_key
+                    }
+                  }.to change { Customer.count }.by(0)
+
+                  expect(response.code).to eq('404')
+
+                  body = JSON.parse(response.body)
+                  expect(body['message']).to eq('Error: Customer not found')
+                  expect(body['errors']).to eq('Email invalido')
+                end
               end
             end
           end

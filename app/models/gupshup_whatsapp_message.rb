@@ -46,15 +46,11 @@ class GupshupWhatsappMessage < ApplicationRecord
     end
 
     def apply_cost
-      aux_cost = cost.present? ? cost : 0
+      if status == 'error' && (cost.blank? || !cost.zero?)
+        retailer.refund_message_cost(cost)
 
-      new_cost = if status != 'error' && aux_cost.zero?
-                   customer.send("ws_#{message_type}_cost")
-                 elsif status == 'error' && !aux_cost.zero?
-                   retailer.refund_message_cost(aux_cost)
-
-                   0
-                 end
+        new_cost = 0
+      end
 
       update_column(:cost, new_cost) if new_cost.present?
     end

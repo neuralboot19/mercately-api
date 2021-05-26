@@ -5,6 +5,11 @@ module Reminders
       # Busca todos los recordatorios cuyo status sea scheduled, y que esten en el rango de
       # la hora actual y un minuto luego.
       Reminder.where(status: :scheduled, send_at_timezone: current_time..current_time + 1.minute).each do |r|
+        unless r.retailer.positive_balance?(r.customer)
+          r.update_column(:status, :failed)
+          next
+        end
+
         send(r)
       end
     end
