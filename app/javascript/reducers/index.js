@@ -117,7 +117,15 @@ const reducer = (state = initialState, action) => {
         customerId: action.data.customer_id,
         filter_tags: action.data.filter_tags,
         allowSendVoice: action.data.allow_send_voice
-      }
+      };
+    case 'SET_LAST_MESSAGES':
+      return {
+        ...state,
+        messages: action.data.messages,
+        total_pages: action.data.totalPages,
+        handle_message_events: action.data.handleMessageEvents,
+        recentInboundMessageDate: action.data.recentInboundMessageDate
+      };
     case 'SET_WHATSAPP_TEMPLATES':
       return {
         ...state,

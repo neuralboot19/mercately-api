@@ -32,6 +32,10 @@ module CustomerHelper
       [[name(current_retailer_user), current_retailer_user.id]]
   end
 
+  def groups_allowed
+    current_retailer.contact_groups.map {|group| [group.name, group.id ]  }
+  end
+
   def customer_columns_list
     fields = [
       ['Nombres', 'first_name'],

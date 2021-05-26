@@ -29,40 +29,55 @@
           <%= search_form_for @filter, url: retailers_customers_path do |f| %>
             <div class="box">
               <div class="row">
-                <div class="col-xs-12 col-sm-2 px-0 fs-14 no-style-filter"> Buscar por: </div>
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.search_field :first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont, class: 'input-100 search-field', placeholder: 'Busca por nombres, email o teléfono' %>
+
+                <div class="row w-100">
+                  <div class="col-xs-12 col-sm-1 px-0 fs-14 no-style-filter"> Buscar por: </div>
+                  <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                    <%= f.search_field :first_name_or_last_name_or_phone_or_email_or_whatsapp_name_cont, class: 'input-100 search-field', placeholder: 'Busca por nombres, email o teléfono' %>
+                  </div>
+
+                  <div class="col-xs-12 col-sm-1"></div>
+                  <div class="col-xs-12 col-sm-1 px-0 fs-14 mt-5 no-style-filter"> Etiquetas: </div>
+                  <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                    <%= f.select :customer_tags_tag_id_in, retailer_selectable_tags(current_retailer), { include_blank: true }, class: 'input', multiple: true %>
+                  </div>
                 </div>
 
-                <div class="col-xs-12 col-sm-2 mt-5 pl-0 fs-14 no-style-filter t-right ordering-label"> Ordenar por: </div>
+                <div class="row w-100">
+                  <div class="col-xs-12 col-sm-1 px-0 fs-14 mt-5 no-style-filter">  Agentes: </div>
 
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.hidden_field :s, value: params[:q]&.[]('s').blank? ? 'created_at desc' : params[:q][:s] %>
-                  <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
-                      <span id="selected-order"></span>&nbsp;<i class="fas fa-sort"></i>
-                    </a>
+                  <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                    <%= f.select :agent_id, agents_allowed.unshift(['Todos',' ']), selected: params[:q][:agent_id], class: 'input' %>
+                  </div>
 
-                    <ul class="dropdown__menu w-100" id="order-list">
-                      <% customer_ordering_options.each do |ord| %>
-                        <li value="<%= ord[:value] %>">
-                          <%= ord[:label] %>
-                        </li>
-                      <% end %>
-                    </ul>
-                  </label>
-                </div>
-                <div class="col-xs-12 col-sm-2 px-0 fs-14 mt-5 no-style-filter"> Etiquetas: </div>
+                  <div class="col-xs-12 col-sm-1"></div>
 
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.select :customer_tags_tag_id_in, retailer_selectable_tags(current_retailer), { include_blank: true }, class: 'input', multiple: true %>
+                  <div class="col-xs-12 col-sm-1 px-0 fs-14 mt-5 no-style-filter">  Grupos: </div>
+
+                  <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                    <%= f.select :contact_group_id, groups_allowed.unshift(['Todos',' ']), selected: params[:q][:contact_group_id], class: 'input' %>
+                  </div>
                 </div>
 
-                <div class="col-xs-12 mt-5"></div>
-                <div class="col-xs-12 col-sm-2 px-0 fs-14 mt-5 no-style-filter">  Agentes: </div>
+                <div class="row w-100 mt-10">
+                  <div class="col-xs-12 col-sm-1 mt-5 pl-0 fs-14 no-style-filter ordering-label"> Ordenar por: </div>
 
-                <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= f.select :agent_id, agents_allowed.unshift(['Todos',' ']), selected: params[:q][:agent_id], class: 'input' %>
+                  <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
+                    <%= f.hidden_field :s, value: params[:q]&.[]('s').blank? ? 'created_at desc' : params[:q][:s] %>
+                    <label class="item__dropdown d-inline">
+                      <a class="dropdown__button middle" tabindex="-1" href="#!" id="order-link">
+                        <span id="selected-order"></span>&nbsp;<i class="fas fa-sort"></i>
+                      </a>
+
+                      <ul class="dropdown__menu w-100" id="order-list">
+                        <% customer_ordering_options.each do |ord| %>
+                          <li value="<%= ord[:value] %>">
+                            <%= ord[:label] %>
+                          </li>
+                        <% end %>
+                      </ul>
+                    </label>
+                  </div>
                 </div>
               </div>
 
