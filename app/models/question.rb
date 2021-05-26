@@ -5,6 +5,8 @@ class Question < ApplicationRecord
   belongs_to :product
   belongs_to :customer
 
+  validates_length_of :answer, maximum: 2000
+
   after_update :ml_answer_question, if: :answered?
   before_save :set_answered, if: :will_save_change_to_answer?
   after_create :generate_web_id

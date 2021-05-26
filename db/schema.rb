@@ -800,8 +800,8 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
 
   create_table "questions", force: :cascade do |t|
     t.bigint "product_id"
-    t.string "answer"
-    t.string "question"
+    t.text "answer"
+    t.text "question"
     t.string "meli_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
