@@ -91,9 +91,9 @@ RSpec.describe Order, type: :model do
     end
 
     it 'returns false when it was already read and true when it has not been read yet' do
-      expect(order.unread_message?).to be true
+      expect(order.unread_message).to be true
       order.messages.last.update(date_read: Time.now)
-      expect(order.unread_message?).to be false
+      expect(order.unread_message).to be false
     end
   end
 

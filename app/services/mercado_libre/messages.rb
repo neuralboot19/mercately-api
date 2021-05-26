@@ -17,6 +17,7 @@ module MercadoLibre
       customer = find_customer(is_an_answer, message_info)
 
       message = Message.find_or_initialize_by(meli_id: message_info['message_id'])
+      send_notification = message.new_record?
       order = Order.find_by(meli_order_id: message_info['resource_id'])
 
       return if not_corresponding_message(order, customer, is_an_answer)
@@ -25,14 +26,13 @@ module MercadoLibre
         order: order,
         customer: customer,
         meli_question_type: Question.meli_question_types[:from_order],
+        attachments: message_info['attachments'],
         created_at: message_info['date']
       )
 
-      action = 'add'
       if message_info['date_read'].present?
-        action = 'subtract'
-        total_unread = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
-          .update_all(date_read: message_info['date_read'])
+        unread_messages = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
+        unread_messages.update_all(date_read: message_info['date_read'])
       end
 
       if is_an_answer
@@ -41,7 +41,7 @@ module MercadoLibre
         message.update(question: message_info['text']['plain'])
       end
 
-      insert_notification(is_an_answer, action, total_unread, message)
+      insert_notification(is_an_answer, message) if send_notification
     end
 
     def answer_message(message)
@@ -67,11 +67,11 @@ module MercadoLibre
           (is_an_answer == false && order.customer.id != customer.id)
       end
 
-      def insert_notification(is_an_answer, action, total_unread, message)
+      def insert_notification(is_an_answer, message)
         return if is_an_answer
 
         ml_helper = MercadoLibreNotificationHelper
-        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'messages', action, total_unread, message)
+        ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'messages', message)
       end
 
       def prepare_message_answer(message)

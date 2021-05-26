@@ -121,7 +121,7 @@ const addNotificationsDropdownToggleListener = () => {
  */
 const addOnChatItemClickListener = () => {
   // FIXME Fire event only on unread chats from the list
-  $(document).on('click', '.chat__selector>.profile', function(e){
+  $(document).on('click', '.chat__selector:not(#ml-chat__selector, #q-list)>.profile', function(e){
     e.stopPropagation()
     const customerId = e.currentTarget.getAttribute("customer-id");
     const chatType = e.currentTarget.getAttribute("chat-type");

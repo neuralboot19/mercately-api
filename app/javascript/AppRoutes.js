@@ -6,6 +6,7 @@ import Chat from './components/chat';
 import WhatsAppChat from './components/WhatsApp';
 import ContactGroup from './components/ContactGroup';
 import Funnels from './components/Funnels';
+import MLChat from './components/MLChat';
 
 const customHistory = createBrowserHistory();
 
@@ -36,6 +37,11 @@ const AppRoutes = ({ store }) => (
         exact
         path="/retailers/:slug/funnels"
         component={Funnels}
+      />
+      <Route
+        exact
+        path="/retailers/:slug/mercadolibre_chats"
+        component={MLChat}
       />
     </Router>
   </Provider>

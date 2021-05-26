@@ -43,6 +43,10 @@ class Order < ApplicationRecord
     orders
   end
 
+  def to_param
+    web_id
+  end
+
   def total
     order_items.map { |order_item| order_item.unit_price * order_item.quantity }.sum
   end
@@ -53,16 +57,26 @@ class Order < ApplicationRecord
     @last_message = messages.order(created_at: 'DESC').first
   end
 
-  def unread_message?
+  def unread_message
     messages.where(answer: nil).last&.date_read.blank?
+  end
+
+  def unread_messages_count
+    messages.where(answer: nil, date_read: nil).count
   end
 
   def last_message_received_date
     messages.where(answer: nil).last&.created_at
   end
 
-  def to_param
-    web_id
+  def order_img
+    product = products.first
+    url = "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/"
+    key = product.main_picture_id ? product.images&.find(product.main_picture_id)&.key : product.images&.first&.key
+    key.present? ? url += key : url = nil
+    url
+  rescue
+    nil
   end
 
   private

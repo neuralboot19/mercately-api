@@ -21,6 +21,8 @@
       var roomId = <%= current_retailer_user&.id || session&.[](:room_id) %>;
       var ENV = {
         ENVIRONMENT: "<%= ENV['ENVIRONMENT'] %>",
+        ML_ID: "<%= current_retailer&.meli_retailer&.nickname %>",
+        ML_DOMAIN: "<%= current_retailer.ml_domain %>",
         PORT: "<%= ENV['PORT'] %>",
         DOMAIN: "<%= ENV['DOMAIN'] %>",
         INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>",

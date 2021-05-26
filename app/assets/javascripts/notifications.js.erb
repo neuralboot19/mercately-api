@@ -28,16 +28,7 @@ socket.on('new_message_counter', function(data) {
   }
 
   if (data['identifier'] === '#item__cookie_message' || data['identifier'] === '#item__cookie_question') {
-    var currentTotal = $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').html();
-
-    if (data['action'] === 'add') {
-      playAlert = true;
-      currentTotal = parseInt(currentTotal) + 1;
-    } else {
-      currentTotal = parseInt(currentTotal) - parseInt(data['q']);
-    }
-
-    $('#sidebar .item__cookie_total, #sidebar--pc .item__cookie_total').html(currentTotal);
+    $('#sidebar .item__cookie_total, #sidebar--pc .item__cookie_total').html(data['ml_total']);
   }
 
   play(playAlert, data);
@@ -91,7 +82,7 @@ function showNotification(data) {
         window.focus();
         new_location = window.location.origin + '/retailers/' + ENV['SLUG'] + redirect_to;
 
-        if (window.location.href !== new_location || data['from'] === 'MercadoLibre') {
+        if (window.location.href !== new_location || redirect_to === '/questions') {
           window.location = new_location;
         }
       };
