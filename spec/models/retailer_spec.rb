@@ -336,15 +336,46 @@ RSpec.describe Retailer, type: :model do
   end
 
   describe '#positive_balance?' do
-    it 'will return true if ws_balance >= 0.0672' do
-      retailer.save
-      expect(retailer.positive_balance?).to eq(true)
+    subject(:retailer) { create(:retailer, :gupshup_integrated) }
+
+    context 'when customer chat is open' do
+      let(:customer) { create(:customer, retailer: retailer, ws_notification_cost: '0.05') }
+      let!(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer,
+          created_at: Time.now - 10.hours)
+      end
+
+      it 'returns true if balance is minor than notification cost' do
+        retailer.ws_balance = 0.01
+        retailer.save
+        expect(retailer.positive_balance?(customer)).to eq(true)
+      end
+
+      it 'returns true if balance is greater than notification cost' do
+        retailer.ws_balance = 1.0
+        retailer.save
+        expect(retailer.positive_balance?(customer)).to eq(true)
+      end
     end
 
-    it 'will return false if ws_balance < 0.0672' do
-      retailer.ws_balance = 0.05
-      retailer.save
-      expect(retailer.positive_balance?).to eq(false)
+    context 'when customer chat is closed' do
+      let(:customer) { create(:customer, retailer: retailer, ws_notification_cost: '0.05') }
+      let!(:message) do
+        create(:gupshup_whatsapp_message, :inbound, customer: customer, retailer: retailer,
+          created_at: Time.now - 30.hours)
+      end
+
+      it 'returns false if balance is minor than notification cost' do
+        retailer.ws_balance = 0.01
+        retailer.save
+        expect(retailer.positive_balance?(customer)).to eq(false)
+      end
+
+      it 'returns true if balance is greater than notification cost' do
+        retailer.ws_balance = 1.0
+        retailer.save
+        expect(retailer.positive_balance?(customer)).to eq(true)
+      end
     end
   end
 

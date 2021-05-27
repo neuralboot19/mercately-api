@@ -5,8 +5,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
   include CurrentRetailer
 
+  before_action :set_customer, only: [:messages, :send_file, :message_read, :set_chat_as_unread, :send_bulk_files,
+    :create]
   before_action :validate_balance, only: [:create, :send_file, :send_bulk_files]
-  before_action :set_customer, only: [:messages, :send_file, :message_read, :set_chat_as_unread, :send_bulk_files]
   protect_from_forgery only: [:save_message]
 
   def index
@@ -59,15 +60,14 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   end
 
   def create
-    customer = current_retailer.customers.find(params[:customer_id])
     integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
-    self.send("send_#{integration}_notification", customer, params, params[:type])
+    self.send("send_#{integration}_notification", @customer, params, params[:type])
   end
 
   def messages
     @messages = customer_messages
     if @messages.present?
-      agents_to_notify = @messages.first.customer.agent.present? ? [@messages.first.customer.agent] : current_retailer
+      agents_to_notify = @customer.agent.present? ? [@customer.agent] : current_retailer
         .retailer_users.all_customers.to_a
 
       total_pages = @messages.total_pages
@@ -82,7 +82,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         ).reverse
       end
 
-      if current_retailer.unlimited_account || current_retailer.positive_balance?
+      if current_retailer.unlimited_account || current_retailer.positive_balance?(@customer)
         render status: 200, json: {
           messages: @messages,
           agents: agents,
@@ -303,7 +303,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
 
       return if current_retailer.unlimited_account && is_template == false
-      return if current_retailer.positive_balance?
+      return if current_retailer.positive_balance?(@customer)
 
       render status: 401, json: balance_error
     end

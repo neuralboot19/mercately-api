@@ -71,7 +71,7 @@ function buildQuestionAnswer() {
               `<input type="hidden" name="authenticity_token" value="${$('meta[name="csrf-token"]').attr('content')}">` +
               '<div class="chat-input">'+
                 '<div class="text-input mb-10">'+
-                  '<textarea name="answer" placeholder="Respuesta" maxlength="140" class="no-border"></textarea>' +
+                  '<textarea name="answer" placeholder="Respuesta" maxlength="2000" class="no-border"></textarea>' +
                 '</div>' +
                 '<input type="submit" name="commit" value="Enviar" class="btn-btn btn-submit w-100" data-disable-with="Enviar">' +
                 '<p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto como teléfonos, ' +

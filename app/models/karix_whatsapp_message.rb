@@ -20,19 +20,17 @@ class KarixWhatsappMessage < ApplicationRecord
   scope :delivered, -> { where(status: 'delivered') }
   scope :read, -> { where(status: 'read') }
 
-  after_create :apply_cost
+  after_save :apply_cost
 
   private
 
     def apply_cost
-      self.cost = if status == 'failed'
-                    retailer.refund_message_cost(cost)
+      if status == 'failed' && (cost.blank? || !cost.zero?)
+        retailer.refund_message_cost(cost)
 
-                    0
-                  else
-                    retailer.send("ws_#{message_type}_cost")
-                  end
+        new_cost = 0
+      end
 
-      save
+      update_column(:cost, new_cost) if new_cost.present?
     end
 end
