@@ -57,6 +57,10 @@
                       <button onClick="sendReminder()">Enviar</button>
                     </div>
                   </div>
+                  <% if current_retailer.ws_balance <= 1 %>
+                    <div class="divider"></div>
+                    <i class="fz-12 pb-8 d-inline-block">Saldo insuficiente, <%= link_to '¿desea realizar una recarga?', retailers_payment_plans_path(current_retailer) %></i>
+                  <% end %>
                 </div>
               </div>
             </div>
