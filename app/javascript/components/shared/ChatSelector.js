@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 
+import { useSelector } from "react-redux";
 import ChatListItem from './ChatListItem';
+import LoadMore from "./LoadMore";
 
 const ChatSelector = ({
   applySearchFromAssignation,
@@ -13,6 +15,7 @@ const ChatSelector = ({
 }) => {
   const location = useLocation();
   const history = useHistory();
+  const loadingMoreCustomers = useSelector((reduxState) => reduxState.loadingMoreCustomers);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -42,6 +45,7 @@ const ChatSelector = ({
           chatType={chatType}
         />
       ))}
+      {loadingMoreCustomers && <LoadMore />}
     </div>
   );
 };
