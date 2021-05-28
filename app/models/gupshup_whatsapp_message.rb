@@ -5,6 +5,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   include WhatsappChatBotActionConcern
   include PushNotificationable
   include CustomerActiveWhatsappConcern
+  include MessageSenderInformationConcern
 
   belongs_to :retailer
   belongs_to :customer

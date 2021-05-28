@@ -711,7 +711,7 @@ class ChatMessages extends Component {
       classes += ' read-message';
     }
     if (['voice', 'audio'].includes(this.fileType(message.content_media_type))) {
-      classes += ' video-audio no-background';
+      classes += ' video-audio audio-background';
     } else if (['image', 'video', 'sticker'].includes(this.fileType(message.content_media_type))) {
       classes += ' no-background media-container';
     }

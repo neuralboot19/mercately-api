@@ -1,4 +1,5 @@
 import React from 'react';
+import SenderData from './SenderData';
 
 const MessageStatusIcon = ({
   chatType,
@@ -33,6 +34,9 @@ const MessageStatusIcon = ({
             <br /><small>{message.error_message}</small>
           </>
         }
+        <SenderData
+          message={message}
+        />
       </>
     );
   }

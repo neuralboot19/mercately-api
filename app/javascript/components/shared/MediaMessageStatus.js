@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import MessageDateTime from './MessageDateTime';
 import MessageStatusIcon from './MessageStatusIcon';
+import SenderData from './SenderData';
 
 const MediaMessageStatus = ({
   chatType,
@@ -43,6 +44,11 @@ const MediaMessageStatus = ({
           message={message}
         />
       )}
+      {chatType === 'facebook' &&
+        <SenderData
+          message={message}
+        />
+      }
     </div>
   );
 };

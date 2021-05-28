@@ -965,8 +965,9 @@ h1 {
   }
 
   .audio-message-status {
-    @extend %media-message-status;
-    span, i {
+    text-align: right;
+
+    span, i, small {
       color: #646464;
     }
   }
@@ -975,6 +976,9 @@ h1 {
     color: #FFF;
   }
 
+  &.audio-background {
+    background: #F1F3F4 !important;
+  }
 }
 
 i {
