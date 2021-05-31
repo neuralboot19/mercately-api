@@ -7,6 +7,8 @@ import { fetchCustomers as fetchCustomersAction } from "../../actions/actions";
 import { fetchWhatsAppCustomers as fetchWhatsAppCustomersAction } from "../../actions/whatsapp_karix";
 import ChatFilter from './ChatFilter';
 import ChatSelector from './ChatSelector';
+import filterUtil from '../../util/chatFiltersUtil';
+import ActiveFilters from './ActiveFilters';
 
 const _ = require('lodash');
 
@@ -268,6 +270,8 @@ const ChatSideBar = ({
       // Assigned agents list is usually the shorter one. So we need to search for the item in this list first.
       removeCustomer(customer);
     } else {
+      if (!isCustomerOnList(customer) && !filterUtil.checkFilters(customer, state.filter, chatType)) return;
+
       setActiveChatBot(customer);
       insertCustomer(customer);
     }
@@ -312,7 +316,9 @@ const ChatSideBar = ({
         ...state,
         page: 1,
         customers: [],
-        filter
+        filter,
+        assignedCustomers: [],
+        allCustomers: []
       });
     }
   };
@@ -328,7 +334,9 @@ const ChatSideBar = ({
         order,
         filter,
         page: 1,
-        customers: []
+        customers: [],
+        assignedCustomers: [],
+        allCustomers: []
       });
     }
   };
@@ -362,7 +370,9 @@ const ChatSideBar = ({
       tag,
       filter,
       page: 1,
-      customers: []
+      customers: [],
+      assignedCustomers: [],
+      allCustomers: []
     });
   };
 
@@ -387,6 +397,23 @@ const ChatSideBar = ({
     });
   };
 
+  const isCustomerOnList = (customer) => {
+    let index = state.allCustomers.findIndex((cus) => (
+      cus.id === customer.id
+    ));
+
+    return index >= 0;
+  }
+
+  const filterApplied = () => {
+    return state.filter.searchString !== '' || state.filter.agent !== 'all' || state.filter.type !== 'all' ||
+      state.filter.tag !== 'all' || state.filter.order !== 'received_desc'
+  }
+
+  const cleanFilters = () => {
+    setState(initialState);
+  }
+
   if (loading) {
     return (
       <div>
@@ -400,6 +427,11 @@ const ChatSideBar = ({
   return (
     <div>
       <div>
+        {filterApplied() ?
+          <ActiveFilters
+            cleanFilters={cleanFilters}
+          /> : ''
+        }
         <ChatFilter
           agent={state.agent}
           agents={agents}
