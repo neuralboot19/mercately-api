@@ -25,6 +25,7 @@
         DOMAIN: "<%= ENV['DOMAIN'] %>",
         INTEGRATION: "<%= current_retailer.karix_integrated? ? '0' : '1' %>",
         SLUG: "<%= current_retailer.slug %>",
+        WS_BALANCE: "<%= current_retailer.ws_balance %>",
         HS_ID: "<%= current_retailer.hs_id %>",
         HUBSPOT_INTEGRATED: <%= current_retailer.hubspot_integrated? %>,
         HUBSPOT_AUTH_URL: "<%= ENV['HUBSPOT_AUTH_URL'] %>",

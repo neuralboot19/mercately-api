@@ -43,7 +43,7 @@ class Customer < ApplicationRecord
   validates :first_name, presence: true, if: -> { api_created? }
   validates :last_name, presence: true, if: -> { api_created? }
   validate :valid_api_creation, if: -> { api_created? }
-  validates :email, :uniqueness => { :scope => :retailer_id }, allow_blank: true, if: -> { api_created? }
+  validates :email, uniqueness: { scope: :retailer_id }, allow_blank: true, if: -> { api_created? }
 
   before_validation :strip_whitespace
   before_validation :grab_country_on_import, if: -> { from_import_file }

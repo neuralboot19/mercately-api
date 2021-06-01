@@ -1,0 +1,144 @@
+<div class="divider"></div>
+<div class="table__item row middle-xs">
+  <div class="col-xs-4 col-sm-2">
+    <div class="t-center"><%= customer.full_names.presence || customer.whatsapp_name %></div>
+  </div>
+  <div class="col-xs-4 col-sm-1 c-grey">
+    <div class="t-center truncate"><%= customer.email %></div>
+  </div>
+  <div class="hide-on-md-and-up hide-on-2k m-auto">
+    <label class="item__dropdown dropdown d-inline">
+      <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+            <i class="far fa-eye mr-8"></i>
+            Ver
+          <% end %>
+        </li>
+        <li>
+          <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+  <div class="col-xs-4 col-sm-2 c-grey t-center">
+    <div class="t-center truncate">
+      <% if customer.country_id.present? && customer.phone.present? %>
+        <span class="mr-5"><%= customer.emoji_flag %></span>
+      <% end %>
+      <%= customer.phone %>
+    </div>
+    <% if can_send_whatsapp_notification?(current_retailer_user, customer) %>
+      <a class="request-demo-label ws-button dropdown__button no-style" href="#!">
+        <i class="fab fa-whatsapp fz-16 mr-5"></i>
+        Enviar Notificación
+      </a>
+      <ul class="dropdown__menu notifications">
+        <li class="t-left">
+          <label
+            for="modal--toggle-index"
+            class="ws-contact"
+            data-customer_full_names="<%= customer.full_names.presence || customer.whatsapp_name %>"
+            data-customer_id="<%= customer.id %>"
+            data-ws_balance="<%= current_retailer.ws_balance %>"
+            data-open_chat="<%= customer.recent_inbound_message_date ? customer.recent_inbound_message_date > 24.hours.ago : false %>"
+            data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>">
+            <i class="fas fa-angle-right mr-8"></i>
+            Enviar ahora
+          </label>
+        </li>
+        <li class="t-left">
+          <label
+            for="reminder-modal--toggle-index"
+            class="reminder-ws-contact"
+            data-customer_full_names="<%= customer.full_names.presence || customer.whatsapp_name %>"
+            data-customer_id="<%= customer.id %>"
+            data-whatsapp_opt_in="<%= customer.whatsapp_opt_in || false %>">
+            <i class="fas fa-angle-right mr-8"></i>
+            Programar recordatorio
+          </label>
+        </li>
+      </ul>
+    <% end %>
+  </div>
+  <div class="col-xs-12 col-sm-3 hide-on-sm-and-down">
+    <div class="box">
+      <div class="row">
+        <div class="col-xs-4 col-sm-6 item__descriptor">Completadas:</div>
+        <div class="col-xs-2 col-sm-6"><%= customer.orders_success_count %></div>
+        <div class="col-xs-4 col-sm-6 item__descriptor">Pendientes:</div>
+        <div class="col-xs-2 col-sm-6"><%= customer.orders_pending_count %></div>
+        <div class="col-xs-4 col-sm-6 item__descriptor">Canceladas:</div>
+        <div class="col-xs-2 col-sm-6"><%= customer.orders_cancelled_count %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-1 t-center">
+    <b class="c-green">$<%= customer.earnings %></b>
+  </div>
+  <div class="col-xs-4 col-sm-2 c-grey t-center">
+    <div class="t-center truncate"><%= customer.notes %></div>
+    <% if customer.notes.present? %>
+      <label for="modal--toggle" class="c-secondary modal__toggler"
+        data-customer_full_names="<%= customer.full_names %>"
+        data-customer_notes="<%= customer.notes %>">Ver más</label>
+    <% end %>
+
+    <% if customer.agent.present? %>
+      <div class="t-center">
+        <strong> Asignado a:</strong> <%= "#{customer.agent.full_name} (#{customer.agent.email})" %>'
+      </div>
+    <% end %>
+  </div>
+  <div class="hide-on-1080-and-down col-sm-1">
+    <label class="item__dropdown dropdown d-inline">
+      <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+            <i class="far fa-eye mr-8"></i>
+            Ver
+          <% end %>
+        </li>
+        <li>
+          <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+  <div class="hide-on-sm-and-down hide-on-2k m-auto">
+    <label class="item__dropdown dropdown d-inline">
+      <a class="dropdown__button midd" tabindex="-1" href="#!">
+        <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
+      </a>
+
+      <ul class="dropdown__menu">
+        <li>
+          <%= link_to retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+            <i class="far fa-eye mr-8"></i>
+            Ver
+          <% end %>
+        </li>
+        <li>
+          <%= link_to edit_retailers_customer_path(current_retailer, customer), class: 'c-black no-style' do %>
+            <i class="fas fa-edit mr-8"></i>
+            Editar
+          <% end %>
+        </li>
+      </ul>
+    </label>
+  </div>
+</div>
