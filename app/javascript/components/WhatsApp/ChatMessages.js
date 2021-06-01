@@ -517,6 +517,14 @@ class ChatMessages extends Component {
 
   openModal = () => {
     // eslint-disable-next-line no-undef
+    if (this.isChatClosed() && parseFloat(ENV.WS_BALANCE) <= 1) {
+      if (confirm('Saldo insuficiente, ¿deseas hacer una recarga?')) {
+        // eslint-disable-next-line no-undef
+        window.location.pathname = `/retailers/${ENV.SLUG}/pricing`;
+      }
+      return false;
+    }
+    // eslint-disable-next-line no-undef
     if (this.props.customer.whatsapp_opt_in || ENV.INTEGRATION === '0' || this.opted_in) {
       this.toggleModal();
     } else if (this.opted_in === false) {

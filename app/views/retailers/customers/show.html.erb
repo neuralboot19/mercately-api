@@ -64,8 +64,11 @@ fieldset {
                           <div>
                             <label
                                 for="modal--toggle"
-                                class="request-demo-label ws-button dropdown__button no-style"
+                                class="request-demo-label ws-button ws-contact dropdown__button no-style"
+                                data-customer_full_names="<%= @customer.full_names.presence || @customer.whatsapp_name %>"
                                 data-customer_id="<%= @customer.id %>"
+                                data-ws_balance="<%= current_retailer.ws_balance %>"
+                                data-open_chat="<%= @customer.recent_inbound_message_date ? @customer.recent_inbound_message_date > 24.hours.ago : false %>"
                                 data-whatsapp_opt_in="<%= @customer.whatsapp_opt_in || false %>"
                                 >
                                 <i class="fab fa-whatsapp fz-16 mr-5"></i>
