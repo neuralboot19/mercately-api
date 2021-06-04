@@ -34,8 +34,13 @@ class Connection
     post_connection
   end
 
-  def self.post_form_request(connection, body)
+  def self.post_form_request(connection, body, headers = {})
     post_connection = connection.post do |req|
+      if headers.present?
+        headers.each do |k, v|
+          req.headers[k] = v
+        end
+      end
       req.body = body
     end
 

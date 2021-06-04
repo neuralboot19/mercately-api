@@ -28,7 +28,9 @@ ActiveAdmin.register Retailer do
                 :allow_multiple_answers,
                 :max_agents,
                 :ml_domain,
-                :ml_site
+                :ml_site,
+                :gupshup_app_id,
+                :gupshup_app_token
 
   filter :name
   filter :slug
@@ -353,6 +355,8 @@ ActiveAdmin.register Retailer do
       f.input :gupshup_src_name
       f.input :gupshup_api_key
       f.input :max_agents
+      f.input :gupshup_app_id
+      f.input :gupshup_app_token
       f.input :ecu_charges, label: 'Hace pagos en Ecuador'
       f.input :int_charges, label: 'Hace pagos Internacionales'
       f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'

@@ -32,11 +32,11 @@
 
                 <div class="col-xs-12 col-sm-2 mt-5 pl-0 fs-14 no-style-filter t-right ordering-label">Estado:</div>
                 <div class="col-xs-12 col-sm-4 px-0 mt-5 fs-14 no-style-filter p-relative">
-                  <%= select_tag 'q[status_eq]', raw(%Q{
-                    <option #{'selected' if params[:q]&.[](:status_eq).blank?} value="none">Todo</option>
-                    <option #{'selected' if params[:q]&.[](:status_eq) == '0'} value="0">Pendientes</option>
-                    <option #{'selected' if params[:q]&.[](:status_eq) == '1'} value="1">Aceptados</option>
-                    <option #{'selected' if params[:q]&.[](:status_eq) == '2'} value="2">Rechazados</option>
+                  <%= select_tag 'q[status_in]', raw(%Q{
+                    <option #{'selected' if params[:q]&.[](:status_in).blank?} value="none">Todo</option>
+                    <option #{'selected' if params[:q]&.[](:status_in) == '0'} value="0">Pendientes</option>
+                    <option #{'selected' if params[:q]&.[](:status_in) == '1'} value="1">Aceptados</option>
+                    <option #{'selected' if params[:q]&.[](:status_in) == '2'} value="2">Rechazados</option>
                   }.squish), class: 'input h-unset w-100' %>
                 </div>
               </div>
@@ -110,7 +110,7 @@
                   <div class="col-xs-12 col-sm-2 t-center">
                     <div class="t-center">
                       <% case template.status %>
-                      <% when 'pending' %>
+                      <% when 'pending', 'submitted' %>
                         <b class="cookie cookie--yellow fs-12" value="2">Pendiente</b>
                       <% when 'accepted' %>
                         <b class="cookie cookie--green fs-12" value="0">Aceptado</b>
