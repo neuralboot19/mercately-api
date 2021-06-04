@@ -1,3 +1,10 @@
+import {
+  SET_CUSTOMERS,
+  SET_WHATSAPP_CUSTOMERS,
+  SET_WHATSAPP_CUSTOMERS_REQUEST,
+  LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST
+} from "../actionTypes";
+
 let initialState = {
   customers: [],
   messages: [],
@@ -8,7 +15,8 @@ let initialState = {
   tags: [],
   reminders: [],
   customerFields: [],
-  customFields: []
+  customFields: [],
+  loadingMoreCustomers: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -31,7 +39,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         reminders: action.data.reminders
       }
-    case 'SET_CUSTOMERS':
+    case SET_CUSTOMERS:
       return {
         ...state,
         customers: action.data.customers,
@@ -39,7 +47,8 @@ const reducer = (state = initialState, action) => {
         agents: action.data.agents,
         storageId: action.data.storage_id,
         agent_list: action.data.agent_list,
-        filter_tags: action.data.filter_tags
+        filter_tags: action.data.filter_tags,
+        loadingMoreCustomers: false
       }
     case 'SET_SELECTED_CUSTOMERS':
       return {
@@ -86,7 +95,7 @@ const reducer = (state = initialState, action) => {
         message: action.data.message,
         recentInboundMessageDate: action.data.recent_inbound_message_date
       }
-    case 'SET_WHATSAPP_CUSTOMERS':
+    case SET_WHATSAPP_CUSTOMERS:
       return {
         ...state,
         customers: action.data.customers,
@@ -95,7 +104,8 @@ const reducer = (state = initialState, action) => {
         storageId: action.data.storage_id,
         agent_list: action.data.agent_list,
         filter_tags: action.data.filter_tags,
-        allowSendVoice: action.data.allow_send_voice
+        allowSendVoice: action.data.allow_send_voice,
+        loadingMoreCustomers: false
       }
     case 'SET_WHATSAPP_MESSAGES':
       var balance_error = { status: null, message: null };
@@ -197,6 +207,17 @@ const reducer = (state = initialState, action) => {
         nameValidationText: action.data.errors.name?.shift(),
         customersValidationText: action.data.errors.customer_ids?.shift()
       }
+    case SET_WHATSAPP_CUSTOMERS_REQUEST:
+    case SET_CUSTOMERS_REQUEST:
+      return {
+        ...state,
+        loadingMoreCustomers: true
+      };
+    case LOAD_DATA_FAILURE:
+      return {
+        ...state,
+        loadingMoreCustomers: false
+      };
     default:
       return state;
   }

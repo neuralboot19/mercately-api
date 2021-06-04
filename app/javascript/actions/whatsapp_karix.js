@@ -1,4 +1,11 @@
 /* Customers */
+
+import {
+  LOAD_DATA_FAILURE,
+  SET_WHATSAPP_CUSTOMERS,
+  SET_WHATSAPP_CUSTOMERS_REQUEST
+} from "../actionTypes";
+
 export const fetchWhatsAppCustomers = (page = 1, params, offset) => {
   let endpoint = `/api/v1/karix_whatsapp_customers?page=${page}&offset=${offset}`;
 
@@ -8,6 +15,7 @@ export const fetchWhatsAppCustomers = (page = 1, params, offset) => {
   }
 
   return (dispatch) => {
+    dispatch({ type: SET_WHATSAPP_CUSTOMERS_REQUEST });
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -18,8 +26,18 @@ export const fetchWhatsAppCustomers = (page = 1, params, offset) => {
     })
       .then((res) => res.json())
       .then(
-        (data) => dispatch({ type: "SET_WHATSAPP_CUSTOMERS", data }),
-        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => {
+          dispatch({
+            type: SET_WHATSAPP_CUSTOMERS,
+            data
+          });
+        },
+        (err) => {
+          dispatch({
+            type: LOAD_DATA_FAILURE,
+            err
+          });
+        }
       ).catch((error) => {
         if (error.response) {
           alert(error.response);
