@@ -37,5 +37,21 @@ module Retailers::Api::V1
         messenger_conversations: conversations
       }
     end
+
+    def customer_conversations
+      customer = current_retailer.customers.find_by(web_id: params[:id])
+      return not_found if customer.nil?
+
+      conversations = customer.facebook_messages.order(created_at: :desc).page(params[:page])
+      total_pages = conversations.total_pages
+      serialized = ActiveModelSerializers::SerializableResource.new(
+        conversations,
+        each_serializer: Retailers::Api::V1::FacebookMessageSerializer
+      ).as_json
+      render status: 200, json: {
+        messenger_conversations: serialized,
+        total_pages: total_pages
+      }
+    end
   end
 end

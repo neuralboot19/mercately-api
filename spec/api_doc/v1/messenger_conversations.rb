@@ -15,6 +15,10 @@ module ApiDoc
       document :messenger_conversations do
         action 'Get Messenger conversations'
       end
+
+      document :customer_conversations do
+        action 'Get customer Messenger conversations'
+      end
     end
   end
 end
