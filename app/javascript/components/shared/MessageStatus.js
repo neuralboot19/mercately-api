@@ -1,6 +1,7 @@
 import React from 'react';
 import MessageDateTime from './MessageDateTime';
 import MessageStatusIcon from './MessageStatusIcon';
+import SenderData from './SenderData';
 
 const MessageStatus = ({
   chatType,
@@ -28,6 +29,11 @@ const MessageStatus = ({
           message={message}
         />
       )}
+      {chatType === 'facebook' &&
+        <SenderData
+          message={message}
+        />
+      }
     </div>
   );
 };

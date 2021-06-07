@@ -5,7 +5,7 @@ class GupshupWhatsappMessageSerializer
   set_id :id
 
   attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :message_identifier,
-             :uid, :created_time, :replied_message, :filename
+             :uid, :created_time, :replied_message, :filename, :sender_full_name
 
   attribute :content_type do |object|
     message = object.message_payload
@@ -177,5 +177,12 @@ class GupshupWhatsappMessageSerializer
     when 1002
       I18n.t('errors.gupshup_errors.not_existing_number')
     end
+  end
+
+  attribute :sender_full_name do |object|
+    next if object.direction == 'inbound' || object.retailer_user_id.blank?
+
+    full_name = "#{object.sender_first_name} #{object.sender_last_name}".strip
+    full_name.presence || object.sender_email
   end
 end

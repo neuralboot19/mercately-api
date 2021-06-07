@@ -309,7 +309,8 @@ class ChatMessages extends Component {
     classes += ' main-message-container';
     if (message.sent_by_retailer === true && message.date_read)
       classes += ' read-message';
-    if (['voice', 'audio', 'video'].includes(this.fileType(message.file_type))) classes += ' video-audio no-background';
+    if (['voice', 'audio'].includes(this.fileType(message.file_type))) classes += ' video-audio audio-background';
+    if (this.fileType(message.file_type) === 'video') classes += ' video-audio no-background';
     if (this.fileType(message.file_type) === 'image') classes += ' no-background';
     return classes;
   }
