@@ -2,8 +2,16 @@ class Retailers::GsTemplatesController < RetailersController
   # GET retailers/:slug/gs_templates
   def index
     params[:q]&.delete_if { |_k, v| v == 'none' }
-    @filter = current_retailer.gs_templates.ransack(params[:q])
+
+    if params[:q]&.[](:status_in) == '0'
+      params[:q][:status_in] = ['0', '3']
+      is_pending = true
+    end
+
+    @filter = params[:q]&.[](:s) ? current_retailer.gs_templates.ransack(params[:q]) :
+      current_retailer.gs_templates.order(created_at: :desc).ransack(params[:q])
     @gs_templates = @filter.result.page(params[:page])
+    params[:q][:status_in] = '0' if is_pending
   end
 
   # GET retailers/:slug/gs_templates/new

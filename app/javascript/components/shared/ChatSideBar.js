@@ -51,6 +51,7 @@ const ChatSideBar = ({
   const totalPages = useSelector((reduxState) => reduxState.total_customers || 0);
   const agents = useSelector((reduxState) => reduxState.agents || []);
   const filterTags = useSelector((reduxState) => reduxState.filter_tags || []);
+  const loadingMoreCustomers = useSelector((reduxState)=> reduxState.loadingMoreCustomers)
 
   const dispatch = useDispatch();
   const fetchCustomers = () => {
@@ -191,6 +192,7 @@ const ChatSideBar = ({
   const handleLoadMore = () => {
     if (totalPages > state.page
       && state.customers.length !== state.lastCustomerOffset
+      && !loadingMoreCustomers
     ) {
       setState({
         ...state,

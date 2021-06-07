@@ -7,6 +7,7 @@ class FacebookMessage < ApplicationRecord
 
   validates_uniqueness_of :mid, allow_blank: true
 
+  before_create :set_sender_information
   after_create :sent_by_retailer?
   after_create :assign_agent
   after_commit :send_welcome_message, on: :create
@@ -101,5 +102,13 @@ class FacebookMessage < ApplicationRecord
 
     def set_last_interaction
       customer.update_column(:last_chat_interaction, created_at)
+    end
+
+    def set_sender_information
+      return unless retailer_user.present?
+
+      self.sender_first_name = retailer_user.first_name
+      self.sender_last_name = retailer_user.last_name
+      self.sender_email = retailer_user.email
     end
 end

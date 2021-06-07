@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_21_202809) do
+ActiveRecord::Schema.define(version: 2021_05_28_152403) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -445,6 +445,9 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.string "file_data"
     t.string "filename"
     t.bigint "retailer_user_id"
+    t.string "sender_first_name"
+    t.string "sender_last_name"
+    t.string "sender_email"
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_facebook_messages_on_retailer_user_id"
@@ -472,7 +475,16 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.bigint "retailer_id"
     t.text "reason"
     t.boolean "submitted", default: false
+    t.string "ws_template_id"
     t.index ["retailer_id"], name: "index_gs_templates_on_retailer_id"
+  end
+
+  create_table "gupshup_partners", force: :cascade do |t|
+    t.integer "partner_id"
+    t.string "name"
+    t.string "token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gupshup_whatsapp_messages", force: :cascade do |t|
@@ -498,6 +510,9 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.float "cost"
     t.string "message_identifier"
     t.bigint "campaign_id"
+    t.string "sender_first_name"
+    t.string "sender_last_name"
+    t.string "sender_email"
     t.index ["campaign_id"], name: "index_gupshup_whatsapp_messages_on_campaign_id"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
@@ -552,6 +567,9 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.float "cost"
     t.string "message_identifier"
     t.bigint "campaign_id"
+    t.string "sender_first_name"
+    t.string "sender_last_name"
+    t.string "sender_email"
     t.index ["campaign_id"], name: "index_karix_whatsapp_messages_on_campaign_id"
     t.index ["customer_id"], name: "index_karix_whatsapp_messages_on_customer_id"
     t.index ["retailer_id"], name: "index_karix_whatsapp_messages_on_retailer_id"
@@ -936,6 +954,8 @@ ActiveRecord::Schema.define(version: 2021_04_21_202809) do
     t.boolean "campaings_access", default: false
     t.string "ml_domain", default: "com.ec"
     t.string "ml_site", default: "MEC"
+    t.string "gupshup_app_id"
+    t.string "gupshup_app_token"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

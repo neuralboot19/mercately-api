@@ -35,7 +35,7 @@
         <div class="col-xs-12 col-sm-6">
           <div class="card-box mt-16">
             <div class="w-100">
-              Información de la venta
+              Información de la orden
               <div class="my-16">
                 <%= f.label :status, 'Estado' %>
                 <%= f.select :status, Order.statuses.keys.collect { |s| [ Order.enum_translation(:statuses, s), s ]}, { include_blank: false, disabled: disabled_statuses }, onchange: 'showHideFeedback(this);', class: 'input' %>
@@ -87,7 +87,7 @@
           <div class="card-box mt-16">
             <div class="w-100">
               <div class="mb-8">
-                <b>Detalles de la venta</b>
+                <b>Detalles de la orden</b>
                 <i class="validation-msg">&nbsp;</i>
               </div>
               <div id="items-header" class="row py-4 t-center">

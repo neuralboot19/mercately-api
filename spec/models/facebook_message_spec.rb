@@ -599,4 +599,32 @@ RSpec.describe FacebookMessage, type: :model do
       end
     end
   end
+
+  describe '#set_sender_information' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_message)
+        .and_return('Sent')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+        .and_return(set_facebook_messages_service)
+    end
+
+    let(:retailer_user) do
+      create(:retailer_user, retailer: retailer, first_name: 'Test', last_name: 'Example', email: 'test@example.com')
+    end
+
+    let(:message) do
+      build(:facebook_message, facebook_retailer: facebook_retailer, sent_by_retailer: true,
+        retailer_user: retailer_user)
+    end
+
+    it 'saves the sender information in the message' do
+      expect(message.sender_first_name).to be_nil
+      message.save
+      expect(message.sender_first_name).to eq(retailer_user.first_name)
+      expect(message.sender_last_name).to eq(retailer_user.last_name)
+      expect(message.sender_email).to eq(retailer_user.email)
+    end
+  end
 end

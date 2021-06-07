@@ -10,7 +10,8 @@ ActiveAdmin.register GsTemplate do
   filter :retailer, as: :searchable_select
 
   batch_action :submit do |ids|
-    batch_action_collection.where(id: ids).pending.find_each(&:submitted!)
+    batch_action_collection.where(id: ids).pending.find_each(&:submit_template)
+
     redirect_to admin_gs_templates_path, alert: 'Templates submitted!'
   end
 
@@ -22,6 +23,23 @@ ActiveAdmin.register GsTemplate do
   batch_action :reject do |ids|
     batch_action_collection.where(id: ids).pending.find_each(&:rejected!)
     redirect_to admin_gs_templates_path, alert: 'Templates rejected!'
+  end
+
+  index do
+    selectable_column
+    id_column
+    column :status
+    column :label
+    column :category
+    column :text
+    column :example
+    column :language
+    column :retailer
+    column :ws_template_id
+    column :created_at
+    column :updated_at
+
+    actions
   end
 
   form do |f|

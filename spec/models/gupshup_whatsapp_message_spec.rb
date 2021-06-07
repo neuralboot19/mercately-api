@@ -1273,4 +1273,32 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
       end
     end
   end
+
+  describe '#set_sender_information' do
+    let(:set_gupshup_messages_service) { instance_double(Whatsapp::Gupshup::V1::Outbound::Msg) }
+
+    before do
+      allow(set_gupshup_messages_service).to receive(:send_message)
+        .and_return('Sent')
+      allow(Whatsapp::Gupshup::V1::Outbound::Msg).to receive(:new)
+        .and_return(set_gupshup_messages_service)
+    end
+
+    let(:retailer) { create(:retailer, :gupshup_integrated) }
+    let(:retailer_user) do
+      create(:retailer_user, retailer: retailer, first_name: 'Test', last_name: 'Example', email: 'test@example.com')
+    end
+
+    let(:message) do
+      build(:gupshup_whatsapp_message, :outbound, retailer: retailer, retailer_user: retailer_user)
+    end
+
+    it 'saves the sender information in the message' do
+      expect(message.sender_first_name).to be_nil
+      message.save
+      expect(message.sender_first_name).to eq(retailer_user.first_name)
+      expect(message.sender_last_name).to eq(retailer_user.last_name)
+      expect(message.sender_email).to eq(retailer_user.email)
+    end
+  end
 end
