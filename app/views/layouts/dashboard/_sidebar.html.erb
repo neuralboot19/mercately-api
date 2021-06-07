@@ -36,11 +36,11 @@
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_orders_path(current_retailer)) %>">
         <input type="checkbox" id="item--inbox-3" class="item__checkbox" />
         <i class="item__icon fas fa-clipboard-check"></i>
-        <label for="item--inbox-3" class="item__name">Ordenes</label>
+        <label for="item--inbox-3" class="item__name">Órdenes</label>
         <i class="item__arrow right"></i>
         <ul class="submenu no-style">
           <li class="submenu__item">
-            <%= link_to 'Lista de ordenes', retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
+            <%= link_to 'Lista de órdenes', retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
           </li>
           <li class="submenu__item">
             <%= link_to 'Canales de venta', retailers_sales_channels_path(current_retailer), class: 'item__name no-style' %>
@@ -206,11 +206,11 @@
           <div class="tooltip">
             <%= image_tag('dashboard/order-new.png', class: 'item__name no-style') %>
             <div class="tooltiptext tooltiptext--medium" style="top: -28px;">
-              <div class="t-center">Ordenes</div>
+              <div class="t-center">Órdenes</div>
               <div class="divider"></div>
               <div>
                 <%= link_to retailers_orders_path(current_retailer, status: 'all'), class: 'c-secondary no-style' do %>
-                  Lista de ordenes
+                  Lista de órdenes
                 <% end %>
               </div>
               <div>
