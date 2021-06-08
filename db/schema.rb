@@ -299,8 +299,8 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.string "web_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "imported", default: false
     t.boolean "archived", default: false
+    t.boolean "imported", default: false
     t.index ["retailer_id"], name: "index_contact_groups_on_retailer_id"
     t.index ["web_id"], name: "index_contact_groups_on_web_id"
   end
@@ -377,7 +377,6 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
-    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -392,8 +391,8 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.float "ws_notification_cost", default: 0.0672
     t.boolean "hs_active"
     t.string "hs_id"
-    t.string "number_to_use"
     t.boolean "api_created", default: false
+    t.string "number_to_use"
     t.boolean "ws_active", default: false
     t.datetime "last_chat_interaction"
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
@@ -401,6 +400,20 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.index ["psid"], name: "index_customers_on_psid"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
     t.index ["ws_active"], name: "index_customers_on_ws_active"
+  end
+
+  create_table "deals", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.bigint "funnel_step_id"
+    t.bigint "customer_id"
+    t.string "name"
+    t.string "web_id"
+    t.decimal "amount", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_deals_on_customer_id"
+    t.index ["funnel_step_id"], name: "index_deals_on_funnel_step_id"
+    t.index ["retailer_id"], name: "index_deals_on_retailer_id"
   end
 
   create_table "demo_request_leads", force: :cascade do |t|
@@ -460,6 +473,26 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
+  end
+
+  create_table "funnel_steps", force: :cascade do |t|
+    t.bigint "funnel_id"
+    t.string "name"
+    t.integer "position"
+    t.decimal "step_total", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "web_id"
+    t.index ["funnel_id"], name: "index_funnel_steps_on_funnel_id"
+  end
+
+  create_table "funnels", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "web_id"
+    t.index ["retailer_id"], name: "index_funnels_on_retailer_id"
   end
 
   create_table "gs_templates", force: :cascade do |t|
@@ -878,10 +911,6 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -892,6 +921,10 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -929,10 +962,10 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "gupshup_phone_number"
-    t.string "gupshup_src_name"
     t.string "karix_account_uid"
     t.string "karix_account_token"
+    t.string "gupshup_phone_number"
+    t.string "gupshup_src_name"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
@@ -946,8 +979,8 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.string "hs_access_token"
     t.string "hs_refresh_token"
     t.boolean "all_customers_hs_integrated", default: true
-    t.boolean "allow_send_videos", default: false
     t.boolean "hs_tags", default: false
+    t.boolean "allow_send_videos", default: false
     t.boolean "allow_multiple_answers", default: false
     t.string "hs_id"
     t.integer "max_agents", default: 2
@@ -956,6 +989,7 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.string "ml_site", default: "MEC"
     t.string "gupshup_app_id"
     t.string "gupshup_app_token"
+    t.boolean "has_funnels", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -1062,10 +1096,14 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
   add_foreign_key "contact_groups", "retailers"
   add_foreign_key "customer_hubspot_fields", "hubspot_fields"
   add_foreign_key "customer_hubspot_fields", "retailers"
+  add_foreign_key "deals", "funnel_steps"
+  add_foreign_key "deals", "retailers"
   add_foreign_key "facebook_catalogs", "retailers"
   add_foreign_key "facebook_messages", "customers"
   add_foreign_key "facebook_messages", "facebook_retailers"
   add_foreign_key "facebook_retailers", "retailers"
+  add_foreign_key "funnel_steps", "funnels"
+  add_foreign_key "funnels", "retailers"
   add_foreign_key "gs_templates", "retailers"
   add_foreign_key "gupshup_whatsapp_messages", "customers"
   add_foreign_key "gupshup_whatsapp_messages", "retailers"

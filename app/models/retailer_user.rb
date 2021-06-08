@@ -10,7 +10,7 @@ class RetailerUser < ApplicationRecord
   has_many :mobile_tokens, dependent: :destroy
   has_many :agent_teams, dependent: :destroy
   has_many :team_assignments, through: :agent_teams
-  has_many :templates
+  has_many :templates, dependent: :destroy
   has_many :calendar_events, dependent: :destroy
   has_many :agent_notifications, dependent: :destroy
 
