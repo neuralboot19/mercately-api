@@ -31,7 +31,8 @@ ActiveAdmin.register Retailer do
                 :ml_site,
                 :gupshup_app_id,
                 :gupshup_app_token,
-                :has_funnels
+                :has_funnels,
+                :ig_allowed
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -370,6 +371,7 @@ ActiveAdmin.register Retailer do
       f.input :allow_send_videos, label: 'Permitir enviar videos'
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
       f.input :has_funnels, label: 'Permitir Etapas de negociación'
+      f.input :ig_allowed, label: 'Permitir integrar con Instagram'
     end
     f.actions
   end

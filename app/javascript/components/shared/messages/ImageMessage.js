@@ -46,7 +46,7 @@ function ImageMessage({
     } else {
       getMsnUrl();
     }
-  });
+  }, []);
 
   return (
     <div className="img-holder">

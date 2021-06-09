@@ -23,17 +23,18 @@ module AgentNotificationHelper
   end
 
   def self.serialize_customer(customer, chat_type)
-    if chat_type == 'messenger'
-      return ActiveModelSerializers::Adapter::Json.new(
+    case chat_type
+    when 'messenger', 'instagram'
+      ActiveModelSerializers::Adapter::Json.new(
         CustomerSerializer.new(customer)
       ).serializable_hash
-    end
-    if chat_type == 'whatsapp'
-      return ActiveModelSerializers::Adapter::Json.new(
+    when 'whatsapp'
+      ActiveModelSerializers::Adapter::Json.new(
         GupshupCustomerSerializer.new(customer)
       ).serializable_hash
+    else
+      raise StandardError, 'Chat type not valid for notification'
     end
-    raise StandardError, 'Chat type not valid for notification'
   end
 
   private_class_method :redis, :serialize_customer

@@ -11,6 +11,10 @@ module MessagesHelper
     current_retailer.facebook_retailer&.facebook_unread_messages(current_retailer_user)&.size
   end
 
+  def instagram_unread_messages
+    current_retailer.facebook_retailer&.instagram_unread_messages(current_retailer_user)&.size
+  end
+
   def quantity_unread_questions
     current_retailer.unread_questions.size
   end

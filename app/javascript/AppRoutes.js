@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import Chat from './components/chat';
+import Instagram from './components/Instagram';
 import WhatsAppChat from './components/WhatsApp';
 import ContactGroup from './components/ContactGroup';
 import Funnels from './components/Funnels';
@@ -17,6 +18,11 @@ const AppRoutes = ({ store }) => (
         exact
         path="/retailers/:slug/facebook_chats"
         component={Chat}
+      />
+      <Route
+        exact
+        path="/retailers/:slug/instagram_chats"
+        component={Instagram}
       />
       <Route
         exact

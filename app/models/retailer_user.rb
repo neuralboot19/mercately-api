@@ -41,19 +41,26 @@ class RetailerUser < ApplicationRecord
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
     retailer_user.long_live_user_access_token
 
-    retailer_user.handle_page_connection if connect_messenger?(permissions, connection_type)
+    retailer_user.handle_page_connection(messenger_integrated: true) if connect_messenger?(permissions, connection_type)
+    retailer_user.handle_page_connection(instagram_integrated: true) if connect_instagram?(permissions, connection_type)
     retailer_user.handle_catalog_connection if connect_catalog?(permissions, connection_type)
 
     retailer_user
   end
 
   # TODO: mover a FacebookRetailer
-  def handle_page_connection
+  def handle_page_connection(messenger_integrated: false, instagram_integrated: false)
     facebook_retailer = FacebookRetailer.find_or_create_by(retailer_id: retailer.id)
-    facebook_retailer.update!(uid: uid, access_token: facebook_access_token)
+    facebook_retailer.update!(
+      uid: uid,
+      access_token: facebook_access_token,
+      messenger_integrated: facebook_retailer.messenger_integrated || messenger_integrated,
+      instagram_integrated: facebook_retailer.instagram_integrated || instagram_integrated
+    )
 
     facebook_service = Facebook::Api.new(facebook_retailer, self)
     facebook_service.update_retailer_access_token
+    facebook_service.find_instagram_uid if facebook_retailer.instagram_integrated
   end
 
   def handle_catalog_connection
@@ -105,6 +112,11 @@ class RetailerUser < ApplicationRecord
   def self.connect_messenger?(permissions, connection_type)
     permissions.any? { |p| p['permission'] == 'pages_manage_metadata' && p['status'] == 'granted' } &&
       connection_type == 'messenger'
+  end
+
+  def self.connect_instagram?(permissions, connection_type)
+    permissions.any? { |p| p['permission'] == 'instagram_manage_messages' && p['status'] == 'granted' } &&
+      connection_type == 'instagram'
   end
 
   def self.connect_catalog?(permissions, connection_type)

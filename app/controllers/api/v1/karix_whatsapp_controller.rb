@@ -230,8 +230,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       agents = [@customer.agent] | admins | supervisors
     end
 
-    case params.try(:[],:chat_service)
-    when 'facebook'
+    case params.try(:[], :chat_service)
+    when 'facebook', 'instagram'
       # Se setea el chat como unread
       @customer.update_attribute(:unread_messenger_chat, true)
       facebook_helper = FacebookNotificationHelper
@@ -240,7 +240,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         agents,
         nil,
         @customer.agent_customer,
-        @customer
+        @customer,
+        params[:chat_service]
       )
     when 'whatsapp'
       # Se setea el chat como unread

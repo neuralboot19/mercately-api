@@ -43,13 +43,15 @@ function play(playAlert, data) {
 
   var totalWs = $('#sidebar .item__cookie_whatsapp_messages, #sidebar--pc .item__cookie_whatsapp_messages').html();
   var totalMsn = $('#sidebar .item__cookie_facebook_messages, #sidebar--pc .item__cookie_facebook_messages').html();
+  var totalIg = $('#sidebar .item__cookie_instagram_messages, #sidebar--pc .item__cookie_instagram_messages').html();
   var totalMl = $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').html();
 
   totalWs = totalWs ? totalWs : 0;
   totalMsn = totalMsn ? totalMsn : 0;
+  totalIg = totalIg ? totalIg : 0;
   totalMl = totalMl ? totalMl : 0;
 
-  var total = parseInt(totalWs) + parseInt(totalMsn) + parseInt(totalMl);
+  var total = parseInt(totalWs) + parseInt(totalMsn) + parseInt(totalMl) + parseInt(totalIg);
 
   if (total > 0) {
     document.title = `(${total}) Mercately`;
@@ -73,6 +75,8 @@ function showNotification(data) {
 
         if (data['from'] === 'Messenger') {
           redirect_to = '/facebook_chats';
+        } else if (data['from'] === 'Instagram') {
+          redirect_to = '/instagram_chats';
         } else if (data['from'] === 'WhatsApp') {
           redirect_to = '/whatsapp_chats';
         } else if (data['from'] === 'MercadoLibre') {

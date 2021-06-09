@@ -4,8 +4,10 @@ module FacebookNotificationHelper
     retailer_users,
     message,
     assigned_agent,
-    customer = args
+    customer,
+    platform = args
 
+    platform = 'facebook' if platform.nil? || platform == 'messenger'
     if message.present?
       serialized_message = ActiveModelSerializers::Adapter::Json.new(
         FacebookMessageSerializer.new(message)
@@ -15,11 +17,19 @@ module FacebookNotificationHelper
     retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
     customer = message&.customer || assigned_agent&.customer || customer
-    serialized_customer = ActiveModelSerializers::Adapter::Json.new(
-      CustomerSerializer.new(customer)
-    ).serializable_hash if customer.present?
+    if customer.present?
+      serialized_customer = ActiveModelSerializers::Adapter::Json.new(
+        CustomerSerializer.new(customer)
+      ).serializable_hash
+    end
+
     retailer_users.each do |ret_u|
       removed_agent = false
+      unread_messages_count = if platform == 'instagram'
+                                retailer.instagram_unread_messages(ret_u).size
+                              else
+                                retailer.facebook_unread_messages(ret_u).size
+                              end
 
       if ret_u.agent? && ret_u.only_assigned?
         removed_agent = is_removed(ret_u, assigned_agent)
@@ -29,9 +39,9 @@ module FacebookNotificationHelper
       end
 
       redis.publish 'new_message_counter', {
-        identifier: '.item__cookie_facebook_messages',
-        total: retailer.facebook_unread_messages(ret_u).size,
-        from: 'Messenger',
+        identifier: ".item__cookie_#{platform}_messages",
+        total: unread_messages_count,
+        from: platform == 'instagram' ? 'Instagram' : 'Messenger',
         message_text: message_info(message),
         customer_info: customer&.full_names.presence || '',
         execute_alert: message.present? ? !message.sent_from_mercately : false,
@@ -40,8 +50,8 @@ module FacebookNotificationHelper
       }.to_json
 
       if message.present?
-        redis.publish 'message_facebook_chat', {facebook_message: serialized_message, room: ret_u.id}.to_json
-        redis.publish 'customer_facebook_chat', {
+        redis.publish "message_#{platform}_chat", { facebook_message: serialized_message, room: ret_u.id }.to_json
+        redis.publish "customer_#{platform}_chat", {
           customer: serialized_customer,
           room: ret_u.id
         }.to_json
@@ -63,7 +73,7 @@ module FacebookNotificationHelper
         })
       end
 
-      redis.publish 'customer_facebook_chat', customer_chat_args.to_json
+      redis.publish "customer_#{platform}_chat", customer_chat_args.to_json
     end
   end
 

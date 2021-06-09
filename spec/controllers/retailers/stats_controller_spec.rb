@@ -57,10 +57,10 @@ RSpec.describe 'StatsController', type: :request do
   end
 
   describe '#total_messages_stats' do
-    let(:customer_old) { create(:customer, retailer: retailer, created_at: Time.now - 8.days) }
-    let(:customer_old2) { create(:customer, retailer: retailer, created_at: Time.now - 8.days) }
-    let(:customer) { create(:customer, retailer: retailer) }
-    let(:customer2) { create(:customer, retailer: retailer) }
+    let(:customer_old) { create(:customer, retailer: retailer, created_at: Time.now - 8.days, pstype: :messenger) }
+    let(:customer_old2) { create(:customer, retailer: retailer, created_at: Time.now - 8.days, pstype: :messenger) }
+    let(:customer) { create(:customer, retailer: retailer, pstype: :messenger) }
+    let(:customer2) { create(:customer, retailer: retailer, pstype: :messenger) }
 
     context 'when the retailer is whatsapp integrated' do
       context 'with karix integrated' do
@@ -663,9 +663,9 @@ RSpec.describe 'StatsController', type: :request do
         let(:retailer) { create(:retailer, :with_stats) }
         let(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
         let(:retailer_user) { create(:retailer_user, retailer: retailer) }
-        let(:customer1) { create(:customer, retailer: retailer) }
-        let(:customer2) { create(:customer, retailer: retailer) }
-        let(:customer3) { create(:customer, retailer: retailer) }
+        let(:customer1) { create(:customer, retailer: retailer, pstype: :messenger) }
+        let(:customer2) { create(:customer, retailer: retailer, pstype: :messenger) }
+        let(:customer3) { create(:customer, retailer: retailer, pstype: :messenger) }
 
         before do
           sign_in retailer_user

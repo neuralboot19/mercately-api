@@ -4,8 +4,8 @@ import {
   SET_MESSAGES, SET_MESSAGES_REQUEST
 } from "../actionTypes";
 
-export const fetchCustomers = (page = 1, params, offset) => {
-  let endpoint = `/api/v1/customers?page=${page}&offset=${offset}`;
+export const fetchCustomers = (page = 1, params, offset, platform = 'messenger') => {
+  let endpoint = `/api/v1/customers?page=${page}&offset=${offset}&platform=${platform}`;
 
   if (params !== null && params !== undefined) {
     // eslint-disable-next-line no-undef
@@ -118,8 +118,8 @@ export const cancelReminder = (reminderId) => {
 
 /* Messages */
 
-export const fetchMessages = (id, page = 1) => {
-  const endpoint = `/api/v1/customers/${id}/messages?page=${page}`;
+export const fetchMessages = (id, page = 1, platform = 'messenger') => {
+  const endpoint = `/api/v1/customers/${id}/messages?page=${page}&platform=${platform}`;
   return (dispatch) => {
     dispatch({ type: SET_MESSAGES_REQUEST });
     fetch(endpoint, {
@@ -144,8 +144,8 @@ export const fetchMessages = (id, page = 1) => {
   };
 };
 
-export const sendMessage = (id, body, token) => {
-  const endpoint = `/api/v1/customers/${id}/messages`;
+export const sendMessage = (id, body, token, platform = 'messenger') => {
+  const endpoint = `/api/v1/customers/${id}/messages?platform=${platform}`;
   const csrfToken = token;
   return (dispatch) => {
     fetch(endpoint, {
@@ -173,8 +173,8 @@ export const sendMessage = (id, body, token) => {
   };
 };
 
-export const sendImg = (id, body, token) => {
-  const endpoint = `/api/v1/customers/${id}/messages/imgs`;
+export const sendImg = (id, body, token, platform = 'messenger') => {
+  const endpoint = `/api/v1/customers/${id}/messages/imgs?platform=${platform}`;
   const csrfToken = token;
   return (dispatch) => {
     fetch(endpoint, {
@@ -199,8 +199,8 @@ export const sendImg = (id, body, token) => {
   };
 };
 
-export const setMessageAsRead = (id, token) => {
-  const endpoint = `/api/v1/messages/${id}/read`;
+export const setMessageAsRead = (id, token, platform = 'messenger') => {
+  const endpoint = `/api/v1/messages/${id}/read?platform=${platform}`;
   const csrfToken = token;
   return (dispatch) => {
     fetch(endpoint, {
@@ -288,8 +288,8 @@ export const getProducts = (page = 1, params) => {
   };
 };
 
-export const sendBulkFiles = (id, body, token) => {
-  const endpoint = `/api/v1/customers/${id}/messages/send_bulk_files`;
+export const sendBulkFiles = (id, body, token, platform = 'messenger') => {
+  const endpoint = `/api/v1/customers/${id}/messages/send_bulk_files?platform=${platform}`;
   const csrfToken = token;
   return (dispatch) => {
     fetch(endpoint, {
