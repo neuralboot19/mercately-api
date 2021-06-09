@@ -21,8 +21,8 @@ RSpec.describe 'Api::V1::FunnelsController', type: :request do
       let!(:funnel) { create(:funnel, retailer: retailer) }
       let!(:f_step_1) { create(:funnel_step, funnel: funnel) }
       let!(:f_step_2) { create(:funnel_step, funnel: funnel) }
-      let!(:deal_1) { create(:deal, name: 'Negocio 1', funnel_step: f_step_1, retailer: retailer) }
-      let!(:deal_2) { create(:deal, name: 'Negocio 2', funnel_step: f_step_1, retailer: retailer) }
+      let!(:deal_1) { create(:deal, name: 'Negocio 1', funnel_step: f_step_1, retailer: retailer, retailer_user_id: retailer_user.id) }
+      let!(:deal_2) { create(:deal, name: 'Negocio 2', funnel_step: f_step_1, retailer: retailer, retailer_user_id: retailer_user.id) }
 
       it 'returns funnel information' do
         get api_v1_funnels_path
@@ -32,6 +32,34 @@ RSpec.describe 'Api::V1::FunnelsController', type: :request do
         expect(body['funnelSteps']['columns'].keys).to eq(funnel.funnel_steps.pluck(:web_id))
         expect(body['funnelSteps']['columnOrder']).to eq(funnel.funnel_steps.pluck(:web_id))
       end
+    end
+  end
+
+  describe 'POST #create_deal' do
+    let!(:funnel) { create(:funnel, retailer: retailer) }
+    let!(:f_step_1) { create(:funnel_step, funnel: funnel) }
+
+    it 'creates deal succesfully' do
+
+      post create_deal_api_v1_funnels_path, params: {
+        deal: {
+          name: 'New Deal',
+          retailer_user_id: retailer_user.id,
+          retailer_id: retailer.id,
+          funnel_step_id: f_step_1.id
+        }
+      }
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'returns error message if params are not correct' do
+      post create_deal_api_v1_funnels_path, params: {
+        deal: {
+          retailer_user_id: retailer_user.id
+        }
+      }
+      expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 end

@@ -3,7 +3,7 @@ class Api::V1::CustomersController < Api::ApiController
   include CurrentRetailer
   include ActionView::Helpers::TextHelper
   before_action :sanitize_params, only: [:update]
-  before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger]
+  before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger, :search_customers]
 
   def index
     customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
@@ -192,6 +192,22 @@ class Api::V1::CustomersController < Api::ApiController
     facebook_service.send_bulk_files(@customer, current_retailer_user, params)
 
     render status: 200, json: { message: 'Mensaje enviado' }
+  end
+
+  def search_customers
+    customers = current_retailer.customers
+
+    if params[:text].blank?
+      customers = customers.limit(300)
+    else
+      customers = customers.where("CONCAT(lower(first_name), lower(last_name)) ilike ?
+        OR email ILIKE ? OR phone ILIKE ?",
+        "%#{params[:text].downcase.delete(' ')}%",
+        "%#{params[:text].downcase}%",
+        "%#{params[:text].downcase}%"
+      )
+    end
+    render json: { customers: customers }
   end
 
   private
