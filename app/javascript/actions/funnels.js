@@ -165,4 +165,24 @@ export const clearNewStep = () => {
   return (dispatch) => dispatch({ type: "CLEAR_NEW_STEP", data });
 };
 
+export const deleteDeal = (data, column) => {
+  const endpoint = `/api/v1/deals/${data}`;
+  const header = {
+    method: "DELETE",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Access-Level": "read-write"
+    }
 
+  };
+  return async (dispatch) => {
+    try {
+      const deleteDealResponse = await fetch(endpoint, header);
+      if (!deleteDealResponse.ok) throw Error(deleteDealResponse.statusText);
+      dispatch({ type: "ERASE_DEAL", data, column });
+    } catch (error) {
+      alert(error);
+    }
+  };
+};

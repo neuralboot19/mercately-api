@@ -8,7 +8,13 @@ class InnerList extends React.Component {
 
   render() {
     return this.props.deals.map((deal, index) => (
-      <OpportunityClient key={deal.id} deal={deal} index={index} />
+      <OpportunityClient
+        key={deal.id}
+        deal={deal}
+        index={index}
+        openDeleteDeal={this.props.openDeleteDeal}
+        columnId={this.props.columnId}
+      />
     ));
   }
 }

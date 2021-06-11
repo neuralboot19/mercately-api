@@ -26,6 +26,7 @@ const Column = ({
   index,
   openCreateDeal,
   openDeleteStep,
+  openDeleteDeal,
   allowColumn,
   deals
 }) => (
@@ -54,7 +55,7 @@ const Column = ({
               isDraggingOver={snapshot.isDraggingOver}
               isDragging={snapshot.isDragging}
             >
-              <InnerList deals={deals} />
+              <InnerList openDeleteDeal={openDeleteDeal} deals={deals} columnId={column.id} />
               {provided.placeholder}
             </DealList>
           )}
