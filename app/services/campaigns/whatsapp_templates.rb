@@ -12,7 +12,13 @@ module Campaigns
           next
         end
 
-        c.contact_group.customers.find_each do |cus|
+        customers = c.contact_group.customers
+        customers = if c.retailer.karix_integrated?
+                      customers.where.not(phone: [nil, ''])
+                    else
+                      customers.where(whatsapp_opt_in: true)
+                    end
+        customers.find_each do |cus|
           send_campaign(c, cus)
         end
 
