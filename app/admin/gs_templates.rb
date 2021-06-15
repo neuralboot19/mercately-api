@@ -10,18 +10,17 @@ ActiveAdmin.register GsTemplate do
   filter :retailer, as: :searchable_select
 
   batch_action :submit do |ids|
-    batch_action_collection.where(id: ids).pending.find_each(&:submit_template)
-
+    batch_action_collection.where(id: ids).find_each(&:submit_template)
     redirect_to admin_gs_templates_path, alert: 'Templates submitted!'
   end
 
   batch_action :accept do |ids|
-    batch_action_collection.where(id: ids).pending.find_each(&:accepted!)
+    batch_action_collection.where(id: ids).find_each(&:accepted!)
     redirect_to admin_gs_templates_path, alert: 'Templates accepted!'
   end
 
   batch_action :reject do |ids|
-    batch_action_collection.where(id: ids).pending.find_each(&:rejected!)
+    batch_action_collection.where(id: ids).find_each(&:rejected!)
     redirect_to admin_gs_templates_path, alert: 'Templates rejected!'
   end
 
