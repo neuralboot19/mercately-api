@@ -56,6 +56,7 @@ Rails.application.routes.draw do
         get 'agents', to: 'retailer_users#index'
         get 'whatsapp_templates', to: 'whatsapp_templates#index'
         get 'whatsapp_conversations', to: "whatsapp_conversations#whatsapp_conversations"
+        get 'customers/:id/whatsapp_conversations', to: "whatsapp_conversations#customer_conversations"
         get 'messenger_conversations', to: 'messenger_conversations#messenger_conversations'
         get 'customers/:id/messenger_conversations', to: 'messenger_conversations#customer_conversations'
         resources :customers, only: [:index, :show, :update, :create]

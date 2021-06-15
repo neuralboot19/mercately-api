@@ -15,6 +15,10 @@ module ApiDoc
       document :whatsapp_conversations do
         action 'Get WhatsApp conversations'
       end
+
+      document :customer_conversations do
+        action 'Get customer WhatsApp conversations'
+      end
     end
   end
 end
