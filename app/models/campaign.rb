@@ -54,8 +54,9 @@ class Campaign < ApplicationRecord
   end
 
   def customer_content_params(customer)
-    replaced_params = []
+    return [] unless content_params.present?
 
+    replaced_params = []
     content_params.each do |cp|
       replaced_params << cp.gsub(/{{\w*}}/) do |match|
         vars = match.gsub(/\w+/) do |method|

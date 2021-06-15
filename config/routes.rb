@@ -57,6 +57,7 @@ Rails.application.routes.draw do
         get 'whatsapp_templates', to: 'whatsapp_templates#index'
         get 'whatsapp_conversations', to: "whatsapp_conversations#whatsapp_conversations"
         get 'messenger_conversations', to: 'messenger_conversations#messenger_conversations'
+        get 'customers/:id/messenger_conversations', to: 'messenger_conversations#customer_conversations'
         resources :customers, only: [:index, :show, :update, :create]
       end
     end
@@ -98,6 +99,8 @@ Rails.application.routes.draw do
         get 'messages', to: 'messages#chat'
         post 'send_message', to: 'messages#send_message', as: :send_message
       end
+
+      resources :funnels, only: [:index, :show]
       resources :calendar_events, except: [:show, :new, :edit]
       resources :customers, except: [:destroy]
       resources :messages, only: [:show]
@@ -201,6 +204,16 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :customers, only: [:index, :show, :update] do
         resources :custom_fields, only: [:index, :update]
+      end
+
+      resources :funnels, only: [:index] do
+        collection do
+          post 'update_deal', to: 'funnels#update_deal'
+          post 'update_funnel_step', to: 'funnels#update_funnel_step'
+          post 'create_deal', to: 'funnels#create_deal'
+          post 'create_step', to: 'funnels#create_step'
+          delete 'delete_step/:id', to: 'funnels#delete_step'
+        end
       end
 
       put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent

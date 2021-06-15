@@ -25,7 +25,8 @@ class Retailer < ApplicationRecord
   has_many :paymentez_credit_cards, dependent: :destroy
   has_many :paymentez_transactions
   has_many :stripe_transactions
-
+  has_many :funnels
+  has_many :deals
   has_many :gs_templates, dependent: :destroy
   has_many :whatsapp_templates, dependent: :destroy
   has_many :top_ups, dependent: :destroy
@@ -232,6 +233,22 @@ class Retailer < ApplicationRecord
 
   def refund_message_cost(cost)
     update_column(:ws_balance, ws_balance + cost.to_f)
+  end
+
+  def create_funnel_steps
+    return if funnels.exists?
+
+    new_funnel = funnels.build(name: 'Negociaciones')
+    new_funnel.funnel_steps.build(name: 'Calificado')
+    new_funnel.funnel_steps.build(name: 'Contactado')
+    new_funnel.funnel_steps.build(name: 'Demostración programada')
+    new_funnel.funnel_steps.build(name: 'Propuesta enviada')
+    new_funnel.funnel_steps.build(name: 'Negociación comenzada')
+    new_funnel.save
+  end
+
+  def current_funnel
+    funnels&.last
   end
 
   private

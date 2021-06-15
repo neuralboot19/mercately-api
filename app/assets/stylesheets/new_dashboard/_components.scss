@@ -33,9 +33,9 @@ h1 {
 
   &--invalid {
     border: 1px solid #ddd;
-    -webkit-box-shadow: 0px 0px 5px .1px #f00;
-    -moz-box-shadow: 0px 0px 5px .1px #f00;
-    box-shadow: 0px 0px 5px .1px #f00;
+    -webkit-box-shadow: 0px 0px 5px .1px #F92222;
+    -moz-box-shadow: 0px 0px 5px .1px #F92222;
+    box-shadow: 0px 0px 5px .1px #F92222;
   }
 }
 
@@ -67,12 +67,12 @@ h1 {
   }
 
   &--destroy {
-    border: 2px solid #F00;
-    color: #F00;
+    border: 2px solid #F92222;
+    color: #F92222;
 
     &:hover {
       color: #FFF;
-      background-color: #F00;
+      background-color: #F92222;
     }
   }
 
@@ -112,7 +112,7 @@ h1 {
   }
 
   &--red {
-    background-color: #F00;
+    background-color: #F92222;
     color: #FFF;
   }
 
@@ -981,6 +981,10 @@ h1 {
   }
 }
 
+.overflow-x-scroll {
+  overflow-x: scroll;
+}
+
 i {
 
   &.stroke {
@@ -1054,7 +1058,7 @@ i {
   }
 
   &.error-message {
-    background-color: #ff0000ad !important;
+    background-color: #F92222 !important;
   }
 
   .media-caption {
@@ -1191,7 +1195,7 @@ i {
     }
 
     .cancel-audio-counter {
-      color: #FF0000;
+      color: #F92222;
     }
 
     .send-audio-counter {
@@ -1200,7 +1204,7 @@ i {
 
     .time-audio-counter {
       .fa-circle {
-        color: #FF0000;
+        color: #F92222;
       }
     }
   }
@@ -1539,7 +1543,7 @@ i {
   }
 
   .delete {
-    color: #F00;
+    color: #F92222;
   }
 }
 
@@ -1745,9 +1749,9 @@ i {
 
       &--invalid {
         border: 1px solid #d9d9d9;
-        -webkit-box-shadow: 0px 0px 5px .1px #f00;
-        -moz-box-shadow: 0px 0px 5px .1px #f00;
-        box-shadow: 0px 0px 5px .1px #f00;
+        -webkit-box-shadow: 0px 0px 5px .1px #F92222;
+        -moz-box-shadow: 0px 0px 5px .1px #F92222;
+        box-shadow: 0px 0px 5px .1px #F92222;
       }
     }
   }

@@ -30,8 +30,8 @@ ActiveAdmin.register Retailer do
                 :ml_domain,
                 :ml_site,
                 :gupshup_app_id,
-                :gupshup_app_token
-
+                :gupshup_app_token,
+                :has_funnels
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -114,6 +114,7 @@ ActiveAdmin.register Retailer do
       row :max_agents
       row :ml_domain
       row :ml_site
+      row :has_funnels
       row :created_at
       row :updated_at
     end
@@ -168,6 +169,8 @@ ActiveAdmin.register Retailer do
         row :gupshup_src_name
         row :gupshup_phone_number
         row :gupshup_api_key
+        row :gupshup_app_id
+        row :gupshup_app_token
         row 'Saldo' do |retailer|
           retailer.ws_balance
         end
@@ -365,6 +368,7 @@ ActiveAdmin.register Retailer do
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
       f.input :allow_send_videos, label: 'Permitir enviar videos'
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
+      f.input :has_funnels, label: 'Permitir Etapas de negociación'
     end
     f.actions
   end

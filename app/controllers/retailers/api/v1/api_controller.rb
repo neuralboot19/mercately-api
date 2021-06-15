@@ -15,6 +15,10 @@ module Retailers::Api::V1
 
     private
 
+      def not_found
+        render(status: 404, json: { message: 'Not found' })
+      end
+
       def disable_access_by_authorization
         slug = request.get_header 'HTTP_SLUG'
         @retailer = Retailer.find_by_slug(slug)

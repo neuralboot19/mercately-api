@@ -2,10 +2,10 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
-
 import Chat from './components/chat';
 import WhatsAppChat from './components/WhatsApp';
 import ContactGroup from './components/ContactGroup';
+import Funnels from './components/Funnels';
 
 const customHistory = createBrowserHistory();
 
@@ -31,6 +31,11 @@ const AppRoutes = ({ store }) => (
         exact
         path="/retailers/:slug/contact_groups/:id/edit"
         component={ContactGroup}
+      />
+      <Route
+        exact
+        path="/retailers/:slug/funnels"
+        component={Funnels}
       />
     </Router>
   </Provider>
