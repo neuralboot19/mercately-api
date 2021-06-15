@@ -3,8 +3,8 @@ FactoryBot.define do
     facebook_retailer
     customer
     sender_uid { Faker::IDNumber.valid }
-    id_client { nil }
-    text { nil }
+    id_client { Faker::IDNumber.valid }
+    text { Faker::Lorem.paragraph }
     mid { Faker::Internet.uuid }
     reply_to { nil }
     date_read { nil }
