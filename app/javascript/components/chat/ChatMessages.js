@@ -125,7 +125,7 @@ class ChatMessages extends Component {
     e.preventDefault();
     e.stopPropagation();
     let el = e.target;
-    if(el.scrollTop >= 0 && el.scrollTop <= 5) {
+    if (el.scrollTop >= 0 && el.scrollTop <= 5 && this.props.currentCustomer === this.props.customer.id) {
       el.scrollTop = 10;
       this.handleLoadMore();
     }
