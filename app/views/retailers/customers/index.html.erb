@@ -122,7 +122,7 @@
               <div class="col-sm-2">Notas</div>
               <div class="col-sm-1"></div>
             </div>
-            <%= render partial: 'retailers/customers/customer_row', cached: true, collection: @customers, as: :customer %>
+            <%= render partial: 'retailers/customers/customer_row', collection: @customers, as: :customer %>
             <div class="row middle-xs center-xs">
               <div class="col-xs-12">
                 <%= paginate @customers %>
