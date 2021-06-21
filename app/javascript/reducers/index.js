@@ -2,7 +2,8 @@ import {
   SET_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS_REQUEST,
-  LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST
+  LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST,
+  ERASE_DEAL
 } from "../actionTypes";
 
 let initialState = {
@@ -306,7 +307,7 @@ const reducer = (state = initialState, action) => {
         ...state
       }
 
-    case 'ERASE_DEAL': {
+    case ERASE_DEAL: {
       const newDeals = { ...state.funnelSteps.deals };
       delete newDeals[action.data];
 

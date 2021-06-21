@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import DealCreate from "./custom/DealCreate";
 import FunnelStepDelete from "./custom/FunnelStepDelete";
 import FunnelStepCreate from "./custom/FunnelStepCreate";
 import Funnel from "./Funnel";
 
 import {
-  updateFunnelStep,
   deleteStep,
   deleteDeal
 } from '../../actions/funnels';
@@ -29,6 +27,7 @@ const Funnels = () => {
 
   const openCreateDeal = (columnId, columnWebId, retailerId) => {
     setState((previousState) => ({
+      ...state,
       columnWebId,
       columnId,
       retailerId,
@@ -38,6 +37,7 @@ const Funnels = () => {
 
   const openDeleteStep = (columnWebId) => {
     setState((previousState) => ({
+      ...state,
       columnWebId,
       isDeleteStepOpen: !previousState.isDeleteStepOpen
     }));
@@ -45,6 +45,7 @@ const Funnels = () => {
 
   const openDeleteDeal = (dealId, columnWebId) => {
     setState((previousState) => ({
+      ...state,
       dealId,
       columnWebId,
       isDeleteDealOpen: !previousState.isDeleteDealOpen
@@ -53,27 +54,21 @@ const Funnels = () => {
 
   const openCreateStep = () => {
     setState((previousState) => ({
+      ...state,
       isCreateStepOpen: !previousState.isCreateStepOpen
     }));
   };
 
   const createDeal = () => {
     setState((previousState) => ({
+      ...state,
       isCreateDealOpen: !previousState.isCreateDealOpen
     }));
   };
 
-  const createStep = (step) => {
-    setState((previousState) => ({
-      isCreateStepOpen: !previousState.isCreateStepOpen
-    }),
-    () => {
-      props.createStep(step);
-    });
-  };
-
   const handleDeleteStep = () => {
     setState((previousState) => ({
+      ...state,
       isDeleteStepOpen: !previousState.isDeleteStepOpen
     }));
     dispatch(deleteStep(state.columnWebId));
@@ -149,12 +144,4 @@ const Funnels = () => {
   );
 };
 
-function mapDispatch(dispatch) {
-  return {
-    updateFunnelStep: (body) => {
-      dispatch(updateFunnelStep(body));
-    }
-  };
-}
-
-export default connect(() => {}, mapDispatch)(withRouter(Funnels));
+export default Funnels;

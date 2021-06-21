@@ -1,3 +1,8 @@
+import {
+  ERASE_DEAL,
+  LOAD_DATA_FAILURE
+} from "../actionTypes";
+
 /* Customers */
 export const fetchFunnelSteps = () => {
   const endpoint = `/api/v1/funnels`;
@@ -174,15 +179,15 @@ export const deleteDeal = (data, column) => {
       "Content-Type": "application/json",
       "X-Access-Level": "read-write"
     }
-
   };
-  return async (dispatch) => {
-    try {
-      const deleteDealResponse = await fetch(endpoint, header);
-      if (!deleteDealResponse.ok) throw Error(deleteDealResponse.statusText);
-      dispatch({ type: "ERASE_DEAL", data, column });
-    } catch (error) {
-      alert(error);
-    }
+  return (dispatch) => {
+    fetch(endpoint, header)
+      .then((res) => res.json())
+      .then(() => {
+        dispatch({ type: ERASE_DEAL, data, column });
+      })
+      .catch((err) => {
+        dispatch({ type: LOAD_DATA_FAILURE, err });
+      });
   };
 };
