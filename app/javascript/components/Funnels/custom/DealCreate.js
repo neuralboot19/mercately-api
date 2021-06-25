@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import AsyncSelect from 'react-select/async';
 import {
   createNewDeal,
   clearNewDeal
@@ -19,125 +19,167 @@ const customStyles = {
     width: '50%'
   }
 };
+const DealCreate = ({
+  openCreateDeal,
+  columnId,
+  retailerId,
+  columnWebId,
+  isOpen
+}) => {
+  const dispatch = useDispatch();
+  const newDealSuccess = useSelector((state) => state.newDealSuccess) || false;
 
-class DealCreate extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false,
-      newDeal: {},
-      errors: {
-        name: ''
-      }
-    };
+  const [newDeal, setNewDeal] = useState({
+    name: '',
+    customerId: undefined,
+    selectedCustomer: 'Select'
+  });
+  const [errors, setErrors] = useState({ name: '' });
+  const [typingTimeout, setTypingTimeout] = useState();
 
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
-
-  static getDerivedStateFromProps(props) {
-    if (props.newDealSuccess) {
-      props.openCreateDeal();
-      props.clearNewDeal();
-      return {
-        newDeal: {}
-      };
-    }
-    return null;
-  }
-
-  handleInputChange = (evt) => {
-    evt.preventDefault();
-    const { newDeal } = this.state;
-    const { value } = event.target;
-    newDeal[evt.target.name] = value;
-    this.setState(newDeal);
-  };
-
-  handleValidation() {
-    const { newDeal } = this.state;
-    const errors = {};
-    let formIsValid = true;
-
-    if (!newDeal.name) {
-      formIsValid = false;
-      errors.name = "Nombre no puede estar vacio";
-    }
-
-    this.setState({ errors });
-    return formIsValid;
-  }
-
-  closeDealModal = () => {
-    this.setState(() => ({
-      errors: {},
-      newDeal: {
-        name: ''
-      }
-    }),
-    () => {
-      this.props.openCreateDeal();
-    });
-  }
-
-  createNewDeal = () => {
-    if (this.handleValidation()) {
-      const { newDeal } = this.state;
-      newDeal.funnel_step_id = this.props.columnId;
-      newDeal.retailer_id = this.props.retailerId;
-      this.props.createNewDeal(newDeal, this.props.columnWebId);
-    }
-  }
-
-  render() {
-    return (
-      <Modal
-        isOpen={this.props.isOpen}
-        style={customStyles}
-        ariaHideApp={false}
-      >
-        <button type="button" onClick={this.closeDealModal} className="f-right">Cerrar</button>
-        <div className="row">
-          <h4 className="mb-15">Nuevo negocio</h4>
-        </div>
-        <div className="row">
-          <div className="mb-20 col-xs-12">
-            <input
-              value={this.state.newDeal.name || ''}
-              onChange={this.handleInputChange}
-              className="mb-0 custom-input"
-              placeholder="Nombre del negocio"
-              name="name"
-            />
-            <span className="funnel-input-error">{this.state.errors.name}</span>
-          </div>
-
-          <div className="row">
-            <button type="button" className="py-5 px-15 funnel-btn btn--cta" onClick={this.createNewDeal}>Crear negocio</button>
-          </div>
-        </div>
-      </Modal>
-    );
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    newDealSuccess: state.newDealSuccess || false
-  };
-}
-
-function mapDispatch(dispatch) {
-  return {
-    createNewDeal: (body, column) => {
-      dispatch(createNewDeal(body, column));
-    },
-    clearNewDeal: () => {
+  useEffect(() => {
+    if (newDealSuccess) {
+      openCreateDeal();
       dispatch(clearNewDeal());
     }
-  };
-}
+  }, [newDealSuccess, openCreateDeal, dispatch]);
 
-export default connect(
-  mapStateToProps,
-  mapDispatch
-)(withRouter(DealCreate));
+  const handleInputChange = (e) => {
+    e.preventDefault();
+    // const { newDeal } = this.state;
+    const { name, value } = e.target;
+    setNewDeal({ ...newDeal, [name]: value });
+  };
+
+  const handleValidation = () => {
+    let formIsValid = true;
+    const formErrors = {
+      name: ''
+    };
+    if (!newDeal.name) {
+      formIsValid = false;
+      formErrors.name = "Nombre no puede estar vacio";
+    }
+
+    setErrors(formErrors);
+    return formIsValid;
+  };
+
+  const closeDealModal = () => {
+    setErrors({});
+    setNewDeal({
+      name: ''
+    });
+    openCreateDeal();
+  };
+
+  const handleCreateNewDeal = async () => {
+    if (handleValidation()) {
+      const { name, customerId } = newDeal;
+      const deal = {
+        name,
+        customer_id: customerId,
+        funnel_step_id: columnId,
+        retailer_id: retailerId
+      };
+      dispatch(createNewDeal(deal, columnWebId));
+    }
+  };
+
+  const getOptions = (inputValue, callback) => {
+    if (typingTimeout) clearTimeout(typingTimeout);
+    const timeout = setTimeout(async () => {
+      const endpoint = `/api/v1/customers/search_customers?text=${inputValue}`;
+      try {
+        const customersResponse = await fetch(endpoint, { credentials: "same-origin" });
+        const { customers } = await customersResponse.json();
+        const options = mapOptionsToValues(customers);
+        callback(options);
+      } catch (error) {
+        callback([]);
+      }
+    }, 500);
+    setTypingTimeout(timeout);
+  };
+
+  const createSelectLabel = (option) => (
+    <>
+      <p>
+        <b>
+          {
+            option.first_name
+              ? `${option.first_name || ''} ${option.last_name || ''}`
+              : option.whatsapp_name || ''
+          }
+        </b>
+      </p>
+      {option.email && <p>{`${option.email}`}</p>}
+      {option.phone && <p>{option.phone}</p>}
+    </>
+  );
+
+  const createSelectedOptionTag = (option) => (
+    option.first_name && option.last_name
+      ? `${option.first_name} ${option.last_name}`
+      : option.first_name || option.whatsapp_name || option.phone || 'Vacío'
+  );
+
+  const mapOptionsToValues = (options) => (
+    options.map((option) => ({
+      value: option.id,
+      label: createSelectLabel(option),
+      selectedCustomer: createSelectedOptionTag(option)
+    }))
+  );
+
+  const handleSelect = ({ value, selectedCustomer }) => setNewDeal(
+    {
+      ...newDeal,
+      customerId: value,
+      selectedCustomer
+    }
+  );
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      style={customStyles}
+      ariaHideApp={false}
+    >
+      <button type="button" onClick={closeDealModal} className="f-right">Cerrar</button>
+      <div className="row">
+        <h4 className="mb-15">Nuevo negocio</h4>
+      </div>
+      <div className="row">
+        <div className="mb-20 col-xs-12">
+          <input
+            value={newDeal.name}
+            onChange={handleInputChange}
+            className="mb-0 custom-input async-select-height "
+            placeholder="Nombre del negocio"
+            name="name"
+          />
+          <span className="funnel-input-error">{errors.name}</span>
+        </div>
+
+        <div className="mb-20 col-xs-12">
+          <AsyncSelect
+            clearable
+            isSearchable
+            loadOptions={getOptions}
+            defaultOptions
+            onChange={handleSelect}
+            placeholder={newDeal.selectedCustomer}
+            value={null}
+          />
+        </div>
+
+        <div className="row">
+          <button type="button" className="py-5 px-15 funnel-btn btn--cta" onClick={handleCreateNewDeal}>Crear negocio</button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+export default DealCreate;

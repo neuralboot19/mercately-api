@@ -205,6 +205,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :customers, only: [:index, :show, :update] do
         resources :custom_fields, only: [:index, :update]
+         collection do
+          get 'search_customers', to: 'customers#search_customers'
+        end
       end
 
       resources :funnels, only: [:index] do
