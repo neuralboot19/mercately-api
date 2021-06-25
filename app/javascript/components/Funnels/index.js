@@ -1,31 +1,33 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import DealCreate from "./custom/DealCreate";
 import FunnelStepDelete from "./custom/FunnelStepDelete";
 import FunnelStepCreate from "./custom/FunnelStepCreate";
 import Funnel from "./Funnel";
 
 import {
-  updateFunnelStep,
-  deleteStep
+  deleteStep,
+  deleteDeal
 } from '../../actions/funnels';
+import FunnelDealDelete from './custom/FunnelDealDelete';
 
-class Funnels extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isCreateDealOpen: false,
-      isDeleteStepOpen: false,
-      isCreateStepOpen: false,
-      columnWebId: '',
-      columnId: '',
-      retailerId: ''
-    };
-  }
+const Funnels = () => {
+  const dispatch = useDispatch();
 
-  openCreateDeal = (columnId, columnWebId, retailerId) => {
-    this.setState((previousState) => ({
+  const [state, setState] = useState({
+    isCreateDealOpen: false,
+    isDeleteDealOpen: false,
+    isDeleteStepOpen: false,
+    isCreateStepOpen: false,
+    columnWebId: undefined,
+    columnId: '',
+    retailerId: '',
+    dealId: undefined
+  });
+
+  const openCreateDeal = (columnId, columnWebId, retailerId) => {
+    setState((previousState) => ({
+      ...state,
       columnWebId,
       columnId,
       retailerId,
@@ -33,115 +35,113 @@ class Funnels extends React.Component {
     }));
   };
 
-  openDeleteStep = (columnWebId) => {
-    this.setState((previousState) => ({
+  const openDeleteStep = (columnWebId) => {
+    setState((previousState) => ({
+      ...state,
       columnWebId,
       isDeleteStepOpen: !previousState.isDeleteStepOpen
     }));
-  }
+  };
 
-  openCreateStep = () => {
-    this.setState((previousState) => ({
+  const openDeleteDeal = (dealId, columnWebId) => {
+    setState((previousState) => ({
+      ...state,
+      dealId,
+      columnWebId,
+      isDeleteDealOpen: !previousState.isDeleteDealOpen
+    }));
+  };
+
+  const openCreateStep = () => {
+    setState((previousState) => ({
+      ...state,
       isCreateStepOpen: !previousState.isCreateStepOpen
     }));
-  }
+  };
 
-  createDeal = () => {
-    this.setState((previousState) => ({
+  const createDeal = () => {
+    setState((previousState) => ({
+      ...state,
       isCreateDealOpen: !previousState.isCreateDealOpen
     }));
-  }
+  };
 
-  createStep = (step) => {
-    this.setState((previousState) => ({
-      isCreateStepOpen: !previousState.isCreateStepOpen
-    }),
-    () => {
-      this.props.createStep(step);
-    });
-  }
-
-  deleteStep = () => {
-    this.setState((previousState) => ({
+  const handleDeleteStep = () => {
+    setState((previousState) => ({
+      ...state,
       isDeleteStepOpen: !previousState.isDeleteStepOpen
-    }),
-    () => {
-      this.props.deleteStep(this.state.columnWebId);
-    });
-  }
+    }));
+    dispatch(deleteStep(state.columnWebId));
+  };
 
-  render() {
-    return (
-      <div className="funnel_holder">
+  const handleDeleteDeal = () => {
+    setState((previousState) => ({
+      ...state,
+      isDeleteDealOpen: !previousState.isDeleteDealOpen
+    }));
+    dispatch(deleteDeal(state.dealId, state.columnWebId));
+  };
 
-        <div className="col-xs-12 col-sm-4">
-          <h1 className="d-inline index__title">Negociaciones</h1>
-          <div className="index__desc">
-            Lista de negociaciones
-          </div>
-          <button type="button" onClick={() => this.openCreateStep()} className="py-5 px-15 funnel-btn btn--cta">
-            Añadir etapa de negociación
-          </button>
+  return (
+    <div className="funnel_holder">
+
+      <div className="col-xs-12 col-sm-4">
+        <h1 className="d-inline index__title">Negociaciones</h1>
+        <div className="index__desc">
+          Lista de negociaciones
         </div>
-
-        <Funnel
-          openCreateDeal={this.openCreateDeal}
-          openDeleteStep={this.openDeleteStep}
-        />
-
-        {this.state.isCreateDealOpen
-          && (
-          <DealCreate
-            isOpen={this.state.isCreateDealOpen}
-            openCreateDeal={this.openCreateDeal}
-            createDeal={this.createDeal}
-            sendCreateDeal={this.props.sendCreateDeal}
-            columnWebId={this.state.columnWebId}
-            columnId={this.state.columnId}
-            retailerId={this.state.retailerId}
-          />
-          )}
-
-        {this.state.isDeleteStepOpen
-          && (
-          <FunnelStepDelete
-            isOpen={this.state.isDeleteStepOpen}
-            openDeleteStep={this.openDeleteStep}
-            deleteStep={this.deleteStep}
-          />
-          )}
-
-        {this.state.isCreateStepOpen
-          && (
-          <FunnelStepCreate
-            isOpen={this.state.isCreateStepOpen}
-            openCreateStep={this.openCreateStep}
-          />
-          )}
-
+        <button type="button" onClick={() => openCreateStep()} className="py-5 px-15 funnel-btn btn--cta">
+          Añadir etapa de negociación
+        </button>
       </div>
 
-    );
-  }
-}
+      <Funnel
+        openCreateDeal={openCreateDeal}
+        openDeleteStep={openDeleteStep}
+        openDeleteDeal={openDeleteDeal}
+      />
 
-function mapStateToProps() {
-  return {
-  };
-}
+      {state.isCreateDealOpen
+        && (
+        <DealCreate
+          isOpen={state.isCreateDealOpen}
+          openCreateDeal={openCreateDeal}
+          createDeal={createDeal}
+          columnWebId={state.columnWebId}
+          columnId={state.columnId}
+          retailerId={state.retailerId}
+        />
+        )}
 
-function mapDispatch(dispatch) {
-  return {
-    updateFunnelStep: (body) => {
-      dispatch(updateFunnelStep(body));
-    },
-    deleteStep: (column) => {
-      dispatch(deleteStep(column));
-    }
-  };
-}
+      {state.isDeleteStepOpen
+        && (
+        <FunnelStepDelete
+          isOpen={state.isDeleteStepOpen}
+          openDeleteStep={openDeleteStep}
+          deleteStep={handleDeleteStep}
+        />
+        )}
 
-export default connect(
-  mapStateToProps,
-  mapDispatch
-)(withRouter(Funnels));
+      {state.isCreateStepOpen
+        && (
+        <FunnelStepCreate
+          isOpen={state.isCreateStepOpen}
+          openCreateStep={openCreateStep}
+        />
+        )}
+
+      {state.isDeleteDealOpen
+        && (
+        <FunnelDealDelete
+          isOpen={state.isDeleteDealOpen}
+          openDeleteDeal={openDeleteDeal}
+          deleteDeal={handleDeleteDeal}
+        />
+        )}
+
+    </div>
+
+  );
+};
+
+export default Funnels;

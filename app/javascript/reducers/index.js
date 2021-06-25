@@ -2,7 +2,8 @@ import {
   SET_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS_REQUEST,
-  LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST
+  LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST,
+  ERASE_DEAL
 } from "../actionTypes";
 
 let initialState = {
@@ -305,9 +306,27 @@ const reducer = (state = initialState, action) => {
       return {
         ...state
       }
+
+    case ERASE_DEAL: {
+      const newDeals = { ...state.funnelSteps.deals };
+      delete newDeals[action.data];
+
+      const newColumns = { ...state.funnelSteps.columns };
+      newColumns[action.column].dealIds = newColumns[action.column].dealIds.filter((deal) => deal !== action.data);
+      return {
+        ...state,
+        funnelSteps: {
+          ...state.funnelSteps,
+          deals: newDeals,
+          columnOrder: state.funnelSteps.columnOrder.filter((step) => step !== action.column),
+          columns: newColumns,
+          fetching_funnels: true
+        }
+      };
+    }
     default:
       return state;
   }
-}
+};
 
 export default reducer;

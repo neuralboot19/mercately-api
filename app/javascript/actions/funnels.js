@@ -1,3 +1,8 @@
+import {
+  ERASE_DEAL,
+  LOAD_DATA_FAILURE
+} from "../actionTypes";
+
 /* Customers */
 export const fetchFunnelSteps = () => {
   const endpoint = `/api/v1/funnels`;
@@ -165,4 +170,24 @@ export const clearNewStep = () => {
   return (dispatch) => dispatch({ type: "CLEAR_NEW_STEP", data });
 };
 
-
+export const deleteDeal = (data, column) => {
+  const endpoint = `/api/v1/deals/${data}`;
+  const header = {
+    method: "DELETE",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Access-Level": "read-write"
+    }
+  };
+  return (dispatch) => {
+    fetch(endpoint, header)
+      .then((res) => res.json())
+      .then(() => {
+        dispatch({ type: ERASE_DEAL, data, column });
+      })
+      .catch((err) => {
+        dispatch({ type: LOAD_DATA_FAILURE, err });
+      });
+  };
+};

@@ -8,3 +8,5 @@ export const SET_CUSTOMERS = 'SET_CUSTOMERS';
 
 // LOAD DATA FAILURE
 export const LOAD_DATA_FAILURE = 'LOAD_DATA_FAILURE';
+
+export const ERASE_DEAL = 'ERASE_DEAL';
