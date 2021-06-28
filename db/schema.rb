@@ -870,6 +870,7 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.integer "meli_question_type"
     t.boolean "answered", default: false
     t.string "web_id"
+    t.jsonb "attachments", default: []
     t.index ["customer_id"], name: "index_questions_on_customer_id"
     t.index ["meli_id"], name: "index_questions_on_meli_id", unique: true
     t.index ["order_id"], name: "index_questions_on_order_id"
