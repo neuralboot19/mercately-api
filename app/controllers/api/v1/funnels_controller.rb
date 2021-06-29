@@ -31,8 +31,7 @@ class Api::V1::FunnelsController < Api::ApiController
   end
 
   def create_deal
-    deal = Deal.new(deal_params)
-
+    deal = current_retailer_user.deals.new(deal_params)
     if deal.save
       render status: 200, json:
       {
@@ -40,7 +39,8 @@ class Api::V1::FunnelsController < Api::ApiController
           id: deal.web_id,
           name: deal.name,
           funnel_step_id: deal.funnel_step_id,
-          retailer_id: deal.retailer_id
+          retailer_id: deal.retailer_id,
+          customer: deal.customer
         }
       }
     else
@@ -128,7 +128,8 @@ class Api::V1::FunnelsController < Api::ApiController
       params.require(:deal).permit(
         :name,
         :funnel_step_id,
-        :retailer_id
+        :retailer_id,
+        :customer_id
       )
     end
 

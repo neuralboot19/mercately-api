@@ -1,108 +1,16 @@
 <div class="container-fluid reduced-container-padding mb-16">
   <div class="card">
-    <div class="container-fluid index">
-      <div class="row middle-xs">
-        <div class="col-xs-12 col-sm-4">
-          <h1 class="d-inline index__title">Mensajes</h1>
-          <div class="index__desc">
-            Lista de mensajes
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="container-fluid products">
       <div class="row">
-        <div class="col-xs-12">
-          <div class="table box">
-            <div class="table__header row hide-on-tablet-and-down center-sm">
-              <div class="col-sm-1">Usuario</div>
-              <div class="col-sm-3">Producto</div>
-              <div class="col-sm-4"></div>
-              <div class="col-sm-2"></div>
-              <div class="col-sm-1">Fecha</div>
-              <div class="col-sm-1"></div>
-            </div>
-            <% @chats.each do |order| %>
-              <div class="divider"></div>
-              <div class="table__item row">
-                <div class="col-xs-10 col-sm-1 t-center">
-                  <div class="truncate">
-                    <%= order.customer.email.presence || order.customer.meli_nickname %>
-                  </div>
-                </div>
-                <div class="col-xs-10 col-sm-3 t-center">
-                  <%= order.products.first&.title %>
-                </div>
-                <div class="col-xs-2 table__action-dots p-0 hide-on-md-and-up">
-                  <label class="item__dropdown d-inline">
-                    <a class="dropdown__button middle t-center no-style" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_order_messages_path(current_retailer, order, return_to: 'chat'), class: 'c-secondary no-style' do %>
-                          <i class="fas fa-eye mr-8"></i>
-                          Ver mensajes
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
-                </div>
-                <div class="col-xs-12 col-sm-4 c-grey">
-                  <br class="hide-on-md-and-up"/>
-                  <% order.messages.last(2).each do |m| %>
-                    <div class="c-secondary truncate">
-                      <% if m.sender.present? %>
-                        <%= m.sender&.email %>:
-                      <% else %>
-                        <%= m.customer.email %>
-                      <% end %>
-                    </div> <%= m.question || m.answer %>
-                    <br/>
-                    <br/>
-                  <% end %>
-                </div>
-                <div class="col-xs-12 col-sm-2 t-center">
-                  <% if order.unread_message? %>
-                    <b class="cookie__box cookie__box__blue px-5">Por Leer</b>
-                  <% else %>
-                    <b class="cookie__box cookie__box__green px-5">Visto</b>
-                  <% end %>
-                </div>
-                <div class="col-xs-12 col-sm-1 t-center">
-                  <%= show_date(order.last_message_received_date) %>
-                </div>
-                <div class="col-xs-12 hide-on-1080-and-down products__actions col-sm-1 t-center">
-                  <%= link_to retailers_order_messages_path(current_retailer, order, return_to: 'chat'), class: 'c-secondary no-style' do %>
-                    Ver mensajes
-                  <% end %>
-                </div>
-                <div class="hide-on-sm-and-down hide-on-2k m-auto">
-                  <label class="item__dropdown dropdown d-inline">
-                    <a class="dropdown__button midd" tabindex="-1" href="#!">
-                      <i class="fas fa-ellipsis-v m-auto f-right c-black"></i>
-                    </a>
-
-                    <ul class="dropdown__menu">
-                      <li>
-                        <%= link_to retailers_order_messages_path(current_retailer, order, return_to: 'chat'), class: 'c-secondary no-style' do %>
-                          <i class="fas fa-eye mr-8"></i>
-                          Ver mensajes
-                        <% end %>
-                      </li>
-                    </ul>
-                  </label>
-                </div>
-              </div>
-            <% end %>
-            <div class="row middle-xs center-xs">
-              <div class="col-xs-12">
-                <%= paginate @chats %>
-              </div>
-            </div>
-          </div>
+        <div class="col-xs-12 p-0">
+          <!-- Display a message if JS has been disabled on the browser. -->
+          <noscript>If you're seeing this message, that means
+            <strong>JavaScript has been disabled on your browser</strong>, please
+            <strong>enable JS</strong> to make this app work.
+          </noscript>
+          <%# stylesheet_pack_tag 'application' %>
+          <%= javascript_packs_with_chunks_tag 'application' %>
+          <div id="react_content"></div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from "react";
 import { connect } from "react-redux";
+/* eslint-disable-next-line import/no-unresolved */
 import Loader from "images/dashboard/loader.jpg";
 import { withRouter } from "react-router-dom";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
@@ -211,6 +212,7 @@ class Funnel extends React.Component {
                         dealMap={this.state.funnelSteps.deals}
                         openCreateDeal={this.props.openCreateDeal}
                         openDeleteStep={this.props.openDeleteStep}
+                        openDeleteDeal={this.props.openDeleteDeal}
                         allowColumn={this.state.currentDragColumnId}
                       />
                     );

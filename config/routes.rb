@@ -96,12 +96,9 @@ Rails.application.routes.draw do
           put 'update_meli_status', to: 'products#update_meli_status'
         end
       end
-      resources :orders do
-        get 'messages', to: 'messages#chat'
-        post 'send_message', to: 'messages#send_message', as: :send_message
-      end
 
       resources :funnels, only: [:index, :show]
+      resources :orders
       resources :calendar_events, except: [:show, :new, :edit]
       resources :customers, except: [:destroy]
       resources :messages, only: [:show]
@@ -127,7 +124,7 @@ Rails.application.routes.draw do
       get 'whatsapp_chats', to: 'whats_app#index', as: :whats_app_chats
 
       get 'questions', to: 'messages#questions'
-      get 'chats', to: 'messages#chats'
+      get 'mercadolibre_chats', to: 'messages#chats'
       get 'questions/:question_id', to: 'messages#question', as: :question
       put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
       put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
@@ -205,6 +202,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :customers, only: [:index, :show, :update] do
         resources :custom_fields, only: [:index, :update]
+         collection do
+          get 'search_customers', to: 'customers#search_customers'
+        end
       end
 
       resources :funnels, only: [:index] do
@@ -216,6 +216,8 @@ Rails.application.routes.draw do
           delete 'delete_step/:id', to: 'funnels#delete_step'
         end
       end
+
+      resources :deals, only: [:destroy]
 
       put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
 
@@ -265,6 +267,13 @@ Rails.application.routes.draw do
         member do
           get 'unselected_customers', to: 'contact_groups#unselected_customers'
           get 'selected_customers', to: 'contact_groups#selected_customers'
+        end
+      end
+
+      resources :orders, only: :index do
+        member do
+          put 'mark_messages_as_read', to: 'orders#mark_messages_as_read'
+          resources :ml_chats, only: %i[index create]
         end
       end
 

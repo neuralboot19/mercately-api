@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Draggable } from 'react-beautiful-dnd';
+/* eslint-disable-next-line import/no-unresolved */
 import WhatsApp from 'images/dashboard/funnel/whatsapp.png';
 
 const Container = styled.div`
@@ -10,9 +11,19 @@ const Container = styled.div`
   border: 1px solid grey;
   border-radius: 5px;
   padding: 15px 10px;
-`;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-center;
+  .text-danger {
+    color: tomato;
+  }`;
 
-const OpportunityClient = ({ deal, index }) => {
+const OpportunityClient = ({
+  deal,
+  index,
+  openDeleteDeal,
+  columnId
+}) => {
   let hasWhatsapp = false;
   if (deal.amount) {
     hasWhatsapp = true;
@@ -28,6 +39,11 @@ const OpportunityClient = ({ deal, index }) => {
           isDragging={snapshot.isDragging}
         >
           <p className="funnel-content-name">{deal.name}</p>
+          <i
+            className="fas fa-trash-alt text-danger"
+            onClick={() => openDeleteDeal(deal.id, columnId)}
+          >
+          </i>
 
           {hasWhatsapp
             && (

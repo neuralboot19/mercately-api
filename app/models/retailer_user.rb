@@ -13,7 +13,7 @@ class RetailerUser < ApplicationRecord
   has_many :templates, dependent: :destroy
   has_many :calendar_events, dependent: :destroy
   has_many :agent_notifications, dependent: :destroy
-
+  has_many :deals
   validate :onboarding_status_format
   validates :agree_terms, presence: true
   validates :email, presence: true, uniqueness: true
@@ -26,6 +26,7 @@ class RetailerUser < ApplicationRecord
   attr_reader :raw_invitation_token
 
   scope :all_customers, -> { where(only_assigned: false) }
+  scope :active, -> (retailer_id) { where(retailer_id: retailer_id, removed_from_team: false, invitation_token: nil) }
   scope :active_and_pending_agents, -> (retailer_id) { where(retailer_id: retailer_id, removed_from_team: false) }
   scope :active_admins, lambda { |retailer_id|
     where(retailer_id: retailer_id, retailer_admin: true, removed_from_team: false, invitation_token: nil)

@@ -47,7 +47,7 @@
               <%# <a class="cta--dashboard mr-8" href="">Enviar email</a> %>
               <%# <a class="cta--dashboard" href="">Ver PDF</a> %>
               <% if @order.meli_order_id %>
-                <%= link_to retailers_order_messages_path(current_retailer, @order, return_to: 'order'), class: 'btn btn--cta' do %>
+                <%= link_to retailers_mercadolibre_chats_path(current_retailer), class: 'btn btn--cta' do %>
                   <i class="fas fa-comment-alt mr-5"></i>
                   Chat de la venta
                 <% end %>

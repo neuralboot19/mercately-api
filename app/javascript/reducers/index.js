@@ -2,10 +2,11 @@ import {
   SET_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS_REQUEST,
-  LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST
+  LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST,
+  ERASE_DEAL, SET_ORDERS, SET_ORDERS_REQUEST
 } from "../actionTypes";
 
-let initialState = {
+const initialState = {
   customers: [],
   messages: [],
   total_pages: 0,
@@ -17,7 +18,11 @@ let initialState = {
   customerFields: [],
   customFields: [],
   loadingMoreCustomers: false,
-  funnelSteps: []
+  funnelSteps: [],
+  orders: [],
+  totalOrders: 0,
+  mlChats: [],
+  totalMlChats: 0
 };
 
 const reducer = (state = initialState, action) => {
@@ -25,8 +30,8 @@ const reducer = (state = initialState, action) => {
     case 'GET_CURRENT_USER':
       return {
         ...state,
-        currentUser: action.response.data.user,
-      }
+        currentUser: action.response.data.user
+      };
     case 'SET_CUSTOMER':
       return {
         ...state,
@@ -34,7 +39,7 @@ const reducer = (state = initialState, action) => {
         errors: action.data.errors,
         reminders: action.data.reminders,
         tags: action.data.tags
-      }
+      };
     case 'CREATE_REMINDER':
       return {
         ...state,
@@ -56,7 +61,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         selectedCustomers: action.data.customers,
         totalSelectedCustomersPages: action.data.total_customers
-      }
+      };
     case 'SET_SELECTED_CUSTOMER_IDS':
       return {
         ...state,
@@ -64,7 +69,7 @@ const reducer = (state = initialState, action) => {
         selectedCustomers: action.data.customers,
         selectedCustomerIds: action.data.customer_ids,
         totalSelectedCustomersPages: action.data.total_customers
-      }
+      };
     case 'SET_CUSTOM_FIELDS':
       return {
         ...state,
@@ -89,7 +94,7 @@ const reducer = (state = initialState, action) => {
         recentInboundMessageDate: action.data.recent_inbound_message_date,
         customerId: action.data.customer_id,
         filter_tags: action.data.filter_tags
-      }
+      };
     case 'SET_SEND_MESSAGE':
       return {
         ...state,
@@ -142,66 +147,66 @@ const reducer = (state = initialState, action) => {
         ...state,
         templates: action.data.templates,
         total_template_pages: action.data.total_pages
-      }
+      };
     case 'CHANGE_CUSTOMER_AGENT':
       return {
         ...state,
         status: action.data.status,
         message: action.data.message
-      }
+      };
     case 'UNAUTHORIZED_SEND_MESSAGE':
       return {
         ...state,
         errorSendMessageStatus: action.data.status,
         errorSendMessageText: action.data.message,
-      }
+      };
     case 'SET_WHATSAPP_FAST_ANSWERS':
       return {
         ...state,
         fast_answers: action.data.templates.data,
         total_pages: action.data.total_pages
-      }
+      };
     case 'SET_MESSENGER_FAST_ANSWERS':
       return {
         ...state,
         fast_answers: action.data.templates.data,
         total_pages: action.data.total_pages
-      }
+      };
     case 'SET_TAGS':
       return {
         ...state,
         tags: action.data.tags
-      }
+      };
     case 'SET_CREATE_CUSTOMER_TAG':
       return {
         ...state,
         customer: action.data.customer,
         tags: action.data.tags
-      }
+      };
     case 'SET_REMOVE_CUSTOMER_TAG':
       return {
         ...state,
         customer: action.data.customer,
         tags: action.data.tags
-      }
+      };
     case 'SET_CREATE_TAG':
       return {
         ...state,
         customer: action.data.customer,
         tags: action.data.tags,
         filter_tags: action.data.filter_tags
-      }
+      };
     case 'SET_PRODUCTS':
       return {
         ...state,
         products: action.data.products.data,
         total_pages: action.data.total_pages
-      }
+      };
     case 'SET_CHAT_BOT':
       return {
         ...state,
         customer: action.data.customer
-      }
+      };
     case 'SET_CONTACT_GROUP_ERRORS':
       return {
         ...state,
@@ -210,6 +215,7 @@ const reducer = (state = initialState, action) => {
       }
     case SET_WHATSAPP_CUSTOMERS_REQUEST:
     case SET_CUSTOMERS_REQUEST:
+    case SET_ORDERS_REQUEST:
       return {
         ...state,
         loadingMoreCustomers: true
@@ -219,7 +225,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         loadingMoreCustomers: false
       };
-        case 'GET_FUNNELS':
+    case 'GET_FUNNELS':
       return {
         ...state,
         funnelSteps: action.data.funnelSteps,
@@ -301,13 +307,44 @@ const reducer = (state = initialState, action) => {
           fetching_funnels: true,
         };
       }
-    case "LOAD_DATA_FAILURE":
+    case SET_ORDERS:
       return {
-        ...state
-      }
+        ...state,
+        orders: action.data.orders,
+        totalOrders: action.data.total_orders,
+        loadingMoreCustomers: false
+      };
+    case 'SET_MLCHATS':
+      return {
+        ...state,
+        mlChats: action.data.ml_chats,
+        totalMlChats: action.data.total_ml_chats
+      };
+    case 'SET_MLCHAT':
+      return {
+        ...state,
+        ml_chat: action.data.ml_chat
+      };
+    case ERASE_DEAL: {
+      const newDeals = { ...state.funnelSteps.deals };
+      delete newDeals[action.data];
+
+      const newColumns = { ...state.funnelSteps.columns };
+      newColumns[action.column].dealIds = newColumns[action.column].dealIds.filter((deal) => deal !== action.data);
+      return {
+        ...state,
+        funnelSteps: {
+          ...state.funnelSteps,
+          deals: newDeals,
+          columnOrder: state.funnelSteps.columnOrder.filter((step) => step !== action.column),
+          columns: newColumns,
+          fetching_funnels: true
+        }
+      };
+    }
     default:
       return state;
   }
-}
+};
 
 export default reducer;

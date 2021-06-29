@@ -74,7 +74,7 @@
         </ul>
       </li>
       <% if current_retailer.meli_retailer %>
-        <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_chats_path(current_retailer)) ||
+        <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_mercadolibre_chats_path(current_retailer)) ||
           current_page?(retailers_questions_path(current_retailer)) %>">
           <input type="checkbox" id="item--inbox-4" class="item__checkbox" />
           <i class="item__icon fas fa-mail-bulk"></i>
@@ -87,7 +87,7 @@
               <b id="item__cookie_question" class="item__cookie"><%= quantity_unread_questions %></b>
             </li>
             <li class="submenu__item">
-              <%= link_to 'Mensajes', retailers_chats_path(current_retailer), class: 'item__name no-style' %>
+              <%= link_to 'Mensajes', retailers_mercadolibre_chats_path(current_retailer), class: 'item__name no-style' %>
               <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
             </li>
           </ul>
@@ -280,7 +280,7 @@
                   <% end %>
                 </div>
                 <div>
-                  <%= link_to retailers_chats_path(current_retailer), class: 'c-secondary no-style' do %>
+                  <%= link_to retailers_mercadolibre_chats_path(current_retailer), class: 'c-secondary no-style' do %>
                     Chats
                     <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
                   <% end %>
