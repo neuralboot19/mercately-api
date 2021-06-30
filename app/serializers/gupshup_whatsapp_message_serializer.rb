@@ -5,7 +5,7 @@ class GupshupWhatsappMessageSerializer
   set_id :id
 
   attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :message_identifier,
-             :uid, :created_time, :replied_message, :filename, :sender_full_name
+             :uid, :created_time, :replied_message, :filename, :sender_full_name, :will_retry
 
   attribute :content_type do |gwm|
     message = gwm.message_payload
@@ -179,10 +179,14 @@ class GupshupWhatsappMessageSerializer
     end
   end
 
-  attribute :sender_full_name do |object|
-    next if object.direction == 'inbound' || object.retailer_user_id.blank?
+  attribute :sender_full_name do |gwm|
+    next if gwm.direction == 'inbound' || gwm.retailer_user_id.blank?
 
-    full_name = "#{object.sender_first_name} #{object.sender_last_name}".strip
-    full_name.presence || object.sender_email
+    full_name = "#{gwm.sender_first_name} #{gwm.sender_last_name}".strip
+    full_name.presence || gwm.sender_email
+  end
+
+  attribute :will_retry do |gwm|
+    gwm.direction == 'outbound' && gwm.mexican_error? && gwm.able_for_retry?
   end
 end

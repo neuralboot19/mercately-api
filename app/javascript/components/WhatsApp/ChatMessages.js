@@ -703,7 +703,7 @@ class ChatMessages extends Component {
 
   divClasses = (message) => {
     let classes = message.direction === 'outbound'
-      ? 'message-by-retailer f-right' + (message.status === 'error' ? ' error-message' : '')
+      ? 'message-by-retailer f-right' + (message.status === 'error' && message.will_retry === false ? ' error-message' : '')
       : 'message-by-customer';
     classes += ' main-message-container';
     if (message.status === 'read'
