@@ -8,4 +8,15 @@ class Deal < ApplicationRecord
   validates :name, presence: true
 
   after_create :generate_web_id
+  after_create :validate_customer_deals
+  after_destroy :validate_customer_deals
+  #TODO ADD SPECS
+  def validate_customer_deals
+    return unless customer
+    if customer.deals.count > 0
+      customer.update_columns(has_deals: true)
+    else
+      customer.update_columns(has_deals: false)
+    end
+  end
 end

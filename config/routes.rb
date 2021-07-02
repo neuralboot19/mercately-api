@@ -217,7 +217,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :deals, only: [:destroy]
+      resources :deals, only: [:index, :destroy]
 
       put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
 
