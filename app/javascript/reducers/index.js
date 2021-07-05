@@ -3,7 +3,9 @@ import {
   SET_WHATSAPP_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS_REQUEST,
   LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST,
-  ERASE_DEAL, SET_ORDERS, SET_ORDERS_REQUEST
+  ERASE_DEAL, SET_ORDERS, SET_ORDERS_REQUEST,
+  CHANGE_DEAL_COLUMN,
+  SET_COLUMNS
 } from "../actionTypes";
 
 const initialState = {
@@ -330,18 +332,57 @@ const reducer = (state = initialState, action) => {
       delete newDeals[action.data];
 
       const newColumns = { ...state.funnelSteps.columns };
-      newColumns[action.column].dealIds = newColumns[action.column].dealIds.filter((deal) => deal !== action.data);
+      newColumns[action.column].dealIds = newColumns[action.column]
+        .dealIds.filter((deal) => deal !== action.data);
+
+      newColumns[action.column].deals = newColumns[action.column].dealIds.length; 
+      
       return {
         ...state,
         funnelSteps: {
           ...state.funnelSteps,
           deals: newDeals,
-          columnOrder: state.funnelSteps.columnOrder.filter((step) => step !== action.column),
-          columns: newColumns,
-          fetching_funnels: true
-        }
+          columns: newColumns
+        },
+        fetching_funnels: true
       };
     }
+
+    case CHANGE_DEAL_COLUMN: {
+      const columnToRemoveDeal = Object.keys(state.funnelSteps.columns)
+        .find((colId) => state.funnelSteps.columns[colId].dealIds
+          .filter((deal) => deal === action.data.deal_id).length);
+
+      const columnToAddDeal = state.funnelSteps.columns[action.data.funnel_step_id];
+
+      const newColumns = { ...state.funnelSteps.columns };
+      newColumns[columnToRemoveDeal].dealIds = newColumns[columnToRemoveDeal].dealIds.filter((deal) => deal !== action.data.deal_id);
+
+      newColumns[columnToAddDeal.id].dealIds = [...newColumns[columnToAddDeal.id].dealIds, action.data.deal_id];
+      newColumns[columnToRemoveDeal].deals = newColumns[columnToRemoveDeal].dealIds.length;
+      newColumns[columnToAddDeal.id].deals = newColumns[columnToAddDeal.id].dealIds.length;
+
+      return {
+        ...state,
+        funnelSteps: {
+          ...state.funnelSteps,
+          columns: newColumns
+        },
+        fetching_funnels: true
+      };
+    }
+
+    case SET_COLUMNS: {
+      return {
+        ...state,
+        funnelSteps: {
+          ...state.funnelSteps,
+          columnOrder: action.columns.columns
+        },
+        fetching_funnels: true
+      }
+    }
+
     default:
       return state;
   }
