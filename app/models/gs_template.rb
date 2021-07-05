@@ -19,32 +19,15 @@ class GsTemplate < ApplicationRecord
   LANGUAGE_CODES = { spanish: 'es_ES', english: 'en_US' }.freeze
 
   def submit_template
-    return unless retailer.gupshup_app_id.present? && retailer.gupshup_app_token.present?
+    return if ws_template_id || status != 'pending'
 
-    headers = {
-      'Connection': 'keep-alive',
-      'token': retailer.gupshup_app_token
-    }
+    api_service.submit_gs_template(self)
+  end
 
-    body = {
-      elementName: label,
-      languageCode: GsTemplate::LANGUAGE_CODES[language.to_sym],
-      category: category,
-      templateType: key.upcase,
-      content: text,
-      example: example,
-      vertical: label
-    }
+  def accept_template
+    return unless status == 'submitted'
 
-    url = "https://partner.gupshup.io/partner/app/#{retailer.gupshup_app_id}/templates"
-    conn = Connection.prepare_connection(url)
-    response = Connection.post_form_request(conn, body, headers)
-    resp_json = JSON.parse(response.body)
-    return unless resp_json['template'].present?
-
-    set_response_status(resp_json['template'])
-    self.ws_template_id = resp_json['template']['id']
-    save
+    api_service.accept_gs_template(self)
   end
 
   private
@@ -82,14 +65,7 @@ class GsTemplate < ApplicationRecord
       errors.add(:base, 'Hay variables repetidas')
     end
 
-    def set_response_status(data)
-      self.status = case data['status']
-                    when 'PENDING'
-                      'submitted'
-                    when 'APPROVED'
-                      'accepted'
-                    when 'REJECTED'
-                      'rejected'
-                    end
+    def api_service
+      @api_service ||= GsTemplates::Api.new
     end
 end
