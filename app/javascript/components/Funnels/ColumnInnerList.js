@@ -8,7 +8,8 @@ const ColumnInnerList = ({
   allowColumn,
   openCreateDeal,
   openDeleteStep,
-  openDeleteDeal
+  openDeleteDeal,
+  loadMoreDeals
 }) => {
   const deals = column.dealIds.map((dealId) => dealMap[dealId]);
   return (
@@ -19,6 +20,7 @@ const ColumnInnerList = ({
       openCreateDeal={openCreateDeal}
       openDeleteStep={openDeleteStep}
       openDeleteDeal={openDeleteDeal}
+      loadMoreDeals={loadMoreDeals}
       allowColumn={allowColumn}
     />
   );

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 import InnerList from "./InnerList";
@@ -28,41 +28,65 @@ const Column = ({
   openDeleteStep,
   openDeleteDeal,
   allowColumn,
-  deals
-}) => (
-  <Draggable draggableId={column.id} index={index}>
-    {(provided, snapshot) => (
-      <Container
-        {...provided.draggableProps}
-        ref={provided.innerRef}
-        isDragging={snapshot.isDragging}
-      >
-        <ColumnHeader
-          provided={provided}
-          dealInfo={column}
-          openCreateDeal={openCreateDeal}
-          openDeleteStep={openDeleteStep}
-        />
-        <Droppable
-          droppableId={column.id}
-          isDropDisabled={allowColumn === column.id}
-          type="deal"
+  deals,
+  loadMoreDeals
+}) => {
+
+  const [page, setPage] = useState(2)
+
+  const HandleLoadMoreDeals = () => {
+    loadMoreDeals(column.id, page);
+    setPage(page + 1);
+  }
+
+  return (
+    <Draggable draggableId={column.id} index={index}>
+      {(provided, snapshot) => (
+        <Container
+          {...provided.draggableProps}
+          ref={provided.innerRef}
+          isDragging={snapshot.isDragging}
         >
-          {(provided, snapshot) => (
-            <DealList
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              isDraggingOver={snapshot.isDraggingOver}
-              isDragging={snapshot.isDragging}
-            >
-              <InnerList openDeleteDeal={openDeleteDeal} deals={deals} columnId={column.id} />
-              {provided.placeholder}
-            </DealList>
-          )}
-        </Droppable>
-      </Container>
-    )}
-  </Draggable>
-);
+          <ColumnHeader
+            provided={provided}
+            dealInfo={column}
+            openCreateDeal={openCreateDeal}
+            openDeleteStep={openDeleteStep}
+          />
+          <Droppable
+            droppableId={column.id}
+            isDropDisabled={allowColumn === column.id}
+            type="deal"
+          >
+            {(provided, snapshot) => (
+              <DealList
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                isDraggingOver={snapshot.isDraggingOver}
+                isDragging={snapshot.isDragging}
+              >
+                <InnerList  
+                  openDeleteDeal={openDeleteDeal}
+                  deals={deals}
+                  columnId={column.id}
+                />
+                {provided.placeholder}
+              </DealList>
+            )}
+          </Droppable>
+          {
+            column.total > column.dealIds.length &&
+              <h1
+                className="py-5 px-15 funnel-btn btn--cta m-10"
+                onClick={()=>HandleLoadMoreDeals(column.id, page)}
+              >
+                <p style={{textAlign: 'center'}}>Ver Mas de la etapa: <b>{column.title}</b></p>
+              </h1>
+          }
+        </Container>
+      )}
+    </Draggable>
+  );
+}
 
 export default Column;

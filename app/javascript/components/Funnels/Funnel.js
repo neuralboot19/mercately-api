@@ -12,7 +12,8 @@ import {
   fetchFunnelSteps,
   clearFunnels,
   updateFunnelStepDeal,
-  updateFunnelStep
+  updateFunnelStep,
+  loadMoreDeals
 } from "../../actions/funnels";
 
 const Container = styled.div`
@@ -212,10 +213,11 @@ class Funnel extends React.Component {
                         key={column.id}
                         column={column}
                         index={index}
-                        dealMap={this.state.funnelSteps.deals}
+                        dealMap={this.props.funnelSteps.deals}
                         openCreateDeal={this.props.openCreateDeal}
                         openDeleteStep={this.props.openDeleteStep}
                         openDeleteDeal={this.props.openDeleteDeal}
+                        loadMoreDeals={this.props.loadMoreDeals}
                         allowColumn={this.state.currentDragColumnId}
                       />
                     );
@@ -255,6 +257,9 @@ function mapDispatch(dispatch) {
     },
     updateFunnelStep: (body) => {
       dispatch(updateFunnelStep(body));
+    },
+    loadMoreDeals: (colunm, page = 1) => {
+      dispatch(loadMoreDeals(colunm, page));
     }
   };
 }
