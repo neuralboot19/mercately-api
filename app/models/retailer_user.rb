@@ -21,16 +21,18 @@ class RetailerUser < ApplicationRecord
   before_save :max_agents_limit
   before_save :set_only_assigned
 
-  accepts_nested_attributes_for :retailer
-
-  attr_reader :raw_invitation_token
-
   scope :all_customers, -> { where(only_assigned: false) }
   scope :active, -> (retailer_id) { where(retailer_id: retailer_id, removed_from_team: false, invitation_token: nil) }
   scope :active_and_pending_agents, -> (retailer_id) { where(retailer_id: retailer_id, removed_from_team: false) }
   scope :active_admins, lambda { |retailer_id|
     where(retailer_id: retailer_id, retailer_admin: true, removed_from_team: false, invitation_token: nil)
   }
+
+  enum locale: %i[es en]
+
+  accepts_nested_attributes_for :retailer
+
+  attr_reader :raw_invitation_token
 
   def self.from_omniauth(auth, retailer_user, permissions, connection_type)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
