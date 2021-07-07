@@ -251,6 +251,10 @@ class Retailer < ApplicationRecord
     funnels&.last
   end
 
+  def update_gs_info
+    update_gupshup_info
+  end
+
   private
 
     def save_free_plan

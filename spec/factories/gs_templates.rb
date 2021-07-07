@@ -7,5 +7,6 @@ FactoryBot.define do
     category { 'ACCOUNT_UPDATE' }
     text { 'My Text with var {{1}}' }
     example { 'My Text with var [Variable text]' }
+    language { 'spanish' }
   end
 end
