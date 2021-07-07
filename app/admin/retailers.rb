@@ -210,6 +210,7 @@ ActiveAdmin.register Retailer do
       plan = retailer.payment_plan
       attributes_table_for plan do
         row :price
+        row :month_interval
         row :start_date
         row :next_pay_date
         row :status

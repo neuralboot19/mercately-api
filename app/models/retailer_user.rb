@@ -27,6 +27,9 @@ class RetailerUser < ApplicationRecord
   scope :active_admins, lambda { |retailer_id|
     where(retailer_id: retailer_id, retailer_admin: true, removed_from_team: false, invitation_token: nil)
   }
+  scope :active_agents, -> do
+    where(retailer_admin: false, retailer_supervisor: false, removed_from_team: false, invitation_token: nil)
+  end
 
   enum locale: %i[es en]
 
