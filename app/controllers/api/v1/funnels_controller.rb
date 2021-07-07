@@ -40,7 +40,9 @@ class Api::V1::FunnelsController < Api::ApiController
           name: deal.name,
           funnel_step_id: deal.funnel_step_id,
           retailer_id: deal.retailer_id,
-          customer: deal.customer
+          customer: deal.customer,
+          has_whastapp: deal&.customer&.ws_active,
+          has_fb: deal&.customer&.psid
         }
       }
     else
@@ -92,15 +94,22 @@ class Api::V1::FunnelsController < Api::ApiController
     end
 
     def set_deals
+      #TODO SET SERIALIZER
       deals = {}
-      @funnel.retailer.deals.each do |deal|
-        deals[deal.web_id] = {
-          id: deal.web_id,
-          name: deal.name,
-          amount: deal.amount
-        }
-      end
 
+      @funnel.funnel_steps.each do |f_step|
+        #TODO FIND A BETTER WAY TO DO THIS
+        f_step.deals.page(1).each do |deal|
+          deals[deal.web_id] = {
+            id: deal.web_id,
+            name: deal.name,
+            amount: deal.amount,
+            customer: deal.customer,
+            has_whastapp: deal&.customer&.ws_active,
+            has_fb: deal&.customer&.psid
+          }
+        end
+      end
       deals
     end
 
@@ -110,8 +119,8 @@ class Api::V1::FunnelsController < Api::ApiController
         columns[step.web_id] = {
           id: step.web_id.to_s,
           title: step.name,
-          deals: step.deals.count,
-          dealIds: step.deals.pluck(:web_id).map(&:to_s),
+          deals: step.deals.page(1).count,
+          dealIds: step.deals.page(1).pluck(:web_id).map(&:to_s),
           internal_id: step.id,
           r_internal_id: @funnel.retailer_id
         }
