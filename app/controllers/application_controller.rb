@@ -1,7 +1,13 @@
 class ApplicationController < ActionController::Base
   layout :layout_by_resource
   before_action :set_raven_context
+  around_action :switch_locale
   skip_before_action :track_ahoy_visit
+
+  def switch_locale(&action)
+    locale = current_retailer_user.try(:locale) || I18n.default_locale
+    I18n.with_locale(locale, &action)
+  end
 
   def current_subdomain
     Retailer.find_by_slug(request.subdomain).present?
