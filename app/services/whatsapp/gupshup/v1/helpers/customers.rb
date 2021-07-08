@@ -32,6 +32,7 @@ module Whatsapp::Gupshup::V1::Helpers
 
       customer.country_id = country
       customer.number_to_use = original_phone if add_number
+      customer.send_for_opt_in = true if customer.new_record? || customer.whatsapp_opt_in == false
 
       customer.save!
       customer

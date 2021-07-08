@@ -17,6 +17,15 @@
         <%= image_tag 'landing/logo.png', class: "hide-on-pc" %>
       </div>
       <div class="col-xs-6 col-sm-4 t-right">
+        <div class="d-inline-block mr-7 d-none">
+          <span>
+            <i class="fas far fa-language"></i>
+            <% next_locale = current_retailer_user.locale == 'es' ? 'en' : 'es' %>
+            <%= link_to retailer_user_locale_path(locale: next_locale), class: 'no-style', method: :put do %>
+              <strong class="hide-on-tablet-and-down nav-option"><%= t :locale %></strong>
+            <% end %>
+          </span>
+        </div>
         <div class="d-inline-block mr-7">
           <span>
             <i class="fas far fa-question-circle">

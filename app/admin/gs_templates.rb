@@ -15,7 +15,7 @@ ActiveAdmin.register GsTemplate do
   end
 
   batch_action :accept do |ids|
-    batch_action_collection.where(id: ids).find_each(&:accepted!)
+    batch_action_collection.where(id: ids).find_each(&:accept_template)
     redirect_to admin_gs_templates_path, alert: 'Templates accepted!'
   end
 

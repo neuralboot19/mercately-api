@@ -178,6 +178,7 @@ Rails.application.routes.draw do
   end
 
   put 'retailer_user/onboarding_status', to: 'retailer_users#update_onboarding_info', as: :update_onboarding_info
+  put 'retailer_user/locale', to: 'retailer_users#locale'
 
   get 'categories', to: 'categories#roots'
   get 'categories/:id', to: 'categories#childs', as: :categories_childs
@@ -217,7 +218,7 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :deals, only: [:destroy]
+      resources :deals, only: [:index, :destroy]
 
       put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
 

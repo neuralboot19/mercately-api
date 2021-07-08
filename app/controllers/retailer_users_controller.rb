@@ -13,4 +13,9 @@ class RetailerUsersController < ApplicationController
   def onboarding_status_params
     params.require(:onboarding_status).permit(:step, :skipped, :completed)
   end
+
+  def locale
+    current_retailer_user.update(locale: params[:locale])
+    redirect_back fallback_location: root_path
+  end
 end

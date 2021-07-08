@@ -169,6 +169,10 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
 
   describe '#process_event!' do
     context 'when it is a message' do
+      before do
+        allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+      end
+
       context 'with text type' do
         it 'will save a new inbound gupshup message' do
           expect {

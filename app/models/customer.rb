@@ -13,6 +13,7 @@ class Customer < ApplicationRecord
   has_one :agent, class_name: 'RetailerUser', source: 'retailer_user', through: :agent_customer
 
   has_many :orders, dependent: :destroy
+  has_many :deals, dependent: :destroy
 
   has_many :orders_pending, -> { pending }, class_name: 'Order', inverse_of: :customer
   has_many :orders_success, -> { success }, class_name: 'Order', inverse_of: :customer

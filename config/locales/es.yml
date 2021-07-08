@@ -1,5 +1,6 @@
 ---
 es:
+  locale: ES
   activerecord:
     models:
       customer:
