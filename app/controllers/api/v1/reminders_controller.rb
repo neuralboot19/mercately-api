@@ -14,7 +14,7 @@ class Api::V1::RemindersController < Api::ApiController
     if @reminder.save
       render json: {
         message: 'Recordatorio creado con éxito',
-        reminders: @reminder.customer.reminders.order(created_at: :desc)
+        reminders: serialize_reminders(@reminder.customer.reminders.order(created_at: :desc))
       }
     end
   end
@@ -26,7 +26,7 @@ class Api::V1::RemindersController < Api::ApiController
     render status: 200, json: {
       customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]),
       hubspot_integrated: @customer.retailer.hubspot_integrated?,
-      reminders: @customer.reminders.order(created_at: :desc),
+      reminders: serialize_reminders(@customer.reminders.order(created_at: :desc)),
       tags: current_retailer.available_customer_tags(@customer.id)
     }
   end
@@ -43,5 +43,12 @@ class Api::V1::RemindersController < Api::ApiController
         :file,
         content_params: []
       )
+    end
+
+    def serialize_reminders(reminders)
+      ActiveModelSerializers::SerializableResource.new(
+        reminders,
+        each_serializer: Api::V1::ReminderSerializer
+      ).as_json
     end
 end

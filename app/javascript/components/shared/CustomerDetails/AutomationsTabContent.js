@@ -53,7 +53,7 @@ const AutomationsTabContent = ({
                   {reminder.template_text}
                 </ShowMoreText>
                 <span className="c-grey">
-                  {moment(reminder.send_at_timezone).format('DD/MM/YYYY h:mm a')}
+                  {reminder.send_at}
                 </span>
               </div>
               <div className="col-xs-6 t-center p-0">

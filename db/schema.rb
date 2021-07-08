@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_28_152403) do
+ActiveRecord::Schema.define(version: 2021_07_08_173153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -411,9 +411,11 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.decimal "amount", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "retailer_user_id"
     t.index ["customer_id"], name: "index_deals_on_customer_id"
     t.index ["funnel_step_id"], name: "index_deals_on_funnel_step_id"
     t.index ["retailer_id"], name: "index_deals_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_deals_on_retailer_user_id"
   end
 
   create_table "demo_request_leads", force: :cascade do |t|
@@ -992,6 +994,7 @@ ActiveRecord::Schema.define(version: 2021_05_28_152403) do
     t.string "gupshup_app_id"
     t.string "gupshup_app_token"
     t.boolean "has_funnels", default: false
+    t.string "timezone"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

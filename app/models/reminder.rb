@@ -14,8 +14,8 @@ class Reminder < ApplicationRecord
   enum status: %i[scheduled sent cancelled failed]
 
   before_create :calculate_send_timezone
+  before_create :generate_template_text
   after_create :generate_web_id
-  after_create :generate_template_text
 
   def to_param
     web_id
@@ -32,11 +32,16 @@ class Reminder < ApplicationRecord
         match.gsub(/\*/, content_params[i])
       end
       txt.gsub!(/\\\*/, '*')
-      update_column :template_text, txt
+      self.template_text = txt
     end
 
     def calculate_send_timezone
-      time_zone = timezone.dup
-      self.send_at_timezone = send_at.change(offset: time_zone.insert(3, ':'))
+      time_zone = ActiveSupport::TimeZone.new(retailer.timezone.strip) if retailer.timezone.present?
+      self.send_at_timezone = if time_zone
+                                time_zone.local_to_utc(send_at)
+                              else
+                                time_zone = timezone.dup
+                                send_at.change(offset: time_zone.insert(3, ':'))
+                              end
     end
 end
