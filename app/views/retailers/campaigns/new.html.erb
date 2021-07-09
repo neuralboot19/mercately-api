@@ -12,7 +12,7 @@
         <div class="box p-relative card-box form-container_card">
           <% if @campaign.whatsapp_template_id || params[:whatsapp_template_id] %>
             <%= form_for [:retailers, @campaign], html: { class: 'validate-form col-xs-12 p-0' } do |f| %>
-              <%= hidden_field_tag :timezone, Time.now.localtime.formatted_offset %>
+              <%= hidden_field_tag :campaign_timezone %>
               <%= f.hidden_field :whatsapp_template_id, value: @campaign.whatsapp_template_id || params[:whatsapp_template_id] %>
               <div class="box">
                 <fieldset class="fieldset-to-replace fieldset row">
@@ -142,6 +142,11 @@
       parent.find('input').val(`${inputVal}{{${value}}}`);
     }
   }
+
+  $(document).ready(function() {
+    const timezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+    $('#campaign_timezone').val(timezone);
+  });
 </script>
 
 <script src="<%= asset_path 'retailers/chat_bots/chat_bots.js' %>" charset="utf-8"></script>

@@ -6,7 +6,7 @@ class CalendarEvent < ApplicationRecord
 
   validates_presence_of :title, :starts_at, :ends_at
 
-  before_validation :calc_remember_at
+  before_save :calc_remember_at
   after_create :generate_web_id
 
   def to_param
@@ -16,8 +16,14 @@ class CalendarEvent < ApplicationRecord
   private
 
     def calc_remember_at
-      time_zone = timezone.dup
-      self.remember_at = starts_at.change(offset: time_zone.insert(3, ':'))
+      time_zone = ActiveSupport::TimeZone.new(retailer.timezone.strip) if retailer.timezone.present?
+      self.remember_at = if time_zone
+                           time_zone.local_to_utc(starts_at)
+                         else
+                           time_zone = timezone.dup
+                           starts_at.change(offset: time_zone.insert(3, ':'))
+                         end
+
       self.remember_at -= remember.minutes
     end
 end
