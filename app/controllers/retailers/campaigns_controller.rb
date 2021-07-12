@@ -23,7 +23,7 @@ class Retailers::CampaignsController < RetailersController
   # POST retailers/:slug/campaigns
   def create
     @campaign = current_retailer.campaigns.new(campaign_params)
-    @campaign.send_at = @campaign.send_at.change(offset: params[:timezone])
+    @campaign.timezone = params[:campaign_timezone]
 
     if @campaign.save
       redirect_to retailers_campaigns_path(current_retailer), notice: 'Campaña creada con éxito.'

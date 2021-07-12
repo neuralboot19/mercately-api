@@ -27,7 +27,7 @@
       </div>
     <% end %>
   </div>
-  <div class="col-sm-2 t-center"><%= show_date campaign.send_at.localtime %></div>
+  <div class="col-sm-2 t-center"><%= show_date campaign.time_with_zone %></div>
   <div class="col-sm-1 p-0">
     <div class="t-center">
       <% case campaign.status %>

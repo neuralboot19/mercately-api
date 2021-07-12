@@ -72,7 +72,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
                                           :last_name,
                                           :password,
                                           :password_confirmation,
-                                          retailer_attributes: [:id, :avatar, :name, :retailer_number]
+                                          retailer_attributes: [:id, :avatar, :name, :retailer_number, :timezone]
                                         ])
     end
 

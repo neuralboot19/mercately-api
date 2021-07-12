@@ -12,12 +12,15 @@ class Campaign < ApplicationRecord
 
   validates_presence_of :name, :send_at
 
+  before_create :set_timezone
   before_create :generate_template_text
   after_create :generate_web_id
   after_update :success, if: :sent?
   after_update :send_reason, if: :failed?
 
   enum status: %i[pending sent cancelled failed processing]
+
+  attr_accessor :timezone
 
   def to_param
     web_id
@@ -77,6 +80,14 @@ class Campaign < ApplicationRecord
     replaced_params
   end
 
+  def time_with_zone
+    if retailer.timezone.present?
+      ActiveSupport::TimeZone.new(retailer.timezone).utc_to_local(send_at)
+    else
+      send_at.localtime
+    end
+  end
+
   private
 
     def generate_template_text
@@ -108,5 +119,14 @@ class Campaign < ApplicationRecord
       RetailerUser.active_admins(retailer.id).each do |ru|
         CampaignMailer.insufficient_balance(self, ru).deliver_now
       end
+    end
+
+    def set_timezone
+      time_zone = ActiveSupport::TimeZone.new(retailer.timezone.strip) if retailer.timezone.present?
+      self.send_at = if time_zone
+                       time_zone.local_to_utc(send_at)
+                     else
+                       send_at.change(offset: timezone&.insert(3, ':'))
+                     end
     end
 end
