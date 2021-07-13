@@ -4,7 +4,7 @@ Sidekiq::Testing.inline!
 
 RSpec.describe Retailers::RetailerChargeAlertJob, type: :job do
   describe '#perform_in' do
-    let(:retailer) { create(:retailer) }
+    let(:retailer) { create(:retailer, :gupshup_integrated) }
     let(:payment_plan) { create(:payment_plan, retailer: retailer) }
     let(:slack_notifier) { instance_double(Slack::Notifier) }
 
