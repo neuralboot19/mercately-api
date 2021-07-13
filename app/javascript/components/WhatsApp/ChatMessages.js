@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import Lightbox from 'react-image-lightbox';
+import { v4 as uuidv4 } from 'uuid';
 import {
   changeCustomerAgent,
   fetchWhatsAppMessages,
@@ -19,7 +21,7 @@ import ImagesSelector from '../shared/ImagesSelector';
 import GoogleMap from '../shared/Map';
 import Message from './Message';
 import 'emoji-mart/css/emoji-mart.css';
-import TopChatBar from './TopChatBar';
+import TopChatBar from '../shared/TopChatBar';
 import ClosedChannel from './ClosedChannel';
 import MessageForm from './MessageForm';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
@@ -27,8 +29,6 @@ import TemplateSelectionModal from './TemplateSelectionModal';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
 import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
 import ReminderConfigModal from './ReminderConfigModal';
-import Lightbox from 'react-image-lightbox';
-import { v4 as uuidv4 } from 'uuid';
 import 'react-image-lightbox/style.css';
 
 let currentCustomer = 0;
@@ -73,7 +73,9 @@ class ChatMessages extends Component {
       acceptedFiles: '',
       isReminderConfigModalOpen: false,
       isOpenImage: false,
-      imageUrl: null
+      imageUrl: null,
+      showInputMenu: false,
+      showOptions: !props.onMobile
     };
     this.bottomRef = React.createRef();
     this.opted_in = false;
@@ -130,8 +132,8 @@ class ChatMessages extends Component {
     if (index === -1) {
       newMessagesArray = newMessagesArray.concat(newMessage);
     } else {
-      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id ||
-        (newMessage.message_identifier && message.message_identifier === newMessage.message_identifier)) ? newMessage : message));
+      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id
+        || (newMessage.message_identifier && message.message_identifier === newMessage.message_identifier)) ? newMessage : message));
     }
 
     return newMessagesArray;
@@ -157,8 +159,9 @@ class ChatMessages extends Component {
 
   // eslint-disable-next-line camelcase
   UNSAFE_componentWillReceiveProps(newProps) {
-    if (newProps.messages !== this.props.messages && newProps.messages.length > 0 &&
-      this.props.currentCustomer === newProps.messages[0].customer_id) {
+    if (newProps.messages !== this.props.messages
+        && newProps.messages.length > 0
+        && this.props.currentCustomer === newProps.messages[0].customer_id) {
       const rDate = moment(newProps.recentInboundMessageDate).local();
       this.setState((prevState) => ({
         new_message: false,
@@ -672,7 +675,7 @@ class ChatMessages extends Component {
   }
 
   handleAgentAssignment = (e) => {
-    const value = parseInt(e.target.value, 10);
+    const value = parseInt(e.value, 10);
     const agent = this.props.agent_list.filter((currentAgent) => currentAgent.id === value);
 
     const r = confirm("Estás seguro de asignar este chat a otro agente?");
@@ -703,13 +706,9 @@ class ChatMessages extends Component {
 
   divClasses = (message) => {
     let classes = message.direction === 'outbound'
-      ? 'message-by-retailer f-right' + (message.status === 'error' && message.will_retry === false ? ' error-message' : '')
+      ? `message-by-retailer f-right ${(message.status === 'error' && message.will_retry === false ? ' error-message' : '')}`
       : 'message-by-customer';
     classes += ' main-message-container';
-    if (message.status === 'read'
-      && this.props.handleMessageEvents === true) {
-      classes += ' read-message';
-    }
     if (['voice', 'audio'].includes(this.fileType(message.content_media_type))) {
       classes += ' video-audio audio-background';
     } else if (['image', 'video', 'sticker'].includes(this.fileType(message.content_media_type))) {
@@ -723,12 +722,10 @@ class ChatMessages extends Component {
     this.props.setNoRead(this.props.currentCustomer, csrfToken);
   }
 
-  toggleChatBot = (e) => {
-    e.preventDefault();
-
+  toggleChatBot = () => {
     const params = {
       chat_service: 'whatsapp'
-    }
+    };
     this.props.toggleChatBot(this.props.currentCustomer, params, csrfToken);
   }
 
@@ -832,6 +829,7 @@ class ChatMessages extends Component {
   )
 
   getLocation = () => {
+    this.handleShowInputMenu();
     if (navigator.geolocation) {
       this.setState({
         showMap: true
@@ -877,7 +875,7 @@ class ChatMessages extends Component {
   }
 
   // eslint-disable-next-line no-undef
-  overwriteStyle = () => (ENV.CURRENT_AGENT_ROLE === 'Supervisor' ? { height: '80vh' } : {})
+  overwriteStyle = () => (ENV.CURRENT_AGENT_ROLE === 'Supervisor' ? { height: 'calc(100vh - 405px)' } : {})
 
   customerRemoved = () => (
     !this.props.removedCustomer
@@ -1104,7 +1102,7 @@ class ChatMessages extends Component {
     if (this.props.customer.whatsapp_opt_in || ENV.INTEGRATION === '0' || this.opted_in) {
       this.toggleReminderConfigModal();
     } else if (this.opted_in === false) {
-      this.verifyOptIn('reminders')
+      this.verifyOptIn('reminders');
     }
   }
 
@@ -1157,13 +1155,13 @@ class ChatMessages extends Component {
 
     if (allFilled && fileSelected && time) {
       if (this.state.templateType === 'image' && this.validateImages(file) === false) {
-        alert('La imagen debe ser JPG/JPEG o PNG, de máximo 5MB')
+        alert('La imagen debe ser JPG/JPEG o PNG, de máximo 5MB');
         return;
       }
 
       if (this.state.templateType === 'file' && this.validFile(file) === false) return;
 
-      let params = new FormData();
+      const params = new FormData();
       params.append('reminder[customer_id]', this.props.currentCustomer);
       params.append('reminder[whatsapp_template_id]', templateSelectedId);
       params.append('reminder[send_at]', time);
@@ -1174,7 +1172,7 @@ class ChatMessages extends Component {
       const insertedParams = Object.values(templateParams);
       params.append('reminder[content_params]', JSON.stringify(insertedParams));
 
-      this.props.createReminder(params, csrfToken)
+      this.props.createReminder(params, csrfToken);
       this.cancelTemplate('reminders');
     } else {
       let alertMessage = '';
@@ -1191,6 +1189,19 @@ class ChatMessages extends Component {
     }
   }
 
+  handleShowInputMenu = () => {
+    this.setState((prevState) => ({
+      showInputMenu: !prevState.showInputMenu
+    }));
+  }
+
+  openProducts = () => {
+    this.handleShowInputMenu();
+    this.props.toggleProducts();
+  }
+
+  toggleOptions = () => this.setState(({ showOptions }) => ({ showOptions: !showOptions }))
+
   render() {
     let screen;
     if (this.state.templateEdited === false) {
@@ -1199,8 +1210,12 @@ class ChatMessages extends Component {
       screen = this.getTextInputEdited();
     }
 
+    const chatBoxClass = this.state.showOptions && this.props.onMobile
+      ? 'chat__box chat__box-without-options'
+      : 'chat__box';
+
     return (
-      <div className="row bottom-xs">
+      <div className="chat-messages-holder bottom-xs">
         {this.props.onMobile && (
           <MobileTopChatBar
             backToChatList={this.props.backToChatList}
@@ -1221,6 +1236,9 @@ class ChatMessages extends Component {
               onMobile={this.props.onMobile}
               setNoRead={this.setNoRead}
               toggleChatBot={this.toggleChatBot}
+              toggleOptions={this.toggleOptions}
+              showOptions={this.state.showOptions}
+              chatType='whatsapp'
             />
           )}
         {this.state.isOpenImage && (
@@ -1231,12 +1249,12 @@ class ChatMessages extends Component {
           />
         )}
         <div
-          className="col-xs-12 chat__box pt-8"
+          className={`col-xs-12 mt-8 px-24 border-top-light ${chatBoxClass}`}
           onScroll={(e) => this.handleScrollToTop(e)}
           style={this.overwriteStyle()}
         >
           {this.state.messages.map((message) => (
-            <div key={message.id} className="message">
+            <div key={message.id} className="message text-gray-dark">
               <div className={this.divClasses(message)}>
                 <Message
                   key={message.id}
@@ -1290,7 +1308,11 @@ class ChatMessages extends Component {
                   toggleFastAnswers={this.toggleFastAnswers}
                   toggleLoadImages={this.toggleLoadImages}
                   toggleProducts={this.props.toggleProducts}
+                  openProducts={this.openProducts}
                   openReminderConfigModal={this.openReminderConfigModal}
+                  showInputMenu={this.state.showInputMenu}
+                  handleShowInputMenu={this.handleShowInputMenu}
+                  wrapperInputMenu={this.wrapperInputMenu}
                 />
               )
             )

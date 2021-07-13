@@ -1,0 +1,151 @@
+// Header
+.header--dashboard {
+  height: $header-height;
+  border-bottom: 1px solid #eee;
+  background-color: #FFF;
+
+  .bar {
+    &__left-info {
+      display: inline-block;
+      margin-left: 120px;
+      line-height: $header-height;
+      color: #808191;
+
+      a {
+        color: #808191;
+      }
+
+      img {
+        vertical-align: middle;
+      }
+    }
+
+    &__right-info {
+      display: inline-block;
+    }
+  }
+
+  .info {
+    &__logo {
+      width: $header-height;
+      line-height: $header-height;
+      padding: 5px 6px;
+      border-radius: 20px;
+      background-color: #EBF7FC;
+      color: #3CAAE1;
+    }
+  }
+
+  .user__dropdown {
+    position: relative;
+  }
+}
+
+.child_container {
+  width: 50%;
+  float: left;
+
+  .right-content {
+    padding-right: 50px;
+    text-align: right;
+    color: #3C4348;
+
+    a {
+      color: #3C4348;
+    }
+
+    img {
+      vertical-align: middle;
+    }
+  }
+}
+
+#dropdown__notifications ~ ul {
+  top: 50px;
+  right: 32px;
+}
+
+#dropdown__menu--header ~ ul {
+  top: 50px;
+  right: 16px;
+}
+
+.nav-option {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 24px;
+  text-transform: capitalize;
+}
+
+@media screen and (max-width: 1024px) {
+  .header--dashboard {
+    background-color: #FFF;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 100vw;
+    z-index: 101;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+
+    .bar {
+      &__left-info {
+        display: none;
+      }
+
+      &__right-info {
+        display: none;
+      }
+    }
+
+    .dropdown__menu {
+      right: 0;
+    }
+
+    .child-container-mobile-first {
+      width: 20%;
+      float: left;
+      line-height: $header-height;
+
+      i {
+        color: #808191;
+      }
+    }
+
+    .child-container-mobile-second {
+      width: 30%;
+      float: left;
+      line-height: $header-height;
+
+      img {
+        vertical-align: middle;
+      }
+    }
+
+    .child-container-mobile-third {
+      width: 50%;
+      float: left;
+
+      .img-bell {
+        margin-right: 5px !important;
+      }
+
+      .mobile-header-links {
+        display: inline-block;
+        line-height: $header-height;
+        color: #808191;
+  
+        a {
+          color: #808191;
+        }
+
+        .img-mobile {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}

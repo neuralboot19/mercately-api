@@ -7,69 +7,69 @@
   <div id="sidebar__menu">
     <ul class="menu no-style">
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_dashboard_path(current_retailer)) %>">
-        <i class="item__icon fas fa-chart-line"></i>
-        <%= link_to 'Dashboard', retailers_dashboard_path(current_retailer), class: 'item__name no-style' %>
+        <i class="icon-dashboard-left item__icon"></i>
+        <%= link_to 'Dashboard', retailers_dashboard_path(current_retailer), class: "item__name no-style" %>
       </li>
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_customers_path(current_retailer)) %>">
         <input type="checkbox" id="item--inbox-1" class="item__checkbox" />
-        <i class="item__icon fas fa-users"></i>
-        <label for="item--inbox-1" class="item__name">Clientes</label>
+        <i class="icon-customers-left item__icon"></i>
+        <label for="item--inbox-1" class="item__name"><%= t('vertical_navbar.clients.clients')%></label>
         <i class="item__arrow right"></i>
         <ul class="submenu no-style">
           <li class="submenu__item">
-            <%= link_to 'Lista de clientes', retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
+            <%= link_to t('vertical_navbar.clients.clients_list'), retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
           </li>
           <li class="submenu__item">
-            <%= link_to 'Campos personalizados', retailers_customer_related_fields_path(current_retailer), class: 'item__name no-style' %>
+            <%= link_to t('vertical_navbar.clients.custom_fields'), retailers_customer_related_fields_path(current_retailer), class: 'item__name no-style' %>
           </li>
           <% if current_retailer.whatsapp_integrated? %>
             <li class="submenu__item">
-              <%= link_to 'Grupos de clientes', retailers_contact_groups_path(current_retailer), class: 'item__name no-style' %>
+              <%= link_to t('vertical_navbar.clients.client_groups'), retailers_contact_groups_path(current_retailer), class: 'item__name no-style' %>
             </li>
           <% end %>
         </ul>
       </li>
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_products_path(current_retailer)) %>">
-        <i class="item__icon fas fa-poll"></i>
-        <%= link_to 'Productos', retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
+        <i class="icon-products-left item__icon fs-20"></i>
+        <%= link_to t('vertical_navbar.products.products'), retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
       </li>
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_orders_path(current_retailer)) %>">
         <input type="checkbox" id="item--inbox-3" class="item__checkbox" />
-        <i class="item__icon fas fa-clipboard-check"></i>
-        <label for="item--inbox-3" class="item__name">Órdenes</label>
+        <i class="icon-orders-left item__icon fs-20"></i>
+        <label for="item--inbox-3" class="item__name"><%= t('vertical_navbar.orders.orders') %></label>
         <i class="item__arrow right"></i>
         <ul class="submenu no-style">
           <li class="submenu__item">
-            <%= link_to 'Lista de órdenes', retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
+            <%= link_to t('vertical_navbar.orders.orders_list'), retailers_orders_path(current_retailer, status: 'all'), class: 'item__name no-style' %>
           </li>
           <li class="submenu__item">
-            <%= link_to 'Canales de venta', retailers_sales_channels_path(current_retailer), class: 'item__name no-style' %>
+            <%= link_to t('vertical_navbar.orders.sales_channels'), retailers_sales_channels_path(current_retailer), class: 'item__name no-style' %>
           </li>
         </ul>
       </li>
       <% if current_retailer.has_funnels %>
-        <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_dashboard_path(current_retailer)) %>">
-          <i class="item__icon far fa-handshake"></i>
-          <%= link_to 'Negociaciones', retailers_funnels_path(current_retailer), class: 'item__name no-style' %>
+        <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_funnels_path(current_retailer)) %>">
+          <i class="icon-funnels-left item__icon"></i>
+          <%= link_to t('vertical_navbar.deals.deals'), retailers_funnels_path(current_retailer), class: 'item__name no-style' %>
         </li>
       <% end %>
       <% if current_retailer.whatsapp_integrated? %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_campaigns_path(current_retailer)) %>">
-          <i class="item__icon fas fa-comments"></i>
-          <%= link_to 'Campañas', retailers_campaigns_path(current_retailer), class: 'item__name no-style' %>
+          <i class="icon-campaigns-left item__icon"></i>
+          <%= link_to t('vertical_navbar.campaings.campaings'), retailers_campaigns_path(current_retailer), class: 'item__name no-style' %>
         </li>
       <% end %>
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_chat_bots_path(current_retailer)) %>">
         <input type="checkbox" id="item--inbox-2" class="item__checkbox" />
-        <i class="item__icon fas fa-robot"></i>
-        <label for="item--inbox-2" class="item__name">Automatizaciones</label>
+        <i class="icon-bots-left item__icon fs-20"></i>
+        <label for="item--inbox-2" class="item__name"><%= t('vertical_navbar.automations.automations') %></label>
         <i class="item__arrow right"></i>
         <ul class="submenu no-style">
           <li class="submenu__item">
-            <%= link_to 'ChatBots', retailers_chat_bots_path(current_retailer), class: 'item__name no-style' %>
+            <%= link_to t('vertical_navbar.automations.chatbots'), retailers_chat_bots_path(current_retailer), class: 'item__name no-style' %>
           </li>
           <li class="submenu__item">
-            <%= link_to 'Recordatorios', retailers_reminders_path(current_retailer), class: 'item__name no-style' %>
+            <%= link_to t('vertical_navbar.automations.reminders'), retailers_reminders_path(current_retailer), class: 'item__name no-style' %>
           </li>
         </ul>
       </li>
@@ -77,17 +77,17 @@
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_mercadolibre_chats_path(current_retailer)) ||
           current_page?(retailers_questions_path(current_retailer)) %>">
           <input type="checkbox" id="item--inbox-4" class="item__checkbox" />
-          <i class="item__icon fas fa-mail-bulk"></i>
+          <i class="icon-mercadolibre-left item__icon fs-14 fw-bold"></i>
           <label for="item--inbox-4" class="item__name">Inbox</label>
           <i class="item__arrow right"></i>
           <b id="item__cookie_total" class="item__cookie item__cookie_total"><%= total_unread %></b>
           <ul class="submenu no-style">
             <li class="submenu__item">
-              <%= link_to 'Preguntas', retailers_questions_path(current_retailer), class: 'item__name no-style' %>
+              <%= link_to t('vertical_navbar.ml.questions'), retailers_questions_path(current_retailer), class: 'item__name no-style' %>
               <b id="item__cookie_question" class="item__cookie"><%= quantity_unread_questions %></b>
             </li>
             <li class="submenu__item">
-              <%= link_to 'Mensajes', retailers_mercadolibre_chats_path(current_retailer), class: 'item__name no-style' %>
+              <%= link_to t('vertical_navbar.ml.chats'), retailers_mercadolibre_chats_path(current_retailer), class: 'item__name no-style' %>
               <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
             </li>
           </ul>
@@ -95,69 +95,69 @@
       <% end %>
       <% if current_retailer.facebook_retailer&.connected? %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_facebook_chats_path(current_retailer)) %>">
-          <i class="item__icon fab fa-facebook-messenger"></i>
+          <i class="icon-messenger-left item__icon fs-20"></i>
           <%= link_to 'Messenger', retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
           <b class="item__cookie item__cookie_facebook_messages"><%= facebook_unread_messages %></b>
         </li>
       <% end %>
       <% if current_retailer.facebook_retailer&.instagram_integrated? %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_instagram_chats_path(current_retailer)) %>">
-          <i class="item__icon fab fa-instagram"></i>
+          <i class="item__icon icon-instagram-left"></i>
           <%= link_to 'Instagram', retailers_instagram_chats_path(current_retailer), class: 'item__name no-style' %>
           <b class="item__cookie item__cookie_instagram_messages"><%= instagram_unread_messages %></b>
         </li>
       <% end %>
       <% if current_retailer.whatsapp_integrated? %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_whats_app_chats_path(current_retailer)) %>">
-          <i class="item__icon fab fa-whatsapp"></i>
+          <i class="icon-whatsapp-left item__icon"></i>
           <%= link_to 'WhatsApp', retailers_whats_app_chats_path(current_retailer), class: 'item__name no-style' %>
           <b class="item__cookie item__cookie_whatsapp_messages"><%= whatsapp_unread_messages %></b>
         </li>
       <% end %>
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_customers_path(current_retailer)) %>">
         <input type="checkbox" id="item--inbox-5" class="item__checkbox" />
-        <i class="item__icon fas fa-users"></i>
-        <label for="item--inbox-5" class="item__name">Configuración de mensajería</label>
+        <i class="icon-settings-left item__icon fs-20"></i>
+        <label for="item--inbox-5" class="item__name"><%= t('vertical_navbar.messaging_configuration.messaging_configuration') %></label>
         <i class="item__arrow right"></i>
         <ul class="submenu no-style">
           <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer || current_retailer.meli_retailer %>
             <li class="submenu__item">
-              <%= link_to 'Respuestas Rápidas', retailers_templates_path(current_retailer), class: 'item__name no-style' %>
+              <%= link_to t('vertical_navbar.messaging_configuration.canned_responses'), retailers_templates_path(current_retailer), class: 'item__name no-style' %>
             </li>
           <% end %>
           <% if current_retailer.whatsapp_integrated? %>
             <li class="submenu__item">
-              <%= link_to 'Plantillas de WhatsApp', retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
+              <%= link_to t('vertical_navbar.messaging_configuration.whatsapp_templates'), retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'item__name no-style' %>
             </li>
           <% end %>
           <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer %>
             <li class="submenu__item">
               <% if current_retailer.whatsapp_integrated? %>
-                <%= link_to 'Mensajes de bienvenida', retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'item__name no-style' %>
+                <%= link_to t('vertical_navbar.messaging_configuration.welcome_messages'), retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'item__name no-style' %>
               <% elsif current_retailer.facebook_retailer %>
-                <%= link_to 'Mensajes de bienvenida', retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'item__name no-style' %>
+                <%= link_to t('vertical_navbar.messaging_configuration.welcome_messages'), retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'item__name no-style' %>
               <% end %>
             </li>
           <% end %>
           <li class="submenu__item">
-            <%= link_to 'Etiquetas', retailers_tags_path(current_retailer), class: 'item__name no-style' %>
+            <%= link_to t('vertical_navbar.messaging_configuration.tags'), retailers_tags_path(current_retailer), class: 'item__name no-style' %>
           </li>
           <% if current_retailer.manage_team_assignment %>
             <li class="submenu__item">
-              <%= link_to 'Asignación Automática', retailers_team_assignments_path(current_retailer), class: 'item__name no-style' %>
+              <%= link_to t('vertical_navbar.messaging_configuration.automatic_assignment'), retailers_team_assignments_path(current_retailer), class: 'item__name no-style' %>
             </li>
           <% end %>
         </ul>
       </li>
       <% if current_retailer_user.admin? || current_retailer_user.supervisor? %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_total_messages_stats_path(current_retailer)) %>">
-          <i class="fas fa-chart-pie item__icon"></i>
-          <%= link_to 'Estadísticas', retailers_total_messages_stats_path(current_retailer), class: 'item__name no-style' %>
+          <i class="icon-stats-left item__icon"></i>
+          <%= link_to t('vertical_navbar.statistics.statistics'), retailers_total_messages_stats_path(current_retailer), class: 'item__name no-style' %>
         </li>
       <% end %>
       <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_integrations_path(current_retailer)) %>">
-        <i class="item__icon fas fa-link"></i>
-        <%= link_to 'Integraciones', retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
+        <i class="icon-integrations-left item__icon fs-10"></i>
+        <%= link_to t('vertical_navbar.integrations.integrations'), retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
       </li>
       <% if session[:old_retailer_id] %>
         <li class="menu__item m-0">
@@ -177,31 +177,33 @@
     <div id="sidebar__menu--pc">
       <ul class="menu no-style">
         <li class="menu__item">
-          <div class="tooltip">
-            <%= link_to image_tag('dashboard/dashboard-new.png', class: 'item__name no-style'), retailers_dashboard_path(current_retailer), class: 'item__name no-style' %>
-            <div class="tooltiptext">Dashboard</div>
+          <div class="merc-tooltip <%= controller.controller_name == 'pages' ? 'merc-tooltip-active' : '' %>">
+            <%= link_to retailers_dashboard_path(current_retailer), class: "item__name no-style " do %>
+              <i class="icon-dashboard-left"></i>
+            <% end %>
+            <div class="merc-tooltiptext ">Dashboard</div>
           </div>
         </li>
         <li class="menu__item">
-          <div class="tooltip">
-            <%= image_tag('dashboard/user.png', class: 'item__name no-style') %>
-            <div class="tooltiptext tooltiptext--big" style="top: -28px;">
-              <div class="t-center">Clientes</div>
+          <div class="merc-tooltip <%='merc-tooltip-active' if %w(customers customer_related_fields contact_groups).include?(controller.controller_name) %>">
+            <i class="icon-customers-left"></i>
+            <div class="merc-tooltiptext merc-tooltiptext--big" style="top: -38px;">
+              <div class="t-center"><%= t('vertical_navbar.clients.clients')%></div>
               <div class="divider"></div>
               <div>
                 <%= link_to retailers_customers_path(current_retailer, q: { 's': 'created_at desc' }), class: 'c-secondary no-style' do %>
-                  Lista de clientes
+                  <%= t('vertical_navbar.clients.clients_list') %>
                 <% end %>
               </div>
               <div>
                 <%= link_to retailers_customer_related_fields_path(current_retailer), class: 'c-secondary no-style' do %>
-                  Campos personalizados
+                  <%= t('vertical_navbar.clients.custom_fields') %>
                 <% end %>
               </div>
               <% if current_retailer.whatsapp_integrated? %>
                 <div>
                   <%= link_to retailers_contact_groups_path(current_retailer), class: 'c-secondary no-style' do %>
-                    Grupos de clientes
+                    <%= t('vertical_navbar.clients.client_groups') %>
                   <% end %>
                 </div>
               <% end %>
@@ -209,26 +211,27 @@
           </div>
         </li>
         <li class="menu__item">
-          <div class="tooltip">
-            <%= link_to image_tag('dashboard/product.png', class: 'item__name no-style'),
-              retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' %>
-            <div class="tooltiptext">Productos</div>
+          <div class="merc-tooltip <%= controller.controller_name == 'products' ? 'merc-tooltip-active' : '' %>">
+            <%= link_to retailers_products_path(current_retailer, q: { 'status_eq': '0', 's': 'created_at desc' }), class: 'item__name no-style' do %>
+              <i class="icon-products-left fs-20"></i>
+            <% end %>
+            <div class="merc-tooltiptext"><%= t('vertical_navbar.products.products') %></div>
           </div>
         </li>
         <li class="menu__item">
-          <div class="tooltip">
-            <%= image_tag('dashboard/order-new.png', class: 'item__name no-style') %>
-            <div class="tooltiptext tooltiptext--medium" style="top: -28px;">
-              <div class="t-center">Órdenes</div>
+          <div class="merc-tooltip <%='merc-tooltip-active' if %w(orders sales_channels).include?(controller.controller_name) %>">
+            <i class="icon-orders-left fs-20"></i>
+            <div class="merc-tooltiptext merc-tooltiptext--medium" style="top: -28px;">
+              <div class="t-center"><%= t('vertical_navbar.orders.orders') %></div>
               <div class="divider"></div>
               <div>
                 <%= link_to retailers_orders_path(current_retailer, status: 'all'), class: 'c-secondary no-style' do %>
-                  Lista de órdenes
+                  <%= t('vertical_navbar.orders.orders_list') %>
                 <% end %>
               </div>
               <div>
                 <%= link_to retailers_sales_channels_path(current_retailer), class: 'c-secondary no-style' do %>
-                  Canales de venta
+                  <%= t('vertical_navbar.orders.sales_channels') %>
                 <% end %>
               </div>
             </div>
@@ -236,38 +239,38 @@
         </li>
         <% if current_retailer.has_funnels %>
           <li class="menu__item">
-            <div class="tooltip">
+            <div class="merc-tooltip <%= controller.controller_name == 'funnels' ? 'merc-tooltip-active' : '' %>">
               <%= link_to retailers_funnels_path(current_retailer), class: 'item__name no-style' do %>
-                <i class="far fa-handshake c-secondary fs-25 mb-10"></i>
+                <i class="icon-funnels-left"></i>
               <% end %>
-              <div class="tooltiptext">Negociaciones</div>
+              <div class="merc-tooltiptext"><%= t('vertical_navbar.deals.deals') %></div>
             </div>
           </li>
         <% end %>
         <% if current_retailer.whatsapp_integrated? %>
           <li class="menu__item">
-            <div class="tooltip">
+            <div class="merc-tooltip <%= controller.controller_name == 'campaigns' ? 'merc-tooltip-active' : '' %>">
               <%= link_to retailers_campaigns_path(current_retailer), class: 'item__name no-style' do %>
-                <i class="c-secondary fs-25 mb-10 fas fa-comments"></i>
+                <i class="icon-campaigns-left"></i>
               <% end %>
-              <div class="tooltiptext positioned">Campañas</div>
+              <div class="merc-tooltiptext positioned"><%= t('vertical_navbar.campaigns.campaigns') %></div>
             </div>
           </li>
         <% end %>
         <li class="menu__item">
-          <div class="tooltip">
-            <i class="fas fa-robot c-secondary fs-25 mb-10"></i>
-            <div class="tooltiptext tooltiptext--medium" style="top: -28px;">
-              <div class="t-center">Automatizaciones</div>
+          <div class="merc-tooltip <%='merc-tooltip-active' if %w(chat_bots reminders).include?(controller.controller_name) %>">
+            <i class="icon-bots-left fs-20"></i>
+            <div class="merc-tooltiptext merc-tooltiptext--medium" style="top: -28px;">
+              <div class="t-center"><%= t('vertical_navbar.automations.automations') %></div>
               <div class="divider"></div>
               <div>
                 <%= link_to retailers_chat_bots_path(current_retailer, status: 'all'), class: 'c-secondary no-style' do %>
-                  ChatBots
+                  <%= t('vertical_navbar.automations.chatbots') %>
                 <% end %>
               </div>
               <div>
                 <%= link_to retailers_reminders_path(current_retailer), class: 'c-secondary no-style' do %>
-                  Recordatorios
+                  <%= t('vertical_navbar.automations.reminders') %>
                 <% end %>
               </div>
             </div>
@@ -275,20 +278,20 @@
         </li>
         <% if current_retailer.meli_retailer %>
           <li class="menu__item">
-            <div class="tooltip">
-              <%= image_tag('dashboard/mercadol.png', class: 'item__name no-style') %>
-              <div class="tooltiptext" style="top: -28px;">
+            <div class="merc-tooltip <%='merc-tooltip-active' if %w(questions chats).include?(controller.action_name) %>">
+              <i class="icon-mercadolibre-left fs-14 fw-bold"></i>
+              <div class="merc-tooltiptext" style="top: -28px;">
                 &nbsp;&nbsp;MercadoLibre&nbsp;&nbsp;<br/>
                 <div class="divider"></div>
                 <div>
                   <%= link_to retailers_questions_path(current_retailer), class: 'c-secondary no-style' do %>
-                    Preguntas
+                    <%= t('vertical_navbar.ml.questions') %>
                     <b id="item__cookie_question" class="item__cookie item__cookie_question"><%= quantity_unread_questions %></b>
                   <% end %>
                 </div>
                 <div>
                   <%= link_to retailers_mercadolibre_chats_path(current_retailer), class: 'c-secondary no-style' do %>
-                    Chats
+                    <%= t('vertical_navbar.ml.chats') %>
                     <b id="item__cookie_message" class="item__cookie"><%= quantity_unread_messages %></b>
                   <% end %>
                 </div>
@@ -299,48 +302,54 @@
         <% end %>
         <% if current_retailer.facebook_retailer&.connected? %>
           <li class="menu__item">
-            <div class="tooltip">
-              <%= link_to image_tag('dashboard/messenger.png', class: 'item__name no-style'), retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' %>
-              <div class="tooltiptext">Messenger</div>
+            <div class="merc-tooltip <%='merc-tooltip-active' if %w(facebook_chats).include?(controller.action_name) %>">
+              <%= link_to retailers_facebook_chats_path(current_retailer), class: 'item__name no-style' do %>
+                <i class="icon-messenger-left fs-20"></i>
+              <% end %>
+              <div class="merc-tooltiptext">Messenger</div>
               <b class="item__cookie item__cookie_facebook_messages"><%= facebook_unread_messages %></b>
             </div>
           </li>
         <% end %>
         <% if current_retailer.facebook_retailer&.instagram_integrated? %>
           <li class="menu__item">
-            <div class="tooltip">
-              <%= link_to image_tag('dashboard/instagram.png', class: 'item__name no-style'), retailers_instagram_chats_path(current_retailer), class: 'item__name no-style' %>
-              <div class="tooltiptext">Instagram</div>
+            <div class="merc-tooltip <%='merc-tooltip-active' if %w(instagram_chats).include?(controller.action_name) %>">
+              <%= link_to retailers_instagram_chats_path(current_retailer), class: 'item__name no-style' do %>
+                <i class="icon-instagram-left"></i>
+              <% end %>
+              <div class="merc-tooltiptext">Instagram</div>
               <b class="item__cookie item__cookie_instagram_messages"><%= instagram_unread_messages %></b>
             </div>
           </li>
         <% end %>
         <% if current_retailer.whatsapp_integrated? %>
           <li class="menu__item">
-            <div class="tooltip">
-              <%= link_to image_tag('dashboard/what.png', class: 'item__name no-style'), retailers_whats_app_chats_path(current_retailer), class: 'item__name no-style' %>
-              <div class="tooltiptext">WhatsApp</div>
+            <div class="merc-tooltip <%= controller.controller_name == 'whats_app' ? 'merc-tooltip-active' : '' %> ">
+              <%= link_to retailers_whats_app_chats_path(current_retailer), class: 'item__name no-style' do %>
+                <i class="icon-whatsapp-left"></i>
+              <% end %>
+              <div class="merc-tooltiptext">WhatsApp</div>
               <b class="item__cookie item__cookie_whatsapp_messages"><%= whatsapp_unread_messages %></b>
             </div>
           </li>
         <% end %>
         <li class="menu__item">
-          <div class="tooltip">
-            <%= image_tag('dashboard/config-mensajeria.png', class: 'item__name no-style', style: 'width: 32px;') %>
-            <div class="tooltiptext tooltiptext--big" style="top: -45px;">
-              Configuración de mensajería<br/>
+          <div class="merc-tooltip <%= 'merc-tooltip-active' if %w(templates gs_templates automatic_answers tags team_assignments).include?(controller.controller_name) %> ">
+            <i class="icon-settings-left fs-20"></i>
+            <div class="merc-tooltiptext merc-tooltiptext--big" style="top: -60px;">
+              <%= t('vertical_navbar.messaging_configuration.messaging_configuration')%><br/>
               <div class="divider"></div>
               <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer || current_retailer.meli_retailer %>
                 <div>
                   <%= link_to retailers_templates_path(current_retailer), class: 'c-secondary no-style' do %>
-                    Respuestas Rápidas
+                    <%= t('vertical_navbar.messaging_configuration.canned_responses') %>
                   <% end %>
                 </div>
               <% end %>
               <% if current_retailer.whatsapp_integrated? %>
                 <div>
                   <%= link_to retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'c-secondary no-style' do %>
-                    Plantillas de WhatsApp
+                    <%= t('vertical_navbar.messaging_configuration.whatsapp_templates') %>
                   <% end %>
                 </div>
               <% end %>
@@ -348,24 +357,24 @@
                 <div>
                   <% if current_retailer.whatsapp_integrated? %>
                     <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'c-secondary no-style' do %>
-                      Mensajes de bienvenida
+                      <%= t('vertical_navbar.messaging_configuration.welcome_messages') %>
                     <% end %>
                   <% elsif current_retailer.facebook_retailer %>
                     <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'c-secondary no-style' do %>
-                      Mensajes de bienvenida
+                      <%= t('vertical_navbar.messaging_configuration.welcome_messages') %>
                     <% end %>
                   <% end %>
                 </div>
               <% end %>
               <div>
                 <%= link_to retailers_tags_path(current_retailer), class: 'c-secondary no-style' do %>
-                  Etiquetas
+                  <%= t('vertical_navbar.messaging_configuration.tags') %>
                 <% end %>
               </div>
               <% if current_retailer.manage_team_assignment %>
                 <div>
                   <%= link_to retailers_team_assignments_path(current_retailer), class: 'c-secondary no-style' do %>
-                    Asignación Automática
+                    <%= t('vertical_navbar.messaging_configuration.automatic_assignment') %>
                   <% end %>
                 </div>
               <% end %>
@@ -374,25 +383,27 @@
         </li>
         <% if current_retailer_user.admin? || current_retailer_user.supervisor? %>
           <li class="menu__item">
-            <div class="tooltip">
+            <div class="merc-tooltip <%= controller.controller_name == 'stats' ? 'merc-tooltip-active' : '' %>">
               <%= link_to retailers_total_messages_stats_path(current_retailer), class: 'item__name no-style' do %>
-                <i class="fas fa-chart-pie c-secondary fs-28 mb-10"></i>
+                <i class="icon-stats-left"></i>
               <% end %>
-              <div class="tooltiptext">Estadísticas</div>
+              <div class="merc-tooltiptext"><%= t('vertical_navbar.statistics.statistics') %></div>
             </div>
           </li>
         <% end %>
         <li class="menu__item">
-          <div class="tooltip">
-            <%= link_to image_tag('dashboard/integration.png', class: 'item__name no-style'), retailers_integrations_path(current_retailer), class: 'item__name no-style' %>
-            <div class="tooltiptext">Integraciones</div>
+          <div class="merc-tooltip <%= controller.controller_name == 'integrations' ? 'merc-tooltip-active' : '' %>"">
+            <%= link_to retailers_integrations_path(current_retailer), class: 'item__name no-style' do %>
+              <i class="icon-integrations-left fs-10"></i>
+            <% end %>
+            <div class="merc-tooltiptext"><%= t('vertical_navbar.integrations.integrations') %></div>
           </div>
         </li>
         <% if session[:old_retailer_id] %>
           <li class="menu__item">
-            <div class="tooltip">
+            <div class="merc-tooltip">
               <%= link_to raw('<i class="fas fa-reply"></i>'), go_back_as_admin_admin_retailer_path(current_retailer) %>
-              <div class="tooltiptext">Regresar al admin</div>
+              <div class="merc-tooltiptext">Regresar al admin</div>
             </div>
           </li>
         <% end %>

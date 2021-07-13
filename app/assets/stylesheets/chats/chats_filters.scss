@@ -1,0 +1,42 @@
+.btn-filter {
+  top: 0;
+  bottom: 0;
+  right: 18px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-filter span {
+  cursor: pointer;
+  height: 32px;
+  width: 32px;
+  background-color: $white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-search {
+  top: 0;
+  bottom: 0;
+  left: 8px;
+  padding: 0 10px 0 10px;
+  display: flex;
+  align-items: center;
+}
+
+.chat-selector {
+  height: calc(100vh - 192px);
+  overflow-x: hidden;
+  overflow-y: scroll;
+
+  @media screen and (max-width: 1024px) {
+    height: calc(100vh - 192px);
+  }
+}
+
+.remove-filters-icon {
+  width: 8px;
+  height: 8px;
+}

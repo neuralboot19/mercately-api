@@ -164,12 +164,14 @@ class Chat extends Component {
   }
 
   render() {
+    const responsiveStyles = this.state.onMobile ? "col-xs-12 col-md-3 no-border-right no-padding-xs" : "col-xs-12 col-md-3";
+
     return (
       <div>
-        <div className="box">
-          <div className="row">
+        <div className="container-fluid">
+          <div className="row no-left-margin-xs">
             {this.state.showChatList && (
-              <div className={this.state.onMobile ? "col-xs-12 col-sm-3 chat_list_holder no-border-right" : "col-xs-12 col-sm-3 chat_list_holder" }>
+              <div className={responsiveStyles}>
                 <ChatSideBar
                   handleOpenChat={this.handleOpenChat}
                   currentCustomer={this.state.currentCustomer}
@@ -186,7 +188,7 @@ class Chat extends Component {
             )}
 
             {this.state.currentCustomer !== 0 && this.state.showChatMessages && (
-              <div className="col-xs-12 col-sm-6">
+              <div className="col-xs-12 col-md-6 no-padding-xs">
                 <ChatMessages
                   currentCustomer={this.state.currentCustomer}
                   customerDetails={this.state.currentCustomerDetails}
@@ -211,7 +213,7 @@ class Chat extends Component {
             this.state.showFastAnswers === false &&
             this.state.showProducts === false &&
             this.state.showCustomerDetails &&
-              <div className="col-xs-12 col-sm-3">
+              <div className="col-xs-12 col-md-3 no-padding-xs">
                 <CustomerDetails
                   customerId={this.state.currentCustomer}
                   chatType='facebook_chats'
@@ -223,7 +225,7 @@ class Chat extends Component {
 
             {this.state.currentCustomer !== 0 &&
             this.state.showFastAnswers &&
-              <div className="col-xs-12 col-sm-3">
+              <div className="col-xs-12 col-md-3 no-padding-xs">
                 <FastAnswers
                   chatType='facebook'
                   changeFastAnswer={this.changeFastAnswer}
@@ -235,7 +237,7 @@ class Chat extends Component {
 
             {this.state.currentCustomer !== 0 &&
             this.state.showProducts &&
-              <div className="col-xs-12 col-sm-3">
+              <div className="col-xs-12 col-md-3 no-padding-xs">
                 <Products
                   onMobile={this.state.onMobile}
                   toggleProducts={this.toggleProducts}

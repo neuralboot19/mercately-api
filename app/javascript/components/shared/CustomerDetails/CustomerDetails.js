@@ -95,7 +95,7 @@ const CustomerDetails = ({
    * Initial customer info fetch
    */
   useEffect(() => {
-    fetchCustomerFromRedux(customerId);
+    !onMobile && fetchCustomerFromRedux(customerId);
     fetchTagsFromRedux(customerId);
     fetchCustomerFieldsFromRedux(customerId);
   }, [customerId]);
@@ -303,7 +303,7 @@ const CustomerDetails = ({
       {onMobile && (
         <MobileHeader onBack={backToChatMessages} />
       )}
-      <CustomerName customer={customer} />
+      <CustomerName customer={customer} chatType={chatType} />
       <TabSelector
         showUserDetails={state.showUserDetails}
         showCustomFields={state.showCustomFields}

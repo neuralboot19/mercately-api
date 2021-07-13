@@ -109,7 +109,7 @@ const addMarkNotificationAsReadListener = () => {
  */
 const addNotificationsDropdownToggleListener = () => {
   $(document).on("click", function(event){
-    event.stopPropagation()
+    event.stopPropagation();
     $('.assignment_notification').hide();
     const $trigger = $(".notifications-button");
     if($trigger !== event.target && !$trigger.has(event.target).length){
@@ -121,11 +121,11 @@ const addNotificationsDropdownToggleListener = () => {
 }
 
 /**
- * Event handler fired when agent clicks a customers's chat and marks all its unread existent notifications as read.
+ * Event handler fired when agent clicks a customers chat and marks all its unread existent notifications as read.
  */
 const addOnChatItemClickListener = () => {
   // FIXME Fire event only on unread chats from the list
-  $(document).on('click', '.chat__selector:not(#ml-chat__selector, #q-list, .fb-selector) > .profile', function(e) {
+  $(document).on('click', '.chat__selector:not(#ml-chat__selector, #q-list, .fb-selector) .profile-container', function(e) {
     e.stopPropagation();
     const customerId = e.currentTarget.getAttribute("customer-id");
     const chatType = e.currentTarget.getAttribute("chat-type");
@@ -144,7 +144,7 @@ const addOnChatItemClickListener = () => {
         },
       }
     });
-  })
+  });
 }
 
 /**
@@ -208,7 +208,7 @@ const appendNewNotifications = (newNotifications) => {
 
 ////////// AGENT ASSIGNATION NOTIFICATION END //////////
 
-$(document).on('ready page:load', function() {
+$(document).ready(function() {
   addMarkNotificationAsReadListener();
   addNotificationsDropdownToggleListener();
   addOnChatItemClickListener();

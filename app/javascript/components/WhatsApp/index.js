@@ -165,13 +165,13 @@ class WhatsAppChat extends Component {
   render() {
     return (
       <div>
-        <div className="box">
-          <div className="row">
+        <div className="container-fluid">
+          <div className="row no-left-margin-xs">
             {this.state.showChatList && (
               <div className={
                 this.state.onMobile
-                  ? "col-xs-12 col-sm-3 chat_list_holder no-border-right"
-                  : "col-xs-12 col-sm-3 chat_list_holder"
+                  ? "col-xs-12 col-md-3 no-border-right no-padding-xs"
+                  : "col-xs-12 col-md-3"
               }
               >
                 <ChatSideBar
@@ -190,7 +190,7 @@ class WhatsAppChat extends Component {
             )}
 
             {this.state.currentCustomer !== 0 && this.state.showChatMessages && (
-              <div className="col-xs-12 col-sm-6 pr-0">
+              <div className="col-xs-12 col-md-6 no-padding-xs">
                 <ChatMessages
                   currentCustomer={this.state.currentCustomer}
                   customerDetails={this.state.currentCustomerDetails}
@@ -216,7 +216,7 @@ class WhatsAppChat extends Component {
             && this.state.showProducts === false
             && this.state.showCustomerDetails
             && (
-              <div className="col-xs-12 col-sm-3">
+              <div className="col-xs-12 col-md-3 no-padding-xs">
                 <CustomerDetails
                   customerId={this.state.currentCustomer}
                   chatType="whatsapp_chats"
@@ -228,7 +228,7 @@ class WhatsAppChat extends Component {
             {this.state.currentCustomer !== 0
             && this.state.showFastAnswers
             && (
-              <div className="col-xs-12 col-sm-3">
+              <div className="col-xs-12 col-md-3 no-padding-xs">
                 <FastAnswers
                   chatType="whatsapp"
                   changeFastAnswer={this.changeFastAnswer}
@@ -240,7 +240,7 @@ class WhatsAppChat extends Component {
             {this.state.currentCustomer !== 0
             && this.state.showProducts
             && (
-              <div className="col-xs-12 col-sm-3">
+              <div className="col-xs-12 col-md-3 no-padding-xs">
                 <Products
                   onMobile={this.state.onMobile}
                   toggleProducts={this.toggleProducts}

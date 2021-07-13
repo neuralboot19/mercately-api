@@ -11,8 +11,70 @@ en:
           message: 'No client config found'
           summary: 'No summary config found'
           resolution: 'No resolution config found'
+  horizontal_navbar:
+    calendar: 'Calendar'
+    help: 'Help'
+    edit_profile: 'Edit Profile'
+    team: 'Team'
+    payment_plans: 'Payment Plan'
+    api_key: 'API Key'
+    logout: 'Logout'
   mailer:
     failed_charge_subject: '[Urgent] Your Mercately payment was not successful'
     failed_charge_greetings: 'Hello %{name}'
     failed_charge_message: 'We were unable to charge your card %{card} for your payment to Mercately, LLC. Update your billing information at the following link:'
     failed_charge_advice: 'In case of 3 failed payments, your service will be canceled.'
+  vertical_navbar:
+    clients:
+      clients: 'Clients'
+      clients_list: 'Clients List'
+      custom_fields: 'Custom Fields'
+      client_groups: 'Groups'
+    products:
+      products: 'Products'
+    orders:
+      orders: 'Orders'
+      orders_list: 'Orders List'
+      sales_channels: 'Sales channels'
+    deals:
+      deals: 'Deals'
+    campaigns:
+      campaigns: 'Campaigns'
+    ml:
+      questions: 'Questions'
+      chats: 'Chats'
+    automations:
+      automations: 'Automations'
+      chatbots: 'Chatbots'
+      reminders: 'Reminders'
+    messaging_configuration:
+      messaging_configuration: 'Messaging Configuration'
+      canned_responses: 'Canned Responses'
+      whatsapp_templates: 'WhatsApp Templates'
+      welcome_messages: 'Welcome Messages'
+      tags: 'Tags'
+      automatic_assignment: 'Automatic Assignment'
+    statistics:
+      statistics: 'Statistics'
+    integrations:
+      integrations: 'Integrations'
+  activerecord:
+    attributes:
+      chat_bot:
+        platforms:
+          whatsapp: WhatsApp
+          messenger: Messenger
+      chat_bot_option:
+        option_types:
+          decision: decision
+          form: form
+      order:
+        statuses:
+          success: Success
+          pending: Pending
+          cancelled: Cancelled
+      product:
+        conditions:
+          new_product: New Product
+          used: Used
+          not_specified: Not specified

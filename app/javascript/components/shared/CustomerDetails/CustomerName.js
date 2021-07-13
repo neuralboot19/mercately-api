@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CustomerName = ({ customer }) => {
+const CustomerName = ({ customer, chatType }) => {
   let customerName;
   if (customer.first_name && customer.last_name) {
     customerName = `${customer.first_name} ${customer.last_name}`;
@@ -11,10 +11,10 @@ const CustomerName = ({ customer }) => {
   }
 
   return (
-    <div className="customer_box">
+    <div className="customer_box d-md-none">
       <p>
         {customerName}
-        <a href={window.location.href.replace('whatsapp_chats', `customers/${customer.web_id}/edit`)} target="_blank">
+        <a href={window.location.href.replace(`${chatType}`, `customers/${customer.web_id}/edit`)} target="_blank">
           <i className="fs-18 mt-4 mr-4 f-right fas fa-external-link-alt" />
         </a>
       </p>

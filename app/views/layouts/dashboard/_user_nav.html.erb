@@ -1,94 +1,101 @@
 <header class="header--dashboard">
-  <div class="retailer container-fluid">
-    <div class="row middle-xs" style="height: 50px;">
-      <div class="col-xs-2 col-sm-7">
-        <div class="dropdown__button middle hide-on-pc">
+  <div class="retailer">
+    <div class="parent-container h-72">
+      <div class="child_container child-container-mobile-first">
+        <div class="dropdown__button hide-on-pc">
           <label for="sidebar--toggle">
             <i class="fas fa-bars"></i>
           </label>
         </div>
 
-        <div class="retailer__info">
-          <div class="d-inline info__logo"><strong><%= two_upper_case_letters(current_retailer.name) %></strong></div>
-          <div class="d-inline info__name"><strong class="account"><%= current_retailer.name %></strong></div>
+        <div class="bar__left-info">
+          <div class="d-inline-block mr-20">
+            <span>
+              <a class="no-style" href="https://mercately.crunch.help/" target="_blank">
+                <%= image_tag 'new_design/Question-mark-circle-outline.svg', class: 'w-20 mr-13 mb-2' %>
+                <strong class="hide-on-tablet-and-down nav-option"><%= t('horizontal_navbar.help') %></strong>
+              </a>
+            </span>
+          </div>
+          <div class="calendar-button">
+            <span>
+              <%= image_tag 'new_design/Calendar-outline.svg', class: 'w-20 mr-13 mb-2' %>
+              <strong class="hide-on-tablet-and-down nav-option"><%= t('horizontal_navbar.calendar') %></strong>
+            </span>
+          </div>
         </div>
       </div>
-      <div class="col-xs-4 col-sm-1 t-center">
-        <%= image_tag 'landing/logo.png', class: "hide-on-pc" %>
+      <div class="child-container-mobile-second t-center hide-on-pc">
+        <%= image_tag 'landing/logo.png', class: "" %>
       </div>
-      <div class="col-xs-6 col-sm-4 t-right">
-        <div class="d-inline-block mr-7 d-none">
-          <span>
-            <i class="fas far fa-language"></i>
-            <% next_locale = current_retailer_user.locale == 'es' ? 'en' : 'es' %>
-            <%= link_to retailer_user_locale_path(locale: next_locale), class: 'no-style', method: :put do %>
-              <strong class="hide-on-tablet-and-down nav-option"><%= t :locale %></strong>
-            <% end %>
-          </span>
-        </div>
-        <div class="d-inline-block mr-7">
-          <span>
-            <i class="fas far fa-question-circle">
-            </i>
-            <a class="no-style" href="https://mercately.crunch.help/" target="_blank">
-              <strong class="hide-on-tablet-and-down nav-option">Ayuda</strong>
-            </a>
-          </span>
-        </div>
-        <div class="calendar-button">
-          <span>
-            <i class="fas fa-calendar-alt">
-            </i>
-            <strong class="hide-on-tablet-and-down nav-option">Calendario</strong>
-          </span>
-        </div>
-        <!-- Notifications start -->
-        <%= render "layouts/dashboard/notifications/notifications" %>
-        <!-- Notifications end -->
-        <div id="user" class="d-inline-block">
-          <label id="user__dropdown--button" for="dropdown__menu--header" class="user__dropdown">
-            <div class="dropdown__button middle">
-              <i class="fas far fa-user mr-2"></i>
-              <strong class="hide-on-tablet-and-down nav-option">Cuenta</strong>
-              <i class="fas fa-sort-down mb-8 ml-8"></i>
-            </div>
-          </label>
-          <input id="dropdown__menu--header" type="checkbox" class="dropdown__input"/>
-          <ul class="dropdown__menu t-left">
-            <li>
-              <%= link_to edit_retailer_info_path(current_retailer), class: 'no-style' do %>
-                <i class="fas fa-user-cog mr-8"></i>
-                Editar perfil
+      <div class="child_container child-container-mobile-third">
+        <div class="right-content">
+          <div class="d-inline-block mr-7 not-show">
+            <span>
+              <i class="fas far fa-language"></i>
+              <% next_locale = current_retailer_user.locale == 'es' ? 'en' : 'es' %>
+              <%= link_to retailer_user_locale_path(locale: next_locale), class: 'no-style', method: :put do %>
+                <strong class="hide-on-tablet-and-down nav-option"><%= t :locale %></strong>
               <% end %>
-            </li>
-            <% unless current_retailer_user.agent? %>
+            </span>
+          </div>
+          <!-- Notifications start -->
+          <%= render "layouts/dashboard/notifications/notifications" %>
+          <!-- Notifications end -->
+          <div class="bar__right-info">
+            <div class="d-inline info__logo"><strong><%= two_upper_case_letters(current_retailer_user.full_name.presence || current_retailer_user.email) %></strong></div>
+          </div>
+          <div class="mobile-header-links hide-on-pc">
+            <div class="calendar-button">
+              <span>
+                <%= image_tag 'new_design/Calendar-outline.svg', class: 'w-20 mr-13 mb-2 img-mobile' %>
+              </span>
+            </div>
+          </div>
+          <div id="user" class="d-inline-block">
+            <label id="user__dropdown--button" for="dropdown__menu--header" class="user__dropdown">
+              <div class="dropdown__button">
+                <strong class="hide-on-tablet-and-down nav-option"><%= current_retailer_user.full_name.presence || current_retailer_user.email %></strong>
+                <i class="fas fa-sort-down"></i>
+              </div>
+            </label>
+            <input id="dropdown__menu--header" type="checkbox" class="dropdown__input"/>
+            <ul class="dropdown__menu t-left">
               <li>
-                <%= link_to edit_team_path(current_retailer), class: 'no-style' do %>
-                  <i class="fas fa-users mr-8"></i>
-                  Equipo
+                <%= link_to edit_retailer_info_path(current_retailer), class: 'no-style' do %>
+                  <i class="fas fa-user-cog mr-8"></i>
+                  <%= t('horizontal_navbar.edit_profile') %>
                 <% end %>
               </li>
-            <% end %>
-            <li>
-              <%= link_to retailers_payment_plans_path(current_retailer), class: 'no-style' do %>
-                <i class="fas fa-credit-card mr-8"></i>
-                Planes de pago
+              <% unless current_retailer_user.agent? %>
+                <li>
+                  <%= link_to edit_team_path(current_retailer), class: 'no-style' do %>
+                    <i class="fas fa-users mr-8"></i>
+                    <%= t('horizontal_navbar.team') %>
+                  <% end %>
+                </li>
               <% end %>
-            </li>
-            <li>
-              <%= link_to api_key_path(current_retailer), class: 'no-style' do %>
-                <i class="fas fa-credit-card mr-8"></i>
-                API Key
-              <% end %>
-            </li>
-            <li class="divider"></li>
-            <li>
-              <%= link_to destroy_retailer_user_session_path, method: :delete, class: 'no-style' do %>
-                <i class="fas fa-sign-out-alt mr-8"></i>
-                Cerrar sesión
-              <% end %>
-            </li>
-          </ul>
+              <li>
+                <%= link_to retailers_payment_plans_path(current_retailer), class: 'no-style' do %>
+                  <i class="fas fa-credit-card mr-8"></i>
+                  <%= t('horizontal_navbar.payment_plans') %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to api_key_path(current_retailer), class: 'no-style' do %>
+                  <i class="fas fa-credit-card mr-8"></i>
+                  <%= t('horizontal_navbar.api_key') %>
+                <% end %>
+              </li>
+              <li class="divider"></li>
+              <li>
+                <%= link_to destroy_retailer_user_session_path, method: :delete, class: 'no-style' do %>
+                  <i class="fas fa-sign-out-alt mr-8"></i>
+                  <%= t('horizontal_navbar.logout') %>
+                <% end %>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

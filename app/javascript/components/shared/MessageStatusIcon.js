@@ -1,5 +1,6 @@
 import React from 'react';
-import SenderData from './SenderData';
+import DoubleCheckIcon from '../icons/DoubleCheckIcon';
+import CheckIcon from '../icons/CheckIcon';
 
 const MessageStatusIcon = ({
   chatType,
@@ -9,38 +10,33 @@ const MessageStatusIcon = ({
     let className;
     switch (message.status) {
       case 'error':
-        className = 'exclamation-circle fs-12';
+        className = 'exclamation-circle fs-12 ml-4';
         break;
       case 'sent':
-        className = 'check';
-        break;
+        return <CheckIcon className="fill-gray ml-4" />;
       case 'delivered':
-        className = 'check-double';
-        break;
+        return <DoubleCheckIcon className="fill-gray ml-4" />;
       case 'read':
-        className = 'check-double stroke';
-        break;
+        return <DoubleCheckIcon className="fill-blue ml-4" />;
       default:
         className = message.content_type === 'text' ? 'check' : 'sync';
     }
-    return `checks-mark ml-7 fas fa-${className}`;
+    return <CheckIcon className="fill-gray ml-4" />;
   };
-  if (chatType === "whatsapp") {
-    return (
+
+  return chatType === 'whatsapp'
+    ? (
       <>
-        <i className={iconClass()} />
-        {message.status === 'error' &&
+        {iconClass()}
+        {message.status === 'error' && (
           <>
-            <br /><small>{message.error_message}</small>
+            <br />
+            <small>{message.error_message}</small>
           </>
-        }
-        <SenderData
-          message={message}
-        />
+        )}
       </>
-    );
-  }
-  return <i className="ml-7 fas fa-check-double checks-mark" />;
+    )
+    : <DoubleCheckIcon className="fill-blue ml-4" />;
 };
 
 export default MessageStatusIcon;

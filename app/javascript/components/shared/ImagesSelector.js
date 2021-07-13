@@ -1,19 +1,8 @@
 import React, { Component } from "react";
 import Modal from 'react-modal';
 import Dropzone from "react-dropzone";
-
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)',
-    height: '80vh',
-    width: '50%'
-  }
-};
+import modalCustomStyles from '../../util/modalCustomStyles';
+import CloseIcon from '../icons/CloseIcon';
 
 class ImagesSelector extends Component {
   constructor(props) {
@@ -31,22 +20,26 @@ class ImagesSelector extends Component {
   }
 
   render() {
+    const fsTitle = this.props.onMobile ? 'fs-16' : 'fs-24';
+    
     return (
-      <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showLoadImages} style={customStyles}>
-        <div className={this.props.onMobile ? "row mt-50" : "row" }>
-          <div className="col-md-10">
-            <p className={this.props.onMobile ? "fs-20 mt-0" : "fs-30 mt-0" }>Imágenes</p>
+      <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showLoadImages} style={modalCustomStyles(this.props.onMobile)}>
+        <div className={this.props.onMobile ? "d-flex justify-content-between" : "d-flex justify-content-between" }>
+          <div>
+            <p className={`font-weight-bold text-gray-dark ${fsTitle}`}>Imágenes</p>
           </div>
-          <div className="col-md-2 t-right">
-            <button onClick={(e) => this.props.toggleLoadImages()}>Cerrar</button>
+          <div className="t-right">
+            <a className="px-8" onClick={(e) => this.props.toggleLoadImages()}>
+              <CloseIcon className="fill-dark" />
+            </a>
           </div>
         </div>
-        <div className="row">
-          <div className="col-md-12 col-xs-12">
+        <div>
+          <div>
             <Dropzone onDrop={this.props.onDrop} accept="image/jpg, image/jpeg, image/png">
               {({getRootProps, getInputProps}) => (
                 <section>
-                  <div {...getRootProps()} className="selector-container" contentEditable="true" onKeyDown={(e) => this.preventKey(e)} onPaste={(e) => this.callPasteImages(e)}>
+                  <div {...getRootProps()} className="selector-container " contentEditable="true" onKeyDown={(e) => this.preventKey(e)} onPaste={(e) => this.callPasteImages(e)}>
                     <input {...getInputProps()} />
                     <div className="indicators">
                       <i className="far fa-arrow-alt-circle-down fs-35 c-grey"></i>
@@ -58,21 +51,23 @@ class ImagesSelector extends Component {
             </Dropzone>
             {this.props.loadedImages.length > 0 &&
               <div>
-                <div className="preview-container row mt-30">
+                <div className="preview-container d-md-flex mt-30">
                   {this.props.loadedImages.map((image, index) =>
-                    <div className="div-image mr-15">
-                      <i className="fas fa-times-circle cursor-pointer" onClick={() => this.props.removeImage(index)}></i>
-                      <img src={URL.createObjectURL(image)} className="image-selected" />
-                    </div>
+                    <div className="flex-center-xy">
+                      <div className="div-image mr-15">
+                        <i className="fas fa-times-circle cursor-pointer" onClick={() => this.props.removeImage(index)}></i>
+                        <img src={URL.createObjectURL(image)} className="image-selected" />
+                      </div>
+                    </div>                    
                   )}
                 </div>
-                <div className="row mt-30">
-                  <div className="col-md-6 t-right">
-                    <button onClick={(e) => this.props.toggleLoadImages()}>Cancelar</button>
-                  </div>
-                  <div className="col-md-6 t-left">
-                    <button onClick={(e) => this.props.sendImages()}>Enviar</button>
-                  </div>
+                <div className="d-flex justify-content-center mt-30 mx-0">
+                    <div className={this.props.onMobile ? "mr-5" : "mr-15"}>
+                      <a className="bg-light border-8 p-12 text-gray-dark border-gray" onClick={(e) => this.props.toggleLoadImages()}>Cancelar</a>
+                    </div>
+                    <div>
+                      <a className="bg-blue border-8 text-white p-12" onClick={(e) => this.props.sendImages()}>Enviar</a>
+                    </div>
                 </div>
               </div>
             }

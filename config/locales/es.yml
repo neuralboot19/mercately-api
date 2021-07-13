@@ -363,8 +363,50 @@ es:
           message: "No message config found"
           summary: "No summary config found"
           resolution: "No resolution config found"
+  horizontal_navbar:
+    calendar: 'Calendario'
+    help: 'Ayuda'
+    edit_profile: 'Editar Perfil'
+    team: 'Equipo'
+    payment_plans: 'Planes de pago'
+    api_key: 'API Key'
+    logout: 'Cerrar sesión'
   mailer:
     failed_charge_subject: '[Urgente] Tu pago de Mercately no se realizó correctamente'
     failed_charge_greetings: 'Hola %{name}'
     failed_charge_message: 'No pudimos cobrar su tarjeta %{card} para su pago a Mercately, LLC. Actualice su información de facturación en el siguiente enlace:'
     failed_charge_advice: 'En caso de 3 pagos fallidos, su servicio será cancelado.'
+  vertical_navbar:
+    clients:
+      clients: 'Clientes'
+      clients_list: 'Lista de clientes'
+      custom_fields: 'Campos personalizados'
+      client_groups: 'Grupos de clientes'
+    products:
+      products: 'Productos'
+    orders:
+      orders: 'Órdenes'
+      orders_list: 'Lista de órdenes'
+      sales_channels: 'Canales de venta'
+    deals:
+      deals: 'Negociaciones'
+    campaigns:
+      campaigns: 'Campañas'
+    ml:
+      questions: 'Preguntas'
+      chats: 'Chats'
+    automations:
+      automations: 'Automatizaciones'
+      chatbots: 'Chatbots'
+      reminders: 'Recordatorios'
+    messaging_configuration:
+      messaging_configuration: 'Configuración de mensajería'
+      canned_responses: 'Respuestas Rápidas'
+      whatsapp_templates: 'Plantillas de WhatsApp'
+      welcome_messages: 'Mensajes de bienvenida'
+      tags: 'Etiquetas'
+      automatic_assignment: 'Asignación Automática'
+    statistics:
+      statistics: 'Estadísticas'
+    integrations:
+      integrations: 'Integraciones'

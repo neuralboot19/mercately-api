@@ -1,11 +1,18 @@
 $sides: (top, bottom, left, right);
 
+$white: #fff;
 $primary-color: #6E2A79;
 $secondary-color: #00B4FF;
 
-$header-height: 50px;
+$header-height: 60px;
+
 $product__img-height: 60px;
 
 $screen-sm: 48em;
 $screen-md: 64em;
 $screen-lg: 75em;
+
+$chatHeight: calc(100vh - 100px);
+$chaBoxHeight: calc(100vh - 348px);
+$customerDetailHeight: calc(100vh - 160px);
+$customerDetailHeightMobile: calc(100vh - 242px);

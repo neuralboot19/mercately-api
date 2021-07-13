@@ -5,10 +5,10 @@ let totalQuestionPages;
 function getQuestionInfo(input) {
   var questionId = input.id;
 
-  $('.profile').removeClass('border--secondary');
-  $('.profile').addClass('border--transparent');
-  $(`#${input.id}`).removeClass('border--transparent');
-  $(`#${input.id}`).addClass('border--secondary');
+  $('.q-profile').removeClass('border--secondary');
+  $('.q-profile').addClass('border--transparent');
+  $(`#${questionId}`).removeClass('border--transparent');
+  $(`#${questionId}`).addClass('border--secondary');
 
   $('#question-info').show();
   $('#product-info').show();
@@ -69,8 +69,8 @@ function buildQuestionAnswer() {
               '<input name="utf8" type="hidden" value="✓">' +
               '<input type="hidden" name="_method" value="put">' +
               `<input type="hidden" name="authenticity_token" value="${$('meta[name="csrf-token"]').attr('content')}">` +
-              '<div class="chat-input">'+
-                '<div class="text-input mb-10">'+
+              '<div class="q-chat-input">'+
+                '<div class="q-text-input mb-10">'+
                   '<textarea name="answer" placeholder="Respuesta" maxlength="2000" class="no-border"></textarea>' +
                 '</div>' +
                 '<input type="submit" name="commit" value="Enviar" class="btn-btn btn-submit w-100" data-disable-with="Enviar">' +
@@ -110,14 +110,14 @@ function buildQuestionList(question) {
     letters = question.meli_nickname.charAt(0) + ' ' + question.meli_nickname.charAt(1);
   }
 
-  string = `<div id="${question.id}" class="profile fs-14 box border border--transparent" onclick="getQuestionInfo(this)">` +
+  string = `<div id="${question.id}" class="q-profile fs-14 box border border--transparent" onclick="getQuestionInfo(this)">` +
            '<div class="profile__data row">' +
            '<div class="img__profile col-xs-2 p-0">' +
            '<div class="rounded-circle mw-100">' +
            `<p>${letters.toUpperCase()}</p>` +
            '</div>' +
            '</div>' +
-           '<div class="col-xs-10">' +
+           '<div class="col-xs-10 pl-20 mt-5">' +
            `<div class="profile__name">${question.first_name && question.last_name ? (question.first_name + ' ' + question.last_name) : question.meli_nickname}</div>` +
            `<div class="${ question.answered ? '' : 'fw-bold' }">${moment(question.created_at).locale('es').fromNow()}</div>` +
            '</div>' +

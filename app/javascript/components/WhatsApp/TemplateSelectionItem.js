@@ -8,15 +8,15 @@ const TemplateSelectionItem = ({
   getCleanTemplate,
   selectTemplate
 }) => (
-  <div className="row" key={template.id}>
-    <div className={onMobile ? "col-md-10 fs-10" : "col-md-10"}>
-      <p>
+  <div className="d-flex justify-content-between mb-8" key={template.id}>
+    <div className="fs-14 text-gray-dark input-from-backend">
+      <p className="text-gray-dark">
         {`[${setTemplateType(template.template_type)}] `}
         {getCleanTemplate(template.text)}
       </p>
     </div>
-    <div className="col-md-2">
-      <button type="submit" onClick={() => selectTemplate(template)}>Seleccionar</button>
+    <div>
+      <a className="border-8 bg-blue text-white p-12 fs-12" onClick={() => selectTemplate(template)}>Seleccionar</a>
     </div>
   </div>
 );

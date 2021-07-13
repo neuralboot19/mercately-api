@@ -52,7 +52,6 @@ html, body {
   padding: 1em 0;
   position: relative;
   border-bottom: 1px solid #e7e7e7;
-  margin-bottom: 8px;
   width: 100%;
 
   .mark-no-read, .assigned-to {
@@ -225,6 +224,10 @@ label:hover, a:hover, button:hover {
   display: flex;
 }
 
+.not-show {
+  display: none !important;
+}
+
 @media screen and (min-width: 1024px) {
   .d-md-none {
     display: none;
@@ -302,10 +305,6 @@ label:hover, a:hover, button:hover {
 
 .c-black {
   color: #000 !important;
-}
-
-#sidebar--pc a.c-secondary:hover {
-  color: rgba(0, 180, 255, 0.7) !important;
 }
 
 .c-dark {
