@@ -20,6 +20,8 @@ class KarixWhatsappMessage < ApplicationRecord
   scope :sent, -> { where(status: 'sent') }
   scope :delivered, -> { where(status: 'delivered') }
   scope :read, -> { where(status: 'read') }
+  scope :inbound_messages, -> { where(direction: 'inbound') }
+  scope :outbound_messages, -> { where(direction: 'outbound') }
 
   after_save :apply_cost
 
