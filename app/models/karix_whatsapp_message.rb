@@ -25,6 +25,18 @@ class KarixWhatsappMessage < ApplicationRecord
 
   after_save :apply_cost
 
+  def message_info
+    return 'Archivo' if content_media_type == 'document'
+    return 'Imagen' if content_media_type == 'image'
+    return 'Video' if content_media_type == 'video'
+    return 'Audio' if ['audio', 'voice'].include?(content_media_type)
+    return 'Ubicación' if content_type == 'location'
+    return 'Contacto' if content_type == 'contact'
+    return 'Sticker' if content_type == 'sticker'
+
+    content_text
+  end
+
   private
 
     def apply_cost

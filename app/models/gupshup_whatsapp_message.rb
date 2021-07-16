@@ -58,6 +58,27 @@ class GupshupWhatsappMessage < ApplicationRecord
     'video'
   end
 
+  def message_info
+    case type
+    when 'file'
+      'Archivo'
+    when 'image'
+      'Imagen'
+    when 'video'
+      'Video'
+    when 'audio', 'voice'
+      'Audio'
+    when 'location'
+      'Ubicación'
+    when 'contact'
+      'Contacto'
+    when 'sticker'
+      'Sticker'
+    else
+      message_payload['payload'].try(:[], 'payload').try(:[], 'text') || message_payload['text']
+    end
+  end
+
   private
 
     def set_message_type
