@@ -38,6 +38,26 @@ class GupshupWhatsappMessage < ApplicationRecord
     message_payload.try(:[], 'payload').try(:[], 'type') || message_payload['type']
   end
 
+  def has_referral?
+    message_payload['payload'].try(:[], 'referral').present?
+  end
+
+  def has_referral_media?
+    message_payload['payload'].try(:[], 'referral').try(:[], 'image').try(:[], 'id').present? ||
+      message_payload['payload'].try(:[], 'referral').try(:[], 'video').try(:[], 'id').present?
+  end
+
+  def referral_media_id
+    message_payload['payload'].try(:[], 'referral').try(:[], 'image').try(:[], 'id').presence ||
+      message_payload['payload'].try(:[], 'referral').try(:[], 'video').try(:[], 'id')
+  end
+
+  def referral_type_media
+    return 'image' if message_payload['payload'].try(:[], 'referral').try(:[], 'image').try(:[], 'id').present?
+
+    'video'
+  end
+
   private
 
     def set_message_type

@@ -11,8 +11,8 @@ class GupshupWhatsappMessageSerializer
     message = gwm.message_payload
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     type = message.try(:[], 'type') if type.blank?
-    next 'text' if ['text', 'quick_reply'].include?(type)
-    next 'media' if %[image audio video file sticker].include?(type)
+    next 'text' if ['text', 'quick_reply'].include?(type) && !gwm.has_referral_media?
+    next 'media' if %[image audio video file sticker].include?(type) || gwm.has_referral_media?
     next 'location' if type == 'location'
     next 'contact' if type == 'contact'
   end
@@ -21,39 +21,56 @@ class GupshupWhatsappMessageSerializer
     message = gwm.message_payload
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless ['text', 'quick_reply'].include?(type)
-    message['payload'].try(:[], 'payload').try(:[], 'text') || message['text']
+
+    msg = message['payload'].try(:[], 'payload').try(:[], 'text') || message['text']
+    msg += " #{message['payload'].try(:[], 'referral').try(:[], 'source_url')}" if gwm.has_referral?
+
+    msg
   end
 
   attribute :content_media_url do |gwm|
     message = gwm.message_payload
+    with_media = gwm.has_referral_media?
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
-    next '' unless %[image audio video file sticker].include?(type)
+    next '' unless %[image audio video file sticker].include?(type) || with_media
 
-    url = message.try(:[], 'originalUrl') ||
-      message.try(:[], 'payload').try(:[], 'payload').try(:[],'url') ||
-      message.try(:[], 'url') || ''
+    url = if with_media
+            "https://filemanager.gupshup.io/fm/wamedia/#{gwm.retailer.gupshup_src_name.strip}/#{gwm.referral_media_id}"
+          else
+            message.try(:[], 'originalUrl') ||
+              message.try(:[], 'payload').try(:[], 'payload').try(:[],'url') ||
+              message.try(:[], 'url') || ''
+          end
 
     url.gsub('http:', 'https:')
   end
 
   attribute :content_media_caption do |gwm|
     message = gwm.message_payload
+    with_media = gwm.has_referral_media?
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
-    next '' unless %[image audio video file sticker].include?(type)
+    next '' unless %[image audio video file sticker].include?(type) || with_media
 
-    if %[image audio video sticker].include?(type) || (type == 'file' && gwm.message_type == 'notification')
-      next message.try(:[], 'caption') ||
-           message.try(:[], 'payload').try(:[], 'payload').try(:[],'caption')
-    end
+    caption = if with_media
+                "#{message['payload'].try(:[], 'payload').try(:[], 'text') || message['text']} " \
+                  "#{message['payload'].try(:[], 'referral').try(:[], 'source_url')}"
+              elsif %[image audio video sticker].include?(type) ||
+                (type == 'file' && gwm.message_type == 'notification')
+                message.try(:[], 'caption') ||
+                  message.try(:[], 'payload').try(:[], 'payload').try(:[],'caption')
+              end
 
-    ''
+    caption || ''
   end
 
   attribute :content_media_type do |gwm|
     message = gwm.message_payload
+    with_media = gwm.has_referral_media?
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
-    next '' if type == 'text'
+    next '' if type == 'text' && !with_media
+    next gwm.referral_type_media if with_media
     next 'document' if type == 'file'
+
     type
   end
 
