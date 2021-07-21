@@ -14,3 +14,5 @@ export const SET_ORDERS = 'SET_ORDERS';
 export const LOAD_DATA_FAILURE = 'LOAD_DATA_FAILURE';
 
 export const ERASE_DEAL = 'ERASE_DEAL';
+export const CHANGE_DEAL_COLUMN = 'CHANGE_DEAL_COLUMN';
+export const SET_COLUMNS = 'SET_COLUMNS';

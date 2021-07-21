@@ -33,13 +33,15 @@ const OpportunityClient = ({
         ref={provided.innerRef}
         isDragging={snapshot.isDragging}
       >
-        <div class="w-100">
-          <div class="w-100">
-            <p className="funnel-content-name">{deal.name}
+        <div className="w-100">
+          <div className="w-100">
+            <p className="funnel-content-name">
+              {deal.name}
               <i
                 className="fas fa-trash-alt text-danger f-right"
                 onClick={() => openDeleteDeal(deal.id, columnId)}
-              ></i>
+              >
+              </i>
             </p>
 
           </div>
@@ -50,14 +52,14 @@ const OpportunityClient = ({
                 <img src={WhatsApp} className="funnel-client-whatsapp" />
                 <div className="tooltiptext bottom-100">Ver Chat</div>
               </a>
-            )}
+              )}
             {deal.has_fb
               && (
               <a href={`/retailers/${ENV.SLUG}/facebook_chats?cid=${deal.customer.id}`} className="tooltip-top">
                 <img src={Messenger} className="funnel-client-whatsapp" />
                 <div className="tooltiptext bottom-100">Ver Chat</div>
               </a>
-            )}
+              )}
           </div>
         </div>
       </Container>

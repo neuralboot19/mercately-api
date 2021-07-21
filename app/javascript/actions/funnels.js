@@ -44,7 +44,7 @@ export const updateFunnelStepDeal = (body) => {
     })
       .then((res) => res.json())
       .then(
-        (data) => dispatch({ type: 'SET_FUNNEL_DEAL', data }),
+        (data) => dispatch({ type: 'CHANGE_DEAL_COLUMN', data: body }),
         (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
       ).catch((error) => {
         if (error.response) {
@@ -70,7 +70,7 @@ export const updateFunnelStep = (body) => {
     })
       .then((res) => res.json())
       .then(
-        (data) => dispatch({ type: 'SET_FUNNEL_DEAL', data }),
+        (data) => dispatch({ type: 'SET_COLUMNS', columns: body }),
         (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
       ).catch((error) => {
         if (error.response) {

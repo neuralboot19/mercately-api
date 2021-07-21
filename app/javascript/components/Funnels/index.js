@@ -67,6 +67,7 @@ const Funnels = () => {
   };
 
   const handleDeleteStep = () => {
+    dispatch({ type: 'CLEAR_FUNNELS' });
     setState((previousState) => ({
       ...state,
       isDeleteStepOpen: !previousState.isDeleteStepOpen
