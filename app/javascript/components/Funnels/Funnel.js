@@ -52,13 +52,16 @@ class Funnel extends React.Component {
 
   componentDidUpdate(prevState) {
     // Optimistic update for list order
-    if (prevState.funnelSteps.columnOrder !== this.state.funnelSteps.columnOrder) {
+    const isEqualDealsAmount = prevState.funnelSteps.deals && !this.props.fetchingFunnels &&
+      Object.keys(prevState.funnelSteps.deals).length === Object.keys(this.state.funnelSteps.deals).length;
+    if (prevState.funnelSteps.columnOrder !== this.state.funnelSteps.columnOrder
+        && isEqualDealsAmount) {
       this.props.updateFunnelStep({
         columns: this.state.funnelSteps.columnOrder
       });
     }
     // Optimictic update for list item
-    if (prevState.funnelSteps.columns !== this.state.funnelSteps.columns) {
+    if (prevState.funnelSteps.columns !== this.state.funnelSteps.columns && isEqualDealsAmount) {
       this.props.updateFunnelStepDeal({
         funnel_step_id: this.state.itemDroppableId,
         deal_id: this.state.itemDraggableId
