@@ -6,6 +6,7 @@ module PushNotificationable
   end
 
   private
+
     def send_push_notifications
       # only inbound messages will be notified
       return unless self.direction == 'inbound'
@@ -16,8 +17,7 @@ module PushNotificationable
       tokens = users_tokens(users)
       return true if tokens.blank?
 
-      body = "Nuevo mensaje de #{customer_name}"
-      Retailers::MobilePushNotificationJob.perform_later(tokens, body, customer_id)
+      Retailers::MobilePushNotificationJob.perform_later(tokens, message_info, customer_id, 'WhatsApp')
     end
 
     def customer_name
