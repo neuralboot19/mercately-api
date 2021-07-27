@@ -47,30 +47,72 @@ RSpec.describe AgentCustomer, type: :model do
           end.to have_enqueued_job(Retailers::MobilePushNotificationJob)
         end
 
-        it 'will send the message with the customer full_name' do
-          expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
-            .with(
-              [mobile_token.mobile_push_token],
-              "Nuevo chat asignado - #{customer.full_names}",
-              customer.id
-            )
+        context 'when is a Messenger customer' do
+          before do
+            customer.update(psid: '12345')
+          end
 
-          agent_customer.update(retailer_user_id: retailer_user2.id)
+          it 'will send the message with the customer full_name' do
+            expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
+              .with(
+                [mobile_token.mobile_push_token],
+                "Nuevo chat asignado - #{customer.full_names}",
+                customer.id,
+                'Messenger'
+              )
+
+            agent_customer.update(retailer_user_id: retailer_user2.id)
+          end
+
+          it 'will send the message with the customer phone when no first/last name' do
+            customer.first_name = nil
+            customer.last_name = nil
+            customer.save!
+
+            expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
+              .with(
+                [mobile_token.mobile_push_token],
+                "Nuevo chat asignado - #{customer.phone}",
+                customer.id,
+                'Messenger'
+              )
+
+            agent_customer.update(retailer_user_id: retailer_user2.id)
+          end
         end
 
-        it 'will send the message with the customer phone when no first/last name' do
-          customer.first_name = nil
-          customer.last_name = nil
-          customer.save!
+        context 'when is a WhatsApp customer' do
+          before do
+            customer.update(ws_active: true)
+          end
 
-          expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
-            .with(
-              [mobile_token.mobile_push_token],
-              "Nuevo chat asignado - #{customer.phone}",
-              customer.id
-            )
+          it 'will send the message with the customer full_name' do
+            expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
+              .with(
+                [mobile_token.mobile_push_token],
+                "Nuevo chat asignado - #{customer.full_names}",
+                customer.id,
+                'WhatsApp'
+              )
 
-          agent_customer.update(retailer_user_id: retailer_user2.id)
+            agent_customer.update(retailer_user_id: retailer_user2.id)
+          end
+
+          it 'will send the message with the customer phone when no first/last name' do
+            customer.first_name = nil
+            customer.last_name = nil
+            customer.save!
+
+            expect(Retailers::MobilePushNotificationJob).to receive(:perform_later)
+              .with(
+                [mobile_token.mobile_push_token],
+                "Nuevo chat asignado - #{customer.phone}",
+                customer.id,
+                'WhatsApp'
+              )
+
+            agent_customer.update(retailer_user_id: retailer_user2.id)
+          end
         end
       end
 
