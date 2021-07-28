@@ -9,6 +9,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_type do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     type = message.try(:[], 'type') if type.blank?
     next 'text' if ['text', 'quick_reply'].include?(type) && !gwm.has_referral_media?
@@ -19,6 +21,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_text do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless ['text', 'quick_reply'].include?(type)
 
@@ -30,6 +34,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_media_url do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     with_media = gwm.has_referral_media?
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless %[image audio video file sticker].include?(type) || with_media
@@ -47,6 +53,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_media_caption do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     with_media = gwm.has_referral_media?
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless %[image audio video file sticker].include?(type) || with_media
@@ -65,6 +73,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_media_type do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     with_media = gwm.has_referral_media?
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' if type == 'text' && !with_media
@@ -76,6 +86,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_location_longitude do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     type = (gwm.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
       message['type']
     next '' unless type == 'location'
@@ -84,6 +96,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_location_latitude do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     type = (gwm.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
       message['type']
     next '' unless type == 'location'
@@ -92,6 +106,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_location_label do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     type = (gwm.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
       message['type']
     next '' unless type == 'location'
@@ -100,6 +116,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :content_location_address do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     type = (gwm.direction == 'inbound' ? message.try(:[], 'payload').try(:[], 'type') : message.try(:[], 'type')) ||
       message['type']
     next '' unless type == 'location'
@@ -128,6 +146,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :contacts_information do |gwm|
     message = gwm.message_payload
+    next [] unless message.present?
+
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next [] unless type == 'contact'
 
@@ -170,6 +190,8 @@ class GupshupWhatsappMessageSerializer
 
   attribute :filename do |gwm|
     message = gwm.message_payload
+    next '' unless message.present?
+
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
     next '' unless type == 'file'
 
