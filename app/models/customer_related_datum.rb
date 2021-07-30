@@ -25,7 +25,7 @@ class CustomerRelatedDatum < ApplicationRecord
         retailer: customer.retailer,
         customer_field: customer_related_field.identifier
       )
-      return if chf.nil?
+      return if chf.nil? || data.blank?
 
       hubspot.contact_update(customer.hs_id, "#{chf.hubspot_field.hubspot_field}": data)
     end
