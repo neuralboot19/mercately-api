@@ -38,7 +38,9 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def show
+    @customer.open_chat(current_retailer_user)
     read_messages! if @customer.instagram?
+
     render status: 200, json: {
       customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]),
       hubspot_integrated: @customer.retailer.hubspot_integrated?,

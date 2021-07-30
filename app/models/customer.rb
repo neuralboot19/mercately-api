@@ -35,6 +35,7 @@ class Customer < ApplicationRecord
   has_many :customer_related_data, dependent: :destroy
   has_many :contact_group_customers
   has_many :contact_groups, through: :contact_group_customers
+  has_many :chat_histories, dependent: :destroy
 
   validates_uniqueness_of :psid, allow_blank: true
   validates_presence_of :email, if: :hs_active?
@@ -63,6 +64,7 @@ class Customer < ApplicationRecord
 
   enum id_type: %i[cedula pasaporte ruc rut otro]
   enum pstype: %i[messenger instagram]
+  enum status_chat: %i[new_chat open_chat in_process resolved]
 
   attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file, :from_api
 
@@ -462,6 +464,42 @@ class Customer < ApplicationRecord
     ((Time.now - last_message_date) / 3600) < 24
   end
 
+  def open_chat(retailer_user)
+    with_lock do
+      return false unless status_chat == 'new_chat' && update(status_chat: 'open_chat')
+    end
+
+    save_history(retailer_user, 'mark_as', 'chat_open')
+  end
+
+  def set_in_process(retailer_user, from_answer = false)
+    with_lock do
+      return false unless (status_chat == 'open_chat' || (status_chat == 'new_chat' && from_answer == true)) &&
+                          update(status_chat: 'in_process')
+    end
+
+    save_history(retailer_user, 'mark_as', 'chat_in_process')
+  end
+
+  def change_status_chat(retailer_user, params)
+    with_lock do
+      case params[:status_chat]
+      when 'resolved'
+        return false unless status_chat.in?(['open_chat', 'in_process']) && update(status_chat: params[:status_chat])
+
+        @chat_status = 'chat_resolved'
+      when 'in_process'
+        return false unless status_chat == 'resolved' && update(status_chat: params[:status_chat])
+
+        @chat_status = 'chat_in_process'
+      else
+        return false
+      end
+    end
+
+    save_history(retailer_user, 'change_to', @chat_status)
+  end
+
   private
 
     def update_valid_customer
@@ -624,5 +662,22 @@ class Customer < ApplicationRecord
       partition_name = whatsapp_name.partition(' ')
       self.first_name = partition_name.first
       self.last_name = partition_name.last
+    end
+
+    def save_history(retailer_user, action, chat_status)
+      ChatHistory.create!(
+        customer: self,
+        retailer_user: retailer_user,
+        action: action,
+        chat_status: chat_status
+      )
+
+      true
+    rescue => e
+      Rails.logger.info('******** Error al guardar ChatHistory ********')
+      Rails.logger.error(e)
+      Raven.capture_exception(e)
+
+      false
     end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_04_132055) do
+ActiveRecord::Schema.define(version: 2021_08_06_165712) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -284,6 +284,18 @@ ActiveRecord::Schema.define(version: 2021_08_04_132055) do
     t.index ["retailer_id"], name: "index_chat_bots_on_retailer_id"
   end
 
+  create_table "chat_histories", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.bigint "retailer_user_id"
+    t.integer "action"
+    t.integer "chat_status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id", "action", "chat_status"], name: "index_chat_histories_on_customer_id_and_action_and_chat_status", unique: true, where: "((action = 0) AND (chat_status = ANY (ARRAY[0, 1])))"
+    t.index ["customer_id"], name: "index_chat_histories_on_customer_id"
+    t.index ["retailer_user_id"], name: "index_chat_histories_on_retailer_user_id"
+  end
+
   create_table "contact_group_customers", force: :cascade do |t|
     t.bigint "contact_group_id"
     t.bigint "customer_id"
@@ -396,10 +408,12 @@ ActiveRecord::Schema.define(version: 2021_08_04_132055) do
     t.boolean "ws_active", default: false
     t.datetime "last_chat_interaction"
     t.integer "pstype"
+    t.integer "status_chat", default: 0
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"
     t.index ["retailer_id"], name: "index_customers_on_retailer_id"
+    t.index ["status_chat"], name: "index_customers_on_status_chat"
     t.index ["ws_active"], name: "index_customers_on_ws_active"
   end
 
@@ -1027,6 +1041,7 @@ ActiveRecord::Schema.define(version: 2021_08_04_132055) do
     t.string "gupshup_app_token"
     t.boolean "has_funnels", default: false
     t.string "timezone"
+    t.boolean "ig_allowed", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

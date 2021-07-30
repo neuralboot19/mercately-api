@@ -290,6 +290,8 @@ Rails.application.routes.draw do
       patch 'mark_notification_as_read', to: 'agent_notifications#mark_as_read',  as: :mark_notification_as_read
       patch 'mark_by_customer_as_read', to: 'agent_notifications#mark_by_customer_as_read',  as: :mark_by_customer_as_read
       get 'notifications_list', to: 'agent_notifications#notifications_list'
+
+      put 'change_chat_status', to: 'chats#change_chat_status'
     end
   end
 
