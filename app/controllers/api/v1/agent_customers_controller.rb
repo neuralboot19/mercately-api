@@ -57,9 +57,6 @@ class Api::V1::AgentCustomersController < Api::ApiController
         end
       end
 
-      RetailerMailer.chat_assignment_notification(@agent_customer, current_retailer_user).deliver_now if
-        @agent_customer.retailer_user_id != current_retailer_user.id
-
       # Se responde con un estado 200 y un mensaje satisfactorio
       render status: 200, json: { message: 'Nuevo agente asignado satisfactoriamente' }
     else
