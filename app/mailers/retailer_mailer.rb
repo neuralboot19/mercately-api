@@ -27,12 +27,6 @@ class RetailerMailer < ApplicationMailer
     mail to: retailer_email, subject: 'Mercately Exportación de Clientes Completa'
   end
 
-  def chat_assignment_notification(agent_customer, retailer_user)
-    @agent_customer = agent_customer
-    @retailer_user = retailer_user
-    mail to: agent_customer.retailer_user.email, subject: 'Nuevo chat asignado'
-  end
-
   def running_out_balance(retailer, email)
     @retailer = retailer
     mail to: email, subject: 'Su saldo está a punto de terminarse'
