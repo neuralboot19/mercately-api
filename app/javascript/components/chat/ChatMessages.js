@@ -578,6 +578,19 @@ class ChatMessages extends Component {
     this.props.toggleChatBot(this.props.currentCustomer, params, csrfToken);
   }
 
+  lastCustomerMessage = () => {
+    let customerMessages = [];
+    if (this.state.messages.length > 0) {
+      customerMessages = this.state.messages.filter((message) => (message.sent_by_retailer === false));
+    }
+    return customerMessages[customerMessages.length - 1];
+  };
+
+  lastInteraction = () => {
+    const latestCustomerMessage = this.lastCustomerMessage();
+    return latestCustomerMessage && moment().local().diff(latestCustomerMessage.created_at, 'days') > 7;
+  };
+
   render() {
     return (
       <div className="row bottom-xs">
@@ -628,7 +641,10 @@ class ChatMessages extends Component {
         { this.chatAlreadyAssigned() ? (
             <AlreadyAssignedChatLabel/>
             )
-          : (
+            : (this.lastInteraction() ? (
+              <p>Este canal de chat no ha tenido actividad del cliente los últimos 7 días, por lo tanto se encuentra cerrado.</p>
+            )
+            : (
             this.canSendMessages() &&
               <div className="col-xs-12 chat-input">
                 <MessageForm
@@ -649,7 +665,7 @@ class ChatMessages extends Component {
                   insertEmoji={this.insertEmoji}
                 />
               </div>
-          )
+          ))
         }
 
         <ImagesSelector
