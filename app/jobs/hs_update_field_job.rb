@@ -7,6 +7,8 @@ class HsUpdateFieldJob < ApplicationJob
     customer_field = @chf.customer_field
     if Customer.columns_hash[customer_field]
       @retailer.customers.where(hs_active: true).where.not(hs_id: nil).find_each do |c|
+        next if c.send(customer_field).blank?
+
         hubspot.contact_update(c.hs_id, "#{@chf.hubspot_field.hubspot_field}": c.send(customer_field))
         sleep 0.1
       end
@@ -24,6 +26,8 @@ class HsUpdateFieldJob < ApplicationJob
       crf = CustomerRelatedField.find_by(retailer: @retailer, identifier: customer_field)
       @retailer.customers.where(hs_active: true).where.not(hs_id: nil).find_each do |c|
         crf.customer_related_data.where(customer: c).each do |crd|
+          next if crd.data.blank?
+
           hubspot.contact_update(c.hs_id, "#{@chf.hubspot_field.hubspot_field}": crd.data)
           sleep 0.1
         end

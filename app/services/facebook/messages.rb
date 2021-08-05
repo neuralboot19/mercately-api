@@ -118,14 +118,20 @@ module Facebook
     private
 
       def prepare_message(to, message)
-        {
+        body = {
           "recipient": {
             "id": to
           },
           "message": {
             "text": message
           }
-        }.to_json
+        }
+        last_message_date = Customer.find_by(psid: to).facebook_messages.inbound.last&.created_at
+        if last_message_date && last_message_date >= 24.hours.ago
+          body.merge!("messaging_type": 'MESSAGE_TAG', "tag": 'HUMAN_AGENT')
+        end
+
+        body.to_json
       end
 
       def prepare_attachment(to, file_path, filename, url = nil, file_type = nil, file_content_type = nil)
@@ -155,6 +161,10 @@ module Facebook
               }
             }
           }
+        end
+        last_message_date = Customer.find_by(psid: to).facebook_messages.inbound.last&.created_at
+        if last_message_date && last_message_date >= 24.hours.ago
+          body.merge!("messaging_type": 'MESSAGE_TAG', "tag": 'HUMAN_AGENT')
         end
 
         body

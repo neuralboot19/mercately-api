@@ -579,6 +579,8 @@ class Customer < ApplicationRecord
       params = {}
       self_hash = as_json
       retailer.customer_hubspot_fields.where(customer_field: Customer.public_fields).find_each do |chf|
+        next if self_hash[chf.customer_field].blank?
+
         params[chf.hubspot_field.hubspot_field] = self_hash[chf.customer_field]
       end
       hubspot.contact_update(hs_id, params)
