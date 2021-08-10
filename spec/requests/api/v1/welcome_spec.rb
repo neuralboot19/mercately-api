@@ -3,13 +3,16 @@ require 'rails_helper'
 RSpec.describe 'Api::V1::Welcome', type: :request do
   describe 'GET #ping' do
     let(:mobile_token) { create(:mobile_token) }
+    let(:retailer_user) { mobile_token.retailer_user }
+    let(:email) { retailer_user.email }
+    let(:device) { retailer_user.api_session_device }
+    let(:token) { retailer_user.api_session_token }
+
+    before do
+      retailer_user.generate_api_token!
+    end
 
     it 'responses successfully if credentials are correct' do
-      # Generating credentials for the retailer_user
-      email = mobile_token.retailer_user.email
-      device = mobile_token.device
-      token = mobile_token.generate!
-
       # Making the request
       get '/api/v1/ping', headers: { 'email': email, 'device': device, 'token': token }
       expect(response.code).to eq('200')
@@ -20,10 +23,6 @@ RSpec.describe 'Api::V1::Welcome', type: :request do
     end
 
     it 'responses a not_found response if credentials not match' do
-      # Generating credentials for the retailer_user
-      email = mobile_token.retailer_user.email
-      token = mobile_token.generate!
-
       # Making the request
       get '/api/v1/ping', headers: { 'email': email, 'device': 'WR0NGD3V1C3', 'token': token }
       expect(response.code).to eq('404')
@@ -33,11 +32,6 @@ RSpec.describe 'Api::V1::Welcome', type: :request do
     end
 
     it 'responses an unauthorized response if token is not correct' do
-      # Generating credentials for the retailer_user
-      email = mobile_token.retailer_user.email
-      mobile_token.generate!
-      device = mobile_token.device
-
       # Making the request
       get '/api/v1/ping', headers: { 'email': email, 'device': device, 'token': 'wR0n670k3N' }
       expect(response.code).to eq('401')
@@ -47,14 +41,10 @@ RSpec.describe 'Api::V1::Welcome', type: :request do
     end
 
     it 'responses a 401 response if token expired' do
-      expired = create(:mobile_token, :expired, token: '4we50M37oK3n')
-
-      # Generating credentials for the retailer_user
-      email = expired.retailer_user.email
-      device = expired.device
+      retailer_user.update(api_session_expiration: 14.days.ago)
 
       # Making the request
-      get '/api/v1/ping', headers: { 'email': email, 'device': device, 'token': expired.token }
+      get '/api/v1/ping', headers: { 'email': email, 'device': device, 'token': token }
       expect(response.code).to eq('401')
 
       # The response will return the right message
@@ -63,7 +53,7 @@ RSpec.describe 'Api::V1::Welcome', type: :request do
 
       # The response will return a new token and the record was updated
       new_token = body['info']['token']
-      expect(expired.reload.token).to eq(new_token)
+      expect(retailer_user.reload.api_session_token).to eq(new_token)
     end
 
     it 'responses a forbidden response if header email not present' do

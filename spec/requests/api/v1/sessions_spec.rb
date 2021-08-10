@@ -9,20 +9,18 @@ RSpec.describe 'Api::V1::Sessions', type: :request do
       email = retailer_user.email
       password = 'test1234'
 
-      expect {
-        post '/api/v1/sign_in', params: {
-          retailer_user: {
-            'email': email,
-            'password': password,
-            'mobile_push_token': 'mYM081L3pu5h7ok3n'
-          }
+      post '/api/v1/sign_in', params: {
+        retailer_user: {
+          'email': email,
+          'password': password,
+          'mobile_push_token': 'mYM081L3pu5h7ok3n'
         }
-      }.to change(MobileToken, :count).by(1)
+      }
 
       expect(response.code).to eq('200')
 
       expected_response = JSON.parse(Api::V1::RetailerUserSerializer.new(
-        retailer_user,
+        retailer_user.reload,
         {
           include: [
             :retailer
@@ -37,13 +35,13 @@ RSpec.describe 'Api::V1::Sessions', type: :request do
 
   describe 'DELETE /log_out' do
     it 'will return a 200 response if sucessfully closed the session' do
-      email = mobile_token.retailer_user.email
-      device = mobile_token.device
-      token = mobile_token.generate!
+      retailer_user = mobile_token.retailer_user
+      retailer_user.generate_api_token!
+      email = retailer_user.email
+      device = retailer_user.api_session_device
+      token = retailer_user.api_session_token
 
-      expect {
-        delete '/api/v1/log_out', headers: { 'email': email, 'device': device, 'token': token }
-      }.to change(MobileToken, :count).by(-1)
+      delete '/api/v1/log_out', headers: { 'email': email, 'device': device, 'token': token }
 
       expect(response.code).to eq('200')
 

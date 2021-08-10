@@ -5,7 +5,7 @@ module Api::V1
     set_type :retailer_user
     set_id :id
 
-    attributes :id, :email, :first_name, :last_name
+    attributes :id, :email, :first_name, :last_name, :api_session_token, :api_session_device, :api_session_expiration
 
     attribute :admin do |ru|
       ru.admin?

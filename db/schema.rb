@@ -934,6 +934,9 @@ ActiveRecord::Schema.define(version: 2021_07_08_173153) do
     t.boolean "retailer_supervisor", default: false
     t.boolean "only_assigned", default: false
     t.integer "locale", default: 0
+    t.string "api_session_token"
+    t.string "api_session_device"
+    t.datetime "api_session_expiration"
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"

@@ -112,6 +112,19 @@ class RetailerUser < ApplicationRecord
       connection_type == 'catalog'
   end
 
+  def generate_api_token!(generate_device = false)
+    new_token = SecureRandom.hex
+    attrs = { api_session_token: new_token, api_session_expiration: 1.week.from_now }
+    attrs[:api_session_device] = SecureRandom.hex(3) if generate_device || api_session_device.nil?
+    update_attributes(attrs)
+
+    new_token
+  end
+
+  def destroy_api_token!
+    update(api_session_token: nil, api_session_expiration: nil)
+  end
+
   private
 
     def onboarding_status_format

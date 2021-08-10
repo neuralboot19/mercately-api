@@ -18,6 +18,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     create_list(:karix_whatsapp_message, 2, :inbound, retailer: retailer, customer: customer1, status: 'failed')
     create_list(:karix_whatsapp_message, 6, retailer: retailer, customer: customer2)
 
+    retailer_user.generate_api_token!
     sign_in retailer_user
   end
 
@@ -237,8 +238,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
       let(:header_email) { retailer_user.email }
-      let(:header_device) { mobile_token.device }
-      let(:header_token) { mobile_token.generate! }
+      let(:header_device) { retailer_user.api_session_device }
+      let(:header_token) { retailer_user.api_session_token }
 
       it 'responses with all customers' do
         get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
@@ -327,8 +328,12 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_agent) }
 
         let(:header_email) { retailer_user_agent.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user_agent.api_session_device }
+        let(:header_token) { retailer_user_agent.api_session_token }
+
+        before do
+          retailer_user_agent.generate_api_token!
+        end
 
         it 'returns only the customers assigned to it or those not assigned' do
           get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
@@ -561,11 +566,15 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
 
         let(:header_email) { retailer_user_gupshup.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user_gupshup.api_session_device }
+        let(:header_token) { retailer_user_gupshup.api_session_token }
 
         let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
         let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
+
+        before do
+          retailer_user_gupshup.generate_api_token!
+        end
 
         context 'when the message is submitted' do
           it 'will response a 200 status code and store a new gupshup whatsapp message' do
@@ -591,8 +600,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
         let(:header_email) { retailer_user.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user.api_session_device }
+        let(:header_token) { retailer_user.api_session_token }
 
         let(:message) { create(:karix_whatsapp_message) }
 
@@ -655,8 +664,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
         let(:header_email) { retailer_user.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user.api_session_device }
+        let(:header_token) { retailer_user.api_session_token }
 
         before do
           retailer.update!(unlimited_account: true)
@@ -817,8 +826,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
         let(:header_email) { retailer_user.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user.api_session_device }
+        let(:header_token) { retailer_user.api_session_token }
 
         context 'when the customer selected has messages' do
           context 'when the retailer has positive balance' do
@@ -940,8 +949,12 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
 
         let(:header_email) { retailer_user_gupshup.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user_gupshup.api_session_device }
+        let(:header_token) { retailer_user_gupshup.api_session_token }
+
+        before do
+          retailer_user_gupshup.generate_api_token!
+        end
 
         it 'marks as read only not failed or read inbound messages' do
           total_unread = customer3.gupshup_whatsapp_messages.where.not(status: ['read', 'error']).count
@@ -1183,8 +1196,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
       let(:header_email) { retailer_user.email }
-      let(:header_device) { mobile_token.device }
-      let(:header_token) { mobile_token.generate! }
+      let(:header_device) { retailer_user.api_session_device }
+      let(:header_token) { retailer_user.api_session_token }
 
       context 'when the retailer is karix integrated' do
         let(:message) { create(:karix_whatsapp_message, customer: customer1) }
@@ -1229,11 +1242,15 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
 
         let(:header_email) { retailer_user_gupshup.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user_gupshup.api_session_device }
+        let(:header_token) { retailer_user_gupshup.api_session_token }
 
         let(:message) { create(:gupshup_whatsapp_message, customer: customer3) }
         let(:service_instance) { Whatsapp::Gupshup::V1::Outbound::Msg.new }
+
+        before do
+          retailer_user_gupshup.generate_api_token!
+        end
 
         context 'when the message is sent without errors' do
           it 'successfully, will response a 200 status' do
@@ -1326,8 +1343,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
       let(:header_email) { retailer_user.email }
-      let(:header_device) { mobile_token.device }
-      let(:header_token) { mobile_token.generate! }
+      let(:header_device) { retailer_user.api_session_device }
+      let(:header_token) { retailer_user.api_session_token }
 
       context 'when the message is updated without errors' do
         it 'successfully, will response a 200 status' do
@@ -1467,10 +1484,11 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_agent) }
 
       let(:header_email) { retailer_user_agent.email }
-      let(:header_device) { mobile_token.device }
-      let(:header_token) { mobile_token.generate! }
+      let(:header_device) { retailer_user_agent.api_session_device }
+      let(:header_token) { retailer_user_agent.api_session_token }
 
       before do
+        retailer_user_agent.generate_api_token!
         sign_out retailer_user
       end
 
@@ -1673,8 +1691,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
         let(:header_email) { retailer_user.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user.api_session_device }
+        let(:header_token) { retailer_user.api_session_token }
 
         describe 'when the retailer is karix integrated' do
           before do
@@ -1726,8 +1744,12 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       context 'when the retailer is gupshup integrated' do
         let(:header_email) { retailer_user_gupshup.email }
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user_gupshup) }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user_gupshup.api_session_device }
+        let(:header_token) { retailer_user_gupshup.api_session_token }
+
+        before do
+          retailer_user_gupshup.generate_api_token!
+        end
 
         context 'when the message is sent without errors' do
           it 'successfully, will response a 200 status' do
