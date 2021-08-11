@@ -53,8 +53,8 @@ class ChatMessages extends Component {
 
   handleLoadMore = () => {
     let id = this.props.currentCustomer;
-    if (this.props.total_pages > this.state.page) {
-      this.setState({ page: this.state.page += 1, load_more: true, scrolable: false}, () => {
+    if (this.props.total_pages > this.state.page && !this.props.loadingMoreMessages) {
+      this.setState({ page: this.state.page += 1, load_more: true, scrolable: false }, () => {
         this.props.fetchMessages(id, this.state.page);
       });
     }
@@ -698,7 +698,8 @@ function mapStateToProps(state) {
     total_pages: state.total_pages || 0,
     agents: state.agents || [],
     agent_list: state.agent_list || [],
-    customer: state.customer
+    customer: state.customer,
+    loadingMoreMessages: state.loadingMoreMessages || false
   };
 }
 

@@ -5,7 +5,9 @@ import {
   LOAD_DATA_FAILURE, SET_CUSTOMERS_REQUEST,
   ERASE_DEAL, SET_ORDERS, SET_ORDERS_REQUEST,
   CHANGE_DEAL_COLUMN,
-  SET_COLUMNS
+  SET_COLUMNS, SET_WHATSAPP_MESSAGES,
+  SET_WHATSAPP_MESSAGES_REQUEST, SET_MESSAGES,
+  SET_MESSAGES_REQUEST
 } from "../actionTypes";
 
 const initialState = {
@@ -24,7 +26,8 @@ const initialState = {
   orders: [],
   totalOrders: 0,
   mlChats: [],
-  totalMlChats: 0
+  totalMlChats: 0,
+  loadingMoreMessages: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -78,7 +81,7 @@ const reducer = (state = initialState, action) => {
         customerFields: action.data.customer_fields,
         customFields: action.data.custom_fields
       };
-    case 'SET_MESSAGES':
+    case SET_MESSAGES:
       var balance_error = { status: null, message: null };
 
       if (action.data.balance_error_info)
@@ -95,7 +98,8 @@ const reducer = (state = initialState, action) => {
         errorSendMessageText: balance_error.message,
         recentInboundMessageDate: action.data.recent_inbound_message_date,
         customerId: action.data.customer_id,
-        filter_tags: action.data.filter_tags
+        filter_tags: action.data.filter_tags,
+        loadingMoreMessages: false
       };
     case 'SET_SEND_MESSAGE':
       return {
@@ -115,7 +119,7 @@ const reducer = (state = initialState, action) => {
         allowSendVoice: action.data.allow_send_voice,
         loadingMoreCustomers: false
       }
-    case 'SET_WHATSAPP_MESSAGES':
+    case SET_WHATSAPP_MESSAGES:
       var balance_error = { status: null, message: null };
 
       if (action.data.balance_error_info)
@@ -134,7 +138,8 @@ const reducer = (state = initialState, action) => {
         recentInboundMessageDate: action.data.recent_inbound_message_date,
         customerId: action.data.customer_id,
         filter_tags: action.data.filter_tags,
-        allowSendVoice: action.data.allow_send_voice
+        allowSendVoice: action.data.allow_send_voice,
+        loadingMoreMessages: false
       };
     case 'SET_LAST_MESSAGES':
       return {
@@ -225,7 +230,8 @@ const reducer = (state = initialState, action) => {
     case LOAD_DATA_FAILURE:
       return {
         ...state,
-        loadingMoreCustomers: false
+        loadingMoreCustomers: false,
+        loadingMoreMessages: false
       };
     case 'GET_FUNNELS':
       return {
@@ -382,6 +388,12 @@ const reducer = (state = initialState, action) => {
         fetching_funnels: true
       }
     }
+    case SET_WHATSAPP_MESSAGES_REQUEST:
+    case SET_MESSAGES_REQUEST:
+      return {
+        ...state,
+        loadingMoreMessages: true
+      }
 
     default:
       return state;
