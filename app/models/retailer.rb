@@ -255,6 +255,21 @@ class Retailer < ApplicationRecord
     update_gupshup_info
   end
 
+  def send_failed_charge_email
+    card_type = if ecu_charges
+                  PaymentezCardHelper.brand(paymentez_credit_cards.last&.card_type)
+                elsif int_charges
+                  payment_methods.last&.card_type
+                end
+
+    recipients = RetailerUser.active(id).where(retailer_admin: true)
+      .or(RetailerUser.active(id).where(retailer_supervisor: true))
+
+    recipients.each do |r|
+      RetailerMailer.failed_charge(self, r, card_type).deliver_now
+    end
+  end
+
   private
 
     def save_free_plan

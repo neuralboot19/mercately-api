@@ -63,6 +63,11 @@ ActiveAdmin.register Retailer do
     column 'Agregar Saldo' do |resource|
       link_to 'Agregar Saldo', new_admin_top_up_path(retailer_id: resource.id), class: 'member_link edit_link'
     end
+
+    column 'Pago fallído' do |resource|
+      link_to 'Enviar email', failed_charge_email_admin_retailer_path(resource.id), class:
+        'member_link edit_link'
+    end
   end
 
   csv do
@@ -404,6 +409,14 @@ ActiveAdmin.register Retailer do
   member_action :refund_paymentez_transaction do
     pt = PaymentezTransaction.find(params[:pt_id]).refund
     flash[:alert] = pt[:message]
+    redirect_to admin_retailers_path
+  end
+
+  member_action :failed_charge_email do
+    retailer = Retailer.find(params[:id])
+
+    retailer.send_failed_charge_email
+    flash[:alert] = 'Email enviado con éxito'
     redirect_to admin_retailers_path
   end
 end

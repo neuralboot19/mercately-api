@@ -363,3 +363,8 @@ es:
           message: "No message config found"
           summary: "No summary config found"
           resolution: "No resolution config found"
+  mailer:
+    failed_charge_subject: '[Urgente] Tu pago de Mercately no se realizó correctamente'
+    failed_charge_greetings: 'Hola %{name}'
+    failed_charge_message: 'No pudimos cobrar su tarjeta %{card} para su pago a Mercately, LLC. Actualice su información de facturación en el siguiente enlace:'
+    failed_charge_advice: 'En caso de 3 pagos fallidos, su servicio será cancelado.'

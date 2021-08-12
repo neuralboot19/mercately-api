@@ -11,3 +11,8 @@ en:
           message: 'No client config found'
           summary: 'No summary config found'
           resolution: 'No resolution config found'
+  mailer:
+    failed_charge_subject: '[Urgent] Your Mercately payment was not successful'
+    failed_charge_greetings: 'Hello %{name}'
+    failed_charge_message: 'We were unable to charge your card %{card} for your payment to Mercately, LLC. Update your billing information at the following link:'
+    failed_charge_advice: 'In case of 3 failed payments, your service will be canceled.'
