@@ -89,7 +89,8 @@ module Facebook
     def send_bulk_files(customer, params)
       return unless params[:file_data]
 
-      params[:file_data].each do |file|
+      params[:file_data].each_with_index do |file, index|
+        @index = index
         file_data = file.tempfile.path
         filename = File.basename(file.original_filename)
         save_message(customer, file_data, filename, params)
@@ -167,7 +168,8 @@ module Facebook
           sent_by_retailer: true,
           filename: filename,
           retailer_user: @retailer_user,
-          file_type: params[:type]
+          file_type: params[:type],
+          message_identifier: @index ? params[:message_identifiers][@index] : params[:message_identifier]
         )
       end
   end

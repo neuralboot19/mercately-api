@@ -833,7 +833,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       params = {
         file_data: [
           fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')
-        ]
+        ],
+        message_identifiers: ['12345']
       }
 
       expect(FacebookMessage).to receive(:create).with(anything())

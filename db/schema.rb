@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_08_173153) do
+ActiveRecord::Schema.define(version: 2021_08_04_132055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -463,6 +463,7 @@ ActiveRecord::Schema.define(version: 2021_07_08_173153) do
     t.string "sender_first_name"
     t.string "sender_last_name"
     t.string "sender_email"
+    t.string "message_identifier"
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_facebook_messages_on_retailer_user_id"
