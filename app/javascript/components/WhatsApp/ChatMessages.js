@@ -83,7 +83,7 @@ class ChatMessages extends Component {
 
   handleLoadMore = () => {
     const id = this.props.currentCustomer;
-    if (totalPages > this.state.page) {
+    if (totalPages > this.state.page && !this.props.loadingMoreMessages) {
       this.setState((prevState) => (
         { page: prevState.page + 1, load_more: true, scrolable: false }
       ), () => {
@@ -1370,7 +1370,8 @@ function mapStateToProps(state) {
     errorSendMessageStatus: state.errorSendMessageStatus,
     errorSendMessageText: state.errorSendMessageText,
     customer: state.customer,
-    allowSendVoice: state.allowSendVoice
+    allowSendVoice: state.allowSendVoice,
+    loadingMoreMessages: state.loadingMoreMessages || false
   };
 }
 

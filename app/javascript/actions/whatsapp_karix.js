@@ -3,7 +3,9 @@
 import {
   LOAD_DATA_FAILURE,
   SET_WHATSAPP_CUSTOMERS,
-  SET_WHATSAPP_CUSTOMERS_REQUEST
+  SET_WHATSAPP_CUSTOMERS_REQUEST,
+  SET_WHATSAPP_MESSAGES,
+  SET_WHATSAPP_MESSAGES_REQUEST
 } from "../actionTypes";
 
 export const fetchWhatsAppCustomers = (page = 1, params, offset) => {
@@ -86,6 +88,7 @@ export const sendWhatsAppMessage = (body, token) => {
 export const fetchWhatsAppMessages = (id, page = 1) => {
   const endpoint = `/api/v1/karix_whatsapp_customers/${id}/messages?page=${page}`;
   return (dispatch) => {
+    dispatch({ type: SET_WHATSAPP_MESSAGES_REQUEST });
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -96,8 +99,8 @@ export const fetchWhatsAppMessages = (id, page = 1) => {
     })
       .then((res) => res.json())
       .then(
-        (data) => dispatch({ type: "SET_WHATSAPP_MESSAGES", data }),
-        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => dispatch({ type: SET_WHATSAPP_MESSAGES, data }),
+        (err) => dispatch({ type: LOAD_DATA_FAILURE, err })
       ).catch((error) => {
         if (error.response) {
           alert(error.response);

@@ -1,5 +1,8 @@
 /* Customers */
-import { LOAD_DATA_FAILURE, SET_CUSTOMERS, SET_CUSTOMERS_REQUEST } from "../actionTypes";
+import {
+  LOAD_DATA_FAILURE, SET_CUSTOMERS, SET_CUSTOMERS_REQUEST,
+  SET_MESSAGES, SET_MESSAGES_REQUEST
+} from "../actionTypes";
 
 export const fetchCustomers = (page = 1, params, offset) => {
   let endpoint = `/api/v1/customers?page=${page}&offset=${offset}`;
@@ -118,6 +121,7 @@ export const cancelReminder = (reminderId) => {
 export const fetchMessages = (id, page = 1) => {
   const endpoint = `/api/v1/customers/${id}/messages?page=${page}`;
   return (dispatch) => {
+    dispatch({ type: SET_MESSAGES_REQUEST });
     fetch(endpoint, {
       method: "GET",
       credentials: "same-origin",
@@ -128,8 +132,8 @@ export const fetchMessages = (id, page = 1) => {
     })
       .then((res) => res.json())
       .then(
-        (data) => dispatch({ type: "SET_MESSAGES", data }),
-        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+        (data) => dispatch({ type: SET_MESSAGES, data }),
+        (err) => dispatch({ type: LOAD_DATA_FAILURE, err })
       ).catch((error) => {
         if (error.response) {
           alert(error.response);

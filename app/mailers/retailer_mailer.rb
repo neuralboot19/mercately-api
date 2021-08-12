@@ -50,4 +50,14 @@ class RetailerMailer < ApplicationMailer
 
     mail to: retailer_user.email, subject: 'La importación de clientes ha fallado'
   end
+
+  def failed_charge(retailer, retailer_user, card_type)
+    @retailer = retailer
+    @card_type = card_type
+    @retailer_user = retailer_user
+
+    I18n.with_locale(@retailer_user.locale) do
+      mail to: retailer_user.email, subject: t('mailer.failed_charge_subject')
+    end
+  end
 end
