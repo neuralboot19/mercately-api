@@ -38,7 +38,7 @@ RSpec.describe FacebookMessage, type: :model do
   describe '#send_facebook_message' do
     let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
     let(:msn_response) { { 'message_id': '1234567890' }.with_indifferent_access }
-    let(:customer) { create(:customer, retailer: retailer, psid: '1234567890') }
+    let(:customer) { create(:customer, retailer: retailer, psid: '1234567890', pstype: :messenger) }
 
     let(:facebook_msg_sent) do
       create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_from_mercately:
@@ -62,7 +62,7 @@ RSpec.describe FacebookMessage, type: :model do
         .and_return(msn_response)
       allow(set_facebook_messages_service).to receive(:import_delivered)
         .and_return(set_facebook_messages_service)
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
@@ -102,12 +102,12 @@ RSpec.describe FacebookMessage, type: :model do
     before do
       allow(set_facebook_messages_service).to receive(:send_message)
         .and_return('Sent')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
     context 'when the retailer does not have an active welcome message configured' do
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let(:facebook_msg_sent) do
         create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_by_retailer:
@@ -121,7 +121,7 @@ RSpec.describe FacebookMessage, type: :model do
 
     context 'when the customer does not text for the first time' do
       let!(:automatic_answer) { create(:automatic_answer, :welcome, :messenger, retailer: facebook_retailer.retailer) }
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let!(:first_facebook_message) do
         create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, text: 'Test')
@@ -139,7 +139,7 @@ RSpec.describe FacebookMessage, type: :model do
 
     context 'when the message is sent from the retailer' do
       let!(:automatic_answer) { create(:automatic_answer, :welcome, :messenger, retailer: facebook_retailer.retailer) }
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let(:facebook_msg_sent) do
         create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_by_retailer:
@@ -153,7 +153,7 @@ RSpec.describe FacebookMessage, type: :model do
 
     context 'when all conditions are present' do
       let!(:automatic_answer) { create(:automatic_answer, :welcome, :messenger, retailer: facebook_retailer.retailer) }
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let(:facebook_msg_sent) do
         create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_by_retailer:
@@ -172,12 +172,12 @@ RSpec.describe FacebookMessage, type: :model do
     before do
       allow(set_facebook_messages_service).to receive(:send_message)
         .and_return('Sent')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
     context 'when the retailer does not have an inactive message configured' do
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let!(:first_facebook_message) do
         create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_by_retailer:
@@ -195,7 +195,7 @@ RSpec.describe FacebookMessage, type: :model do
     end
 
     context 'when the customer does not have a prior message sent' do
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let!(:automatic_answer) do
         create(:automatic_answer, :inactive, :messenger, retailer: facebook_retailer.retailer)
@@ -212,7 +212,7 @@ RSpec.describe FacebookMessage, type: :model do
     end
 
     context 'when the message is sent from the retailer' do
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let!(:automatic_answer) do
         create(:automatic_answer, :inactive, :messenger, retailer: facebook_retailer.retailer)
@@ -234,7 +234,7 @@ RSpec.describe FacebookMessage, type: :model do
     end
 
     context 'when the created time of the prior message is not passed yet' do
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let!(:automatic_answer) do
         create(:automatic_answer, :inactive, :messenger, retailer: facebook_retailer.retailer)
@@ -256,7 +256,7 @@ RSpec.describe FacebookMessage, type: :model do
     end
 
     context 'when all conditions are present' do
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let!(:automatic_answer) do
         create(:automatic_answer, :inactive, :messenger, retailer: facebook_retailer.retailer)
@@ -284,8 +284,8 @@ RSpec.describe FacebookMessage, type: :model do
       let(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
       let(:retailer_user) { create(:retailer_user, retailer: retailer) }
       let(:another_retailer_user) { create(:retailer_user, retailer: retailer) }
-      let(:customer) { create(:customer, retailer: retailer) }
-      let(:customer2) { create(:customer, retailer: retailer) }
+      let(:customer) { create(:customer, retailer: retailer, pstype: :messenger) }
+      let(:customer2) { create(:customer, retailer: retailer, pstype: :messenger) }
 
       let(:message) do
         create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
@@ -556,7 +556,7 @@ RSpec.describe FacebookMessage, type: :model do
     end
 
     context 'when a chat is answered' do
-      let(:customer) { create(:customer, retailer: retailer) }
+      let(:customer) { create(:customer, retailer: retailer, pstype: :messenger) }
 
       context 'when the message is not sent from an agent' do
         let(:outbound_message) do
@@ -606,7 +606,7 @@ RSpec.describe FacebookMessage, type: :model do
     before do
       allow(set_facebook_messages_service).to receive(:send_message)
         .and_return('Sent')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 

@@ -11,6 +11,8 @@ class AgentNotificationSerializer
       'whatsapp_chats'
     when 'messenger'
       'facebook_chats'
+    when 'instagram'
+      'instagram_chats'
     else
       raise StandardError, 'Chat type not valid for notification'
     end

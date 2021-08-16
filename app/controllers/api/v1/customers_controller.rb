@@ -3,13 +3,15 @@ class Api::V1::CustomersController < Api::ApiController
   include CurrentRetailer
   include ActionView::Helpers::TextHelper
   before_action :sanitize_params, only: [:update]
+  before_action :set_klass, only: %i[create_message send_img set_message_as_read]
   before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger, :search_customers]
 
   def index
+    @platform = params[:platform].presence || 'messenger'
     customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
-                  current_retailer.customers.facebook_customers.active
+                  current_retailer.customers.facebook_customers.active.where(pstype: @platform)
                 elsif current_retailer_user.agent?
-                  current_retailer_user.customers.facebook_customers.active
+                  current_retailer_user.customers.facebook_customers.active.where(pstype: @platform)
                 end
 
     @customers = customer_list(customers)
@@ -23,7 +25,8 @@ class Api::V1::CustomersController < Api::ApiController
           :last_messenger_message,
           :assigned_agent,
           :tags,
-          :unread_messenger_messages
+          :unread_messenger_messages,
+          :last_fb_messages
         ]
       ) : [],
       agents: agents,
@@ -35,6 +38,7 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def show
+    read_messages! if @customer.instagram?
     render status: 200, json: {
       customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]),
       hubspot_integrated: @customer.retailer.hubspot_integrated?,
@@ -54,24 +58,10 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def messages
-    facebook_helper = FacebookNotificationHelper
-    @messages = @customer.facebook_messages
-    @messages.customer_unread.update_all(date_read: Time.now)
-    @messages = @messages.order(created_at: :desc).page(params[:page])
-    @customer.update_attribute(:unread_messenger_chat, false)
-    facebook_service.send_read_action(@customer.psid, 'mark_seen')
-    agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.all_customers.to_a
-
-    facebook_helper.broadcast_data(
-      current_retailer,
-      agents,
-      nil,
-      @customer.agent_customer,
-      @customer
-    )
+    read_messages!
     render status: 200, json: {
       messages: serialize_facebook_messages.to_a.reverse,
-      agents: agents,
+      agents: @agents,
       storage_id: current_retailer_user.storage_id,
       agent_list: current_retailer.team_agents,
       total_pages: @messages.total_pages,
@@ -82,7 +72,7 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def create_message
-    message = FacebookMessage.new(
+    message = @klass.new(
       customer: @customer,
       sender_uid: current_retailer_user.uid,
       id_client: @customer.psid,
@@ -104,7 +94,7 @@ class Api::V1::CustomersController < Api::ApiController
       filename = File.basename(params[:file_data].original_filename)
     end
 
-    message = FacebookMessage.new(
+    message = @klass.new(
       customer: @customer,
       sender_uid: current_retailer_user.uid,
       id_client: @customer.psid,
@@ -124,12 +114,19 @@ class Api::V1::CustomersController < Api::ApiController
 
   def set_message_as_read
     facebook_helper = FacebookNotificationHelper
-    @message = FacebookMessage.find(params[:id])
+    @message = @klass.find(params[:id])
     @message.update_column(:date_read, Time.now)
-    facebook_service.send_read_action(@message.customer.psid, 'mark_seen')
+    facebook_service.send_read_action(@message.customer.psid, 'mark_seen') if params[:platform] != 'instagram'
     agents = @message.customer.agent ? [@message.customer.agent] : current_retailer.retailer_users.all_customers.to_a
 
-    facebook_helper.broadcast_data(current_retailer, agents, nil, @message.customer.agent_customer, @message.customer)
+    facebook_helper.broadcast_data(
+      current_retailer,
+      agents,
+      nil,
+      @message.customer.agent_customer,
+      @message.customer,
+      params[:platform]
+    )
     render status: 200, json: { message: @message }
   end
 
@@ -230,18 +227,22 @@ class Api::V1::CustomersController < Api::ApiController
     end
 
     def facebook_service
-      @facebook_service ||= Facebook::Messages.new(current_retailer.facebook_retailer)
+      @facebook_service ||= Facebook::Messages.new(
+        current_retailer.facebook_retailer,
+        @customer&.pstype || params[:platform] || 'messenger'
+      )
     end
 
     def customer_list(customers)
       return nil unless customers.present?
 
       customers = customers.select('customers.*, customers.last_chat_interaction as recent_message_date')
+      table = @platform == 'messenger' ? 'facebook_messages' : 'instagram_messages'
 
       if params[:type].present?
         customers = if ['no_read', 'read'].include?(params[:type])
-                      customers.joins(:facebook_messages).where(
-                        "facebook_messages.date_read IS
+                      customers.joins(table.to_sym).where(
+                        "#{table}.date_read IS
                         #{params[:type] == 'read' ? 'NOT ' : ''}NULL
                         OR customers.unread_messenger_chat = true"
                       )
@@ -299,7 +300,8 @@ class Api::V1::CustomersController < Api::ApiController
         agents,
         nil,
         @customer.agent_customer,
-        @customer
+        @customer,
+        params[:platform]
       ]
 
       case chat_service
@@ -314,6 +316,10 @@ class Api::V1::CustomersController < Api::ApiController
           gnhm.notify_customer_update!(*data)
         end
       end
+    end
+
+    def set_klass
+      @klass = params[:platform] == 'instagram' ? InstagramMessage : FacebookMessage
     end
 
     def serialize_facebook_messages
@@ -353,5 +359,24 @@ class Api::V1::CustomersController < Api::ApiController
         reminders,
         each_serializer: Api::V1::ReminderSerializer
       ).as_json
+    end
+
+    def read_messages!
+      facebook_helper = FacebookNotificationHelper
+      @messages = @customer.message_records
+      @messages.customer_unread.update_all(date_read: Time.now)
+      @messages = @messages.order(created_at: :desc).page(params[:page])
+      @customer.update_attribute(:unread_messenger_chat, false)
+      facebook_service.send_read_action(@customer.psid, 'mark_seen') if @customer.messenger?
+      @agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.all_customers.to_a
+
+      facebook_helper.broadcast_data(
+        current_retailer,
+        @agents,
+        nil,
+        @customer.agent_customer,
+        @customer,
+        @customer.pstype
+      )
     end
 end

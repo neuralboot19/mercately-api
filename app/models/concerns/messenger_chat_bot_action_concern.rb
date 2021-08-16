@@ -85,6 +85,7 @@ module MessengerChatBotActionConcern
 
     # El mensaje debe ser inbound de tipo texto para que pueda ejecutar el metodo.
     def chat_bot_execution
+      return if customer.instagram? # TODO: Reactivar bots para IG
       return unless sent_by_retailer == false && text.present?
 
       chat_bot_service.manage_chat_bot

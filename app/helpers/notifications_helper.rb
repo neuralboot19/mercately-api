@@ -9,6 +9,8 @@ module NotificationsHelper
       'fab fa-whatsapp'
     when 'messenger'
       'fab fa-facebook-messenger'
+    when 'instagram'
+      'fab fa-instagram'
     else
       'far fa-comment-alt'
     end
@@ -20,6 +22,8 @@ module NotificationsHelper
       retailers_whats_app_chats_path(current_retailer, cid: notification.customer.id)
     when 'messenger'
       retailers_facebook_chats_path(current_retailer, cid: notification.customer.id)
+    when 'instagram'
+      retailers_instagram_chats_path(current_retailer, cid: notification.customer.id)
     else
       nil
     end

@@ -38,7 +38,8 @@ const ChatSideBar = ({
   chatType,
   setRemovedCustomerInfo,
   storageId,
-  setActiveChatBot
+  setActiveChatBot,
+  platform = 'messenger'
 }) => {
   const [state, setState] = useState(initialState);
   const [loading, setLoading] = useState(true);
@@ -55,7 +56,7 @@ const ChatSideBar = ({
 
   const dispatch = useDispatch();
   const fetchCustomers = () => {
-    dispatch(fetchCustomersAction(state.page, state.filter, state.customers.length));
+    dispatch(fetchCustomersAction(state.page, state.filter, state.customers.length, platform));
   };
   const fetchWhatsAppCustomers = () => {
     dispatch(fetchWhatsAppCustomersAction(state.page, state.filter, state.customers.length));
@@ -88,8 +89,13 @@ const ChatSideBar = ({
     // Subscribe to assignation/de-assignation broadcasts
     switch (chatType) {
       case 'facebook': {
-        // eslint-disable-next-line no-undef
-        socket.on('customer_facebook_chat', eventHandler);
+        if (platform === 'instagram') {
+          // eslint-disable-next-line no-undef
+          socket.on('customer_instagram_chat', eventHandler);
+        } else {
+          // eslint-disable-next-line no-undef
+          socket.on('customer_facebook_chat', eventHandler);
+        }
         break;
       }
       case 'whatsapp': {
@@ -112,8 +118,13 @@ const ChatSideBar = ({
       // unsubscribe from event for preventing memory leaks
       switch (chatType) {
         case 'facebook': {
-          // eslint-disable-next-line no-undef
-          socket.off('customer_facebook_chat', eventHandler);
+          if (platform === 'instagram') {
+            // eslint-disable-next-line no-undef
+            socket.off('customer_instagram_chat', eventHandler);
+          } else {
+            // eslint-disable-next-line no-undef
+            socket.off('customer_facebook_chat', eventHandler);
+          }
           break;
         }
         case 'whatsapp': {

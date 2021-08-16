@@ -14,6 +14,7 @@ const initialState = {
   customers: [],
   messages: [],
   total_pages: 0,
+  total_fb_pages: 0,
   total_customers: 0,
   errorSendMessageStatus: null,
   errorSendMessageText: null,
@@ -148,6 +149,12 @@ const reducer = (state = initialState, action) => {
         total_pages: action.data.totalPages,
         handle_message_events: action.data.handleMessageEvents,
         recentInboundMessageDate: action.data.recentInboundMessageDate
+      };
+    case 'SET_LAST_FB_MESSAGES':
+      return {
+        ...state,
+        messages: action.data.messages,
+        total_fb_pages: action.data.total_fb_pages
       };
     case 'SET_WHATSAPP_TEMPLATES':
       return {

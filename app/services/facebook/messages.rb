@@ -2,16 +2,18 @@ require 'mime/types'
 
 module Facebook
   class Messages
-    def initialize(facebook_retailer)
+    def initialize(facebook_retailer, type = 'messenger')
+      @type = type
       @facebook_retailer = facebook_retailer
+      @klass = @type == 'instagram' ? InstagramMessage : FacebookMessage
     end
 
     def save(message_data)
-      customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
+      customer = Facebook::Customers.new(@facebook_retailer, @type).import(message_data['sender']['id'])
       file_type = message_data['message']&.[]('attachments')&.[](0)&.[]('type')
       url = file_type_url(message_data, file_type)
       file_name = File.basename(URI.parse(url)&.path) if url.present?
-      FacebookMessage.create_with(
+      @klass.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         sender_uid: message_data['sender']['id'],
@@ -37,7 +39,7 @@ module Facebook
       file_type = attachment&.[]('mime_type')
       file_name = attachment&.[]('name')
       attachment_url = grab_url(response, file_type)
-      message = FacebookMessage.create_with(
+      message = @klass.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         sender_uid: @facebook_retailer.uid,
@@ -79,7 +81,7 @@ module Facebook
       customer = Customer.find_by(psid: psid)
       return unless customer.present?
 
-      messages = customer.facebook_messages.retailer_unread.order(:id)
+      messages = customer.message_records.retailer_unread.order(:id)
       last_message = messages.last
       return unless last_message.present?
 
@@ -90,7 +92,7 @@ module Facebook
       retailer = @facebook_retailer.retailer
       last_message.date_read = read_date
       agents = customer.agent.present? ? [customer.agent] : retailer.retailer_users.all_customers.to_a
-      facebook_helper.broadcast_data(retailer, agents, last_message, customer.agent_customer)
+      facebook_helper.broadcast_data(retailer, agents, last_message, customer.agent_customer, nil, @type)
     end
 
     def send_read_action(to, action)
@@ -100,13 +102,13 @@ module Facebook
     end
 
     def send_bulk_files(customer, retailer_user, params)
-      Facebook::Api.new(@facebook_retailer, retailer_user).send_bulk_files(customer, params)
+      Facebook::Api.new(@facebook_retailer, retailer_user, @type).send_bulk_files(customer, params)
     end
 
     def save_postback_interaction(message_data)
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
 
-      FacebookMessage.create(
+      @klass.create(
         customer: customer,
         facebook_retailer: @facebook_retailer,
         sender_uid: message_data['sender']['id'],
@@ -117,6 +119,14 @@ module Facebook
 
     private
 
+      def add_human_agent_tag(psid, body)
+        last_message_date = Customer.find_by(psid: psid).facebook_messages.inbound.last&.created_at
+        if @type == 'instagram' || (last_message_date && last_message_date >= 24.hours.ago)
+          body.merge!("messaging_type": 'MESSAGE_TAG', "tag": 'HUMAN_AGENT')
+        end
+        body
+      end
+
       def prepare_message(to, message)
         body = {
           "recipient": {
@@ -126,47 +136,39 @@ module Facebook
             "text": message
           }
         }
-        last_message_date = Customer.find_by(psid: to).facebook_messages.inbound.last&.created_at
-        if last_message_date && last_message_date >= 24.hours.ago
-          body.merge!("messaging_type": 'MESSAGE_TAG', "tag": 'HUMAN_AGENT')
-        end
-
+        body = add_human_agent_tag(to, body)
         body.to_json
       end
 
       def prepare_attachment(to, file_path, filename, url = nil, file_type = nil, file_content_type = nil)
-        if file_path.present?
-          content_type = file_content_type.presence || MIME::Types.type_for(file_path).first.content_type
-          type = check_content_type(content_type)
+        body = if file_path.present?
+                 content_type = file_content_type.presence || MIME::Types.type_for(file_path).first.content_type
+                 type = check_content_type(content_type)
 
-          body = {
-            "recipient": JSON.dump(id: to),
-            "message": JSON.dump(attachment: {
-              "type": type,
-              "payload": {}
-            }),
-            "filedata": Faraday::UploadIO.new(file_path, content_type, filename)
-          }
-        else
-          body = {
-            'recipient': {
-              'id': to
-            },
-            'message': {
-              'attachment': {
-                'type': file_type,
-                'payload': {
-                  'url': url
-                }
-              }
-            }
-          }
-        end
-        last_message_date = Customer.find_by(psid: to).facebook_messages.inbound.last&.created_at
-        if last_message_date && last_message_date >= 24.hours.ago
-          body.merge!("messaging_type": 'MESSAGE_TAG', "tag": 'HUMAN_AGENT')
-        end
-
+                 {
+                   "recipient": JSON.dump(id: to),
+                   "message": JSON.dump(attachment: {
+                     "type": type,
+                     "payload": {}
+                   }),
+                   "filedata": Faraday::UploadIO.new(file_path, content_type, filename)
+                 }
+               else
+                 {
+                   'recipient': {
+                     'id': to
+                   },
+                   'message': {
+                     'attachment': {
+                       'type': file_type,
+                       'payload': {
+                         'url': url
+                       }
+                     }
+                   }
+                 }
+               end
+        body = add_human_agent_tag(to, body)
         body
       end
 

@@ -10,6 +10,8 @@ redis.subscribe('customer_chat');
 redis.subscribe('message_chat');
 redis.subscribe('customer_facebook_chat');
 redis.subscribe('message_facebook_chat');
+redis.subscribe('customer_instagram_chat');
+redis.subscribe('message_instagram_chat');
 redis.subscribe('agent_assignment');
 redis.subscribe('ml_orders');
 redis.subscribe('ml_messages');

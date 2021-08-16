@@ -5,8 +5,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
   let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
   let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
 
-  let!(:customer1) { create(:customer, :from_fb, retailer: retailer, first_name: 'First', last_name: 'Example') }
-  let!(:customer2) { create(:customer, :from_fb, retailer: retailer, first_name: 'Another', last_name: 'Test') }
+  let!(:customer1) { create(:customer, :from_fb, retailer: retailer, first_name: 'First', last_name: 'Example', pstype: :messenger) }
+  let!(:customer2) { create(:customer, :from_fb, retailer: retailer, first_name: 'Another', last_name: 'Test', pstype: :messenger) }
 
   before do
     # Facebook messages for customer1 and customer2
@@ -298,6 +298,14 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
   end
 
   describe 'GET #show' do
+    let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
+
+    before do
+      allow(set_facebook_messages_service).to receive(:send_read_action)
+        .and_return('Read')
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
+        .and_return(set_facebook_messages_service)
+    end
     let(:customer) { create(:customer, retailer: retailer) }
     let(:tag) { create(:tag, retailer: retailer, tag: 'Prueba 1') }
     let!(:tag2) { create(:tag, retailer: retailer, tag: 'Prueba 2') }
@@ -384,7 +392,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     before do
       allow(set_facebook_messages_service).to receive(:send_read_action)
         .and_return('Read')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
@@ -406,7 +414,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     before do
       allow(set_facebook_messages_service).to receive(:send_read_action)
         .and_return('Read')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
@@ -526,7 +534,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     before do
       allow(set_facebook_messages_service).to receive(:send_read_action)
         .and_return('Read')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
@@ -545,7 +553,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     before do
       allow(set_facebook_messages_service).to receive(:send_read_action)
         .and_return('Read')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
@@ -564,7 +572,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     before do
       allow(set_facebook_messages_service).to receive(:send_message)
         .and_return('Sent')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
     end
 
@@ -584,7 +592,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     before do
       allow(set_facebook_messages_service).to receive(:send_attachment)
         .and_return('Sent')
-      allow(Facebook::Messages).to receive(:new).with(facebook_retailer)
+      allow(Facebook::Messages).to receive(:new).with(facebook_retailer, 'messenger')
         .and_return(set_facebook_messages_service)
       allow(set_facebook_messages_service).to receive(:import_delivered)
         .and_return(set_facebook_messages_service)

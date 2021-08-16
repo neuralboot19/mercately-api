@@ -64,20 +64,28 @@ class Retailers::IntegrationsController < RetailersController
 
   def messenger_callbacks
     render(status: 200, json: params['hub.challenge']) && return if params['hub.challenge']
-    message_data = params['entry'][0]['messaging'][0]
-    facebook_retailer = FacebookRetailer.find_by(uid: message_data['recipient']['id'])
 
-    unless facebook_retailer.present?
-      render status: 200, json: {}
-      return
+    message_data = begin
+                     params['entry'][0]['messaging'][0]
+                   rescue
+                     params['entry'][0]['message'][0]
+                   end
+    platform = params['object']
+    uid = message_data['recipient']['id']
+    if platform != 'instagram'
+      platform = 'messenger'
+      finder = { uid: uid }
+    else
+      finder = { instagram_uid: uid }
     end
+    facebook_retailer = FacebookRetailer.find_by(finder)
+    render(status: 200, json: {}) && return if facebook_retailer.blank?
 
-    facebook_service = Facebook::Messages.new(facebook_retailer)
-
+    facebook_service = Facebook::Messages.new(facebook_retailer, platform)
     save_facebook_message(facebook_service, message_data)
     save_postback_button_interaction(facebook_service, message_data)
     import_facebook_message(facebook_service, message_data)
-    read_facebook_message(facebook_service, message_data)
+    read_facebook_message(facebook_service, message_data, platform)
 
     render status: 200, json: {}
   end
@@ -118,8 +126,8 @@ class Retailers::IntegrationsController < RetailersController
       facebook_service.import_delivered(message_data['delivery']['mids'][0], psid)
     end
 
-    def read_facebook_message(facebook_service, message_data)
-      return unless message_data['read']&.[]('watermark')
+    def read_facebook_message(facebook_service, message_data, platform)
+      return if message_data['read']&.[]('watermark').blank? && platform == 'messenger'
 
       psid = message_data['sender']['id']
       facebook_service.mark_read(psid)

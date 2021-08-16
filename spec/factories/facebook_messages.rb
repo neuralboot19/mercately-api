@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :facebook_message do
     facebook_retailer
-    customer
+    association :customer, pstype: :messenger
     sender_uid { Faker::IDNumber.valid }
     id_client { Faker::IDNumber.valid }
     text { Faker::Lorem.paragraph }
