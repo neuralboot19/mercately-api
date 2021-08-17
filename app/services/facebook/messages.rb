@@ -121,7 +121,7 @@ module Facebook
 
       def add_human_agent_tag(psid, body)
         last_message_date = Customer.find_by(psid: psid).facebook_messages.inbound.last&.created_at
-        if @type == 'instagram' || (last_message_date && last_message_date >= 24.hours.ago)
+        if @type == 'instagram' || (last_message_date && last_message_date <= 24.hours.ago)
           body.merge!("messaging_type": 'MESSAGE_TAG', "tag": 'HUMAN_AGENT')
         end
         body
