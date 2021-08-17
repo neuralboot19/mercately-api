@@ -35,7 +35,8 @@ const ChatSelector = ({
   }, [customers]);
 
   return (
-    <div className="chat__selector" onScroll={(e) => handleLoadMoreOnScrollToBottom(e)}>
+    <div className={`chat__selector ${chatType === 'facebook' ? 'fb-selector' : 'ws-selector'}`}
+      onScroll={(e) => handleLoadMoreOnScrollToBottom(e)}>
       {customers.map((customer) => (
         <ChatListItem
           key={customer.id}

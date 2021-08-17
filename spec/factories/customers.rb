@@ -16,6 +16,7 @@ FactoryBot.define do
     unread_messenger_chat { false }
     active_bot { false }
     chat_bot_option { nil }
+    status_chat { 'new_chat' }
 
     trait :from_ml do
       meli_nickname { meli_customer.nickname }

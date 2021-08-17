@@ -18,6 +18,7 @@ RSpec.describe Customer, type: :model do
     it { is_expected.to have_many(:customer_tags).dependent(:destroy) }
     it { is_expected.to have_many(:tags).through(:customer_tags) }
     it { is_expected.to have_one(:chat_bot).through(:chat_bot_option) }
+    it { is_expected.to have_many(:chat_histories).dependent(:destroy) }
   end
 
   describe 'enums' do
@@ -1078,6 +1079,177 @@ RSpec.describe Customer, type: :model do
 
       it 'sets the default notification cost' do
         expect(customer.ws_notification_cost).to eq(country_codes['Others'])
+      end
+    end
+  end
+
+  describe '#open_chat' do
+    let(:retailer) { create(:retailer) }
+    let(:retailer_user) { create(:retailer_user, :admin, retailer: retailer) }
+
+    context 'when the chat is on new_chat status' do
+      let(:customer) { create(:customer, retailer: retailer, status_chat: 'new_chat') }
+
+      it 'updates the chat to open_chat status' do
+        expect {
+          customer.open_chat(retailer_user)
+        }.to change(ChatHistory, :count).by(1)
+
+        expect(customer.status_chat).to eq('open_chat')
+
+        chat_history = ChatHistory.last
+        expect(chat_history.chat_status).to eq('chat_open')
+        expect(chat_history.action).to eq('mark_as')
+        expect(chat_history.retailer_user_id).to eq(retailer_user.id)
+      end
+    end
+
+    context 'when the chat is not on new_chat status' do
+      let(:customer) { create(:customer, retailer: retailer, status_chat: 'in_process') }
+
+      it 'does not update the chat to open_chat status' do
+        expect {
+          customer.open_chat(retailer_user)
+        }.to change(ChatHistory, :count).by(0)
+
+        expect(customer.status_chat).to eq('in_process')
+      end
+    end
+  end
+
+  describe '#set_in_process' do
+    let(:retailer) { create(:retailer) }
+    let(:retailer_user) { create(:retailer_user, :admin, retailer: retailer) }
+
+    context 'when the chat is on open_chat status' do
+      let(:customer) { create(:customer, retailer: retailer, status_chat: 'open_chat') }
+
+      it 'updates the chat to in_process status' do
+        expect {
+          customer.set_in_process(retailer_user)
+        }.to change(ChatHistory, :count).by(1)
+
+        expect(customer.status_chat).to eq('in_process')
+
+        chat_history = ChatHistory.last
+        expect(chat_history.chat_status).to eq('chat_in_process')
+        expect(chat_history.action).to eq('mark_as')
+        expect(chat_history.retailer_user_id).to eq(retailer_user.id)
+      end
+    end
+
+    context 'when the chat is not on open_chat status' do
+      context 'when the update comes from an answer message' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'new_chat') }
+
+        it 'updates the chat to in_process status' do
+          expect {
+            customer.set_in_process(retailer_user, true)
+          }.to change(ChatHistory, :count).by(1)
+
+          expect(customer.status_chat).to eq('in_process')
+
+          chat_history = ChatHistory.last
+          expect(chat_history.chat_status).to eq('chat_in_process')
+          expect(chat_history.action).to eq('mark_as')
+          expect(chat_history.retailer_user_id).to eq(retailer_user.id)
+        end
+      end
+
+      context 'when the update does not come from an answer message' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'new_chat') }
+
+        it 'does not update the chat to in_process status' do
+          expect {
+            customer.set_in_process(retailer_user)
+          }.to change(ChatHistory, :count).by(0)
+
+          expect(customer.status_chat).to eq('new_chat')
+        end
+      end
+    end
+  end
+
+  describe '#change_status_chat' do
+    let(:retailer) { create(:retailer) }
+    let(:retailer_user) { create(:retailer_user, :admin, retailer: retailer) }
+
+    context 'when changing to resolved status' do
+      context 'when the chat is on open_chat status' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'open_chat') }
+
+        it 'sets the chat as resolved' do
+          expect {
+            customer.change_status_chat(retailer_user, { status_chat: 'resolved' })
+          }.to change(ChatHistory, :count).by(1)
+
+          expect(customer.status_chat).to eq('resolved')
+
+          chat_history = ChatHistory.last
+          expect(chat_history.chat_status).to eq('chat_resolved')
+          expect(chat_history.action).to eq('change_to')
+          expect(chat_history.retailer_user_id).to eq(retailer_user.id)
+        end
+      end
+
+      context 'when the chat is on in_process status' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'in_process') }
+
+        it 'sets the chat as resolved' do
+          expect {
+            customer.change_status_chat(retailer_user, { status_chat: 'resolved' })
+          }.to change(ChatHistory, :count).by(1)
+
+          expect(customer.status_chat).to eq('resolved')
+
+          chat_history = ChatHistory.last
+          expect(chat_history.chat_status).to eq('chat_resolved')
+          expect(chat_history.action).to eq('change_to')
+          expect(chat_history.retailer_user_id).to eq(retailer_user.id)
+        end
+      end
+
+      context 'when the chat is not on open_chat and in_process status' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'new_chat') }
+
+        it 'does not set the chat as resolved' do
+          expect {
+            customer.change_status_chat(retailer_user, { status_chat: 'resolved' })
+          }.to change(ChatHistory, :count).by(0)
+
+          expect(customer.status_chat).to eq('new_chat')
+        end
+      end
+    end
+
+    context 'when changing to in_process status' do
+      context 'when the chat is on resolved status' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'resolved') }
+
+        it 'sets the chat as in_process' do
+          expect {
+            customer.change_status_chat(retailer_user, { status_chat: 'in_process' })
+          }.to change(ChatHistory, :count).by(1)
+
+          expect(customer.status_chat).to eq('in_process')
+
+          chat_history = ChatHistory.last
+          expect(chat_history.chat_status).to eq('chat_in_process')
+          expect(chat_history.action).to eq('change_to')
+          expect(chat_history.retailer_user_id).to eq(retailer_user.id)
+        end
+      end
+
+      context 'when the chat is not on resolved status' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'open_chat') }
+
+        it 'does not set the chat as in_process' do
+          expect {
+            customer.change_status_chat(retailer_user, { status_chat: 'in_process' })
+          }.to change(ChatHistory, :count).by(0)
+
+          expect(customer.status_chat).to eq('open_chat')
+        end
       end
     end
   end
