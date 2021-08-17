@@ -269,69 +269,17 @@
     <% end %>
   <% else %>
     <div class="card t-center mt-14 pl-40 pr-40 pt-35 pb-35 container-payment-plan_card index">
-      <div class="container-payment-plan_parent">
-        <div class="container-payment-plan_parent2 pricing__card m-0 mt-10 mr-5">
-          <div class="container-payment-plan_div1">
-            <h2 class="c-secondary m-0 container-payment-plan_plans_title">BÁSICO</h2>
-            <h2 class="m-0 container-payment-plan_plans_title"><b class="c-secondary">$29.99</b> al mes</h2>
-            <h4 class="m-0 container-payment-plan_pricing_text">Para negocios que estan empezando</h4>
-          </div>
-          <div class="container-payment-plan_div2">
-            <p class="container-payment-plan_sub container-payment-plan_plans_text">
-              Manejo de inventario<br/>
-              Facturación electronica<br/>
-              Múltiples usuarios<br/>
-              Múltiples locaciones
-            </p>
-          </div>
-          <div class="container-payment-plan_div3"><label data-plan="basic" data-plan_name="Básico" data-plan_price="29.99" for="basic" class="container-payment-plan_button">COMPRAR</label></div>
+      Tu plan ha sido desactivado, actualiza tu tarjeta y comunicate con <%= mail_to 'hola@mercately.com' %> para reactivarlo.
+      <% if current_retailer.ecu_charges || current_retailer.int_charges %>
+        <div class="card mt-60 ml-0 pl-40 pr-40 pt-35 pb-35 container-payment-plan_card">
+          <h3 class="m-0 mb-10 container-payment-plan_sub-title">Método de Pago</h3>
+          <% if current_retailer.ecu_charges %>
+            <%= render partial: 'paymentez_credit_card', locals: { pm: @pm, purchase_plan: false, is_modal: false } %>
+          <% elsif current_retailer.int_charges %>
+            <%= render partial: 'payment_method', locals: { pm: @pm, purchase_plan: false, is_modal: false } %>
+          <% end %>
         </div>
-        <div class="container-payment-plan_parent2 pricing__card m-0 mt-10 mr-5">
-          <div class="container-payment-plan_div1">
-            <h2 class="c-secondary m-0 container-payment-plan_plans_title">PROFESIONAL</h2>
-            <h2 class="m-0 container-payment-plan_plans_title"><b class="c-secondary">$49.99</b> al mes</h2>
-            <h4 class="m-0 container-payment-plan_pricing_text">Capitalizate y eleva tus ventas</h4>
-          </div>
-          <div class="container-payment-plan_div2">
-            <p class="container-payment-plan_sub container-payment-plan_plans_text">
-              Beneficios del plan Básico<br/>
-              Mercado Libre<br/>
-              Facebook Shops
-            </p>
-          </div>
-          <div class="container-payment-plan_div3"><label data-plan="professional" data-plan_name="Professional" data-plan_price="49.99" for="professional" class="container-payment-plan_button">COMPRAR</label></div>
-        </div>
-        <div class="container-payment-plan_parent2 pricing__card m-0 mt-10 mr-5">
-          <div class="container-payment-plan_div1">
-            <h2 class="c-secondary m-0 container-payment-plan_plans_title">AVANZADO</h2>
-            <h2 class="m-0 container-payment-plan_plans_title"><b class="c-secondary">$109.99</b> al mes</h2>
-            <h4 class="m-0 container-payment-plan_pricing_text">Aumenta tus ingresos como nunca antes</h4>
-          </div>
-          <div class="container-payment-plan_div2">
-            <p class="container-payment-plan_sub container-payment-plan_plans_text">
-              Beneficios del plan Profesional<br/>
-              Instagram<br/>
-              Facebook Messenger<br/>
-              WhatsApp
-            </p>
-          </div>
-          <div class="container-payment-plan_div3"><label data-plan="advanced" data-plan_name="Avanzado" data-plan_price="109.99" for="advanced" class="container-payment-plan_button">COMPRAR</label></div>
-        </div>
-        <div class="container-payment-plan_parent2 pricing__card m-0 mt-10 mr-5">
-          <div class="container-payment-plan_div1">
-            <h2 class="c-secondary m-0 container-payment-plan_plans_title">ENTERPRISE</h2>
-            <h2 class="m-0 container-payment-plan_plans_title"><b class="c-secondary">$199.99</b> al mes</h2>
-            <h4 class="m-0 container-payment-plan_pricing_text">Conviertete en nuestro socio</h4>
-          </div>
-          <div class="container-payment-plan_div2">
-            <p class="container-payment-plan_sub container-payment-plan_plans_text">
-              Todo lo anterior<br/>
-              API de desarrollo
-            </p>
-          </div>
-          <div class="container-payment-plan_div3"><label data-plan="enterprise" data-plan_name="Enterprise" data-plan_price="199.99" for="enterprise" class="container-payment-plan_button">COMPRAR</label></div>
-        </div>
-      </div>
+      <% end %>
     </div>
 
     <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
