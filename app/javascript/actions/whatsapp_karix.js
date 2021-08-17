@@ -123,6 +123,18 @@ export const setLastMessages = (customerDetails) => (
   })
 );
 
+export const setLastFBMessages = (customerDetails) => (
+  (dispatch) => {
+    return dispatch({
+      type: "SET_LAST_FB_MESSAGES",
+      data: {
+        messages: customerDetails.last_fb_messages.messages,
+        total_fb_pages: customerDetails.last_fb_messages.total_pages
+      }
+    })
+  }
+);
+
 export const sendWhatsAppImg = (id, body, token) => {
   const endpoint = `/api/v1/karix_whatsapp_send_file/${id}`;
   const csrfToken = token;

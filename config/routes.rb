@@ -32,6 +32,7 @@ Rails.application.routes.draw do
 
   devise_scope :retailer_user do
     get '/retailer_users/auth/facebook/messenger', to: 'retailer_users/omniauth_callbacks#messenger', as: :retailer_user_omniauth_messenger
+    get '/retailer_users/auth/facebook/instagram', to: 'retailer_users/omniauth_callbacks#instagram', as: :retailer_user_omniauth_instagram
     get '/retailer_users/auth/facebook/catalog', to: 'retailer_users/omniauth_callbacks#catalog', as: :retailer_user_omniauth_catalog
     get 'auth/facebook/setup', to: 'retailer_users/omniauth_callbacks#setup'
   end
@@ -119,6 +120,7 @@ Rails.application.routes.draw do
       get 'facebook_chats', to: 'messages#facebook_chats', as: :facebook_chats
       get 'facebook_chat/:id', to: 'messages#facebook_chat', as: :facebook_chat
       post 'facebook_chats/:id', to: 'messages#send_facebook_message', as: :send_facebook_message
+      get 'instagram_chats', to: 'messages#instagram_chats'
 
       # WhatsApp Chats
       get 'whatsapp_chats', to: 'whats_app#index', as: :whats_app_chats
@@ -167,6 +169,8 @@ Rails.application.routes.draw do
     post 'callbacks', to: 'integrations#callbacks'
     get 'messenger_callbacks', to: 'integrations#messenger_callbacks'
     post 'messenger_callbacks', to: 'integrations#messenger_callbacks'
+    get 'instagram_callbacks', to: 'integrations#instagram_callbacks'
+    post 'instagram_callbacks', to: 'integrations#instagram_callbacks'
     get 'products/:id/product_with_variations', to: 'products#product_with_variations'
     get 'products/:id/price_quantity', to: 'products#price_quantity'
     get 'customers/:id', to: 'customers#customer_data'

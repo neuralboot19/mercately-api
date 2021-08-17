@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_08_173153) do
+ActiveRecord::Schema.define(version: 2021_08_04_132055) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -391,10 +391,11 @@ ActiveRecord::Schema.define(version: 2021_07_08_173153) do
     t.float "ws_notification_cost", default: 0.0672
     t.boolean "hs_active"
     t.string "hs_id"
-    t.boolean "api_created", default: false
     t.string "number_to_use"
+    t.boolean "api_created", default: false
     t.boolean "ws_active", default: false
     t.datetime "last_chat_interaction"
+    t.integer "pstype"
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"
@@ -463,6 +464,7 @@ ActiveRecord::Schema.define(version: 2021_07_08_173153) do
     t.string "sender_first_name"
     t.string "sender_last_name"
     t.string "sender_email"
+    t.string "message_identifier"
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_facebook_messages_on_retailer_user_id"
@@ -474,6 +476,9 @@ ActiveRecord::Schema.define(version: 2021_07_08_173153) do
     t.string "access_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "instagram_integrated", default: false
+    t.string "instagram_uid"
+    t.boolean "messenger_integrated"
     t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
   end
 
@@ -567,6 +572,32 @@ ActiveRecord::Schema.define(version: 2021_07_08_173153) do
     t.datetime "updated_at", null: false
     t.index ["retailer_id", "hubspot_field"], name: "index_hubspot_fields_on_retailer_id_and_hubspot_field", unique: true
     t.index ["retailer_id"], name: "index_hubspot_fields_on_retailer_id"
+  end
+
+  create_table "instagram_messages", force: :cascade do |t|
+    t.string "sender_uid"
+    t.string "id_client"
+    t.bigint "facebook_retailer_id"
+    t.text "text"
+    t.string "mid"
+    t.string "reply_to"
+    t.bigint "customer_id"
+    t.date "date_read"
+    t.boolean "sent_from_mercately", default: false
+    t.boolean "sent_by_retailer", default: false
+    t.string "file_type"
+    t.string "url"
+    t.string "file_data"
+    t.string "filename"
+    t.bigint "retailer_user_id"
+    t.string "sender_first_name"
+    t.string "sender_last_name"
+    t.string "sender_email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_instagram_messages_on_customer_id"
+    t.index ["facebook_retailer_id"], name: "index_instagram_messages_on_facebook_retailer_id"
+    t.index ["retailer_user_id"], name: "index_instagram_messages_on_retailer_user_id"
   end
 
   create_table "karix_whatsapp_messages", force: :cascade do |t|
@@ -1114,6 +1145,9 @@ ActiveRecord::Schema.define(version: 2021_07_08_173153) do
   add_foreign_key "gupshup_whatsapp_messages", "customers"
   add_foreign_key "gupshup_whatsapp_messages", "retailers"
   add_foreign_key "hubspot_fields", "retailers"
+  add_foreign_key "instagram_messages", "customers"
+  add_foreign_key "instagram_messages", "facebook_retailers"
+  add_foreign_key "instagram_messages", "retailer_users"
   add_foreign_key "karix_whatsapp_messages", "customers"
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"

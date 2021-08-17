@@ -23,6 +23,7 @@ import TopChatBar from './TopChatBar';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
 import Lightbox from 'react-image-lightbox';
+import { v4 as uuidv4 } from 'uuid';
 import 'react-image-lightbox/style.css';
 
 var currentCustomer = 0;
@@ -62,11 +63,17 @@ class ChatMessages extends Component {
 
   handleSubmitMessage = (e, message) => {
     e.preventDefault();
-    let text = { message: message }
+    const uuid = uuidv4();
+    let text = { message: message, message_identifier: uuid };
     let isText = message && message.trim() !== '';
     this.setState(
       {
-        messages: isText ? this.state.messages.concat({text: message, sent_by_retailer: true, created_at: new Date() }) : this.state.messages,
+        messages: isText ? this.state.messages.concat({
+          text: message,
+          sent_by_retailer: true,
+          created_at: new Date(),
+          message_identifier: uuid
+        }) : this.state.messages,
         new_message: true
       }, () => {
         if (isText) {
@@ -87,28 +94,34 @@ class ChatMessages extends Component {
   }
 
   handleSubmitImg = (el, file_data) => {
-    var url, type;
+    let url, type, data;
+    const uuid = uuidv4();
 
     if (this.state.selectedProduct || this.state.selectedFastAnswer) {
       url = this.state.selectedProduct ? this.state.selectedProduct.attributes.image : this.state.selectedFastAnswer.attributes.image_url;
       type = 'image';
 
-      var data = new FormData();
+      data = new FormData();
       data.append('url', url);
       data.append('type', 'image');
+      data.append('message_identifier', uuid);
     } else {
       url = URL.createObjectURL(el.files[0]);
       type = this.fileType(el.files[0].type);
+      file_data.append('message_identifier', uuid);
     }
 
-    this.setState({messages: this.state.messages.concat({
-      url: url,
-      sent_by_retailer: true,
-      file_type: type, filename: el ? el.files[0].name : null}),
+    this.setState({
+      messages: this.state.messages.concat({
+        url: url,
+        sent_by_retailer: true,
+        file_type: type, filename: el ? el.files[0].name : null,
+        created_at: new Date(),
+        message_identifier: uuid
+      }),
       new_message: true,
       selectedProduct: null,
-      selectedFastAnswer: null,
-      created_at: new Date()
+      selectedFastAnswer: null
     }, () => {
       this.props.sendImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
       this.scrollToBottom();
@@ -205,18 +218,20 @@ class ChatMessages extends Component {
   )
 
   addArrivingMessage = (currentMessages, newMessage) => {
-    // First remove message without Id to avoid duplication
-    let newMessagesArray = currentMessages.filter((message) => message.id);
-    // Then find and replace element if it exists
+    // Find and replace element if it exists
     const index = currentMessages.findIndex((el) => (
-      el.id === newMessage.id
+      el.id === newMessage.id || (newMessage.message_identifier && el.message_identifier === newMessage.message_identifier)
     ));
+
     if (index === -1) {
-      newMessagesArray = newMessagesArray.concat(newMessage);
+      currentMessages = currentMessages.concat(newMessage);
     } else {
-      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id) ? newMessage : message));
+      currentMessages = currentMessages.map((message) => ((newMessage.id === message.id
+        || (newMessage.message_identifier && message.message_identifier === newMessage.message_identifier))
+        ? newMessage : message));
     }
-    return newMessagesArray.sort(this.sortMessages());
+
+    return currentMessages;
   }
 
   updateChat = (data) => {
@@ -247,18 +262,6 @@ class ChatMessages extends Component {
       }
     }
   }
-
-  sortMessages = () => (
-    (a, b) => {
-      if (moment(a.created_at) === moment(b.created_at)) {
-        return 0;
-      }
-      if (moment(a.created_at) > moment(b.created_at)) {
-        return 1;
-      }
-      return -1;
-    }
-  )
 
   downloadFile = (e, file_url, filename) => {
     e.preventDefault();
@@ -384,15 +387,25 @@ class ChatMessages extends Component {
   }
 
   sendImages = () => {
-    var insertedMessages = [];
-    var data = new FormData();
+    let insertedMessages = [];
+    let uuid, url, type;
+    const data = new FormData();
+
     this.state.loadedImages.map((image) => {
+      uuid = uuidv4();
       data.append('file_data[]', image);
+      data.append('message_identifiers[]', uuid);
 
-      var url = URL.createObjectURL(image);
-      var type = this.fileType(image.type);
+      url = URL.createObjectURL(image);
+      type = this.fileType(image.type);
 
-      insertedMessages.push({url: url, sent_by_retailer: true, file_type: type, created_at: new Date()})
+      insertedMessages.push({
+        url: url,
+        sent_by_retailer: true,
+        file_type: type,
+        created_at: new Date(),
+        message_identifier: uuid
+      })
     });
 
     this.setState({
@@ -497,19 +510,22 @@ class ChatMessages extends Component {
   }
 
   objectPresence = () => ((this.state.selectedProduct && this.state.selectedProduct.attributes.image)
-      || (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url))
+    || (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url))
 
   sendLocation = (position) => {
+    const uuid = uuidv4();
     let text = {
       message: `https://www.google.com/maps/place/${position.lat},${position.lng}`,
-      type: 'location'
+      type: 'location',
+      message_identifier: uuid
     }
 
     this.setState({ messages: this.state.messages.concat(
       {
         url: text.message,
         sent_by_retailer: true,
-        file_type: 'location'
+        file_type: 'location',
+        message_identifier: uuid
       }
     ), new_message: true, showMap: false}, () => {
       this.props.sendMessage(this.props.currentCustomer, text, csrfToken);

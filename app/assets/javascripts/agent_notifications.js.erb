@@ -62,6 +62,8 @@ const getChatType = (notificationType) => {
       return 'whatsapp_chats';
     case 'messenger':
       return 'facebook_chats';
+    case 'instagram':
+      return 'instagram_chats';
   }
   return null;
 }
@@ -77,6 +79,8 @@ const getChatNotificationIcon = (notificationType) => {
       return 'fab fa-whatsapp';
     case 'messenger':
       return 'fab fa-facebook-messenger';
+    case 'instagram':
+      return 'fab fa-instagram';
   }
   return 'far fa-comment-alt';
 }

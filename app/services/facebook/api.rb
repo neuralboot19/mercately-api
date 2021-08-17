@@ -1,8 +1,10 @@
 module Facebook
   class Api
-    def initialize(facebook_retailer, retailer_user)
+    def initialize(facebook_retailer, retailer_user, type = 'messenger')
       @facebook_retailer = facebook_retailer
       @retailer_user = retailer_user
+      @type = type
+      @klass = @type == 'instagram' ? InstagramMessage : FacebookMessage
     end
 
     def self.validate_granted_permissions(access_token, connection_type)
@@ -16,13 +18,18 @@ module Facebook
 
       if connection_type == 'messenger'
         messenger_permissions = ['email', 'pages_messaging', 'pages_manage_metadata', 'pages_read_engagement',
-          'pages_show_list']
+                                 'pages_show_list']
         granted_permissions = response['data'].any? { |d| messenger_permissions.include?(d['permission']) &&
-          d['status'] == 'declined' }
+                                                      d['status'] == 'declined' }
+      elsif connection_type == 'instagram'
+        instagram_permissions = ['instagram_basic', 'instagram_manage_messages', 'pages_manage_metadata',
+                               'pages_show_list']
+        granted_permissions = response['data'].any? { |d| instagram_permissions.include?(d['permission']) &&
+                                                      d['status'] == 'declined' }
       elsif connection_type == 'catalog'
         catalog_permissions = ['business_management', 'catalog_management']
         granted_permissions = response['data'].any? { |d| catalog_permissions.include?(d['permission']) &&
-          d['status'] == 'declined' }
+                                                      d['status'] == 'declined' }
       end
 
       {
@@ -38,6 +45,24 @@ module Facebook
       response = Connection.get_request(conn)
       save_page_access_token(response) if response
       subscribe_page_to_webhooks
+    end
+
+    def find_instagram_uid
+      url = instagram_uid_url
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      return unless response
+
+      raise 'NotIgAllowed' if response['instagram_business_account'].nil?
+
+      @facebook_retailer.update!(instagram_uid: response['instagram_business_account']['id'])
+    end
+
+    def check_instagram_access
+      url = instagram_conversations_url
+      conn = Connection.prepare_connection(url)
+      response = Connection.get_request(conn)
+      response['error'].nil? ? true : false
     end
 
     def save_page_access_token(response)
@@ -89,7 +114,8 @@ module Facebook
     def send_bulk_files(customer, params)
       return unless params[:file_data]
 
-      params[:file_data].each do |file|
+      params[:file_data].each_with_index do |file, index|
+        @index = index
         file_data = file.tempfile.path
         filename = File.basename(file.original_filename)
         save_message(customer, file_data, filename, params)
@@ -115,9 +141,25 @@ module Facebook
         "https://graph.facebook.com/v5.0/oauth/access_token?#{params.to_query}"
       end
 
+      def instagram_conversations_url
+        params = {
+          platform: 'instagram',
+          access_token: @facebook_retailer.access_token
+        }
+        "https://graph.facebook.com/v11.0/#{@facebook_retailer.uid}/conversations?#{params.to_query}"
+      end
+
+      def instagram_uid_url
+        params = {
+          fields: 'instagram_business_account',
+          access_token: @facebook_retailer.access_token
+        }
+        "https://graph.facebook.com/v11.0/#{@facebook_retailer.uid}?#{params.to_query}"
+      end
+
       def prepare_webhook_subscription
         {
-          subscribed_fields: 'messages,message_deliveries,message_reads,messaging_postbacks'
+          subscribed_fields: 'messages,message_deliveries,message_reads,messaging_postbacks,messaging_seen'
         }.to_json
       end
 
@@ -157,7 +199,7 @@ module Facebook
       end
 
       def save_message(customer, file_data, filename, params)
-        FacebookMessage.create(
+        @klass.create(
           customer: customer,
           sender_uid: @retailer_user.uid,
           id_client: customer.psid,
@@ -167,7 +209,8 @@ module Facebook
           sent_by_retailer: true,
           filename: filename,
           retailer_user: @retailer_user,
-          file_type: params[:type]
+          file_type: params[:type],
+          message_identifier: @index ? params[:message_identifiers][@index] : params[:message_identifier]
         )
       end
   end

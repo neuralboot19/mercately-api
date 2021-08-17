@@ -23,6 +23,7 @@ class Customer < ApplicationRecord
   has_many :reminders, dependent: :destroy
   has_many :messages, dependent: :destroy
   has_many :facebook_messages, dependent: :destroy
+  has_many :instagram_messages, dependent: :destroy
   has_many :karix_whatsapp_messages, dependent: :destroy
   has_many :gupshup_whatsapp_messages, dependent: :destroy
   has_many :customer_tags, dependent: :destroy
@@ -61,6 +62,7 @@ class Customer < ApplicationRecord
   after_update :sync_hs, if: :hs_active?
 
   enum id_type: %i[cedula pasaporte ruc rut otro]
+  enum pstype: %i[messenger instagram]
 
   attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file, :from_api
 
@@ -141,6 +143,14 @@ class Customer < ApplicationRecord
     first_name
   end
 
+  def message_records
+    if instagram?
+      instagram_messages
+    else
+      facebook_messages
+    end
+  end
+
   def earnings
     orders_success.map(&:total).sum.to_f.round(2)
   end
@@ -170,11 +180,11 @@ class Customer < ApplicationRecord
   end
 
   def unread_message?
-    self.unread_messenger_chat || facebook_messages.where(sent_by_retailer: false).last&.date_read.blank?
+    self.unread_messenger_chat || message_records.where(sent_by_retailer: false).last&.date_read.blank?
   end
 
   def last_message_received_date
-    facebook_messages.where(sent_by_retailer: false).last.created_at
+    message_records.where(sent_by_retailer: false).last.created_at
   end
 
   def range_earnings(start_date, end_date)
@@ -212,13 +222,25 @@ class Customer < ApplicationRecord
     end
   end
 
+  def last_fb_messages
+    msgs = messenger? ? facebook_messages : instagram_messages
+    msgs = msgs.order(created_at: :desc).page(1)
+    {
+      messages: ActiveModelSerializers::SerializableResource.new(
+        msgs,
+        each_serializer: FacebookMessageSerializer
+      ).as_json.reverse,
+      total_pages: msgs.total_pages
+    }
+  end
+
   def unread_whatsapp_messages
     messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
     self.send(messages).unread.where(direction: 'inbound').count
   end
 
   def unread_messenger_messages
-    facebook_messages.customer_unread.count
+    message_records.customer_unread.count
   end
 
   def recent_inbound_message_date
@@ -270,7 +292,7 @@ class Customer < ApplicationRecord
   end
 
   def recent_facebook_message_date
-    facebook_messages.last&.created_at
+    message_records.last&.created_at
   end
 
   def whatsapp_messages
@@ -319,15 +341,15 @@ class Customer < ApplicationRecord
   end
 
   def total_messenger_messages
-    facebook_messages.count
+    message_records.count
   end
 
   def before_last_messenger_message
-    facebook_messages.where(sent_by_retailer: false).second_to_last
+    message_records.where(sent_by_retailer: false).second_to_last
   end
 
   def last_messenger_message
-    facebook_messages.last
+    message_records.last
   end
 
   def accept_opt_in!
@@ -354,11 +376,11 @@ class Customer < ApplicationRecord
   end
 
   def messenger_answered_by_agent?
-    facebook_messages.where(sent_by_retailer: true).where.not(retailer_user_id: nil).exists?
+    message_records.where(sent_by_retailer: true).where.not(retailer_user_id: nil).exists?
   end
 
   def first_messenger_answer_by_agent?(message_uid)
-    answers = facebook_messages.where(sent_by_retailer: true).where.not(retailer_user_id: nil)
+    answers = message_records.where(sent_by_retailer: true).where.not(retailer_user_id: nil)
     eval_answers(answers, 'mid', message_uid)
   end
 

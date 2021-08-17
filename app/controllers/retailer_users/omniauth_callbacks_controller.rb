@@ -14,10 +14,23 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
       return
     end
 
-    @retailer_user = RetailerUser.from_omniauth(auth, current_retailer_user, permissions[:permissions],
-                                                auth_connection_type)
+    begin
+      @retailer_user = RetailerUser.from_omniauth(auth, current_retailer_user, permissions[:permissions],
+                                                  auth_connection_type)
+    rescue => e
+      facebook_retailer = FacebookRetailer.find_by(retailer_id: current_retailer.id)
+      facebook_retailer&.update(instagram_integrated: false)
+      message = if e == 'NotIgAllowed'
+                  'Tu cuenta de Instagram no cumple con los requisitos para la integración'
+                else
+                  'Ya existe una cuenta de Mercately conectada con esa cuenta de Instagram'
+                end
+      redirect_to root_path, notice: message
+      return
+    end
 
     return if check_facebook_retailer(permissions, auth_connection_type)
+    return if check_instagram(permissions, auth_connection_type)
     return if select_catalog(permissions, auth_connection_type)
 
     check_persistence
@@ -30,6 +43,19 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
   def messenger
     session['auth_connection_type'] = 'messenger'
     scope = 'email,pages_messaging,pages_manage_metadata,pages_read_engagement,pages_show_list'
+    if current_retailer_user.retailer.facebook_retailer&.instagram_integrated
+      scope += ',instagram_basic,instagram_manage_messages,pages_manage_metadata'
+    end
+
+    redirect_to retailer_user_facebook_omniauth_authorize_path, flash: { scope: scope }
+  end
+
+  def instagram
+    session['auth_connection_type'] = 'instagram'
+    scope = 'instagram_basic,instagram_manage_messages,pages_manage_metadata,pages_show_list'
+    if current_retailer_user.retailer.facebook_retailer&.connected?
+      scope += ',email,pages_messaging,pages_manage_metadata,pages_read_engagement,pages_show_list'
+    end
 
     redirect_to retailer_user_facebook_omniauth_authorize_path, flash: { scope: scope }
   end
@@ -37,8 +63,12 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
   def catalog
     session['auth_connection_type'] = 'catalog'
     scope = 'business_management,catalog_management'
-    scope += ',email,pages_messaging,pages_manage_metadata,pages_read_engagement,pages_show_list' if
-      current_retailer_user.retailer.facebook_retailer
+    if current_retailer_user.retailer.facebook_retailer&.connected?
+      scope += ',email,pages_messaging,pages_manage_metadata,pages_read_engagement,pages_show_list'
+    end
+    if current_retailer_user.retailer.facebook_retailer&.instagram_integrated
+      scope += ',instagram_basic,instagram_manage_messages,pages_manage_metadata'
+    end
 
     redirect_to retailer_user_facebook_omniauth_authorize_path, flash: { scope: scope }
   end
@@ -62,6 +92,25 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
       false
     end
 
+    def check_instagram(permissions, connection_type)
+      if check_instagram_requirements
+        redirect_to root_path, notice: 'Tu cuenta de Instagram no cumple con los requisitos para la integración'
+        return true
+      elsif @retailer_user.retailer.facebook_retailer.nil? &&
+         permissions[:permissions].any? { |p| p['permission'] == 'instagram_manage_messages' &&
+          p['status'] == 'granted' } && connection_type == 'instagram'
+        redirect_to root_path, notice: 'Ya existe una cuenta de Mercately con esta cuenta de Instagram'
+        return true
+      end
+
+      false
+    end
+
+    def check_instagram_requirements
+      facebook_service = Facebook::Api.new(@retailer_user.retailer.facebook_retailer, @retailer_user)
+      facebook_service.check_instagram_access
+    end
+
     def select_catalog(permissions, connection_type)
       if @retailer_user.retailer.facebook_catalog && @retailer_user.retailer.facebook_catalog.uid.nil? &&
          permissions[:permissions].any? { |p| p['permission'] == 'catalog_management' && p['status'] == 'granted' } &&
@@ -76,7 +125,8 @@ class RetailerUsers::OmniauthCallbacksController < Devise::OmniauthCallbacksCont
     def check_persistence
       if @retailer_user.persisted?
         sign_in_and_redirect @retailer_user, event: :authentication
-        set_flash_message(:notice, :success, kind: 'Facebook') if is_navigational_format?
+        kind = session['auth_connection_type'] == 'instagram' ? 'Instagram' : 'Facebook'
+        set_flash_message(:notice, :success, kind: kind) if is_navigational_format?
       else
         session['devise.facebook_data'] = request.env['omniauth.auth']
         redirect_to new_retailer_user_registration_url
