@@ -144,14 +144,15 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
 
       context 'when mobile request' do
         before do
+          retailer_user.generate_api_token!
           sign_out retailer_user
         end
 
         let(:mobile_token) { create(:mobile_token, retailer_user: retailer_user) }
 
         let(:header_email) { retailer_user.email }
-        let(:header_device) { mobile_token.device }
-        let(:header_token) { mobile_token.generate! }
+        let(:header_device) { retailer_user.api_session_device }
+        let(:header_token) { retailer_user.api_session_token }
 
         describe 'when karix_integrated' do
           let(:customer) { create(:customer, :with_retailer_karix_integrated) }
@@ -229,8 +230,12 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
           let(:mobile_token) { create(:mobile_token, retailer_user: customer.retailer.retailer_users.first) }
 
           let(:header_email) { customer.retailer.retailer_users.first.email }
-          let(:header_device) { mobile_token.device }
-          let(:header_token) { mobile_token.generate! }
+          let(:header_device) { customer.retailer.retailer_users.first.api_session_device }
+          let(:header_token) { customer.retailer.retailer_users.first.api_session_token }
+
+          before do
+            customer.retailer.retailer_users.first.generate_api_token!
+          end
 
           context 'when the agent customer is a new record' do
             it 'successfully, a 200 Ok will be responsed' do

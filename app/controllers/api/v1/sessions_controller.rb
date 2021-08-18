@@ -1,24 +1,32 @@
 module Api::V1
   class SessionsController < Api::MobileController
     skip_before_action :disable_access_by_authorization, only: :create
-    before_action :set_retailer, only: :create
+    before_action :valid_push_token, only: :create_mobile_push_token
+    before_action :set_retailer, only: [:create, :create_mobile_push_token, :delete]
+    before_action :valid_retailer_password, only: :create
 
     def create
+      @user.generate_api_token!
+
+      response.headers['Authorization'] = @user.api_session_token
+      response.headers['Device'] = @user.api_session_device
+      render json: serialize_retailer_user(@user), status: 200
+    end
+
+    def create_mobile_push_token
       mobile_token = @user.mobile_tokens.build(
         mobile_push_token: create_params[:mobile_push_token]
       )
 
       if mobile_token.save!
-        token = mobile_token.generate!
-
-        response.headers['Authorization'] = token
-        response.headers['Device'] = mobile_token.device
+        mobile_token.generate!
         render json: serialize_retailer_user(@user), status: 200
       end
     end
 
     def delete
-      @mobile_token.destroy
+      @user.destroy_api_token!
+      @user.mobile_tokens.destroy_all
       set_response(200, 'Sesión cerrada correctamente')
     end
 
@@ -28,12 +36,17 @@ module Api::V1
         params.require(:retailer_user).permit(:email, :password, :mobile_push_token)
       end
 
-      def set_retailer
-        return render_unauthorized unless create_params[:mobile_push_token].present?
-
-        @user = RetailerUser.find_by_email(create_params[:email])
-        return record_not_found unless @user
+      def valid_retailer_password
         return render_unauthorized unless @user.valid_password?(create_params[:password])
+      end
+
+      def valid_push_token
+        return render_unauthorized unless create_params[:mobile_push_token].present?
+      end
+
+      def set_retailer
+        @user = RetailerUser.find_by_email(request.headers['email'] || create_params[:email])
+        return record_not_found unless @user
 
         @user
       end
