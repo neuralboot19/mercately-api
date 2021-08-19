@@ -237,6 +237,7 @@ Rails.application.routes.draw do
       # App Mobile
       get 'ping', to: 'welcome#ping', as: :ping
       post 'sign_in', to: 'sessions#create', as: :sign_in
+      post 'mobile_token', to: 'sessions#create_mobile_push_token', as: :create_mobile_push_token
       delete 'log_out', to: 'sessions#delete', as: :log_out
 
       # For Karix
@@ -290,6 +291,8 @@ Rails.application.routes.draw do
       patch 'mark_notification_as_read', to: 'agent_notifications#mark_as_read',  as: :mark_notification_as_read
       patch 'mark_by_customer_as_read', to: 'agent_notifications#mark_by_customer_as_read',  as: :mark_by_customer_as_read
       get 'notifications_list', to: 'agent_notifications#notifications_list'
+
+      put 'change_chat_status', to: 'chats#change_chat_status'
     end
   end
 

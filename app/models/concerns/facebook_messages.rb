@@ -2,6 +2,7 @@ module FacebookMessages
   extend ActiveSupport::Concern
 
   included do
+    include StatusChatConcern
     include AgentMessengerAssignmentConcern
     include MessengerChatBotActionConcern
     belongs_to :facebook_retailer
