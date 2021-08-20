@@ -320,6 +320,8 @@ class Retailer < ApplicationRecord
       self.ml_domain = case ml_site
                        when 'MLC'
                          'cl'
+                       when 'MCR'
+                         'co.cr'
                        else
                          'com.ec'
                        end
