@@ -8,7 +8,7 @@
         <% if current_retailer.address.blank? || current_retailer.city.blank? || current_retailer.state.blank? %><li>Dirección de domicilio</li><% end %>
       </ul>
 
-      Puedes confirmar esta información directamente en Mercado Libre haciendo click <a href="https://myaccount.mercadolibre.com.ec/profile#menu-user" target="_blank">aquí</a>.</br></br>
+      Puedes confirmar esta información directamente en Mercado Libre haciendo click <a href=<%= "https://myaccount.mercadolibre.#{current_retailer.ml_domain}/profile#menu-user" %> target="_blank">aquí</a>.</br></br>
 
       Nota: Si ya actualizaste tus datos por favor cierra sesión y vuelve a ingresar a Mercately.
     </div>
