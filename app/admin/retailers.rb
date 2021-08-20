@@ -353,7 +353,7 @@ ActiveAdmin.register Retailer do
       f.input :phone_number
       f.input :unlimited_account
       f.input :whats_app_enabled
-      f.input :ml_site, as: :select, collection: [['Ecuador', 'MEC'], ['Chile', 'MLC']]
+      f.input :ml_site, as: :select, collection: [['Ecuador', 'MEC'], ['Chile', 'MLC'], ['Costa Rica', 'MCR']]
       f.input :ml_domain
       f.input :karix_whatsapp_phone
       f.input :karix_account_uid
