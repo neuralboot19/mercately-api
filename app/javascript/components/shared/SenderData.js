@@ -1,8 +1,8 @@
 import React from 'react';
 
-const SenderData = ({ senderFullName }) => (
+const SenderData = ({ senderFullName, isNote }) => (
   <p className="m-0 text-right">
-    <small>Enviado por: {senderFullName}</small>
+    <small>{isNote ? 'Creado' : 'Enviado'} por: {senderFullName}</small>
   </p>
 );
 

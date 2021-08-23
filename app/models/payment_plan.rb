@@ -7,7 +7,7 @@ class PaymentPlan < ApplicationRecord
   def notify_slack
     npd = (next_pay_date || Date.today) + month_interval.month
     ws_msg = if retailer.gupshup_integrated?
-               retailer.gupshup_whatsapp_messages.where(created_at: month_interval.months.ago..Time.now)
+               retailer.gupshup_whatsapp_messages.where(created_at: month_interval.months.ago..Time.now).where.not(note: true)
              elsif retailer.karix_integrated?
                retailer.karix_whatsapp_messages.where(created_time: month_interval.months.ago..Time.now)
              end

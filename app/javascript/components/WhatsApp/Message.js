@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import RepliedMessage from '../shared/messages/replied/RepliedMessage';
 import TextMessage from '../shared/messages/TextMessage';
+import NoteMessage from '../shared/messages/NoteMessage';
 import AudioMessage from '../shared/messages/AudioMessage';
 import ContactMessage from './messages/ContactMessage';
 import DocumentMessage from '../shared/messages/DocumentMessage';
@@ -20,6 +21,21 @@ class Message extends Component {
   }
 
   render() {
+    const isNote = this.props.message.content_type === 'text' && this.props.message.note === true;
+    let textMsg;
+    if (isNote) {
+      textMsg = <NoteMessage
+        chatType="whatsapp"
+        message={this.props.message}
+      />
+    } else if (this.props.message.content_type === 'text') {
+      textMsg = <TextMessage
+        chatType="whatsapp"
+        handleMessageEvents={this.props.handleMessageEvents}
+        message={this.props.message}
+      />
+    }
+
     return (
       <div>
         {this.props.message.replied_message
@@ -30,14 +46,7 @@ class Message extends Component {
             openImage={this.props.openImage}
           />
         )}
-        {this.props.message.content_type === 'text'
-        && (
-          <TextMessage
-            chatType="whatsapp"
-            handleMessageEvents={this.props.handleMessageEvents}
-            message={this.props.message}
-          />
-        )}
+        {textMsg && textMsg}
         {this.props.message.content_type === 'media'
         && this.props.message.content_media_type === 'image'
         && (

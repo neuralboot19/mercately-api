@@ -26,6 +26,7 @@ const initialState = {
   loadingMoreCustomers: false,
   funnelSteps: [],
   orders: [],
+  customerNotes: [],
   totalOrders: 0,
   mlChats: [],
   totalMlChats: 0,
@@ -46,6 +47,16 @@ const reducer = (state = initialState, action) => {
         errors: action.data.errors,
         reminders: action.data.reminders,
         tags: action.data.tags
+      };
+    case 'SET_NOTES':
+      return {
+        ...state,
+        customerNotes: action.data.notes
+      };
+    case 'ADD_NOTE':
+      return {
+        ...state,
+        customerNotes: [action.body, ...state.customerNotes]
       };
     case 'CREATE_REMINDER':
       return {

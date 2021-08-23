@@ -14,7 +14,7 @@
   }
 
   .ig-chat__box {
-    height: calc(100vh - 292px);
+    height: calc(100vh - 340px);
     overflow-y: auto;
   }
 
@@ -33,7 +33,7 @@
       height: calc(100vh - 323px)!important;
     }
     .ig-chat__box {
-      height: calc(100vh - 256px);
+      height: calc(100vh - 316px);
       overflow-y: auto;
     }
   }
@@ -110,7 +110,7 @@
   }
 }
 .input-from-backend {
-  input{
+  input, textarea {
     background-color: $light!important;
     border-color: rgba(0,0,0,.05);
     border-radius: 8px!important;
@@ -119,6 +119,11 @@
     @extend .font-weight-normal;
     @extend .text-gray-dark;
     @extend .fs-12;
+  }
+
+  #note-textarea {
+    padding: 14px !important;
+    font-size: 16px !important;
   }
 }
 

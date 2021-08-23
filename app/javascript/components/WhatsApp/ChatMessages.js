@@ -17,6 +17,9 @@ import {
   createReminder,
   setLastMessages
 } from '../../actions/whatsapp_karix';
+import {
+  addNote as addNoteAction
+} from "../../actions/actions";
 import ImagesSelector from '../shared/ImagesSelector';
 import GoogleMap from '../shared/Map';
 import Message from './Message';
@@ -29,6 +32,7 @@ import TemplateSelectionModal from './TemplateSelectionModal';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
 import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
 import ReminderConfigModal from './ReminderConfigModal';
+import NoteModal from '../shared/NoteModal';
 import 'react-image-lightbox/style.css';
 
 let currentCustomer = 0;
@@ -72,12 +76,14 @@ class ChatMessages extends Component {
       templateType: '',
       acceptedFiles: '',
       isReminderConfigModalOpen: false,
+      isNoteModalOpen: false,
       isOpenImage: false,
       imageUrl: null,
       showInputMenu: false,
       showOptions: !props.onMobile
     };
     this.bottomRef = React.createRef();
+    this.noteTextRef = React.createRef();
     this.opted_in = false;
     this.cancelledAudio = false;
     this.caretPosition = 0;
@@ -309,6 +315,43 @@ class ChatMessages extends Component {
     }), () => {
       this.props.sendWhatsAppMessage(text, csrfToken);
       this.scrollToBottom();
+    });
+  }
+
+  submitNote = () => {
+    const message = this.noteTextRef.current.value;
+    if (message.trim() === '') return;
+
+    const uuid = uuidv4();
+    const text = {
+      message,
+      customer_id: this.props.currentCustomer,
+      note: true,
+      type: 'text',
+      message_identifier: uuid
+    };
+    this.setState((prevState) => ({
+      messages: prevState.messages.concat({
+        note: true,
+        content_type: 'text',
+        content_text: message,
+        direction: 'outbound',
+        status: 'enqueued',
+        created_time: new Date(),
+        message_identifier: uuid
+      }),
+      new_message: true
+    }), () => {
+      this.props.sendWhatsAppMessage(text, csrfToken);
+      this.props.addNote({
+        id: uuid,
+        message,
+        // eslint-disable-next-line no-undef
+        retailer_user: ENV.CURRENT_AGENT_NAME || ENV.CURRENT_AGENT_EMAIL,
+        created_at: new Date()
+      });
+      this.scrollToBottom();
+      this.cancelNote();
     });
   }
 
@@ -709,6 +752,7 @@ class ChatMessages extends Component {
       ? `message-by-retailer f-right ${(message.status === 'error' && message.will_retry === false ? ' error-message' : '')}`
       : 'message-by-customer';
     classes += ' main-message-container';
+    if (message.note === true) classes += ' note-message';
     if (['voice', 'audio'].includes(this.fileType(message.content_media_type))) {
       classes += ' video-audio audio-background';
     } else if (['image', 'video', 'sticker'].includes(this.fileType(message.content_media_type))) {
@@ -1106,6 +1150,17 @@ class ChatMessages extends Component {
     }
   }
 
+  cancelNote = () => {
+    this.toggleNoteModal();
+    this.noteTextRef.current.clearValue();
+  }
+
+  toggleNoteModal = () => {
+    this.setState((prevState) => ({
+      isNoteModalOpen: !prevState.isNoteModalOpen
+    }));
+  }
+
   toggleReminderConfigModal = () => {
     this.setState((prevState) => ({
       isReminderConfigModalOpen: !prevState.isReminderConfigModalOpen
@@ -1279,6 +1334,7 @@ class ChatMessages extends Component {
               <ClosedChannel
                 openModal={this.openModal}
                 openReminderConfigModal={this.openReminderConfigModal}
+                toggleNoteModal={this.toggleNoteModal}
               />
             ) : (
               this.canSendMessages()
@@ -1310,6 +1366,7 @@ class ChatMessages extends Component {
                   toggleProducts={this.props.toggleProducts}
                   openProducts={this.openProducts}
                   openReminderConfigModal={this.openReminderConfigModal}
+                  openNoteModal={this.toggleNoteModal}
                   showInputMenu={this.state.showInputMenu}
                   handleShowInputMenu={this.handleShowInputMenu}
                   wrapperInputMenu={this.wrapperInputMenu}
@@ -1371,6 +1428,15 @@ class ChatMessages extends Component {
           toggleReminderConfigModal={this.toggleReminderConfigModal}
           isReminderConfigModalOpen={this.state.isReminderConfigModalOpen}
         />
+
+        <NoteModal
+          ref={this.noteTextRef}
+          onMobile={this.props.onMobile}
+          cancelNote={this.cancelNote}
+          submitNote={this.submitNote}
+          isNoteModalOpen={this.state.isNoteModalOpen}
+          toggleNoteModal={this.toggleNoteModal}
+        />
       </div>
     );
   }
@@ -1431,6 +1497,9 @@ function mapDispatch(dispatch) {
     },
     createReminder: (body, token) => {
       dispatch(createReminder(body, token));
+    },
+    addNote: (body) => {
+      dispatch(addNoteAction(body));
     }
   };
 }

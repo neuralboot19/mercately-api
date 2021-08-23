@@ -83,7 +83,7 @@ module Facebook
       customer = Customer.find_by(psid: psid)
       return unless customer.present?
 
-      messages = customer.message_records.retailer_unread.order(:id)
+      messages = customer.message_records.where.not(note: true).retailer_unread.order(:id)
       last_message = messages.last
       return unless last_message.present?
 
@@ -210,12 +210,14 @@ module Facebook
       end
 
       def prepare_action(to, action)
-        {
+        body = {
           'recipient': {
             'id': to
           },
           'sender_action': action
-        }.to_json
+        }
+        body = add_human_agent_tag(to, body)
+        body.to_json
       end
 
       def file_type_url(message_data, file_type)

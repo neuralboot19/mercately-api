@@ -201,12 +201,7 @@ class Customer < ApplicationRecord
   end
 
   def unread_whatsapp_message?
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-
-    last_message = self.send(messages).where(direction: 'inbound').last
-    return false unless last_message.present?
-
-    last_message.status != 'read'
+    count_unread_messages.positive?
   end
 
   def last_messages
@@ -247,12 +242,10 @@ class Customer < ApplicationRecord
   end
 
   def recent_inbound_message_date
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-
-    last_message = self.send(messages).where(direction: 'inbound').last
+    last_message = whatsapp_messages.where(direction: 'inbound').last
     return Time.now - 30.hours unless last_message.present?
-
     return last_message.created_time.localtime if retailer.karix_integrated?
+
     last_message.created_at.localtime
   end
 
@@ -283,25 +276,29 @@ class Customer < ApplicationRecord
   end
 
   def last_whatsapp_message
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-    self.send(messages).last
+    msg_records = whatsapp_messages
+    msg_records = msg_records.where.not(note: true) if retailer.gupshup_integrated?
+    msg_records.last
   end
 
   def recent_whatsapp_message_date
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
+    msg_records = whatsapp_messages
+    if retailer.gupshup_integrated?
+      msg_records = msg_records.where.not(note: true)
+      return msg_records.last&.created_at
+    end
 
-    return self.send(messages).last&.created_time if retailer.karix_integrated?
-    self.send(messages).last&.created_at
+    msg_records.last&.created_time
   end
 
   def recent_facebook_message_date
-    message_records.last&.created_at
+    message_records.where.not(note: true).last&.created_at
   end
 
   def whatsapp_messages
     if retailer.karix_integrated?
       karix_whatsapp_messages
-    elsif retailer.gupshup_integrated?
+    else
       gupshup_whatsapp_messages
     end
   end
@@ -333,15 +330,11 @@ class Customer < ApplicationRecord
   end
 
   def total_whatsapp_messages
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-
-    send(messages).count
+    whatsapp_messages.count
   end
 
   def before_last_whatsapp_message
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-
-    send(messages).where(direction: 'inbound').second_to_last
+    whatsapp_messages.where(direction: 'inbound').second_to_last
   end
 
   def total_messenger_messages
@@ -353,7 +346,7 @@ class Customer < ApplicationRecord
   end
 
   def last_messenger_message
-    message_records.last
+    message_records.where.not(note: true).last
   end
 
   def accept_opt_in!
@@ -361,30 +354,31 @@ class Customer < ApplicationRecord
   end
 
   def whatsapp_answered_by_agent?
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-
-    send(messages).where(direction: 'outbound').where.not(retailer_user_id: nil).exists?
+    msg_records = whatsapp_messages
+    if retailer.gupshup_integrated?
+      msg_records = msg_records.where.not(note: true)
+    end
+    msg_records.where(direction: 'outbound').where.not(retailer_user_id: nil).exists?
   end
 
   def first_whatsapp_answer_by_agent?(message_uid)
+    answers = whatsapp_messages.where(direction: 'outbound').where.not(retailer_user_id: nil)
     if retailer.karix_integrated?
-      messages = 'karix_whatsapp_messages'
       attribute = 'uid'
     else
-      messages = 'gupshup_whatsapp_messages'
+      answers = answers.where.not(note: true)
       attribute = 'gupshup_message_id'
     end
 
-    answers = send(messages).where(direction: 'outbound').where.not(retailer_user_id: nil)
     eval_answers(answers, attribute, message_uid)
   end
 
   def messenger_answered_by_agent?
-    message_records.where(sent_by_retailer: true).where.not(retailer_user_id: nil).exists?
+    message_records.where(sent_by_retailer: true).where.not(retailer_user_id: nil, note: true).exists?
   end
 
   def first_messenger_answer_by_agent?(message_uid)
-    answers = message_records.where(sent_by_retailer: true).where.not(retailer_user_id: nil)
+    answers = message_records.where(sent_by_retailer: true).where.not(retailer_user_id: nil, note: true)
     eval_answers(answers, 'mid', message_uid)
   end
 

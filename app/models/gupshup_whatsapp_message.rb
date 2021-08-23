@@ -31,6 +31,7 @@ class GupshupWhatsappMessage < ApplicationRecord
     where("status <> 0 OR error_payload -> 'payload' -> 'payload' ->> 'code' = '1002'")
   end
 
+  before_validation :nil_to_false
   before_create :set_message_type
   after_save :apply_cost
   after_save :update_reminder
@@ -119,5 +120,9 @@ class GupshupWhatsappMessage < ApplicationRecord
         "Código del error: #{error['code']}",
         "Razón del error: #{error['reason']}"
       ].join("\n"))
+    end
+
+    def nil_to_false
+      self.note = false if note.nil?
     end
 end

@@ -23,7 +23,7 @@ const SelectedTemplate = ({
             <input type="file" name="file" id="template_file" accept={acceptedFiles} />
           </div>
         )}
-    <div className="d-flex justify-content-center mt-30">
+    <div className="d-flex justify-content-center justify-content-md-end mt-30">
       <div className={onMobile ? "mr-5" : "mr-15"}>
         <a className="border-8 bg-light text-gray-dark p-12 border-gray" onClick={() => cancelTemplate()}>Cancelar</a>
       </div>

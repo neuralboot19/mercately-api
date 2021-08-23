@@ -58,10 +58,10 @@ class ImagesSelector extends Component {
                         <i className="fas fa-times-circle cursor-pointer" onClick={() => this.props.removeImage(index)}></i>
                         <img src={URL.createObjectURL(image)} className="image-selected" />
                       </div>
-                    </div>                    
+                    </div>
                   )}
                 </div>
-                <div className="d-flex justify-content-center mt-30 mx-0">
+                <div className="d-flex justify-content-center mt-30 mx-0 justify-content-md-end">
                     <div className={this.props.onMobile ? "mr-5" : "mr-15"}>
                       <a className="bg-light border-8 p-12 text-gray-dark border-gray" onClick={(e) => this.props.toggleLoadImages()}>Cancelar</a>
                     </div>
