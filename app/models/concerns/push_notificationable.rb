@@ -9,7 +9,12 @@ module PushNotificationable
 
     def send_push_notifications
       # only inbound messages will be notified
-      return unless self.direction == 'inbound'
+      if self.class == GupshupWhatsappMessage || self.class == KarixWhatsappMessage
+        return unless direction == 'inbound'
+      elsif self.class == FacebookMessage || self.class == InstagramMessage
+        return if sent_by_retailer
+      end
+
 
       users = users_to_be_notified
       return true unless users.any?
@@ -17,7 +22,14 @@ module PushNotificationable
       tokens = users_tokens(users)
       return true if tokens.blank?
 
-      Retailers::MobilePushNotificationJob.perform_later(tokens, message_info, customer_id, 'WhatsApp')
+      channel = if customer.ws_active
+                  'whatsapp'
+                elsif customer.messenger?
+                  'messenger'
+                elsif customer.instagram?
+                  'instagram'
+                end
+      Retailers::MobilePushNotificationJob.perform_later(tokens, message_info, customer_id, channel)
     end
 
     def customer_name
