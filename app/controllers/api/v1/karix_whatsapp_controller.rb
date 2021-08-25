@@ -34,7 +34,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
             :handle_message_events?,
             :unread_whatsapp_messages,
             :tags,
-            :last_messages
+            :last_messages,
+            :has_pending_reminders
           ]
         ),
         agents: agents,

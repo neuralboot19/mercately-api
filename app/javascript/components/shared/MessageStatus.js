@@ -18,23 +18,25 @@ const MessageStatus = ({
   };
 
   return (
-    <div className="f-right t-right">
-      <MessageDateTime
-        chatType={chatType}
-        message={message}
-      />
-      {shouldShowIcon() && (
-        <MessageStatusIcon
+    <>
+      <div className="text-right">
+        <MessageDateTime
           chatType={chatType}
           message={message}
         />
-      )}
-      {chatType === 'facebook' &&
+        {shouldShowIcon() && (
+          <MessageStatusIcon
+            chatType={chatType}
+            message={message}
+          />
+        )}
+      </div>
+      {message.sender_full_name && (
         <SenderData
-          message={message}
+          senderFullName={message.sender_full_name}
         />
-      }
-    </div>
+      )}
+    </>
   );
 };
 

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import Lightbox from 'react-image-lightbox';
+import 'react-image-lightbox/style.css';
 import {
   fetchMessages,
   sendMessage,
@@ -19,12 +21,11 @@ import MessageForm from './MessageForm';
 import ChatMessage from './ChatMessage';
 import ImagesSelector from "../shared/ImagesSelector";
 import GoogleMap from "../shared/Map";
-import TopChatBar from './TopChatBar';
+import TopChatBar from '../shared/TopChatBar';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
-import Lightbox from 'react-image-lightbox';
+
 import { v4 as uuidv4 } from 'uuid';
-import 'react-image-lightbox/style.css';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -46,7 +47,9 @@ class ChatMessages extends Component {
       showMap: false,
       zoomLevel: 17,
       isOpenImage: false,
-      imageUrl: null
+      imageUrl: null,
+      showInputMenu: false,
+      showOptions: !props.onMobile
     };
     this.bottomRef = React.createRef();
     this.caretPosition = 0;
@@ -297,6 +300,7 @@ class ChatMessages extends Component {
 
   toggleProducts = () => {
     this.props.toggleProducts();
+    this.handleShowInputMenu();
   }
 
   removeSelectedProduct = () => {
@@ -310,8 +314,6 @@ class ChatMessages extends Component {
   divClasses = (message) => {
     var classes = message.sent_by_retailer === true ? 'message-by-retailer f-right' : 'message-by-customer';
     classes += ' main-message-container';
-    if (message.sent_by_retailer === true && message.date_read)
-      classes += ' read-message';
     if (['voice', 'audio'].includes(this.fileType(message.file_type))) classes += ' video-audio audio-background';
     if (this.fileType(message.file_type) === 'video') classes += ' video-audio no-background';
     if (this.fileType(message.file_type) === 'image') classes += ' no-background';
@@ -319,14 +321,14 @@ class ChatMessages extends Component {
   }
 
   handleAgentAssignment = (e) => {
-    var value = parseInt(e.target.value);
-    var agent = this.props.agent_list.filter(agent => agent.id === value);
+    const value = parseInt(e.value, 10);
+    const currentAgent = this.props.agent_list.filter((agent) => agent.id === value);
 
     var r = confirm("Estás seguro de asignar este chat a otro agente?");
     if (r === true) {
       var params = {
         agent: {
-          retailer_user_id: agent[0] ? agent[0].id : null,
+          retailer_user_id: currentAgent[0] ? currentAgent[0].id : null,
           chat_service: 'facebook'
         }
       };
@@ -457,7 +459,7 @@ class ChatMessages extends Component {
   }
 
   overwriteStyle = () => {
-    return ENV['CURRENT_AGENT_ROLE'] === 'Supervisor' ? { height: '80vh'} : {}
+    return ENV['CURRENT_AGENT_ROLE'] === 'Supervisor' ? { height: 'calc(100vh - 405px)' } : {}
   }
 
   canSendMessages = () => {
@@ -514,6 +516,7 @@ class ChatMessages extends Component {
 
   sendLocation = (position) => {
     const uuid = uuidv4();
+    this.handleShowInputMenu();
     let text = {
       message: `https://www.google.com/maps/place/${position.lat},${position.lng}`,
       type: 'location',
@@ -590,7 +593,7 @@ class ChatMessages extends Component {
 
     const params = {
       chat_service: 'facebook'
-    }
+    };
     this.props.toggleChatBot(this.props.currentCustomer, params, csrfToken);
   }
 
@@ -607,9 +610,21 @@ class ChatMessages extends Component {
     return latestCustomerMessage && moment().local().diff(latestCustomerMessage.created_at, 'days') > 7;
   };
 
+  handleShowInputMenu = () => {
+    this.setState((prevState) => ({
+      showInputMenu: !prevState.showInputMenu
+    }));
+  }
+
+  toggleOptions = () => this.setState(({ showOptions }) => ({ showOptions: !showOptions }));
+
   render() {
+    const chatBoxClass = this.state.showOptions && this.props.onMobile
+      ? 'chat__box chat__box-without-options'
+      : 'chat__box';
+
     return (
-      <div className="row bottom-xs">
+      <div className="chat-messages-holder bottom-xs">
         {this.props.onMobile && (
           <MobileTopChatBar
             backToChatList={this.props.backToChatList}
@@ -621,14 +636,17 @@ class ChatMessages extends Component {
           (
             <TopChatBar
               activeChatBot={this.props.activeChatBot}
-              agent_list={this.props.agent_list}
+              agentsList={this.props.agent_list}
               customer={this.props.customer}
               customerDetails={this.props.customerDetails}
               handleAgentAssignment={this.handleAgentAssignment}
               newAgentAssignedId={this.props.newAgentAssignedId}
               onMobile={this.props.onMobile}
+              showOptions={this.state.showOptions}
               setNoRead={this.setNoRead}
               toggleChatBot={this.toggleChatBot}
+              toggleOptions={this.toggleOptions}
+              chatType='facebook'
             />
           )}
         {this.state.isOpenImage && (
@@ -638,10 +656,14 @@ class ChatMessages extends Component {
             imageLoadErrorMessage="Error al cargar la imagen"
           />
         )}
-        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
+        <div
+          className={`col-xs-12 mt-8 px-24 border-top-light ${chatBoxClass}`}
+          onScroll={(e) => this.handleScrollToTop(e)}
+          style={this.overwriteStyle()}
+        >
           {this.state.messages.map((message) => (
-            <div key={message.id} className="message">
-              <div className={ this.divClasses(message) }>
+            <div key={message.id} className="message text-gray-dark">
+              <div className={this.divClasses(message)}>
                 <ChatMessage
                   message={message}
                   downloadFile={this.downloadFile}
@@ -655,32 +677,34 @@ class ChatMessages extends Component {
         </div>
 
         { this.chatAlreadyAssigned() ? (
-            <AlreadyAssignedChatLabel/>
-            )
-            : (this.lastInteraction() ? (
-              <p>Este canal de chat no ha tenido actividad del cliente los últimos 7 días, por lo tanto se encuentra cerrado.</p>
-            )
-            : (
-            this.canSendMessages() &&
-              <div className="col-xs-12 chat-input">
-                <MessageForm
-                  handleSubmitMessage={this.handleSubmitMessage}
-                  handleSubmitImg={this.handleSubmitImg}
-                  toggleFastAnswers={this.toggleFastAnswers}
-                  selectedFastAnswer={this.state.selectedFastAnswer}
-                  toggleProducts={this.toggleProducts}
-                  selectedProduct={this.state.selectedProduct}
-                  removeSelectedProduct={this.removeSelectedProduct}
-                  onMobile={this.props.onMobile}
-                  toggleLoadImages={this.toggleLoadImages}
-                  pasteImages={this.pasteImages}
-                  removeSelectedFastAnswer={this.removeSelectedFastAnswer}
-                  objectPresence={this.objectPresence}
-                  toggleMap={this.toggleMap}
-                  getCaretPosition={this.getCaretPosition}
-                  insertEmoji={this.insertEmoji}
-                />
-              </div>
+          <AlreadyAssignedChatLabel/>
+          )
+          : (this.lastInteraction() ? (
+            <p className="p-24 text-gray-dark">Este canal de chat no ha tenido actividad del cliente los últimos 7 días, por lo tanto se encuentra cerrado.</p>
+          )
+          : (
+          this.canSendMessages() &&
+            <div className="col-xs-12 chat-input">
+              <MessageForm
+                handleSubmitMessage={this.handleSubmitMessage}
+                handleSubmitImg={this.handleSubmitImg}
+                toggleFastAnswers={this.toggleFastAnswers}
+                selectedFastAnswer={this.state.selectedFastAnswer}
+                toggleProducts={this.toggleProducts}
+                selectedProduct={this.state.selectedProduct}
+                removeSelectedProduct={this.removeSelectedProduct}
+                onMobile={this.props.onMobile}
+                toggleLoadImages={this.toggleLoadImages}
+                pasteImages={this.pasteImages}
+                removeSelectedFastAnswer={this.removeSelectedFastAnswer}
+                objectPresence={this.objectPresence}
+                toggleMap={this.toggleMap}
+                getCaretPosition={this.getCaretPosition}
+                insertEmoji={this.insertEmoji}
+                showInputMenu={this.state.showInputMenu}
+                handleShowInputMenu={this.handleShowInputMenu}
+              />
+            </div>
           ))
         }
 
@@ -703,7 +727,7 @@ class ChatMessages extends Component {
           sendLocation={this.sendLocation}
         />
       </div>
-    )
+    );
   }
 }
 
@@ -731,7 +755,7 @@ function mapDispatch(dispatch) {
       dispatch(sendImg(id, body, token));
     },
     setMessageAsRead: (id, token) => {
-      dispatch(setMessageAsRead(id, token))
+      dispatch(setMessageAsRead(id, token));
     },
     changeCustomerAgent: (id, body, token) => {
       dispatch(changeCustomerAgent(id, body, token));

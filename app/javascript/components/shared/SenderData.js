@@ -1,13 +1,9 @@
 import React from 'react';
 
-const SenderData = ({ message }) => (
-  <>
-    {message.sender_full_name &&
-      <>
-        <br /><small>Enviado por: {message.sender_full_name}</small>
-      </>
-    }
-  </>
+const SenderData = ({ senderFullName }) => (
+  <p className="m-0 text-right">
+    <small>Enviado por: {senderFullName}</small>
+  </p>
 );
 
 export default SenderData;

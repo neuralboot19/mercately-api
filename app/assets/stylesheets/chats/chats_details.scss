@@ -1,0 +1,134 @@
+$primary-color: #6E2A79;
+$red: #EB686D;
+$white: #fff;
+
+.customer_icon_holder {
+  padding: 10px 0;
+}
+
+.customer_sidebar {
+  background-color: $white;
+  height: $chatHeight;
+  padding: 0 10px;
+  border-radius: 12px;
+}
+
+.customer_sidebar .customer_box {
+  border-bottom: 1px solid #e7e7e7;
+  padding: 17px 5px;
+  position: relative;
+}
+
+.customer_sidebar .customer_box p {
+  margin: 0;
+  font-size: 15px;
+  color: #30343a;
+  font-weight: 700;
+}
+.customer_sidebar i {
+  color: #b1b8c4;
+
+  &.primary {
+    color: $primary-color;
+  }
+}
+
+.customer_sidebar .customer_box p i {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0%, -85%);
+}
+
+.customer_sidebar .label {
+  margin: 0;
+  color: #AAA;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+}
+
+.customer_sidebar .tag {
+  font-size: 12px !important;
+  color: #000;
+  margin-left: 5px;
+}
+
+.customer_details {
+  height: $customerDetailHeight;
+  padding: 0 10px 20px;
+  overflow: scroll;
+  @media screen and (max-width: 768px) {
+    height: $customerDetailHeightMobile;
+  }
+}
+
+.details-mobile-height {
+  @media screen and (max-width: 768px) {
+    height: calc(100vh - 148px)!important;
+  }
+}
+
+.custome_fields {
+  height: $customerDetailHeight;
+  overflow: scroll;
+  @media screen and (max-width: 768px) {
+    height: $customerDetailHeightMobile;
+  }
+}
+
+.customer_fields {
+  padding: 0 10px 20px;
+}
+
+.customer_details .details_holder,
+.customer_fields .details_holder {
+  background-color: #00B4FF;
+  color: #fff;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 1024px) {
+  .customer_sidebar {
+    height: calc(100vh - 90px);
+  }
+}
+
+.unread-messages {
+  background-color: $red;
+  color: $white;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+}
+
+.bot-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.w-btn-top-chat {
+  width: 218px;
+
+  @media screen and (max-width: 768px) {
+    width: 192px;
+  }
+}
+
+.w-select-top-chat {
+  width: 208px;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.chat-right-side-selector {
+  padding: 0 10px;
+  overflow-y: auto;
+}

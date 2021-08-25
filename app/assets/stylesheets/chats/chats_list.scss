@@ -1,0 +1,122 @@
+// Scroll Bar
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #FFF;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+
+
+/* Customer */
+.chat_list_holder{
+  background-color: $white;
+  border-radius: 12px;
+  height: $chatHeight;
+  overflow-y: auto;
+}
+
+::-webkit-scrollbar {
+  width: 0;  /* Remove scrollbar space */
+  background: transparent;  /* Optional: just make scrollbar invisible */
+}
+
+.chat-filter-holder {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+.ticket-status {
+  height: 30px;
+  width: 30px;
+  border-radius: 4px;
+  background-color: #F7F8FD;
+  text-align: center;
+  line-height: 30px;
+  font-size: 12px;
+  color: #7BD6A2!important;
+}
+
+.profile {
+  min-height: 64px;
+  padding: 12px 16px;
+
+  &__data {
+    position: relative;
+    .profile__info {
+      @media only screen and (min-width: 768px) {
+        padding-left: 25px;
+      }
+    }
+  }
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  &:last-child {
+    border-bottom: unset;
+  }
+
+  &__name {
+    font-size: 14px;
+    font-weight: 600;
+
+    .fw-muted {
+      font-size: .7em;
+      color: #999;
+
+    }
+
+    .time-from {
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      line-height: 16px;
+      top: 0;
+      right: 0;
+    }
+  }
+}
+
+.bot-icon-container {
+  .bot-position {
+    right: 20px;
+  }
+}
+
+.assigned-customer {
+  font-size: 12px;
+  line-height: 18px;
+  color: #B2B3BD!important;
+  margin-bottom: 5px;
+}
+
+.customer-tags-chats {
+  font-size: 12px;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  color: #B2B3BD;
+  border: 1px solid #B2B3BD;
+  box-sizing: border-box;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-right: 4px;
+  margin-top: 4px;
+}
+
+@media screen and (max-width: 1024px) {
+  .chat_list_holder {
+    height: calc(100vh - 90px);
+  }
+}

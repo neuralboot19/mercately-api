@@ -1,15 +1,16 @@
 import React from 'react';
+import SendOutlineIcon from '../icons/SendOutlineIcon'
 
 const SendButton = ({
   onMobile,
   handleSubmit
 }) => (
-  <div className="tooltip-top">
-    <i
-      className="fas fa-paper-plane fs-22 mr-5 c-secondary cursor-pointer"
-      onClick={(e) => handleSubmit(e)}
-    >
-    </i>
+  <div className="tooltip-top" onClick={(e) => handleSubmit(e)}>
+    <span className="h-32 w-32 border-4 bg-blue p-8 flex-center-xy">
+      <SendOutlineIcon
+        className="fill-white cursor-pointer"
+      />
+    </span>
     {onMobile === false
     && (
       <div className="tooltiptext">Enviar</div>

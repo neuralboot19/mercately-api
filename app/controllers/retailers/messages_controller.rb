@@ -1,15 +1,16 @@
 class Retailers::MessagesController < RetailersController
   before_action :check_ownership, only: %i[show answer_question]
   before_action :set_question, only: %i[show answer_question]
-
   # GET /messages/1
   def show
   end
 
   def questions
+    render layout: "dashboard"
   end
 
   def chats
+    render layout: "chats/chat"
   end
 
   def question
@@ -39,9 +40,18 @@ class Retailers::MessagesController < RetailersController
   end
 
   def facebook_chats
+    render layout: "chats/chat"
+    @chats = if current_retailer_user.only_assigned
+               current_retailer_user.a_customers.includes(:facebook_messages)
+                 .where.not(facebook_messages: { id: nil }).page(params[:page])
+             else
+               current_retailer.customers.includes(:facebook_messages)
+                 .where.not(facebook_messages: { id: nil }).page(params[:page])
+             end
   end
 
   def instagram_chats
+    render layout: 'chats/chat'
   end
 
   def facebook_chat

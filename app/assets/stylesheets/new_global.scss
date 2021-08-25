@@ -1,0 +1,117 @@
+$blue: #3CAAE1;
+$dark: #3C4348;
+$light: #F7F8FD;
+
+.bg-light {
+  background-color: $light!important;
+}
+
+.bg-blue {
+  background-color: $blue;
+}
+
+.text-blue {
+  color: $blue;
+}
+
+.text-gray-dark {
+  color: $dark!important;
+}
+
+.text-gray-light {
+  color: #808191;
+}
+
+
+
+.cursor-pointer {
+  cursor: pointer;;
+}
+
+@for $space from 0 through 250 {
+  .border-#{$space} {
+    border-radius: #{$space}px;
+  }
+}
+
+.border-left-8 {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.border-right-8 {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.border-12 {
+  border-radius: 12px;
+}
+
+.border-blue {
+  border-color: $blue;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.btn-outline-blue {
+  border-color: $blue;
+  border-width: 1px;
+  border-style: solid;
+  color: $blue;
+  text-align: center;
+}
+
+.react-select-container {
+  background-color: $light;
+  border-color: transparent;
+  height: 50px!important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px!important;
+}
+
+.react-select__control {
+  border-color: transparent!important;
+  background-color: $light!important;
+  width: 100%;
+  padding-left: 16px;
+  color: $dark;
+  height: 50px!important;
+  border-radius: 8px!important;
+}
+
+.react-select__placeholder {
+  color: $dark!important;
+}
+
+.react-select__indicator {
+  color: $dark!important;
+  padding-right: 18px!important;
+}
+
+.react-select__indicator-separator {
+  display: none;
+}
+
+.react-select__option {
+  padding: 16px!important;
+}
+
+.react-select__option:hover {
+  background-color: $blue;
+  color: white;
+}
+
+.react-select__single-value {
+  color: $dark;
+}
+
+.details-select__menu-list {
+  max-height: 180px!important;
+}

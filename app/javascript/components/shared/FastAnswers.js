@@ -114,7 +114,7 @@ class FastAnswers extends Component {
             <i className="fs-18 mt-4 mr-4 f-right fas fa-times cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
           </p>
         </div>
-        <div className="customer_details">
+        <div className="customer_details details-mobile-height">
           <div>
             <input
               type="text"

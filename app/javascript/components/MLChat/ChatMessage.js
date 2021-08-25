@@ -55,7 +55,9 @@ const ChatMessage = ({
       {message.attachments.map((attachment) => (
         showAttachment(attachment)
       ))}
-      <MessageDateTime message={message} />
+      <div className="text-right">
+        <MessageDateTime message={message} />
+      </div>
     </div>
   );
 };

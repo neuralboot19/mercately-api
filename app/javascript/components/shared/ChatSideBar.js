@@ -8,7 +8,6 @@ import { fetchWhatsAppCustomers as fetchWhatsAppCustomersAction } from "../../ac
 import ChatFilter from './ChatFilter';
 import ChatSelector from './ChatSelector';
 import filterUtil from '../../util/chatFiltersUtil';
-import ActiveFilters from './ActiveFilters';
 
 const _ = require('lodash');
 
@@ -27,7 +26,9 @@ const initialState = {
     order: 'received_desc',
     type: 'all',
     agent: 'all',
-    tag: 'all'
+    tag: 'all',
+    reset: false,
+    isFiltered: false
   },
   lastCustomerOffset: 0
 };
@@ -44,22 +45,25 @@ const ChatSideBar = ({
   const [state, setState] = useState(initialState);
   const [loading, setLoading] = useState(true);
   const [socketData, setSocketData] = useState();
+  const [openChatFilters, setOpenChatFilters] = useState(false);
   const isMounted = useRef(false);
   const isMountedForSearch = useRef(false);
   const isMountedForListAssembly = useRef(false);
+  const isFirstSearch = useRef(true);
+  const isFilteredChats = useRef(true);
 
   const customers = useSelector((reduxState) => reduxState.customers || []);
   const totalPages = useSelector((reduxState) => reduxState.total_customers || 0);
   const agents = useSelector((reduxState) => reduxState.agents || []);
   const filterTags = useSelector((reduxState) => reduxState.filter_tags || []);
-  const loadingMoreCustomers = useSelector((reduxState)=> reduxState.loadingMoreCustomers)
+  const loadingMoreCustomers = useSelector((reduxState) => reduxState.loadingMoreCustomers);
 
   const dispatch = useDispatch();
-  const fetchCustomers = () => {
-    dispatch(fetchCustomersAction(state.page, state.filter, state.customers.length, platform));
+  const fetchCustomers = (offset) => {
+    dispatch(fetchCustomersAction(state.page, state.filter, offset, platform));
   };
-  const fetchWhatsAppCustomers = () => {
-    dispatch(fetchWhatsAppCustomersAction(state.page, state.filter, state.customers.length));
+  const fetchWhatsAppCustomers = (offset) => {
+    dispatch(fetchWhatsAppCustomersAction(state.page, state.filter, offset));
   };
 
   // Initial effect
@@ -85,6 +89,15 @@ const ChatSideBar = ({
       tag = state.tag;
     }
 
+    setState({
+      ...state,
+      filter,
+      order,
+      agent,
+      type,
+      tag
+    });
+
     const eventHandler = (data) => setSocketData(data);
     // Subscribe to assignation/de-assignation broadcasts
     switch (chatType) {
@@ -106,14 +119,7 @@ const ChatSideBar = ({
       default:
         break;
     }
-    setState({
-      ...state,
-      filter,
-      order,
-      agent,
-      type,
-      tag
-    });
+
     return () => {
       // unsubscribe from event for preventing memory leaks
       switch (chatType) {
@@ -146,13 +152,6 @@ const ChatSideBar = ({
 
   // Side effect which requests new data from API
   // Fired after updating order, filter, agent, tag and page
-  useEffect(() => {
-    if (isMountedForSearch.current) {
-      applySearch();
-    } else {
-      isMountedForSearch.current = true;
-    }
-  }, [state.order, state.filter, state.agent, state.tag, state.page, state.type, state.customerId]);
 
   // This side effect is fired after changes in redux's customer state, this just appends new customers'
   // pages to local state
@@ -187,10 +186,27 @@ const ChatSideBar = ({
 
   // Side effect which saves new filter to localStorage
   // Fired on changes over filter state
+
   useEffect(() => {
     const newFilter = { ...state.filter };
     delete newFilter.customer_id;
     localStorage.setItem(`${storageId}_filter`, JSON.stringify(newFilter));
+    if (isMountedForSearch.current && isFirstSearch.current) {
+      applySearch(0);
+      isFirstSearch.current = false;
+    }
+    isMountedForSearch.current = true;
+
+    if (state.filter.reset) {
+      applySearch(0);
+      setState({
+        ...state,
+        filter: {
+          ...state.filter,
+          reset: false
+        }
+      });
+    }
   }, [state.filter]);
 
   const sortCustomers = (cust1, cust2) => {
@@ -209,6 +225,7 @@ const ChatSideBar = ({
         ...state,
         page: state.page + 1
       });
+      applySearch();
     }
   };
 
@@ -291,13 +308,23 @@ const ChatSideBar = ({
     setRemovedCustomerInfo(data);
   };
 
-  const applySearch = () => {
+  const applySearch = (offset = state.customers.length) => {
+    isFilteredChats.current = filterApplied()
+    if (!offset) {
+      setState({
+        ...state,
+        customers: [],
+        allCustomers: []
+      });
+    }
+
     if (chatType === 'whatsapp') {
-      fetchWhatsAppCustomers();
+      fetchWhatsAppCustomers(offset);
     }
     if (chatType === 'facebook') {
-      fetchCustomers();
+      fetchCustomers(offset);
     }
+    setOpenChatFilters(false);
   };
 
   const handleLoadMoreOnScrollToBottom = (e) => {
@@ -317,6 +344,10 @@ const ChatSideBar = ({
     const { value } = e.target;
     setState({
       ...state,
+      filter: {
+        ...state.filter,
+        searchString: value
+      },
       searchString: value
     });
   };
@@ -327,19 +358,27 @@ const ChatSideBar = ({
       filter.searchString = state.searchString;
       setState({
         ...state,
-        page: 1,
+        agent: 'all',
+        type: 'all',
+        tag: 'all',
+        order: 'received_desc',
         customers: [],
-        filter,
-        assignedCustomers: [],
-        allCustomers: []
+        allCustomers: [],
+        filter: {
+          ...state.filter,
+          agent: 'all',
+          type: 'all',
+          tag: 'all',
+          order: 'received_desc',
+          reset: true
+        }
       });
     }
   };
 
-  const handleChatOrdering = (event) => {
-    event.preventDefault();
-    if (event.target.value !== state.order) {
-      const order = event.target.value;
+  const handleChatOrdering = ({ value }) => {
+    if (value !== state.order) {
+      const order = value;
       const filter = { ...state.filter };
       filter.order = order;
       setState({
@@ -354,18 +393,18 @@ const ChatSideBar = ({
     }
   };
 
-  const handleAddOptionToFilter = (by) => {
+  const handleAddOptionToFilter = (value, by) => {
     let type = null;
     let agent = null;
     let tag = null;
     const filter = { ...state.filter };
 
     if (by === 'type') {
-      type = event.target.value;
+      type = value;
     } else if (by === 'agent') {
-      agent = event.target.value;
+      agent = value;
     } else if (by === 'tag') {
-      tag = event.target.value;
+      tag = value;
     }
     type = type || state.type;
     agent = agent || state.agent;
@@ -383,9 +422,7 @@ const ChatSideBar = ({
       tag,
       filter,
       page: 1,
-      customers: [],
-      assignedCustomers: [],
-      allCustomers: []
+      assignedCustomers: []
     });
   };
 
@@ -416,16 +453,37 @@ const ChatSideBar = ({
     ));
 
     return index >= 0;
-  }
+  };
 
-  const filterApplied = () => {
-    return state.filter.searchString !== '' || state.filter.agent !== 'all' || state.filter.type !== 'all' ||
-      state.filter.tag !== 'all' || state.filter.order !== 'received_desc'
-  }
+  const filterApplied = () => (
+    state.filter.searchString !== ''
+      || state.filter.agent !== 'all'
+      || state.filter.type !== 'all'
+      || state.filter.tag !== 'all'
+      || state.filter.order !== 'received_desc'
+  );
 
   const cleanFilters = () => {
-    setState(initialState);
-  }
+    setState({
+      ...state,
+      agent: 'all',
+      type: 'all',
+      tag: 'all',
+      searchString: '',
+      order: 'received_desc',
+      customers: [],
+      allCustomers: [],
+      filter: {
+        agent: 'all',
+        type: 'all',
+        tag: 'all',
+        searchString: '',
+        order: 'received_desc',
+        reset: true,
+        isFiltered: false
+      }
+    });
+  };
 
   if (loading) {
     return (
@@ -438,35 +496,40 @@ const ChatSideBar = ({
   }
 
   return (
-    <div>
-      <div>
-        {filterApplied() ?
-          <ActiveFilters
+    <div className="chat_list_holder">
+      <ChatFilter
+        agent={state.agent}
+        agents={agents}
+        filterTags={filterTags}
+        handleAddOptionToFilter={handleAddOptionToFilter}
+        handleChatOrdering={handleChatOrdering}
+        handleSearchInputValueChange={handleSearchInputValueChange}
+        handleKeyPress={handleKeyPress}
+        order={state.order}
+        searchString={state.searchString}
+        tag={state.tag}
+        type={state.type}
+        openChatFilters={openChatFilters}
+        setOpenChatFilters={setOpenChatFilters}
+        applySearch={applySearch}
+        cleanFilters={cleanFilters}
+        filterApplied={isFilteredChats.current}
+      />
+      {
+        !openChatFilters && (
+          <ChatSelector
+            chatType={chatType}
+            currentCustomer={currentCustomer}
+            customers={state.allCustomers}
+            applySearchFromAssignation={applySearchFromAssignation}
+            handleLoadMoreOnScrollToBottom={handleLoadMoreOnScrollToBottom}
+            handleOpenChat={handleOpenChat}
+            filterApplied={filterApplied}
             cleanFilters={cleanFilters}
-          /> : ''
-        }
-        <ChatFilter
-          agent={state.agent}
-          agents={agents}
-          filterTags={filterTags}
-          handleAddOptionToFilter={handleAddOptionToFilter}
-          handleChatOrdering={handleChatOrdering}
-          handleSearchInputValueChange={handleSearchInputValueChange}
-          handleKeyPress={handleKeyPress}
-          order={state.order}
-          searchString={state.searchString}
-          tag={state.tag}
-          type={state.type}
-        />
-        <ChatSelector
-          chatType={chatType}
-          currentCustomer={currentCustomer}
-          customers={state.allCustomers}
-          applySearchFromAssignation={applySearchFromAssignation}
-          handleLoadMoreOnScrollToBottom={handleLoadMoreOnScrollToBottom}
-          handleOpenChat={handleOpenChat}
-        />
-      </div>
+            openChatFilters={openChatFilters}
+          />
+        )
+      }
     </div>
   );
 };

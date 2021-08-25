@@ -17,28 +17,28 @@ const MobileTopChatBar = ({ backToChatList, chatType, customerDetails, editCusto
   const customerName = getCustomerName();
 
   if (chatType === 'whatsapp') {
-    containerClass = 'col-xs-12 row';
+    containerClass = 'col-12 row mx-0 mt-8 pt-12';
     unreadMessagePropertyName = 'unread_whatsapp_message?';
   } else {
-    containerClass = 'col-xs-12 row mb-15';
+    containerClass = 'col-12 row mx-0 pt-12';
     unreadMessagePropertyName = 'unread_message?';
   }
 
   return (
     <div className={containerClass}>
-      <div className="col-xs-2 pl-0" onClick={() => backToChatList()}>
-        <i className="fas fa-arrow-left c-secondary fs-30 mt-12">
+      <div className="col-2 pl-0 flex-center-xy" onClick={() => backToChatList()}>
+        <i className="fas fa-arrow-left c-secondary fs-30">
         </i>
       </div>
-      <div className="col-xs-8 pl-0">
-        <div className="profile__name">
+      <div className="col-8 pl-0">
+        <div className="profile__name fs-sm-and-down-12 text-truncate">
           {customerName}
         </div>
         <div className={customerDetails[unreadMessagePropertyName] ? 'fw-bold' : ''}>
           <small>{moment(customerDetails.recent_message_date).locale('es').fromNow()}</small>
         </div>
       </div>
-      <div className="col-xs-2 pl-0" onClick={() => editCustomerDetails()}>
+      <div className="col-2 pl-0" onClick={() => editCustomerDetails()}>
         <div className="c-secondary mt-12">
           Editar
         </div>

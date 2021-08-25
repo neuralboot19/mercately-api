@@ -23,20 +23,17 @@ const CustomerDetailsTabContent = ({
   const errors = useSelector((reduxState) => reduxState.errors) || {};
   return (
     <div className="customer_details" style={{ display: showUserDetails }}>
-      <div className="details_holder">
-        <span>Detalles</span>
-      </div>
       <div>
         <div>
           <i className="fs-18 mt-4 mr-4 fas fa-user editable_name" />
-          <p className="label inline-block">Nombres</p>
+          <p className="label inline-block fs-14 text-gray-dark font-weight-bold">Nombres</p>
         </div>
         { Object.keys(customer).length !== 0 && (
           <div>
             <EditableField
               handleInputChange={handleInputChange}
               content={customer.first_name}
-              givenClass="mb-6 custom-input"
+              givenClass="mb-6 custom-input text-gray-dark fs-14"
               handleSubmit={handleSubmit}
               targetName="first_name"
               placeholder="Nombre"
@@ -45,7 +42,7 @@ const CustomerDetailsTabContent = ({
               handleInputChange={handleInputChange}
               content={customer.last_name}
               handleSubmit={handleSubmit}
-              givenClass="mb-6 custom-input"
+              givenClass="mb-6 custom-input text-gray-dark fs-14"
               targetName="last_name"
               placeholder="Apellido"
             />
@@ -55,7 +52,7 @@ const CustomerDetailsTabContent = ({
       <div>
         <div>
           <i className="fs-18 mt-4 mr-4 fab fa-whatsapp-square editable_phone" />
-          <p className="label inline-block">Teléfono:</p>
+          <p className="label inline-block fs-14 text-gray-dark font-weight-bold">Teléfono:</p>
         </div>
         <div className="d-flex">
           {customer.emoji_flag}
@@ -63,16 +60,16 @@ const CustomerDetailsTabContent = ({
             handleInputChange={handleInputChange}
             content={customer.phone}
             handleSubmit={handleSubmit}
-            givenClass="mb-6 custom-input"
+            givenClass="mb-6 custom-input text-gray-dark fs-14"
             targetName="phone"
             placeholder="Teléfono"
           />
         </div>
       </div>
-      <div>
+      <div className="text-gray-dark">
         <div>
           <i className="fs-18 mt-4 mr-4 fas fa-envelope-square editable_email" />
-          <p className="label inline-block">Email:</p>
+          <p className="label inline-block text-gray-dark fs-14 font-weight-bold">Email:</p>
           <small className="validation-msg">{errors.email}</small>
         </div>
         { Object.keys(customer).length !== 0 && (
@@ -81,15 +78,15 @@ const CustomerDetailsTabContent = ({
             content={customer.email}
             handleSubmit={handleSubmit}
             targetName="email"
-            givenClass="mb-6 custom-input"
+            givenClass="mb-6 custom-input text-gray-dark fs-14"
             placeholder="Email"
           />
         )}
       </div>
-      <div>
+      <div className="fs-14 text-gray-dark">
         <div>
           <i className="fs-18 mt-4 mr-4 fas fa-address-card editable_card_id" />
-          <p className="label inline-block">Identificación:</p>
+          <p className="label inline-block text-gray-dark font-weight-bold">Identificación:</p>
         </div>
         <SelectableField
           selected={customer.id_type}
@@ -99,7 +96,7 @@ const CustomerDetailsTabContent = ({
           handleInputChange={handleInputChange}
           content={customer.id_number}
           handleSubmit={handleSubmit}
-          givenClass="my-6 custom-input"
+          givenClass="my-6 custom-input text-gray-dark fs-14"
           targetName="id_number"
           placeholder="Identificación"
         />
@@ -107,7 +104,7 @@ const CustomerDetailsTabContent = ({
       <div>
         <div>
           <i className="fs-18 mt-4 mr-4 fas fa-map-marked-alt editable_map" />
-          <p className="label inline-block">Dirección:</p>
+          <p className="label inline-block fs-14 text-gray-dark font-weight-bold">Dirección:</p>
         </div>
         { Object.keys(customer).length !== 0 && (
           <div>
@@ -117,14 +114,14 @@ const CustomerDetailsTabContent = ({
               handleSubmit={handleSubmit}
               targetName="address"
               placeholder="Dirección"
-              givenClass="mb-6 custom-input"
+              givenClass="mb-6 custom-input text-gray-dark fs-14"
             />
             <EditableField
               handleInputChange={handleInputChange}
               content={customer.city}
               handleSubmit={handleSubmit}
               targetName="city"
-              givenClass="mb-6 custom-input"
+              givenClass="mb-6 custom-input text-gray-dark fs-14"
               placeholder="Ciudad"
             />
             <EditableField
@@ -133,7 +130,7 @@ const CustomerDetailsTabContent = ({
               handleSubmit={handleSubmit}
               targetName="state"
               placeholder="Provincia/Estado"
-              givenClass="mb-6 custom-input"
+              givenClass="mb-6 custom-input text-gray-dark fs-14"
             />
           </div>
         )}
@@ -142,17 +139,17 @@ const CustomerDetailsTabContent = ({
       <div>
         <div>
           <i className="fs-18 mt-4 mr-4 fas fa-tags editable_name" />
-          <p className="label inline-block">Etiquetas:</p>
+          <p className="label inline-block fs-14 text-gray-dark font-weight-bold">Etiquetas:</p>
         </div>
 
-        <div>
+        <div className="text-gray-dark fs-14">
           <SelectableField
             handleSelectTagChange={handleSelectTagChange}
             isTag
             options={tags}
           />
           <input
-            className="input"
+            className="input text-gray-dark fs-14"
             type="text"
             name="newTag"
             value={newTag}
@@ -163,17 +160,20 @@ const CustomerDetailsTabContent = ({
           />
         </div>
 
-        <div className="row bottom-xs">
-          {customerTags && customerTags.map((tag) => (
-            <div key={tag.tag} className="customer-saved-tags mt-10">
-              {tag.tag}
-              <i
-                className="fas fa-times f-right mt-2 cursor-pointer"
-                onClick={() => removeCustomerTag(tag)}
-              />
-            </div>
-          ))}
+        <div className="container">
+          <div className="row bottom-xs">
+            {customerTags && customerTags.map((tag) => (
+              <div key={tag.tag} className="customer-saved-tags mt-10">
+                {tag.tag}
+                <i
+                  className="fas fa-times f-right mt-2 cursor-pointer"
+                  onClick={() => removeCustomerTag(tag)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
+
       </div>
 
       <div>
@@ -181,7 +181,7 @@ const CustomerDetailsTabContent = ({
           onKeyDown={handleEnter}
           onChange={(e) => handleInputChange(e, 'notes')}
           name="notes"
-          className="editable-notes w-100"
+          className="editable-notes w-100 text-gray-dark fs-14"
           onBlur={handleSubmit}
           placeholder="Notas"
           value={customer.notes || ''}

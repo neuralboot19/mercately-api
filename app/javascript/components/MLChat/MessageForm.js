@@ -45,19 +45,23 @@ const MessageForm = ({
   };
 
   return (
-    <div className="text-input">
-      <MessageInput
-        onKeyPress={onKeyPress}
-        getCaretPosition={getCaretPosition}
-      />
-      <div className="t-right mr-15 p-relative">
-        {showEmojiPicker
-        && (
-          <EmojisContainer insertEmoji={insertEmoji} />
-        )}
-        <AttachEmojiIcon toggleEmojiPicker={toggleEmojiPicker} />
-        <div className="tooltip-top ml-15" />
-        <SendButton handleSubmit={handleSubmit} />
+    <div className="text-input row mx-0 no-gutters mt-24">
+      <div className="col-8 col-md-9 bg-light border-left-8">
+        <MessageInput
+          onKeyPress={onKeyPress}
+          getCaretPosition={getCaretPosition}
+        />
+      </div>
+      <div className="col-4 col-md-3 bg-light border-right-8 d-flex align-items-center justify-content-end pr-8">
+        <div className="t-right mr-15 p-relative">
+          {showEmojiPicker
+          && (
+            <EmojisContainer insertEmoji={insertEmoji} />
+          )}
+          <AttachEmojiIcon toggleEmojiPicker={toggleEmojiPicker} />
+          <div className="tooltip-top ml-15" />
+          <SendButton handleSubmit={handleSubmit} />
+        </div>
       </div>
     </div>
   );

@@ -6,23 +6,12 @@ import {
   Marker
 } from 'google-maps-react';
 import Loader from 'images/dashboard/loader.jpg'
+import modalCustomStyles from '../../util/modalCustomStyles';
+import CloseIcon from '../icons/CloseIcon';
 
 const mapStyles = {
   width: '100%',
   height: '100%'
-};
-
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)',
-    height: '80vh',
-    width: '50%'
-  }
 };
 
 class GoogleMap extends Component {
@@ -72,22 +61,26 @@ class GoogleMap extends Component {
   }
 
   render() {
+    const fsTitle = this.props.onMobile ? 'fs-16' : 'fs-24';
     return (
-      <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showMap} style={customStyles}>
-        <div className={this.props.onMobile ? "row mt-50 mb-15" : "row mb-15" }>
-          <div className="col-md-10">
-            <p className={this.props.onMobile ? "fs-20 my-0" : "fs-30 my-0" }>Selecciona la ubicación</p>
-            <small>Asegúrate que la ubicación marcada en el mapa es la correcta antes de enviarla</small>
+      <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showMap} style={modalCustomStyles(this.props.onMobile)}>
+        <div className={this.props.onMobile ? "d-flex justify-content-between align-items-center mb-15" : "d-flex justify-content-between align-items-center mb-15" }>
+          <div className="text-gray-dark font-weight-bold">
+            <p className={`font-weight-bold m-0 ${fsTitle}`}>Selecciona la ubicación</p>
+            <small className="d-none d-md-block">Asegúrate que la ubicación marcada en el mapa es la correcta antes de enviarla</small>
           </div>
-          <div className="col-md-2 t-right">
-            <button onClick={() => this.props.toggleMap()}>Cerrar</button>
+          <div>
+            <a className="px-8" onClick={() => this.props.toggleMap()}>
+              <CloseIcon className="fill-dark" />
+            </a>
           </div>
         </div>
-        <div className="row">
-          <div className="col-md-12 col-xs-12">
+        <small className="d-md-none mb-10">Asegúrate que la ubicación marcada en el mapa es la correcta antes de enviarla</small>
+        <div>
+          <div >
             {this.state.loadedLocation ?
               <div>
-                <div className="google-map">
+                <div className="google-map mb-20">
                   <Map
                     google={this.props.google}
                     zoom={this.props.zoomLevel}
@@ -101,12 +94,12 @@ class GoogleMap extends Component {
                     />
                   </Map>
                 </div>
-                <div className="row mt-10">
-                  <div className="col-md-6 t-right">
-                    <button onClick={() => this.props.toggleMap()}>Cancelar</button>
+                <div className="d-flex justify-content-center">
+                  <div className={this.props.onMobile ? "mr-5" : "mr-15"}>
+                    <a className="border-8 bg-light p-12 text-gray-dark border-gray" onClick={() => this.props.toggleMap()}>Cancelar</a>
                   </div>
-                  <div className="col-md-6 t-left">
-                    <button onClick={() => this.props.sendLocation(this.state.location)}>Enviar</button>
+                  <div>
+                    <a className="border-8 bg-blue text-white p-12" onClick={() => this.props.sendLocation(this.state.location)}>Enviar</a>
                   </div>
                 </div>
               </div>

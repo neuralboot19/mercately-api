@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import 'emoji-mart/css/emoji-mart.css';
+// eslint-disable-next-line import/no-unresolved
+import PlusOutlineIcon from 'images/plusOutline.svg';
 import MessageInput from "./MessageInput";
 import SelectedProductImageContainer from "./SelectedProductImageContainer";
 import SelectedFastAnswerImageContainer from "./SelectedFastAnswerImageContainer";
 import EmojisContainer from "./EmojisContainer";
 import AttachedFile from "./AttachedFile";
 import AttachFileIcon from "./AttachFileIcon";
-import AttachImageIcon from "./AttachImageIcon";
+import AttachImageIcon from "../icons/AttachImageOutlineIconContainer";
 import AttachFastAnswerIcon from "./AttachFastAnswerIcon";
-import AttachProductIcon from "./AttachProductIcon";
-import AttachLocationIcon from "./AttachLocationIcon";
 import AttachEmojiIcon from "./AttachEmojiIcon";
+import MessageInputMenu from '../shared/MessageInputMenu';
 import SendButton from "./SendButton";
 
 const MessageForm = ({
@@ -28,7 +29,9 @@ const MessageForm = ({
   onMobile,
   toggleLoadImages,
   toggleFastAnswers,
-  toggleProducts
+  toggleProducts,
+  showInputMenu,
+  handleShowInputMenu
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -110,6 +113,7 @@ const MessageForm = ({
   const selectionPresent = () => objectPresence();
 
   const getLocation = () => {
+    handleShowInputMenu();
     if (navigator.geolocation) {
       toggleMap();
     } else {
@@ -122,42 +126,57 @@ const MessageForm = ({
   };
 
   return (
-    <div className="text-input">
-      <MessageInput
-        pasteImages={pasteImages}
-        onKeyPress={onKeyPress}
-        getCaretPosition={getCaretPosition}
-      />
-      {selectedProduct
-      && selectedProduct.attributes.image
-      && (
-        <SelectedProductImageContainer
-          removeSelectedProduct={removeSelectedProduct}
-          selectedProduct={selectedProduct}
-        />
-      )}
-      {/* selectedFastAnswer
-      && selectedFastAnswer.attributes.image_url
-      && (
-        <SelectedFastAnswerImageContainer
-          selectedFastAnswer={selectedFastAnswer}
-          removeSelectedFastAnswer={removeSelectedFastAnswer}
-        />
-      ) */}
-      <div className="t-right mr-15 p-relative">
-        {showEmojiPicker
-        && (
-          <EmojisContainer insertEmoji={insertEmoji} />
-        )}
-        {/* <AttachedFile handleFileSubmit={handleFileSubmit} /> */}
-        {/* <AttachFileIcon onMobile={onMobile} /> */}
-        <AttachImageIcon onMobile={onMobile} toggleLoadImages={toggleLoadImages} />
-        {/* <AttachFastAnswerIcon onMobile={onMobile} toggleFastAnswers={toggleFastAnswers} /> */}
-        <AttachProductIcon onMobile={onMobile} toggleProducts={toggleProducts} />
-        <AttachLocationIcon onMobile={onMobile} getLocation={getLocation} />
-        <AttachEmojiIcon onMobile={onMobile} toggleEmojiPicker={toggleEmojiPicker} />
-        <div className="tooltip-top ml-15" />
-        <SendButton onMobile={onMobile} handleSubmit={handleSubmit} />
+    <div className="col-xs-12 chat-input mt-16">
+      <div className="text-input row mx-0 no-gutters text-input-padding border-input-top">
+        <div className="d-flex col-7 col-md-8">
+          <span className="d-flex align-items-center position-relative mr-12 mr-md-24 min-w-input-menu">
+            <img onClick={handleShowInputMenu} src={PlusOutlineIcon} alt="outline plus icon" />
+            {showInputMenu && (
+              <MessageInputMenu
+                handleShowInputMenu={handleShowInputMenu}
+                getLocation={getLocation}
+                openProducts={toggleProducts}
+              />
+            )}
+          </span>
+          <span className="bg-light border-left-8 flex-grow-1">
+            <MessageInput
+              pasteImages={pasteImages}
+              onKeyPress={onKeyPress}
+              getCaretPosition={getCaretPosition}
+            />
+          </span>
+          {selectedProduct
+          && selectedProduct.attributes.image
+          && (
+            <SelectedProductImageContainer
+              removeSelectedProduct={removeSelectedProduct}
+              selectedProduct={selectedProduct}
+            />
+          )}
+          {/* selectedFastAnswer
+          && selectedFastAnswer.attributes.image_url
+          && (
+            <SelectedFastAnswerImageContainer
+              selectedFastAnswer={selectedFastAnswer}
+              removeSelectedFastAnswer={removeSelectedFastAnswer}
+            />
+          ) */}
+        </div>
+        <div className="col-5 col-md-4 bg-light border-right-8 d-flex">
+          <div className="p-relative flex-grow-1 pr-8 d-flex justify-content-end align-items-center  space-input-icons">
+            {showEmojiPicker
+            && (
+              <EmojisContainer insertEmoji={insertEmoji} />
+            )}
+            {/* <AttachedFile handleFileSubmit={handleFileSubmit} /> */}
+            {/* <AttachFileIcon onMobile={onMobile} /> */}
+            <AttachImageIcon onMobile={onMobile} toggleLoadImages={toggleLoadImages} />
+            {/* <AttachFastAnswerIcon onMobile={onMobile} toggleFastAnswers={toggleFastAnswers} /> */}
+            <AttachEmojiIcon onMobile={onMobile} toggleEmojiPicker={toggleEmojiPicker} />
+            <SendButton onMobile={onMobile} handleSubmit={handleSubmit} />
+          </div>
+        </div>
       </div>
     </div>
   );
