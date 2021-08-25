@@ -258,8 +258,8 @@ function mapDispatch(dispatch) {
     updateFunnelStep: (body) => {
       dispatch(updateFunnelStep(body));
     },
-    loadMoreDeals: (colunm, page = 1) => {
-      dispatch(loadMoreDeals(colunm, page));
+    loadMoreDeals: (column, page = 1) => {
+      dispatch(loadMoreDeals(column, page));
     }
   };
 }

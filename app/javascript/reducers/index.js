@@ -404,7 +404,7 @@ const reducer = (state = initialState, action) => {
         ...Object.keys(action.data.deals)
       ];
 
-      newColumns[action.column].deals = newColumns[action.column].dealIds.length
+      newColumns[action.column].deals = newColumns[action.column].dealIds.length;
 
       return {
         ...state,

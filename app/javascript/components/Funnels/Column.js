@@ -31,13 +31,11 @@ const Column = ({
   deals,
   loadMoreDeals
 }) => {
-
-  const [page, setPage] = useState(2)
-
+  const [page, setPage] = useState(2);
   const HandleLoadMoreDeals = () => {
     loadMoreDeals(column.id, page);
     setPage(page + 1);
-  }
+  };
 
   return (
     <Draggable draggableId={column.id} index={index}>
@@ -58,35 +56,36 @@ const Column = ({
             isDropDisabled={allowColumn === column.id}
             type="deal"
           >
-            {(provided, snapshot) => (
+            {(stepProvided, stepSnapshot) => (
               <DealList
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                isDraggingOver={snapshot.isDraggingOver}
-                isDragging={snapshot.isDragging}
+                ref={stepProvided.innerRef}
+                {...stepProvided.droppableProps}
+                isDraggingOver={stepSnapshot.isDraggingOver}
+                isDragging={stepSnapshot.isDragging}
               >
-                <InnerList  
+                <InnerList
                   openDeleteDeal={openDeleteDeal}
                   deals={deals}
                   columnId={column.id}
                 />
-                {provided.placeholder}
+                {stepProvided.placeholder}
               </DealList>
             )}
           </Droppable>
           {
-            column.total > column.dealIds.length &&
+            column.total > column.dealIds.length && (
               <h1
                 className="py-5 px-15 funnel-btn btn--cta m-10"
                 onClick={()=>HandleLoadMoreDeals(column.id, page)}
               >
                 <p style={{textAlign: 'center'}}>Ver Mas de la etapa: <b>{column.title}</b></p>
               </h1>
+            )
           }
         </Container>
       )}
     </Draggable>
   );
-}
+};
 
 export default Column;

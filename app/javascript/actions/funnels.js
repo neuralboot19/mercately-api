@@ -202,19 +202,15 @@ export const loadMoreDeals = (column, page) => {
       Accept: "application/json, text/plain, */*",
       "Content-Type": "application/json"
     }
-  }
+  };
   return (dispatch) => {
     fetch(endpoint, head)
       .then((res) => res.json())
       .then(
         (data) => dispatch({ type: ADD_DEALS_TO_COLUMN, data, column }),
         (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
-      ).catch((error) => {
-        if (error.response) {
-          alert(error.response);
-        } else {
-          alert("An unexpected error occurred.");
-        }
+      ).catch((err) => {
+        dispatch({ type: LOAD_DATA_FAILURE, err });
       });
   };
 };
