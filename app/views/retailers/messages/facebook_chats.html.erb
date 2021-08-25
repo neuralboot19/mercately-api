@@ -1,18 +1,9 @@
-<div class="container-fluid reduced-container-padding mb-16">
-  <div class="card">
-    <div class="container-fluid products">
-      <div class="row">
-        <div class="col-xs-12 p-0">
-          <!-- Display a message if JS has been disabled on the browser. -->
-          <noscript>If you're seeing this message, that means
-            <strong>JavaScript has been disabled on your browser</strong>, please
-            <strong>enable JS</strong> to make this app work.
-          </noscript>
-          <%# stylesheet_pack_tag 'application' %>
-          <%= javascript_packs_with_chunks_tag 'application' %>
-          <div id="react_content"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="chat-holder">
+<!-- Display a message if JS has been disabled on the browser. -->
+  <noscript>If you're seeing this message, that means
+    <strong>JavaScript has been disabled on your browser</strong>, please
+    <strong>enable JS</strong> to make this app work.
+  </noscript>
+  <%= javascript_packs_with_chunks_tag 'application' %>
+  <div id="react_content"></div>
 </div>

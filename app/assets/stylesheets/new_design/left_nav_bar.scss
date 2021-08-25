@@ -1,0 +1,378 @@
+@import 'fonts/new_design_icons/left-navbar/left-icons-font';
+
+#sidebar--pc {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 100vh;
+  background-color: #FFF;
+  z-index: 100;
+  border-right: 0.5px solid #eee;
+
+  &__logo {
+    padding: 40px;
+    text-align: center;
+  }
+
+  .merc-tooltiptext .item__cookie {
+    position: static;
+  }
+
+  .menu {
+    padding: 0;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    &__item {
+      text-align: center;
+      border-left: 5px solid transparent;
+    }
+
+    i {
+      color: #808191;
+      vertical-align: middle;
+    }
+  }
+
+  .submenu {
+    display: none;
+    max-height: 0;
+    padding: 11px;
+    transition: all .2s ease-in-out;
+    &__item {
+      margin: 12px;
+    }
+  }
+
+  .item__checkbox:checked {
+    & ~ .item__arrow.right {
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+    }
+    & ~ .submenu {
+      display: block;
+      max-height: 500px;
+    }
+  }
+
+  .item__cookie_total, .item__cookie_facebook_messages, .item__cookie_whatsapp_messages,
+  .item__cookie_instagram_messages {
+    top: 5px;
+    width: 15px;
+    height: 15px;
+    font-size: 10px;
+    right: -5px;
+  }
+}
+
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #FFF;
+  transition: left .2s ease-in-out;
+  z-index: 100;
+  -webkit-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+
+  &__logo {
+    padding: 40px;
+    text-align: center;
+
+    &--pc {
+      img {
+        vertical-align: unset;
+      }
+    }
+  }
+
+  .menu {
+    &__item {
+      border-left: 5px solid transparent;
+      padding: 12px;
+      margin: 12px;
+      &:hover, &.menu__item--selected {
+        border-left: 5px solid $primary-color;
+      }
+    }
+
+    a {
+      color: #000;
+    }
+  }
+
+  .item {
+    &__icon {
+      color: $primary-color;
+    }
+
+    &__checkbox { display: none; }
+
+    &__cookie {
+      float: right;
+      width: 22px;
+      height: 22px;
+      background-color: $secondary-color;
+      color: #FFF;
+      border-radius: 7px;
+      text-align: center;
+      font-size: 14px;
+      margin-right: 8px;
+      top: auto;
+    }
+    &__arrow {
+      border: solid black;
+      border-width: 0 3px 3px 0;
+      display: inline-block;
+      padding: 3px;
+      margin: 7px;
+      float: right;
+      transition: transform .2s ease-in-out;
+      &.right {
+        transform: rotate(-45deg);
+        -webkit-transform: rotate(-45deg);
+      }
+      &.left {
+        transform: rotate(135deg);
+        -webkit-transform: rotate(135deg);
+      }
+      &.up {
+        transform: rotate(-135deg);
+        -webkit-transform: rotate(-135deg);
+      }
+      &.down {
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+      }
+    }
+  }
+
+  .submenu {
+    display: none;
+    max-height: 0;
+    padding: 11px;
+    transition: all .2s ease-in-out;
+    &__item {
+      margin: 12px;
+    }
+  }
+
+  .item__checkbox:checked {
+    & ~ .item__arrow.right {
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+    }
+    & ~ .submenu {
+      display: block;
+      max-height: 500px;
+    }
+  }
+}
+
+/* Tooltip container */
+.merc-tooltip {
+  position: relative;
+  display: inline-block;
+  padding: 8px 11px;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: #EBF7FC;
+
+    i {
+      color: #3CAAE1 !important;
+    }
+
+    &::after {
+      display: block;
+    }
+  }
+
+  &:active {
+    background-color: #EBF7FC;
+  }
+}
+
+.merc-tooltip-active {
+  background-color: #EBF7FC;
+  i {
+    color: #3CAAE1 !important;
+  }
+}
+
+/* Tooltip text */
+.merc-tooltip .merc-tooltiptext {
+  visibility: hidden;
+  display: inline-table;
+  background-color: #FFF;
+  color: #000;
+  text-align: justify;
+  padding: 10px 17px;
+  border: 1px solid #FFF;
+  border-radius: 4px;
+  font-size: 14px;
+  max-width: unset;
+  -webkit-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.2);
+  -moz-box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 0px 7px 0px rgba(0,0,0,0.2);
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 100;
+  top: 0px;
+  left: 70px;
+
+  &.merc-tooltiptext--right {
+    top: -75px;
+    left: 110%;
+  }
+
+  &.merc-tooltiptext--black {
+    background-color: #000;
+    border-color: #000;
+    color: #fff;
+  }
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+
+  &--big {
+    width: 210px;
+  }
+
+  &--medium {
+    width: 140px;
+  }
+
+  &.positioned {
+    top: 0px;
+  }
+
+  &.tootip-text-customer-chat-column {
+    top: -20px;
+    left: 40px;
+  }
+}
+
+/* Tooltip arrow */
+.merc-tooltip .merc-tooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  right: 100%; /* To the left of the tooltip */
+  margin-top: -7px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent #FFF transparent transparent;
+  box-sizing: unset;
+}
+
+.merc-tooltip .merc-tooltiptext--black::after {
+  border-color: transparent #000 transparent transparent;
+  box-sizing: unset;
+}
+
+.merc-tooltip::after {
+  content: " ";
+  display: none;
+  position: absolute;
+  top: 0%;
+  left: 90%;
+  width: 30px;
+  height: 40px;
+
+  &:hover {
+    display: block;
+
+    .merc-tooltiptext {
+      visibility: visible;
+      opacity: 1;
+      box-sizing: unset;
+    }
+  }
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.merc-tooltip:hover .merc-tooltiptext {
+  visibility: visible;
+  opacity: 1;
+  box-sizing: unset;
+}
+
+.merc-tooltip-top {
+  position: relative;
+  display: inline-block;
+}
+
+.merc-tooltip-top .merc-tooltiptext {
+  visibility: hidden;
+  width: 100px;
+  background-color: #555;
+  border: 1px solid #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 30%;
+  margin-left: -50px;
+  max-width: unset;
+  font-size: 12px;
+}
+
+.merc-tooltip-top .merc-tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.merc-tooltip-top .merc-tooltiptext::after .aaa {
+  left: 63%;
+}
+
+.merc-tooltip-top:hover .merc-tooltiptext {
+  visibility: visible;
+}
+
+#sidebar--pc a.c-secondary:hover {
+  color: rgba(0, 180, 255, 0.7) !important;
+}
+
+@media screen and (max-width: 1366px) {
+  #sidebar {
+    width: 250px;
+
+    .menu {
+      padding-left: 22px;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  #sidebar {
+    top: 64px;
+    left: -300px;
+    width: 300px;
+
+    &__logo {
+      display: none;
+    }
+  }
+
+  #sidebar--toggle:checked ~ #sidebar {
+    left: 0;
+  }
+}

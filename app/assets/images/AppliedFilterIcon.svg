@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18">
+  <g id="AppliedFilterIcon" transform="translate(2)">
+    <rect id="Rectángulo_1" data-name="Rectángulo 1" width="20" height="18" transform="translate(-2)" fill="#fff"/>
+    <path id="Trazado_1" data-name="Trazado 1" d="M6.667,14H9.333V12.667H6.667ZM2,6V7.333H14V6Zm2,4.667h8V9.333H4Z" fill="#3c4348"/>
+    <circle id="Elipse_1" data-name="Elipse 1" cx="2" cy="2" r="2" transform="translate(14)" fill="#eb686d"/>
+  </g>
+</svg>

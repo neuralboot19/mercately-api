@@ -1,7 +1,7 @@
 <div class="notifications-button d-inline-block">
   <label id="notifications__dropdown--button" for="dropdown__notifications" class="p-relative">
-    <div class="dropdown__button middle p-relative  pl-5 pr-5">
-      <i class="fas fa-bell"></i>
+    <div class="dropdown__button p-relative">
+      <%= image_tag 'new_design/bell.svg', class: 'w-14 mr-20 img-bell' %>
       <b class="item__cookie assignment_notification" style="display: <%= @notifications.unread.count > 0 ? 'block' : 'none' %>"><%= @notifications.unread.count %></b>
     </div>
   </label>

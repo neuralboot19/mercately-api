@@ -1,0 +1,130 @@
+.chat-messages-holder {
+  background-color: $white;
+  padding: 0;
+  border-radius: 12px;
+  height: $chatHeight;
+
+  .chat__box {
+    height: $chaBoxHeight
+  }
+
+  .ml-chat__box {
+    height: calc(100vh - 222px);
+    overflow-y: auto;
+  }
+
+  .ig-chat__box {
+    height: calc(100vh - 292px);
+    overflow-y: auto;
+  }
+
+  @media screen and (max-width: 1024px) {
+    .chat__box {
+      height: calc(100vh - 312px);
+    }
+    .ml-chat__box {
+      height: calc(100vh - 202px);
+      overflow-y: auto;
+    }
+    .chat__box-without-options {
+      height: calc(100vh - 379px)!important;
+    }
+    .ig-chat__box-without-options {
+      height: calc(100vh - 323px)!important;
+    }
+    .ig-chat__box {
+      height: calc(100vh - 256px);
+      overflow-y: auto;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .chat-messages-holder {
+    height: calc(100vh - 90px);
+  }
+}
+
+.bg-full-screen-fixed {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 1;
+}
+
+#divMessage {
+  overflow-wrap: anywhere;
+}
+
+.fs-input-text {
+  font-size: 14px;
+  @media screen and (max-width: 768px) {
+    font-size: 10px;
+  }
+}
+
+.border-top-light {
+  border-top: 1px solid #e7e7e7;
+}
+
+.rotate-180 {
+  transform: rotate(180deg);
+}
+
+.space-input-icons {
+  & > div {
+    margin-left: 8px;
+  }
+  svg {
+    min-width: 18px;
+  }
+  @media screen and (min-width: 1401px) {
+    & > div {
+      margin-left: 12px;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    & > div {
+      margin-left: 0;
+    }
+  }
+}
+
+.bg-blue-btn {
+  background-color: #EBF7FC;
+}
+
+.name-top-chat-bar {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 184px;
+  @media screen and (min-width: 1400px) {
+    max-width: 240px;
+  }
+  @media screen and (min-width: 1600px) {
+    max-width: 400px;
+  }
+}
+.input-from-backend {
+  input{
+    background-color: $light!important;
+    border-color: rgba(0,0,0,.05);
+    border-radius: 8px!important;
+    padding-left: 12px!important;
+    margin: 4px!important;
+    @extend .font-weight-normal;
+    @extend .text-gray-dark;
+    @extend .fs-12;
+  }
+}
+
+.react-datepicker-popper[data-placement^="bottom"] .react-datepicker__triangle, .react-datepicker-popper[data-placement^="bottom"] .react-datepicker__triangle {
+  left: 48px!important;
+  &::before {   
+    left: -8px!important;
+  }
+}

@@ -22,10 +22,12 @@ import MessageForm from './MessageForm';
 import ChatMessage from './ChatMessage';
 import ImagesSelector from "../shared/ImagesSelector";
 import GoogleMap from "../shared/Map";
-import TopChatBar from './TopChatBar';
+import TopChatBar from '../shared/TopChatBar';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
 import 'react-image-lightbox/style.css';
+
+import { v4 as uuidv4 } from 'uuid';
 
 let currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content;
@@ -47,7 +49,9 @@ class ChatMessages extends Component {
       showMap: false,
       zoomLevel: 17,
       isOpenImage: false,
-      imageUrl: null
+      imageUrl: null,
+      showInputMenu: false,
+      showOptions: !props.onMobile
     };
     this.bottomRef = React.createRef();
     this.caretPosition = 0;
@@ -64,11 +68,17 @@ class ChatMessages extends Component {
 
   handleSubmitMessage = (e, message) => {
     e.preventDefault();
-    let text = { message: message };
-    const isText = message && message.trim() !== '';
+    const uuid = uuidv4();
+    let text = { message: message, message_identifier: uuid };
+    let isText = message && message.trim() !== '';
     this.setState(
       {
-        messages: isText ? this.state.messages.concat({text: message, sent_by_retailer: true, created_at: new Date() }) : this.state.messages,
+        messages: isText ? this.state.messages.concat({
+          text: message,
+          sent_by_retailer: true,
+          created_at: new Date(),
+          message_identifier: uuid
+        }) : this.state.messages,
         new_message: true
       }, () => {
         if (isText) {
@@ -90,6 +100,7 @@ class ChatMessages extends Component {
 
   handleSubmitImg = (el, file_data) => {
     let url, type, data;
+    const uuid = uuidv4();
 
     if (this.state.selectedProduct || this.state.selectedFastAnswer) {
       url = this.state.selectedProduct ? this.state.selectedProduct.attributes.image : this.state.selectedFastAnswer.attributes.image_url;
@@ -98,19 +109,24 @@ class ChatMessages extends Component {
       data = new FormData();
       data.append('url', url);
       data.append('type', 'image');
+      data.append('message_identifier', uuid);
     } else {
       url = URL.createObjectURL(el.files[0]);
       type = this.fileType(el.files[0].type);
+      file_data.append('message_identifier', uuid);
     }
 
-    this.setState({messages: this.state.messages.concat({
-      url: url,
-      sent_by_retailer: true,
-      file_type: type, filename: el ? el.files[0].name : null}),
+    this.setState({
+      messages: this.state.messages.concat({
+        url: url,
+        sent_by_retailer: true,
+        file_type: type, filename: el ? el.files[0].name : null,
+        created_at: new Date(),
+        message_identifier: uuid
+      }),
       new_message: true,
       selectedProduct: null,
-      selectedFastAnswer: null,
-      created_at: new Date()
+      selectedFastAnswer: null
     }, () => {
       this.props.sendImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
       this.scrollToBottom();
@@ -215,18 +231,20 @@ class ChatMessages extends Component {
   )
 
   addArrivingMessage = (currentMessages, newMessage) => {
-    // First remove message without Id to avoid duplication
-    let newMessagesArray = currentMessages.filter((message) => message.id);
-    // Then find and replace element if it exists
+    // Find and replace element if it exists
     const index = currentMessages.findIndex((el) => (
-      el.id === newMessage.id
+      el.id === newMessage.id || (newMessage.message_identifier && el.message_identifier === newMessage.message_identifier)
     ));
+
     if (index === -1) {
-      newMessagesArray = newMessagesArray.concat(newMessage);
+      currentMessages = currentMessages.concat(newMessage);
     } else {
-      newMessagesArray = newMessagesArray.map((message) => ((newMessage.id === message.id) ? newMessage : message));
+      currentMessages = currentMessages.map((message) => ((newMessage.id === message.id
+        || (newMessage.message_identifier && message.message_identifier === newMessage.message_identifier))
+        ? newMessage : message));
     }
-    return newMessagesArray.sort(this.sortMessages());
+
+    return currentMessages;
   }
 
   updateChat = (data) => {
@@ -257,18 +275,6 @@ class ChatMessages extends Component {
       }
     }
   }
-
-  sortMessages = () => (
-    (a, b) => {
-      if (moment(a.created_at) === moment(b.created_at)) {
-        return 0;
-      }
-      if (moment(a.created_at) > moment(b.created_at)) {
-        return 1;
-      }
-      return -1;
-    }
-  )
 
   downloadFile = (e, file_url, filename) => {
     e.preventDefault();
@@ -304,6 +310,7 @@ class ChatMessages extends Component {
 
   toggleProducts = () => {
     this.props.toggleProducts();
+    this.handleShowInputMenu();
   }
 
   removeSelectedProduct = () => {
@@ -317,8 +324,6 @@ class ChatMessages extends Component {
   divClasses = (message) => {
     let classes = message.sent_by_retailer === true ? 'message-by-retailer f-right' : 'message-by-customer';
     classes += ' main-message-container';
-    if (message.sent_by_retailer === true && message.date_read)
-      classes += ' read-message';
     if (['voice', 'audio'].includes(this.fileType(message.file_type))) classes += ' video-audio audio-background';
     if (this.fileType(message.file_type) === 'video') classes += ' video-audio no-background';
     if (this.fileType(message.file_type) === 'image') classes += ' no-background';
@@ -395,14 +400,24 @@ class ChatMessages extends Component {
 
   sendImages = () => {
     let insertedMessages = [];
-    let data = new FormData();
+    let uuid, url, type;
+    const data = new FormData();
+
     this.state.loadedImages.map((image) => {
+      uuid = uuidv4();
       data.append('file_data[]', image);
+      data.append('message_identifiers[]', uuid);
 
-      let url = URL.createObjectURL(image);
-      let type = this.fileType(image.type);
+      url = URL.createObjectURL(image);
+      type = this.fileType(image.type);
 
-      insertedMessages.push({url: url, sent_by_retailer: true, file_type: type, created_at: new Date()})
+      insertedMessages.push({
+        url: url,
+        sent_by_retailer: true,
+        file_type: type,
+        created_at: new Date(),
+        message_identifier: uuid
+      })
     });
 
     this.setState({
@@ -510,16 +525,20 @@ class ChatMessages extends Component {
       || (this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.image_url))
 
   sendLocation = (position) => {
+    const uuid = uuidv4();
+    this.handleShowInputMenu();
     let text = {
       message: `https://www.google.com/maps/place/${position.lat},${position.lng}`,
-      type: 'location'
+      type: 'location',
+      message_identifier: uuid
     }
 
     this.setState({ messages: this.state.messages.concat(
       {
         url: text.message,
         sent_by_retailer: true,
-        file_type: 'location'
+        file_type: 'location',
+        message_identifier: uuid
       }
     ), new_message: true, showMap: false}, () => {
       this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
@@ -601,9 +620,21 @@ class ChatMessages extends Component {
     return latestCustomerMessage && moment().local().diff(latestCustomerMessage.created_at, 'days') > 7;
   };
 
+  handleShowInputMenu = () => {
+    this.setState((prevState) => ({
+      showInputMenu: !prevState.showInputMenu
+    }));
+  }
+
+  toggleOptions = () => this.setState(({ showOptions }) => ({ showOptions: !showOptions }));
+
   render() {
+    const chatBoxClass = this.state.showOptions && this.props.onMobile
+      ? 'ig-chat__box ig-chat__box-without-options'
+      : 'ig-chat__box';
+
     return (
-      <div className="row bottom-xs">
+      <div className="chat-messages-holder bottom-xs">
         {this.props.onMobile && (
           <MobileTopChatBar
             backToChatList={this.props.backToChatList}
@@ -615,14 +646,17 @@ class ChatMessages extends Component {
           (
             <TopChatBar
               activeChatBot={this.props.activeChatBot}
-              agent_list={this.props.agent_list}
+              agentsList={this.props.agent_list}
               customer={this.props.customer}
               customerDetails={this.props.customerDetails}
               handleAgentAssignment={this.handleAgentAssignment}
               newAgentAssignedId={this.props.newAgentAssignedId}
               onMobile={this.props.onMobile}
+              showOptions={this.state.showOptions}
               setNoRead={this.setNoRead}
               toggleChatBot={this.toggleChatBot}
+              toggleOptions={this.toggleOptions}
+              chatType='instagram'
             />
           )}
         {this.state.isOpenImage && (
@@ -632,9 +666,13 @@ class ChatMessages extends Component {
             imageLoadErrorMessage="Error al cargar la imagen"
           />
         )}
-        <div className="col-xs-12 chat__box pt-8" onScroll={(e) => this.handleScrollToTop(e)} style={this.overwriteStyle()}>
+        <div
+          className={`col-xs-12 mt-8 px-24 border-top-light ${chatBoxClass}`}
+          onScroll={(e) => this.handleScrollToTop(e)}
+          style={this.overwriteStyle()}
+        >
           {this.state.messages.map((message) => (
-            <div key={message.id} className="message">
+            <div key={message.id} className="message text-gray-dark">
               <div className={ this.divClasses(message) }>
                 <ChatMessage
                   message={message}
@@ -652,7 +690,7 @@ class ChatMessages extends Component {
             <AlreadyAssignedChatLabel/>
             )
             : (this.lastInteraction() ? (
-              <p>Este canal de chat no ha tenido actividad del cliente los últimos 7 días, por lo tanto se encuentra cerrado.</p>
+              <p className="p-24 text-gray-dark">Este canal de chat no ha tenido actividad del cliente los últimos 7 días, por lo tanto se encuentra cerrado.</p>
             )
             : (
               this.canSendMessages() &&
@@ -673,6 +711,8 @@ class ChatMessages extends Component {
                     toggleMap={this.toggleMap}
                     getCaretPosition={this.getCaretPosition}
                     insertEmoji={this.insertEmoji}
+                    showInputMenu={this.state.showInputMenu}
+                    handleShowInputMenu={this.handleShowInputMenu}
                   />
                 </div>
             )

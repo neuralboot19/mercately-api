@@ -13,12 +13,12 @@ const MessageDateTime = ({ chatType, message }) => {
     return false;
   };
 
-  const messageDateTimeClass = messageDirection() === "inbound" ? 'fs-10 mt-3 c-gray-label' : 'fs-10 mt-3';
+  const messageDateTimeClass = messageDirection() === "inbound" ? 'fs-10 mt-3' : 'mt-3';
 
   const formattedDateTime = moment(messageDateTime).local().locale('es').format('DD-MM-YYYY HH:mm');
 
   return (
-    <div className="t-right d-inline">
+    <div className="d-inline fs-10">
       <span
         className={messageDateTimeClass}
       >

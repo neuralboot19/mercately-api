@@ -5,8 +5,8 @@ const MessageInput = ({ getCaretPosition, onKeyPress, pasteImages }) => (
     id="divMessage"
     contentEditable="true"
     role="textbox"
-    placeholder-text="Escribe un mensaje aquí"
-    className="message-input fs-14"
+    placeholder-text="Escribe tu mensaje"
+    className="message-input fs-input-text"
     onPaste={(e) => pasteImages(e)}
     onKeyPress={onKeyPress}
     onKeyUp={getCaretPosition}

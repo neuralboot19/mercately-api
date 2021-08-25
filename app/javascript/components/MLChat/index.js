@@ -242,44 +242,46 @@ const MLChat = () => {
   };
 
   return (
-    <div className="row">
-      <div className="col-xs-12 col-sm-3 chat_list_holder">
-        {loading ?
-          <LoadMore />
-          :
+    <div>
+      <div className="container-fluid">
+        <div className="row no-left-margin-xs">
           <OrderList
             orders={state.orders}
             handleLoadMoreOnScrollToBottom={handleLoadMoreOnScrollToBottom}
             selectOrder={selectOrder}
             selectedChat={state.selectedChat}
+            loading={loading}
           />
-        }
-      </div>
-      {state.selectedChat === null && (
-        <SelectChatLabel />
-      )}
-      {state.selectedChat && (
-        <div className="col-xs-12 col-sm-9">
-          <div className="box">
-            <div className="row">
-              <ChatWindow
-                state={state}
-                handleScrollToTop={handleScrollToTop}
-                bottomRef={bottomRef}
-                openImage={openImage}
-                handleSubmitMessage={handleSubmitMessage}
-              />
+
+          {state.selectedChat === null && (
+            <SelectChatLabel />
+          )}
+          {state.selectedChat && (
+            <div className="col-xs-12 col-md-9 no-padding-xs">
+              <div className="">
+                <div className="chat-messages-holder p-24">
+                  <ChatWindow
+                    state={state}
+                    handleScrollToTop={handleScrollToTop}
+                    bottomRef={bottomRef}
+                    openImage={openImage}
+                    handleSubmitMessage={handleSubmitMessage}
+                  />
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
         </div>
-      )}
-      {state.isOpenImage && (
-        <Lightbox
-          mainSrc={state.imageUrl}
-          onCloseRequest={() => setState({ ...state, isOpenImage: false })}
-          imageLoadErrorMessage="Error al cargar la imagen"
-        />
-      )}
+
+        {state.isOpenImage && (
+          <Lightbox
+            mainSrc={state.imageUrl}
+            onCloseRequest={() => setState({ ...state, isOpenImage: false })}
+            imageLoadErrorMessage="Error al cargar la imagen"
+          />
+        )}
+      </div>
     </div>
   );
 };

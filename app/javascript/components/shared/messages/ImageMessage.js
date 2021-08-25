@@ -70,7 +70,7 @@ function ImageMessage({
           />
         </div>
         {message.content_media_caption
-        && (<div className="media-caption text-pre-line" dangerouslySetInnerHTML={{ __html: checkForUrls(message.content_media_caption) }} />)}
+        && (<div className="media-caption text-pre-line t-left" dangerouslySetInnerHTML={{ __html: checkForUrls(message.content_media_caption) }} />)}
       </div>
     </div>
   );

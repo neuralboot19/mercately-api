@@ -92,7 +92,7 @@ class Products extends Component {
             <i className="fs-18 mt-4 mr-4 f-right fas fa-times cursor-pointer" onClick={() => this.toggleProducts()}></i>
           </p>
         </div>
-        <div className="customer_details col-xs-12 col-sm-12 col-md-12 col-lg-12">
+        <div className="customer_details details-mobile-height col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div>
             <input
               type="text"

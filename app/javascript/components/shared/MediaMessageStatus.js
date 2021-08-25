@@ -44,11 +44,11 @@ const MediaMessageStatus = ({
           message={message}
         />
       )}
-      {chatType === 'facebook' &&
+      {message.sender_full_name && (
         <SenderData
-          message={message}
+          senderFullName={message.sender_full_name}
         />
-      }
+      )}
     </div>
   );
 };

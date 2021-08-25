@@ -464,6 +464,10 @@ class Customer < ApplicationRecord
     ((Time.now - last_message_date) / 3600) < 24
   end
 
+  def has_pending_reminders
+    reminders.where('send_at_timezone >= ? and status = ?', Time.now, 0).exists?
+  end
+
   def open_chat(retailer_user)
     with_lock do
       return false unless status_chat == 'new_chat' && update(status_chat: 'open_chat')

@@ -13,7 +13,7 @@ const ChatWindow = ({
   let caretPosition = 0;
 
   const divClasses = (message) => {
-    let classes = message.answer ? 'message-by-retailer f-right' : 'message-by-customer';
+    let classes = message.answer ? 'message-by-retailer f-right' : 'message-by-customer text-gray-dark';
     classes += ' main-message-container';
     return classes;
   };
@@ -118,7 +118,7 @@ const ChatWindow = ({
 
   return (
     <>
-      <div className="col-xs-12 chat__box pt-8" style={{ height: '72vh' }} onScroll={handleScrollToTop}>
+      <div className="col-xs-12 border-12 ml-chat__box pt-8" onScroll={handleScrollToTop}>
         {state.orderMessages.map((message) => (
           <div key={message.id} className="message">
             <div className={divClasses(message)}>
