@@ -41,13 +41,6 @@ class Retailers::MessagesController < RetailersController
 
   def facebook_chats
     render layout: "chats/chat"
-    @chats = if current_retailer_user.only_assigned
-               current_retailer_user.a_customers.includes(:facebook_messages)
-                 .where.not(facebook_messages: { id: nil }).page(params[:page])
-             else
-               current_retailer.customers.includes(:facebook_messages)
-                 .where.not(facebook_messages: { id: nil }).page(params[:page])
-             end
   end
 
   def instagram_chats
