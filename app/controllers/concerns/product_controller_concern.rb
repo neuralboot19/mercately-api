@@ -14,7 +14,8 @@ module ProductControllerConcern
   # Asigna atributos comunes en los metodos create y update
   def assign_attributes
     @product.attributes = {
-      upload_product: convert_to_boolean(params[:product][:upload_product]),
+      # upload_product: convert_to_boolean(params[:product][:upload_product]),
+      upload_product: false,
       incoming_images:params[:product][:images],
       incoming_variations: @variations,
       main_image: @main_image,

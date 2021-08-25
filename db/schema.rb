@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_06_165712) do
+ActiveRecord::Schema.define(version: 2021_08_31_180617) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -856,7 +856,7 @@ ActiveRecord::Schema.define(version: 2021_08_06_165712) do
   create_table "products", force: :cascade do |t|
     t.string "title"
     t.decimal "price"
-    t.integer "available_quantity"
+    t.integer "available_quantity", default: 0
     t.text "description"
     t.bigint "retailer_id"
     t.datetime "created_at", null: false

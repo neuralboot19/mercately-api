@@ -115,7 +115,7 @@
       Código: <b class="fs-12"><%= product.code %></b>
       <br/>
     <% end %>
-    Disponible: <b class="<%= product.available_quantity >= 0 ? 'c-green' : 'c-red' %>"><%= product.available_quantity %></b>
+    Disponible: <b class="<%= product.available_quantity > 0 ? 'c-green' : 'c-red' %>"><%= product.available_quantity %></b>
   </div>
   <div class="hide-on-sm-and-down m-auto">
     <label class="item__dropdown d-inline">
