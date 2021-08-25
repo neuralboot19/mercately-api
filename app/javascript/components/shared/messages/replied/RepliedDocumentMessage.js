@@ -47,7 +47,7 @@ function RepliedDocumentMessage({
     return <div className="lds-dual-ring" />;
   }
   return (
-    <div className="fs-15 no-back-color">
+    <div className="fs-md-and-down-12 no-back-color">
       <a
         href=""
         onClick={(e) => onClick(e, url, message.filename)}

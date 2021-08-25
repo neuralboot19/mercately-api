@@ -13,7 +13,7 @@ const TextMessage = ({ chatType, handleMessageEvents, message }) => {
   messageText = checkForUrls(messageText);
 
   return (
-    <div className="text-pre-line">
+    <div className="text-pre-line fs-md-and-down-12">
       <div dangerouslySetInnerHTML={{ __html: messageText }} />
       <MessageStatus
         chatType={chatType}

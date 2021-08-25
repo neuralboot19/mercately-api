@@ -14,7 +14,7 @@ const LocationMessage = ({ chatType, handleMessageEvents, message }) => {
   };
 
   return (
-    <div className="fs-15">
+    <div className="fs-md-and-down-12">
       <a
         href={locationURL()}
         target="_blank"

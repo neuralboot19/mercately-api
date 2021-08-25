@@ -196,7 +196,7 @@ const TopChatBar = ({
         </span>
       </p>
       {showOptions && (
-        <div className="top-chat-bar">
+        <div className="top-chat-bar pb-0">
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <p className="font-weight-bolder fs-16 m-0 d-none d-md-block text-gray-dark name-top-chat-bar">{fullName || ''}</p>
@@ -212,7 +212,7 @@ const TopChatBar = ({
               />
             </div>
 
-            <div className="flex-grow-1 d-flex justify-content-end">
+            <div className="flex-grow-1 d-flex justify-content-end h-40">
               <button
                 type="button"
                 onClick={(e) => handleUnreadChat(e)}
@@ -227,7 +227,7 @@ const TopChatBar = ({
               </button>
               {chatType !== 'instagram' && (
                 <button
-                  className={`d-flex justify-content-center align-items-center p-12 border-8 cursor-pointer border-0 mr-8 ${bgBotBtn}`}
+                  className={`d-flex justify-content-center align-items-center p-12 border-8 cursor-pointer border-0 mr-8 tooltip-top ${bgBotBtn}`}
                   onClick={(e) => toggleChatBot(e)}
                 >
                   <div className="tooltip-top">
@@ -241,8 +241,8 @@ const TopChatBar = ({
                 </button>
               )}
               <Select
-                className="react-select-container fs-14 w-select-top-chat"
-                classNamePrefix="react-select"
+                className="react-select-container-top-chat-bar fs-14 w-select-top-chat"
+                classNamePrefix="react-select-container-top-chat-bar"
                 options={agentsOptions}
                 value={newAgentAssignedId || customerDetails.assigned_agent.id || ''}
                 onChange={(e) => handleChange(e)}

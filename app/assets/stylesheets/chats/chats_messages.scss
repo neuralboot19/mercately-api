@@ -5,7 +5,11 @@
   height: $chatHeight;
 
   .chat__box {
-    height: $chaBoxHeight
+    height: $chatBoxHeight;
+
+    &.maximize {
+      height: $chatBoxHeightGrow;
+    }
   }
 
   .ml-chat__box {
@@ -16,6 +20,10 @@
   .ig-chat__box {
     height: calc(100vh - 340px);
     overflow-y: auto;
+
+    &.maximize {
+      height: calc(100vh - 250px);
+    }
   }
 
   @media screen and (max-width: 1024px) {
@@ -27,7 +35,7 @@
       overflow-y: auto;
     }
     .chat__box-without-options {
-      height: calc(100vh - 379px)!important;
+      height: calc(100vh - 360px) !important;
     }
     .ig-chat__box-without-options {
       height: calc(100vh - 323px)!important;
@@ -131,5 +139,11 @@
   left: 48px!important;
   &::before {   
     left: -8px!important;
+  }
+}
+
+.fs-md-and-down-12 {
+  @media screen and (max-height: 768px) {
+    font-size: 12px !important;
   }
 }

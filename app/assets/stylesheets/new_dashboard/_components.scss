@@ -1059,17 +1059,27 @@ i {
 
     .message-input {
       align-items: center;
-      width: 95%;
+      width: 100%;
       border: 0;
       padding: 15px;
       outline: 0;
       height: 53px;
       overflow-y: auto;
       white-space: pre-wrap;
+
+      &.maximize {
+        height: 85px;
+      }
+
+      @media screen and (max-width: 768px) {
+        &.maximize {
+          height: 80px;
+        }
+      }
     }
 
     [contentEditable=true]:empty::before {
-      content:attr(placeholder-text)
+      content:attr(placeholder-text);
     }
 
     .cancel-audio-counter {
