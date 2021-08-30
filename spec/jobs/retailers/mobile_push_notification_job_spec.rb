@@ -11,10 +11,10 @@ RSpec.describe Retailers::MobilePushNotificationJob, type: :job do
         body: body,
         customer_id: customer.id,
         type: 'message',
-        channel: 'WhatsApp'
+        channel: 'whatsapp'
       },
       priority: 'high',
-      contentAvailable: true
+      mutableContent: true
     }
   end
 
@@ -26,7 +26,7 @@ RSpec.describe Retailers::MobilePushNotificationJob, type: :job do
     it 'enques the job' do
       expect {
         Retailers::MobilePushNotificationJob.perform_later(
-          [mobile_token.mobile_push_token], body, customer.id, 'WhatsApp'
+          [mobile_token.mobile_push_token], body, customer.id, 'whatsapp'
         )
       }.to have_enqueued_job
     end
@@ -38,7 +38,7 @@ RSpec.describe Retailers::MobilePushNotificationJob, type: :job do
         .with([mobile_token.mobile_push_token], data)
 
       Retailers::MobilePushNotificationJob.perform_now(
-        [mobile_token.mobile_push_token], body, customer.id, 'WhatsApp'
+        [mobile_token.mobile_push_token], body, customer.id, 'whatsapp'
       )
     end
 

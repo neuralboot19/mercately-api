@@ -58,7 +58,7 @@ RSpec.describe AgentCustomer, type: :model do
                 [mobile_token.mobile_push_token],
                 "Nuevo chat asignado - #{customer.full_names}",
                 customer.id,
-                'Messenger'
+                'messenger'
               )
 
             agent_customer.update(retailer_user_id: retailer_user2.id)
@@ -74,14 +74,14 @@ RSpec.describe AgentCustomer, type: :model do
                 [mobile_token.mobile_push_token],
                 "Nuevo chat asignado - #{customer.phone}",
                 customer.id,
-                'Messenger'
+                'messenger'
               )
 
             agent_customer.update(retailer_user_id: retailer_user2.id)
           end
         end
 
-        context 'when is a WhatsApp customer' do
+        context 'when is a whatsapp customer' do
           before do
             customer.update(ws_active: true)
           end
@@ -92,7 +92,7 @@ RSpec.describe AgentCustomer, type: :model do
                 [mobile_token.mobile_push_token],
                 "Nuevo chat asignado - #{customer.full_names}",
                 customer.id,
-                'WhatsApp'
+                'whatsapp'
               )
 
             agent_customer.update(retailer_user_id: retailer_user2.id)
@@ -108,7 +108,7 @@ RSpec.describe AgentCustomer, type: :model do
                 [mobile_token.mobile_push_token],
                 "Nuevo chat asignado - #{customer.phone}",
                 customer.id,
-                'WhatsApp'
+                'whatsapp'
               )
 
             agent_customer.update(retailer_user_id: retailer_user2.id)
