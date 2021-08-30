@@ -316,7 +316,7 @@ class ChatMessages extends Component {
     classes += ' main-message-container';
     if (['voice', 'audio'].includes(this.fileType(message.file_type))) classes += ' video-audio audio-background';
     if (this.fileType(message.file_type) === 'video') classes += ' video-audio no-background';
-    if (this.fileType(message.file_type) === 'image') classes += ' no-background';
+    if (['image', 'video', 'sticker'].includes(this.fileType(message.file_type))) classes += ' no-background media-container';
     return classes;
   }
 
