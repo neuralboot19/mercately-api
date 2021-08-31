@@ -1,6 +1,7 @@
 import {
   ERASE_DEAL,
-  LOAD_DATA_FAILURE
+  LOAD_DATA_FAILURE,
+  ADD_DEALS_TO_COLUMN
 } from "../actionTypes";
 
 /* Customers */
@@ -187,6 +188,28 @@ export const deleteDeal = (data, column) => {
         dispatch({ type: ERASE_DEAL, data, column });
       })
       .catch((err) => {
+        dispatch({ type: LOAD_DATA_FAILURE, err });
+      });
+  };
+};
+
+export const loadMoreDeals = (column, page) => {
+  const endpoint = `/api/v1/deals?page=${page}&column_id=${column}`;
+  const head = {
+    method: "GET",
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json, text/plain, */*",
+      "Content-Type": "application/json"
+    }
+  };
+  return (dispatch) => {
+    fetch(endpoint, head)
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: ADD_DEALS_TO_COLUMN, data, column }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      ).catch((err) => {
         dispatch({ type: LOAD_DATA_FAILURE, err });
       });
   };

@@ -5,6 +5,7 @@ module FacebookMessages
     include StatusChatConcern
     include AgentMessengerAssignmentConcern
     include MessengerChatBotActionConcern
+    include PushNotificationable
     belongs_to :facebook_retailer
     belongs_to :customer
     belongs_to :retailer_user, required: false
@@ -29,6 +30,26 @@ module FacebookMessages
     delegate :retailer, to: :facebook_retailer
 
     attr_accessor :file_url, :file_content_type
+  end
+
+  def message_info
+    return text if file_type.blank?
+
+    general_file_type = file_type.split('/').first
+    case general_file_type
+    when 'image'
+      'Imagen'
+    when 'video'
+      'Video'
+    when 'audio', 'voice'
+      'Audio'
+    when 'location'
+      'Ubicación'
+    when 'sticker'
+      'Sticker'
+    else
+      'Archivo'
+    end
   end
 
   private

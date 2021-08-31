@@ -26,9 +26,11 @@ class AgentCustomer < ApplicationRecord
 
       body = "Nuevo chat asignado - #{customer_name}"
       channel = if customer.ws_active
-                  'WhatsApp'
+                  'whatsapp'
+                elsif customer.instagram?
+                  'instagram'
                 else
-                  'Messenger'
+                  'messenger'
                 end
 
       Retailers::MobilePushNotificationJob.perform_later(tokens, body, self.customer.id, channel)

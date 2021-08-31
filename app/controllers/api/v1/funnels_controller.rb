@@ -119,10 +119,12 @@ class Api::V1::FunnelsController < Api::ApiController
         columns[step.web_id] = {
           id: step.web_id.to_s,
           title: step.name,
-          deals: step.deals.page(1).count,
+          deals: step.deals.page.count,
           dealIds: step.deals.page(1).pluck(:web_id).map(&:to_s),
           internal_id: step.id,
-          r_internal_id: @funnel.retailer_id
+          r_internal_id: @funnel.retailer_id,
+          total: step.deals.count,
+          pages: (step.deals.count / 25) + 1
         }
       end
 

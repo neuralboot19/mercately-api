@@ -19,7 +19,7 @@ const ChatMessage = ({
         <ImageMessage
           message={message}
           onClick={openImage}
-          chatType='facebook'
+          chatType="facebook"
         />
       );
       break;
@@ -27,7 +27,7 @@ const ChatMessage = ({
       tag = (
         <AudioMessage
           message={message}
-          chatType='facebook'
+          chatType="facebook"
         />
       );
       break;
@@ -37,7 +37,7 @@ const ChatMessage = ({
           isLoading={message.is_loading}
           message={message}
           onClick={downloadFile}
-          chatType='facebook'
+          chatType="facebook"
         />
       );
       break;
@@ -45,7 +45,7 @@ const ChatMessage = ({
       tag = (
         <VideoMessage
           message={message}
-          chatType='facebook'
+          chatType="facebook"
         />
       );
       break;
@@ -53,14 +53,14 @@ const ChatMessage = ({
       tag = (
         <LocationMessage
           message={message}
-          chatType='facebook'
+          chatType="facebook"
         />
       );
       break;
     default:
       tag = (
         <TextMessage
-          chatType='facebook'
+          chatType="facebook"
           message={message}
         />
       );

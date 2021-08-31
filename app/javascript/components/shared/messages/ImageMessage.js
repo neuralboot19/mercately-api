@@ -8,6 +8,8 @@ function ImageMessage({
   message,
   onClick
 }) {
+  const caption = chatType === 'facebook' ? message.text : message.content_media_caption;
+
   const [url, setUrl] = useState('');
 
   const getMsnUrl = () => {
@@ -69,8 +71,8 @@ function ImageMessage({
             mediaMessageType="image"
           />
         </div>
-        {message.content_media_caption
-        && (<div className="media-caption text-pre-line t-left" dangerouslySetInnerHTML={{ __html: checkForUrls(message.content_media_caption) }} />)}
+        {caption
+        && (<div className="media-caption text-pre-line t-left" dangerouslySetInnerHTML={{ __html: checkForUrls(caption) }} />)}
       </div>
     </div>
   );
