@@ -13,8 +13,8 @@ set :branch, 'master'
 set :rails_env, 'production'
 # Extended Server Syntax
 # ======================
-role :web, %w{10.116.0.5 10.116.0.4 10.116.0.7 10.116.0.6}, user: 'mercately'
-role :app, %w{10.116.0.5 10.116.0.4 10.116.0.7 10.116.0.6}, user: 'mercately'
+role :web, %w{10.116.0.5 10.116.0.4 10.116.0.7 10.116.0.6 10.116.0.10}, user: 'mercately'
+role :app, %w{10.116.0.5 10.116.0.4 10.116.0.7 10.116.0.6 10.116.0.10}, user: 'mercately'
 role :db, %w{10.116.0.5}, user: 'mercately'
 
 # This can be used to drop a more detailed server
