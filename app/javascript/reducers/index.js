@@ -7,7 +7,8 @@ import {
   CHANGE_DEAL_COLUMN,
   SET_COLUMNS, SET_WHATSAPP_MESSAGES,
   SET_WHATSAPP_MESSAGES_REQUEST, SET_MESSAGES,
-  SET_MESSAGES_REQUEST
+  SET_MESSAGES_REQUEST,
+  ADD_DEALS_TO_COLUMN
 } from "../actionTypes";
 
 const initialState = {
@@ -395,6 +396,30 @@ const reducer = (state = initialState, action) => {
         fetching_funnels: true
       }
     }
+
+    case ADD_DEALS_TO_COLUMN: {
+      const newColumns = state.funnelSteps.columns;
+      newColumns[action.column].dealIds = [
+        ...newColumns[action.column].dealIds,
+        ...Object.keys(action.data.deals)
+      ];
+
+      newColumns[action.column].deals = newColumns[action.column].dealIds.length;
+
+      return {
+        ...state,
+        funnelSteps: {
+          ...state.funnelSteps,
+          columns: newColumns,
+          deals: {
+            ...state.funnelSteps.deals,
+            ...action.data.deals
+          }
+        },
+        fetching_funnels: true
+      };
+    }
+
     case SET_WHATSAPP_MESSAGES_REQUEST:
     case SET_MESSAGES_REQUEST:
       return {
