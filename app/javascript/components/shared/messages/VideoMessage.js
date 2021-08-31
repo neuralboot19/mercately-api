@@ -3,6 +3,8 @@ import MediaMessageStatus from '../MediaMessageStatus';
 import checkForUrls from "../../../util/urlUtil";
 
 const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
+  const caption = chatType === 'facebook' ? message.text : message.content_media_caption;
+
   const url = chatType === "whatsapp" ? message.content_media_url : message.url;
 
   return (
@@ -18,8 +20,8 @@ const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
           mediaMessageType="video"
         />
       </div>
-      {message.content_media_caption
-      && (<div className="media-caption text-pre-line" dangerouslySetInnerHTML={{ __html: checkForUrls(message.content_media_caption) }} />)}
+      {caption
+      && (<div className="media-caption text-pre-line" dangerouslySetInnerHTML={{ __html: checkForUrls(caption) }} />)}
     </div>
   );
 };

@@ -3,6 +3,8 @@ import MessageStatus from '../MessageStatus';
 
 // chatType, handleMessageEvents, isReply, message, onClick
 function DocumentMessage(props) {
+  const caption = props.chatType === 'facebook' ? props.message.text : props.message.content_media_caption;
+
   const [url, setUrl] = useState('');
 
   const getMsnUrl = () => {
@@ -53,8 +55,8 @@ function DocumentMessage(props) {
           {props.message.filename || 'Descargar archivo'}
         </a>
         <br />
-        {props.message.content_media_caption
-        && (<div className="media-caption media-caption-template text-pre-line">{props.message.content_media_caption}</div>)}
+        {caption
+        && (<div className="media-caption media-caption-template text-pre-line">{caption}</div>)}
         <MessageStatus
           chatType={props.chatType}
           handleMessageEvents={props.handleMessageEvents}
