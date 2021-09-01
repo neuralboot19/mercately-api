@@ -65,16 +65,15 @@ class Product < ApplicationRecord
 
     return if check_cloudinary_image(img)
 
-    tempfile = MiniMagick::Image.open(url)
-    tempfile.resize '500x500'
-    tempfile.write('./public/upload-' + filename + '.jpg')
-
-    return unless File.exist?(tempfile.path)
+    begin
+      tempfile = MiniMagick::Image.open(url)
+      tempfile.resize '500x500'
+    rescue
+      return
+    end
 
     images.attach(io: File.open(tempfile.path), filename: filename)
     update(main_picture_id: images.last.id) if index.zero?
-
-    File.delete('./public/upload-' + filename + '.jpg')
   end
 
   def update_ml_info(past_meli_status)

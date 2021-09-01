@@ -314,6 +314,7 @@ const ChatSideBar = ({
       setState({
         ...state,
         customers: [],
+        assignedCustomers: [],
         allCustomers: []
       });
     }
@@ -363,6 +364,7 @@ const ChatSideBar = ({
         tag: 'all',
         order: 'received_desc',
         customers: [],
+        assignedCustomers: [],
         allCustomers: [],
         filter: {
           ...state.filter,
@@ -472,6 +474,7 @@ const ChatSideBar = ({
       searchString: '',
       order: 'received_desc',
       customers: [],
+      assignedCustomers: [],
       allCustomers: [],
       filter: {
         agent: 'all',
