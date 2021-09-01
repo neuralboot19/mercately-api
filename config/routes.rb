@@ -61,6 +61,7 @@ Rails.application.routes.draw do
         get 'messenger_conversations', to: 'messenger_conversations#messenger_conversations'
         get 'customers/:id/messenger_conversations', to: 'messenger_conversations#customer_conversations'
         resources :customers, only: [:index, :show, :update, :create]
+        resources :products, only: [:index, :show, :create, :update]
       end
     end
 

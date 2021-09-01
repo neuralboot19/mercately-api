@@ -51,14 +51,19 @@ RSpec.describe Product, type: :model do
     let(:url) { 'https://miro.medium.com/max/500/1*pgsK9936_OIKWYJpcMicVg.gif' }
 
     it 'uploads from ML to Cloudinary and sets the main picture' do
-      expect(product.attach_image(url, 'tio_ben.gif', 0)).to eq 1
+      product.attach_image(url, 'tio_ben.gif', 0)
+      expect(product.images.size).to eq(1)
       expect(product.main_picture_id).not_to be_nil
     end
 
     context 'when the image already exists' do
-      it 'deletes the local file' do
+      before do
         product.attach_image(url, 'tio_ben.gif', 0)
-        expect(product.attach_image(url, 'tio_ben.gif', 0)).to eq 1
+        allow(MiniMagick::Image).to receive(:open).and_return(true)
+      end
+
+      it 'does not upload it again' do
+        expect(product.attach_image(url, 'tio_ben.gif', 0)).to be_nil
       end
     end
   end
