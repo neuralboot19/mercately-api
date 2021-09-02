@@ -35,7 +35,7 @@ socket.on('new_message_counter', function(data) {
 });
 
 function play(playAlert, data) {
-  if (playAlert === true && data['execute_alert'] === true) {
+  if (data && data['execute_alert'] === true) {
     var audio = new Audio('../../notification_tune.mp3');
     audio.play();
     showNotification(data);
