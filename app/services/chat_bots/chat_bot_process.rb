@@ -347,10 +347,9 @@ module ChatBots
       body = set_body_request(action)
       endpoint_action = define_endpoint_action(action)
 
-      response = send(endpoint_action, action.webhook, body, set_headers(action))
-      # @retailer.with_advisory_lock(@retailer.to_global_id.to_s) do
-      #               send(endpoint_action, action.webhook, body, set_headers(action))
-      #             end
+      response = @retailer.with_advisory_lock(@retailer.to_global_id.to_s) do
+                   send(endpoint_action, action.webhook, body, set_headers(action))
+                 end
 
       body = parse_json(response)
 

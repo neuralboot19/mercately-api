@@ -100,6 +100,8 @@ class Retailer < ApplicationRecord
   end
 
   def karix_unread_whatsapp_messages(retailer_user)
+    return []
+
     messages = karix_whatsapp_messages.includes(:customer).where.not(status: 'read', account_uid: nil)
       .where(direction: 'inbound', customers: { retailer_id: id })
     return messages if retailer_user.admin? || retailer_user.supervisor?
@@ -113,6 +115,8 @@ class Retailer < ApplicationRecord
   end
 
   def gupshup_unread_whatsapp_messages(retailer_user)
+    return []
+
     messages = gupshup_whatsapp_messages.includes(:customer).where.not(status: 'read', whatsapp_message_id: nil)
       .where(direction: 'inbound', customers: { retailer_id: id })
     return messages if retailer_user.admin? || retailer_user.supervisor?

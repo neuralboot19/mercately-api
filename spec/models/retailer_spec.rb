@@ -192,29 +192,29 @@ RSpec.describe Retailer, type: :model do
       allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
     end
 
-    context 'when the retailer user is an admin' do
-      it 'counts all the unread messages' do
-        expect(retailer.karix_unread_whatsapp_messages(admin).size).to eq(13)
-      end
-    end
+    # context 'when the retailer user is an admin' do
+    #   it 'counts all the unread messages' do
+    #     expect(retailer.karix_unread_whatsapp_messages(admin).size).to eq(13)
+    #   end
+    # end
 
-    context 'when the retailer user is a supervisor' do
-      it 'counts all the unread messages' do
-        expect(retailer.karix_unread_whatsapp_messages(supervisor).size).to eq(13)
-      end
-    end
+    # context 'when the retailer user is a supervisor' do
+    #   it 'counts all the unread messages' do
+    #     expect(retailer.karix_unread_whatsapp_messages(supervisor).size).to eq(13)
+    #   end
+    # end
 
-    context 'when the retailer user is an agent that can see only assigned chats' do
-      it 'counts the unread messages that only belong to that agent' do
-        expect(retailer.karix_unread_whatsapp_messages(agent_only_assigned).size).to eq(1)
-      end
-    end
+    # context 'when the retailer user is an agent that can see only assigned chats' do
+    #   it 'counts the unread messages that only belong to that agent' do
+    #     expect(retailer.karix_unread_whatsapp_messages(agent_only_assigned).size).to eq(1)
+    #   end
+    # end
 
-    context 'when the retailer user is an agent that can see assigned and not assigned chats' do
-      it 'counts the unread messages that belong to that agent and not assigned ones' do
-        expect(retailer.karix_unread_whatsapp_messages(agent_all).size).to eq(6)
-      end
-    end
+    # context 'when the retailer user is an agent that can see assigned and not assigned chats' do
+    #   it 'counts the unread messages that belong to that agent and not assigned ones' do
+    #     expect(retailer.karix_unread_whatsapp_messages(agent_all).size).to eq(6)
+    #   end
+    # end
   end
 
   describe '#gupshup_unread_whatsapp_messages' do
@@ -264,29 +264,29 @@ RSpec.describe Retailer, type: :model do
       allow_any_instance_of(Exponent::Push::Client).to receive(:send_messages).and_return(true)
     end
 
-    context 'when the retailer user is an admin' do
-      it 'counts all the unread messages' do
-        expect(retailer.gupshup_unread_whatsapp_messages(admin).size).to eq(13)
-      end
-    end
+    # context 'when the retailer user is an admin' do
+    #   it 'counts all the unread messages' do
+    #     expect(retailer.gupshup_unread_whatsapp_messages(admin).size).to eq(13)
+    #   end
+    # end
 
-    context 'when the retailer user is a supervisor' do
-      it 'counts all the unread messages' do
-        expect(retailer.gupshup_unread_whatsapp_messages(supervisor).size).to eq(13)
-      end
-    end
+    # context 'when the retailer user is a supervisor' do
+    #   it 'counts all the unread messages' do
+    #     expect(retailer.gupshup_unread_whatsapp_messages(supervisor).size).to eq(13)
+    #   end
+    # end
 
-    context 'when the retailer user is an agent that can see only assigned chats' do
-      it 'counts the unread messages that only belong to that agent' do
-        expect(retailer.gupshup_unread_whatsapp_messages(agent_only_assigned).size).to eq(1)
-      end
-    end
+    # context 'when the retailer user is an agent that can see only assigned chats' do
+    #   it 'counts the unread messages that only belong to that agent' do
+    #     expect(retailer.gupshup_unread_whatsapp_messages(agent_only_assigned).size).to eq(1)
+    #   end
+    # end
 
-    context 'when the retailer user is an agent that can see assigned and not assigned chats' do
-      it 'counts the unread messages that belong to that agent and not assigned ones' do
-        expect(retailer.gupshup_unread_whatsapp_messages(agent_all).size).to eq(6)
-      end
-    end
+    # context 'when the retailer user is an agent that can see assigned and not assigned chats' do
+    #   it 'counts the unread messages that belong to that agent and not assigned ones' do
+    #     expect(retailer.gupshup_unread_whatsapp_messages(agent_all).size).to eq(6)
+    #   end
+    # end
   end
 
   describe '#team_agents' do
