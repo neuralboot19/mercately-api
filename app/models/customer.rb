@@ -469,24 +469,24 @@ class Customer < ApplicationRecord
   end
 
   def open_chat(retailer_user)
-    with_lock do
+    # with_lock do
       return false unless status_chat == 'new_chat' && update(status_chat: 'open_chat')
-    end
+    # end
 
     save_history(retailer_user, 'mark_as', 'chat_open')
   end
 
   def set_in_process(retailer_user, from_answer = false)
-    with_lock do
+    # with_lock do
       return false unless (status_chat == 'open_chat' || (status_chat == 'new_chat' && from_answer == true)) &&
                           update(status_chat: 'in_process')
-    end
+    # end
 
     save_history(retailer_user, 'mark_as', 'chat_in_process')
   end
 
   def change_status_chat(retailer_user, params)
-    with_lock do
+    # with_lock do
       case params[:status_chat]
       when 'resolved'
         return false unless status_chat.in?(['open_chat', 'in_process']) && update(status_chat: params[:status_chat])
@@ -499,7 +499,7 @@ class Customer < ApplicationRecord
       else
         return false
       end
-    end
+    # end
 
     save_history(retailer_user, 'change_to', @chat_status)
   end
