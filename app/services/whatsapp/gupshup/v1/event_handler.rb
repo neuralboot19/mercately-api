@@ -26,12 +26,12 @@ module Whatsapp::Gupshup::V1
       gwm.status = :error
       gwm.error_payload = params
 
-      gwm.with_advisory_lock(gwm.to_global_id.to_s) do
+      # gwm.with_advisory_lock(gwm.to_global_id.to_s) do
         gwm.save!
 
         # Broadcast to the proper chat
         broadcast(gwm)
-      end
+      # end
     end
 
     private
@@ -41,9 +41,9 @@ module Whatsapp::Gupshup::V1
         customer = save_customer
 
         # Store in our database the incoming text message
-        GupshupWhatsappMessage.with_advisory_lock(
-          "#{@retailer.to_global_id}_#{customer.to_global_id}"
-        ) do
+        # GupshupWhatsappMessage.with_advisory_lock(
+        #   "#{@retailer.to_global_id}_#{customer.to_global_id}"
+        # ) do
           gwm = GupshupWhatsappMessage.create!(
             retailer: @retailer,
             customer: customer,
@@ -61,7 +61,7 @@ module Whatsapp::Gupshup::V1
 
           # Broadcast to the proper chat
           broadcast(gwm)
-        end
+        # end
       rescue StandardError => e
         Rails.logger.error(e)
         false
@@ -103,10 +103,10 @@ module Whatsapp::Gupshup::V1
             temp_events.destroy_all if top_temp_event.event == 5
           end
 
-          gwm.with_advisory_lock(gwm.to_global_id.to_s) do
+          # gwm.with_advisory_lock(gwm.to_global_id.to_s) do
             gwm.save!
             broadcast(gwm.reload)
-          end
+          # end
         else
           gs_id = @params['payload']['gsId']
           gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(gs_id)
@@ -123,16 +123,16 @@ module Whatsapp::Gupshup::V1
                 temp_events.destroy_all
               end
 
-              gwm.with_advisory_lock(gwm.to_global_id.to_s) do
+              # gwm.with_advisory_lock(gwm.to_global_id.to_s) do
                 gwm.save!
                 broadcast(gwm.reload)
-              end
+              # end
             end
           else
             wm_id = @params['payload']['id']
-            GupshupWhatsappMessage.with_advisory_lock(
-              "#{@retailer.to_global_id}_#{wm_id}"
-            ) do
+            # GupshupWhatsappMessage.with_advisory_lock(
+            #   "#{@retailer.to_global_id}_#{wm_id}"
+            # ) do
               GupshupTemporalMessageState.create(
                 gupshup_message_id: gs_id,
                 whatsapp_message_id: wm_id,
@@ -141,7 +141,7 @@ module Whatsapp::Gupshup::V1
                 destination: @params['payload']['destination'],
                 event_timestamp: @params['timestamp'].to_i
               )
-            end
+            # end
           end
         end
         true
