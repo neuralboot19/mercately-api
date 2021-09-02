@@ -23,9 +23,9 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
     context 'outbound message events' do
       context 'when the response from Gupshup has errors' do
+        let(:customer) { create(:customer, retailer: retailer, phone: '58414522XXXX', country_id: 'VE') }
         let!(:gupshup_message) do
-          create(:gupshup_whatsapp_message, retailer: retailer, gupshup_message_id:
-            'f7fd3d13-bc80-47e4-8697-2f2611a20b70')
+          create(:gupshup_whatsapp_message, customer: customer, retailer: retailer, gupshup_message_id: 'f7fd3d13-bc80-47e4-8697-2f2611a20b70')
         end
 
         let(:failed_response) do
@@ -38,7 +38,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
               'payload': {
                 'id': 'f7fd3d13-bc80-47e4-8697-2f2611a20b70',
                 'type': 'failed',
-                'destination': '584145223776',
+                'destination': '58414522XXXX',
                 'payload': {
                   'code': 1005,
                   'reason': 'Message sending failed as user is inactive for session message and template did not match'
