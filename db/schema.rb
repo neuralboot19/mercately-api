@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_31_180617) do
+ActiveRecord::Schema.define(version: 2021_09_08_214017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -409,6 +409,7 @@ ActiveRecord::Schema.define(version: 2021_08_31_180617) do
     t.datetime "last_chat_interaction"
     t.integer "pstype"
     t.integer "status_chat", default: 0
+    t.integer "count_unread_messages", default: 0
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"
@@ -773,6 +774,7 @@ ActiveRecord::Schema.define(version: 2021_08_31_180617) do
     t.text "notes"
     t.bigint "retailer_user_id"
     t.bigint "sales_channel_id"
+    t.integer "count_unread_messages", default: 0
     t.index ["customer_id"], name: "index_orders_on_customer_id"
     t.index ["meli_order_id"], name: "index_orders_on_meli_order_id", unique: true
     t.index ["retailer_user_id"], name: "index_orders_on_retailer_user_id"
@@ -982,6 +984,10 @@ ActiveRecord::Schema.define(version: 2021_08_31_180617) do
     t.string "api_session_token"
     t.string "api_session_device"
     t.datetime "api_session_expiration"
+    t.boolean "whatsapp_unread", default: false
+    t.boolean "ml_unread", default: false
+    t.boolean "messenger_unread", default: false
+    t.boolean "instagram_unread", default: false
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"

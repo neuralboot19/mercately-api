@@ -333,7 +333,7 @@ class ChatMessages extends Component {
   }
 
   handleAgentAssignment = (e) => {
-    let value = parseInt(e.target.value);
+    let value = parseInt(e.value);
     let agent = this.props.agent_list.filter(agent => agent.id === value);
 
     let r = confirm("Estás seguro de asignar este chat a otro agente?");

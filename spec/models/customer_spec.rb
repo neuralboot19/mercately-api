@@ -265,7 +265,7 @@ RSpec.describe Customer, type: :model do
   end
 
   describe '#recent_facebook_message_date' do
-    let(:customer) { create(:customer) }
+    let(:customer) { create(:customer, :messenger) }
     let!(:message1) { create(:facebook_message, customer: customer) }
     let!(:message2) { create(:facebook_message, customer: customer) }
     let!(:message3) { create(:facebook_message, customer: customer) }
@@ -449,7 +449,7 @@ RSpec.describe Customer, type: :model do
 
   describe '#total_messenger_messages' do
     let(:facebook_retailer) { create(:facebook_retailer) }
-    let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+    let(:customer) { create(:customer, :messenger, retailer: facebook_retailer.retailer) }
 
     before do
       create_list(:facebook_message, 5, customer: customer)
@@ -501,7 +501,7 @@ RSpec.describe Customer, type: :model do
   describe '#before_last_messenger_message' do
     context 'when there are not at least two facebook messages' do
       let(:facebook_retailer) { create(:facebook_retailer) }
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, :messenger, retailer: facebook_retailer.retailer) }
       let!(:facebook_message) { create(:facebook_message, customer: customer, sent_by_retailer: false) }
 
       it 'returns nil' do
@@ -511,7 +511,7 @@ RSpec.describe Customer, type: :model do
 
     context 'when there are at least two facebook messages' do
       let(:facebook_retailer) { create(:facebook_retailer) }
-      let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+      let(:customer) { create(:customer, :messenger, retailer: facebook_retailer.retailer) }
 
       before do
         create_list(:facebook_message, 2, customer: customer, sent_by_retailer: false)
@@ -525,7 +525,7 @@ RSpec.describe Customer, type: :model do
 
   describe '#last_messenger_message' do
     let(:facebook_retailer) { create(:facebook_retailer) }
-    let(:customer) { create(:customer, retailer: facebook_retailer.retailer) }
+    let(:customer) { create(:customer, :messenger, retailer: facebook_retailer.retailer) }
 
     before do
       create_list(:facebook_message, 2, customer: customer)
@@ -787,7 +787,7 @@ RSpec.describe Customer, type: :model do
     let(:retailer) { create(:retailer) }
     let(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
     let(:retailer_user) { create(:retailer_user, retailer: retailer) }
-    let(:customer) { create(:customer, retailer: retailer) }
+    let(:customer) { create(:customer, :messenger, retailer: retailer) }
     let!(:inbound_message) do
       create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
     end
@@ -824,7 +824,7 @@ RSpec.describe Customer, type: :model do
     let(:retailer) { create(:retailer) }
     let(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
     let(:retailer_user) { create(:retailer_user, retailer: retailer) }
-    let(:customer) { create(:customer, retailer: retailer) }
+    let(:customer) { create(:customer, :messenger, retailer: retailer) }
     let!(:inbound_message) do
       create(:facebook_message, :inbound, customer: customer, facebook_retailer: facebook_retailer)
     end
@@ -898,15 +898,15 @@ RSpec.describe Customer, type: :model do
   end
 
   describe '#unread_messenger_messages' do
-    let(:customer) { create(:customer) }
+    let(:customer) { create(:customer, :messenger) }
 
     before do
       create_list(:facebook_message, 2, :inbound, customer: customer)
-      create_list(:facebook_message, 3, :inbound, customer: customer, date_read: Time.now)
+      create_list(:facebook_message, 3, :inbound, customer: customer)
     end
 
     it 'returns the total unread inbound messenger messages' do
-      expect(customer.unread_messenger_messages).to eq(2)
+      expect(customer.unread_messenger_messages).to eq(5)
     end
   end
 

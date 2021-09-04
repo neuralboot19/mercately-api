@@ -35,17 +35,14 @@ module KarixNotificationHelper
         next if !removed_agent && !add_agent
       end
 
-      total = retailer.karix_unread_whatsapp_messages(ret_u).size
-
       redis.publish 'new_message_counter',
                     {
                       identifier: '.item__cookie_whatsapp_messages',
-                      total: total,
+                      unread_messages: ret_u.whatsapp_unread,
                       from: 'WhatsApp',
                       message_text: message_info(message),
                       customer_info: customer&.notification_info,
                       execute_alert: message.present? ? message.direction == 'inbound' : false,
-                      update_counter: message.blank? || message.direction == 'inbound',
                       room: ret_u.id
                     }.to_json
 

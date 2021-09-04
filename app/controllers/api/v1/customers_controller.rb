@@ -119,14 +119,16 @@ class Api::V1::CustomersController < Api::ApiController
     @message = @klass.find(params[:id])
     @message.update_column(:date_read, Time.now)
     facebook_service.send_read_action(@message.customer.psid, 'mark_seen') if params[:platform] != 'instagram'
-    agents = @message.customer.agent ? [@message.customer.agent] : current_retailer.retailer_users.all_customers.to_a
+    customer = @message.customer
+    mark_unread_flag(customer)
+    agents = customer.agent ? [customer.agent] : current_retailer.retailer_users.all_customers.to_a
 
     facebook_helper.broadcast_data(
       current_retailer,
       agents,
       nil,
-      @message.customer.agent_customer,
-      @message.customer,
+      customer.agent_customer,
+      customer,
       params[:platform]
     )
     render status: 200, json: { message: @message }
@@ -370,6 +372,7 @@ class Api::V1::CustomersController < Api::ApiController
       @messages = @messages.order(created_at: :desc).page(params[:page])
       @customer.update_attribute(:unread_messenger_chat, false)
       facebook_service.send_read_action(@customer.psid, 'mark_seen') if @customer.messenger?
+      mark_unread_flag(@customer)
       @agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.all_customers.to_a
 
       facebook_helper.broadcast_data(
@@ -380,5 +383,44 @@ class Api::V1::CustomersController < Api::ApiController
         @customer,
         @customer.pstype
       )
+    end
+
+    def mark_unread_flag(customer)
+      return unless customer.count_unread_messages > 0
+
+      customer.update_column(:count_unread_messages, 0)
+
+      field = "#{customer.pstype}_unread"
+      admins_supervisors = current_retailer.admins.or(current_retailer.supervisors)
+      admins_supervisors.update_all(field => current_retailer.customers.where(pstype: customer.pstype)
+        .with_unread_messages.exists?)
+
+      agent = customer.agent
+      return if agent && !agent.agent?
+
+      if agent.present?
+        if agent.only_assigned?
+          agent.update_columns(field => agent.a_customers.where(pstype: customer.pstype).with_unread_messages.exists?)
+        else
+          agent.update_columns(field => agent.customers.where(pstype: customer.pstype).with_unread_messages.exists?)
+        end
+      else
+        agents = current_retailer.retailer_users.active_agents.all_customers
+
+        customer_ids = Customer.joins('LEFT JOIN agent_customers ac ON ac.customer_id = customers.id')
+          .where('(ac.retailer_user_id IN (?) OR ac.retailer_user_id is NULL) AND customers.retailer_id = ? AND ' \
+          'customers.pstype = ? AND customers.count_unread_messages > 0',
+          agents.ids, current_retailer.id, Customer.pstypes[customer.pstype]).select('distinct customers.id')
+
+        assigned = AgentCustomer.where(customer_id: customer_ids)
+        if assigned.select('distinct customer_id').size != customer_ids.size
+          agents.update_all(field => true)
+          return
+        end
+
+        assigned_users = assigned.pluck(:retailer_user_id).uniq
+        agents.where(id: assigned_users).update_all(field => true) if assigned_users.present?
+        agents.where.not(id: assigned_users).update_all(field => false)
+      end
     end
 end

@@ -10,8 +10,6 @@ class FacebookRetailer < ApplicationRecord
   after_create :add_sales_channel
 
   def facebook_unread_messages(retailer_user)
-    return []
-
     messages = facebook_messages.includes(:customer).where(
       date_read: nil,
       sent_by_retailer: false,
@@ -29,8 +27,6 @@ class FacebookRetailer < ApplicationRecord
   end
 
   def instagram_unread_messages(retailer_user)
-    return []
-
     messages = instagram_messages.includes(:customer).where(
       date_read: nil,
       sent_by_retailer: false,

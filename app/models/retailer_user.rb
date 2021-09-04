@@ -22,6 +22,7 @@ class RetailerUser < ApplicationRecord
   before_save :set_only_assigned
 
   scope :all_customers, -> { where(only_assigned: false) }
+  scope :only_assigned_customers, -> { where(only_assigned: true) }
   scope :active, -> (retailer_id) { where(retailer_id: retailer_id, removed_from_team: false, invitation_token: nil) }
   scope :active_and_pending_agents, -> (retailer_id) { where(retailer_id: retailer_id, removed_from_team: false) }
   scope :active_admins, lambda { |retailer_id|

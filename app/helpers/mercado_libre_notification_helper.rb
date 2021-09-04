@@ -2,17 +2,11 @@ module MercadoLibreNotificationHelper
   def self.broadcast_data(*args)
     retailer, retailer_users, type, object = args
 
-    sub_total_questions = retailer.unread_questions.size
-    sub_total_messages = retailer.unread_messages.size
-    ml_total = sub_total_questions + sub_total_messages
-
-    if type == 'questions'
-      identifier = '#item__cookie_question'
-      sub_total = sub_total_questions
-    elsif type == 'messages'
-      identifier = '#item__cookie_message'
-      sub_total = sub_total_messages
-    end
+    identifier = if type == 'questions'
+                   '#item__cookie_question'
+                 elsif type == 'messages'
+                   '#item__cookie_message'
+                 end
 
     customer = object&.customer
     order = begin
@@ -28,14 +22,14 @@ module MercadoLibreNotificationHelper
     retailer_users.active(retailer.id).each do |ret_u|
       redis.publish 'new_message_counter', {
         identifier: identifier,
-        total: sub_total,
-        ml_total: ml_total,
+        unread_total_messages: ret_u.ml_unread,
+        unread_questions: retailer.unread_questions,
+        unread_ml_messages: retailer.unread_messages,
         from: 'MercadoLibre',
         message_text: object&.question.presence || 'Archivo',
         order_id: object&.order_id,
         customer_info: customer&.full_names.presence || customer&.meli_nickname,
         execute_alert: object.present?,
-        update_counter: true,
         type: type == 'messages' ? 'mercadolibre_chats' : type,
         room: ret_u.id
       }.to_json
@@ -55,9 +49,6 @@ module MercadoLibreNotificationHelper
   end
 
   def self.subtract_messages_counter(retailer:, order:)
-    sub_total_questions = retailer.unread_questions.size
-    sub_total_messages = retailer.unread_messages.size
-    ml_total = sub_total_questions + sub_total_messages
     order = begin
               # Editar tambien en api/v1/orders
               order.as_json(
@@ -72,11 +63,11 @@ module MercadoLibreNotificationHelper
       redis.publish 'new_message_counter',
         {
           identifier: '#item__cookie_message',
-          total: sub_total_messages,
-          ml_total: ml_total,
+          unread_total_messages: ret_u.ml_unread,
+          unread_questions: retailer.unread_questions,
+          unread_ml_messages: retailer.unread_messages,
           from: 'MercadoLibre',
           execute_alert: false,
-          update_counter: true,
           type: 'mercadolibre_chats',
           room: ret_u.id
         }.to_json
@@ -89,19 +80,15 @@ module MercadoLibreNotificationHelper
   end
 
   def self.mark_chat_as_read(retailer:, order_web_id:)
-    sub_total_questions = retailer.unread_questions.size
-    sub_total_messages = retailer.unread_messages.size
-    ml_total = sub_total_questions + sub_total_messages
-
     retailer.retailer_users.active(retailer.id).each do |ret_u|
       redis.publish 'new_message_counter',
         {
           identifier: '#item__cookie_message',
-          total: sub_total_messages,
-          ml_total: ml_total,
+          unread_total_messages: ret_u.ml_unread,
+          unread_questions: retailer.unread_questions,
+          unread_ml_messages: retailer.unread_messages,
           from: 'MercadoLibre',
           execute_alert: false,
-          update_counter: true,
           type: 'mercadolibre_chats',
           room: ret_u.id
         }.to_json

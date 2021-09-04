@@ -190,8 +190,10 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
     if @message.update_column(:status, 'read')
       @message.customer.update_attribute(:unread_whatsapp_chat, false)
+      retailer_user_api(@customer, current_retailer).mark_unread_flag
       agents = @message.customer.agent.present? ? [@message.customer.agent] : current_retailer
         .retailer_users.all_customers.to_a
+
       if current_retailer.karix_integrated?
         KarixNotificationHelper.broadcast_data(current_retailer, agents, nil, @message.customer.agent_customer,
           @message.customer)
@@ -468,5 +470,9 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       current_retailer_user.supervisor? ?
         current_retailer.team_agents :
         [current_retailer_user]
+    end
+
+    def retailer_user_api(customer, retailer)
+      @retailer_user_api = RetailerUsers::ManageUnreadMessages.new(customer, retailer)
     end
 end
