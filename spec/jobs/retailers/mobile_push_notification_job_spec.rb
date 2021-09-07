@@ -14,8 +14,8 @@ RSpec.describe Retailers::MobilePushNotificationJob, type: :job do
         channel: 'whatsapp'
       },
       priority: 'high',
-      mutableContent: true,
-      contentAvailable: true
+      mutable_content: true,
+      content_available: true
     }
   end
 

@@ -20,8 +20,8 @@ class PushNotification
         channel: @channel
       },
       priority: 'high',
-      mutableContent: true,
-      contentAvailable: true
+      mutable_content: true,
+      content_available: true
     }
 
     fcm.send(@tokens, notification)
