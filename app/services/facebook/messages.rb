@@ -1,4 +1,5 @@
 require 'mime/types'
+require 'open-uri'
 
 module Facebook
   class Messages
@@ -13,6 +14,7 @@ module Facebook
       file_type = message_data['message']&.[]('attachments')&.[](0)&.[]('type')
       url = file_type_url(message_data, file_type)
       file_name = File.basename(URI.parse(url)&.path) if url.present?
+      file_type = sniff_mime_type(url) if @type == 'instagram' && file_type.in?(['story_mention', 'share'])
       @klass.create_with(
         customer: customer,
         facebook_retailer: @facebook_retailer,
@@ -118,6 +120,10 @@ module Facebook
     end
 
     private
+
+      def sniff_mime_type(url)
+        open(url).content_type.first(5)
+      end
 
       def add_human_agent_tag(psid, body)
         last_message_date = Customer.find_by(psid: psid).facebook_messages.inbound.last&.created_at

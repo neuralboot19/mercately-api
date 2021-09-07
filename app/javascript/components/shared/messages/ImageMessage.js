@@ -11,6 +11,7 @@ function ImageMessage({
   const caption = chatType === 'facebook' ? message.text : message.content_media_caption;
 
   const [url, setUrl] = useState('');
+  const [error, setError] = useState(false);
 
   const getMsnUrl = () => {
     if (!message.mid) {
@@ -42,6 +43,10 @@ function ImageMessage({
     );
   };
 
+  const errorLoadingImg = (e) => {
+    if (url) setError(true);
+  };
+
   useEffect(() => {
     if (chatType === 'whatsapp') {
       setUrl(message.content_media_url);
@@ -53,17 +58,24 @@ function ImageMessage({
   return (
     <div className="img-holder">
       <div>
-        <div className="media-content">
+        <div className={ error ? 'media-content error-media-content' : 'media-content' }>
           {message.is_loading && (
             <div className="lds-dual-ring" />
           )}
-          <img
-            src={url}
-            className="msg__img"
-            onClick={() => onClick(url)}
-            alt=""
-            style={{display: "block"}}
-          />
+          { error ? (
+            <blockquote className="text-center mt-140">
+              Imagen temporal no disponible
+            </blockquote>
+          ) : (
+            <img
+              src={url}
+              className="msg__img"
+              onClick={() => onClick(url)}
+              onError={errorLoadingImg}
+              alt=""
+              style={{display: "block"}}
+            />
+          ) }
           <MediaMessageStatus
             chatType={chatType}
             message={message}
