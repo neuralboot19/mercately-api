@@ -39,6 +39,7 @@ const Column = ({
     loadMoreDeals(column.id, page, column.dealIds.length);
     setPage(page + 1);
   };
+  // if (column.id === '108blwqt9' && column.total > column.dealIds.length && (column.total > 0 || column.dealIds.length > 0)) debugger;
 
   return (
     <Draggable draggableId={column.id} index={index}>

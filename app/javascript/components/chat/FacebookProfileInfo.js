@@ -3,6 +3,7 @@ import DoubleCheckIcon from '../icons/DoubleCheckIcon';
 import CustomerTags from '../shared/CustomerTags';
 // eslint-disable-next-line import/no-unresolved
 import BotIcon from 'images/bot.svg';
+import DealIcon from 'images/new_design/deal.svg'
 
 const FacebookProfileInfo = ({customer, howLongAgo, agentName}) => {
   const messengerStatusIcon = customer.last_messenger_message?.sent_by_retailer === true
@@ -30,7 +31,10 @@ const FacebookProfileInfo = ({customer, howLongAgo, agentName}) => {
       </div>
 
       {customer.active_bot && (
-        <img src={BotIcon} alt="bot icon" className="w-18 h-18" />
+        <img src={BotIcon} alt="bot icon" className="w-18 h-18 mr-8" />
+      )}
+      {customer.has_deals && (
+        <img src={DealIcon} alt="reminder icon" className="w-18 h-18" />
       )}
       {isReadMessenger && (
         <span className="float-right unread-messages rounded-pill float-right">

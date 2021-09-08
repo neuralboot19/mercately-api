@@ -1446,6 +1446,11 @@
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^7.28.1"
 
+"@trendyol-js/react-carousel@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@trendyol-js/react-carousel/-/react-carousel-2.0.0.tgz#ecc7dccace8414b301226c9ad80576aacca7448a"
+  integrity sha512-AS/2cYZp4bXErECV6c49CsFeWxxd6J7xsRqRPUL5j1BF2Ga0rcIZog7wDRQr6WYaUbVRa/8Z5BKtg7kTk0s0+w==
+
 "@types/aria-query@^4.2.0":
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/@types/aria-query/-/aria-query-4.2.1.tgz#78b5433344e2f92e8b306c06a5622c50c245bf6b"

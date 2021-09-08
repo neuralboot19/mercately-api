@@ -70,6 +70,16 @@ $white: #fff;
   @media screen and (max-width: 768px) {
     height: $customerDetailHeightMobile;
   }
+  .card {
+    margin: 5px 0px 10px 0px;
+    min-height: auto;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    .card-body {
+      padding: 0px;
+    }
+  }
 }
 
 .details-mobile-height {

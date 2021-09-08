@@ -12,7 +12,8 @@ const modalCustomStyles = (isMobile, otherStyles) => {
   }
   const overlay = {
     backgroundColor: 'rgba(0, 0, 0, 0.35)',
-    backdropFilter: 'blur(9px)'
+    backdropFilter: 'blur(9px)',
+    zIndex: 10
   }
   
   return { overlay, content: { ...styles, ...otherStyles }}; 

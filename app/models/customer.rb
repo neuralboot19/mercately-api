@@ -551,6 +551,11 @@ class Customer < ApplicationRecord
     end
   end
 
+  def has_deals
+    return false if !retailer.has_funnels
+    deals.exists?
+  end
+
   private
 
     def update_valid_customer

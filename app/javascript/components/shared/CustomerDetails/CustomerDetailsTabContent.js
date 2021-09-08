@@ -1,7 +1,11 @@
-import React from 'react';
-import { useSelector } from "react-redux";
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import EditableField from "./EditableField";
 import SelectableField from "./SelectableField";
+import DealModal from '../DealModal';
+import { deleteSimpleDeal } from '../../../actions/funnels';
+import EditIcon from 'images/edit.svg';
+import TrashIcon from '../../icons/TrashIcon';
 
 const CustomerDetailsTabContent = ({
   chatType,
@@ -18,9 +22,25 @@ const CustomerDetailsTabContent = ({
   newTag,
   handleNewTagChange,
   onKeyPress,
-  removeCustomerTag
+  removeCustomerTag,
+  customerDeals,
+  funnelSteps,
+  getCustomerDeals
 }) => {
+  const dispatch = useDispatch();
+
   const errors = useSelector((reduxState) => reduxState.errors) || {};
+  const [isDealModalOpen, setIsDealModalOpen] = useState(false);
+  const [dealSelected, setDealSelected] = useState(null);
+  const agents = useSelector((reduxState) => reduxState.agents || []);
+
+  const handleDeleteDeal = (deal) => {
+    const destroy = confirm('¿Estás seguro de eliminar esta negociación?');
+    if (destroy) {
+      dispatch(deleteSimpleDeal(deal.web_id));
+    }
+  };
+
   return (
     <div className="customer_details" style={{ display: showUserDetails }}>
       <div>
@@ -149,7 +169,7 @@ const CustomerDetailsTabContent = ({
             options={tags}
           />
           <input
-            className="input text-gray-dark fs-14"
+            className="input text-gray-dark fs-14 w-100"
             type="text"
             name="newTag"
             value={newTag}
@@ -176,7 +196,45 @@ const CustomerDetailsTabContent = ({
 
       </div>
 
+      {ENV.HAS_FUNNELS && Object.keys(customerDeals).length !== 0 && (
+        <div>
+          <div>
+            <i className="fs-18 mt-4 mr-4 fas fa-briefcase editable_name" />
+            <p className="label inline-block fs-14 text-gray-dark font-weight-bold">Negociaciones:</p>
+          </div>
+          { customerDeals.map((deal, index) => {
+              return (
+                <div key={index} className="card">
+                  <div className="card-body">
+                    <p className="card-title fs-14 deal-name">{deal.name}</p>
+                    <p className="card-text fs-12 m-0">Estado: {deal.funnel_step_name}</p>
+                    { deal.amount && (
+                      <p className="card-text fs-12 m-0">Monto: {deal.amount}</p>
+                    )}
+                    <div className="chat-funnel-holder">
+                      <a onClick={() => {
+                        setIsDealModalOpen(prevState => !prevState);
+                        setDealSelected(deal)
+                        }} className="card-link"><img src={EditIcon} width="12" height="14" /></a>
+                      <a onClick={() => {
+                        handleDeleteDeal(deal)
+                        }} className="card-link"><TrashIcon /></a>
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          }
+        </div>
+      )}
+
       <div>
+
+        <div>
+          <i className="fs-18 mt-4 mr-4 fas fa-pencil-alt editable_name" />
+          <p className="label inline-block fs-14 text-gray-dark font-weight-bold">Notas:</p>
+        </div>
+
         <textarea
           onKeyDown={handleEnter}
           onChange={(e) => handleInputChange(e, 'notes')}
@@ -206,6 +264,21 @@ const CustomerDetailsTabContent = ({
           </a>
         )}
       </div>
+
+      { isDealModalOpen ?
+        <DealModal
+          customer={{...customer, id: customerId}}
+          funnelSteps={funnelSteps}
+          isDealModalOpen={isDealModalOpen}
+          toggleDealModal={() => setIsDealModalOpen(prevState => !prevState)}
+          dealSelected={dealSelected}
+          agents={agents}
+          getCustomerDeals={getCustomerDeals}
+          handleDeleteDeal={handleDeleteDeal}
+        />
+        :
+        false
+      }
     </div>
   );
 };

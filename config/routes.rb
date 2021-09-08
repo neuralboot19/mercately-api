@@ -230,7 +230,11 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :deals, only: [:index, :destroy]
+      resources :deals, only: [:index, :destroy] do
+        collection do
+          get 'customer_deals/:customer_id', to: 'deals#customer_deals'
+        end
+      end
 
       put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
 
