@@ -86,8 +86,6 @@ module FacebookNotificationHelper
 
     return 'Archivo' if message.file_type == 'file'
     return 'Imagen' if message.file_type == 'image'
-    return 'Mención en historia' if message.file_type == 'story_mention'
-    return 'Publicación' if message.file_type == 'share'
     return 'Video' if message.file_type == 'video'
     return 'Audio' if ['audio', 'voice'].include?(message.file_type)
     return 'Ubicación' if message.file_type == 'location'
