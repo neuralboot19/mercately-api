@@ -207,6 +207,11 @@ Rails.application.routes.draw do
   # REACT
   namespace :api do
     namespace :v1 do
+      resources :retailer_users, only: :index do
+        collection do
+          get 'current_retailer_user', to: 'retailer_users#loged_retailer_user'
+        end
+      end
       resources :customers, only: [:index, :show, :update] do
         put 'custom_fields', to: 'custom_fields_mobile#bulk_update'
         resources :custom_fields, only: [:index, :update]

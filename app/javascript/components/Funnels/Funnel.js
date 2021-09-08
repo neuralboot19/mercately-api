@@ -4,8 +4,8 @@ import { connect } from "react-redux";
 /* eslint-disable-next-line import/no-unresolved */
 import Loader from "images/dashboard/loader.jpg";
 import { withRouter } from "react-router-dom";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import styled from "styled-components";
+import { DragDropContext, Droppable } from 'react-beautiful-dnd';
+import styled from 'styled-components';
 import ColumnInnerList from "./ColumnInnerList";
 
 import {
@@ -16,12 +16,11 @@ import {
   loadMoreDeals
 } from "../../actions/funnels";
 
+import { fetchCurrentRetailerUser } from "../../actions/actions";
+
 const Container = styled.div`
   white-space: nowrap;
-  height: 70vh;
   margin-top: 25px;
-  border-left: 1px solid #eeeeee;
-  border-right: 1px solid #eeeeee;
   display: inline-flex;
   background-color: ${(props) => (props.isDragging ? "lightgreen" : "white")};
 `;
@@ -36,12 +35,13 @@ class Funnel extends React.Component {
       columnWebId: "",
       currentDragColumnId: "",
       itemDroppableId: "",
-      itemDraggableId: ""
+      itemDraggableId: "",
+      dealPosition: 0
     };
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.funnelSteps !== state.funnelSteps) {
+    if (!_.isEqual(props.funnelSteps, state.funnelSteps)) {
       props.clearFunnels();
     }
     return null;
@@ -49,27 +49,37 @@ class Funnel extends React.Component {
 
   componentDidMount() {
     this.props.fetchFunnelSteps();
+    this.props.fetchCurrentRetailerUser();
   }
 
   componentDidUpdate(prevState) {
     // Optimistic update for list order
-    const isEqualDealsAmount = prevState.funnelSteps.deals && !this.props.fetchingFunnels &&
-      Object.keys(prevState.funnelSteps.deals).length === Object.keys(this.state.funnelSteps.deals).length;
-    if (prevState.funnelSteps.columnOrder !== this.state.funnelSteps.columnOrder
+    const isEqualDealsAmount = prevState.funnelSteps.deals && !this.props.fetchingFunnels
+      && Object.keys(prevState.funnelSteps.deals).length === Object.keys(this.state.funnelSteps.deals).length;
+    if (!_.isEqual(prevState.funnelSteps.columnOrder, this.state.funnelSteps.columnOrder)
         && isEqualDealsAmount) {
       this.props.updateFunnelStep({
         columns: this.state.funnelSteps.columnOrder
       });
     }
     // Optimictic update for list item
-    if (prevState.funnelSteps.columns !== this.state.funnelSteps.columns && isEqualDealsAmount) {
+    if (this.state.itemDroppableId && this.state.itemDraggableId
+      && !_.isEqual(prevState.funnelSteps.columns, this.state.funnelSteps.columns)
+      && isEqualDealsAmount) {
       this.props.updateFunnelStepDeal({
         funnel_step_id: this.state.itemDroppableId,
-        deal_id: this.state.itemDraggableId
+        deal_id: this.state.itemDraggableId,
+        position: this.state.dealPosition
       });
+      this.setState(
+        () => ({
+          itemDroppableId: null,
+          itemDraggableId: null
+        })
+      );
     }
 
-    if (this.props.fetchingFunnels) {
+    if (this.props.fetchingFunnels && !_.isEqual(prevState.funnelSteps, this.props.funnelSteps)) {
       this.setState(
         () => ({
           loadedData: true,
@@ -135,6 +145,9 @@ class Funnel extends React.Component {
 
       const newState = {
         ...this.state,
+        itemDroppableId: destination.droppableId,
+        itemDraggableId: draggableId,
+        dealPosition: destination.index,
         funnelSteps: {
           ...this.state.funnelSteps,
           columns: {
@@ -173,6 +186,7 @@ class Funnel extends React.Component {
       ...this.state,
       itemDroppableId: destination.droppableId,
       itemDraggableId: draggableId,
+      dealPosition: destination.index,
       funnelSteps: {
         ...this.state.funnelSteps,
         columns: {
@@ -189,49 +203,56 @@ class Funnel extends React.Component {
 
   render() {
     return (
-      <div className="funnel_holder">
-        {this.state.loadedData ? (
-          <DragDropContext
-            onDragEnd={this.onDragEnd}
-            onDragStart={this.onDragStart}
-          >
-            <Droppable
-              droppableId="all-columns"
-              direction="horizontal"
-              type="column"
-            >
-              {(provided) => (
-                <Container
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className="column-container"
+      <div className="row">
+        <div className="col-12">
+          <div className="overflow-x-scroll scrollbar-thin">
+            <div className="funnel_holder">
+              {this.state.loadedData ? (
+                <DragDropContext
+                  onDragEnd={this.onDragEnd}
+                  onDragStart={this.onDragStart}
                 >
-                  {this.state.funnelSteps.columnOrder.map((columnId, index) => {
-                    const column = this.state.funnelSteps.columns[columnId];
-                    return (
-                      <ColumnInnerList
-                        key={column.id}
-                        column={column}
-                        index={index}
-                        dealMap={this.props.funnelSteps.deals}
-                        openCreateDeal={this.props.openCreateDeal}
-                        openDeleteStep={this.props.openDeleteStep}
-                        openDeleteDeal={this.props.openDeleteDeal}
-                        loadMoreDeals={this.props.loadMoreDeals}
-                        allowColumn={this.state.currentDragColumnId}
-                      />
-                    );
-                  })}
-                  {provided.placeholder}
-                </Container>
+                  <Droppable
+                    droppableId="all-columns"
+                    direction="horizontal"
+                    type="column"
+                  >
+                    {(provided) => (
+                      <Container
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="column-container bg-transparent"
+                      >
+                        {this.state.funnelSteps.columnOrder && this.state.funnelSteps.columnOrder.map((columnId, index) => {
+                          const column = this.state.funnelSteps.columns[columnId];
+                          return (
+                            <ColumnInnerList
+                              key={column.id}
+                              column={column}
+                              index={index}
+                              dealMap={this.props.funnelSteps.deals}
+                              openCreateDeal={this.props.openCreateDeal}
+                              toggleEditDeal={this.props.toggleEditDeal}
+                              deleteStep={this.props.deleteStep}
+                              deleteDeal={this.props.deleteDeal}
+                              loadMoreDeals={this.props.loadMoreDeals}
+                              allowColumn={this.state.currentDragColumnId}
+                            />
+                          );
+                        })}
+                        {provided.placeholder}
+                      </Container>
+                    )}
+                  </Droppable>
+                </DragDropContext>
+              ) : (
+                <div className="chat_loader">
+                  <img src={Loader} />
+                </div>
               )}
-            </Droppable>
-          </DragDropContext>
-        ) : (
-          <div className="chat_loader">
-            <img src={Loader} />
+            </div>
           </div>
-        )}
+        </div>
       </div>
     );
   }
@@ -249,6 +270,9 @@ function mapDispatch(dispatch) {
     fetchFunnelSteps: () => {
       dispatch(fetchFunnelSteps());
     },
+    fetchCurrentRetailerUser: () => {
+      dispatch(fetchCurrentRetailerUser());
+    },
     clearFunnels: () => {
       dispatch(clearFunnels());
     },
@@ -258,8 +282,8 @@ function mapDispatch(dispatch) {
     updateFunnelStep: (body) => {
       dispatch(updateFunnelStep(body));
     },
-    loadMoreDeals: (column, page = 1) => {
-      dispatch(loadMoreDeals(column, page));
+    loadMoreDeals: (column, page = 1, offset) => {
+      dispatch(loadMoreDeals(column, page, offset));
     }
   };
 }

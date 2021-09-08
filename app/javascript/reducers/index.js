@@ -12,6 +12,7 @@ import {
 } from "../actionTypes";
 
 const initialState = {
+  currentRetailerUser: null,
   customers: [],
   messages: [],
   total_pages: 0,
@@ -300,11 +301,12 @@ const reducer = (state = initialState, action) => {
               [action.column]: {
                 ...state.funnelSteps.columns[action.column],
                 deals: state.funnelSteps.columns[action.column].deals + 1,
+                amount: action.data.amount,
                 dealIds: [action.data.deal.id].concat(state.funnelSteps.columns[action.column].dealIds)
               }
             }
           },
-          fetching_funnels: true,
+          fetching_funnels: true
         };
       }
     case 'SET_NEW_STEP':
@@ -332,20 +334,19 @@ const reducer = (state = initialState, action) => {
       }
     case 'ERASE_DEAL_STEP':
       if (Object.keys(action.data).length > 0) {
-        let new_columns = Object.assign({}, state.funnelSteps.columns);
-        delete(new_columns[action.column])
+        let newColumns = Object.assign({}, state.funnelSteps.columns);
+        delete newColumns[action.column];
         return {
           ...state,
           funnelSteps: {
             ...state.funnelSteps,
-            columnOrder: state.funnelSteps.columnOrder.filter(function(step) {
-              return step !== action.column
-            }),
-            columns: new_columns
+            columnOrder: state.funnelSteps.columnOrder.filter((step) => (step !== action.column)),
+            columns: newColumns
           },
-          fetching_funnels: true,
+          fetching_funnels: true
         };
       }
+      break;
     case SET_ORDERS:
       return {
         ...state,
@@ -366,13 +367,15 @@ const reducer = (state = initialState, action) => {
       };
     case ERASE_DEAL: {
       const newDeals = { ...state.funnelSteps.deals };
-      delete newDeals[action.data];
+      delete newDeals[action.dealId];
 
       const newColumns = { ...state.funnelSteps.columns };
       newColumns[action.column].dealIds = newColumns[action.column]
-        .dealIds.filter((deal) => deal !== action.data);
+        .dealIds.filter((deal) => deal !== action.dealId);
 
       newColumns[action.column].deals = newColumns[action.column].dealIds.length;
+      newColumns[action.column].amount = action.data.amount;
+      newColumns[action.column].total = action.data.total;
 
       return {
         ...state,
@@ -386,16 +389,30 @@ const reducer = (state = initialState, action) => {
     }
 
     case CHANGE_DEAL_COLUMN: {
+      // find column web id to remove the deal
       const columnToRemoveDeal = Object.keys(state.funnelSteps.columns)
         .find((colId) => state.funnelSteps.columns[colId].dealIds
           .filter((deal) => deal === action.data.deal_id).length);
-
+      // find column object to add the deal
       const columnToAddDeal = state.funnelSteps.columns[action.data.funnel_step_id];
-
+      // copy columns object to make changes
       const newColumns = { ...state.funnelSteps.columns };
-      newColumns[columnToRemoveDeal].dealIds = newColumns[columnToRemoveDeal].dealIds.filter((deal) => deal !== action.data.deal_id);
 
-      newColumns[columnToAddDeal.id].dealIds = [...newColumns[columnToAddDeal.id].dealIds, action.data.deal_id];
+      // set deals
+      // remove deal from previous column
+      newColumns[columnToRemoveDeal].dealIds = newColumns[columnToRemoveDeal].dealIds.filter((deal) => deal !== action.data.deal_id);
+      // add deal on new column at selected position
+      newColumns[columnToAddDeal.id].dealIds.splice(action.data.position, 0, action.data.deal_id);
+
+      // set total deals amount
+      newColumns[columnToAddDeal.id].amount = action.data.amount;
+      newColumns[columnToRemoveDeal].amount = action.data.previous_funnel_step_amount;
+
+      // set total count of deals on DB
+      newColumns[columnToAddDeal.id].total = action.data.total;
+      newColumns[columnToRemoveDeal].total = action.data.previous_funnel_step_total;
+
+      // set total count of deals loaded on each column
       newColumns[columnToRemoveDeal].deals = newColumns[columnToRemoveDeal].dealIds.length;
       newColumns[columnToAddDeal.id].deals = newColumns[columnToAddDeal.id].dealIds.length;
 
@@ -403,8 +420,17 @@ const reducer = (state = initialState, action) => {
         ...state,
         funnelSteps: {
           ...state.funnelSteps,
-          columns: newColumns
+          columns: newColumns,
+          deals: {
+            ...state.funnelSteps.deals,
+            [action.data.deal_id]: action.data.deal
+          }
         },
+        deals: {
+          ...state.deals,
+          [action.data.deal_id]: action.data.deal
+        },
+        newDealSuccess: Boolean(action.data.deal_id && action.data.deal),
         fetching_funnels: true
       };
     }
@@ -428,6 +454,7 @@ const reducer = (state = initialState, action) => {
       ];
 
       newColumns[action.column].deals = newColumns[action.column].dealIds.length;
+      newColumns[action.column].amount = action.data.amount;
 
       return {
         ...state,
@@ -448,7 +475,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         loadingMoreMessages: true
-      }
+      };
+    case 'SET_CURRENT_RETAILER_USER':
+      return {
+        ...state,
+        currentRetailerUser: action.data.current_retailer_user
+      };
     case 'SET_GS_TEMPLATE_ERRORS':
       return {
         ...state,

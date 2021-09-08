@@ -48,6 +48,20 @@ h1 {
   font-size: 12px;
 }
 
+
+.mercately-input {
+  background: #F7F8FD;
+  border-radius: 12px;
+  border: none;
+  padding: 12px;
+  height: 48px !important;
+  font-size: 14px;
+  line-height: 24px;
+  color: $funnel-grey;
+  width: 100%;
+}
+
+
 .btn {
   text-decoration: none;
   padding: 8px 16px;
@@ -1413,7 +1427,6 @@ i {
 
 .tooltip-top .tooltiptext {
   visibility: hidden;
-  width: 120px;
   background-color: #555;
   border: 1px solid #555;
   color: #fff;
@@ -1423,10 +1436,11 @@ i {
   position: absolute;
   z-index: 1;
   bottom: 150%;
-  left: 30%;
-  margin-left: -55px;
   max-width: unset;
   font-size: 12px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%)
 }
 
 .tooltip-top .tooltiptext::after {

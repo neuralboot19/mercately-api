@@ -19,6 +19,9 @@ class Api::V1::DealsController < Api::ApiController
     if deal&.destroy
       render status: 200, json:
       {
+        amount: deal.funnel_step.total,
+        funnel_step_id: deal.funnel_step.web_id,
+        total: deal.funnel_step.deals_count,
         deal: deal
       }
     else
@@ -32,15 +35,17 @@ class Api::V1::DealsController < Api::ApiController
       #TODO SET SERIALIZER
       deals = {}
 
-      column.deals.page(params['page']).each do |deal|
+      column.deals.page(params[:page]).offset(false).offset(params[:offset]).each do |deal|
         #TODO FIND A BETTER WAY TO DO THIS
         deals[deal.web_id] = {
           id: deal.web_id,
           name: deal.name,
           amount: deal.amount,
+          currency: deal.currency_symbol,
+          funnel_step_id: deal.funnel_step_id,
           customer: deal.customer,
-          has_whastapp: deal&.customer&.ws_active,
-          has_fb: deal&.customer&.psid
+          agent: deal.retailer_user,
+          channel: deal.customer&.channel
         }
       end
       deals

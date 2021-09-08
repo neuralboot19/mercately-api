@@ -1,7 +1,21 @@
 /****************************** Funnel Headers ********************************************/
 
+.funnel_container {
+  margin: 20px 0 0 100px;
+}
+
 .funnel_holder {
   min-width: fit-content !important;
+  height: calc(100vh - 210px);
+  & > div {
+    background-color: transparent!important;
+  }
+}
+
+@for $space from 0 through 16 {
+  .border-#{$space} {
+    border-radius: #{$space}px;
+  }
 }
 
 .column-header {
@@ -10,9 +24,6 @@
   align-items: center;
   flex-direction: row;
   position: relative;
-  height: 60px;
-  border-bottom: 1px solid rgb(238, 238, 238);
-  border-top: 1px solid rgb(238, 238, 238);
 }
 
 .column-header .add {
@@ -174,21 +185,36 @@
 }
 
 .column-title h1 {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
   letter-spacing: 0.75px;
-  margin: 0 0 0 15px;
+  color: $funnel-grey;
 }
 
 .column-title-content p {
   margin: 0;
   font-size: 12px;
-  margin-left: 15px;
+  color: #808191;
+}
+
+.column-title-icon {
+  fill: $funnel-grey;
 }
 
 .funnel-content-name {
-  font-size: 14px;
-  margin: 0 0 5px 0;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 16px;
+  color: $funnel-grey;
+}
+
+.funnel-deal-amount {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 16px;
+  color: #808191;
 }
 
 .funnel-content {
@@ -199,6 +225,21 @@
   font-size: 12px;
 }
 
+
+.funnel-agent {
+  background: #EBF7FC;
+  border-radius: 50%;
+  font-family: 'Poppins-Regular';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 12px;
+  padding: 12px 10px;
+  color: #3CAAE1;
+  text-align: center;
+}
+
+
 .funnel-content-client {
   color: #00B4FF !important;
   font-size: 14px;
@@ -207,4 +248,76 @@
 
 .funnel-client-whatsapp {
   width: 25px;
+}
+
+.funnels-box-menu {
+  position: absolute;
+  background-color: $white;
+  border-radius: 8px;
+  top: 50px;
+  right: 15px;
+  border: 1px solid #E4E4E4;
+  max-width: 254px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+
+  & > div {
+    svg {
+      fill: $funnel-grey;
+    }
+
+    &:hover{
+      background-color: #3CAAE1;
+      color: #FFF;
+      svg {
+        fill: #FFF;
+      }
+    }
+  }
+}
+
+.bg-full-screen-fixed {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent;
+  z-index: 1;
+}
+
+.funnel-box-menu-img {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+}
+
+.name-initials {
+  border-radius: 50%;
+  background-color: #EBF7FC;
+  color: #3CAAE1;
+}
+
+.fw-bold {
+  font-weight: 700!important;
+}
+
+.funnels__title {
+  font-family: 'Poppins-SemiBold';
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 48px;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
 }
