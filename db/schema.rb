@@ -1071,7 +1071,6 @@ ActiveRecord::Schema.define(version: 2021_09_14_170029) do
     t.string "gupshup_app_token"
     t.boolean "has_funnels", default: false
     t.string "timezone"
-    t.boolean "ig_allowed", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

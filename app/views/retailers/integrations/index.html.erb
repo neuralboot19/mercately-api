@@ -98,33 +98,31 @@
           </div>
         </div>
       </div>
-      <% if current_retailer.ig_allowed %>
-        <div class="row mb-30">
-          <div class="col-xs-12 col-md-6 mt-15 p-relative">
-            <div class="col-xs-12 pt-20 t-center">
-              <div class="logo-integration-platform" id="instagram_logo"></div>
-              <div class="integration__desc">
-                Mejora la comunicación con tus clientes mediante nuestra integración con Instagram Direct. Podrás contar con las siguientes funcionalidades:
-                <br/>
-                Recibe y envía mensajes directos desde Mercately a Instagram.
-                <ul class="t-justify mx-12 pb-45">
-                  <li>Envía imágenes y productos desde nuestro catálogo.</li>
-                  <li>Guarda toda la información de tus clientes con nuestro CRM.</li>
-                  <li>Vincula a todo tu equipo de trabajo para agilizar la atención al cliente y las ventas.</li>
-                  <li>Asigna clientes a tus vendedores y analiza en tiempo real sus estadísticas de gestión.</li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-xs-12 col-md-12 btn-box btn-aligned">
-              <% if current_retailer.facebook_retailer&.instagram_integrated %>
-                <p class="c-green fs-18 fs-sm-and-down-12">Conectado con Instagram Exitosamente</p>
-              <% else %>
-                <%= link_to 'Conectar con Instagram', retailer_user_omniauth_instagram_path, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
-              <% end %>
+      <div class="row mb-30">
+        <div class="col-xs-12 col-md-6 mt-15 p-relative">
+          <div class="col-xs-12 pt-20 t-center">
+            <div class="logo-integration-platform" id="instagram_logo"></div>
+            <div class="integration__desc">
+              Mejora la comunicación con tus clientes mediante nuestra integración con Instagram Direct. Podrás contar con las siguientes funcionalidades:
+              <br/>
+              Recibe y envía mensajes directos desde Mercately a Instagram.
+              <ul class="t-justify mx-12 pb-45">
+                <li>Envía imágenes y productos desde nuestro catálogo.</li>
+                <li>Guarda toda la información de tus clientes con nuestro CRM.</li>
+                <li>Vincula a todo tu equipo de trabajo para agilizar la atención al cliente y las ventas.</li>
+                <li>Asigna clientes a tus vendedores y analiza en tiempo real sus estadísticas de gestión.</li>
+              </ul>
             </div>
           </div>
+          <div class="col-xs-12 col-md-12 btn-box btn-aligned">
+            <% if current_retailer.facebook_retailer&.instagram_integrated %>
+              <p class="c-green fs-18 fs-sm-and-down-12">Conectado con Instagram Exitosamente</p>
+            <% else %>
+              <%= link_to 'Conectar con Instagram', retailer_user_omniauth_instagram_path, class: 'fs-sm-and-down-8 fs-12 btn-btn btn-submit' %>
+            <% end %>
+          </div>
         </div>
-      <% end %>
+      </div>
     </div>
   </div>
 </div>
