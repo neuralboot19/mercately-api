@@ -8,12 +8,12 @@ const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
 
   const [error, setError] = useState(false);
 
-  const errorLoadingVideo = (e) => {
+  const errorLoadingVideo = () => {
     if (url) setError(true);
   };
 
   return (
-    <div className={error && 'error-media-content'}>
+    <div className={error ? 'error-media-content' : ''}>
       <div className="video-content">
         { error ? (
           <blockquote className="text-center py-115">
