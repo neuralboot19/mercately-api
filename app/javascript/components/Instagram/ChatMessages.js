@@ -301,8 +301,6 @@ class ChatMessages extends Component {
       return 'video';
     } else if (file_type.includes('location/') || file_type === 'location') {
       return 'location';
-    } else if (file_type === 'story_mention') {
-      return 'story_mention';
     }
   }
 

@@ -47,10 +47,6 @@ module FacebookMessages
       'Ubicación'
     when 'sticker'
       'Sticker'
-    when 'share'
-      'Publicación'
-    when 'story_mention'
-      'Mención en historia'
     else
       'Archivo'
     end

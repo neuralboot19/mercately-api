@@ -9,14 +9,14 @@ const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
   const [error, setError] = useState(false);
 
   const errorLoadingVideo = (e) => {
-    if (e.target.currentSrc) setError(true);
+    if (url) setError(true);
   };
 
   return (
-    <div>
+    <div className={error && 'error-media-content'}>
       <div className="video-content">
         { error ? (
-          <blockquote className="text-center mt-150">
+          <blockquote className="text-center py-115">
             Video temporal no disponible
           </blockquote>
         ) : (
