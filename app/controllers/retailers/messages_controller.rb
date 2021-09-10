@@ -30,6 +30,7 @@ class Retailers::MessagesController < RetailersController
     return unless @question.date_read.nil?
 
     @question.update(date_read: Time.now)
+    @retailer.sync_ml_unread
     ml_helper = MercadoLibreNotificationHelper
     ml_helper.broadcast_data(@retailer, @retailer.retailer_users, 'questions')
   end

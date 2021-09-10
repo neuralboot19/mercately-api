@@ -19,7 +19,9 @@ class Api::V1::AgentNotificationsController < Api::ApiController
   def mark_by_customer_as_read
     customer = Customer.find(permit_params[:customer_id])
     customer.update_attribute(:unread_whatsapp_chat, false)
+    retailer_user_api(customer, current_retailer).mark_unread_flag
     agents_to_notify = customer.agent.present? ? [customer.agent] : current_retailer.retailer_users.all_customers.to_a
+
     if current_retailer.karix_integrated?
       customer.karix_whatsapp_messages
         .where(direction: 'inbound')
@@ -54,5 +56,9 @@ class Api::V1::AgentNotificationsController < Api::ApiController
         :customer_id,
         :notification_type
       )
+    end
+
+    def retailer_user_api(customer, retailer)
+      @retailer_user_api = RetailerUsers::ManageUnreadMessages.new(customer, retailer)
     end
 end

@@ -17,9 +17,10 @@ module FacebookMessages
     after_create :assign_agent
     after_commit :send_welcome_message, on: :create, if: -> (obj) { obj.customer.messenger? }
     after_commit :send_inactive_message, on: :create, if: -> (obj) { obj.customer.messenger? }
-    after_commit :send_facebook_message, on: :create
     after_commit :broadcast_to_counter_channel, on: [:create, :update]
+    after_commit :mark_unread_flag, on: :create
     after_commit :set_last_interaction, on: :create
+    after_commit :send_facebook_message, on: :create
 
     scope :customer_unread, -> { where(date_read: nil, sent_by_retailer: false) }
     scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
@@ -142,5 +143,24 @@ module FacebookMessages
       self.sender_first_name = retailer_user.first_name
       self.sender_last_name = retailer_user.last_name
       self.sender_email = retailer_user.email
+    end
+
+    def mark_unread_flag
+      return unless sent_by_retailer == false
+
+      customer.update_column(:count_unread_messages, customer.count_unread_messages + 1)
+
+      field = "#{customer.pstype}_unread"
+      admins_supervisors = retailer.admins.or(retailer.supervisors)
+      admins_supervisors.update_all(field => true)
+
+      agent = customer.agent
+      return if agent && !agent.agent?
+
+      if agent.present?
+        agent.update_columns(field => true)
+      else
+        retailer.retailer_users.active_agents.where(only_assigned: false).update_all(field => true)
+      end
     end
 end

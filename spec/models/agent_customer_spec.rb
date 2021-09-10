@@ -133,7 +133,7 @@ RSpec.describe AgentCustomer, type: :model do
   describe '#free_spot_on_destroy' do
     let(:retailer) { create(:retailer, :gupshup_integrated) }
     let(:retailer_user) { create(:retailer_user, retailer: retailer) }
-    let(:customer) { create(:customer, agent: retailer_user) }
+    let(:customer) { create(:customer, :messenger, agent: retailer_user) }
 
     context 'when the agent customer belongs to an assignment team' do
       let(:team_assignment) { create(:team_assignment, retailer: retailer) }
@@ -203,7 +203,7 @@ RSpec.describe AgentCustomer, type: :model do
   describe '#free_spot_on_change' do
     let(:retailer) { create(:retailer, :gupshup_integrated) }
     let(:retailer_user) { create(:retailer_user, retailer: retailer) }
-    let(:customer) { create(:customer, agent: retailer_user) }
+    let(:customer) { create(:customer, :messenger, agent: retailer_user) }
     let(:another_retailer_user) { create(:retailer_user, retailer: retailer) }
 
     context 'when the agent customer belongs to an assignment team' do

@@ -86,8 +86,6 @@ module Whatsapp::Gupshup::V1::Helpers
       customer,
       removed_agent = args
 
-      total = retailer_user.retailer.gupshup_unread_whatsapp_messages(retailer_user).size
-
       if @msg.is_a?(ActiveRecord::AssociationRelation)
         customer ||= @msg.first.customer
         message = @msg.first
@@ -101,12 +99,11 @@ module Whatsapp::Gupshup::V1::Helpers
       redis.publish 'new_message_counter',
                     {
                       identifier: '.item__cookie_whatsapp_messages',
-                      total: total,
+                      unread_messages: retailer_user.whatsapp_unread,
                       from: 'WhatsApp',
                       message_text: message_info(message),
                       customer_info: customer&.notification_info,
                       execute_alert: execute && message&.direction == 'inbound',
-                      update_counter: execute == false || message&.direction == 'inbound',
                       room: retailer_user.id
                     }.to_json
 

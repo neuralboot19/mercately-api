@@ -14,9 +14,18 @@ RSpec.describe Retailers::Api::V1::MessengerConversationsController, type: :requ
   let(:slug) { retailer_user.retailer.slug }
   let(:api_key) { retailer_user.retailer.generate_api_key }
 
-  let(:customer_1) { create(:customer, retailer: retailer, created_at: Time.now - 8.days, phone: '+593123458475') }
-  let(:customer_2) { create(:customer, retailer: retailer, created_at: Time.now - 8.days, phone: '+593452365897') }
-  let(:customer_3) { create(:customer, retailer: retailer, created_at: Time.now - 8.days, phone: '+593789584759') }
+  let(:customer_1) do
+    create(:customer, :messenger, retailer: retailer, created_at: Time.now - 8.days, phone: '+593123458475')
+  end
+
+  let(:customer_2) do
+    create(:customer, :messenger, retailer: retailer, created_at: Time.now - 8.days, phone: '+593452365897')
+  end
+
+  let(:customer_3) do
+    create(:customer, :messenger, retailer: retailer, created_at: Time.now - 8.days, phone: '+593789584759')
+  end
+
   let!(:agent_customer) { create(:agent_customer, retailer_user: retailer_user, customer: customer_1) }
   let!(:agent_customer_2) { create(:agent_customer, retailer_user: retailer_user, customer: customer_3) }
 

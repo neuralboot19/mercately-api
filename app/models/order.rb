@@ -62,7 +62,7 @@ class Order < ApplicationRecord
   end
 
   def unread_messages_count
-    messages.where(answer: nil, date_read: nil).count
+    count_unread_messages
   end
 
   def last_message_received_date

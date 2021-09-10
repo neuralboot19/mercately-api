@@ -5,6 +5,7 @@ class KarixWhatsappMessage < ApplicationRecord
   include WhatsappAutomaticAnswerConcern
   include WhatsappChatBotActionConcern
   include PushNotificationable
+  include CounterMessagesConcern
   include CustomerActiveWhatsappConcern
   include MessageSenderInformationConcern
 
