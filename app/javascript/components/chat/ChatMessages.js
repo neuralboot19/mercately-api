@@ -337,6 +337,8 @@ class ChatMessages extends Component {
       return 'video';
     } else if (file_type.includes('location/') || file_type === 'location') {
       return 'location';
+    } else if (file_type === 'fallback') {
+      return 'fallback';
     }
   }
 

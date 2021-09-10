@@ -49,6 +49,8 @@ module FacebookMessages
       'Ubicación'
     when 'sticker'
       'Sticker'
+    when 'fallback'
+      'Publicación'
     else
       'Archivo'
     end

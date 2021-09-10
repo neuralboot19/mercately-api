@@ -13,6 +13,7 @@ module Facebook
       customer = Facebook::Customers.new(@facebook_retailer, @type).import(message_data['sender']['id'])
       file_type = message_data['message']&.[]('attachments')&.[](0)&.[]('type')
       url = file_type_url(message_data, file_type)
+      url, file_type = get_fallback_media_url(url) if file_type == 'fallback'
       file_name = File.basename(URI.parse(url)&.path) if url.present?
       file_type = sniff_mime_type(url) if @type == 'instagram' && file_type.in?(['story_mention', 'share'])
       @klass.create_with(
@@ -193,6 +194,17 @@ module Facebook
         "https://graph.facebook.com/#{message_id}?#{params.to_query}"
       end
 
+      def fallback_url(url)
+        post_id = CGI.parse(URI.parse(url).query)['story_fbid'][0]
+        params = {
+          fields: 'message,child_attachments,attachments{media,subattachments}',
+          access_token: @facebook_retailer.access_token
+        }
+        "https://graph.facebook.com/v11.0/#{@facebook_retailer.uid}_#{post_id}?#{params.to_query}"
+      rescue
+        nil
+      end
+
       def check_content_type(content_type)
         return unless content_type.present?
         return 'image' if content_type.include?('image/')
@@ -223,12 +235,28 @@ module Facebook
       def file_type_url(message_data, file_type)
         return unless file_type
 
-        if file_type == 'location'
+        case file_type
+        when 'location', 'fallback'
           message_data['message']&.[]('attachments')&.[](0)&.[]('url') ||
             message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
         else
           message_data['message']&.[]('attachments')&.[](0)&.[]('payload')&.[]('url')
         end
+      end
+
+      def get_fallback_media_url(url)
+        post_url = fallback_url(url)
+        return [url, 'fallback'] if post_url.nil?
+
+        response = JSON.parse(Faraday.get(post_url).body)
+        video_url = response['attachments']['data'][0]['media']['source']
+        if video_url
+          [video_url, 'video']
+        else
+          [response['attachments']['data'][0]['media']['image']['src'], 'image']
+        end
+      rescue
+        [url, 'fallback']
       end
 
       def right_file_format?(content_type)

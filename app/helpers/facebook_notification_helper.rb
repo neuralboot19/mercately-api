@@ -86,12 +86,22 @@ module FacebookNotificationHelper
   def self.message_info(message)
     return '' unless message.present?
 
-    return 'Archivo' if message.file_type == 'file'
-    return 'Imagen' if message.file_type == 'image'
-    return 'Video' if message.file_type == 'video'
-    return 'Audio' if ['audio', 'voice'].include?(message.file_type)
-    return 'Ubicación' if message.file_type == 'location'
-    message.text
+    case message.file_type
+    when 'file'
+      'Archivo'
+    when 'image'
+      'Imagen'
+    when 'video'
+      'Video'
+    when 'audio', 'voice'
+      'Audio'
+    when 'location'
+      'Ubicación'
+    when 'fallback'
+      'Publicación'
+    else
+      message.text
+    end
   end
 
   def self.is_removed(ret_u, assigned_agent)
