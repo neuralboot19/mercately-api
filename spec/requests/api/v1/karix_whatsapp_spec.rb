@@ -101,10 +101,20 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
     }
   end
 
+  let(:params) do
+    {
+      agent: 'all',
+      tag: 'all',
+      type: 'all',
+      searchString: '',
+      order: 'received_desc'
+    }
+  end
+
   describe 'GET #index' do
     context 'when local request' do
       it 'responses with all customers' do
-        get api_v1_karix_customers_path
+        get api_v1_karix_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -112,7 +122,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by first_name' do
-        get api_v1_karix_customers_path, params: { searchString: customer2.first_name }
+        params[:searchString] = customer2.first_name
+        get api_v1_karix_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -121,7 +132,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by last_name' do
-        get api_v1_karix_customers_path, params: { searchString: customer2.last_name }
+        params[:searchString] = customer2.last_name
+        get api_v1_karix_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -130,7 +142,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by first_name and last_name' do
-        get api_v1_karix_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
+        params[:searchString] = "#{customer2.first_name} #{customer2.last_name}"
+        get api_v1_karix_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -139,7 +152,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by email' do
-        get api_v1_karix_customers_path, params: { searchString: customer1.email }
+        params[:searchString] = customer1.email
+        get api_v1_karix_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -148,7 +162,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by phone' do
-        get api_v1_karix_customers_path, params: { searchString: customer1.phone }
+        params[:searchString] = customer1.phone
+        get api_v1_karix_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -159,7 +174,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       it 'responses with a 404 when no customers registered' do
         retailer.customers.destroy_all
 
-        get api_v1_karix_customers_path
+        get api_v1_karix_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:not_found)
@@ -178,7 +193,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         end
 
         it 'returns only the customers assigned to it or those not assigned' do
-          get api_v1_karix_customers_path
+          get api_v1_karix_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -193,7 +208,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         end
 
         it 'fails, a 404 Error will be responsed' do
-          get api_v1_karix_customers_path
+          get api_v1_karix_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response.code).to eq('404')
@@ -207,7 +222,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
 
           it 'responses the customers with (any tag assigned/without tags assigned)' do
-            get api_v1_karix_customers_path, params: { tag: 'all' }
+            get api_v1_karix_customers_path, params: params
             body = JSON.parse(response.body)
 
             expect(response).to have_http_status(:ok)
@@ -220,7 +235,8 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
 
           it 'responses only the customers with the tag assigned' do
-            get api_v1_karix_customers_path, params: { tag: tag.id }
+            params[:tag] = tag.id
+            get api_v1_karix_customers_path, params: params
             body = JSON.parse(response.body)
 
             expect(response).to have_http_status(:ok)
@@ -242,7 +258,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       let(:header_token) { retailer_user.api_session_token }
 
       it 'responses with all customers' do
-        get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+        get api_v1_karix_customers_path,
+          headers: { 'email': header_email, 'device': header_device, 'token': header_token },
+          params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -250,8 +268,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by first_name' do
+        params[:searchString] = customer2.first_name
         get api_v1_karix_customers_path,
-            params: { searchString: customer2.first_name },
+            params: params,
             headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
         body = JSON.parse(response.body)
@@ -262,8 +281,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by last_name' do
+        params[:searchString] = customer2.last_name
         get api_v1_karix_customers_path,
-            params: { searchString: customer2.last_name },
+            params: params,
             headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
         body = JSON.parse(response.body)
@@ -274,8 +294,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by first_name and last_name' do
+        params[:searchString] = "#{customer2.first_name} #{customer2.last_name}"
         get api_v1_karix_customers_path,
-            params: { searchString: "#{customer2.first_name} #{customer2.last_name}" },
+            params: params,
             headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
         body = JSON.parse(response.body)
@@ -286,8 +307,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by email' do
+        params[:searchString] = customer1.email
         get api_v1_karix_customers_path,
-            params: { searchString: customer1.email },
+            params: params,
             headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
         body = JSON.parse(response.body)
@@ -298,8 +320,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       end
 
       it 'filters customers by phone' do
+        params[:searchString] = customer1.phone
         get api_v1_karix_customers_path,
-            params: { searchString: customer1.phone },
+            params: params,
             headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
         body = JSON.parse(response.body)
@@ -312,7 +335,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
       it 'responses with a 404 when no customers registered' do
         retailer.customers.destroy_all
 
-        get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+        get api_v1_karix_customers_path,
+          headers: { 'email': header_email, 'device': header_device, 'token': header_token },
+          params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:not_found)
@@ -336,7 +361,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         end
 
         it 'returns only the customers assigned to it or those not assigned' do
-          get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+          get api_v1_karix_customers_path,
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token },
+            params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -351,7 +378,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
         end
 
         it 'fails, a 404 Error will be responsed' do
-          get api_v1_karix_customers_path, headers: { 'email': header_email, 'device': header_device, 'token': header_token }
+          get api_v1_karix_customers_path,
+            headers: { 'email': header_email, 'device': header_device, 'token': header_token },
+            params: params
           body = JSON.parse(response.body)
 
           expect(response.code).to eq('404')
@@ -366,7 +395,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
           it 'responses the customers with (any tag assigned/without tags assigned)' do
             get api_v1_karix_customers_path,
-                params: { tag: 'all' },
+                params: params,
                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
             body = JSON.parse(response.body)
@@ -381,8 +410,9 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
 
           it 'responses only the customers with the tag assigned' do
+            params[:tag] = tag.id
             get api_v1_karix_customers_path,
-                params: { tag: tag.id },
+                params: params,
                 headers: { 'email': header_email, 'device': header_device, 'token': header_token }
 
             body = JSON.parse(response.body)

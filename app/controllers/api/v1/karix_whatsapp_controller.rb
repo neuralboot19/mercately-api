@@ -317,46 +317,33 @@ class Api::V1::KarixWhatsappController < Api::ApiController
 
       customers = customers.select('customers.*, customers.last_chat_interaction as recent_message_date')
 
-      integration = current_retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-      if params[:type].present?
-        customers = case params[:type]
-                    when 'no_read'
-                      customers.joins(integration.to_sym)
-                      .where("(#{integration}.status != ? AND #{integration}.direction = 'inbound')
-                            OR customers.unread_whatsapp_chat = true", current_retailer.karix_integrated? ? 'read' : 5)
-                    when 'read'
-                      customers.joins(integration.to_sym).where(
-                        "(#{integration}.status = ? AND #{integration}.direction = 'inbound')
-                        AND customers.unread_whatsapp_chat = false",
-                        current_retailer.karix_integrated? ? 'read' : 5
-                      )
-                    when 'all'
-                      customers
-                    end
-      end
+      customers = case params[:type]
+                  when 'no_read'
+                    customers.where('unread_whatsapp_chat = true OR count_unread_messages > 0')
+                  when 'read'
+                    customers.where('unread_whatsapp_chat = false AND count_unread_messages = 0')
+                  when 'all'
+                    customers
+                  end
 
-      if params[:agent].present?
-        case params[:agent]
-        when 'all'
-          customers
-        when 'not_assigned'
-          customers = customers.joins("LEFT JOIN agent_customers agc ON agc.customer_id = customers.id")
-            .where("agc.retailer_user_id is NULL AND customers.retailer_id = ?", current_retailer.id)
-        else
-          customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).select(:customer_id)
-          customers = customers.where('customers.id IN (?)', customer_ids)
-        end
-      end
+      customers = case params[:agent]
+                  when 'all'
+                    customers
+                  when 'not_assigned'
+                    customers.joins('LEFT JOIN agent_customers agc ON agc.customer_id = customers.id')
+                      .where('agc.retailer_user_id is NULL AND customers.retailer_id = ?', current_retailer.id)
+                  else
+                    customer_ids = AgentCustomer.where(retailer_user_id: params[:agent]).select(:customer_id)
+                    customers.where('customers.id IN (?)', customer_ids)
+                  end
 
-      if params[:tag].present?
-        case params[:tag]
-        when 'all'
-          customers
-        else
-          customer_ids = CustomerTag.where(tag_id: params[:tag]).select(:customer_id)
-          customers = customers.where('customers.id IN (?)', customer_ids)
-        end
-      end
+      customers = case params[:tag]
+                  when 'all'
+                    customers
+                  else
+                    customer_ids = CustomerTag.where(tag_id: params[:tag]).select(:customer_id)
+                    customers.where('customers.id IN (?)', customer_ids)
+                  end
 
       customers = customers.by_search_text(params[:searchString]) if params[:searchString]
       customers = customers.where('customers.id = ?', params[:customer_id]) if params[:customer_id].present?
