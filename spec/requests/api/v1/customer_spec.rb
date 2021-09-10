@@ -16,10 +16,20 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     sign_in retailer_user
   end
 
+  let(:params) do
+    {
+      agent: 'all',
+      tag: 'all',
+      type: 'all',
+      searchString: '',
+      order: 'received_desc'
+    }
+  end
+
   describe 'GET #index' do
     describe 'when the current retailer user is admin' do
       it 'responses with all customers' do
-        get api_v1_customers_path
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -27,7 +37,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by first_name' do
-        get api_v1_customers_path, params: { searchString: customer2.first_name }
+        params[:searchString] = customer2.first_name
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -36,7 +47,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by last_name' do
-        get api_v1_customers_path, params: { searchString: customer2.last_name }
+        params[:searchString] = customer2.last_name
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -45,7 +57,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by first_name and last_name' do
-        get api_v1_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
+        params[:searchString] = "#{customer2.first_name} #{customer2.last_name}"
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -54,7 +67,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by email' do
-        get api_v1_customers_path, params: { searchString: customer1.email }
+        params[:searchString] = customer1.email
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -63,7 +77,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by phone' do
-        get api_v1_customers_path, params: { searchString: customer1.phone }
+        params[:searchString] = customer1.phone
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -78,7 +93,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'responses with all customers' do
-        get api_v1_customers_path
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -86,7 +101,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by first_name' do
-        get api_v1_customers_path, params: { searchString: customer2.first_name }
+        params[:searchString] = customer2.first_name
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -95,7 +111,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by last_name' do
-        get api_v1_customers_path, params: { searchString: customer2.last_name }
+        params[:searchString] = customer2.last_name
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -104,7 +121,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by first_name and last_name' do
-        get api_v1_customers_path, params: { searchString: "#{customer2.first_name} #{customer2.last_name}" }
+        params[:searchString] = "#{customer2.first_name} #{customer2.last_name}"
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -113,7 +131,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by email' do
-        get api_v1_customers_path, params: { searchString: customer1.email }
+        params[:searchString] = customer1.email
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -122,7 +141,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       it 'filters customers by phone' do
-        get api_v1_customers_path, params: { searchString: customer1.phone }
+        params[:searchString] = customer1.phone
+        get api_v1_customers_path, params: params
         body = JSON.parse(response.body)
 
         expect(response).to have_http_status(:ok)
@@ -137,7 +157,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
 
         it 'responses the customers with (any tag assigned/without tags assigned)' do
-          get api_v1_customers_path, params: { tag: 'all' }
+          get api_v1_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -150,7 +170,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         let!(:customer_tag) { create(:customer_tag, tag: tag, customer: customer1) }
 
         it 'responses only the customers with the tag assigned' do
-          get api_v1_customers_path, params: { tag: tag.id }
+          params[:tag] = tag.id
+          get api_v1_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -162,7 +183,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     context 'when the agent filter is present' do
       context 'when the agent filter is "all"' do
         it 'responses with all customers' do
-          get api_v1_customers_path, params: { agent: 'all' }
+          get api_v1_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -174,7 +195,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         let!(:agent_customer) {create(:agent_customer, customer: customer1, retailer_user: retailer_user)}
 
         it 'responses customers with not agent assigned' do
-          get api_v1_customers_path, params: { agent: 'not_assigned' }
+          params[:agent] = 'not_assigned'
+          get api_v1_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -189,7 +211,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         end
 
         it 'responses only the customers with the agent assigned' do
-          get api_v1_customers_path, params: { agent: agent.id }
+          params[:agent] = agent.id
+          get api_v1_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -201,7 +224,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     context 'when the type filter is present' do
       context 'when is "all"' do
         it 'responses with all customers' do
-          get api_v1_customers_path, params: { type: 'all' }
+          get api_v1_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
@@ -210,46 +233,29 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
       end
 
       context 'when is "no_read"' do
-        it 'responses only the customers with no read messages' do
-          customer1.facebook_messages.first.update(date_read: nil)
-          get api_v1_customers_path, params: { type: 'no_read' }
+        it 'responses the customers with chat set as no read or unread messages' do
+          customer1.update(unread_messenger_chat: false, count_unread_messages: 0)
+          params[:type] = 'no_read'
+          get api_v1_customers_path, params: params
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
           expect(body['customers'].count).to eq(1)
-        end
-
-        it 'responses only the customers with chat set as no read' do
-          customer1.update(unread_messenger_chat: true)
-          get api_v1_customers_path, params: { type: 'no_read' }
-          body = JSON.parse(response.body)
-
-          expect(response).to have_http_status(:ok)
-          expect(body['customers'].count).to eq(1)
+          expect(body['customers'].first['id']).to eq(customer2.id)
         end
       end
 
       context 'when is "read"' do
-        it 'responses only the customers with read messages' do
-          customer1.facebook_messages.update_all(date_read: nil)
-          get api_v1_customers_path, params: { type: 'read' }
+        it 'responses the customers with read messages and chat read' do
+          customer1.update(unread_messenger_chat: false, count_unread_messages: 0)
+          params[:type] = 'read'
+          get api_v1_customers_path, params: params
 
           body = JSON.parse(response.body)
 
           expect(response).to have_http_status(:ok)
           expect(body['customers'].count).to eq(1)
-          expect(body['customers'].first['id']).to eq(customer2.id)
-        end
-
-        it 'responses only the customers with no read messenger chat' do
-          customer2.update(unread_messenger_chat: true)
-
-          get api_v1_customers_path, params: { type: 'no_read' }
-          body = JSON.parse(response.body)
-
-          expect(response).to have_http_status(:ok)
-          expect(body['customers'].count).to eq(1)
-          expect(body['customers'].first['id']).to eq(customer2.id)
+          expect(body['customers'].first['id']).to eq(customer1.id)
         end
       end
     end
@@ -264,7 +270,8 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
 
       context 'when is received in ascending order' do
         it 'responses customers ordered by facebook_messages.created_at in ascending order' do
-          get api_v1_customers_path, params: { order: 'received_asc' }
+          params[:order] = 'received_asc'
+          get api_v1_customers_path, params: params
 
           body = JSON.parse(response.body)
 
@@ -283,7 +290,7 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
         end
 
         it 'responses customers ordered by facebook_messages.created_at in descending order' do
-          get api_v1_customers_path, params: { order: 'received_desc' }
+          get api_v1_customers_path, params: params
 
           body = JSON.parse(response.body)
 
