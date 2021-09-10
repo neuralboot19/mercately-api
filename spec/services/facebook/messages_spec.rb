@@ -8,7 +8,10 @@ RSpec.describe Facebook::Messages, vcr: true do
   let!(:retailer_user) { create(:retailer_user, retailer: retailer) }
   let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
 
-  let!(:customer) { create(:customer, retailer: facebook_retailer.retailer, psid: message_data_save['sender']['id']) }
+  let!(:customer) do
+    create(:customer, :messenger, retailer: facebook_retailer.retailer, psid: message_data_save['sender']['id'])
+  end
+
   let(:message_id) { 'm_5zQXER3IeTxCOXaHhNOhD0OUElOLpk3ODw-8fGJl54d3iTker4IqLmXsMnseIWB5jfv61RUW9yCCJdOcqegr2w' }
 
   let(:message_data_save) do

@@ -11,7 +11,10 @@ class Api::V1::MlChatsController < Api::ApiController
     unread_messages = @filter.where(date_read: nil, answer: nil)
     if unread_messages.exists?
       unread_messages.update_all(date_read: Time.now)
-      update_counter
+      @order.update_column(:count_unread_messages, 0)
+      current_retailer.sync_ml_unread
+
+      MercadoLibreNotificationHelper.subtract_messages_counter(retailer: current_retailer, order: @order)
     end
     @ml_chats = @filter.order(created_at: :desc).page(params[:page])
     total_pages = @ml_chats&.total_pages
@@ -57,11 +60,6 @@ class Api::V1::MlChatsController < Api::ApiController
         .where.not(questions: { id: nil })
         .where(customers: { retailer_id: current_retailer.id })
         .find_by(web_id: params[:id]) || not_found
-    end
-
-    def update_counter
-      ml_helper = MercadoLibreNotificationHelper
-      ml_helper.subtract_messages_counter(retailer: current_retailer, order: @order)
     end
 
     def not_found

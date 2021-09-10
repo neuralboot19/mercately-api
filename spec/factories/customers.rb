@@ -46,5 +46,13 @@ FactoryBot.define do
     trait :bot_active do
       active_bot { true }
     end
+
+    trait :messenger do
+      pstype { 'messenger' }
+    end
+
+    trait :instagram do
+      pstype { 'instagram' }
+    end
   end
 end

@@ -28,6 +28,9 @@ class Api::V1::OrdersController < Api::ApiController
 
   def mark_messages_as_read
     @order.messages.where(date_read: nil, answer: nil).update_all(date_read: Time.now)
+    @order.update_column(:count_unread_messages, 0)
+    current_retailer.sync_ml_unread
+
     MercadoLibreNotificationHelper.mark_chat_as_read(retailer: current_retailer, order_web_id: @order.web_id)
     render status: 200, json: { message: 'success' }
   end

@@ -18,6 +18,7 @@ module MercadoLibre
 
       message = Message.find_or_initialize_by(meli_id: message_info['message_id'])
       send_notification = message.new_record?
+      sync = send_notification && !is_an_answer
       order = Order.find_by(meli_order_id: message_info['resource_id'])
 
       return if not_corresponding_message(order, customer, is_an_answer)
@@ -33,6 +34,8 @@ module MercadoLibre
       if message_info['date_read'].present?
         unread_messages = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
         unread_messages.update_all(date_read: message_info['date_read'])
+        order.update_column(:count_unread_messages, 0)
+        sync = false
       end
 
       if is_an_answer
@@ -40,6 +43,9 @@ module MercadoLibre
       else
         message.update(question: message_info['text']['plain'])
       end
+
+      order.update_column(:count_unread_messages, order.count_unread_messages + 1) if sync
+      @retailer.sync_ml_unread
 
       insert_notification(is_an_answer, message) if send_notification
     end

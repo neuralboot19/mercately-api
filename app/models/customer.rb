@@ -73,6 +73,7 @@ class Customer < ApplicationRecord
   scope :out_of_range, -> (start_date, end_date) { where.not(created_at: start_date..end_date) }
   scope :facebook_customers, -> { where.not(psid: nil) }
   scope :active_whatsapp, -> { where(ws_active: true) }
+  scope :with_unread_messages, -> { where('count_unread_messages > 0') }
   scope :by_search_text, (lambda do |search_text|
     where("CONCAT(REPLACE(lower(customers.first_name), '\s', ''),
                   REPLACE(lower(customers.last_name), '\s', ''),
@@ -182,7 +183,7 @@ class Customer < ApplicationRecord
   end
 
   def unread_message?
-    self.unread_messenger_chat || message_records.where(sent_by_retailer: false).last&.date_read.blank?
+    unread_messenger_chat || message_records.where(sent_by_retailer: false).last&.date_read.blank?
   end
 
   def last_message_received_date
@@ -237,12 +238,11 @@ class Customer < ApplicationRecord
   end
 
   def unread_whatsapp_messages
-    messages = retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-    self.send(messages).unread.where(direction: 'inbound').count
+    count_unread_messages
   end
 
   def unread_messenger_messages
-    message_records.customer_unread.count
+    count_unread_messages
   end
 
   def recent_inbound_message_date

@@ -10,6 +10,7 @@ class Question < ApplicationRecord
   after_update :ml_answer_question, if: :answered?
   before_save :set_answered, if: :will_save_change_to_answer?
   after_create :generate_web_id
+  after_commit :sync_unread, on: :create
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
 
@@ -40,5 +41,9 @@ class Question < ApplicationRecord
 
     def set_answered
       self.answered = true if answer.present?
+    end
+
+    def sync_unread
+      retailer.sync_ml_unread
     end
 end

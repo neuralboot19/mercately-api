@@ -91,22 +91,44 @@ RSpec.describe Retailer, type: :model do
   describe '#unread_messages' do
     let(:customer) { create(:customer, retailer: retailer) }
     let(:order) { create(:order, customer: customer) }
-    let!(:unread_messages) { create_list(:message, 5, order: order, customer: customer) }
-    let!(:readed_messages) { create_list(:message, 3, :readed, order: order, customer: customer) }
 
-    it 'returns only the unreaded messages' do
-      expect(retailer.unread_messages.count).to eq 5
+    context 'when there are unread messages' do
+      let!(:unread_messages) { create_list(:message, 5, order: order, customer: customer) }
+      let!(:readed_messages) { create_list(:message, 3, :readed, order: order, customer: customer) }
+
+      it 'returns true' do
+        expect(retailer.unread_messages).to be(true)
+      end
+    end
+
+    context 'when there are not unread messages' do
+      let!(:readed_messages) { create_list(:message, 3, :readed, order: order, customer: customer) }
+
+      it 'returns false' do
+        expect(retailer.unread_messages).to be(false)
+      end
     end
   end
 
   describe '#unread_questions' do
     let(:product) { create(:product, retailer: retailer) }
     let(:customer) { create(:customer, retailer: retailer) }
-    let!(:unread_questions) { create_list(:question, 5, product: product, customer: customer) }
-    let!(:readed_questions) { create_list(:question, 3, :readed, product: product, customer: customer) }
 
-    it 'returns only the unreaded questions' do
-      expect(retailer.unread_questions.count).to eq 5
+    context 'when there are unread questions' do
+      let!(:unread_questions) { create_list(:question, 5, product: product, customer: customer) }
+      let!(:readed_questions) { create_list(:question, 3, :readed, product: product, customer: customer) }
+
+      it 'returns true' do
+        expect(retailer.unread_questions).to eq(true)
+      end
+    end
+
+    context 'when there are not unread questions' do
+      let!(:readed_questions) { create_list(:question, 3, :readed, product: product, customer: customer) }
+
+      it 'returns false' do
+        expect(retailer.unread_questions).to eq(false)
+      end
     end
   end
 

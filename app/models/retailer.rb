@@ -92,11 +92,11 @@ class Retailer < ApplicationRecord
   end
 
   def unread_messages
-    Message.includes(:customer).where(date_read: nil, answer: nil, customers: { retailer_id: id })
+    Message.includes(:customer).where(date_read: nil, answer: nil, customers: { retailer_id: id }).exists?
   end
 
   def unread_questions
-    Question.includes(:customer).where(date_read: nil, customers: { retailer_id: id })
+    Question.includes(:customer).where(date_read: nil, customers: { retailer_id: id }).exists?
   end
 
   def karix_unread_whatsapp_messages(retailer_user)
@@ -157,11 +157,11 @@ class Retailer < ApplicationRecord
   end
 
   def admins
-    retailer_users.where(retailer_admin: true)
+    retailer_users.where(retailer_admin: true, removed_from_team: false, invitation_token: nil)
   end
 
   def supervisors
-    retailer_users.where(retailer_supervisor: true)
+    retailer_users.where(retailer_supervisor: true, removed_from_team: false, invitation_token: nil)
   end
 
   def positive_balance?(customer)
@@ -276,6 +276,13 @@ class Retailer < ApplicationRecord
     recipients.each do |r|
       RetailerMailer.failed_charge(self, r, card_type).deliver_now
     end
+  end
+
+  def sync_ml_unread
+    unread = unread_questions || Order.joins(:customer)
+      .where('orders.count_unread_messages > 0 AND customers.retailer_id = ?', id).exists?
+
+    retailer_users.update_all(ml_unread: unread)
   end
 
   private
