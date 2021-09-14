@@ -857,6 +857,18 @@
     }
   }
 
+  &.social-newtork-card-ig {
+    border: 1px solid #e64d8a;
+    background: #F599BE;
+
+    .image-icon {
+      position: absolute;
+      right: -6px;
+      width: 25px;
+      top: -3px;
+    }
+  }
+
   &.social-newtork-card-total {
     border: 1px solid #692087;
     background: #E9DFED;
@@ -884,6 +896,10 @@
 
   &.circle-legend-ml {
     background: #FFEC00;
+  }
+
+  &.circle-legend-ig {
+    background: #BC1888;
   }
 
   &.circle-legend-total {

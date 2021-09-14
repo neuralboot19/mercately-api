@@ -352,7 +352,42 @@ es:
       default: "%A, %-d de %B de %Y %H:%M:%S %z"
       long: "%-d de %B de %Y %H:%M"
       short: "%-d de %b %H:%M"
-    pm: pm
+    pm: pm,
+    datepicker:
+      format: 'DD/MM/YYYY'
+      cancelLabel: 'Cancelar'
+      applyLabel: 'Aplicar'
+      fromLabel: 'Desde'
+      toLabel: 'Hasta'
+      customRangeLabel: 'Editar fecha'
+      weekLabel: 'Semana'
+      today: 'Hoy'
+      yesterday: 'Ayer'
+      last_7_days: 'Últimos 7 días'
+      last_30_days: Últimos 30 días
+      this_month: 'Este mes'
+      last_month: 'Mes pasado'
+      daysOfWeek:
+        sun: 'Do'
+        mon: 'Lu'
+        tues: 'Ma'
+        wed: 'Mi'
+        thurs: 'Ju'
+        fri: 'Vi'
+        sat: 'Sa'
+      monthNames:
+        jan: 'Enero'
+        feb: 'Febrero'
+        mar: 'Marzo'
+        apr: 'Abril'
+        may: 'Mayo'
+        jun: 'Junio'
+        jul: 'Julio'
+        aug: 'Agosto'
+        sep: 'Septiembre'
+        oct: 'Octubre'
+        nov: 'Noviembre'
+        dec: 'Diciembre'
   mongoid:
     errors:
       messages:
@@ -410,3 +445,45 @@ es:
       statistics: 'Estadísticas'
     integrations:
       integrations: 'Integraciones'
+  social_networks:
+    whatsapp: Whatsapp
+    messenger: Messenger
+    mercadoLibre: MercadoLibre
+    instagram: Instagram
+  retailer:
+    total: Total
+    statistics:
+      messenger_service: 'Mensajería'
+      description: Estadísticas de ventas, mensajería y otros
+      text_show_stats: Sólo puedes ver datos de los últimos 5 días. Para ver datos completos actualiza a Premium.
+      card:
+        messages: Mensajes
+        received: Recibidos
+        sent: Enviados
+        total: Total
+      chart:
+        title: Total de mensajes por plataforma/red social
+        total_messages: Total de mensajes
+      cliente_content:
+        clients: Clientes
+        new_clients: Clientes nuevos
+        recurring_customers: Clientes recurrentes
+      performance:
+        performance_title: Rendimiento por agente 
+        agent: Agente
+        assigned_chats: Chats asignados
+        assigned_chats_answered: Chats asignados respondidos
+        assigned_chats_without_replying: Chats asignados sin responder
+        messages: Mensajes
+        total_clients: Total de clientes
+        recurring_customers: Clientes recurrentes
+        new_clients: Clientes nuevos
+      chats_by_platform:
+        title: Total de chats por plataforma
+        platform: Plataforma
+        total_chats_assigned: Total de chats asignados
+        total_assigned_chats_answered: Total de chats asignados respondidos
+        total_assigned_chats_without_replying: Total de chats asignados sin responder
+
+
+  

@@ -8,6 +8,8 @@ module StatsChatsConcern
     total_chats_answered_ws
     total_chats_msn
     total_chats_answered_msn
+    total_chats_ig
+    total_chats_answered_ig
 
     @total_chats = [
       {
@@ -23,10 +25,16 @@ module StatsChatsConcern
         total_not_answered: @total_msn - @total_answered_msn
       },
       {
+        platform: 'Instagram',
+        total_chats: @total_ig,
+        total_answered: @total_answered_ig,
+        total_not_answered: @total_ig - @total_answered_ig
+      },
+      {
         platform: 'TOTAL',
-        total_chats: @total_ws + @total_msn,
-        total_answered: @total_answered_ws + @total_answered_msn,
-        total_not_answered: (@total_ws - @total_answered_ws) + (@total_msn - @total_answered_msn)
+        total_chats: @total_ws + @total_msn + @total_ig,
+        total_answered: @total_answered_ws + @total_answered_msn + @total_answered_ig,
+        total_not_answered: (@total_ws - @total_answered_ws) + (@total_msn - @total_answered_msn) + (@total_ig - @total_answered_ig)
       }
     ]
   end
@@ -59,5 +67,19 @@ module StatsChatsConcern
       return unless current_retailer.facebook_retailer&.connected?
 
       @total_answered_msn = @total_agent_chats_answered_msn.values.sum
+    end
+
+    def total_chats_ig
+      @total_ig = 0
+      return unless current_retailer.facebook_retailer&.instagram_integrated?
+
+      @total_ig = @total_agent_chats_assigned_ig.values.sum
+    end
+
+    def total_chats_answered_ig
+      @total_answered_ig = 0
+      return unless current_retailer.facebook_retailer&.instagram_integrated?
+
+      @total_answered_ig = @total_agent_chats_answered_ig.values.sum
     end
 end
