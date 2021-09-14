@@ -75,6 +75,38 @@ class ChatBotOption < ApplicationRecord
     'video' if file.content_type.include?('video/')
   end
 
+  def has_return_options?
+    go_past_option || go_start_option
+  end
+
+  def items_list
+    return option_sub_lists unless has_return_options?
+
+    items = option_sub_lists.to_a
+    size = items.size
+    if go_past_option
+      size = size + 1
+      items << OptionSubList.new(
+        chat_bot_option: self,
+        position: size,
+        value_to_save: '_back_',
+        value_to_show: 'Volver al paso anterior'
+      )
+    end
+
+    if go_start_option
+      size = size + 1
+      items << OptionSubList.new(
+        chat_bot_option: self,
+        position: size,
+        value_to_save: '_start_',
+        value_to_show: 'Ir al menú principal'
+      )
+    end
+
+    items
+  end
+
   private
 
     def set_position
@@ -109,6 +141,8 @@ class ChatBotOption < ApplicationRecord
       return if option_type == 'form'
 
       self.option_sub_lists.delete_all
+      self.go_past_option = false
+      self.go_start_option = false
     end
 
     def check_skip_option
