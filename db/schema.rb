@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_10_002250) do
+ActiveRecord::Schema.define(version: 2021_09_08_214017) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "adminpack"
   enable_extension "plpgsql"
 
   create_table "action_tags", force: :cascade do |t|
@@ -388,7 +389,6 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.boolean "valid_customer", default: false
     t.string "psid"
     t.string "web_id"
-    t.string "karix_whatsapp_phone"
     t.text "notes"
     t.boolean "whatsapp_opt_in", default: false
     t.string "whatsapp_name"
@@ -408,7 +408,6 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.boolean "ws_active", default: false
     t.datetime "last_chat_interaction"
     t.integer "pstype"
-    t.boolean "has_deals", default: false
     t.integer "status_chat", default: 0
     t.integer "count_unread_messages", default: 0
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
@@ -494,7 +493,7 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.datetime "updated_at", null: false
     t.boolean "instagram_integrated", default: false
     t.string "instagram_uid"
-    t.boolean "messenger_integrated", default: false
+    t.boolean "messenger_integrated"
     t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
   end
 
@@ -516,13 +515,6 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.datetime "updated_at", null: false
     t.string "web_id"
     t.index ["retailer_id"], name: "index_funnels_on_retailer_id"
-  end
-
-  create_table "global_settings", force: :cascade do |t|
-    t.string "setting_key"
-    t.string "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "gs_templates", force: :cascade do |t|
@@ -618,7 +610,6 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.string "sender_email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "message_identifier"
     t.index ["customer_id"], name: "index_instagram_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_instagram_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_instagram_messages_on_retailer_user_id"
@@ -899,8 +890,8 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.string "manufacturer_part_number"
     t.string "gtin"
     t.string "brand"
-    t.string "url"
     t.boolean "connected_to_facebook", default: false
+    t.string "url"
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["facebook_product_id"], name: "index_products_on_facebook_product_id", unique: true, where: "(facebook_product_id IS NOT NULL)"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
@@ -971,10 +962,6 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -985,6 +972,10 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -1030,10 +1021,10 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "gupshup_phone_number"
-    t.string "gupshup_src_name"
     t.string "karix_account_uid"
     t.string "karix_account_token"
+    t.string "gupshup_phone_number"
+    t.string "gupshup_src_name"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
@@ -1047,16 +1038,17 @@ ActiveRecord::Schema.define(version: 2021_09_10_002250) do
     t.string "hs_access_token"
     t.string "hs_refresh_token"
     t.boolean "all_customers_hs_integrated", default: true
-    t.boolean "allow_send_videos", default: false
     t.boolean "hs_tags", default: false
+    t.boolean "allow_send_videos", default: false
     t.boolean "allow_multiple_answers", default: false
     t.string "hs_id"
     t.integer "max_agents", default: 2
+    t.boolean "campaings_access", default: false
     t.string "ml_domain", default: "com.ec"
     t.string "ml_site", default: "MEC"
-    t.boolean "has_funnels", default: false
     t.string "gupshup_app_id"
     t.string "gupshup_app_token"
+    t.boolean "has_funnels", default: false
     t.string "timezone"
     t.boolean "ig_allowed", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
