@@ -27,6 +27,7 @@ module Whatsapp::Gupshup::V1
       }
     rescue StandardError => e
       Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 
     def send_bulk_files(options)
@@ -238,6 +239,7 @@ module Whatsapp::Gupshup::V1
         gwm
       rescue => e
         Rails.logger.error(e)
+        SlackError.send_error(e)
       end
 
       def send_message_request(body)

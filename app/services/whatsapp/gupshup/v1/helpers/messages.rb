@@ -17,7 +17,8 @@ module Whatsapp::Gupshup::V1::Helpers
         notify_update!(ret_u, serialized_message)
       end
     rescue StandardError => e
-      Rails.logger.debug(e)
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 
     def notify_agent!(*args)
@@ -51,7 +52,8 @@ module Whatsapp::Gupshup::V1::Helpers
         notify_new_counter(ret_u, assigned_agent.customer, removed_agent)
       end
     rescue StandardError => e
-      Rails.logger.debug(e)
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 
     def notify_messages!(retailer, retailer_users)
@@ -64,7 +66,8 @@ module Whatsapp::Gupshup::V1::Helpers
 
       serialized_message['data'].pluck('attributes')
     rescue StandardError => e
-      Rails.logger.debug(e)
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 
     def notify_read!(retailer, retailer_users)
@@ -77,7 +80,8 @@ module Whatsapp::Gupshup::V1::Helpers
 
       serialized_message['data']['attributes']
     rescue StandardError => e
-      Rails.logger.debug(e)
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 
     def notify_new_counter(*args)

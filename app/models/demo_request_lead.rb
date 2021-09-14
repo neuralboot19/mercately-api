@@ -18,6 +18,7 @@ class DemoRequestLead < ApplicationRecord
         Phony.split(phone.gsub('+', ''))
       rescue Phony::SplittingError => e
         Rails.logger.error(e)
+        SlackError.send_error(e)
         return
       end
     end

@@ -28,6 +28,7 @@ module Retailers::Api::V1
         render_unauthorized unless @retailer.api_key == key && key.present?
       rescue StandardError => e
         Rails.logger.error e
+        SlackError.send_error(e)
       end
 
     protected
@@ -38,6 +39,7 @@ module Retailers::Api::V1
 
       def render_internal_server_error(exception)
         Rails.logger.error("API call EXCEPTION: #{exception.message}")
+        SlackError.send_error(exception)
         Rails.logger.error(exception.backtrace.join("\n"))
         set_response(500, exception.message) and return
       end
