@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { withRouter } from "react-router-dom";
+import { withRouter, useLocation } from "react-router-dom";
 // eslint-disable-next-line import/no-unresolved
 import Loader from 'images/dashboard/loader.jpg';
 import { useSelector, useDispatch } from "react-redux";
@@ -21,12 +21,16 @@ const initialState = {
   agent: 'all',
   type: 'all',
   tag: 'all',
+  status: 'all',
+  tab: 'pending',
   filter: {
     searchString: '',
     order: 'received_desc',
     type: 'all',
     agent: 'all',
     tag: 'all',
+    status: 'all',
+    tab: 'pending',
     reset: false,
     isFiltered: false
   },
@@ -40,8 +44,10 @@ const ChatSideBar = ({
   setRemovedCustomerInfo,
   storageId,
   setActiveChatBot,
-  platform = 'messenger'
+  platform = 'messenger',
+  setChatStatus
 }) => {
+  const location = useLocation();
   const [state, setState] = useState(initialState);
   const [loading, setLoading] = useState(true);
   const [socketData, setSocketData] = useState();
@@ -73,7 +79,10 @@ const ChatSideBar = ({
     let agent;
     let type;
     let tag;
+    let status;
+    let tab;
     const storedFilter = JSON.parse(localStorage.getItem(`${storageId}_filter`));
+
     if (storedFilter) {
       storedFilter.searchString = '';
       filter = storedFilter;
@@ -81,12 +90,22 @@ const ChatSideBar = ({
       agent = storedFilter.agent;
       type = storedFilter.type;
       tag = storedFilter.tag;
+      status = storedFilter.status;
+      tab = storedFilter.tab;
     } else {
       filter = { ...state.filter };
       order = state.order;
       agent = state.agent;
       type = state.type;
       tag = state.tag;
+      status = state.status;
+      tab = state.tab;
+    }
+
+    const queryParams = new URLSearchParams(location.search);
+    if (queryParams.has('cid')) {
+      filter.tab = 'all';
+      tab = 'all';
     }
 
     setState({
@@ -95,7 +114,9 @@ const ChatSideBar = ({
       order,
       agent,
       type,
-      tag
+      tag,
+      status,
+      tab
     });
 
     const eventHandler = (data) => setSocketData(data);
@@ -293,6 +314,7 @@ const ChatSideBar = ({
    */
   const updateCustomerList = (data) => {
     const { customer } = data.customer;
+    if (currentCustomer === customer.id) setChatStatus(customer);
     // Check  if event comes from removal
     if (data.remove_only) {
       // First check if customer is in recently assigned ones' list in order to remove from this list
@@ -300,7 +322,14 @@ const ChatSideBar = ({
       // Assigned agents list is usually the shorter one. So we need to search for the item in this list first.
       removeCustomer(customer);
     } else {
-      if (!isCustomerOnList(customer) && !filterUtil.checkFilters(customer, state.filter, chatType)) return;
+      const okWithFilters = filterUtil.checkFilters(customer, state.filter, chatType)
+
+      if (!isCustomerOnList(customer) && !okWithFilters) return;
+
+      if (isCustomerOnList(customer) && !okWithFilters) {
+        removeCustomer(customer);
+        return;
+      }
 
       setActiveChatBot(customer);
       insertCustomer(customer);
@@ -311,11 +340,18 @@ const ChatSideBar = ({
   const applySearch = (offset = state.customers.length) => {
     isFilteredChats.current = filterApplied()
     if (!offset) {
+      const auxTab = filteredStatusTab();
+
       setState({
         ...state,
+        tab: auxTab,
         customers: [],
         assignedCustomers: [],
-        allCustomers: []
+        allCustomers: [],
+        filter: {
+          ...state.filter,
+          tab: auxTab
+        }
       });
     }
 
@@ -359,19 +395,11 @@ const ChatSideBar = ({
       filter.searchString = state.searchString;
       setState({
         ...state,
-        agent: 'all',
-        type: 'all',
-        tag: 'all',
-        order: 'received_desc',
         customers: [],
         assignedCustomers: [],
         allCustomers: [],
         filter: {
           ...state.filter,
-          agent: 'all',
-          type: 'all',
-          tag: 'all',
-          order: 'received_desc',
           reset: true
         }
       });
@@ -399,22 +427,45 @@ const ChatSideBar = ({
     let type = null;
     let agent = null;
     let tag = null;
+    let status = null;
+    let tab = null;
+    let auxCustomers = state.customers;
+    let auxAllCustomers = state.allCustomers;
     const filter = { ...state.filter };
 
-    if (by === 'type') {
-      type = value;
-    } else if (by === 'agent') {
-      agent = value;
-    } else if (by === 'tag') {
-      tag = value;
+    switch (by) {
+      case 'type':
+        type = value;
+        break;
+      case 'agent':
+        agent = value;
+        break;
+      case 'tag':
+        tag = value;
+        break;
+      case 'status':
+        status = value;
+        break;
+      case 'tab':
+        tab = value;
+        status = 'all';
+        filter.reset = true;
+        auxCustomers = [];
+        auxAllCustomers = [];
+        break;
     }
+
     type = type || state.type;
     agent = agent || state.agent;
     tag = tag || state.tag;
+    status = status || state.status;
+    tab = tab || state.tab;
 
     filter.type = type;
     filter.agent = agent;
     filter.tag = tag;
+    filter.status = status;
+    filter.tab = tab;
     delete filter.customer_id;
 
     setState({
@@ -422,9 +473,13 @@ const ChatSideBar = ({
       type,
       agent,
       tag,
+      status,
+      tab,
       filter,
       page: 1,
-      assignedCustomers: []
+      customers: auxCustomers,
+      assignedCustomers: [],
+      allCustomers: auxAllCustomers
     });
   };
 
@@ -437,7 +492,9 @@ const ChatSideBar = ({
         order: 'received_desc',
         type: 'all',
         agent: 'all',
-        tag: 'all'
+        tag: 'all',
+        status: 'all',
+        tab: 'all'
       }
     };
 
@@ -462,6 +519,7 @@ const ChatSideBar = ({
       || state.filter.agent !== 'all'
       || state.filter.type !== 'all'
       || state.filter.tag !== 'all'
+      || state.filter.status !== 'all'
       || state.filter.order !== 'received_desc'
   );
 
@@ -471,6 +529,8 @@ const ChatSideBar = ({
       agent: 'all',
       type: 'all',
       tag: 'all',
+      status: 'all',
+      tab: state.filter.tab,
       searchString: '',
       order: 'received_desc',
       customers: [],
@@ -480,6 +540,8 @@ const ChatSideBar = ({
         agent: 'all',
         type: 'all',
         tag: 'all',
+        status: 'all',
+        tab: state.filter.tab,
         searchString: '',
         order: 'received_desc',
         reset: true,
@@ -487,6 +549,16 @@ const ChatSideBar = ({
       }
     });
   };
+
+  const filteredStatusTab = () => {
+    if (state.filter.status === 'all') return state.filter.tab;
+
+    if (['new_chat', 'open_chat', 'in_process'].includes(state.filter.status)) {
+      return 'pending';
+    } else {
+      return 'resolved';
+    }
+  }
 
   if (loading) {
     return (
@@ -499,7 +571,7 @@ const ChatSideBar = ({
   }
 
   return (
-    <div className="chat_list_holder">
+    <div className={`chat_list_holder pt-16 ${openChatFilters && 'overflow-auto'}`}>
       <ChatFilter
         agent={state.agent}
         agents={agents}
@@ -512,11 +584,14 @@ const ChatSideBar = ({
         searchString={state.searchString}
         tag={state.tag}
         type={state.type}
+        status={state.status}
+        tab={state.tab}
         openChatFilters={openChatFilters}
         setOpenChatFilters={setOpenChatFilters}
         applySearch={applySearch}
         cleanFilters={cleanFilters}
         filterApplied={isFilteredChats.current}
+        loadingMoreCustomers={loadingMoreCustomers}
       />
       {
         !openChatFilters && (
@@ -527,7 +602,7 @@ const ChatSideBar = ({
             applySearchFromAssignation={applySearchFromAssignation}
             handleLoadMoreOnScrollToBottom={handleLoadMoreOnScrollToBottom}
             handleOpenChat={handleOpenChat}
-            filterApplied={filterApplied}
+            filterApplied={isFilteredChats.current}
             cleanFilters={cleanFilters}
             openChatFilters={openChatFilters}
           />

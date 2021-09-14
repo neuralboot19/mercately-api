@@ -27,16 +27,41 @@
 }
 
 .chat-selector {
-  height: calc(100vh - 192px);
+  height: calc(100vh - 245px);
   overflow-x: hidden;
   overflow-y: scroll;
 
+  &.filtered {
+    height: calc(100vh - 280px);
+  }
+
   @media screen and (max-width: 1024px) {
-    height: calc(100vh - 192px);
+    height: calc(100vh - 230px);
   }
 }
 
 .remove-filters-icon {
   width: 8px;
   height: 8px;
+}
+
+.navs-container {
+  padding-bottom: 15px;
+
+  .navs-status {
+    border-bottom: 1px solid #E4E4E4;
+    padding-bottom: 5px;
+    color: #B2B3BD;
+
+    &:hover, &.active {
+      color: $secondary-color;
+      cursor: pointer;
+      border-bottom: 2px solid $secondary-color;
+    }
+
+    &.disabled-tab {
+      pointer-events: none;
+      cursor: default;
+    }
+  }
 }

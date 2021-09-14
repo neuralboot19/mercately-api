@@ -18,7 +18,7 @@ const OrderList = ({
       {loading
         ? <LoadMore />
         : (
-        <div className="chat_list_holder">
+        <div className="chat_list_holder overflow-auto">
           {orders.map((order) => (
             <OrderSelector
               key={order.id}

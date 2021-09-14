@@ -163,6 +163,14 @@ class Instagram extends Component {
     }
   }
 
+  setChatStatus = (customer) => {
+    if (this.state.currentCustomer === customer.id) {
+      this.setState({
+        currentCustomerDetails: { ...this.state.currentCustomerDetails, status_chat: customer.status_chat }
+      });
+    }
+  }
+
   render() {
     const responsiveStyles = this.state.onMobile ? "col-xs-12 col-md-3 no-border-right no-padding-xs" : "col-xs-12 col-md-3";
 
@@ -180,6 +188,7 @@ class Instagram extends Component {
                   setRemovedCustomerInfo={this.setRemovedCustomerInfo}
                   storageId={$('meta[name=user_storage]').attr("content")}
                   setActiveChatBot={this.setActiveChatBot}
+                  setChatStatus={this.setChatStatus}
                 />
               </div>
             )}

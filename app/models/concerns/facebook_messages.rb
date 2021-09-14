@@ -2,7 +2,6 @@ module FacebookMessages
   extend ActiveSupport::Concern
 
   included do
-    include StatusChatConcern
     include AgentMessengerAssignmentConcern
     include MessengerChatBotActionConcern
     include PushNotificationable
@@ -19,6 +18,9 @@ module FacebookMessages
     after_commit :send_welcome_message, on: :create, unless: :note
     after_commit :send_inactive_message, on: :create, unless: :note
     after_commit :broadcast_to_counter_channel, on: [:create, :update]
+    # Se incluye aca porque necesita ejecutarse antes del broadcast.
+    include StatusChatConcern
+    after_commit :reactivate_chat, on: :create, unless: :note
     after_commit :mark_unread_flag, on: :create
     after_commit :set_last_interaction, on: :create, unless: :note
     after_commit :send_facebook_message, on: :create, unless: :note
@@ -180,5 +182,11 @@ module FacebookMessages
 
     def nil_to_false
       self.note = false if note.nil?
+    end
+
+    def reactivate_chat
+      return if sent_by_retailer == true
+
+      customer.reactivate_chat!
     end
 end

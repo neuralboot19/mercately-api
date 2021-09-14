@@ -5,8 +5,10 @@ import Select from 'react-select';
 import MailLunreadIcon from 'images/mail-unread-line.svg';
 // eslint-disable-next-line import/no-unresolved
 import ArrowDownIcon from 'images/arrowDown.svg';
-import { fetchCustomer as fetchCustomerAction } from "../../actions/actions";
-import BotIcon from '../icons/BotIcon'
+import { changeChatMessagingState, fetchCustomer as fetchCustomerAction } from "../../actions/actions";
+import BotIcon from '../icons/BotIcon';
+
+const csrfToken = document.querySelector('[name=csrf-token]').content;
 
 const TopChatBar = ({
   activeChatBot,
@@ -22,9 +24,21 @@ const TopChatBar = ({
   showOptions,
   chatType
 }) => {
+  const messagingStatesOptions = [
+    { value: 'new_chat', label: 'Nuevo' },
+    { value: 'open_chat', label: 'Abierto' },
+    { value: 'in_process', label: 'Pendiente' },
+    { value: 'resolved', label: 'Resuelto' }
+  ];
+
   const [agentsOptions, setAgentsOptions] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState("");
+  const [selectedMessagingState, setSelectedMessagingState] = useState("");
+  const [chatStateOptions, setChatStateOptions] = useState(messagingStatesOptions);
   const [isUnreadChat, setIsUnreadChat] = useState(false);
+
+  const placeholderMessagingState = <div className="placeholder-messaging-state">Estado</div>;
+
   const isMounted = useRef(false);
 
   const getAgentLabel = (agent) => (
@@ -52,6 +66,9 @@ const TopChatBar = ({
     if (isMounted.current) {
       const label = agentsOptions.find((agent) => agent.value === xxx);
       setSelectedAgent(label?.label || '');
+
+      const statusLabel = messagingStatesOptions.find((state) => state.value === customerDetails.status_chat);
+      setSelectedMessagingState(statusLabel?.label);
     } else {
       isMounted.current = true;
       fetchCustomerFromRedux(customerDetails.id);
@@ -61,6 +78,96 @@ const TopChatBar = ({
   const handleChange = (agentOption) => {
     setSelectedAgent(agentsOptions.find((agent) => agent.value === agentOption.value).label || '');
     handleAgentAssignment(agentOption);
+  };
+
+  useEffect(() => {
+    let options;
+
+    switch (customerDetails.status_chat) {
+      case 'new_chat':
+        options = [
+          {
+            value: 'new_chat',
+            label: 'Nuevo'
+          },
+          {
+            value: 'open_chat',
+            label: 'Abierto'
+          },
+          {
+            value: 'in_process',
+            label: 'Pendiente'
+          },
+          {
+            value: 'resolved',
+            label: 'Resuelto'
+          }
+        ]
+        break;
+      case 'open_chat':
+        options = [
+          {
+            value: 'open_chat',
+            label: 'Abierto'
+          },
+          {
+            value: 'in_process',
+            label: 'Pendiente'
+          },
+          {
+            value: 'resolved',
+            label: 'Resuelto'
+          }
+        ]
+        break;
+      case 'in_process':
+        options = [
+          {
+            value: 'in_process',
+            label: 'Pendiente'
+          },
+          {
+            value: 'resolved',
+            label: 'Resuelto'
+          }
+        ]
+        break;
+      case 'resolved':
+        options = [
+          {
+            value: 'resolved',
+            label: 'Resuelto'
+          },
+          {
+            value: 'in_process',
+            label: 'Pendiente'
+          }
+        ]
+        break;
+    }
+
+    setChatStateOptions(options);
+  }, [customerDetails.status_chat]);
+
+  const onChangeMessagingState = (messagingStateOption) => {
+    if (messagingStateOption.label !== selectedMessagingState) {
+      const messagingStateOptionValue = messagingStateOption.value;
+      setSelectedMessagingState(messagingStatesOptions.find(
+        (messagingState) => messagingState.value === messagingStateOptionValue
+      ).label);
+
+      customerDetails.status_chat = messagingStateOptionValue;
+
+      const body = {
+        chat: {
+          customer_id: customerDetails.id,
+          status_chat: messagingStateOptionValue,
+          chat_service: chatType
+        }
+      }
+
+      dispatch(changeChatMessagingState(body, csrfToken));
+    }
   };
 
   const handleUnreadChat = (e) => {
@@ -93,6 +200,16 @@ const TopChatBar = ({
           <div className="d-flex justify-content-between align-items-center">
             <div>
               <p className="font-weight-bolder fs-16 m-0 d-none d-md-block text-gray-dark name-top-chat-bar">{fullName || ''}</p>
+              <Select
+                className="select-messaging-status fs-12"
+                classNamePrefix="react-select"
+                isSearchable={false}
+                options={chatStateOptions}
+                value={customerDetails.status_chat}
+                onChange={onChangeMessagingState}
+                placeholder={[placeholderMessagingState, selectedMessagingState]}
+                isOptionDisabled={ (opt) => opt.value === customerDetails.status_chat }
+              />
             </div>
 
             <div className="flex-grow-1 d-flex justify-content-end">
@@ -114,7 +231,11 @@ const TopChatBar = ({
                   onClick={(e) => toggleChatBot(e)}
                 >
                   <div className="tooltip-top">
-                    <div className="tooltiptext">{botTooltiptext} bot</div>
+                    <div className="tooltiptext">
+                      {botTooltiptext}
+                      {' '}
+                      bot
+                    </div>
                     <BotIcon className={botIconColor} />
                   </div>
                 </button>

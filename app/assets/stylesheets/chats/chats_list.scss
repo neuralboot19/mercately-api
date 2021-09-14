@@ -15,14 +15,11 @@
   background: #888;
 }
 
-
-
 /* Customer */
 .chat_list_holder{
   background-color: $white;
   border-radius: 12px;
   height: $chatHeight;
-  overflow-y: auto;
 }
 
 ::-webkit-scrollbar {
@@ -39,11 +36,29 @@
   height: 30px;
   width: 30px;
   border-radius: 4px;
-  background-color: #F7F8FD;
   text-align: center;
   line-height: 30px;
   font-size: 12px;
-  color: #7BD6A2!important;
+
+  &.new-chat {
+    background-color: #F8EBF8;
+    color: #884789 !important;
+  }
+
+  &.open-chat {
+    background-color: #EBF7FC;
+    color: #67BDE8 !important;
+  }
+
+  &.pending-chat {
+    background-color: #FDF5EC;
+    color: #F9D5AB !important;
+  }
+
+  &.resolved-chat {
+    background-color: #EEF7F3;
+    color: #8ADAAC !important;
+  }
 }
 
 .profile {
