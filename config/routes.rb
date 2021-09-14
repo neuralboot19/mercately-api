@@ -240,7 +240,6 @@ Rails.application.routes.draw do
       post 'sign_in', to: 'sessions#create', as: :sign_in
       post 'mobile_token', to: 'sessions#create_mobile_push_token', as: :create_mobile_push_token
       delete 'log_out', to: 'sessions#delete', as: :log_out
-      get 'global_settings', to: 'global_settings#index'
 
       # For Karix
       post 'karix_whatsapp', to: 'karix_whatsapp#save_message'
