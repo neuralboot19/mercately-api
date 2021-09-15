@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_08_214017) do
+ActiveRecord::Schema.define(version: 2021_09_10_002250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -515,6 +515,13 @@ ActiveRecord::Schema.define(version: 2021_09_08_214017) do
     t.datetime "updated_at", null: false
     t.string "web_id"
     t.index ["retailer_id"], name: "index_funnels_on_retailer_id"
+  end
+
+  create_table "global_settings", force: :cascade do |t|
+    t.string "setting_key"
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gs_templates", force: :cascade do |t|
