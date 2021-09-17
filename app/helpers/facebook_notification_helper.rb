@@ -25,11 +25,13 @@ module FacebookNotificationHelper
 
     retailer_users.each do |ret_u|
       removed_agent = false
-      unread_messages = if platform == 'instagram'
-                          ret_u.instagram_unread
-                        else
-                          ret_u.messenger_unread
-                        end
+      if platform == 'instagram'
+        unread_messages = ret_u.instagram_unread
+        unread_chats_count = ret_u.unread_instagram_chats_count
+      else
+        unread_messages = ret_u.messenger_unread
+        unread_chats_count = ret_u.unread_messenger_chats_count
+      end
 
       if ret_u.agent? && ret_u.only_assigned?
         removed_agent = is_removed(ret_u, assigned_agent)
@@ -41,6 +43,7 @@ module FacebookNotificationHelper
       redis.publish 'new_message_counter', {
         identifier: ".item__cookie_#{platform}_messages",
         unread_messages: unread_messages,
+        unread_chats_count: unread_chats_count,
         from: platform == 'instagram' ? 'Instagram' : 'Messenger',
         message_text: message_info(message),
         customer_info: customer&.full_names.presence || '',

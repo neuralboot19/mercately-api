@@ -164,6 +164,16 @@ hr.chat_separator {
     top: 0;
     right: 0;
 
+    @media screen and (max-width: 1024px) {
+      margin-right: 16px !important;
+    }
+
+    &.counter {
+      width: 22px;
+      height: 22px;
+      font-size: 14px;
+    }
+
     &.notification {
       background-color: $notifications-color;
       border-radius: 50%;

@@ -104,6 +104,7 @@ module Whatsapp::Gupshup::V1::Helpers
                     {
                       identifier: '.item__cookie_whatsapp_messages',
                       unread_messages: retailer_user.whatsapp_unread,
+                      unread_chats_count: retailer_user.unread_whatsapp_chats_count,
                       from: 'WhatsApp',
                       message_text: message_info(message),
                       customer_info: customer&.notification_info,
