@@ -1,6 +1,14 @@
 <fieldset class="col-xs-12 fieldset pt-16 mt-16 row">
 <legend class="fs-20">Sublista de selección</legend>
   <div id="option_sub_lists" class="w-100">
+    <div class="col-xs-12">
+      <%= f.check_box :go_past_option %>
+      <%= f.label :go_past_option, 'Agregar item para volver al paso anterior del ChatBot' %>
+    </div>
+    <div class="col-xs-12">
+      <%= f.check_box :go_start_option %>
+      <%= f.label :go_start_option, 'Agregar item para volver al inicio del ChatBot' %>
+    </div>
     <% if f.object.is_auto_generated? %>
       <p class="mt-0">Sublista auto generada desde la opción padre.</p>
     <% else %>

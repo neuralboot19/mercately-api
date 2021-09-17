@@ -36,6 +36,7 @@ class Customer < ApplicationRecord
   has_many :contact_group_customers
   has_many :contact_groups, through: :contact_group_customers
   has_many :chat_histories, dependent: :destroy
+  has_many :customer_bot_responses, dependent: :destroy
 
   validates_uniqueness_of :psid, allow_blank: true
   validates_presence_of :email, if: :hs_active?
@@ -394,6 +395,8 @@ class Customer < ApplicationRecord
   end
 
   def deactivate_chat_bot!
+    customer_bot_responses.delete_all
+
     update(
       active_bot: false,
       chat_bot_option_id: nil,
@@ -426,6 +429,29 @@ class Customer < ApplicationRecord
       @message = data['message'] || ''
 
       @options = data['options'].map.with_index { |opt, index| Option.new(opt, index + 1) } if data['options'].present?
+    end
+
+    def insert_return_options(opt, msg_options)
+      size = msg_options.size
+      if opt.go_past_option
+        size = size + 1
+
+        msg_options << Option.new({
+          'key': '_back_',
+          'value': 'Volver al paso anterior'
+        }.as_json, size)
+      end
+
+      if opt.go_start_option
+        size = size + 1
+
+        msg_options << Option.new({
+          'key': '_start_',
+          'value': 'Ir al menú principal'
+        }.as_json, size)
+      end
+
+      msg_options
     end
 
     class Option

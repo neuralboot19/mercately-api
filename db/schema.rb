@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_08_214017) do
+ActiveRecord::Schema.define(version: 2021_09_14_170029) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -260,6 +260,8 @@ ActiveRecord::Schema.define(version: 2021_09_08_214017) do
     t.boolean "option_deleted", default: false
     t.integer "option_type", default: 0
     t.boolean "skip_option", default: false
+    t.boolean "go_past_option", default: false
+    t.boolean "go_start_option", default: false
     t.index ["ancestry"], name: "index_chat_bot_options_on_ancestry"
     t.index ["chat_bot_id"], name: "index_chat_bot_options_on_chat_bot_id"
   end
@@ -324,6 +326,18 @@ ActiveRecord::Schema.define(version: 2021_09_08_214017) do
     t.datetime "updated_at", null: false
     t.index ["chat_bot_option_id"], name: "index_customer_bot_options_on_chat_bot_option_id"
     t.index ["customer_id"], name: "index_customer_bot_options_on_customer_id"
+  end
+
+  create_table "customer_bot_responses", force: :cascade do |t|
+    t.bigint "customer_id"
+    t.bigint "chat_bot_option_id"
+    t.jsonb "response", default: {}
+    t.integer "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_bot_option_id"], name: "index_customer_bot_responses_on_chat_bot_option_id"
+    t.index ["customer_id"], name: "index_customer_bot_responses_on_customer_id"
+    t.index ["status"], name: "index_customer_bot_responses_on_status"
   end
 
   create_table "customer_hubspot_fields", force: :cascade do |t|
@@ -515,6 +529,13 @@ ActiveRecord::Schema.define(version: 2021_09_08_214017) do
     t.datetime "updated_at", null: false
     t.string "web_id"
     t.index ["retailer_id"], name: "index_funnels_on_retailer_id"
+  end
+
+  create_table "global_settings", force: :cascade do |t|
+    t.string "setting_key"
+    t.string "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gs_templates", force: :cascade do |t|

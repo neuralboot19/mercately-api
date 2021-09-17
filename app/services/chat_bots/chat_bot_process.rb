@@ -40,11 +40,15 @@ module ChatBots
         # Si la opcion actual es de tipo Formulario y tiene sublista, buscamos el match
         # en la sublista. Sino se consigue retornamos y se envia el mensaje de fallo
         # o se repiten las opciones.
-        return if @current_option&.has_sub_list? && match_sub_list_items(text) == false
+        return if (@current_option&.has_sub_list? || (!@current_option&.is_auto_generated? &&
+          @current_option&.has_return_options?)) && match_sub_list_items(text) == false
         # Si la opcion actual es autogenerada, buscamos el match
         # en la lista de opciones que vienen del endpoint. Sino se consigue retornamos y
         # se envia el mensaje de fallo o se repiten las opciones.
         return if @current_option&.is_auto_generated? && match_dynamic_list(text) == false
+        # Se revisa si el item seleccionado en una opcion Formulario, es alguna de volver
+        # o ir al menu principal y se ejecuta.
+        return if execute_return_options
 
         # Si la opcion seleccionada no ejecuta un endpoint, se guarda la relacion de esta (@selected)
         # y el customer/chat en cuestion. En caso de que ejecute un endpoint, no se guarda, lo hace en
@@ -267,7 +271,7 @@ module ChatBots
     # Retorna a la opcion anterior del chatbot.
     def return_bot_option
       option = @customer.chat_bot_option
-      # Si la opcion actual no tiene padre, entonces retorna. Este es el cas de la opcion raiz.
+      # Si la opcion actual no tiene padre, entonces retorna. Este es el caso de la opcion raiz.
       return unless option.has_parent?
 
       # Se busca el padre de la opcion actual.
@@ -356,10 +360,14 @@ module ChatBots
       # Si retorna exito el endpoint, guardamos la respuesta en el customer y borramos las respuestas
       # fallidas anteriores del endpoint y seteamos en 0 los intentos fallidos.
       if response.code == '200'
-        @customer.update(endpoint_response: body, endpoint_failed_response: {}, failed_bot_attempts: 0)
+        @customer.update(failed_bot_attempts: 0)
+        new_response = @customer.customer_bot_responses
+                                .find_or_create_by(chat_bot_option_id: chat_bot_option.id, status: 'success')
+        new_response.update(response: body)
+        @customer.customer_bot_responses.where(status: 'failed').delete_all
         # En este punto si guardamos la opcion que selecciono el customer, ya que estamos seguros que
         # el endpoint retorno exito.
-        save_customer_option
+        save_customer_option if chat_bot_option.option_type == 'form'
         # Decimos que en el siguiente mensaje vamos a colocar de primero la respuesta exitosa del
         # endpoint. Dato 'message'.
         @concat_answer_type = 'success'
@@ -377,7 +385,10 @@ module ChatBots
 
         # Sino se ha alcanzado el maximo de intentos fallidos, incrementamos el contador y guardamos la
         # respuesta fallida del endpoint.
-        @customer.update(endpoint_failed_response: body, failed_bot_attempts: @customer.failed_bot_attempts + 1)
+        @customer.update(failed_bot_attempts: @customer.failed_bot_attempts + 1)
+        new_response = @customer.customer_bot_responses
+                                .find_or_create_by(chat_bot_option_id: chat_bot_option.id, status: 'failed')
+        new_response.update(response: body)
         # Se ejecutan las acciones de fallo
         execute_actions(chat_bot_option, 'failed')
       end
@@ -470,10 +481,10 @@ module ChatBots
       return unless @current_option.present?
 
       text_to_i = text.to_i
-      options = @current_option.option_sub_lists
+      options = @current_option.items_list
 
       # Se busca por posicion. Por ejemplo si la persona envia 1, 2, 3, etc...
-      option = options.find_by_position(text_to_i)
+      option = options.select { |opt| opt.position == text_to_i }.first
       unless option.blank?
         @selected_value = option.value_to_save
         return true
@@ -511,13 +522,19 @@ module ChatBots
       candidates.map { |c| count_hash[c.position] = I18n.transliterate(c.value_to_show.downcase).scan(regex).size }
       count_hash = count_hash.sort_by { |k, v| [-v, k] }
 
-      option = options.find_by_position(count_hash.first[0]) if count_hash.present? &&
-                                                                count_hash.first[1] != count_hash.second&.[](1)
+      if count_hash.present? && count_hash.first[1] != count_hash.second&.[](1)
+        option = options.select { |opt| opt.position == count_hash.first[0] }.first
+      end
 
       unless option.blank?
         @selected_value = option.value_to_save
         return true
       end
+
+      # Retorna true si la opcion no tiene sublista de seleccion, es decir, que es
+      # para ingresar un dato tipeado (cedula). Y si no se consiguio, es porque no envio ninguna
+      # de los items para salir.
+      return true unless @current_option.has_sub_list?
 
       # Al no haber ninguna opcion seleccionada, se cuenta como intento fallido.
       manage_failed_attempts
@@ -559,11 +576,14 @@ module ChatBots
 
     # Hace la comparacion entre lo que escribe la persona y las opciones de la opcion dinamica autogenerada.
     def match_dynamic_list(text)
-      data = @customer.endpoint_response
+      response = @customer.customer_bot_responses
+        .where(chat_bot_option_id: @current_option.parent&.id, status: 'success').first&.response
+
+      data = response.presence || @customer.endpoint_response
       return unless data.present?
 
       text_to_i = text.to_i
-      options = data.options
+      options = data.insert_return_options(@current_option, data.options || [])
 
       # Se busca por posicion. Por ejemplo si la persona envia 1, 2, 3, etc...
       option = options.map { |opt| opt if opt.position == text_to_i }.compact.first
@@ -747,18 +767,54 @@ module ChatBots
             message += "\n" if index != children_size
           end
         end
-      elsif option.has_sub_list?
+      elsif option.has_sub_list? || (!option.is_auto_generated? && option.has_return_options?)
         # Construye la lista de opciones a seleccionar tomando en cuenta la sublista de la opcion.
         message = message.nil? ? '' : (message.present? ? message + "\n\n" : '')
-        items_size = option.option_sub_lists.size - 1
+        items_list = option.items_list
+        items_size = items_list.size - 1
 
-        option.option_sub_lists.order(:position).each_with_index do |item, index|
+        items_list.sort_by(&:position).each_with_index do |item, index|
           message += (item.position.to_s + '. ' + item.value_to_show)
           message += "\n" if index != items_size
         end
       end
 
       message
+    end
+
+    # Retorna a la opcion anterior del chatbot en opcion Formulario.
+    def back_to_past_option
+      # Se busca el padre de la opcion actual.
+      parent = @current_option.parent
+
+      # Si la opcion actual no tiene padre, entonces retorna. Este es el caso de la opcion raiz.
+      return unless parent.present?
+
+      # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
+      if skip_this_action?(parent)
+        manage_skip_option(parent)
+        return
+      end
+
+      @customer.update(chat_bot_option_id: parent.id, failed_bot_attempts: 0)
+      @sent_in_action = true
+      @origin_instance.send_answer(parent, @concat_answer_type)
+      @origin_instance.send_additional_answers(parent)
+    end
+
+    # Ejecuta las opciones de regresar o irse al inicio en opciones de tipo Formulario.
+    def execute_return_options
+      return false unless @input_option && (@current_option.go_past_option || @current_option.go_start_option)
+
+      if @selected_value == '_back_'
+        back_to_past_option
+        return true
+      elsif @selected_value == '_start_'
+        restart_bot
+        return true
+      end
+
+      false
     end
   end
 end

@@ -9,7 +9,7 @@ module ChatBots
       # Si es un intento fallido y el bot tiene configurado un mensaje personalizado para estos
       # casos, se toma dicho mensaje.
       return chat_bot.on_failed_attempt_message if chat_bot.on_failed_attempt == 'send_attempt_message' &&
-                                                  failed_attempt
+                                                   failed_attempt
 
       # Se carga el contenido de la opcion
       option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type)
@@ -18,9 +18,10 @@ module ChatBots
     # Construye la lista de opciones a seleccionar tomando en cuenta la sublista de la opcion.
     def prepare_option_sub_list(chat_bot_option, message)
       message += get_option_answer(chat_bot_option, true)
-      items_size = chat_bot_option.option_sub_lists.size - 1
+      items_list = chat_bot_option.items_list
+      items_size = items_list.size - 1
 
-      chat_bot_option.option_sub_lists.order(:position).each_with_index do |item, index|
+      items_list.sort_by(&:position).each_with_index do |item, index|
         message += (item.position.to_s + '. ' + item.value_to_show)
         message += "\n" if index != items_size
       end
@@ -29,13 +30,14 @@ module ChatBots
     end
 
     # Construye la lista de opciones a seleccionar tomando en cuenta la respuesta del endpoint.
-    def prepare_dynamic_sub_list(customer)
-      data = customer.endpoint_response
+    def prepare_dynamic_sub_list(customer, chat_bot_option)
+      data = @response.presence || customer.endpoint_response
+      options = data.insert_return_options(chat_bot_option, data.options || [])
 
       message = data.message + "\n\n"
-      items_size = data.options.size - 1
+      items_size = options.size - 1
 
-      data.options.each_with_index do |item, index|
+      options.each_with_index do |item, index|
         message += (item.position.to_s + '. ' + item.value)
         message += "\n" if index != items_size
       end
@@ -49,10 +51,12 @@ module ChatBots
     # Sino es ninguna de las dos, toma solo la respuesta de la opcion.
     # Si es formulario, carga las opciones solo si no tiene respuestas adicionales la opcion.
     def build_message(chat_bot_option, customer, message)
-      if chat_bot_option.has_sub_list? && chat_bot_option.has_additional_answers_filled? == false
+      if (chat_bot_option.has_sub_list? || (!chat_bot_option.is_auto_generated? &&
+        chat_bot_option.has_return_options?)) &&
+        chat_bot_option.has_additional_answers_filled? == false
         prepare_option_sub_list(chat_bot_option, message)
       elsif chat_bot_option.is_auto_generated?
-        prepare_dynamic_sub_list(customer)
+        prepare_dynamic_sub_list(customer, chat_bot_option)
       else
         message + get_option_answer(chat_bot_option, false)
       end
@@ -62,13 +66,19 @@ module ChatBots
     # Si el parametro concat_answer_type es 'success', toma la respuesta de exito.
     # Si el parametro concat_answer_type es 'failed', toma la respuesta de fallo.
     def set_text_from_response(chat_bot_option, customer, concat_answer_type)
-      message = if concat_answer_type == 'success'
+      @response = search_response(chat_bot_option, customer, concat_answer_type)
+
+      message = if @response.present?
+                  @response.message
+                elsif concat_answer_type == 'success'
                   customer.endpoint_response.message
                 elsif concat_answer_type == 'failed'
                   customer.endpoint_failed_response.message
                 end
 
-      message.present? ? message + "\n\n" : ''
+      return '' unless message.present?
+
+      chat_bot_option.option_type != 'decision' ? message + "\n\n" : message
     end
 
     # Setea el mensaje de salida del bot, dependiendo si fue por intentos fallidos o no.
@@ -125,6 +135,32 @@ module ChatBots
       end
 
       message
+    end
+
+    # Busca la respuesta del endpoint guardada anteriormente para armar
+    # el nuevo mensaje a enviar.
+    def search_response(chat_bot_option, customer, concat_answer_type)
+      if concat_answer_type == 'success'
+        responses = customer.customer_bot_responses.order(chat_bot_option_id: :desc)
+
+        if chat_bot_option.option_type == 'form' || (chat_bot_option.option_type == 'decision' &&
+          !chat_bot_option.execute_endpoint?)
+          ancestor_ids = chat_bot_option.ancestry.split('/')
+          responses.where('chat_bot_option_id IN (?) AND chat_bot_option_id < ? AND status = ?', ancestor_ids,
+            chat_bot_option.id, CustomerBotResponse.statuses[concat_answer_type]).first&.response
+        else
+          responses.where('chat_bot_option_id = ? AND status = ?', chat_bot_option.id,
+            CustomerBotResponse.statuses[concat_answer_type]).first&.response
+        end
+      elsif concat_answer_type == 'failed'
+        customer.customer_bot_responses
+          .where(chat_bot_option_id: chat_bot_option.id, status: concat_answer_type).first&.response
+      elsif chat_bot_option.parent&.execute_endpoint?
+        ancestor_ids = chat_bot_option.ancestry.split('/')
+        customer.customer_bot_responses.order(chat_bot_option_id: :desc)
+          .where('chat_bot_option_id IN (?) AND chat_bot_option_id < ?', ancestor_ids, chat_bot_option.id)
+          .order(updated_at: :desc).first&.response
+      end
     end
   end
 end

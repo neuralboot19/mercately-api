@@ -1,0 +1,12 @@
+class CreateCustomerBotResponse < ActiveRecord::Migration[5.2]
+  def change
+    create_table :customer_bot_responses do |t|
+      t.references :customer
+      t.references :chat_bot_option
+      t.jsonb :response, default: {}
+      t.integer :status, index: true
+
+      t.timestamps
+    end
+  end
+end

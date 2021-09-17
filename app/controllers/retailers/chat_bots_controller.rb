@@ -101,6 +101,8 @@ class Retailers::ChatBotsController < RetailersController
           :file_deleted,
           :option_type,
           :skip_option,
+          :go_past_option,
+          :go_start_option,
           chat_bot_actions_attributes: [
             :id,
             :retailer_user_id,
