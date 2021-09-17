@@ -286,6 +286,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     }
   rescue => e
     Rails.logger.error(e)
+    SlackError.send_error(e)
     render status: 400, json: {message: "Faltaron parámetros"}
   end
 

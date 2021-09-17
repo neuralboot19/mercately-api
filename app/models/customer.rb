@@ -323,6 +323,7 @@ class Customer < ApplicationRecord
       Phony.split(phone.gsub('+', ''))
     rescue Phony::SplittingError => e
       Rails.logger.error(e)
+      SlackError.send_error(e)
       return
     end
   end
@@ -706,6 +707,7 @@ class Customer < ApplicationRecord
     rescue => e
       Rails.logger.info('******** Error al guardar ChatHistory ********')
       Rails.logger.error(e)
+      SlackError.send_error(e)
       Raven.capture_exception(e)
 
       false

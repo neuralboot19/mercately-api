@@ -16,11 +16,13 @@ class GupshupWhatsappController < ApplicationController
       message = { message: 'Gupshup Whatsapp app not found' }
 
       Rails.logger.error(message)
+      SlackError.send_error(message)
       return render status: 404, json: message
     end
 
     if event == 'failed'
       Rails.logger.error(save_message_params[:payload])
+      SlackError.send_error(save_message_params[:payload])
       event_handler = Whatsapp::Gupshup::V1::EventHandler.new(retailer)
       event_handler.process_error!(save_message_params)
       return render status: :ok, json: ''
