@@ -23,6 +23,10 @@ $white: #fff;
   padding: 17px 5px;
   position: relative;
 }
+.customer_sidebar .customer-box-quickly-answers {
+  padding: 17px 12px;
+  position: relative;
+}
 
 .customer_sidebar .customer_box p {
   margin: 0;
@@ -136,4 +140,13 @@ $white: #fff;
 .chat-right-side-selector {
   padding: 0 10px;
   overflow-y: auto;
+}
+
+.quickly-answers-search {
+  width: 100%;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  padding: 6px 0px;
+  background-color: #F7F8FD !important;
 }

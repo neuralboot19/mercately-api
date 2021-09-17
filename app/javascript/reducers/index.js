@@ -198,6 +198,12 @@ const reducer = (state = initialState, action) => {
         fast_answers: action.data.templates.data,
         total_pages: action.data.total_pages
       };
+      case 'SET_INSTAGRAM_FAST_ANSWERS':
+      return {
+        ...state,
+        fast_answers: action.data.templates.data,
+        total_pages: action.data.total_pages
+      };
     case 'SET_TAGS':
       return {
         ...state,

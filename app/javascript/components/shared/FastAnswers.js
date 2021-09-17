@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { getMessengerFastAnswers } from "../../actions/actions";
+import { getMessengerFastAnswers, getInstagramFastAnswers } from "../../actions/actions";
 import { getWhatsAppFastAnswers } from "../../actions/whatsapp_karix";
+
+import SearchIcon from 'images/search.svg';
 
 const csrfToken = document.querySelector('[name=csrf-token]').content
 
@@ -18,12 +20,16 @@ class FastAnswers extends Component {
   }
 
   componentDidMount() {
-    if (this.props.chatType == 'facebook') {
-      this.props.getMessengerFastAnswers();
-    }
-
-    if (this.props.chatType == 'whatsapp') {
-      this.props.getWhatsAppFastAnswers();
+    switch (this.props.chatType) {
+      case 'whatsapp':
+        this.props.getWhatsAppFastAnswers();
+        break;
+      case 'facebook':
+        this.props.getMessengerFastAnswers();
+        break;
+      case 'instagram':
+        this.props.getInstagramFastAnswers();
+        break
     }
   }
 
@@ -66,11 +72,16 @@ class FastAnswers extends Component {
 
   applySearch = () => {
     this.setState({fastAnswers: [], page: 1}, () => {
-      if (this.props.chatType == 'whatsapp'){
-        this.props.getWhatsAppFastAnswers(1, this.state.searchString);
-      }
-      if (this.props.chatType == 'facebook'){
-        this.props.getMessengerFastAnswers(1, this.state.searchString);
+      switch (this.props.chatType) {
+        case 'whatsapp':
+          this.props.getWhatsAppFastAnswers(1, this.state.searchString);
+          break;
+        case 'facebook':
+          this.props.getMessengerFastAnswers(1, this.state.searchString);
+          break;
+        case 'instagram':
+          this.props.getInstagramFastAnswers(1, this.state.searchString);
+          break;
       }
     })
   }
@@ -96,26 +107,31 @@ class FastAnswers extends Component {
       let page = ++this.state.page;
       this.setState({ page: page })
 
-      if (this.props.chatType == "facebook"){
-        this.props.getMessengerFastAnswers(page, this.state.searchString);
-      }
-      if (this.props.chatType == "whatsapp"){
-        this.props.getWhatsAppFastAnswers(page, this.state.searchString);
+      switch (this.props.chatType) {
+        case 'whatsapp':
+          this.props.getWhatsAppFastAnswers(page, this.state.searchString);
+          break;
+        case 'facebook':
+          this.props.getMessengerFastAnswers(page, this.state.searchString);
+          break;
+        case 'instagram':
+          this.props.getInstagramFastAnswers(page, this.state.searchString);
+          break;
       }
     }
   }
 
   render() {
     return (
-      <div className={this.props.onMobile ? "customer_sidebar chat-right-side-selector no-border-left" : "customer_sidebar chat-right-side-selector" } onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
-        <div className="customer_box">
-          <p>
+      <div className={this.props.onMobile ? "customer_sidebar chat-right-side-selector no-border-left" : "quickly-answers-container customer_sidebar chat-right-side-selector" } onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
+        <div className="customer-box-quickly-answers">
+          <span>
             Respuestas Rápidas
             <i className="fs-18 mt-4 mr-4 f-right fas fa-times cursor-pointer" onClick={() => this.toggleFastAnswers()}></i>
-          </p>
+          </span>
         </div>
         <div className="customer_details details-mobile-height">
-          <div>
+          <div className="p-relative">
             <input
               type="text"
               value={this.state.searchString}
@@ -123,30 +139,29 @@ class FastAnswers extends Component {
                 this.handleChatSearch(e)
               }
               placeholder="Busqueda por título o contenido"
-              style={{
-                width: "100%",
-                borderRadius: "5px",
-                marginBottom: "20px",
-                border: "1px solid #ddd",
-                padding: "8px 0px",
-              }}
-              className="form-control"
+              className="input-icon bg-light search-fast-answer"
               onKeyPress={this.handleKeyPress}
             />
+            <span className="p-absolute icon-search">
+              <img src={SearchIcon} alt="search icon" />
+            </span>
           </div>
           {this.state.fastAnswers.map((answer, index) => (
-            <div key={index} className="fast_answer_content">
-              <div className="pb-10 t-right c-secondary">
-                <small className="select_answer" onClick={() => this.changeFastAnswer(answer)}>Seleccionar</small>
+            <div key={index} className="fast_answer_content" onClick={() => this.changeFastAnswer(answer)}>
+              <div className="container-answer-title">
+                <span className="answer-title">{answer.attributes.title}</span>
+                <span className="select_answer"><i className="fas fa-check-circle check-icon"></i></span>
               </div>
-              <small className="fs-15">{answer.attributes.title}</small>
+              
               <div className="divider"></div>
-              <div>
+              <div className="container-answer-description">
                 {answer.attributes.image_url &&
-                  <img src={answer.attributes.image_url} />
+                  <div className="image-answer-description">
+                    <img src={answer.attributes.image_url} />
+                  </div>
                 }
+                <small className="text-pre-line text-answer-description">{answer.attributes.answer}</small>
               </div>
-              <small className="text-pre-line">{answer.attributes.answer}</small>
             </div>
           ))}
         </div>
@@ -169,6 +184,9 @@ function mapDispatch(dispatch) {
     },
     getMessengerFastAnswers: (page = 1, params) => {
       dispatch(getMessengerFastAnswers(page, params));
+    },
+    getInstagramFastAnswers: (page = 1, params) => {
+      dispatch(getInstagramFastAnswers(page, params));
     }
   };
 }

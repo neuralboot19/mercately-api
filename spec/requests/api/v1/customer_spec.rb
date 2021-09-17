@@ -535,6 +535,103 @@ RSpec.describe 'Api::V1::CustomersController', type: :request do
     end
   end
 
+  describe 'GET #fast_answers_for_instagram' do
+    let(:another_retailer_user) { create(:retailer_user, :agent, retailer: retailer) }
+    let(:retailer_user_agent) { create(:retailer_user, :agent, retailer: retailer) }
+
+    before do
+      sign_out retailer_user
+      sign_in retailer_user_agent
+    end
+
+    context 'when the templates are global' do
+      before do
+        create_list(:template, 4, :for_instagram, :global_template, retailer: retailer, retailer_user: retailer_user)
+        create_list(:template, 4, :for_instagram, :global_template, retailer: retailer, retailer_user:
+          another_retailer_user)
+      end
+
+      it 'returns a instagram fast answers list to all agents' do
+        get api_v1_fast_answers_for_instagram_path
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(8)
+      end
+    end
+
+    context 'when the templates do not have retailer user associated' do
+      before do
+        create_list(:template, 3, :for_instagram, retailer: retailer)
+      end
+
+      it 'returns a messenger fast answers list to all agents' do
+        get api_v1_fast_answers_for_instagram_path
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(3)
+      end
+    end
+
+    context 'when search param is present' do
+      before do
+        create(:template, :for_instagram, retailer: retailer, title: 'Test 1', answer: 'fast answer 1')
+        create(:template, :for_instagram, retailer: retailer, title: 'Other template', answer: 'anything')
+      end
+
+      it 'filters by title' do
+        get api_v1_fast_answers_for_instagram_path, params: { search: 'test' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(1)
+        expect(body['templates']['data'][0]['attributes']['title']).to include('Test')
+      end
+
+      it 'filters by content' do
+        get api_v1_fast_answers_for_instagram_path, params: { search: 'answer' }
+        body = JSON.parse(response.body)
+
+        expect(response).to have_http_status(:ok)
+        expect(body['templates']['data'].count).to eq(1)
+        expect(body['templates']['data'][0]['attributes']['answer']).to include('answer')
+      end
+    end
+
+    context 'when the templates are not global and they have retailer user associated' do
+      context 'when it is not the templates creator' do
+        before do
+          create_list(:template, 3, :for_instagram, retailer: retailer, retailer_user: another_retailer_user)
+          create_list(:template, 4, :for_instagram, retailer: retailer, retailer_user: retailer_user)
+        end
+
+        it 'does not return any template' do
+          get api_v1_fast_answers_for_instagram_path
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(0)
+        end
+      end
+
+      context 'when it is the templates creator' do
+        before do
+          create_list(:template, 3, :for_instagram, retailer: retailer, retailer_user: another_retailer_user)
+          create_list(:template, 4, :for_instagram, retailer: retailer, retailer_user: retailer_user_agent)
+        end
+
+        it 'returns the templates belonging to it' do
+          get api_v1_fast_answers_for_instagram_path
+          body = JSON.parse(response.body)
+
+          expect(response).to have_http_status(:ok)
+          expect(body['templates']['data'].count).to eq(4)
+        end
+      end
+    end
+  end
+
   describe 'GET #messages' do
     let(:set_facebook_messages_service) { instance_double(Facebook::Messages) }
 

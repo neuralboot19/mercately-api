@@ -28,7 +28,7 @@ class Retailers::TemplatesController < RetailersController
 
     if @template.save
       redirect_to retailers_template_path(current_retailer, @template), notice:
-        'Respuesta creada con éxito.'
+      I18n.t("retailer.settings.quick_answers.answer_created_successfully")
     else
       render :new
     end
@@ -38,7 +38,7 @@ class Retailers::TemplatesController < RetailersController
   def update
     if @template.update(template_params)
       redirect_to retailers_template_path(current_retailer, @template), notice:
-        'Respuesta actualizada con éxito.'
+        I18n.t("retailer.settings.quick_answers.answer_updated_successfully")
     else
       render :edit
     end
@@ -47,7 +47,7 @@ class Retailers::TemplatesController < RetailersController
   # DELETE /templates/1
   def destroy
     @template.destroy
-    redirect_to retailers_templates_url, notice: 'Respuesta eliminada con éxito.'
+    redirect_to retailers_templates_url, notice: I18n.t("retailer.settings.quick_answers.answer_removed_successfully")
   end
 
   # Filtra las plantillas para preguntas por titulo o respuesta
@@ -80,7 +80,7 @@ class Retailers::TemplatesController < RetailersController
       return unless @template.retailer_user_id && current_retailer_user.agent?
       return if @template.retailer_user_id == current_retailer_user.id
 
-      redirect_to retailers_templates_path(current_retailer), notice: 'No tienes permisos sobre la respuesta'
+      redirect_to retailers_templates_path(current_retailer), notice: I18n.t("retailer.settings.quick_answers.not_have_permissions_on_answer")
     end
 
     # Only allow a trusted parameter "white list" through.
@@ -92,6 +92,7 @@ class Retailers::TemplatesController < RetailersController
         :enable_for_chats,
         :enable_for_messenger,
         :enable_for_whatsapp,
+        :enable_for_instagram,
         :image,
         :global
       )

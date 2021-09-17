@@ -677,8 +677,8 @@ class ChatMessages extends Component {
 
   render() {
     const chatBoxClass = this.state.showOptions && this.props.onMobile
-      ? 'ig-chat__box ig-chat__box-without-options'
-      : 'ig-chat__box';
+      ? 'chat__box chat__box-without-options'
+      : 'chat__box';
 
     return (
       <div className="chat-messages-holder bottom-xs">
@@ -744,29 +744,28 @@ class ChatMessages extends Component {
               </p>
             )
             : (
-              this.canSendMessages() &&
-                <div className="col-xs-12 chat-input">
-                  <MessageForm
-                    handleSubmitMessage={this.handleSubmitMessage}
-                    handleSubmitImg={this.handleSubmitImg}
-                    toggleFastAnswers={this.toggleFastAnswers}
-                    selectedFastAnswer={this.state.selectedFastAnswer}
-                    toggleProducts={this.toggleProducts}
-                    selectedProduct={this.state.selectedProduct}
-                    removeSelectedProduct={this.removeSelectedProduct}
-                    onMobile={this.props.onMobile}
-                    toggleLoadImages={this.toggleLoadImages}
-                    pasteImages={this.pasteImages}
-                    removeSelectedFastAnswer={this.removeSelectedFastAnswer}
-                    objectPresence={this.objectPresence}
-                    toggleMap={this.toggleMap}
-                    getCaretPosition={this.getCaretPosition}
-                    insertEmoji={this.insertEmoji}
-                    showInputMenu={this.state.showInputMenu}
-                    handleShowInputMenu={this.handleShowInputMenu}
-                    openNoteModal={this.toggleNoteModal}
-                  />
-                </div>
+              this.canSendMessages() && (
+                <MessageForm
+                  handleSubmitMessage={this.handleSubmitMessage}
+                  handleSubmitImg={this.handleSubmitImg}
+                  toggleFastAnswers={this.toggleFastAnswers}
+                  selectedFastAnswer={this.state.selectedFastAnswer}
+                  toggleProducts={this.toggleProducts}
+                  selectedProduct={this.state.selectedProduct}
+                  removeSelectedProduct={this.removeSelectedProduct}
+                  onMobile={this.props.onMobile}
+                  toggleLoadImages={this.toggleLoadImages}
+                  pasteImages={this.pasteImages}
+                  removeSelectedFastAnswer={this.removeSelectedFastAnswer}
+                  objectPresence={this.objectPresence}
+                  toggleMap={this.toggleMap}
+                  getCaretPosition={this.getCaretPosition}
+                  insertEmoji={this.insertEmoji}
+                  showInputMenu={this.state.showInputMenu}
+                  handleShowInputMenu={this.handleShowInputMenu}
+                  openNoteModal={this.toggleNoteModal}
+                />
+              )
             )
           )
         }

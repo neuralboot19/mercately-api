@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_14_170029) do
+
+ActiveRecord::Schema.define(version: 2021_09_17_133104) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1147,6 +1148,7 @@ ActiveRecord::Schema.define(version: 2021_09_14_170029) do
     t.boolean "enable_for_whatsapp", default: false
     t.bigint "retailer_user_id"
     t.boolean "global", default: false
+    t.boolean "enable_for_instagram", default: false
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_templates_on_retailer_user_id"
   end

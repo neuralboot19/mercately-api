@@ -14,6 +14,7 @@ import AttachEmojiIcon from "./AttachEmojiIcon";
 import MessageInputMenu from '../shared/MessageInputMenu';
 import SendButton from "./SendButton";
 import OpenNoteModalButton from '../shared/OpenNoteModalButton';
+import FastAnswerButton from '../shared/FastAnswerButton';
 
 const MessageForm = ({
   handleSubmitMessage,
@@ -129,6 +130,7 @@ const MessageForm = ({
 
   return (
     <div className="col-xs-12 chat-input mt-16">
+      <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
       <OpenNoteModalButton openNoteModal={openNoteModal} />
       <div className="text-input row mx-0 no-gutters text-input-padding border-input-top">
         <div className="d-flex col-7 col-md-8">
@@ -152,19 +154,21 @@ const MessageForm = ({
           {selectedProduct
           && selectedProduct.attributes.image
           && (
-            <SelectedProductImageContainer
-              removeSelectedProduct={removeSelectedProduct}
-              selectedProduct={selectedProduct}
-            />
+            <span className="bg-light">
+              <SelectedProductImageContainer
+                removeSelectedProduct={removeSelectedProduct}
+                selectedProduct={selectedProduct}
+              />
+            </span>
           )}
-          {/* selectedFastAnswer
-          && selectedFastAnswer.attributes.image_url
-          && (
-            <SelectedFastAnswerImageContainer
-              selectedFastAnswer={selectedFastAnswer}
-              removeSelectedFastAnswer={removeSelectedFastAnswer}
-            />
-          ) */}
+          { selectedFastAnswer && selectedFastAnswer.attributes.image_url && (
+            <span className="bg-light">
+              <SelectedFastAnswerImageContainer
+                selectedFastAnswer={selectedFastAnswer}
+                removeSelectedFastAnswer={removeSelectedFastAnswer}
+              />
+            </span>
+          )}
         </div>
         <div className="col-5 col-md-4 bg-light border-right-8 d-flex">
           <div className="p-relative flex-grow-1 pr-8 d-flex justify-content-end align-items-center  space-input-icons">
