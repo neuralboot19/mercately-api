@@ -5,6 +5,7 @@ import DocumentMessage from '../shared/messages/DocumentMessage';
 import VideoMessage from '../shared/messages/VideoMessage';
 import LocationMessage from '../shared/messages/LocationMessage';
 import TextMessage from '../shared/messages/TextMessage';
+import NoteMessage from '../shared/messages/NoteMessage';
 
 const ChatMessage = ({
   message,
@@ -58,12 +59,21 @@ const ChatMessage = ({
       );
       break;
     default:
-      tag = (
-        <TextMessage
-          chatType="facebook"
-          message={message}
-        />
-      );
+      if (message.note === true) {
+        tag = (
+          <NoteMessage
+            chatType="facebook"
+            message={message}
+          />
+        );
+      } else {
+        tag = (
+          <TextMessage
+            chatType="facebook"
+            message={message}
+          />
+        );
+      }
   }
   return (tag);
 };

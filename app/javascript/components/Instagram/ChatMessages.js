@@ -3,12 +3,14 @@ import moment from 'moment';
 import Lightbox from 'react-image-lightbox';
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
+import { v4 as uuidv4 } from 'uuid';
 import {
   fetchMessages,
   sendMessage,
   sendImg,
   setMessageAsRead,
-  sendBulkFiles
+  sendBulkFiles,
+  addNote as addNoteAction
 } from "../../actions/actions";
 
 import {
@@ -25,9 +27,8 @@ import GoogleMap from "../shared/Map";
 import TopChatBar from '../shared/TopChatBar';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
+import NoteModal from '../shared/NoteModal';
 import 'react-image-lightbox/style.css';
-
-import { v4 as uuidv4 } from 'uuid';
 
 let currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content;
@@ -51,10 +52,54 @@ class ChatMessages extends Component {
       isOpenImage: false,
       imageUrl: null,
       showInputMenu: false,
+      isNoteModalOpen: false,
       showOptions: !props.onMobile
     };
     this.bottomRef = React.createRef();
+    this.noteTextRef = React.createRef();
     this.caretPosition = 0;
+  }
+
+  submitNote = () => {
+    const message = this.noteTextRef.current.value;
+    if (message.trim() === '') return;
+
+    const uuid = uuidv4();
+    const text = { message, message_identifier: uuid, note: true };
+    this.setState(
+      {
+        messages: this.state.messages.concat({
+          note: true,
+          text: message,
+          sent_by_retailer: true,
+          created_at: new Date(),
+          message_identifier: uuid
+        }),
+        new_message: true
+      }, () => {
+        this.props.sendMessage(this.props.currentCustomer, text, csrfToken);
+        this.props.addNote({
+          id: uuid,
+          message,
+          // eslint-disable-next-line no-undef
+          retailer_user: ENV.CURRENT_AGENT_NAME || ENV.CURRENT_AGENT_EMAIL,
+          created_at: new Date()
+        });
+        this.scrollToBottom();
+      }
+    );
+    this.cancelNote();
+  }
+
+  cancelNote = () => {
+    this.toggleNoteModal();
+    this.noteTextRef.current.clearValue();
+  }
+
+  toggleNoteModal = () => {
+    this.setState((prevState) => ({
+      isNoteModalOpen: !prevState.isNoteModalOpen
+    }));
   }
 
   handleLoadMore = () => {
@@ -70,7 +115,7 @@ class ChatMessages extends Component {
     e.preventDefault();
     const uuid = uuidv4();
     let text = { message: message, message_identifier: uuid };
-    let isText = message && message.trim() !== '';
+    const isText = message && message.trim() !== '';
     this.setState(
       {
         messages: isText ? this.state.messages.concat({
@@ -118,9 +163,10 @@ class ChatMessages extends Component {
 
     this.setState({
       messages: this.state.messages.concat({
-        url: url,
+        url,
         sent_by_retailer: true,
-        file_type: type, filename: el ? el.files[0].name : null,
+        file_type: type,
+        filename: el ? el.files[0].name : null,
         created_at: new Date(),
         message_identifier: uuid
       }),
@@ -265,7 +311,7 @@ class ChatMessages extends Component {
       }
 
       if (facebookMessage.sent_by_retailer === true && facebookMessage.date_read) {
-        this.state.messages.filter((obj) => obj.sent_by_retailer === true)
+        this.state.messages.filter((obj) => obj.sent_by_retailer === true && obj.note === false)
           .forEach((message) => {
             if (!message.date_read && moment(message.created_at) <= moment(facebookMessage.created_at)) {
               message.date_read = facebookMessage.date_read
@@ -324,6 +370,7 @@ class ChatMessages extends Component {
   divClasses = (message) => {
     let classes = message.sent_by_retailer === true ? 'message-by-retailer f-right' : 'message-by-customer';
     classes += ' main-message-container';
+    if (message.note === true) classes += ' note-message';
     if (['voice', 'audio'].includes(this.fileType(message.file_type))) classes += ' video-audio audio-background';
     if (this.fileType(message.file_type) === 'video') classes += ' video-audio no-background';
     if (['image', 'video', 'sticker'].includes(this.fileType(message.file_type))) classes += ' no-background media-container';
@@ -690,7 +737,11 @@ class ChatMessages extends Component {
             <AlreadyAssignedChatLabel/>
             )
             : (this.lastInteraction() ? (
-              <p className="p-24 text-gray-dark">Este canal de chat no ha tenido actividad del cliente los últimos 7 días, por lo tanto se encuentra cerrado.</p>
+              <p className="p-24 text-gray-dark">
+                Este canal de chat no ha tenido actividad del cliente los últimos 7 días,
+                por lo tanto se encuentra cerrado.
+                Si lo desea puede <a href="#" onClick={() => this.toggleNoteModal()}>añadir una nota en el chat.</a>
+              </p>
             )
             : (
               this.canSendMessages() &&
@@ -713,6 +764,7 @@ class ChatMessages extends Component {
                     insertEmoji={this.insertEmoji}
                     showInputMenu={this.state.showInputMenu}
                     handleShowInputMenu={this.handleShowInputMenu}
+                    openNoteModal={this.toggleNoteModal}
                   />
                 </div>
             )
@@ -736,6 +788,15 @@ class ChatMessages extends Component {
           onMobile={this.props.onMobile}
           zoomLevel={this.state.zoomLevel}
           sendLocation={this.sendLocation}
+        />
+
+        <NoteModal
+          ref={this.noteTextRef}
+          onMobile={this.props.onMobile}
+          cancelNote={this.cancelNote}
+          submitNote={this.submitNote}
+          isNoteModalOpen={this.state.isNoteModalOpen}
+          toggleNoteModal={this.toggleNoteModal}
         />
       </div>
     )
@@ -783,6 +844,9 @@ function mapDispatch(dispatch) {
     setLastFBMessages: (customerDetails) => {
       dispatch(setLastFBMessages(customerDetails));
     },
+    addNote: (body) => {
+      dispatch(addNoteAction(body));
+    }
   };
 }
 

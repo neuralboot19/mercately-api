@@ -13,6 +13,7 @@ import AttachFastAnswerIcon from "./AttachFastAnswerIcon";
 import AttachEmojiIcon from "./AttachEmojiIcon";
 import MessageInputMenu from '../shared/MessageInputMenu';
 import SendButton from "./SendButton";
+import OpenNoteModalButton from '../shared/OpenNoteModalButton';
 
 const MessageForm = ({
   handleSubmitMessage,
@@ -31,7 +32,8 @@ const MessageForm = ({
   toggleFastAnswers,
   toggleProducts,
   showInputMenu,
-  handleShowInputMenu
+  handleShowInputMenu,
+  openNoteModal
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -127,6 +129,7 @@ const MessageForm = ({
 
   return (
     <div className="col-xs-12 chat-input mt-16">
+      <OpenNoteModalButton openNoteModal={openNoteModal} />
       <div className="text-input row mx-0 no-gutters text-input-padding border-input-top">
         <div className="d-flex col-7 col-md-8">
           <span className="d-flex align-items-center position-relative mr-12 mr-md-24 min-w-input-menu">

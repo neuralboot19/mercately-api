@@ -27,7 +27,7 @@ module StatsControllerConcern
       .where(direction: 'inbound').where.not(status: @status).size || 0
 
     @total_outbound_ws += current_retailer.send(@integration).range_between(@cast_start_date, @cast_end_date)
-      .where(direction: 'outbound').where.not(status: @status).size || 0
+      .where(direction: 'outbound').where.not(where_not).size || 0
   end
 
   def total_messenger
@@ -39,7 +39,7 @@ module StatsControllerConcern
       .range_between(@cast_start_date, @cast_end_date).where(sent_by_retailer: false).size || 0
 
     @total_outbound_msn += current_retailer.facebook_retailer.facebook_messages
-      .range_between(@cast_start_date, @cast_end_date).where(sent_by_retailer: true).size || 0
+      .range_between(@cast_start_date, @cast_end_date).where(sent_by_retailer: true).where.not(note: true).size || 0
   end
 
   def total_ml
@@ -59,7 +59,7 @@ module StatsControllerConcern
     return unless current_retailer.whatsapp_integrated?
 
     @total_stats_ws = current_retailer.send(@integration).range_between(@cast_start_date, @cast_end_date)
-      .group_by_day(:created_at).where.not(status: @status).size
+      .group_by_day(:created_at).where.not(where_not).size
 
     @total_stats << {
       name: 'Whatsapp',
@@ -72,7 +72,8 @@ module StatsControllerConcern
     @total_stats_msn = {}
     return unless current_retailer.facebook_retailer&.connected?
 
-    @total_stats_msn = current_retailer.facebook_retailer.facebook_messages.range_between(@cast_start_date, @cast_end_date)
+    @total_stats_msn = current_retailer.facebook_retailer.facebook_messages.where.not(note: true)
+      .range_between(@cast_start_date, @cast_end_date)
       .group_by_day(:created_at).size
 
     @total_stats << {
@@ -113,5 +114,13 @@ module StatsControllerConcern
       data: stats,
       color: '#6B2288'
     }
+  end
+
+  def where_not
+    if current_retailer.karix_integrated?
+      { status: @status }
+    else
+      { status: @status, note: true }
+    end
   end
 end

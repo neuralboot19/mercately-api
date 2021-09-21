@@ -5,10 +5,12 @@ const TabSelector = ({
   showCustomFields,
   showAutomationSettings,
   showIntegrationSettings,
+  showNotes,
   onClickUserDetails,
   onClickCustomerFields,
   onClickAutomationSettings,
-  onClickIntegrationSettings
+  onClickIntegrationSettings,
+  onClickNotes
 }) => {
   const tabIconStyles = {
     active: {
@@ -29,9 +31,9 @@ const TabSelector = ({
     <div className="box px-5">
       <div className="customer_icon_holder">
         <div className="container">
-          <div className="row m-0">
+          <div className="row justify-content-center m-0">
             <div
-              className="col-3 t-center py-5"
+              className="col-2 t-center py-5"
               style={showUserDetails === 'block' ? tabStyles.active : tabStyles.inactive}
             >
               <div className="tooltip-top">
@@ -45,7 +47,7 @@ const TabSelector = ({
             </div>
 
             <div
-              className="col-3 t-center py-5"
+              className="col-2 t-center py-5"
               style={showCustomFields === 'block' ? tabStyles.active : tabStyles.inactive}
             >
               <div className="tooltip-top">
@@ -58,7 +60,7 @@ const TabSelector = ({
               </div>
             </div>
             <div
-              className="col-3 t-center py-5"
+              className="col-2 t-center py-5"
               style={showAutomationSettings === 'block' ? tabStyles.active : tabStyles.inactive}
             >
               <div className="tooltip-top">
@@ -71,7 +73,7 @@ const TabSelector = ({
               </div>
             </div>
             <div
-              className="col-3 t-center py-5"
+              className="col-2 t-center py-5"
               style={showIntegrationSettings === 'block' ? tabStyles.active : tabStyles.inactive}
             >
               <div className="tooltip-top">
@@ -81,6 +83,19 @@ const TabSelector = ({
                   onClick={onClickIntegrationSettings}
                 />
                 <div className="tooltiptext bottom-100">Integraciones</div>
+              </div>
+            </div>
+            <div
+              className="col-2 t-center py-5"
+              style={showNotes === 'block' ? tabStyles.active : tabStyles.inactive}
+            >
+              <div className="tooltip-top">
+                <i
+                  className="fas fa-sticky-note cursor-pointer"
+                  style={showNotes === 'block' ? tabIconStyles.active : tabIconStyles.inactive}
+                  onClick={onClickNotes}
+                />
+                <div className="tooltiptext bottom-100">Notas</div>
               </div>
             </div>
           </div>

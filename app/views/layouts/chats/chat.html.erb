@@ -31,6 +31,8 @@
         CURRENT_RETAILER_ID: "<%= current_retailer.id %>",
         GOOGLE_API_KEY: "<%= ENV['GOOGLE_API_KEY'] %>",
         CURRENT_AGENT_ROLE: "<%= current_retailer_user.admin? ? 'Admin' : current_retailer_user.supervisor? ? 'Supervisor' : 'agent' %>",
+        CURRENT_AGENT_NAME: "<%= current_retailer_user.full_name %>",
+        CURRENT_AGENT_EMAIL: "<%= current_retailer_user.email %>",
         FANPAGE_TOKEN: "<%= current_retailer.facebook_retailer&.access_token %>",
         SENTRY_DSN: "<%= ENV['SENTRY_DSN'] %>"
       }

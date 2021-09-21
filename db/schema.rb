@@ -494,6 +494,7 @@ ActiveRecord::Schema.define(version: 2021_09_14_170029) do
     t.string "sender_last_name"
     t.string "sender_email"
     t.string "message_identifier"
+    t.boolean "note", default: false
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_facebook_messages_on_retailer_user_id"
@@ -584,11 +585,12 @@ ActiveRecord::Schema.define(version: 2021_09_14_170029) do
     t.string "message_type"
     t.bigint "retailer_user_id"
     t.float "cost"
-    t.string "message_identifier"
     t.bigint "campaign_id"
+    t.string "message_identifier"
     t.string "sender_first_name"
     t.string "sender_last_name"
     t.string "sender_email"
+    t.boolean "note", default: false
     t.index ["campaign_id"], name: "index_gupshup_whatsapp_messages_on_campaign_id"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
@@ -631,6 +633,8 @@ ActiveRecord::Schema.define(version: 2021_09_14_170029) do
     t.string "sender_email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "message_identifier"
+    t.boolean "note", default: false
     t.index ["customer_id"], name: "index_instagram_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_instagram_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_instagram_messages_on_retailer_user_id"
@@ -1071,7 +1075,6 @@ ActiveRecord::Schema.define(version: 2021_09_14_170029) do
     t.string "gupshup_app_token"
     t.boolean "has_funnels", default: false
     t.string "timezone"
-    t.boolean "ig_allowed", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

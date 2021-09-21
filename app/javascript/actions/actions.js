@@ -61,6 +61,33 @@ export const fetchCustomer = (id) => {
   };
 };
 
+export const fetchNotes = (id, platform) => {
+  const endpoint = `/api/v1/customers/${id}/notes?platform=${platform}`;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      }
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: "SET_NOTES", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      ).catch(
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      );
+  };
+};
+
+export const addNote = (body) => (
+  (dispatch) => (
+    dispatch({ type: "ADD_NOTE", body })
+  )
+);
+
 export const updateCustomer = (id, body, token) => {
   const endpoint = `/api/v1/customers/${id}`;
   const csrfToken = token;

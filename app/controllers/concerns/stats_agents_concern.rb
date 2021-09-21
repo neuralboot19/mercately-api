@@ -23,7 +23,7 @@ module StatsAgentsConcern
 
     @total_agent_messages_ws = current_retailer.send(@integration)
       .range_between(@cast_start_date, @cast_end_date).where(direction: 'outbound')
-      .where.not(status: @status, retailer_user_id: nil).group(:retailer_user_id).count
+      .where.not(where_not).group(:retailer_user_id).count
   end
 
   def total_agent_outbound_messages_msn
@@ -31,7 +31,9 @@ module StatsAgentsConcern
     return unless current_retailer.facebook_retailer&.connected?
 
     @total_agent_messages_msn = current_retailer.facebook_retailer.facebook_messages
-      .range_between(@cast_start_date, @cast_end_date).where(sent_by_retailer: true).where.not(retailer_user_id: nil)
+      .range_between(@cast_start_date, @cast_end_date)
+      .where(sent_by_retailer: true)
+      .where.not(retailer_user_id: nil, note: true)
       .group(:retailer_user_id).count
   end
 
@@ -39,9 +41,14 @@ module StatsAgentsConcern
     @total_agent_chats_assigned_ws = {}
     return unless current_retailer.whatsapp_integrated?
 
+    wherenot = if current_retailer.karix_integrated?
+                 { status: @status }
+               else
+                 { status: @status, note: true }
+               end
     # query que lista todos los chat que fueron asignados - WHATSAAP
     @total_agent_chats_assigned_ws = AgentCustomer.where(retailer_user_id: current_retailer.retailer_users.ids)
-      .where(customer_id: current_retailer.send(@integration).where.not(status: @status).select(:customer_id).distinct)
+      .where(customer_id: current_retailer.send(@integration).where.not(wherenot).select(:customer_id).distinct)
       .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
   end
 
@@ -51,7 +58,7 @@ module StatsAgentsConcern
 
     # query que lista todos los chat asignados y que fueron respondidos - WHATSAAP
     @total_agent_chats_answered_ws = AgentCustomer.where(retailer_user_id: current_retailer.retailer_users.ids)
-      .where(customer_id: current_retailer.send(@integration).range_between(@cast_start_date,@cast_end_date).where.not(status: @status, retailer_user_id: nil)
+      .where(customer_id: current_retailer.send(@integration).range_between(@cast_start_date,@cast_end_date).where.not(where_not)
       .where(direction: 'outbound', message_type: 'conversation').select(:customer_id).distinct)
       .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
   end
@@ -62,7 +69,7 @@ module StatsAgentsConcern
 
     # query que lista todos los chat que fueron asignados - MSN
     @total_agent_chats_assigned_msn = AgentCustomer.where(retailer_user_id: current_retailer.retailer_users.ids)
-      .where(customer_id: current_retailer.facebook_retailer.facebook_messages.select(:customer_id).distinct)
+      .where(customer_id: current_retailer.facebook_retailer.facebook_messages.where.not(note: true).select(:customer_id).distinct)
       .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
 
   end
@@ -74,7 +81,7 @@ module StatsAgentsConcern
     # query que lista todos los chat que fueron asignados - y respondidos MSN
     @total_agent_chats_answered_msn = AgentCustomer.where(retailer_user_id: current_retailer.retailer_users.ids)
       .where(customer_id: current_retailer.facebook_retailer.facebook_messages.range_between(@cast_start_date,@cast_end_date)
-      .where(sent_by_retailer: true).where.not(retailer_user_id: nil).select(:customer_id).distinct)
+      .where(sent_by_retailer: true).where.not(retailer_user_id: nil, note: true).select(:customer_id).distinct)
       .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
 
   end
@@ -87,7 +94,7 @@ module StatsAgentsConcern
     customers = current_retailer.customers.includes(@integration.to_sym)
       .where("#{@integration}.created_at >= ? and #{@integration}.created_at <= ? and " \
       'direction = ?', @cast_start_date, @cast_end_date, 'outbound')
-      .where.not(@integration.to_sym => { status: @status, retailer_user_id: nil })
+      .where.not(@integration.to_sym => where_not)
       .select("customers.*, #{@integration}.retailer_user_id")
 
     @total_agent_prospects_ws = customers.range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id)
@@ -105,7 +112,7 @@ module StatsAgentsConcern
       .where('facebook_messages.created_at >= ? and facebook_messages.created_at <= ?',
              @cast_start_date, @cast_end_date)
       .where(facebook_messages: { sent_by_retailer: true })
-      .where.not(facebook_messages: { retailer_user_id: nil })
+      .where.not(facebook_messages: { retailer_user_id: nil, note: true })
       .select('customers.*, facebook_messages.retailer_user_id')
 
     @total_agent_prospects_msn = customers.range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id)
@@ -199,5 +206,13 @@ module StatsAgentsConcern
   def total_chats_not_answered(id)
     ((@total_agent_chats_assigned_msn[id] || 0 ) - (@total_agent_chats_answered_msn[id] || 0)) +
       ((@total_agent_chats_assigned_ws[id] || 0 ) - (@total_agent_chats_answered_ws[id] || 0))
+  end
+
+  def where_not
+    if current_retailer.karix_integrated?
+      { status: @status, retailer_user_id: nil }
+    else
+      { status: @status, retailer_user_id: nil, note: true }
+    end
   end
 end

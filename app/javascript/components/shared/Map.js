@@ -94,7 +94,7 @@ class GoogleMap extends Component {
                     />
                   </Map>
                 </div>
-                <div className="d-flex justify-content-center">
+                <div className="d-flex justify-content-center justify-content-md-end">
                   <div className={this.props.onMobile ? "mr-5" : "mr-15"}>
                     <a className="border-8 bg-light p-12 text-gray-dark border-gray" onClick={() => this.props.toggleMap()}>Cancelar</a>
                   </div>

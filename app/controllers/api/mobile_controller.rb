@@ -17,6 +17,7 @@ module Api
         @current_retailer = @current_retailer_user.retailer
       rescue StandardError => e
         Rails.logger.error e
+        SlackError.send_error(e)
       end
 
       def response_generate_token

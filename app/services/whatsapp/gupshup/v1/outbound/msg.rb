@@ -27,6 +27,22 @@ module Whatsapp::Gupshup::V1
       }
     rescue StandardError => e
       Rails.logger.error(e)
+      SlackError.send_error(e)
+    end
+
+    def create_note(params:, retailer_user:)
+      @retailer.gupshup_whatsapp_messages.create(
+        note: true,
+        customer: @customer,
+        direction: 'outbound',
+        source: @retailer.phone_number,
+        destination: @customer.phone_number(false),
+        channel: 'whatsapp',
+        status: 'sent',
+        retailer_user: retailer_user,
+        message_payload: { type: :text, payload: { payload: { text: params[:message] } } },
+        message_identifier: @index ? params[:message_identifiers][@index] : params[:message_identifier]
+      )
     end
 
     def send_bulk_files(options)
@@ -155,7 +171,6 @@ module Whatsapp::Gupshup::V1
         [bodyString, message]
       end
 
-
       # Send Audio
       def audio(data)
         raise StandardError.new('Faltaron parámetros') unless data[:file_url].present?
@@ -238,6 +253,7 @@ module Whatsapp::Gupshup::V1
         gwm
       rescue => e
         Rails.logger.error(e)
+        SlackError.send_error(e)
       end
 
       def send_message_request(body)

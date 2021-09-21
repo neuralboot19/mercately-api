@@ -5,7 +5,7 @@ class GupshupWhatsappMessageSerializer
   set_id :id
 
   attributes :id, :retailer_id, :customer_id, :status, :direction, :channel, :message_type, :message_identifier,
-             :uid, :created_time, :replied_message, :filename, :sender_full_name, :will_retry
+             :uid, :created_time, :replied_message, :filename, :sender_full_name, :will_retry, :note
 
   attribute :content_type do |gwm|
     message = gwm.message_payload
