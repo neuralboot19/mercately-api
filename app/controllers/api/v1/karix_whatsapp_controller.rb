@@ -308,7 +308,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
 
       return if current_retailer.unlimited_account && is_template == false
-      return if current_retailer.positive_balance?(@customer)
+      return if current_retailer.positive_balance?(@customer) || params[:note] == true
 
       render status: 401, json: balance_error
     end
@@ -398,9 +398,13 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, agent_customer.customer)
       type = 'template' if true?(params[:template])
 
-      gws.send_message(type: type, params: params, retailer_user: current_retailer_user)
+      if params[:note] == true
+        gws.create_note(params: params, retailer_user: current_retailer_user)
+      else
+        gws.send_message(type: type, params: params, retailer_user: current_retailer_user)
+      end
 
-      message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new()
+      message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new
 
       agents = current_retailer.retailer_users.all_customers.to_a
       message_helper.notify_agent!(current_retailer, agents, agent_customer)

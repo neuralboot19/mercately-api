@@ -6,7 +6,8 @@ import {
   fetchCustomer as fetchCustomerAction,
   fetchCustomerFields as fetchCustomerFieldsAction,
   updateCustomer as updateCustomerAction,
-  updateCustomerField as updateCustomerFieldAction
+  updateCustomerField as updateCustomerFieldAction,
+  fetchNotes as fetchNotesAction
 } from "../../../actions/actions";
 import {
   fetchTags as fetchTagsAction,
@@ -21,6 +22,7 @@ import CustomerDetailsTabContent from "./CustomerDetailsTabContent";
 import CustomFieldsTabContent from "./CustomFieldsTabContent";
 import AutomationsTabContent from "./AutomationsTabContent";
 import IntegrationsTabContent from "./IntegrationsTabContent";
+import NotesTabContent from "./NotesTabContent";
 
 const csrfToken = document.querySelector('[name=csrf-token]').content;
 
@@ -38,6 +40,7 @@ const CustomerDetails = ({
     showCustomFields: 'none',
     showAutomationSettings: 'none',
     showIntegrationSettings: 'none',
+    showNotes: 'none',
     fieldDate: new Date()
   });
 
@@ -45,12 +48,18 @@ const CustomerDetails = ({
 
   const [customerCustomFields, setCustomerCustomFields] = useState([]);
 
+  const [customerNotes, setCustomerNotes] = useState([]);
+
   const containerClassName = onMobile ? "customer_sidebar no-border-left" : "customer_sidebar";
 
   const dispatch = useDispatch();
 
   const fetchCustomerFromRedux = (id) => {
     dispatch(fetchCustomerAction(id));
+  };
+
+  const fetchNotesFromRedux = (id) => {
+    dispatch(fetchNotesAction(id, chatType));
   };
 
   const cancelReminderFromRedux = (reminderId) => {
@@ -90,6 +99,7 @@ const CustomerDetails = ({
   const reminders = useSelector((reduxState) => reduxState.reminders) || [];
   const customerFields = useSelector((reduxState) => reduxState.customerFields);
   const customFields = useSelector((reduxState) => reduxState.customFields);
+  const customerReduxNotes = useSelector((reduxState) => reduxState.customerNotes);
 
   /**
    * Initial customer info fetch
@@ -97,6 +107,7 @@ const CustomerDetails = ({
   useEffect(() => {
     !onMobile && fetchCustomerFromRedux(customerId);
     fetchTagsFromRedux(customerId);
+    fetchNotesFromRedux(customerId);
     fetchCustomerFieldsFromRedux(customerId);
   }, [customerId]);
 
@@ -179,6 +190,10 @@ const CustomerDetails = ({
     setCustomerCustomFields(customerFields);
   }, [customerFields]);
 
+  useEffect(() => {
+    setCustomerNotes(customerReduxNotes);
+  }, [customerReduxNotes]);
+
   const handleInputChange = (evt, name) => {
     setCustomerInfo({ ...customerInfo, ...{ [name]: evt.target.value } });
   };
@@ -260,7 +275,8 @@ const CustomerDetails = ({
       showUserDetails: 'block',
       showAutomationSettings: 'none',
       showIntegrationSettings: 'none',
-      showCustomFields: 'none'
+      showCustomFields: 'none',
+      showNotes: 'none'
     });
   };
 
@@ -270,7 +286,8 @@ const CustomerDetails = ({
       showCustomFields: 'block',
       showAutomationSettings: 'none',
       showIntegrationSettings: 'none',
-      showUserDetails: 'none'
+      showUserDetails: 'none',
+      showNotes: 'none'
     });
   };
 
@@ -280,7 +297,8 @@ const CustomerDetails = ({
       showUserDetails: 'none',
       showCustomFields: 'none',
       showAutomationSettings: 'block',
-      showIntegrationSettings: 'none'
+      showIntegrationSettings: 'none',
+      showNotes: 'none'
     });
   };
 
@@ -290,7 +308,19 @@ const CustomerDetails = ({
       showUserDetails: 'none',
       showCustomFields: 'none',
       showAutomationSettings: 'none',
-      showIntegrationSettings: 'block'
+      showIntegrationSettings: 'block',
+      showNotes: 'none'
+    });
+  };
+
+  const showNotes = () => {
+    setState({
+      ...state,
+      showUserDetails: 'none',
+      showCustomFields: 'none',
+      showAutomationSettings: 'none',
+      showIntegrationSettings: 'none',
+      showNotes: 'block'
     });
   };
 
@@ -309,45 +339,53 @@ const CustomerDetails = ({
         showCustomFields={state.showCustomFields}
         showAutomationSettings={state.showAutomationSettings}
         showIntegrationSettings={state.showIntegrationSettings}
+        showNotes={state.showNotes}
         onClickUserDetails={showUserDetails}
         onClickCustomerFields={showCustomFields}
         onClickAutomationSettings={showAutomationSettings}
         onClickIntegrationSettings={showIntegrationSettings}
+        onClickNotes={showNotes}
       />
-      <CustomerDetailsTabContent
-        chatType={chatType}
-        showUserDetails={state.showUserDetails}
-        customer={customerInfo}
-        customerId={customer.id}
-        customerTags={customer.tags}
-        handleEnter={handleEnter}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-        handleSelectChange={handleIdTypeChange}
-        handleSelectTagChange={handleSelectTagChange}
-        tags={tags}
-        newTag={state.newTag}
-        handleNewTagChange={handleNewTagChange}
-        onKeyPress={onKeyPress}
-        removeCustomerTag={removeCustomerTag}
-      />
-      <CustomFieldsTabContent
-        customFields={customFields}
-        customerFields={customerCustomFields}
-        showCustomFields={state.showCustomFields}
-        updateCustomerField={updateCustomerField}
-      />
-      <AutomationsTabContent
-        reminders={reminders}
-        cancelReminder={cancelReminder}
-        showAutomationSettings={state.showAutomationSettings}
-      />
-      <IntegrationsTabContent
-        customer={customerInfo}
-        onClickUserDetails={showUserDetails}
-        handleCheckboxChange={handleCheckboxChange}
-        showIntegrationSettings={state.showIntegrationSettings}
-      />
+      <div className="customer-tab-selected">
+        <CustomerDetailsTabContent
+          chatType={chatType}
+          showUserDetails={state.showUserDetails}
+          customer={customerInfo}
+          customerId={customer.id}
+          customerTags={customer.tags}
+          handleEnter={handleEnter}
+          handleInputChange={handleInputChange}
+          handleSubmit={handleSubmit}
+          handleSelectChange={handleIdTypeChange}
+          handleSelectTagChange={handleSelectTagChange}
+          tags={tags}
+          newTag={state.newTag}
+          handleNewTagChange={handleNewTagChange}
+          onKeyPress={onKeyPress}
+          removeCustomerTag={removeCustomerTag}
+        />
+        <CustomFieldsTabContent
+          customFields={customFields}
+          customerFields={customerCustomFields}
+          showCustomFields={state.showCustomFields}
+          updateCustomerField={updateCustomerField}
+        />
+        <AutomationsTabContent
+          reminders={reminders}
+          cancelReminder={cancelReminder}
+          showAutomationSettings={state.showAutomationSettings}
+        />
+        <IntegrationsTabContent
+          customer={customerInfo}
+          onClickUserDetails={showUserDetails}
+          handleCheckboxChange={handleCheckboxChange}
+          showIntegrationSettings={state.showIntegrationSettings}
+        />
+        <NotesTabContent
+          notes={customerNotes}
+          showNotes={state.showNotes}
+        />
+      </div>
     </div>
   );
 };

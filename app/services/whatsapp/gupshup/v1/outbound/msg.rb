@@ -30,6 +30,21 @@ module Whatsapp::Gupshup::V1
       SlackError.send_error(e)
     end
 
+    def create_note(params:, retailer_user:)
+      @retailer.gupshup_whatsapp_messages.create(
+        note: true,
+        customer: @customer,
+        direction: 'outbound',
+        source: @retailer.phone_number,
+        destination: @customer.phone_number(false),
+        channel: 'whatsapp',
+        status: 'sent',
+        retailer_user: retailer_user,
+        message_payload: { type: :text, payload: { payload: { text: params[:message] } } },
+        message_identifier: @index ? params[:message_identifiers][@index] : params[:message_identifier]
+      )
+    end
+
     def send_bulk_files(options)
       @phone_number = @customer.phone_number(false)
       @options = options
@@ -155,7 +170,6 @@ module Whatsapp::Gupshup::V1
 
         [bodyString, message]
       end
-
 
       # Send Audio
       def audio(data)

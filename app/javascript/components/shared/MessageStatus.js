@@ -34,6 +34,7 @@ const MessageStatus = ({
       {message.sender_full_name && (
         <SenderData
           senderFullName={message.sender_full_name}
+          isNote={message.note}
         />
       )}
     </>

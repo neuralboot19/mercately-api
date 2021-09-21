@@ -12,15 +12,16 @@ module FacebookMessages
 
     validates_uniqueness_of :mid, allow_blank: true
 
+    before_validation :nil_to_false
     before_create :set_sender_information
     after_create :sent_by_retailer?
-    after_create :assign_agent
-    after_commit :send_welcome_message, on: :create, if: -> (obj) { obj.customer.messenger? }
-    after_commit :send_inactive_message, on: :create, if: -> (obj) { obj.customer.messenger? }
+    after_create :assign_agent, unless: :note
+    after_commit :send_welcome_message, on: :create, if: -> (obj) { obj.customer.messenger? }, unless: :note
+    after_commit :send_inactive_message, on: :create, if: -> (obj) { obj.customer.messenger? }, unless: :note
     after_commit :broadcast_to_counter_channel, on: [:create, :update]
     after_commit :mark_unread_flag, on: :create
-    after_commit :set_last_interaction, on: :create
-    after_commit :send_facebook_message, on: :create
+    after_commit :set_last_interaction, on: :create, unless: :note
+    after_commit :send_facebook_message, on: :create, unless: :note
 
     scope :customer_unread, -> { where(date_read: nil, sent_by_retailer: false) }
     scope :retailer_unread, -> { where(date_read: nil, sent_by_retailer: true) }
@@ -162,5 +163,9 @@ module FacebookMessages
       else
         retailer.retailer_users.active_agents.where(only_assigned: false).update_all(field => true)
       end
+    end
+
+    def nil_to_false
+      self.note = false if note.nil?
     end
 end

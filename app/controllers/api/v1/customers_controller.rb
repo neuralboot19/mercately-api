@@ -84,7 +84,8 @@ class Api::V1::CustomersController < Api::ApiController
       sent_by_retailer: true,
       retailer_user: current_retailer_user,
       file_type: params[:type],
-      message_identifier: params[:message_identifier]
+      message_identifier: params[:message_identifier],
+      note: params[:note]
     )
 
     render status: 200, json: { message: message } if message.save

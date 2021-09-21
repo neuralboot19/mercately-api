@@ -227,6 +227,7 @@ Rails.application.routes.draw do
 
       put 'customers/:id/assign_agent', to: 'agent_customers#update', as: :assign_agent
 
+      get 'customers/:id/notes', to: 'notes#index', as: :customer_notes
       get 'customers/:id/messages', to: 'customers#messages', as: :customer_messages
       post 'customers/:id/messages', to: 'customers#create_message', as: :create_message
       post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img
