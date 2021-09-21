@@ -34,6 +34,9 @@ module Campaigns
         else
           c.sent!
         end
+      rescue => e
+        Rails.logger.error e
+        SlackError.send_error e
       end
     end
 
