@@ -52,9 +52,9 @@ const ChatMessage = ({
   return (
     <div className="text-pre-line">
       <div dangerouslySetInnerHTML={{ __html: messageText }} />
-      {message.attachments.map((attachment) => (
+      {(message.attachments && message.attachments.map((attachment) => (
         showAttachment(attachment)
-      ))}
+      )))}
       <div className="text-right">
         <MessageDateTime message={message} />
       </div>
