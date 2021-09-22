@@ -15,6 +15,9 @@ import MessageInputMenu from '../shared/MessageInputMenu';
 import FastAnswerButton from '../shared/FastAnswerButton';
 import OpenNoteModalButton from '../shared/OpenNoteModalButton';
 
+import fileUtils from '../../util/fileUtils';
+import { DEFAULT_FILE_SIZE_TRANSFER, MAX_FILE_SIZE_TRANSFER_MSN_IG } from '../../constants/chatFileSizes';
+
 const MessageForm = ({
   handleSubmitMessage,
   handleSubmitImg,
@@ -64,9 +67,21 @@ const MessageForm = ({
       return;
     }
 
-    // Max 20 Mb allowed
-    if (file.size > 20 * 1024 * 1024) {
-      alert('Error: Maximo permitido 20MB');
+    // Max DYNAMIC Mb allowed
+    let isValidSizeFile = fileUtils.isDefaultFileSize(file);
+
+    if (ENV.SEND_MAX_SIZE_FILES) {
+      isValidSizeFile = fileUtils.isValidFileSizeForMsnOrIg(file);
+    }
+
+    if (!isValidSizeFile) {
+      let allowedFileSize = fileUtils.sizeFileInMB(DEFAULT_FILE_SIZE_TRANSFER);
+
+      if (ENV.SEND_MAX_SIZE_FILES) {
+        allowedFileSize = fileUtils.sizeFileInMB(MAX_FILE_SIZE_TRANSFER_MSN_IG);
+      }
+
+      alert(`Error: Maximo permitido ${allowedFileSize}MB`);
       return;
     }
 

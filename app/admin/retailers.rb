@@ -31,7 +31,8 @@ ActiveAdmin.register Retailer do
                 :ml_site,
                 :gupshup_app_id,
                 :gupshup_app_token,
-                :has_funnels
+                :has_funnels,
+                :send_max_size_files
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -120,6 +121,7 @@ ActiveAdmin.register Retailer do
       row :ml_domain
       row :ml_site
       row :has_funnels
+      row :send_max_size_files
       row :created_at
       row :updated_at
     end
@@ -375,6 +377,7 @@ ActiveAdmin.register Retailer do
       f.input :allow_send_videos, label: 'Permitir enviar videos'
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
       f.input :has_funnels, label: 'Permitir Etapas de negociación'
+      f.input :send_max_size_files, label: 'Enviar hasta 40MB en pdfs y 15MB en imagenes'
     end
     f.actions
   end

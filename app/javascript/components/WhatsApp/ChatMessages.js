@@ -35,6 +35,13 @@ import ReminderConfigModal from './ReminderConfigModal';
 import NoteModal from '../shared/NoteModal';
 import 'react-image-lightbox/style.css';
 
+import fileUtils from '../../util/fileUtils';
+import {
+  DEFAULT_FILE_SIZE_TRANSFER,
+  MAX_FILE_SIZE_TRANSFER,
+  MAX_IMAGE_SIZE_TRANSFER_WS
+} from '../../constants/chatFileSizes';
+
 let currentCustomer = 0;
 let totalPages = 0;
 let comesFromSelection = false;
@@ -400,14 +407,23 @@ class ChatMessages extends Component {
     });
 
     if (showError || !files || files.length === 0) {
-      alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
+      this.displayErrorAlert(MAX_IMAGE_SIZE_TRANSFER_WS);
     }
   }
 
-  validateImages = (file) => (
-    ['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)
-    || file.size <= 5 * 1024 * 1024
-  )
+  displayErrorAlert(size) {
+    let fileSize = fileUtils.sizeFileInMB(size);
+
+    alert(`Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo ${fileSize}MB`);
+  }
+
+  validateImages = (file) => {
+    if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)) {
+      return false;
+    }
+    
+    return fileUtils.isValidImageSizeForWs(file);
+  }
 
   sendImages = () => {
     const insertedMessages = [];
@@ -520,9 +536,21 @@ class ChatMessages extends Component {
       return;
     }
 
-    // Max 20 Mb allowed
-    if (file.size > 20 * 1024 * 1024) {
-      alert('Error: Maximo permitido 20MB');
+    // Max DYNAMIC Mb allowed
+    let isValidSizeFile = fileUtils.isDefaultFileSize(file);
+
+    if (ENV.SEND_MAX_SIZE_FILES) {
+      isValidSizeFile = fileUtils.isMaxFileSize(file);
+    }
+
+    if (!isValidSizeFile) {
+      let sizeFile = fileUtils.sizeFileInMB(DEFAULT_FILE_SIZE_TRANSFER);
+
+      if (ENV.SEND_MAX_SIZE_FILES) {
+        sizeFile = fileUtils.sizeFileInMB(MAX_FILE_SIZE_TRANSFER);
+      }
+      
+      alert(`Error: Maximo permitido ${sizeFile}MB`);
       return;
     }
 
@@ -803,7 +831,7 @@ class ChatMessages extends Component {
 
         if (file) {
           if (!this.validateImages(file)) {
-            alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
+            this.displayErrorAlert(MAX_IMAGE_SIZE_TRANSFER_WS);
             return;
           }
 
@@ -812,7 +840,7 @@ class ChatMessages extends Component {
             showLoadImages: true
           }));
         } else {
-          alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 5MB');
+          this.displayErrorAlert(MAX_IMAGE_SIZE_TRANSFER_WS);
         }
       } else if (!fromSelector) {
         const text = clipboard.getData('text/plain');
@@ -1121,12 +1149,35 @@ class ChatMessages extends Component {
   }
 
   validFile = (file) => {
-    if (file.type !== 'application/pdf' || file.size > 20 * 1024 * 1024) {
-      alert('El archivo debe ser PDF, de máximo 20MB');
-      return false;
+    let isValidFile = true;
+
+    if (file.type !== 'application/pdf') {
+      isValidFile = false;
+    }
+    else {
+      if (ENV.SEND_MAX_SIZE_FILES) {
+        isValidFile = fileUtils.isMaxFileSize(file);
+      }
+      else {
+        isValidFile =  fileUtils.isDefaultFileSize(file);
+      }
     }
 
-    return true;
+    if (!isValidFile) {
+      this.displayFileErrorAlert();
+    }
+
+    return isValidFile;
+  }
+
+  displayFileErrorAlert() {
+    let fileSize = fileUtils.sizeFileInMB(DEFAULT_FILE_SIZE_TRANSFER);
+
+    if (ENV.SEND_MAX_SIZE_FILES) {
+      fileSize = fileUtils.sizeFileInMB(MAX_FILE_SIZE_TRANSFER);
+    }
+
+    alert(`El archivo debe ser PDF, de máximo ${fileSize}MB`);
   }
 
   acceptedFiles = () => {
