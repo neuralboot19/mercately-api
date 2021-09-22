@@ -39,7 +39,7 @@ class ImagesSelector extends Component {
             <Dropzone onDrop={this.props.onDrop} accept="image/jpg, image/jpeg, image/png">
               {({getRootProps, getInputProps}) => (
                 <section>
-                  <div {...getRootProps()} className="selector-container " contentEditable="true" onKeyDown={(e) => this.preventKey(e)} onPaste={(e) => this.callPasteImages(e)}>
+                  <div {...getRootProps()} className="selector-container " suppressContentEditableWarning={true} contentEditable="true" onKeyDown={(e) => this.preventKey(e)} onPaste={(e) => this.callPasteImages(e)}>
                     <input {...getInputProps()} />
                     <div className="indicators">
                       <i className="far fa-arrow-alt-circle-down fs-35 c-grey"></i>
@@ -53,7 +53,7 @@ class ImagesSelector extends Component {
               <div>
                 <div className="preview-container d-md-flex mt-30">
                   {this.props.loadedImages.map((image, index) =>
-                    <div className="flex-center-xy">
+                    <div key={index} className="flex-center-xy">
                       <div className="div-image mr-15">
                         <i className="fas fa-times-circle cursor-pointer" onClick={() => this.props.removeImage(index)}></i>
                         <img src={URL.createObjectURL(image)} className="image-selected" />
