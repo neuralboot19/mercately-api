@@ -16,8 +16,8 @@ module FacebookMessages
     before_create :set_sender_information
     after_create :sent_by_retailer?
     after_create :assign_agent, unless: :note
-    after_commit :send_welcome_message, on: :create, if: -> (obj) { obj.customer.messenger? }, unless: :note
-    after_commit :send_inactive_message, on: :create, if: -> (obj) { obj.customer.messenger? }, unless: :note
+    after_commit :send_welcome_message, on: :create, unless: :note
+    after_commit :send_inactive_message, on: :create, unless: :note
     after_commit :broadcast_to_counter_channel, on: [:create, :update]
     after_commit :mark_unread_flag, on: :create
     after_commit :set_last_interaction, on: :create, unless: :note
@@ -87,7 +87,7 @@ module FacebookMessages
 
     def send_welcome_message
       retailer = facebook_retailer.retailer
-      welcome_message = retailer.messenger_welcome_message
+      welcome_message = customer.messenger? ? retailer.messenger_welcome_message : retailer.instagram_welcome_message
       total_messages = customer.total_messenger_messages
       return unless total_messages == 1 && welcome_message && sent_by_retailer == false
 
@@ -96,7 +96,7 @@ module FacebookMessages
 
     def send_inactive_message
       retailer = facebook_retailer.retailer
-      inactive_message = retailer.messenger_inactive_message
+      inactive_message = customer.messenger? ? retailer.messenger_inactive_message : retailer.instagram_inactive_message
       before_last_message_msn = customer.before_last_messenger_message
 
       return unless inactive_message && sent_by_retailer == false && before_last_message_msn &&

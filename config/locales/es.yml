@@ -523,6 +523,18 @@ es:
           image: Imagen
           global_answer_question: ¿Respuesta global?
           confirm_remove_text: ¿Estás seguro de eliminar la respuesta?
+      welcome_messages:
+        title: Mensajes de Bienvenida
+        messages_for_new_clients: Mensaje para clientes nuevos
+        status: Estado
+        text: Texto
+        message_text: Texto del mensaje
+        messages_for_inactived_clients: Mensaje para clientes inactivos
+        inactivity_time: Tiempo de inactividad
+      automatic_answers:
+        message_not_found: Mensaje no encontrado
+        message_saved_successfully: Mensaje guardado con éxito
+        all_fields_is_required: Debe llenar todos los campos
   buttons:
     back: Volver
     edit: Editar

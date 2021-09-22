@@ -14,16 +14,16 @@ class Retailers::AutomaticAnswersController < RetailersController
   def save_automatic_answer
     unless @automatic_answer
       redirect_to retailers_manage_automatic_answers_path(current_retailer, platform:
-        automatic_answer_params[:platform]), notice: 'Mensaje no encontrado'
+        automatic_answer_params[:platform]), notice: I18n.t("retailer.settings.automatic_answers.message_not_found")
       return
     end
 
     if @automatic_answer.update(automatic_answer_params)
       redirect_to retailers_manage_automatic_answers_path(current_retailer, platform:
-        automatic_answer_params[:platform]), notice: 'Mensaje guardado con éxito'
+        automatic_answer_params[:platform]), notice: I18n.t("retailer.settings.automatic_answers.message_saved_successfully")
     else
       redirect_to retailers_manage_automatic_answers_path(current_retailer, platform:
-        automatic_answer_params[:platform]), notice: 'Error: Debe llenar todos los campos'
+        automatic_answer_params[:platform]), notice: 'Error: ' + I18n.t("retailer.settings.automatic_answers.all_fields_is_required")
     end
   end
 
@@ -51,7 +51,8 @@ class Retailers::AutomaticAnswersController < RetailersController
     def guess_platform
       platforms = []
       platforms << 'whatsapp' if current_retailer.whatsapp_integrated?
-      platforms << 'messenger' if current_retailer.facebook_retailer
+      platforms << 'messenger' if current_retailer.facebook_retailer&.connected?
+      platforms << 'instagram' if current_retailer.facebook_retailer&.instagram_integrated
 
       platform = params[:platform] || params[:automatic_answer][:platform]
 

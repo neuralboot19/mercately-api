@@ -78,6 +78,10 @@ en:
           new_product: New Product
           used: Used
           not_specified: Not specified
+      automatic_answer:
+        statuses:
+          active: Active
+          inactive: Inactive
   time:
     datepicker:
       format: DD/MM/YYYY
@@ -152,6 +156,10 @@ en:
         total_chats_assigned: Total chats assigned
         total_assigned_chats_answered: Total assigned chats answered
         total_assigned_chats_without_replying: Total assigned chats without replying
+      automatic_answer:
+        statuses:
+          active: Active
+          inactive: Inactive
     settings:
       quick_answers:
         answer_created_successfully: Answer created successfully
@@ -191,6 +199,18 @@ en:
           image: Image
           global_answer_question: is global answer?
           confirm_remove_text: Are you sure to delete the answer?
+      welcome_messages:
+        title: Welcome Messages
+        messages_for_new_clients: Message for new customers
+        status: Status
+        text: Text
+        message_text: Message text
+        messages_for_inactived_clients: Message for inactive customers
+        inactivity_time: Inactivity time
+      automatic_answers:
+        message_not_found: Message not found
+        message_saved_successfully: Message saved successfully
+        all_fields_is_required: All fields are required
   buttons:
     back: Back
     edit: Edit
