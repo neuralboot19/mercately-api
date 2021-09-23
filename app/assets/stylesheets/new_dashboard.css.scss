@@ -104,6 +104,12 @@
     top: 0;
     right: 0;
 
+    &.counter {
+      width: 22px;
+      height: 22px;
+      font-size: 14px;
+    }
+
     &.notification {
       background-color: $notifications-color;
       border-radius: 50%;

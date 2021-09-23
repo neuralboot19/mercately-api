@@ -19,7 +19,8 @@ class Api::V1::CustomersController < Api::ApiController
     total_pages = @customers&.total_pages
 
     render status: 200, json: {
-      customers: @customers.present? ? @customers.as_json(methods:
+      customers: @customers.present? ? @customers.as_json(
+        methods:
         [
           :unread_message?,
           :last_messenger_message,
@@ -52,10 +53,10 @@ class Api::V1::CustomersController < Api::ApiController
   def update
     if @customer.update(customer_params)
       render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), tags:
-        current_retailer.available_customer_tags(@customer.id) }
+                                  current_retailer.available_customer_tags(@customer.id) }
     else
       render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), errors:
-        @customer.errors, tags: current_retailer.available_customer_tags(@customer.id) }
+                                  @customer.errors, tags: current_retailer.available_customer_tags(@customer.id) }
     end
   end
 
@@ -161,7 +162,7 @@ class Api::V1::CustomersController < Api::ApiController
     send_notification(params[:chat_service])
 
     render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
-      current_retailer.available_customer_tags(@customer.id) }
+                                current_retailer.available_customer_tags(@customer.id) }
   end
 
   def remove_customer_tag
@@ -169,7 +170,7 @@ class Api::V1::CustomersController < Api::ApiController
     send_notification(params[:chat_service])
 
     render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
-      current_retailer.available_customer_tags(@customer.id) }
+                                current_retailer.available_customer_tags(@customer.id) }
   end
 
   def add_tag
@@ -178,7 +179,7 @@ class Api::V1::CustomersController < Api::ApiController
     send_notification(params[:chat_service])
 
     render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags]), tags:
-      current_retailer.available_customer_tags(@customer.id), filter_tags: current_retailer.tags }
+                                current_retailer.available_customer_tags(@customer.id), filter_tags: current_retailer.tags }
   end
 
   def toggle_chat_bot
@@ -209,7 +210,7 @@ class Api::V1::CustomersController < Api::ApiController
         "%#{params[:text].downcase.delete(' ')}%",
         "%#{params[:text].downcase}%",
         "%#{params[:text].downcase}%"
-      )
+                                 )
     end
     render json: { customers: customers }
   end
@@ -285,8 +286,8 @@ class Api::V1::CustomersController < Api::ApiController
         customers = customers.where(id: customer_ids)
       end
       customers = customers.group('customers.id')
-                           .order(order)
-                           .page(params[:page])
+        .order(order)
+        .page(params[:page])
       customers
     end
 
@@ -346,7 +347,7 @@ class Api::V1::CustomersController < Api::ApiController
 
     def agents
       current_retailer_user.admin? ||
-      current_retailer_user.supervisor? ?
+        current_retailer_user.supervisor? ?
         current_retailer.team_agents :
         [current_retailer_user]
     end
@@ -379,41 +380,57 @@ class Api::V1::CustomersController < Api::ApiController
     end
 
     def mark_unread_flag(customer)
-      return unless customer.count_unread_messages > 0
+      return if customer.count_unread_messages <= 0
 
       customer.update_column(:count_unread_messages, 0)
 
       field = "#{customer.pstype}_unread"
       admins_supervisors = current_retailer.admins.or(current_retailer.supervisors)
-      admins_supervisors.update_all(field => current_retailer.customers.where(pstype: customer.pstype)
-        .with_unread_messages.exists?)
+      admins_supervisors.update_all(
+        update_sql(
+          field,
+          current_retailer.customers.where(pstype: customer.pstype).with_unread_messages.exists?,
+          customer.pstype
+        )
+      )
 
       agent = customer.agent
       return if agent && !agent.agent?
 
       if agent.present?
+        retailer_user_field = "unread_#{customer.pstype}_chats_count"
         if agent.only_assigned?
-          agent.update_columns(field => agent.a_customers.where(pstype: customer.pstype).with_unread_messages.exists?)
+          agent.update_columns(
+            field => agent.a_customers.where(pstype: customer.pstype).with_unread_messages.exists?,
+            retailer_user_field => agent.send(retailer_user_field) - 1
+          )
         else
-          agent.update_columns(field => agent.customers.where(pstype: customer.pstype).with_unread_messages.exists?)
+          agent.update_columns(
+            field => agent.customers.where(pstype: customer.pstype).with_unread_messages.exists?,
+            retailer_user_field => agent.send(retailer_user_field) - 1
+          )
         end
       else
         agents = current_retailer.retailer_users.active_agents.all_customers
 
         customer_ids = Customer.joins('LEFT JOIN agent_customers ac ON ac.customer_id = customers.id')
           .where('(ac.retailer_user_id IN (?) OR ac.retailer_user_id is NULL) AND customers.retailer_id = ? AND ' \
-          'customers.pstype = ? AND customers.count_unread_messages > 0',
-          agents.ids, current_retailer.id, Customer.pstypes[customer.pstype]).select('distinct customers.id')
+                 'customers.pstype = ? AND customers.count_unread_messages > 0',
+                 agents.ids, current_retailer.id, Customer.pstypes[customer.pstype]).select('distinct customers.id')
 
         assigned = AgentCustomer.where(customer_id: customer_ids)
         if assigned.select('distinct customer_id').size != customer_ids.size
-          agents.update_all(field => true)
+          agents.update_all(update_sql(field, true, customer.pstype))
           return
         end
 
         assigned_users = assigned.pluck(:retailer_user_id).uniq
-        agents.where(id: assigned_users).update_all(field => true) if assigned_users.present?
-        agents.where.not(id: assigned_users).update_all(field => false)
+        agents.where(id: assigned_users).update_all(update_sql(field, true, customer.pstype)) if assigned_users.present?
+        agents.where.not(id: assigned_users).update_all(update_sql(field, false, customer.pstype))
       end
+    end
+
+    def update_sql(field, unread, pstype)
+      "#{field} = #{unread}, unread_#{pstype}_chats_count = unread_#{pstype}_chats_count - 1"
     end
 end

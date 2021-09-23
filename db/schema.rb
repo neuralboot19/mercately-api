@@ -1013,6 +1013,11 @@ ActiveRecord::Schema.define(version: 2021_09_14_170029) do
     t.boolean "ml_unread", default: false
     t.boolean "messenger_unread", default: false
     t.boolean "instagram_unread", default: false
+    t.integer "unread_whatsapp_chats_count", default: 0, null: false
+    t.integer "unread_messenger_chats_count", default: 0, null: false
+    t.integer "unread_instagram_chats_count", default: 0, null: false
+    t.integer "unread_ml_chats_count", default: 0, null: false
+    t.integer "unread_ml_questions_count", default: 0, null: false
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"
