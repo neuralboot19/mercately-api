@@ -21,6 +21,7 @@ socket.on('new_message_counter', function(data) {
   } else {
     $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).hide();
   }
+  if (data['unread_chats_count']) $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).text(data['unread_chats_count']);
 
   if (data['identifier'] === '#item__cookie_message' || data['identifier'] === '#item__cookie_question') {
     if (data['unread_total_messages'] === true) {

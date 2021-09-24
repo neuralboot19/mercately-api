@@ -4,7 +4,7 @@ class SlackError
 
     slack_client.ping([
       "Error: #{e.message}",
-      "Backtrace: #{e.backtrace.select { |x| x.match(/mercately/) }}"
+      "Backtrace: #{e.backtrace.select { |x| x.match(/app/) }}"
     ].join("\n"))
   rescue
     slack_client.ping([

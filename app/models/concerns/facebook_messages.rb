@@ -149,19 +149,30 @@ module FacebookMessages
     def mark_unread_flag
       return unless sent_by_retailer == false
 
+      update_chat_counter = customer.count_unread_messages.zero?
+      field = "#{customer.pstype}_unread"
+      retailer_user_field = "unread_#{customer.pstype}_chats_count"
+      update_sql = if update_chat_counter
+                     "#{field} = TRUE, #{retailer_user_field} = #{retailer_user_field} + 1"
+                   else
+                     "#{field} = TRUE"
+                   end
       customer.update_column(:count_unread_messages, customer.count_unread_messages + 1)
 
-      field = "#{customer.pstype}_unread"
       admins_supervisors = retailer.admins.or(retailer.supervisors)
-      admins_supervisors.update_all(field => true)
-
+      admins_supervisors.update_all(update_sql)
       agent = customer.agent
       return if agent && !agent.agent?
 
       if agent.present?
-        agent.update_columns(field => true)
+        counter = if update_chat_counter
+                    agent.send(retailer_user_field) + 1
+                  else
+                    agent.send(retailer_user_field)
+                  end
+        agent.update_columns(field => true, retailer_user_field => counter)
       else
-        retailer.retailer_users.active_agents.where(only_assigned: false).update_all(field => true)
+        retailer.retailer_users.active_agents.where(only_assigned: false).update_all(update_sql)
       end
     end
 
