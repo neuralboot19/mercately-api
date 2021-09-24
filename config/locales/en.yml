@@ -78,3 +78,78 @@ en:
           new_product: New Product
           used: Used
           not_specified: Not specified
+  time:
+    datepicker:
+      format: DD/MM/YYYY
+      cancelLabel: Cancel
+      applyLabel: Apply
+      fromLabel: From
+      toLabel: To
+      customRangeLabel: Edit date
+      weekLabel: Wheek
+      today: Today
+      yesterday: Yesterday
+      last_7_days: Last 7 days
+      last_30_days: 'Last 30 days'
+      this_month: This month
+      last_month: Last month
+      daysOfWeek:
+        sun: 'Sun'
+        mon: 'Mon'
+        tues: 'Tues'
+        wed: 'Wed'
+        thurs: 'Thurs'
+        fri: 'Fri'
+        sat: 'Sat'
+      monthNames:
+        jan: 'January'
+        feb: 'February'
+        mar: 'March'
+        apr: 'April'
+        may: 'May'
+        jun: 'June'
+        jul: 'July'
+        aug: 'August'
+        sep: 'September'
+        oct: 'Octubre'
+        nov: 'November'
+        dec: 'December'
+  social_networks:
+    whatsapp: Whatsapp
+    messenger: Messenger
+    mercadoLibre: MercadoLibre
+    instagram: Instagram
+  retailer:
+    statistics:
+      messenger_service: Messaging service
+      description: Statistics of sales, messaging and others
+      text_show_stats: You can only see data from the last 5 days. To see complete data upgrade to Premium.
+      card:
+        messages: Messages
+        received: Received
+        sent: Sent
+        total: Total
+      chart:
+        title: Total messages by platform / social network
+        total_messages: Total messages
+      cliente_content:
+        clients: Clients
+        new_clients: New clients
+        recurring_customers: Recurring customers
+      performance:
+        performance_title: Performance by agent
+        agent: Agent
+        assigned_chats: Assigned chats
+        assigned_chats_answered: Assigned chats answered
+        assigned_chats_without_replying: Assigned chats without replying
+        mensajes: Messages
+        total_clients: Total clients
+        recurring_customers: Recurring customers
+        new_clients: New clients
+      chats_by_platform:
+        title: Total chats by platform
+        platform: Platform
+        total_chats_assigned: Total chats assigned
+        total_assigned_chats_answered: Total assigned chats answered
+        total_assigned_chats_without_replying: Total assigned chats without replying
+

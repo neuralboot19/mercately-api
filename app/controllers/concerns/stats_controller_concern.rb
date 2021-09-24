@@ -7,14 +7,16 @@ module StatsControllerConcern
     total_whatsapp
     total_messenger
     total_ml
+    total_instagram
 
-    @total_inbound = @total_inbound_ws + @total_inbound_msn + @total_inbound_ml
-    @total_outbound = @total_outbound_ws + @total_outbound_msn + @total_outbound_ml
+    @total_inbound = @total_inbound_ws + @total_inbound_msn + @total_inbound_ml + @total_inbound_ig
+    @total_outbound = @total_outbound_ws + @total_outbound_msn + @total_outbound_ml + @total_outbound_ig
     @total_stats = []
 
     total_stats_ws
     total_stats_msn
     total_stats_ml
+    total_stats_ig
     total_stats
   end
 
@@ -52,6 +54,18 @@ module StatsControllerConcern
 
     @total_outbound_ml += Question.unscoped.range_between(@cast_start_date, @cast_end_date)
       .includes(:customer).where(customers: { retailer_id: current_retailer.id }).where.not(answer: [nil, '']).size
+  end
+
+  def total_instagram
+    @total_inbound_ig = 0
+    @total_outbound_ig = 0
+    return unless current_retailer.facebook_retailer&.instagram_integrated?
+
+    @total_inbound_ig += current_retailer.facebook_retailer.instagram_messages
+      .range_between(@cast_start_date, @cast_end_date).where(sent_by_retailer: false).size || 0
+
+    @total_outbound_ig += current_retailer.facebook_retailer.instagram_messages
+      .range_between(@cast_start_date, @cast_end_date).where(sent_by_retailer: true).where.not(note: true).size || 0
   end
 
   def total_stats_ws
@@ -97,8 +111,23 @@ module StatsControllerConcern
     }
   end
 
+  def total_stats_ig
+    @total_stats_ig = {}
+    return unless current_retailer.facebook_retailer&.instagram_integrated?
+
+    @total_stats_ig = current_retailer.facebook_retailer.instagram_messages.where.not(note: true)
+      .range_between(@cast_start_date, @cast_end_date)
+      .group_by_day(:created_at).size
+
+    @total_stats << {
+      name: 'Instagram',
+      data: @total_stats_ig,
+      color: '#BC1888'
+    }
+  end
+
   def total_stats
-    dates_list = (@total_stats_ws.keys + @total_stats_msn.keys + @total_stats_ml.keys).uniq.sort
+    dates_list = (@total_stats_ws.keys + @total_stats_msn.keys + @total_stats_ml.keys + @total_stats_ig.keys).uniq.sort
     stats = {}
 
     dates_list.each do |dl|
@@ -107,6 +136,7 @@ module StatsControllerConcern
       @total_stats_ws.key?(dl) ? stats[dl] += @total_stats_ws[dl] : @total_stats_ws[dl] = 0
       @total_stats_msn.key?(dl) ? stats[dl] += @total_stats_msn[dl] : @total_stats_msn[dl] = 0
       @total_stats_ml.key?(dl) ? stats[dl] += @total_stats_ml[dl] : @total_stats_ml[dl] = 0
+      @total_stats_ig.key?(dl) ? stats[dl] += @total_stats_ig[dl] : @total_stats_ig[dl] = 0
     end
 
     @total_stats << {
