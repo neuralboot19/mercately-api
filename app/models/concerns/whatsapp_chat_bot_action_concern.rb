@@ -21,12 +21,12 @@ module WhatsappChatBotActionConcern
   # concat_answer_type = Dice si el mensaje viene de una respuesta exitosa o no del consumo de
   # un endpoint. Valores posibles: 'success', 'failed'
   def send_answer(chat_bot_option, concat_answer_type = nil, get_out = false, error_exit = false,
-    failed_attempt = false)
+    failed_attempt = false, from_option = nil)
     return unless chat_bot_option.present?
 
     params = {
       message: api.prepare_chat_bot_message(chat_bot_option, customer, get_out, error_exit, failed_attempt,
-        concat_answer_type),
+        concat_answer_type, from_option),
       type: 'text'
     }
 

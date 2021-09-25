@@ -423,7 +423,11 @@ class Customer < ApplicationRecord
       @option_name = data['option_name'] || ''
       @message = data['message'] || ''
 
-      @options = data['options'].map.with_index { |opt, index| Option.new(opt, index + 1) } if data['options'].present?
+      @options = if data['options'].is_a?(Array)
+                   data['options'].map.with_index { |opt, index| Option.new(opt, index + 1) }
+                 else
+                   []
+                 end
     end
 
     def insert_return_options(opt, msg_options)
