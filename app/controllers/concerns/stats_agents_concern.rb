@@ -6,14 +6,20 @@ module StatsAgentsConcern
   def total_agents_performance
     total_agent_outbound_messages_ws
     total_agent_outbound_messages_msn
+    total_agent_outbound_messages_ig
     total_agent_chats_assigned_ws
     total_agent_chats_answered_ws
     total_agent_chats_assigned_msn
     total_agent_chats_answered_msn
+    total_agent_chats_assigned_ig
+    total_agent_chats_answered_ig
     total_customers_ws
     total_customers_msn
+    total_customers_ig
     total_agent_stats_msn
     total_agent_stats_ws
+    total_agent_stats_ig
+
     total_agent_stats
   end
 
@@ -31,6 +37,17 @@ module StatsAgentsConcern
     return unless current_retailer.facebook_retailer&.connected?
 
     @total_agent_messages_msn = current_retailer.facebook_retailer.facebook_messages
+      .range_between(@cast_start_date, @cast_end_date)
+      .where(sent_by_retailer: true)
+      .where.not(retailer_user_id: nil, note: true)
+      .group(:retailer_user_id).count
+  end
+
+  def total_agent_outbound_messages_ig
+    @total_agent_messages_ig = {}
+    return unless current_retailer.facebook_retailer&.instagram_integrated?
+
+    @total_agent_messages_ig = current_retailer.facebook_retailer.instagram_messages
       .range_between(@cast_start_date, @cast_end_date)
       .where(sent_by_retailer: true)
       .where.not(retailer_user_id: nil, note: true)
@@ -71,7 +88,6 @@ module StatsAgentsConcern
     @total_agent_chats_assigned_msn = AgentCustomer.where(retailer_user_id: current_retailer.retailer_users.ids)
       .where(customer_id: current_retailer.facebook_retailer.facebook_messages.where.not(note: true).select(:customer_id).distinct)
       .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
-
   end
 
   def total_agent_chats_answered_msn
@@ -83,7 +99,27 @@ module StatsAgentsConcern
       .where(customer_id: current_retailer.facebook_retailer.facebook_messages.range_between(@cast_start_date,@cast_end_date)
       .where(sent_by_retailer: true).where.not(retailer_user_id: nil, note: true).select(:customer_id).distinct)
       .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
+  end
 
+  def total_agent_chats_assigned_ig
+    @total_agent_chats_assigned_ig = {}
+    return unless  current_retailer.facebook_retailer&.instagram_integrated?
+
+    # query que lista todos los chat que fueron asignados - IG
+    @total_agent_chats_assigned_ig = AgentCustomer.where(retailer_user_id: current_retailer.retailer_users.ids)
+      .where(customer_id: current_retailer.facebook_retailer.instagram_messages.where.not(note: true).select(:customer_id).distinct)
+      .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
+  end
+
+  def total_agent_chats_answered_ig
+    @total_agent_chats_answered_ig = {}
+    return unless current_retailer.facebook_retailer&.instagram_integrated?
+
+    # query que lista todos los chat que fueron asignados - y respondidos IG
+    @total_agent_chats_answered_ig = AgentCustomer.where(retailer_user_id: current_retailer.retailer_users.ids)
+      .where(customer_id: current_retailer.facebook_retailer.instagram_messages.range_between(@cast_start_date, @cast_end_date)
+      .where(sent_by_retailer: true).where.not(retailer_user_id: nil, note: true).select(:customer_id).distinct)
+      .update_range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id).count
   end
 
   def total_customers_ws
@@ -118,6 +154,24 @@ module StatsAgentsConcern
     @total_agent_prospects_msn = customers.range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id)
       .count('distinct customers.id')
     @total_agent_currents_msn = customers.out_of_range(@cast_start_date, @cast_end_date).group(:retailer_user_id)
+      .count('distinct customers.id')
+  end
+
+  def total_customers_ig
+    @total_agent_currents_ig = {}
+    @total_agent_prospects_ig = {}
+    return unless current_retailer.facebook_retailer&.instagram_integrated?
+
+    customers = current_retailer.customers.includes(:instagram_messages)
+      .where('instagram_messages.created_at >= ? and instagram_messages.created_at <= ?',
+             @cast_start_date, @cast_end_date)
+      .where(instagram_messages: { sent_by_retailer: true })
+      .where.not(instagram_messages: { retailer_user_id: nil, note: true })
+      .select('customers.*, instagram_messages.retailer_user_id')
+
+    @total_agent_prospects_ig = customers.range_between(@cast_start_date, @cast_end_date).group(:retailer_user_id)
+      .count('distinct customers.id')
+    @total_agent_currents_ig = customers.out_of_range(@cast_start_date, @cast_end_date).group(:retailer_user_id)
       .count('distinct customers.id')
   end
 
@@ -177,6 +231,33 @@ module StatsAgentsConcern
     (@total_agent_currents_ws[id] || 0) + (@total_agent_prospects_ws[id] || 0)
   end
 
+  def total_agent_stats_ig
+    @agent_stats_ig = []
+    return if agents_ids_ig.blank?
+
+    current_retailer.retailer_users.where(id: agents_ids_ig).find_each do |ru|
+      id = ru.id
+      @agent_stats_ig << {
+        name: ru.full_name.presence || ru.email,
+        chats_assigned: @total_agent_chats_assigned_ig[id] || 0,
+        chats_answered: @total_agent_chats_answered_ig[id] || 0,
+        chats_not_answered: (@total_agent_chats_assigned_ig[id] || 0) - (@total_agent_chats_answered_ig[id] || 0),
+        messages_sent: @total_agent_messages_ig[id] || 0,
+        customers: agent_total_customers_ig(id),
+        prospects: @total_agent_prospects_ig[id] || 0,
+        currents: @total_agent_currents_ig[id] || 0
+      }
+    end
+  end
+
+  def agents_ids_ig
+    (@total_agent_messages_ig.keys + @total_agent_currents_ig.keys + @total_agent_chats_assigned_ig.keys +
+      @total_agent_prospects_ig.keys).compact.uniq
+  end
+
+  def agent_total_customers_ig(id)
+    (@total_agent_currents_ig[id] || 0) + (@total_agent_prospects_ig[id] || 0)
+  end
 
   def total_agent_stats
     @agent_stats = []
@@ -186,26 +267,28 @@ module StatsAgentsConcern
       id = ru.id
       @agent_stats << {
         name: ru.full_name.presence || ru.email,
-        chats_assigned: (@total_agent_chats_assigned_msn[id] || 0) + (@total_agent_chats_assigned_ws[id] || 0),
-        chats_answered: (@total_agent_chats_answered_msn[id] || 0) + (@total_agent_chats_answered_ws[id] || 0),
+        chats_assigned: (@total_agent_chats_assigned_msn[id] || 0) + (@total_agent_chats_assigned_ws[id] || 0) + (@total_agent_chats_assigned_ig[id] || 0),
+        chats_answered: (@total_agent_chats_answered_msn[id] || 0) + (@total_agent_chats_answered_ws[id] || 0) + (@total_agent_chats_answered_ig[id] || 0),
         chats_not_answered: total_chats_not_answered(id),
-        messages_sent: (@total_agent_messages_msn[id] || 0) + (@total_agent_messages_ws[id] || 0),
-        customers: agent_total_customers_msn(id) + agent_total_customers_ws(id),
-        prospects: (@total_agent_prospects_msn[id] || 0) + (@total_agent_prospects_ws[id] || 0),
-        currents: (@total_agent_currents_msn[id] || 0) + (@total_agent_currents_ws[id] || 0)
+        messages_sent: (@total_agent_messages_msn[id] || 0) + (@total_agent_messages_ws[id] || 0) + (@total_agent_messages_ig[id] || 0),
+        customers: agent_total_customers_msn(id) + agent_total_customers_ws(id) + agent_total_customers_ig(id),
+        prospects: (@total_agent_prospects_msn[id] || 0) + (@total_agent_prospects_ws[id] || 0) + (@total_agent_prospects_ig[id] || 0),
+        currents: (@total_agent_currents_msn[id] || 0) + (@total_agent_currents_ws[id] || 0) + (@total_agent_currents_ig[id] || 0)
       }
     end
   end
 
   def agents_ids
     (@total_agent_messages_ws.keys + @total_agent_currents_ws.keys +  @total_agent_chats_assigned_ws.keys + @total_agent_prospects_ws.keys +
-      @total_agent_messages_msn.keys + @total_agent_currents_msn.keys + @total_agent_chats_assigned_msn.keys + @total_agent_prospects_msn.keys
+      @total_agent_messages_msn.keys + @total_agent_currents_msn.keys + @total_agent_chats_assigned_msn.keys + @total_agent_prospects_msn.keys +
+      @total_agent_messages_ig.keys + @total_agent_currents_ig.keys + @total_agent_chats_assigned_ig.keys + @total_agent_prospects_ig.keys
     ).compact.uniq
   end
 
   def total_chats_not_answered(id)
     ((@total_agent_chats_assigned_msn[id] || 0 ) - (@total_agent_chats_answered_msn[id] || 0)) +
-      ((@total_agent_chats_assigned_ws[id] || 0 ) - (@total_agent_chats_answered_ws[id] || 0))
+      ((@total_agent_chats_assigned_ws[id] || 0 ) - (@total_agent_chats_answered_ws[id] || 0)) +
+      ((@total_agent_chats_assigned_ig[id] || 0 ) - (@total_agent_chats_answered_ig[id] || 0))
   end
 
   def where_not
