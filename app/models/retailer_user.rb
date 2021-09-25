@@ -14,6 +14,7 @@ class RetailerUser < ApplicationRecord
   has_many :calendar_events, dependent: :destroy
   has_many :agent_notifications, dependent: :destroy
   has_many :deals
+
   validate :onboarding_status_format
   validates :agree_terms, presence: true
   validates :email, presence: true, uniqueness: true
