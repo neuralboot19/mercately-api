@@ -229,6 +229,12 @@ module Whatsapp::Gupshup::V1
       end
 
       def save_message(response_status, response_body, request_body, retailer_user)
+        wl = WhatsappLog.create(
+          payload_sent: request_body,
+          response: response_body,
+          gupshup_message_id: response_body['messageId'],
+          retailer: @retailer
+        )
         gwm = @retailer.gupshup_whatsapp_messages.new(
           customer: @customer,
           direction: 'outbound',
@@ -250,6 +256,7 @@ module Whatsapp::Gupshup::V1
         end
 
         gwm.save!
+        wl.update(gupshup_whatsapp_message: gwm)
         gwm
       rescue => e
         Rails.logger.error(e)

@@ -15,6 +15,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   belongs_to :campaign, required: false
   belongs_to :retailer_user, required: false
   has_one :reminder
+  has_many :whatsapp_logs, dependent: :destroy
 
   validates_presence_of :retailer, :customer, :status,
                         :direction, :source, :destination, :channel
