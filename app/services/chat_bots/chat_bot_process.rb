@@ -224,11 +224,11 @@ module ChatBots
         when 'assign_agent'
           assign_customer_agent(act)
         when 'get_out_bot'
-          exit_bot
+          exit_bot(chat_bot_option)
         when 'go_back_bot'
-          return_bot_option
+          return_bot_option(chat_bot_option)
         when 'go_init_bot'
-          restart_bot
+          restart_bot(chat_bot_option)
         when 'save_on_db'
           save_on_table(act)
         when 'exec_callback'
@@ -260,16 +260,16 @@ module ChatBots
     end
 
     # Desactiva el chatbot. Se sale de el.
-    def exit_bot
+    def exit_bot(chat_bot_option)
       option = @customer.chat_bot_option
       @sent_in_action = true
-      @origin_instance.send_answer(option, @concat_answer_type, true)
+      @origin_instance.send_answer(option, @concat_answer_type, true, false, false, chat_bot_option)
       @origin_instance.send_additional_answers(option)
       @customer.deactivate_chat_bot!
     end
 
     # Retorna a la opcion anterior del chatbot.
-    def return_bot_option
+    def return_bot_option(chat_bot_option = nil)
       option = @customer.chat_bot_option
       # Si la opcion actual no tiene padre, entonces retorna. Este es el caso de la opcion raiz.
       return unless option.has_parent?
@@ -283,29 +283,29 @@ module ChatBots
 
       # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
       if skip_this_action?(second_parent)
-        manage_skip_option(second_parent)
+        manage_skip_option(second_parent, chat_bot_option)
         return
       end
 
       @customer.update(chat_bot_option_id: second_parent.id, failed_bot_attempts: 0)
       @sent_in_action = true
-      @origin_instance.send_answer(second_parent, @concat_answer_type)
+      @origin_instance.send_answer(second_parent, @concat_answer_type, false, false, false, chat_bot_option)
       @origin_instance.send_additional_answers(second_parent)
     end
 
     # Reinicia el chatbot nuevamente. Lo manda al principio, a la opcion raiz.
-    def restart_bot
+    def restart_bot(chat_bot_option = nil)
       root = @customer.chat_bot_option.root
 
       # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
       if skip_this_action?(root)
-        manage_skip_option(root)
+        manage_skip_option(root, chat_bot_option)
         return
       end
 
       @customer.update(chat_bot_option_id: root.id, failed_bot_attempts: 0)
       @sent_in_action = true
-      @origin_instance.send_answer(root, @concat_answer_type)
+      @origin_instance.send_answer(root, @concat_answer_type, false, false, false, chat_bot_option)
       @origin_instance.send_additional_answers(root)
     end
 
@@ -419,13 +419,13 @@ module ChatBots
 
       # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
       if skip_this_action?(jump_option)
-        manage_skip_option(jump_option)
+        manage_skip_option(jump_option, option)
         return
       end
 
       @customer.update(chat_bot_option_id: jump_option.id, failed_bot_attempts: 0)
       @sent_in_action = true
-      @origin_instance.send_answer(jump_option, @concat_answer_type)
+      @origin_instance.send_answer(jump_option, @concat_answer_type, false, false, false, option)
       @origin_instance.send_additional_answers(jump_option)
     end
 
@@ -716,7 +716,7 @@ module ChatBots
     # Hace una recursividad para buscar la proxima opcion que no tenga en true el atributo
     # que dice que se debe saltar a la siguiente opcion si esta ya tiene informacion guardada.
     # Y de encontrarla la envia y actualiza el flujo del customer/chat.
-    def manage_skip_option(option)
+    def manage_skip_option(option, from_option = nil)
       unless option.present?
         @customer.deactivate_chat_bot!
         return
@@ -727,7 +727,7 @@ module ChatBots
       if option.option_type == 'decision' || option.skip_option == false || not_existing_option_content?(option)
         @customer.update(chat_bot_option_id: option.id, failed_bot_attempts: 0)
         @sent_in_action = true
-        @origin_instance.send_answer(option, @concat_answer_type)
+        @origin_instance.send_answer(option, @concat_answer_type, false, false, false, from_option)
         @origin_instance.send_additional_answers(option)
         return
       else

@@ -2,7 +2,7 @@ module ChatBots
   class Api
     # Prepara el cuerpo del mensaje que se enviara
     def prepare_chat_bot_message(*args)
-      chat_bot_option, customer, get_out, error_exit, failed_attempt, concat_answer_type = args
+      chat_bot_option, customer, get_out, error_exit, failed_attempt, concat_answer_type, from_option = args
       return unless chat_bot_option.present?
 
       chat_bot = chat_bot_option.chat_bot
@@ -12,7 +12,7 @@ module ChatBots
                                                    failed_attempt
 
       # Se carga el contenido de la opcion
-      option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type)
+      option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type, from_option)
     end
 
     # Construye la lista de opciones a seleccionar tomando en cuenta la sublista de la opcion.
@@ -30,11 +30,11 @@ module ChatBots
     end
 
     # Construye la lista de opciones a seleccionar tomando en cuenta la respuesta del endpoint.
-    def prepare_dynamic_sub_list(customer, chat_bot_option)
+    def prepare_dynamic_sub_list(customer, chat_bot_option, message)
       data = @response.presence || customer.endpoint_response
       options = data.insert_return_options(chat_bot_option, data.options || [])
 
-      message = data.message + "\n\n"
+      message ||= ''
       items_size = options.size - 1
 
       options.each_with_index do |item, index|
@@ -56,7 +56,7 @@ module ChatBots
         chat_bot_option.has_additional_answers_filled? == false
         prepare_option_sub_list(chat_bot_option, message)
       elsif chat_bot_option.is_auto_generated?
-        prepare_dynamic_sub_list(customer, chat_bot_option)
+        prepare_dynamic_sub_list(customer, chat_bot_option, message)
       else
         message + get_option_answer(chat_bot_option, false)
       end
@@ -65,7 +65,7 @@ module ChatBots
     # Setea la respuesta del endpoint en caso de que la opcion tenga dicha accion.
     # Si el parametro concat_answer_type es 'success', toma la respuesta de exito.
     # Si el parametro concat_answer_type es 'failed', toma la respuesta de fallo.
-    def set_text_from_response(chat_bot_option, customer, concat_answer_type)
+    def set_text_from_response(chat_bot_option, customer, concat_answer_type, from_option)
       @response = search_response(chat_bot_option, customer, concat_answer_type)
 
       message = if @response.present?
@@ -76,9 +76,14 @@ module ChatBots
                   customer.endpoint_failed_response.message
                 end
 
-      return '' unless message.present?
+      if from_option.present? && chat_bot_option.id != from_option.id
+        from_option_response = customer.customer_bot_responses
+          .where(chat_bot_option_id: from_option.id, status: concat_answer_type).first&.response
 
-      chat_bot_option.option_type != 'decision' ? message + "\n\n" : message
+        message = from_option_response.message + "\n\n" + message if from_option_response.present?
+      end
+
+      message.present? ? message + "\n\n" : ''
     end
 
     # Setea el mensaje de salida del bot, dependiendo si fue por intentos fallidos o no.
@@ -103,9 +108,9 @@ module ChatBots
     end
 
     # Se encarga de formar el mensaje con toda la informacion necesaria.
-    def option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type)
+    def option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type, from_option)
       # inicializa el mensaje a enviar
-      message = set_text_from_response(chat_bot_option, customer, concat_answer_type)
+      message = set_text_from_response(chat_bot_option, customer, concat_answer_type, from_option)
 
       # Si no se esta saliendo del bot, ya sea por ejecucion o por intentos fallidos.
       if get_out == false && error_exit == false
@@ -145,6 +150,8 @@ module ChatBots
 
         if chat_bot_option.option_type == 'form' || (chat_bot_option.option_type == 'decision' &&
           !chat_bot_option.execute_endpoint?)
+          return if chat_bot_option.ancestry.blank?
+
           ancestor_ids = chat_bot_option.ancestry.split('/')
           responses.where('chat_bot_option_id IN (?) AND chat_bot_option_id < ? AND status = ?', ancestor_ids,
             chat_bot_option.id, CustomerBotResponse.statuses[concat_answer_type]).first&.response
@@ -156,6 +163,8 @@ module ChatBots
         customer.customer_bot_responses
           .where(chat_bot_option_id: chat_bot_option.id, status: concat_answer_type).first&.response
       elsif chat_bot_option.parent&.execute_endpoint?
+        return if chat_bot_option.ancestry.blank?
+
         ancestor_ids = chat_bot_option.ancestry.split('/')
         customer.customer_bot_responses.order(chat_bot_option_id: :desc)
           .where('chat_bot_option_id IN (?) AND chat_bot_option_id < ?', ancestor_ids, chat_bot_option.id)
