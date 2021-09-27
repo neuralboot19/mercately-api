@@ -152,4 +152,51 @@ en:
         total_chats_assigned: Total chats assigned
         total_assigned_chats_answered: Total assigned chats answered
         total_assigned_chats_without_replying: Total assigned chats without replying
-
+    settings:
+      quick_answers:
+        answer_created_successfully: Answer created successfully
+        answer_updated_successfully: Answer updated successfully
+        answer_removed_successfully: Answer removed successfully
+        not_have_permissions_on_answer: You do not have permissions on the answer
+        list:
+          page_title: Quick answers
+          description: Quick answer list
+          create_answer: Create answer
+          type: Type
+          usability: Usability
+          image_with_caption: Image with caption
+          text: Text
+          global: Global
+          personal: Personal
+        new:
+          create_answer: Create answer
+        edit:
+          edit_answer: Edit answer
+          view_answer: View answer
+        show:
+          quick_answer: Quick Answer
+          description: Answer information
+        form:
+          description: Answer information
+          select_image: Select image
+          texto_of_answer: Text of answer
+          alert_global_answer_question: Global answer can be sent by all agents. Those that are not, can only be sent and modified by the agent who created them.
+          mercado_libre_question: MercadoLibre Questions
+          note_mercado_libre_question: 'Note: For questions, do not include contact information, such as phone numbers, exact addresses, or personal names.'
+          mercado_libre_messages: MercadoLibre Messages
+        common:
+          title: Title
+          content: Content
+          platforms: Platforms
+          image: Image
+          global_answer_question: is global answer?
+          confirm_remove_text: Are you sure to delete the answer?
+  buttons:
+    back: Back
+    edit: Edit
+    remove: Remove
+    save: Save
+  actions:
+    view: View
+    edit: Edit
+    remove: Remove

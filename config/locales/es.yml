@@ -484,6 +484,51 @@ es:
         total_chats_assigned: Total de chats asignados
         total_assigned_chats_answered: Total de chats asignados respondidos
         total_assigned_chats_without_replying: Total de chats asignados sin responder
-
-
-  
+    settings:
+      quick_answers:
+        answer_created_successfully: Respuesta creada con éxito
+        answer_updated_successfully: Respuesta actualizada con éxito
+        answer_removed_successfully: Respuesta eliminada con éxito
+        not_have_permissions_on_answer: No tienes permisos sobre la respuesta
+        list:
+          page_title: Respuestas Rápidas
+          description: Lista de respuestas rápidas
+          create_answer: Crear respuesta
+          type: Tipo
+          usability: Usabilidad
+          image_with_caption: Imagen con descripción
+          text: Texto
+          global: Global
+          personal: Personal
+        new:
+          create_answer: Crear respuesta
+        edit:
+          edit_answer: Editar respuesta
+          view_answer: Ver respuesta
+        show:
+          quick_answer: Respuesta rápida
+          description: Información de la respuesta
+        form:
+          description: Información de la respuesta
+          select_image: Seleccionar imagen
+          texto_of_answer: Texto de respuesta
+          alert_global_answer_question: Las respuestas globales pueden ser enviadas por todos los agentes. Las que no lo son, solo pueden ser enviadas y modificadas por el agente que las creó.
+          mercado_libre_question: Preguntas de MercadoLibre
+          note_mercado_libre_question: 'Nota: Para preguntas, no se debe incluir información de contacto, como teléfonos, direcciones exactas o nombres personales'
+          mercado_libre_messages: Mensajes de MercadoLibre
+        common:
+          title: Título
+          content: Contenido
+          platforms: Plataformas
+          image: Imagen
+          global_answer_question: ¿Respuesta global?
+          confirm_remove_text: ¿Estás seguro de eliminar la respuesta?
+  buttons:
+    back: Volver
+    edit: Editar
+    remove: Eliminar
+    save: Guardar
+  actions:
+    view: Ver
+    edit: Editar
+    remove: Eliminar

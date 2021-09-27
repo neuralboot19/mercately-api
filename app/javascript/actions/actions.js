@@ -285,6 +285,36 @@ export const getMessengerFastAnswers = (page = 1, params) => {
   };
 };
 
+export const getInstagramFastAnswers = (page = 1, params) => {
+  let endpoint = `/api/v1/fast_answers_for_instagram?page=${page}`;
+
+  if (params !== '' && params !== undefined) {
+    endpoint += `&search=${params}`;
+  }
+
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      }
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: "SET_INSTAGRAM_FAST_ANSWERS", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      ).catch((error) => {
+        if (error.response) {
+          alert(error.response);
+        } else {
+          alert("An unexpected error occurred.");
+        }
+      });
+  };
+};
+
 export const getProducts = (page = 1, params) => {
   let endpoint = `/api/v1/products?page=${page}`;
 

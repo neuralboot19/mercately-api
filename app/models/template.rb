@@ -13,6 +13,7 @@ class Template < ApplicationRecord
   scope :for_chats, -> { where(enable_for_chats: true) }
   scope :for_messenger, -> { where(enable_for_messenger: true) }
   scope :for_whatsapp, -> { where(enable_for_whatsapp: true) }
+  scope :for_instagram, -> { where(enable_for_instagram: true) }
   scope :owned, -> (creator_id) { where('retailer_user_id = ? OR retailer_user_id IS NULL', creator_id) }
   scope :owned_and_filtered, -> (search, creator_id) { where('title ILIKE ?' \
     ' OR answer ILIKE ?', "%#{search}%", "%#{search}%").where('retailer_user_id = ?' \

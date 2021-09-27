@@ -16,6 +16,10 @@ FactoryBot.define do
       enable_for_messenger { true }
     end
 
+    trait :for_instagram do
+      enable_for_instagram { true }
+    end
+
     trait :for_whatsapp do
       enable_for_whatsapp { true }
     end

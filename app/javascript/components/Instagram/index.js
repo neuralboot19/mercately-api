@@ -228,7 +228,7 @@ class Instagram extends Component {
             this.state.showFastAnswers &&
               <div className="col-xs-12 col-md-3 no-padding-xs">
                 <FastAnswers
-                  chatType='facebook'
+                  chatType='instagram'
                   changeFastAnswer={this.changeFastAnswer}
                   toggleFastAnswers={this.toggleFastAnswers}
                   onMobile={this.state.onMobile}

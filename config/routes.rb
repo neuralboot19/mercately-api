@@ -261,6 +261,7 @@ Rails.application.routes.draw do
       get 'fast_answers_for_messenger', to: 'customers#fast_answers_for_messenger'
       patch 'accept_optin_for_whatsapp/:id', to: 'customers#accept_opt_in',  as: :accept_optin_for_whatsapp
       get 'fast_answers_for_whatsapp', to: 'karix_whatsapp#fast_answers_for_whatsapp'
+      get 'fast_answers_for_instagram', to: 'customers#fast_answers_for_instagram'
 
       get 'customers/:id/selectable_tags', to: 'customers#selectable_tags', as: :selectable_tags
       post 'customers/:id/add_customer_tag', to: 'customers#add_customer_tag', as: :add_customer_tag
