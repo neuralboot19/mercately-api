@@ -88,6 +88,21 @@ In order to use the Messenger integration in development mode, you need to follo
 - You have to grant all permissions solicited in the modal shown, so your Facebook App could be properly managed (select only one page in the modals shown in this step). Your config should look like this:
 ![Your config should look like this](https://i.imgur.com/KPp7Z21.png)
 
+#### Instagram
+
+- You must have a real FB account, connected with IG and the IG user name needs to start with `test_`, example: `test_dani777`
+- Setup a IG business account with this IG account
+- The same Facebook page must be selected (which one you integrated Messenger) to link the IG business account
+
+- Go to 'Instagram settings' on Messenger config
+- The callback URL must be `https://your-ngrok-id.ngrok.io/retailers/messenger_callbacks` and the verification token can be the same than Messenger at the `.env`
+- Webhooks subscriptions:
+![imagen](https://user-images.githubusercontent.com/20261354/128394645-e122fc63-7071-4cca-843e-7ac5bbca7d22.png)
+- All versions should be v5.0, since thats the version which Messenger is working
+![imagen](https://user-images.githubusercontent.com/20261354/128395101-691cc616-ebca-4b99-9672-97c94b6972c9.png)
+- To confirm the webhook subscription go to `webhooks`, change to Instagram and verify
+![imagen](https://user-images.githubusercontent.com/20261354/128395410-66dbda32-652e-407b-86a3-9800cfb4a46f.png)
+
 #### Create ML test users
 A real ML account has some limitations like:
 - Your products can be bought
