@@ -3,20 +3,20 @@
     <div class="container-fluid index">
       <div class="row middle-xs">
         <div class="col-xs-12 col-sm-4">
-          <h1 class="d-inline name">Respuesta Rápida</h1>
+          <h1 class="d-inline name"><%= t('retailer.settings.quick_answers.show.quick_answer') %></h1>
         </div>
         <div class="col-xs-12 col-md-8 mt-16 t-right button-sm-and-down">
           <%= link_to retailers_templates_path, class: 'btn btn--cta' do %>
             <i class="fas fa-arrow-left mr-5"></i>
-            Volver
+            <%= t('buttons.back') %>
           <% end %>
           <%= link_to edit_retailers_template_path(current_retailer, @template), class: 'btn btn--cta' do %>
             <i class="far fa-edit mr-5"></i>
-            Editar
+            <%= t('buttons.edit') %>
           <% end %>
-          <%= link_to retailers_template_path(current_retailer, @template), method: :delete, data: { confirm: 'Estás seguro de eliminar la respuesta?' }, class: 'btn btn--destroy' do %>
+          <%= link_to retailers_template_path(current_retailer, @template), method: :delete, data: { confirm: t('retailer.settings.quick_answers.common.confirm_remove_text') }, class: 'btn btn--destroy' do %>
             <i class="far fa-trash-alt mr-5"></i>
-            Eliminar
+            <%= t('buttons.remove') %>
           <% end %>
         </div>
       </div>
@@ -25,27 +25,30 @@
       <div class="row">
         <div class="col-xs-12">
           <fieldset class="fieldset mt-16">
-            <legend>Información de la respuesta</legend>
+            <legend><%= t('retailer.settings.quick_answers.show.description') %></legend>
             <div class="box pt-25">
               <div class="row">
                 <div class="col-xs-12 col-sm-3">
                   <p>
-                    <label class="c-grey fs-14">Título:</label><br /><span class="c-secondary fs-14"><%= @template.title %></span>
+                    <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.title') %>:</label><br /><span class="c-secondary fs-14"><%= @template.title %></span>
                   </p>
                 </div>
                 <div class="col-xs-12 col-sm-6">
                   <p>
-                    <label class="c-grey fs-14">Contenido:</label><br /><span class="c-secondary fs-14"><%= @template.answer %></span>
+                    <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.content') %>:</label><br /><span class="c-secondary fs-14"><%= @template.answer %></span>
                   </p>
                 </div>
                 <div class="col-xs-12 col-sm-3">
                   <p>
-                    <label class="c-grey fs-14">Plataformas:</label><br />
+                    <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.platforms') %>:</label><br />
                     <% if @template.enable_for_whatsapp %>
-                      <span class="mr-10 c-secondary"><i class="fab fa-whatsapp fs-27"></i></span>
+                      <span class="mr-10 c-secondary"><i class="fab fa-whatsapp fs-27" title="Whatsapp"></i></span>
                     <% end %>
                     <% if @template.enable_for_messenger %>
-                      <span class="mr-10 c-secondary"><i class="fab fa-facebook-messenger fs-25"></i></span>
+                      <span class="mr-10 c-secondary"><i class="fab fa-facebook-messenger fs-25" title="Facebook"></i></span>
+                    <% end %>
+                    <% if @template.enable_for_instagram %>
+                      <span class="mr-10 c-secondary"><i class="fab fa-instagram fs-25" title="Instagram"></i></span>
                     <% end %>
                     <% if @template.enable_for_questions || @template.enable_for_chats %>
                       <span class="mr-10"><%= image_tag 'dashboard/ml_logo.png', class: 'w-30 h-23' %></span>
@@ -53,14 +56,14 @@
                   </p>
                 </div>
                 <div class="col-xs-12 col-sm-3">
-                  <label class="c-grey fs-14">Imagen:</label><br /><br />
+                  <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.image') %>:</label><br /><br />
                   <% if @template.image.attached? %>
                     <%= cl_image_tag("#{@template.image.key}", width: 200, height: 200) %>
                   <% end %>
                 </div>
                 <% if @template.retailer_user_id %>
                   <div class="col-xs-12 col-sm-3">
-                    <label class="c-grey fs-14">Respuesta global?:</label>
+                    <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.global_answer_question') %>:</label>
                     <span class="c-secondary fs-14"><%= @template.global ? 'Sí' : 'No' %><span>
                   </div>
                 <% end %>

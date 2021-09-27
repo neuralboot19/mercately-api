@@ -1305,24 +1305,52 @@ i {
 }
 
 .fast_answer_content {
-  background-color: #F4F5F7;
-  border: 1px solid #F4F5F7;
-  border-radius: 5px;
+  background-color: #F7F8FD;
+  border: 1px solid #ddd;
+  border-radius: 10px;
   padding: 10px;
+  margin-top: 10px;
   margin-bottom: 10px;
 
   &:hover {
-    background-color: #eee;
+    border: 1px solid #3CAAE1;
+    .fa-check-circle {
+      color:#3CAAE1;
+    }
+    cursor: pointer;
   }
 
   .select_answer {
     cursor: pointer;
     font-size: 12px;
-    margin-bottom: 5px;
 
     &:hover {
       text-decoration: underline;
     }
+    .check-icon {
+      font-size: 1.5em;
+    }
+  }
+  .container-answer-title {
+    display: flex;
+    justify-content: space-between;
+    .answer-title {
+      font-size: 12px;
+      font-weight: 600;
+      padding-top: 5px;
+    }
+  }
+
+  .container-answer-description {
+    display: flex;
+    flex-direction: column;
+  }
+  .image-answer-description {
+    display: flex;
+    margin-bottom: 5px;
+  }
+  .text-answer-description {
+    align-items: flex-start;
   }
 }
 

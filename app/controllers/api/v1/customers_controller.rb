@@ -4,7 +4,7 @@ class Api::V1::CustomersController < Api::ApiController
   include ActionView::Helpers::TextHelper
   before_action :sanitize_params, only: [:update]
   before_action :set_klass, only: %i[create_message send_img set_message_as_read]
-  before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger, :search_customers]
+  before_action :set_customer, except: [:index, :set_message_as_read, :fast_answers_for_messenger, :fast_answers_for_instagram, :search_customers]
 
   def index
     @platform = params[:platform].presence || 'messenger'
@@ -139,6 +139,14 @@ class Api::V1::CustomersController < Api::ApiController
   # Filtra las plantillas para messenger por titulo o respuesta
   def fast_answers_for_messenger
     templates = current_retailer.templates.for_messenger.owned_and_filtered(params[:search], current_retailer_user.id)
+      .page(params[:page])
+
+    serialized = Api::V1::TemplateSerializer.new(templates)
+    render status: 200, json: { templates: serialized, total_pages: templates.total_pages }
+  end
+
+  def fast_answers_for_instagram
+    templates = current_retailer.templates.for_instagram.owned_and_filtered(params[:search], current_retailer_user.id)
       .page(params[:page])
 
     serialized = Api::V1::TemplateSerializer.new(templates)

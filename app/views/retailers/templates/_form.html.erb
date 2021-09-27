@@ -4,23 +4,23 @@
       <div class="box">
         <div class="row">
           <fieldset class="col-xs-12 fieldset mt-16">
-            <legend>Información de la respuesta</legend>
+            <legend><%= t('retailer.settings.quick_answers.form.description') %></legend>
             <div class="mb-8 my-16">
-              <%= f.label :title, 'Título' %><br/>
+              <%= f.label :title, t('retailer.settings.quick_answers.common.title') %><br/>
               <%= f.text_field :title, class: 'input validate-required', maxlength: '60' %>
               <i class="validation-msg"></i>
             </div>
             <div class="mb-8 my-16">
-              <%= f.label :answer, 'Contenido' %>
-              <%= f.text_area :answer, placeholder: 'Texto de respuesta', class: 'input h-77' %>
+              <%= f.label :answer, t('retailer.settings.quick_answers.common.content') %>
+              <%= f.text_area :answer, placeholder: t('retailer.settings.quick_answers.form.texto_of_answer'), class: 'input h-77' %>
             </div>
             <div class="row">
               <div class="mb-8 my-16 col-xs-12 col-sm-6 p-0">
-                <%= f.label :answer, 'Imagen' %><br/>
+                <%= f.label :answer, t('retailer.settings.quick_answers.common.image') %><br/>
                 <%= f.file_field :image, accept: 'image/jpg, image/jpeg, image/png', class: 'uploadedImages', onchange: "previewImage(this)" %><br/>
                 <label class='btn btn--cta' for="template_image">
                   <i class="fas fa-upload mr-5"></i>
-                  Seleccionar imagen
+                  <%= t('retailer.settings.quick_answers.form.select_image') %>
                 </label><br/><br/>
                 <div id="preview-container-image" class="p-relative w-200 d-none">
                   <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeImage()"></i>
@@ -39,15 +39,14 @@
                       <%= f.check_box :global, { 'class': 'input custom-checkbox' } %>
                     </div>
                     <div>
-                      <%= f.label :global, 'Respuesta global?' %>
+                      <%= f.label :global, t('retailer.settings.quick_answers.common.global_answer_question') %>
                     </div>
                   </div>
-                  <p class="note-archived"><i>Las respuestas globales pueden ser enviadas por todos los agentes.
-                  Las que no lo son, sólo pueden ser enviadas y modificadas por el agente que las creó.</i></p>
+                  <p class="note-archived"><i><%= t('retailer.settings.quick_answers.form.alert_global_answer_question') %></i></p>
                 </div>
               <% end %>
             </div>
-            <%= f.label 'Plataformas' %>
+            <%= f.label t('retailer.settings.quick_answers.common.platforms') %>
             <div class="row">
               <% if current_retailer.whats_app_enabled %>
                 <div class="mb-8 my-16 col-xs-12 col-sm-6">
@@ -61,7 +60,7 @@
                   </div>
                 </div>
               <% end %>
-              <% if current_retailer.facebook_retailer %>
+              <% if current_retailer.facebook_retailer&.connected? %>
                 <div class="mb-8 my-16 col-xs-12 col-sm-6">
                   <div class="d-inline-flex">
                     <div>
@@ -74,6 +73,34 @@
                 </div>
               <% end %>
             </div>
+
+            <div class="row">
+              <% if current_retailer.facebook_retailer&.instagram_integrated? %>
+                <div class="mb-8 my-16 col-xs-12 col-sm-6">
+                  <div class="d-inline-flex">
+                    <div>
+                      <%= f.check_box :enable_for_instagram, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_instagram } %>
+                    </div>
+                    <div>
+                      <%= f.label :enable_for_instagram, 'Instagram' %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              <% if current_retailer.meli_retailer %>
+                <div class="mb-8 my-16 col-xs-12 col-sm-6">
+                  <div class="d-inline-flex">
+                    <div>
+                      <%= f.check_box :enable_for_chats, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_chats } %>
+                    </div>
+                    <div>
+                      <%= f.label :enable_for_chats, t('retailer.settings.quick_answers.form.mercado_libre_messages'), class: 'p-static' %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+
             <% if current_retailer.meli_retailer %>
               <div class="row">
                 <div class="mb-8 my-16 col-xs-12 col-sm-6">
@@ -82,26 +109,16 @@
                       <%= f.check_box :enable_for_questions, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_questions } %>
                     </div>
                     <div>
-                      <%= f.label :enable_for_questions, 'Preguntas de MercadoLibre' %>
+                      <%= f.label :enable_for_questions, t('retailer.settings.quick_answers.form.mercado_libre_question') %>
                     </div>
                   </div>
-                  <p class="note-archived"><i>Nota: Para preguntas, no se debe incluir información de contacto, como teléfonos, 
-                  direcciones exactas o nombres personales</i></p>
-                </div>
-                <div class="mb-8 my-16 col-xs-12 col-sm-6">
-                  <div class="d-inline-flex">
-                    <div>
-                      <%= f.check_box :enable_for_chats, { 'class': 'input custom-checkbox', 'checked': @template.new_record? ? true : @template.enable_for_chats } %>
-                    </div>
-                    <div>
-                      <%= f.label :enable_for_chats, 'Mensajes de MercadoLibre', class: 'p-static' %>
-                    </div>
-                  </div>
+                  <p class="note-archived"><i><%= t('retailer.settings.quick_answers.form.note_mercado_libre_question') %></i></p>
                 </div>
               </div>
             <% end %>
+
             <div class="btn-box col-xs-12">
-              <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+              <%= f.submit t('buttons.save'), class: 'btn-btn btn-submit', data: { disable_with: false } %>
             </div>
           </fieldset>
         </div>
