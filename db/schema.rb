@@ -613,6 +613,14 @@ ActiveRecord::Schema.define(version: 2021_09_17_133104) do
     t.index ["retailer_id"], name: "index_hubspot_fields_on_retailer_id"
   end
 
+  create_table "import_contacts_loggers", force: :cascade do |t|
+    t.integer "retailer_user_id"
+    t.integer "retailer_id"
+    t.string "original_file_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "instagram_messages", force: :cascade do |t|
     t.string "sender_uid"
     t.string "id_client"
