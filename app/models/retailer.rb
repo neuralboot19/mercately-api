@@ -219,6 +219,14 @@ class Retailer < ApplicationRecord
     automatic_answers.find_by(platform: :messenger, message_type: :inactive_customer, status: :active)
   end
 
+  def instagram_welcome_message
+    automatic_answers.find_by(platform: :instagram, message_type: :new_customer, status: :active)
+  end
+
+  def instagram_inactive_message
+    automatic_answers.find_by(platform: :instagram, message_type: :inactive_customer, status: :active)
+  end
+
   def retailer_user_connected_to_fb
     retailer_users.where.not(uid: nil, provider: nil, facebook_access_token: nil).first
   end

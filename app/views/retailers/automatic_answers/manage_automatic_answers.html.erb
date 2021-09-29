@@ -3,7 +3,7 @@
     <div class="container-fluid index">
       <div class="row">
         <div class="col-xs-12 mb-20">
-          <h1 class="d-inline index__title">Mensajes de Bienvenida</h1>
+          <h1 class="d-inline index__title"><%= t('retailer.settings.welcome_messages.title') %></h1>
           <div class="index__desc">
           </div>
         </div>
@@ -17,9 +17,14 @@
                     <%= link_to 'WhatsApp', retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp') %>
                   </div>
                 <% end %>
-                <% if current_retailer.facebook_retailer %>
+                <% if current_retailer.facebook_retailer&.connected? %>
                   <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>">
                     <%= link_to 'Messenger', retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger') %>
+                  </div>
+                <% end %>
+                <% if current_retailer.facebook_retailer&.instagram_integrated %>
+                  <div class="worm__btn <%= 'worm__btn--selected' if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'instagram')) %>">
+                    <%= link_to 'Instagram', retailers_manage_automatic_answers_path(current_retailer, platform: 'instagram') %>
                   </div>
                 <% end %>
               </div>
@@ -33,26 +38,28 @@
               <div class="box">
                 <div class="row">
                   <fieldset class="col-xs-12 fieldset mt-16">
-                    <legend>Mensaje para clientes nuevos</legend>
+                    <legend><%= t('retailer.settings.welcome_messages.messages_for_new_clients') %></legend>
                     <% if current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp')) %>
                       <%= f.hidden_field :platform, value: :whatsapp %>
                     <% elsif current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>
                       <%= f.hidden_field :platform, value: :messenger %>
+                    <% elsif current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'instagram')) %>
+                      <%= f.hidden_field :platform, value: :instagram %>
                     <% end %>
                     <%= f.hidden_field :message_type, value: :new_customer %>
                     <div class="col-xs-12 col-sm-3 mb-8 my-16">
-                      <%= f.label :status, 'Estado' %><br/>
+                      <%= f.label :status, t('retailer.settings.welcome_messages.status') %><br/>
                       <%= f.select :status, AutomaticAnswer.statuses.keys.collect { |c| [ AutomaticAnswer.enum_translation(:status, c), c ]}, {}, { class: 'input' } %>
                     </div>
                     <div class="col-xs-12 col-sm-6 mb-8 my-16">
-                      <%= f.label :message, 'Texto' %>
-                      <%= f.text_area :message, placeholder: 'Texto del mensaje', class: 'input h-77' %>
+                      <%= f.label :message, t('retailer.settings.welcome_messages.text') %>
+                      <%= f.text_area :message, placeholder: t('retailer.settings.welcome_messages.message_text'), class: 'input h-77' %>
                       <i class="validation-msg"></i>
                     </div>
                   </div>
                 </div>
                 <div class="col-xs-12">
-                  <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+                  <%= f.submit t('buttons.save'), class: 'btn-btn btn-submit' %>
                 </div>
               </div>
             <% end %>
@@ -69,28 +76,30 @@
                       <%= f.hidden_field :platform, value: :whatsapp %>
                     <% elsif current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger')) %>
                       <%= f.hidden_field :platform, value: :messenger %>
+                    <% elsif current_page? (retailers_manage_automatic_answers_path(current_retailer, platform: 'instagram')) %>
+                      <%= f.hidden_field :platform, value: :instagram %>
                     <% end %>
                     <%= f.hidden_field :message_type, value: :inactive_customer %>
-                    <legend>Mensaje para clientes inactivos</legend>
+                    <legend><%= t('retailer.settings.welcome_messages.messages_for_inactived_clients') %></legend>
                     <div class="row">
                       <div class="col-xs-12 col-sm-3 mb-8 my-16">
-                        <%= f.label :status, 'Estado' %><br/>
+                        <%= f.label :status, t('retailer.settings.welcome_messages.status') %><br/>
                         <%= f.select :status, AutomaticAnswer.statuses.keys.collect { |c| [ AutomaticAnswer.enum_translation(:status, c), c ]}, {}, { class: 'input' } %>
                       </div>
                       <div class="col-xs-12 col-sm-3 mb-8 my-16">
-                        <%= f.label :interval, 'Tiempo de inactividad' %><br/>
+                        <%= f.label :interval, t('retailer.settings.welcome_messages.inactivity_time') %><br/>
                         <%= f.select :interval, AutomaticAnswer::INTERVALS, { class: 'input' } %>
                       </div>
                     </div>
                     <div class="col-xs-12 col-sm-6 mb-8 my-16">
-                      <%= f.label :message, 'Texto' %>
-                      <%= f.text_area :message, placeholder: 'Texto del mensaje', class: 'input h-77' %>
+                      <%= f.label :message, t('retailer.settings.welcome_messages.text') %>
+                      <%= f.text_area :message, placeholder: t('retailer.settings.welcome_messages.message_text'), class: 'input h-77' %>
                       <i class="validation-msg"></i>
                     </div>
                   </div>
                 </div>
                 <div class="col-xs-12">
-                  <%= f.submit 'Guardar', class: 'btn-btn btn-submit' %>
+                  <%= f.submit t('buttons.save'), class: 'btn-btn btn-submit' %>
                 </div>
               </div>
             <% end %>

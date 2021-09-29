@@ -20,5 +20,9 @@ FactoryBot.define do
     trait :messenger do
       platform { 'messenger' }
     end
+
+    trait :instagram do
+      platform { 'instagram' }
+    end
   end
 end
