@@ -23,14 +23,14 @@
           <div class="row">
             <%= form_tag "/retailers/#{current_retailer.slug}/calendar_events/:id", id: 'edit_event', class: 'validate-form col-xs-12 p-0' do %>
               <%= render 'layouts/calendar/event_fields', cache: true, id: '_edit' %>
-              <div class="my-16 box">
+              <div class="my-16 container">
                 <div class="row">
-                  <div class="col-xs-6 col-md-6">
+                  <div class="col-6 col-md-6">
                     <button id="delete_event" data-action="/retailers/<%= current_retailer.slug %>/calendar_events/:id" class="btn-btn btn-submit btn-primary-style bg-red">
                       Borrar
                     </button>
                   </div>
-                  <div class="t-right col-xs-6 col-md-6">
+                  <div class="t-right col-6 col-md-6">
                     <%= submit_tag 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
                   </div>
                 </div>
