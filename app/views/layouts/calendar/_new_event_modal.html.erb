@@ -19,14 +19,17 @@
               </div>
             </div>
           </div>
-          <div class="divider"></div>
-          <div class="row">
-            <%= form_tag retailers_calendar_events_path(current_retailer), id: 'new_event', class: 'validate-form col-xs-12 p-0' do %>
-              <%= render 'layouts/calendar/event_fields', cache: true %>
-              <div class="my-16 t-right">
-                <%= submit_tag 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
-              </div>
-            <% end %>
+          <div class="divider my-0"></div>
+
+          <div class="container">
+            <div class="row">
+              <%= form_tag retailers_calendar_events_path(current_retailer), id: 'new_event', class: 'validate-form w-100 p-0' do %>
+                <%= render 'layouts/calendar/event_fields', cache: true %>
+                <div class="my-16 t-right">
+                  <%= submit_tag 'Guardar', class: 'btn-btn btn-submit btn-primary-style', data: { disable_with: false } %>
+                </div>
+              <% end %>
+            </div>
           </div>
         </div>
       </div>

@@ -148,7 +148,7 @@ module Whatsapp::Gupshup::V1
         true
       rescue StandardError => e
         Rails.logger.error(e)
-        SlackError.send_error(e)
+        # SlackError.send_error(e)
         false
       end
 

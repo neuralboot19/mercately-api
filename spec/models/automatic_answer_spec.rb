@@ -16,6 +16,6 @@ RSpec.describe AutomaticAnswer, type: :model do
   describe 'enums' do
     it { is_expected.to define_enum_for(:status).with_values(%i[active inactive]) }
     it { is_expected.to define_enum_for(:message_type).with_values(%i[new_customer inactive_customer]) }
-    it { is_expected.to define_enum_for(:platform).with_values(%i[whatsapp messenger]) }
+    it { is_expected.to define_enum_for(:platform).with_values(%i[whatsapp messenger instagram]) }
   end
 end

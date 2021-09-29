@@ -473,6 +473,42 @@ RSpec.describe Retailer, type: :model do
     end
   end
 
+  describe '#instagram_welcome_message' do
+    subject(:retailer) { create(:retailer) }
+
+    context 'when the retailer has a instagram active welcome message configured' do
+      let!(:welcome_message) { create(:automatic_answer, :welcome, :instagram, retailer: retailer) }
+
+      it 'returns it' do
+        expect(retailer.instagram_welcome_message).to be_an_instance_of(AutomaticAnswer)
+      end
+    end
+
+    context 'when the retailer does not have a instagram active welcome message configured' do
+      it 'returns nil' do
+        expect(retailer.instagram_welcome_message).to be nil
+      end
+    end
+  end
+
+  describe '#instagram_inactive_message' do
+    subject(:retailer) { create(:retailer) }
+
+    context 'when the retailer has a instagram inactive message configured' do
+      let!(:inactive_message) { create(:automatic_answer, :inactive, :instagram, retailer: retailer) }
+
+      it 'returns it' do
+        expect(retailer.instagram_inactive_message).to be_an_instance_of(AutomaticAnswer)
+      end
+    end
+
+    context 'when the retailer does not have a instagram inactive message configured' do
+      it 'returns nil' do
+        expect(retailer.instagram_inactive_message).to be nil
+      end
+    end
+  end
+
   describe '#retailer_user_connected_to_fb' do
     let(:retailer) { create(:retailer) }
     let!(:retailer_user) { create(:retailer_user, retailer: retailer) }

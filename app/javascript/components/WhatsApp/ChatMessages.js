@@ -816,7 +816,7 @@ class ChatMessages extends Component {
         }
       } else if (!fromSelector) {
         const text = clipboard.getData('text/plain');
-        document.execCommand('insertText', false, text);
+        e.target.innerText = text;
       }
     }
   }
