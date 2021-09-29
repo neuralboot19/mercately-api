@@ -496,11 +496,9 @@ class ChatMessages extends Component {
         } else {
           alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
         }
-      } else {
-        if (!fromSelector) {
-          var text = clipboard.getData('text/plain');
-          document.execCommand('insertText', false, text);
-        }
+      } else if (!fromSelector) {
+        const text = clipboard.getData('text/plain');
+        e.target.innerText = text;
       }
     }
   }
