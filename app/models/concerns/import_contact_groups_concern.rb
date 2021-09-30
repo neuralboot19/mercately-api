@@ -23,11 +23,12 @@ module ImportContactGroupsConcern
       final_file = parsed_file(file)
 
       if final_file
+        final_name = "import-groups-#{retailer_user.id}-#{file&.original_filename}-#{DateTime.now}"
         file_type = file.content_type
         name = if file_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                 "import-file-#{retailer_user.id}.xlsx"
+                 "#{final_name}.xlsx"
                else
-                 "import-file-#{retailer_user.id}.csv"
+                 "#{final_name}.csv"
                end
 
         File.open(Rails.root.join('public', name), 'wb') do |f|
@@ -37,6 +38,12 @@ module ImportContactGroupsConcern
             end
           end
         end
+
+        ImportContactsLogger.create(
+          retailer_user_id: retailer_user.id,
+          retailer_id: retailer_user.retailer.id,
+          original_file_name: file&.original_filename
+        )
 
         ContactGroups::ImportJob.perform_later(name, retailer_user.id, file_type, record_name, id)
         { body: nil, status: :ok }
