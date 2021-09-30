@@ -1161,6 +1161,20 @@ ActiveRecord::Schema.define(version: 2021_09_17_133104) do
     t.index ["retailer_id"], name: "index_top_ups_on_retailer_id"
   end
 
+  create_table "whatsapp_logs", force: :cascade do |t|
+    t.jsonb "payload_sent"
+    t.jsonb "response"
+    t.string "error_message"
+    t.string "gupshup_message_id"
+    t.bigint "gupshup_whatsapp_message_id"
+    t.bigint "retailer_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["gupshup_message_id"], name: "index_whatsapp_logs_on_gupshup_message_id"
+    t.index ["gupshup_whatsapp_message_id"], name: "index_whatsapp_logs_on_gupshup_whatsapp_message_id"
+    t.index ["retailer_id"], name: "index_whatsapp_logs_on_retailer_id"
+  end
+
   create_table "whatsapp_templates", force: :cascade do |t|
     t.bigint "retailer_id"
     t.text "text", default: ""
@@ -1213,4 +1227,6 @@ ActiveRecord::Schema.define(version: 2021_09_17_133104) do
   add_foreign_key "paymentez_transactions", "paymentez_credit_cards"
   add_foreign_key "paymentez_transactions", "retailers"
   add_foreign_key "questions", "products"
+  add_foreign_key "whatsapp_logs", "gupshup_whatsapp_messages"
+  add_foreign_key "whatsapp_logs", "retailers"
 end

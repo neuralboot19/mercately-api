@@ -20,11 +20,22 @@ module Whatsapp::Gupshup::V1
 
       # Find the message by its GupShup Message Id
       gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(event_id)
-      raise StandardError.new("El mensaje ID #{event_id} no fue encontrado") unless gwm.present?
+      if gwm.blank?
+        error_msg = "El mensaje ID #{event_id} no fue encontrado"
+        WhatsappLog.create(error_message: error_msg, response: params, retailer: @retailer, gupshup_message_id: event_id)
+        SlackError.send_error(error_msg)
+        raise StandardError, error_msg
+      end
 
       # Store the message as :failed
       gwm.status = :error
       gwm.error_payload = params
+      WhatsappLog.create(
+        response: params,
+        gupshup_whatsapp_message: gwm,
+        retailer: @retailer,
+        gupshup_message_id: event_id
+      )
 
       gwm.with_advisory_lock(gwm.to_global_id.to_s) do
         gwm.save!
@@ -32,6 +43,10 @@ module Whatsapp::Gupshup::V1
         # Broadcast to the proper chat
         broadcast(gwm)
       end
+    rescue StandardError => e
+      Rails.logger.error(e)
+      SlackError.send_error(e)
+      Raven.capture_exception(e)
     end
 
     private
