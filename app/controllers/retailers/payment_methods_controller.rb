@@ -1,20 +1,16 @@
 class Retailers::PaymentMethodsController < RetailersController
-  before_action :load_stripe_api_key
-
   def create_setup_intent
     retailer = Retailer.find_by(slug: params[:slug])
     payment_methods = PaymentMethod.find_by(retailer_id: retailer.id)
 
     id = if payment_methods.nil?
-      get_stripe_customer_id(retailer)
-    else
-      payload_data = JSON.parse(payment_methods.payment_payload)
-      payload_data['customer']
-    end
+           get_stripe_customer_id(retailer)
+         else
+           payload_data = JSON.parse(payment_methods.payment_payload)
+           payload_data['customer']
+         end
 
-    data = Stripe::SetupIntent.create(
-      customer: id
-    )
+    data = Stripe::SetupIntent.create(customer: id)
 
     render status: 200, json: { data: data.as_json }
   end
@@ -28,7 +24,7 @@ class Retailers::PaymentMethodsController < RetailersController
     end
 
     if pm.save
-      update_stripe_customer(stripe_pm['customer'],params['payment_method'])
+      update_stripe_customer(stripe_pm['customer'], params['payment_method'])
 
       flash[:notice] = 'Método de pago almacenado con éxito.'
       render status: 200, json: {
@@ -58,39 +54,32 @@ class Retailers::PaymentMethodsController < RetailersController
 
   private
 
-    def load_stripe_api_key
-      Stripe.api_key = ENV['STRIPE_SECRET']
-    end
-
     def get_stripe_customer_id(retailer)
-      customers_stripe = Stripe::Customer.list()
-      descrip = retailer.name
+      customers_stripe = Stripe::Customer.list
+      desc = retailer.name
       email = current_retailer_user.email
 
       customers_stripe.each do |customer|
-        if customer['email'] == email && customer['description'] == descrip
-          return customer['id']
-        end
+        return customer['id'] if customer['email'] == email && customer['description'] == desc
       end
 
-      customer = Stripe::Customer.create({
-        description: descrip,
+      customer = Stripe::Customer.create(
+        description: desc,
         email: email
-      })
+      )
 
       customer['id']
     end
 
-    def update_stripe_customer(customer_id, payment_method_id )
+    def update_stripe_customer(customer_id, payment_method_id)
       Stripe::Customer.update(
         customer_id,
-        {
-          'invoice_settings': {
-            'default_payment_method': payment_method_id,
-          },
+        invoice_settings: {
+          default_payment_method: payment_method_id
         }
       )
     rescue StandardError => e
+      Raven.capture_exception(e)
       raise e
     end
 end
