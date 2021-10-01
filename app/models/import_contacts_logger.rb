@@ -1,0 +1,4 @@
+class ImportContactsLogger < ApplicationRecord
+end
+
+
