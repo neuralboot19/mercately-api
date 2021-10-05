@@ -6,6 +6,7 @@ namespace :important_retailer_users do
 - Alimesa 741
 - Fajas la silueta 899
 - ShopiLove 857
+- Cencasit 886
 =end
   task update_unread_whatsapp_chats_count: :environment do
     # Admins y supervisores
@@ -18,7 +19,7 @@ namespace :important_retailer_users do
         AND customers.count_unread_messages > 0
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .where('retailer_users.retailer_admin = TRUE OR retailer_users.retailer_supervisor = TRUE')
       .update_all(update_admins_sql)
 
@@ -42,7 +43,7 @@ namespace :important_retailer_users do
         AND agent_customers.customer_id IS NULL
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .all_customers
       .where(retailer_admin: false, retailer_supervisor: false)
       .update_all(update_non_assigned_sql)
@@ -59,7 +60,7 @@ namespace :important_retailer_users do
         AND customers.count_unread_messages > 0
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .only_assigned_customers
       .update_all(update_only_assigned_sql)
   end
@@ -75,7 +76,7 @@ namespace :important_retailer_users do
         AND customers.count_unread_messages > 0
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .where('retailer_users.retailer_admin = TRUE OR retailer_users.retailer_supervisor = TRUE')
       .update_all(update_admins_sql)
 
@@ -99,7 +100,7 @@ namespace :important_retailer_users do
         AND agent_customers.customer_id IS NULL
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .all_customers
       .where(retailer_admin: false, retailer_supervisor: false)
       .update_all(update_non_assigned_sql)
@@ -116,7 +117,7 @@ namespace :important_retailer_users do
         AND customers.count_unread_messages > 0
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .only_assigned_customers
       .update_all(update_only_assigned_sql)
   end
@@ -132,7 +133,7 @@ namespace :important_retailer_users do
         AND customers.count_unread_messages > 0
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .where('retailer_users.retailer_admin = TRUE OR retailer_users.retailer_supervisor = TRUE')
       .update_all(update_admins_sql)
 
@@ -156,7 +157,7 @@ namespace :important_retailer_users do
         AND agent_customers.customer_id IS NULL
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .all_customers
       .where(retailer_admin: false, retailer_supervisor: false)
       .update_all(update_non_assigned_sql)
@@ -173,7 +174,7 @@ namespace :important_retailer_users do
         AND customers.count_unread_messages > 0
       )
     SQL
-    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857])
+    RetailerUser.where(removed_from_team: false).where(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .only_assigned_customers
       .update_all(update_only_assigned_sql)
   end

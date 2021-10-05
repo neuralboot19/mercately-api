@@ -6,6 +6,7 @@ namespace :not_important_retailer_users do
 - Alimesa 741
 - Fajas la silueta 899
 - ShopiLove 857
+- Cencasit 886
 =end
   task update_unread_whatsapp_chats_count: :environment do
     # Admins y supervisores
@@ -22,7 +23,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .where('retailer_users.retailer_admin = TRUE OR retailer_users.retailer_supervisor = TRUE')
       .update_all(update_admins_sql)
 
@@ -50,7 +51,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .all_customers
       .where(retailer_admin: false, retailer_supervisor: false)
       .update_all(update_non_assigned_sql)
@@ -71,7 +72,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .only_assigned_customers
       .update_all(update_only_assigned_sql)
   end
@@ -91,7 +92,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .where('retailer_users.retailer_admin = TRUE OR retailer_users.retailer_supervisor = TRUE')
       .update_all(update_admins_sql)
 
@@ -119,7 +120,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .all_customers
       .where(retailer_admin: false, retailer_supervisor: false)
       .update_all(update_non_assigned_sql)
@@ -140,7 +141,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .only_assigned_customers
       .update_all(update_only_assigned_sql)
   end
@@ -160,7 +161,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .where('retailer_users.retailer_admin = TRUE OR retailer_users.retailer_supervisor = TRUE')
       .update_all(update_admins_sql)
 
@@ -188,7 +189,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .all_customers
       .where(retailer_admin: false, retailer_supervisor: false)
       .update_all(update_non_assigned_sql)
@@ -209,7 +210,7 @@ namespace :not_important_retailer_users do
       .joins(retailer: :payment_plan)
       .where(payment_plans: { status: 0 })
       .where(removed_from_team: false)
-      .where.not(retailer_id: [845, 699, 595, 741, 899, 857])
+      .where.not(retailer_id: [845, 699, 595, 741, 899, 857, 886])
       .only_assigned_customers
       .update_all(update_only_assigned_sql)
   end
