@@ -1,24 +1,9 @@
-<div class="container-fluid reduced-container-padding mb-16">
-  <div class="card-to-replace">
-    <div class="container-fluid index">
-      <div class="row middle-xs">
-        <div class="col-xs-12 mb-15 p-0">
-          <%= link_to retailers_gs_templates_path(current_retailer, q: { 's': 'created_at desc' }), class: 'back-link' do %>
-            <i class="fas fa-caret-left mr-5"></i>
-            Plantillas de WhatsApp
-          <% end %>
-        </div>
-      </div>
-    </div>
-
-    <div class="container-fluid products">
-      <div class="row">
-        <div class="col-xs-12 p-0 form-container">
-          <h1 class="d-inline form-container_header-title">Crear plantilla</h1>
-          <%= render 'retailers/gs_templates/error_messages', resource: @gs_template %>
-          <%= render 'form', gs_template: @gs_template %>
-        </div>
-      </div>
-    </div>
-  </div>
+<div>
+<!-- Display a message if JS has been disabled on the browser. -->
+  <noscript>If you're seeing this message, that means
+    <strong>JavaScript has been disabled on your browser</strong>, please
+    <strong>enable JS</strong> to make this app work.
+  </noscript>
+  <%= javascript_packs_with_chunks_tag 'application' %>
+  <div id="react_content"></div>
 </div>

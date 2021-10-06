@@ -297,6 +297,7 @@ Rails.application.routes.draw do
       get 'notifications_list', to: 'agent_notifications#notifications_list'
 
       put 'change_chat_status', to: 'chats#change_chat_status'
+      resources :gs_templates, only: :create
     end
   end
 
