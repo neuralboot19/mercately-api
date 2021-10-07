@@ -1,10 +1,14 @@
 module Reminders
   class WhatsappTemplates
     def execute
-      current_time = Time.now
       # Busca todos los recordatorios cuyo status sea scheduled, y que esten en el rango de
       # la hora actual y un minuto luego.
-      Reminder.where(status: :scheduled, send_at_timezone: current_time..current_time + 1.minute).each do |r|
+      reminders = Reminder.scheduled.where(send_at_timezone: 2.minutes.ago..1.minute.from_now)
+      return unless reminders.exists?
+
+      reminder_ids = reminders.ids
+      reminders.update_all status: :processing
+      Reminder.where(id: reminder_ids).each do |r|
         unless r.retailer.positive_balance?(r.customer)
           r.update_column(:status, :failed)
           next
