@@ -17,7 +17,7 @@ module Whatsapp::Gupshup::V1
       response_body = JSON.parse(response.read_body)
 
       # Stores the Gupshup Whatsapp Message in our DB
-      message = save_message(response.code, response_body, request_body, @options[:retailer_user])
+      message = save_message(response, response_body, request_body, @options[:retailer_user])
 
       # Returns the Gupshup response
       {
@@ -58,7 +58,7 @@ module Whatsapp::Gupshup::V1
         request_body = self.send(@options[:type])
         response = send_message_request(request_body[0])
         response_body = JSON.parse(response.read_body)
-        save_message(response.code, response_body, request_body, @options[:retailer_user])
+        save_message(response, response_body, request_body, @options[:retailer_user])
       end
     end
 
@@ -246,7 +246,7 @@ module Whatsapp::Gupshup::V1
             @options[:params][:message_identifiers][@index] : @options[:params][:message_identifier]
         )
 
-        if response_status.to_i == 200
+        if response_status.kind_of? Net::HTTPSuccess
           gwm.gupshup_message_id = response_body['messageId']
           gwm.status = 'sent'
           gwm.message_payload = JSON.parse(request_body[1])
