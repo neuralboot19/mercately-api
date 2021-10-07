@@ -28,6 +28,8 @@ import MobileTopChatBar from '../shared/MobileTopChatBar';
 import NoteModal from '../shared/NoteModal';
 
 import { v4 as uuidv4 } from 'uuid';
+import fileUtils from '../../util/fileUtils';
+import { DEFAULT_IMAGE_SIZE_TRANSFER, MAX_IMAGE_SIZE_TRANSFER } from '../../constants/chatFileSizes';
 
 var currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content
@@ -411,16 +413,26 @@ class ChatMessages extends Component {
     }
 
     if (showError || !files || files.length === 0) {
-      alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
+      ENV.SEND_MAX_SIZE_FILES ? this.displayErrorAlert(MAX_IMAGE_SIZE_TRANSFER) : this.displayErrorAlert(DEFAULT_IMAGE_SIZE_TRANSFER);
     }
   }
 
+  displayErrorAlert(size) {
+    let fileSize = fileUtils.sizeFileInMB(size);
+
+    alert(`Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo ${fileSize}MB`);
+  }
+
   validateImages = (file) => {
-    if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type) || file.size > 8*1024*1024) {
+    if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)) {
       return false;
     }
 
-    return true;
+    if (ENV.SEND_MAX_SIZE_FILES) {
+      return fileUtils.isMaxImageSize(file);
+    }
+    
+    return fileUtils.isDefaultImageSize(file);
   }
 
   toggleLoadImages = () => {
@@ -485,7 +497,7 @@ class ChatMessages extends Component {
 
         if (file) {
           if (!this.validateImages(file)) {
-            alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
+            ENV.SEND_MAX_SIZE_FILES ? this.displayErrorAlert(MAX_IMAGE_SIZE_TRANSFER) : this.displayErrorAlert(DEFAULT_IMAGE_SIZE_TRANSFER);
             return;
           }
 
@@ -494,7 +506,7 @@ class ChatMessages extends Component {
             showLoadImages: true
           })
         } else {
-          alert('Error: Los archivos deben ser imágenes JPG/JPEG o PNG, de máximo 8MB');
+          ENV.SEND_MAX_SIZE_FILES ? this.displayErrorAlert(MAX_IMAGE_SIZE_TRANSFER) : this.displayErrorAlert(DEFAULT_IMAGE_SIZE_TRANSFER);
         }
       } else if (!fromSelector) {
         const text = clipboard.getData('text/plain');
