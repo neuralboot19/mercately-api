@@ -424,6 +424,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_210144) do
     t.integer "pstype"
     t.integer "status_chat", default: 0
     t.integer "count_unread_messages", default: 0
+    t.boolean "number_to_use_opt_in", default: false, null: false
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"
