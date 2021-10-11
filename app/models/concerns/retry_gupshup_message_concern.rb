@@ -1,9 +1,9 @@
 module RetryGupshupMessageConcern
   extend ActiveSupport::Concern
 
-  included do
-    after_save :retry_message, if: :saved_change_to_status?
-  end
+  # included do
+  #   after_save :retry_message, if: :saved_change_to_status?
+  # end
 
   def mexican_error?
     return false unless status == 'error'

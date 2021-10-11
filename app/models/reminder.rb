@@ -11,7 +11,7 @@ class Reminder < ApplicationRecord
 
   validates_presence_of :send_at, :timezone
 
-  enum status: %i[scheduled sent cancelled failed]
+  enum status: %i[scheduled sent cancelled failed processing]
 
   before_create :calculate_send_timezone
   before_create :generate_template_text

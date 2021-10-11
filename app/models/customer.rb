@@ -58,6 +58,7 @@ class Customer < ApplicationRecord
   before_save :calc_ws_notification_cost
   before_save :save_wa_name
   before_update :verify_new_phone, if: -> { phone_changed? }
+  after_save :opt_in_number_to_use, if: :saved_change_to_number_to_use?
   after_save :verify_opt_in
   after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
@@ -589,7 +590,7 @@ class Customer < ApplicationRecord
       return unless retailer.gupshup_integrated? && ActiveModel::Type::Boolean.new.cast(send_for_opt_in) == true &&
         whatsapp_opt_in == false && phone.present?
 
-      number = self.phone_number(false)
+      number = phone_number(false)
       response = gupshup_service.opt_in(number)
 
       Rails.logger.info('*'*100)
@@ -600,6 +601,16 @@ class Customer < ApplicationRecord
 
       self.send_for_opt_in = false
       update(whatsapp_opt_in: true)
+    end
+
+    def opt_in_number_to_use
+      return if phone == number_to_use || number_to_use.blank? || !retailer.gupshup_integrated?
+
+      number = phone_number_to_use(false)
+      response = gupshup_service.opt_in(number)
+
+      opted = response.present? && response[:code] == '202'
+      update_column(:number_to_use_opt_in, opted)
     end
 
     def gupshup_service
@@ -682,6 +693,8 @@ class Customer < ApplicationRecord
     end
 
     def format_mexican_numbers
+      return if phone.blank?
+
       self.phone = phone.insert(3, '1') if phone[3] != '1'
     end
 

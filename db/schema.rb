@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2021_09_17_133104) do
+ActiveRecord::Schema.define(version: 2021_09_29_210144) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -425,6 +424,7 @@ ActiveRecord::Schema.define(version: 2021_09_17_133104) do
     t.integer "pstype"
     t.integer "status_chat", default: 0
     t.integer "count_unread_messages", default: 0
+    t.boolean "number_to_use_opt_in", default: false, null: false
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"
@@ -1089,6 +1089,7 @@ ActiveRecord::Schema.define(version: 2021_09_17_133104) do
     t.string "gupshup_app_token"
     t.boolean "has_funnels", default: false
     t.string "timezone"
+    t.boolean "send_max_size_files", default: false, null: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

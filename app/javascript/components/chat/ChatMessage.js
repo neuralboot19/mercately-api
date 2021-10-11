@@ -3,6 +3,7 @@ import ImageMessage from '../shared/messages/ImageMessage';
 import AudioMessage from '../shared/messages/AudioMessage';
 import DocumentMessage from '../shared/messages/DocumentMessage';
 import VideoMessage from '../shared/messages/VideoMessage';
+import PostMessage from '../shared/messages/PostMessage';
 import LocationMessage from '../shared/messages/LocationMessage';
 import TextMessage from '../shared/messages/TextMessage';
 import NoteMessage from '../shared/messages/NoteMessage';
@@ -45,6 +46,14 @@ const ChatMessage = ({
     case 'video':
       tag = (
         <VideoMessage
+          message={message}
+          chatType="facebook"
+        />
+      );
+      break;
+    case 'fallback':
+      tag = (
+        <PostMessage
           message={message}
           chatType="facebook"
         />

@@ -37,7 +37,8 @@
         CURRENT_AGENT_NAME: "<%= current_retailer_user.full_name %>",
         CURRENT_AGENT_EMAIL: "<%= current_retailer_user.email %>",
         FANPAGE_TOKEN: "<%= current_retailer.facebook_retailer&.access_token %>",
-        SENTRY_DSN: "<%= ENV['SENTRY_DSN'] %>"
+        SENTRY_DSN: "<%= ENV['SENTRY_DSN'] %>",
+        SEND_MAX_SIZE_FILES: <%= current_retailer.send_max_size_files %>
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>

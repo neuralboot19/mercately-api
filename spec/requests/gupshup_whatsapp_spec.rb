@@ -115,6 +115,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
         it 'adds the 1 char' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect {
             post '/gupshup/ws',
@@ -127,6 +128,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
         it 'saves the original phone as number to use' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect {
             post '/gupshup/ws',
@@ -166,6 +168,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
         it 'maintains the same number' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect {
             post '/gupshup/ws',
@@ -176,8 +179,9 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
           expect(Customer.last.phone).to eq '+5215599999999'
         end
 
-        it 'does not save the original phone' do
+        it 'saves the original phone' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect {
             post '/gupshup/ws',
@@ -192,6 +196,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
       context 'when not mexican number' do
         it 'maintains the same number' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect {
             post '/gupshup/ws',
@@ -204,6 +209,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
         it 'does not save the original phone' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect {
             post '/gupshup/ws',
@@ -215,7 +221,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
         end
       end
 
-      context 'when Mexican phone already registered in DB' do
+      context 'when 521 Mexican phone already registered in DB' do
         let(:gupshup_inbound_payload) do
           {
             'gupshup_whatsapp' => {
@@ -245,6 +251,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
         it 'does not create a new customer' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect {
             post '/gupshup/ws',
@@ -254,6 +261,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
 
         it 'saves the original phone as number to use' do
           allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
           expect(customer.number_to_use).to be_nil
 
@@ -266,8 +274,61 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
         end
       end
 
+      context 'when 52 Mexican phone already registered in DB' do
+        let(:gupshup_inbound_payload) do
+          {
+            'gupshup_whatsapp' => {
+              'app' => retailer.gupshup_src_name,
+              'timestamp' => 1589374987521,
+              'version' => 2,
+              'type' => 'message',
+              'payload' => {
+                'id' => 'ABEGWTmYN3BjAhBVDvUy9JyUgNNjdKvZWRFT',
+                'source' => '5215599999999',
+                'type' => 'text',
+                'payload' => {
+                  'text' => 'Hi'
+                },
+                'sender' => {
+                  'phone' => '5215599999999',
+                  'name' => 'bj',
+                  'country_code' => '52',
+                  'dial_code' => '5599999999'
+                }
+              }
+            }
+          }
+        end
+
+        let!(:customer) { create(:customer, retailer: retailer, phone: '+525599999999', country_id: 'MX') }
+
+        it 'does not create a new customer' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(0)
+        end
+
+        it 'does not save the original phone as number to use' do
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+
+          expect(customer.number_to_use).to be_nil
+
+          expect {
+            post '/gupshup/ws',
+            params: gupshup_inbound_payload
+          }.to change(Customer, :count).by(0)
+
+          expect(customer.reload.number_to_use).to be_nil
+        end
+      end
+
       it 'stores a new customer with whatsapp name' do
         allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+        allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
         expect {
           post '/gupshup/ws',
@@ -282,6 +343,7 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
       it 'stores a new gupshup message' do
         allow_any_instance_of(GupshupWhatsappMessage).to receive(:send_push_notifications).and_return(true)
         allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+        allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
         expect {
           post '/gupshup/ws',

@@ -30,6 +30,8 @@
             <% end %>
           </li>
         </ul>
+      <% when 'processing' %>
+        <b class="cookie cookie--yellow fs-12" value="0">Procesando</b>
       <% when 'sent' %>
         <b class="cookie cookie--green fs-12" value="0">Envíado</b>
       <% when 'cancelled' %>
