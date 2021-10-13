@@ -79,7 +79,7 @@ module Retailers::Api::V1
 
         response = gws.send_message(type: type, params: params)
 
-        if response[:code] == '200'
+        if response[:code].in?('200'..'299')
           data = {
             channel: 'whatsapp',
             content: {
