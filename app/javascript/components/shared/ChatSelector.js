@@ -11,7 +11,9 @@ const ChatSelector = ({
   currentCustomer,
   customers,
   handleLoadMoreOnScrollToBottom,
-  handleOpenChat
+  handleOpenChat,
+  filterApplied,
+  openChatFilters
 }) => {
   const location = useLocation();
   const history = useHistory();
@@ -36,7 +38,7 @@ const ChatSelector = ({
 
   return (
     <div
-      className={`chat__selector chat-selector ${chatType === 'facebook' ? 'fb-selector' : 'ws-selector'}`}
+      className={`chat__selector chat-selector ${chatType === 'facebook' ? 'fb-selector' : 'ws-selector'} ${filterApplied && !openChatFilters && 'filtered'}`}
       onScroll={(e) => handleLoadMoreOnScrollToBottom(e)}
     >
       {customers.map((customer) => (

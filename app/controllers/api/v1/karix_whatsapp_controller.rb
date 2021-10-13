@@ -346,6 +346,25 @@ class Api::V1::KarixWhatsappController < Api::ApiController
                     customers.where('customers.id IN (?)', customer_ids)
                   end
 
+      customers = case params[:status]
+                  when 'all', nil
+                    customers
+                  else
+                    customers.where(status_chat: params[:status])
+                  end
+
+      # Es necesario para no causar problemas en la app mobile
+      if params[:status] == 'all' && params[:tab].present?
+        customers = case params[:tab]
+                    when 'all'
+                      customers
+                    when 'pending'
+                      customers.where(status_chat: ['new_chat', 'open_chat', 'in_process'])
+                    when 'resolved'
+                      customers.where(status_chat: params[:tab])
+                    end
+      end
+
       customers = customers.by_search_text(params[:searchString]) if params[:searchString]
       customers = customers.where('customers.id = ?', params[:customer_id]) if params[:customer_id].present?
       order = 'recent_message_date desc'

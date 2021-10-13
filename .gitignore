@@ -54,3 +54,5 @@ yarn-debug.log*
 .generators
 .idea/
 .rakeTasks
+/dump.rdb
+.DS_Store

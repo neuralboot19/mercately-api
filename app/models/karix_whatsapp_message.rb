@@ -1,5 +1,6 @@
 class KarixWhatsappMessage < ApplicationRecord
   include StatusChatConcern
+  include ReactivateChatConcern
   include BalanceConcern
   include AgentAssignmentConcern
   include WhatsappAutomaticAnswerConcern

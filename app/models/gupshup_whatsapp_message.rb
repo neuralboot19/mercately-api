@@ -1,5 +1,6 @@
 class GupshupWhatsappMessage < ApplicationRecord
   include StatusChatConcern
+  include ReactivateChatConcern
   include BalanceConcern
   include AgentAssignmentConcern
   include WhatsappAutomaticAnswerConcern

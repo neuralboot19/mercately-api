@@ -425,3 +425,32 @@ export const updateCustomerField = (customerId, id, body, token) => {
       });
   };
 };
+
+export const changeChatMessagingState = (body, token) => {
+  const endpoint = '/api/v1/change_chat_status';
+  const csrfToken = token;
+
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "PUT",
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrfToken,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*'
+      },
+      body: JSON.stringify(body)
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => {
+          dispatch({ type: 'CHANGE_CHAT_STATUS', data });
+        },
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) alert(error.response);
+        else alert("An unexpected error occurred.");
+      });
+  };
+};
