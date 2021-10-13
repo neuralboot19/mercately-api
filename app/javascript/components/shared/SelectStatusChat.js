@@ -1,23 +1,23 @@
 import React from 'react';
 import Select from 'react-select';
 
-const FilterType = ({
-  typeOptions,
+const SelectStatusChat = ({
+  statusChatOptions,
   handleAddOptionToFilter,
   getPlaceholder
 }) => (
   <div className="my-16">
     <p className="variations-label-bold">
-      Tipo:
+      Estado:
     </p>
     <Select
       className="react-select-container"
       classNamePrefix="react-select"
-      options={typeOptions}
-      onChange={(e) => handleAddOptionToFilter(e.value, 'type')}
-      placeholder={getPlaceholder(typeOptions, 'type')}
+      options={statusChatOptions}
+      onChange={(e) => handleAddOptionToFilter(e.value, 'status')}
+      placeholder={getPlaceholder(statusChatOptions, 'status')}
     />
   </div>
 );
 
-export default FilterType;
+export default SelectStatusChat;

@@ -16,7 +16,7 @@ RSpec.describe 'Api::V1::ChatsController', type: :request do
 
   describe 'PUT #change_chat_status' do
     context 'when changing to resolved status' do
-      context 'when the chat is on open_chat status' do
+      context 'when the chat does not have the status yet' do
         let(:customer) { create(:customer, retailer: retailer, status_chat: 'open_chat') }
 
         it 'sets the chat as resolved' do
@@ -39,31 +39,8 @@ RSpec.describe 'Api::V1::ChatsController', type: :request do
         end
       end
 
-      context 'when the chat is on in_process status' do
-        let(:customer) { create(:customer, retailer: retailer, status_chat: 'in_process') }
-
-        it 'sets the chat as resolved' do
-          expect {
-            put api_v1_change_chat_status_path, params: {
-              chat: {
-                customer_id: customer.id,
-                status_chat: 'resolved'
-              }
-            }
-          }.to change(ChatHistory, :count).by(1)
-
-          expect(response.code).to eq('200')
-          expect(customer.reload.status_chat).to eq('resolved')
-
-          chat_history = ChatHistory.last
-          expect(chat_history.chat_status).to eq('chat_resolved')
-          expect(chat_history.action).to eq('change_to')
-          expect(chat_history.retailer_user_id).to eq(retailer_user.id)
-        end
-      end
-
-      context 'when the chat is not on open_chat and in_process status' do
-        let(:customer) { create(:customer, retailer: retailer, status_chat: 'new_chat') }
+      context 'when the chat has the status already' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'resolved') }
 
         it 'does not set the chat as resolved' do
           expect {
@@ -83,7 +60,7 @@ RSpec.describe 'Api::V1::ChatsController', type: :request do
     end
 
     context 'when changing to in_process status' do
-      context 'when the chat is on resolved status' do
+      context 'when the chat does not have the status yet' do
         let(:customer) { create(:customer, retailer: retailer, status_chat: 'resolved') }
 
         it 'sets the chat as in_process' do
@@ -106,10 +83,53 @@ RSpec.describe 'Api::V1::ChatsController', type: :request do
         end
       end
 
-      context 'when the chat is not on resolved status' do
-        let(:customer) { create(:customer, retailer: retailer, status_chat: 'open_chat') }
+      context 'when the chat has the status already' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'in_process') }
 
         it 'does not set the chat as in_process' do
+          expect {
+            put api_v1_change_chat_status_path, params: {
+              chat: {
+                customer_id: customer.id
+              }
+            }
+          }.to change(ChatHistory, :count).by(0)
+
+          body = JSON.parse(response.body)
+          expect(response.code).to eq('422')
+          expect(body['message']).to eq('No fue posible cambiar el status del chat')
+        end
+      end
+    end
+
+    context 'when changing to open_chat status' do
+      context 'when the chat is on new_chat status' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'new_chat') }
+
+        it 'sets the chat as open_chat' do
+          expect {
+            put api_v1_change_chat_status_path, params: {
+              chat: {
+                customer_id: customer.id,
+                status_chat: 'open_chat'
+              }
+            }
+          }.to change(ChatHistory, :count).by(1)
+
+          expect(response.code).to eq('200')
+          expect(customer.reload.status_chat).to eq('open_chat')
+
+          chat_history = ChatHistory.last
+          expect(chat_history.chat_status).to eq('chat_open')
+          expect(chat_history.action).to eq('change_to')
+          expect(chat_history.retailer_user_id).to eq(retailer_user.id)
+        end
+      end
+
+      context 'when the chat is not on new_chat status' do
+        let(:customer) { create(:customer, retailer: retailer, status_chat: 'in_process') }
+
+        it 'does not set the chat as open_chat' do
           expect {
             put api_v1_change_chat_status_path, params: {
               chat: {

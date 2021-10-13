@@ -39,7 +39,6 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def show
-    @customer.open_chat(current_retailer_user)
     read_messages! if @customer.instagram?
 
     render status: 200, json: {
@@ -280,6 +279,25 @@ class Api::V1::CustomersController < Api::ApiController
                     customers.where('customers.id IN (?)', customer_ids)
                   end
 
+      customers = case params[:status]
+                  when 'all', nil
+                    customers
+                  else
+                    customers.where(status_chat: params[:status])
+                  end
+
+      # Es necesario para no causar problemas en la app mobile
+      if params[:status] == 'all' && params[:tab].present?
+        customers = case params[:tab]
+                    when 'all'
+                      customers
+                    when 'pending'
+                      customers.where(status_chat: ['new_chat', 'open_chat', 'in_process'])
+                    when 'resolved'
+                      customers.where(status_chat: params[:tab])
+                    end
+      end
+
       customers = customers.by_search_text(params[:searchString]) if params[:searchString]
       order = 'recent_message_date desc'
       if params[:order].present?
@@ -368,12 +386,12 @@ class Api::V1::CustomersController < Api::ApiController
     end
 
     def read_messages!
+      @customer.open_chat!(current_retailer_user)
       facebook_helper = FacebookNotificationHelper
       @messages = @customer.message_records
       @messages.customer_unread.update_all(date_read: Time.now)
       @messages = @messages.order(created_at: :desc).page(params[:page])
       @customer.update_attribute(:unread_messenger_chat, false)
-      facebook_service.send_read_action(@customer.psid, 'mark_seen') if @customer.messenger?
       mark_unread_flag(@customer)
       @agents = @customer.agent.present? ? [@customer.agent] : current_retailer.retailer_users.all_customers.to_a
 
@@ -385,6 +403,8 @@ class Api::V1::CustomersController < Api::ApiController
         @customer,
         @customer.pstype
       )
+
+      facebook_service.send_read_action(@customer.psid, 'mark_seen') if @customer.messenger?
     end
 
     def mark_unread_flag(customer)

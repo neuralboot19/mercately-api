@@ -13,6 +13,8 @@ import SelectAgent from './SelectAgent';
 import SelectTag from './SelectTag';
 import SelectOrder from './SelectOrder';
 import ActiveFilters from './ActiveFilters';
+import SelectStatusChat from './SelectStatusChat';
+import NavStatusChat from './NavStatusChat';
 
 const ChatFilter = (props) => {
   const {
@@ -27,7 +29,9 @@ const ChatFilter = (props) => {
     setOpenChatFilters,
     applySearch,
     cleanFilters,
-    filterApplied
+    filterApplied,
+    tab,
+    loadingMoreCustomers
   } = props;
 
   const getAgentName = (currentAgent) => {
@@ -51,6 +55,14 @@ const ChatFilter = (props) => {
   const [orderOptions] = useState([
     { value: 'received_desc', label: 'Reciente - Antíguo' },
     { value: 'received_asc', label: 'Antíguo - Reciente' }
+  ]);
+
+  const [statusChatOptions] = useState([
+    { value: 'all', label: 'Todos' },
+    { value: 'new_chat', label: 'Nuevo' },
+    { value: 'open_chat', label: 'Abierto' },
+    { value: 'in_process', label: 'Pendiente' },
+    { value: 'resolved', label: 'Resuelto' }
   ]);
 
   const iconFilter = isFilteredChatSelector ? AppliedFilterIcon : FilterIcon;
@@ -82,7 +94,7 @@ const ChatFilter = (props) => {
 
   return (
     <div className="chat-filter-holder">
-      <div className="p-relative my-16">
+      <div className="p-relative mb-16">
         <input
           type="text"
           value={searchString}
@@ -110,8 +122,20 @@ const ChatFilter = (props) => {
             />
           ) : ''
       }
+      { !openChatFilters && 
+        <NavStatusChat
+          tab={tab}
+          handleAddOptionToFilter={handleAddOptionToFilter}
+          loadingMoreCustomers={loadingMoreCustomers}
+        />
+      }
       { openChatFilters && (
         <>
+          <SelectStatusChat
+            statusChatOptions={statusChatOptions}
+            handleAddOptionToFilter={handleAddOptionToFilter}
+            getPlaceholder={getPlaceholder}
+          />
           <SelectFilterType
             typeOptions={typeOptions}
             handleAddOptionToFilter={handleAddOptionToFilter}

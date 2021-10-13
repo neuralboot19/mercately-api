@@ -494,40 +494,52 @@ class Customer < ApplicationRecord
     reminders.where('send_at_timezone >= ? and status = ?', Time.now, 0).exists?
   end
 
-  def open_chat(retailer_user)
+  def open_chat!(retailer_user)
     with_lock do
       return false unless status_chat == 'new_chat' && update(status_chat: 'open_chat')
     end
 
-    save_history(retailer_user, 'mark_as', 'chat_open')
+    remark_as = chat_histories.where(action: 'mark_as', chat_status: 'chat_open').exists?
+    action = remark_as ? 'remark_as' : 'mark_as'
+    save_history(retailer_user, action, 'chat_open')
   end
 
-  def set_in_process(retailer_user, from_answer = false)
+  def set_in_process!(retailer_user, from_answer = false)
     with_lock do
       return false unless (status_chat == 'open_chat' || (status_chat == 'new_chat' && from_answer == true)) &&
                           update(status_chat: 'in_process')
     end
 
-    save_history(retailer_user, 'mark_as', 'chat_in_process')
+    remark_as = chat_histories.where(action: 'mark_as', chat_status: 'chat_in_process').exists?
+    action = remark_as ? 'remark_as' : 'mark_as'
+    save_history(retailer_user, action, 'chat_in_process')
   end
 
   def change_status_chat(retailer_user, params)
     with_lock do
       case params[:status_chat]
-      when 'resolved'
-        return false unless status_chat.in?(['open_chat', 'in_process']) && update(status_chat: params[:status_chat])
+      when 'resolved', 'in_process'
+        return false unless status_chat != params[:status_chat] && update(status_chat: params[:status_chat])
 
-        @chat_status = 'chat_resolved'
-      when 'in_process'
-        return false unless status_chat == 'resolved' && update(status_chat: params[:status_chat])
+        @chat_status = "chat_#{params[:status_chat]}"
+      when 'open_chat'
+        return false unless status_chat == 'new_chat' && update(status_chat: params[:status_chat])
 
-        @chat_status = 'chat_in_process'
+        @chat_status = 'chat_open'
       else
         return false
       end
     end
 
     save_history(retailer_user, 'change_to', @chat_status)
+  end
+
+  def reactivate_chat!
+    with_lock do
+      return false unless status_chat == 'resolved' && update(status_chat: 'new_chat')
+    end
+
+    save_history(nil, 'customer_mark_as', 'chat_new')
   end
 
   private

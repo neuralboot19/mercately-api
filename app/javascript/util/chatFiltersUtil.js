@@ -1,5 +1,6 @@
 const checkFilters = (customer, filters, chatType) => {
-  if (filters.searchString === '' && filters.agent === 'all' && filters.type === 'all' && filters.tag === 'all')
+  if (filters.searchString === '' && filters.agent === 'all' && filters.type === 'all' && filters.tag === 'all'
+    && filters.tab === 'all')
     return true;
 
   let matchFilters = [];
@@ -33,7 +34,15 @@ const checkFilters = (customer, filters, chatType) => {
     matchFilters.push(tags.length > 0);
   }
 
-  return matchFilters.indexOf(false) < 0
+  if (filters.status !== 'all') {
+    matchFilters.push(customer.status_chat === filters.status);
+  }
+
+  if (filters.tab !== 'all') {
+    matchFilters.push(checkStatusByTab(customer, filters.tab));
+  }
+
+  return matchFilters.indexOf(false) < 0;
 };
 
 const includeFilter = (search, item) => {
@@ -72,10 +81,26 @@ const readOrNotWhatsapp = (customer, filters) => {
   return isTrue;
 }
 
+const checkStatusByTab = (customer, tab) => {
+  let ok = false;
+
+  switch (tab) {
+    case 'pending':
+      ok = ['new_chat', 'open_chat', 'in_process'].includes(customer.status_chat);
+      break;
+    case 'resolved':
+      ok = customer.status_chat === tab;
+      break;
+  }
+
+  return ok;
+}
+
 export default {
   checkFilters,
   includeFilter,
   elementWithValue,
   readOrNotFacebook,
-  readOrNotWhatsapp
+  readOrNotWhatsapp,
+  checkStatusByTab
 };

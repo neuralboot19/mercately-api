@@ -162,6 +162,14 @@ class WhatsAppChat extends Component {
     }
   }
 
+  setChatStatus = (customer) => {
+    if (this.state.currentCustomer === customer.id) {
+      this.setState({
+        currentCustomerDetails: { ...this.state.currentCustomerDetails, status_chat: customer.status_chat }
+      });
+    }
+  }
+
   render() {
     return (
       <div>
@@ -181,6 +189,7 @@ class WhatsAppChat extends Component {
                   setRemovedCustomerInfo={this.setRemovedCustomerInfo}
                   storageId={$('meta[name=user_storage]').attr("content")}
                   setActiveChatBot={this.setActiveChatBot}
+                  setChatStatus={this.setChatStatus}
                 />
               </div>
             )}

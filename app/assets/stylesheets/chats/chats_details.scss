@@ -137,6 +137,50 @@ $white: #fff;
   }
 }
 
+.select-messaging-status {
+  width: 125px;
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+
+  .react-select__control {
+    border-width: 0;
+    background-color: transparent !important;
+    padding-left: 0;
+    min-height: 16px;
+    height: 16px !important;
+    .react-select__value-container {
+      padding: 0;
+      .react-select__placeholder {
+        color: #3CAAE1 !important;
+        flex-direction: row;
+        display: flex;
+        margin-left: 0;
+      }
+      .placeholder-messaging-state {
+        color: #808191;
+        padding-right: 8px;
+      }
+    }
+    .react-select__indicators .react-select__indicator {
+      color: #3CAAE1 !important;
+      padding: 0 !important;
+      svg {
+        height: 15px;
+        width: 15px;
+      }
+    }
+  }
+  .react-select__control--is-focused {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  .react-select__menu .react-select__menu-list .react-select__option--is-focused {
+    color: #3CAAE1 !important;
+    background-color: #FFFFFF;
+  }
+}
+
 .chat-right-side-selector {
   padding: 0 10px;
   overflow-y: auto;

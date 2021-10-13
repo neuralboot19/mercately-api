@@ -180,6 +180,12 @@ const reducer = (state = initialState, action) => {
         status: action.data.status,
         message: action.data.message
       };
+    case 'CHANGE_CHAT_STATUS':
+      return {
+        ...state,
+        status: action.data.status,
+        message: action.data.message
+      };
     case 'UNAUTHORIZED_SEND_MESSAGE':
       return {
         ...state,
@@ -366,8 +372,8 @@ const reducer = (state = initialState, action) => {
       newColumns[action.column].dealIds = newColumns[action.column]
         .dealIds.filter((deal) => deal !== action.data);
 
-      newColumns[action.column].deals = newColumns[action.column].dealIds.length; 
-      
+      newColumns[action.column].deals = newColumns[action.column].dealIds.length;
+
       return {
         ...state,
         funnelSteps: {

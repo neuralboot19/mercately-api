@@ -20,6 +20,7 @@ class Api::V1::AgentNotificationsController < Api::ApiController
     customer = Customer.find(permit_params[:customer_id])
     customer.update_attribute(:unread_whatsapp_chat, false)
     retailer_user_api(customer, current_retailer).mark_unread_flag
+    customer.open_chat!(current_retailer_user)
     agents_to_notify = customer.agent.present? ? [customer.agent] : current_retailer.retailer_users.all_customers.to_a
 
     if current_retailer.karix_integrated?

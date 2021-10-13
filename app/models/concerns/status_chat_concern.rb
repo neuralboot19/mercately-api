@@ -14,6 +14,6 @@ module StatusChatConcern
       end
       return unless retailer_user.present?
 
-      customer.set_in_process(retailer_user, true)
+      customer.set_in_process!(retailer_user, true)
     end
 end

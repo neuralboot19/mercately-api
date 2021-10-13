@@ -29,16 +29,38 @@ class ChatListItem extends Component {
 
   howLongAgo = () => moment(this.props.customer.recent_message_date).locale('es').fromNow(true);
 
-  getChartAtToTicketStatus = () => (this.props.customer.whatsapp_name
-    ? this.props.customer.whatsapp_name.charAt(0)
-    : '');
+  getTicketStatus = () => {
+    const { status_chat } = this.props.customer;
+
+    switch (status_chat) {
+      case 'new_chat':
+        return 'N';
+      case 'open_chat':
+        return 'A';
+      case 'in_process':
+        return 'P';
+      default:
+        return 'R';
+    }
+  }
+
+  getTicketClass = () => {
+    const { status_chat } = this.props.customer;
+
+    switch (status_chat) {
+      case 'new_chat':
+        return 'new-chat';
+      case 'open_chat':
+        return 'open-chat';
+      case 'in_process':
+        return 'pending-chat';
+      default:
+        return 'resolved-chat';
+    }
+  }
 
   render() {
     const { customer } = this.props;
-
-    const getTicketStatus = this.props.customer.first_name && this.props.customer.last_name
-      ? `${this.props.customer.first_name.charAt(0)} ${this.props.customer.last_name.charAt(0)}`
-      : this.getChartAtToTicketStatus();
 
     const containerClass = this.props.currentCustomer === customer.id
       ? 'chat-selected'
@@ -55,9 +77,9 @@ class ChatListItem extends Component {
           <div className="fs-14 profile__data">
             <div className="row mx-0">
               <div className="img__profile col-2 p-0">
-                <div className="ticket-status">
+                <div className={`ticket-status ${this.getTicketClass()}`}>
                   <p>
-                    {getTicketStatus}
+                    {this.getTicketStatus()}
                   </p>
                 </div>
               </div>
