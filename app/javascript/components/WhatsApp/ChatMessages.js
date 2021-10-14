@@ -65,7 +65,6 @@ class ChatMessages extends Component {
       isTemplateSelected: false,
       templateSelected: '',
       templateEdited: false,
-      templatePage: 1,
       auxTemplateSelected: [],
       agents: [],
       updated: true,
@@ -127,7 +126,7 @@ class ChatMessages extends Component {
       }
     });
 
-    this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
+    this.props.fetchWhatsAppTemplates();
     // eslint-disable-next-line no-undef
     socket.on("message_chat", (data) => this.updateChat(data));
 
@@ -239,7 +238,7 @@ class ChatMessages extends Component {
         }
       });
 
-      this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
+      this.props.fetchWhatsAppTemplates();
     } else if ((comesFromSelection || justMounted) && this.state.messages.length) {
       this.scrollToBottom();
       comesFromSelection = false;
@@ -1531,8 +1530,8 @@ function mapDispatch(dispatch) {
     setWhatsAppMessageAsRead: (id, body, token) => {
       dispatch(setWhatsAppMessageAsRead(id, body, token));
     },
-    fetchWhatsAppTemplates: (page = 1, token) => {
-      dispatch(fetchWhatsAppTemplates(page, token));
+    fetchWhatsAppTemplates: () => {
+      dispatch(fetchWhatsAppTemplates());
     },
     changeCustomerAgent: (id, body, token) => {
       dispatch(changeCustomerAgent(id, body, token));
