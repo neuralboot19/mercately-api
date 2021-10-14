@@ -190,8 +190,8 @@ export const setWhatsAppMessageAsRead = (id, body, token) => {
   };
 };
 
-export const fetchWhatsAppTemplates = (page = 1) => {
-  const endpoint = `/api/v1/whatsapp_templates?page=${page}`;
+export const fetchWhatsAppTemplates = () => {
+  const endpoint = `/api/v1/whatsapp_templates`;
   return (dispatch) => {
     fetch(endpoint, {
       method: "GET",
