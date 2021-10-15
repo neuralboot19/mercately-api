@@ -147,7 +147,8 @@ module Whatsapp::Gupshup::V1
         message = {
           'type': 'file',
           'url': data[:file_url],
-          'filename': data[:file_name]
+          'filename': data[:file_name],
+          'caption': data[:file_caption]
         }.to_json
 
         bodyString = base_body

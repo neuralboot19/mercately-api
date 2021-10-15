@@ -69,11 +69,11 @@
                 </div>
                 <div class="col-xs-10 col-sm-2 c-grey t-center">
                   <% if template.answer.present? && template.image.attached? %>
-                    <%= t('retailer.settings.quick_answers.list.image_with_caption') %>
+                    <%= t('retailer.settings.quick_answers.list.file_with_caption') %>
                   <% elsif template.answer.present? %>
                     <%= t('retailer.settings.quick_answers.list.text') %>
                   <% elsif template.image.attached? %>
-                    <%= t('retailer.settings.quick_answers.list.image') %>
+                    <%= t('retailer.settings.quick_answers.common.file') %>
                   <% end %>
                 </div>
                 <div class="col-xs-10 col-sm-2 c-grey t-center">

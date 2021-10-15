@@ -1,3 +1,21 @@
+$(function() {
+  function handleAcceptedFile() {
+    const igCheck = document.getElementById('template_enable_for_instagram');
+    if (igCheck && igCheck.checked) {
+      let file = $('#template_image').val().split('.').pop();
+      if (file === 'pdf') {
+        removeImage();
+      }
+      document.getElementById("template_image").accept = "image/jpg, image/jpeg, image/png";
+    } else {
+      document.getElementById("template_image").accept = "image/jpg, image/jpeg, image/png, application/pdf";
+    }
+  }
+
+  handleAcceptedFile();
+  $('.template_form input').on('change', handleAcceptedFile);
+});
+
 $('#template-question-search').on('keyup search', function() {
   getAjax(`/retailers/templates/templates_for_questions?search=${$(this).val()}`, function(data) {
     $('#templates-container').empty();
@@ -53,14 +71,34 @@ function buildChatList(item) {
 
 function previewImage(input) {
   if (input.files && input.files[0]) {
-    var reader = new FileReader();
+    let file = input.files[0];
+    if (file.type === 'application/pdf' && file.size > 25*1024*1024) {
+      alert('El archivo no puede pesar más de 25MB');
+      removeImage();
+      return;
+    } else if (['image/jpg', 'image/jpeg', 'image/png'].includes(file.type) && file.size > 5*1024*1024) {
+      alert('La imagen no puede pesar más de 5MB');
+      removeImage();
+      return;
+    } else if (!['image/jpg', 'image/jpeg', 'image/png', 'application/pdf'].includes(file.type)) {
+      alert('Debe seleccionar un archivo valido, JPEG/JPG o PNG no mayor a 5MB o PDF no mayor a 25MB');
+      removeImage();
+      return;
+    }
+    let reader = new FileReader();
 
     reader.onload = function(e) {
-      $('#preview-template-image').attr('src', e.target.result);
+      const fileType = $('#template_image').val().split('.').pop();
+      const src = URL.createObjectURL(file);
+      if (fileType === 'pdf') {
+        $('#preview-template-image').replaceWith($(`<embed id="preview-template-image" src="${src}" class="w-200 h-200" />`));
+      } else {
+        $('#preview-template-image').replaceWith($(`<img id="preview-template-image" src="${src}" class="w-200 h-200" />`));
+      }
       $('#preview-container-image').show();
       $('#current-template-image').hide();
     }
-    reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(file);
   }
 }
 

@@ -56,9 +56,15 @@
                   </p>
                 </div>
                 <div class="col-xs-12 col-sm-3">
-                  <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.image') %>:</label><br /><br />
+                  <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.file') %>:</label><br /><br />
                   <% if @template.image.attached? %>
-                    <%= cl_image_tag("#{@template.image.key}", width: 200, height: 200) %>
+                    <div id="current-template-image">
+                      <% if @template.image.content_type == 'application/pdf' %>
+                        <embed src="<%= @template.image.service_url %>" class="w-200 h-200" width="200" height="200" />
+                      <% else %>
+                        <%= cl_image_tag("#{@template.image.key}", width: 200, height: 200) %>
+                      <% end %>
+                    </div>
                   <% end %>
                 </div>
                 <% if @template.retailer_user_id %>

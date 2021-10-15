@@ -57,13 +57,12 @@ class GupshupWhatsappMessageSerializer
 
     with_media = gwm.has_referral_media?
     type = message.try(:[], 'payload').try(:[], 'type') || message['type']
-    next '' unless %[image audio video file sticker].include?(type) || with_media
+    next '' unless %[image audio file video sticker].include?(type) || with_media
 
     caption = if with_media
                 "#{message['payload'].try(:[], 'payload').try(:[], 'text') || message['text']} " \
                   "#{message['payload'].try(:[], 'referral').try(:[], 'source_url')}"
-              elsif %[image audio video sticker].include?(type) ||
-                (type == 'file' && gwm.message_type == 'notification')
+              elsif %[image audio video file sticker].include?(type)
                 message.try(:[], 'caption') ||
                   message.try(:[], 'payload').try(:[], 'payload').try(:[],'caption')
               end

@@ -135,9 +135,7 @@ class FastAnswers extends Component {
             <input
               type="text"
               value={this.state.searchString}
-              onChange={e =>
-                this.handleChatSearch(e)
-              }
+              onChange={(e) => this.handleChatSearch(e) }
               placeholder="Busqueda por título o contenido"
               className="input-icon bg-light search-fast-answer"
               onKeyPress={this.handleKeyPress}
@@ -146,27 +144,30 @@ class FastAnswers extends Component {
               <img src={SearchIcon} alt="search icon" />
             </span>
           </div>
-          {this.state.fastAnswers.map((answer, index) => (
-            <div key={index} className="fast_answer_content" onClick={() => this.changeFastAnswer(answer)}>
+          {this.state.fastAnswers.map((answer) => (
+            <div key={answer.id} className="fast_answer_content" onClick={() => this.changeFastAnswer(answer)}>
               <div className="container-answer-title">
                 <span className="answer-title">{answer.attributes.title}</span>
                 <span className="select_answer"><i className="fas fa-check-circle check-icon"></i></span>
               </div>
-              
               <div className="divider"></div>
               <div className="container-answer-description">
-                {answer.attributes.image_url &&
+                {answer.attributes.image_url && (
                   <div className="image-answer-description">
-                    <img src={answer.attributes.image_url} />
+                    {answer.attributes.file_type === 'image' ? (
+                      <img src={answer.attributes.image_url} />
+                    ) : (
+                      <embed src={answer.attributes.image_url} />
+                    )}
                   </div>
-                }
+                )}
                 <small className="text-pre-line text-answer-description">{answer.attributes.answer}</small>
               </div>
             </div>
           ))}
         </div>
       </div>
-    )
+    );
   }
 }
 

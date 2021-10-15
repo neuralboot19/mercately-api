@@ -44,9 +44,9 @@ module Retailers::Api::V1
     def content_media_caption
       message = object.message_payload
       type = message.try(:[], 'payload').try(:[], 'type') || message['type']
-      return '' unless %[image audio video file sticker].include?(type)
+      return '' unless %[image audio video sticker].include?(type)
 
-      if %[image audio video sticker].include?(type) || (type == 'file' && object.message_type == 'notification')
+      if %[image audio video file sticker].include?(type)
         return message.try(:[], 'caption') ||
           message.try(:[], 'payload').try(:[], 'payload').try(:[],'caption')
       end

@@ -83,6 +83,7 @@ const MessageForm = ({
             <SelectedFastAnswerImageContainer
               onRemove={removeSelectedFastAnswer}
               url={selectedFastAnswer.attributes.image_url}
+              fileType={selectedFastAnswer.attributes.file_type}
             />
           </span>
         )}

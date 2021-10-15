@@ -173,6 +173,7 @@ en:
           type: Type
           usability: Usability
           image_with_caption: Image with caption
+          file_with_caption: File with caption
           text: Text
           global: Global
           personal: Personal
@@ -186,9 +187,10 @@ en:
           description: Answer information
         form:
           description: Answer information
-          select_image: Select image
+          select_file: Select file
           texto_of_answer: Text of answer
           alert_global_answer_question: Global answer can be sent by all agents. Those that are not, can only be sent and modified by the agent who created them.
+          alert_instagram_answer_question: Instagram only accepts images
           mercado_libre_question: MercadoLibre Questions
           note_mercado_libre_question: 'Note: For questions, do not include contact information, such as phone numbers, exact addresses, or personal names.'
           mercado_libre_messages: MercadoLibre Messages
@@ -197,6 +199,7 @@ en:
           content: Content
           platforms: Platforms
           image: Image
+          file: File
           global_answer_question: is global answer?
           confirm_remove_text: Are you sure to delete the answer?
       welcome_messages:
