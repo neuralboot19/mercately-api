@@ -491,10 +491,12 @@ class ChatMessages extends Component {
       var pos = clipboard.types.indexOf('Files');
 
       if (pos !== -1) {
+        let file;
+        
         if (clipboard.items) {
-          var file = clipboard.items[pos].getAsFile();
+          file = clipboard.items[pos].getAsFile();
         } else if (clipboard.files) {
-          var file = clipboard.files[0];
+          file = clipboard.files[0];
         }
 
         if (file) {
