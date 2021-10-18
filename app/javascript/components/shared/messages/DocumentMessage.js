@@ -50,13 +50,14 @@ function DocumentMessage(props) {
         <a
           href=""
           onClick={(e) => props.onClick(e, url, props.message.filename)}
+          className="fs-md-and-down-12"
         >
           <i className="fas fa-file-download mr-8" />
           {props.message.filename || 'Descargar archivo'}
         </a>
         <br />
         {caption
-        && (<div className="media-caption media-caption-template text-pre-line">{caption}</div>)}
+        && (<div className="media-caption media-caption-template text-pre-line fs-md-and-down-12">{caption}</div>)}
         <MessageStatus
           chatType={props.chatType}
           handleMessageEvents={props.handleMessageEvents}

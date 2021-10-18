@@ -65,7 +65,6 @@ class ChatMessages extends Component {
       isTemplateSelected: false,
       templateSelected: '',
       templateEdited: false,
-      templatePage: 1,
       auxTemplateSelected: [],
       agents: [],
       updated: true,
@@ -87,7 +86,8 @@ class ChatMessages extends Component {
       isOpenImage: false,
       imageUrl: null,
       showInputMenu: false,
-      showOptions: !props.onMobile
+      showOptions: !props.onMobile,
+      inputFilled: false
     };
     this.bottomRef = React.createRef();
     this.noteTextRef = React.createRef();
@@ -127,7 +127,7 @@ class ChatMessages extends Component {
       }
     });
 
-    this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
+    this.props.fetchWhatsAppTemplates();
     // eslint-disable-next-line no-undef
     socket.on("message_chat", (data) => this.updateChat(data));
 
@@ -195,6 +195,7 @@ class ChatMessages extends Component {
       $('#divMessage').html(this.state.selectedFastAnswer.attributes.answer);
       this.props.changeFastAnswer(null);
       this.removeSelectedProduct();
+      this.maximizeInputText();
     }
 
     if (newProps.selectedProduct) {
@@ -207,6 +208,7 @@ class ChatMessages extends Component {
       $('#divMessage').html(productString);
       this.props.selectProduct(null);
       this.removeSelectedFastAnswer();
+      this.maximizeInputText();
     }
   }
 
@@ -239,7 +241,7 @@ class ChatMessages extends Component {
         }
       });
 
-      this.props.fetchWhatsAppTemplates(this.templatePage, csrfToken);
+      this.props.fetchWhatsAppTemplates();
     } else if ((comesFromSelection || justMounted) && this.state.messages.length) {
       this.scrollToBottom();
       comesFromSelection = false;
@@ -283,6 +285,7 @@ class ChatMessages extends Component {
         this.setState({ selectedProduct: null, selectedFastAnswer: null }, () => {
           this.handleSubmitWhatsAppMessage(e, txt, false);
           input.html(null);
+          this.maximizeInputText();
         });
       }
     });
@@ -518,6 +521,7 @@ class ChatMessages extends Component {
     }), () => {
       this.props.sendWhatsAppImg(this.props.currentCustomer, fileData || data, csrfToken);
       input.html(null);
+      this.maximizeInputText();
       this.scrollToBottom();
     });
   }
@@ -847,6 +851,8 @@ class ChatMessages extends Component {
         e.target.innerText = text;
       }
     }
+
+    this.maximizeInputText();
   }
 
   setFocus = (position) => {
@@ -1103,6 +1109,7 @@ class ChatMessages extends Component {
     input.html(text);
 
     this.setFocus(this.caretPosition + emoji.native.length);
+    this.maximizeInputText();
   }
 
   getCaretPosition = () => {
@@ -1135,6 +1142,8 @@ class ChatMessages extends Component {
         this.caretPosition = tempRange.text.length;
       }
     }
+
+    this.maximizeInputText();
   }
 
   getCleanTemplate = (text) => text.replaceAll('\\*', '*')
@@ -1308,6 +1317,20 @@ class ChatMessages extends Component {
 
   toggleOptions = () => this.setState(({ showOptions }) => ({ showOptions: !showOptions }))
 
+  maximizeInputText = () => {
+    const input = $('#divMessage');
+    const text = input.text();
+    let filled;
+
+    if (text.length == 0) {
+      filled = false;
+    } else {
+      filled = true;
+    };
+
+    if (this.state.inputFilled !== filled) this.setState({ inputFilled: filled });
+  }
+
   render() {
     let screen;
     if (this.state.templateEdited === false) {
@@ -1318,7 +1341,7 @@ class ChatMessages extends Component {
 
     const chatBoxClass = this.state.showOptions && this.props.onMobile
       ? 'chat__box chat__box-without-options'
-      : 'chat__box';
+      : `chat__box ${ this.state.inputFilled && 'maximize' }`;
 
     return (
       <div className="chat-messages-holder bottom-xs">
@@ -1421,6 +1444,7 @@ class ChatMessages extends Component {
                   showInputMenu={this.state.showInputMenu}
                   handleShowInputMenu={this.handleShowInputMenu}
                   wrapperInputMenu={this.wrapperInputMenu}
+                  inputFilled={this.state.inputFilled}
                 />
               )
             )
@@ -1531,8 +1555,8 @@ function mapDispatch(dispatch) {
     setWhatsAppMessageAsRead: (id, body, token) => {
       dispatch(setWhatsAppMessageAsRead(id, body, token));
     },
-    fetchWhatsAppTemplates: (page = 1, token) => {
-      dispatch(fetchWhatsAppTemplates(page, token));
+    fetchWhatsAppTemplates: () => {
+      dispatch(fetchWhatsAppTemplates());
     },
     changeCustomerAgent: (id, body, token) => {
       dispatch(changeCustomerAgent(id, body, token));

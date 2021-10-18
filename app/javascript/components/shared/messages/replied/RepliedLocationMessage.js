@@ -6,7 +6,7 @@ const RepliedLocationMessage = ({ latitude, longitude }) => {
                       ${longitude}`;
 
   return (
-    <div className="fs-15 no-back-color">
+    <div className="fs-md-and-down-12 no-back-color">
       <a
         href={locationURL}
         target="_blank"

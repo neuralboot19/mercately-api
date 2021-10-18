@@ -1059,17 +1059,27 @@ i {
 
     .message-input {
       align-items: center;
-      width: 95%;
+      width: 100%;
       border: 0;
       padding: 15px;
       outline: 0;
       height: 53px;
       overflow-y: auto;
       white-space: pre-wrap;
+
+      &.maximize {
+        height: 85px;
+      }
+
+      @media screen and (max-width: 768px) {
+        &.maximize {
+          height: 80px;
+        }
+      }
     }
 
     [contentEditable=true]:empty::before {
-      content:attr(placeholder-text)
+      content:attr(placeholder-text);
     }
 
     .cancel-audio-counter {
@@ -1838,4 +1848,137 @@ i {
   width: 8px!important;
   height: 8px!important;
   background-color: $white!important;
+}
+
+.wrapper-container {
+  margin: 10px 0 0 100px;
+  .textarea-form {
+    resize: none;
+    color: #888888 !important;
+    font-size: 13px !important;
+    font-weight: 300 !important;
+  }
+
+  .page-title {
+    font-family: 'Poppins-SemiBold';
+    margin-top: 20px;
+  }
+
+  h1 {
+    font-size: 22px;
+    letter-spacing: 0.5px;
+  }
+
+  .ibox {
+    clear: both;
+    margin: 15px 30px 15px 8px;
+    padding: 0;
+    min-height: auto !important;
+  }
+
+  .ibox-title {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-image: none;
+    border-width: 2px 0 0;
+    color: inherit;
+    margin-bottom: 0;
+    padding: 10px 90px 8px 0px;
+    min-height: 48px;
+    position: relative;
+    clear: both;
+  }
+
+  .ibox-content {
+    background-color: #ffffff;
+    color: inherit;
+    padding: 30px 30px 20px 50px;
+    border-color: #e7eaec;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 1px 0;
+    border-radius: 5px;
+    box-shadow: 0px 0px 2px 0px #ddd !important;
+  }
+
+  .ibox-footer {
+    color: inherit;
+    border-top: 1px solid #e7eaec;
+    font-size: 90%;
+    background: #ffffff;
+    padding: 10px 15px;
+  }
+
+  .card-title {
+    margin-bottom: 1.75rem !important;
+  }
+
+  .form-label {
+    font-family: 'Poppins-SemiBold';
+    color: #020202;
+  }
+
+  a.cancel-link {
+    text-decoration: none !important;
+    color: #020202;
+    font-size: 18px;
+    &.hover {
+      color: #020202 !important;
+    }
+  }
+
+  .tag-description {
+    color: #aaa;
+    font-size: 12px;
+  }
+
+  .emojis-container-textarea {
+    .emojis-container {
+      bottom: 27px;
+      text-align: left;
+      max-width: 320px;
+      z-index: 10;
+    }
+  }
+
+  .emoji-icon {
+    position: absolute;
+    right: 20px;
+    top: 35px;
+  }
+
+  .form-container {
+    input {
+      color: #888888;
+      font-size: 13px;
+      font-weight: 300;
+    }
+  }
+
+  .back-link {
+    font-family: 'Poppins-SemiBold';
+    text-decoration: none;
+    color: #AAA;
+    font-size: 16px;
+    margin-top: 0;
+  }
+
+  @media screen and (min-width: 1024px) {
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      margin-left: 60px;
+    }
+  }
+
+  @media screen and (min-device-width: 1780px) {
+    .emojis-container-textarea {
+      .emojis-container {
+        bottom: 0px;
+        right: 20px;
+      }
+    }
+  }
 }

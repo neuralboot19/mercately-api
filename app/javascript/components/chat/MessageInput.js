@@ -3,14 +3,15 @@ import React from 'react';
 const MessageInput = ({
   pasteImages,
   onKeyPress,
-  getCaretPosition
+  getCaretPosition,
+  inputFilled
 }) => (
   <div
     id="divMessage"
     contentEditable="true"
     role="textbox"
     placeholder-text="Escribe tu mensaje"
-    className="message-input fs-input-text"
+    className={`message-input fs-input-text ${ inputFilled && 'maximize' }`}
     onPaste={(e) => pasteImages(e)}
     onKeyPress={onKeyPress}
     onKeyUp={getCaretPosition}

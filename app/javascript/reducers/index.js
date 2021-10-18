@@ -449,6 +449,12 @@ const reducer = (state = initialState, action) => {
         ...state,
         loadingMoreMessages: true
       }
+    case 'SET_GS_TEMPLATE_ERRORS':
+      return {
+        ...state,
+        labelValidationText: action.errors.label?.shift(),
+        textValidationText: action.errors.text?.shift()
+      }
 
     default:
       return state;

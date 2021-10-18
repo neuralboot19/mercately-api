@@ -11,7 +11,7 @@ const ReplyTextMessage = ({ text }) => {
   messageText = checkForUrls(messageText);
 
   return (
-    <div className="text text-pre-line" dangerouslySetInnerHTML={{ __html: messageText }} />
+    <div className="text text-pre-line fs-md-and-down-12" dangerouslySetInnerHTML={{ __html: messageText }} />
   );
 };
 

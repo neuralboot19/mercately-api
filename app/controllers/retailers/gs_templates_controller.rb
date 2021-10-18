@@ -16,6 +16,7 @@ class Retailers::GsTemplatesController < RetailersController
 
   # GET retailers/:slug/gs_templates/new
   def new
+    render layout: "chats/chat"
     @gs_template = current_retailer.gs_templates.new
   end
 

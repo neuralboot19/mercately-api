@@ -84,7 +84,7 @@ function ImageMessage({
           />
         </div>
         {caption
-        && (<div className="media-caption text-pre-line t-left" dangerouslySetInnerHTML={{ __html: checkForUrls(caption) }} />)}
+        && (<div className="media-caption text-pre-line t-left fs-md-and-down-12" dangerouslySetInnerHTML={{ __html: checkForUrls(caption) }} />)}
       </div>
     </div>
   );
