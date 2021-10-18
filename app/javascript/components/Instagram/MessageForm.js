@@ -37,7 +37,9 @@ const MessageForm = ({
   toggleProducts,
   showInputMenu,
   handleShowInputMenu,
-  openNoteModal
+  openNoteModal,
+  maximizeInputText,
+  inputFilled
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -51,6 +53,7 @@ const MessageForm = ({
 
     setShowEmojiPicker(false);
     input.html(null);
+    maximizeInputText();
   };
 
   const handleFileSubmit = (e) => {
@@ -105,6 +108,7 @@ const MessageForm = ({
     if (selectedFastAnswer) {
       $('#divMessage')
         .html(selectedFastAnswer.attributes.answer);
+      maximizeInputText();
     }
   }, [selectedFastAnswer]);
 
@@ -117,6 +121,7 @@ const MessageForm = ({
       productString += (selectedProduct.attributes.url ? selectedProduct.attributes.url : '');
       $('#divMessage')
         .html(productString);
+      maximizeInputText();
     }
   }, [selectedProduct]);
 
@@ -148,7 +153,7 @@ const MessageForm = ({
       <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
       <OpenNoteModalButton openNoteModal={openNoteModal} />
       <div className="text-input row mx-0 no-gutters text-input-padding border-input-top">
-        <div className="d-flex col-7 col-md-8">
+        <div className="d-flex col-7 col-md-9">
           <span className="d-flex align-items-center position-relative mr-12 mr-md-24 min-w-input-menu">
             <img onClick={handleShowInputMenu} src={PlusOutlineIcon} alt="outline plus icon" />
             {showInputMenu && (
@@ -164,6 +169,7 @@ const MessageForm = ({
               pasteImages={pasteImages}
               onKeyPress={onKeyPress}
               getCaretPosition={getCaretPosition}
+              inputFilled={inputFilled}
             />
           </span>
           {selectedProduct
@@ -185,7 +191,7 @@ const MessageForm = ({
             </span>
           )}
         </div>
-        <div className="col-5 col-md-4 bg-light border-right-8 d-flex">
+        <div className="col-5 col-md-3 bg-light border-right-8 d-flex">
           <div className="p-relative flex-grow-1 pr-8 d-flex justify-content-end align-items-center  space-input-icons">
             {showEmojiPicker
             && (

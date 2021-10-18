@@ -38,7 +38,8 @@ const MessageForm = ({
   openReminderConfigModal,
   openNoteModal,
   showInputMenu,
-  handleShowInputMenu
+  handleShowInputMenu,
+  inputFilled
 }) => (
   <div className="col-xs-12 chat-input mt-16">
     <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
@@ -63,6 +64,7 @@ const MessageForm = ({
             getCaretPosition={getCaretPosition}
             onKeyPress={onKeyPress}
             pasteImages={pasteImages}
+            inputFilled={inputFilled}
           />
         </span>
         {selectedProduct

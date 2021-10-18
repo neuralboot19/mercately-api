@@ -32,7 +32,7 @@ const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
         />
       </div>
       {caption
-      && (<div className="media-caption text-pre-line" dangerouslySetInnerHTML={{ __html: checkForUrls(caption) }} />)}
+      && (<div className="media-caption text-pre-line fs-md-and-down-12" dangerouslySetInnerHTML={{ __html: checkForUrls(caption) }} />)}
     </div>
   );
 };
