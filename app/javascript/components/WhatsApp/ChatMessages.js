@@ -41,6 +41,7 @@ import {
   MAX_FILE_SIZE_TRANSFER,
   MAX_IMAGE_SIZE_TRANSFER_WS
 } from '../../constants/chatFileSizes';
+import stringUtils from '../../util/stringUtils';
 
 let currentCustomer = 0;
 let totalPages = 0;
@@ -848,7 +849,8 @@ class ChatMessages extends Component {
         }
       } else if (!fromSelector) {
         const text = clipboard.getData('text/plain');
-        e.target.innerText = text;
+        e.target.innerText = stringUtils.addStr(e.target.innerText, this.caretPosition, text);
+        this.setFocus(this.caretPosition + text.length);
       }
     }
 
