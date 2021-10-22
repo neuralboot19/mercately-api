@@ -12,9 +12,10 @@ module Customers
       'Phone': :phone
     }.with_indifferent_access
 
-    def perform(file_path, retailer_user_id, file_type)
+    def perform(import_logger_id, retailer_user_id)
       retailer_user = RetailerUser.find(retailer_user_id)
       retailer = retailer_user.retailer
+      import_logger = ImportContactsLogger.find(import_logger_id)
 
       # Stores all errors
       @errors = { errors: [] }
@@ -27,8 +28,8 @@ module Customers
       # Stores lines and data that do not pass pre validations
       @data_with_errors = []
 
-      rows = parse_file(retailer, file_path, file_type)
-      File.delete(Rails.root.join('public', file_path))
+      rows = parse_file(retailer, import_logger)
+      import_logger.delete_file
 
       Customer.transaction do
         rows.each do |row|
@@ -63,8 +64,8 @@ module Customers
 
     private
 
-      def parse_file(retailer, file_path, file_type)
-        parsed_file(file_path, file_type).map.with_index do |row, index|
+      def parse_file(retailer, import_logger)
+        parsed_file(import_logger).map.with_index do |row, index|
           # Replace all headers with the actual field name
           row.to_h.keys.compact.each do |k|
             if CSV_ATTRIBUTES[k.strip].present?
@@ -149,7 +150,7 @@ module Customers
         true
       end
 
-      def parsed_file(file_path, file_type)
+      def parsed_file(import_logger)
         options = {
           headers: true,
           encoding: 'UTF-8',
@@ -158,11 +159,12 @@ module Customers
           skip_lines: /^(?:,\s*)+$/ # skips lines with all empty spaces
         }
 
-        file = if file_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                 xlsx = Roo::Spreadsheet.open(Rails.root.join('public', file_path), extension: :xlsx)
+        file_url = import_logger.file_url
+        file = if import_logger.file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                 xlsx = Roo::Spreadsheet.open(file_url)
                  xlsx.to_csv
                else
-                 File.open(Rails.root.join('public', file_path)).read
+                 open(file_url).read
                end
 
         file = file.gsub(';', ',')
