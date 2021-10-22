@@ -31,7 +31,8 @@ const initialState = {
   totalOrders: 0,
   mlChats: [],
   totalMlChats: 0,
-  loadingMoreMessages: false
+  loadingMoreMessages: false,
+  submitted: false
 };
 
 const reducer = (state = initialState, action) => {
@@ -487,7 +488,11 @@ const reducer = (state = initialState, action) => {
         labelValidationText: action.errors.label?.shift(),
         textValidationText: action.errors.text?.shift()
       }
-
+    case 'TOGGLE_SUBMITTED':
+      return {
+        ...state,
+        submitted: action.submitted
+      }
     default:
       return state;
   }

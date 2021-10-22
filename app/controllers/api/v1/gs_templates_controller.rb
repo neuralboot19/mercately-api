@@ -15,6 +15,6 @@ class Api::V1::GsTemplatesController < Api::ApiController
   private
 
     def gs_template_params
-      params.require(:gs_template).permit(:label, :language, :category, :text, :example)
+      params.require(:gs_template).permit(:label, :language, :category, :text, :example, :key, :file)
     end
 end

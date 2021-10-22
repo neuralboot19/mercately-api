@@ -1,7 +1,7 @@
 class Connection
-  def self.prepare_connection(url)
+  def self.prepare_connection(url, request = :url_encoded)
     Faraday.new(url: url) do |faraday|
-      faraday.request  :url_encoded             # form-encode POST params
+      faraday.request  request             # form-encode POST params
       faraday.response :logger                  # log requests to $stdout
       faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
     end
