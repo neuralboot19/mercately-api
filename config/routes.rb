@@ -73,6 +73,7 @@ Rails.application.routes.draw do
       resources :campaigns, only: %i[index new create] do
         member do
           put 'cancel', to: 'campaigns#cancel'
+          get 'download'
         end
       end
       resources :contact_groups, only: %i[index new edit destroy] do
