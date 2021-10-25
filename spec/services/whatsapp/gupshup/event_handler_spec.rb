@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
   let(:retailer) { create(:retailer, :gupshup_integrated) }
-  let(:customer) { create(:customer, retailer: retailer) }
+  let(:customer) { create(:customer, retailer: retailer, phone: '58412054XXXX', country_id: 'VE') }
   let(:retailer_user) { create(:retailer_user, retailer: retailer) }
 
   let(:text_response) do
     {
-      'app': 'AutoSeguro',
+      'app': 'MySrCName',
       'timestamp': 1600888652637,
       'version': 2,
       'type': 'message',
@@ -26,7 +26,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
         }
       },
       'gupshup_whatsapp': {
-        'app': 'AutoSeguro',
+        'app': 'MySrCName',
         'timestamp': 1600888652637,
         'version': 2,
         'type': 'message',
@@ -50,7 +50,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
 
   let(:quick_reply_response) do
     {
-      'app': 'AutoSeguro',
+      'app': 'MySrCName',
       'timestamp': 1600887173517,
       'version': 2,
       'type': 'message',
@@ -74,7 +74,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
         }
       },
       'gupshup_whatsapp': {
-        'app': 'AutoSeguro',
+        'app': 'MySrCName',
         'timestamp': 1600887173517,
         'version': 2,
         'type': 'message',
@@ -103,7 +103,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
 
   let(:message_event_response) do
     {
-      'app': 'AutoSeguro',
+      'app': 'MySrCName',
       'timestamp': 1600888666804,
       'version': 2,
       'type': 'message-event',
@@ -117,7 +117,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
         }
       },
       'gupshup_whatsapp': {
-        'app': 'AutoSeguro',
+        'app': 'MySrCName',
         'timestamp': 1600888666804,
         'version': 2,
         'type': 'message-event',
@@ -136,7 +136,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
 
   let(:number_not_exist_response) do
     {
-      'app': 'MercatelyTest',
+      'app': 'MySrCName',
       'timestamp': 1616513437223,
       'version': 2,
       'type': 'message-event',
@@ -150,7 +150,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
         }
       },
       'gupshup_whatsapp': {
-        'app': 'MercatelyTest',
+        'app': 'MySrCName',
         'timestamp': 1616513437223,
         'version': 2,
         'type': 'message-event',
