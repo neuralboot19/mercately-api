@@ -23,29 +23,16 @@ module ImportCustomersConcern
       final_file = parsed_file(file)
 
       if final_file
-        final_name = "import-customers-#{retailer_user.id}-#{file&.original_filename}-#{DateTime.now}"
-        file_type = file.content_type
-        name = if file_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                 "#{final_name}.xlsx"
-               else
-                 "#{final_name}.xlsx"
-               end
-
-        File.open(Rails.root.join('public', name), 'wb') do |f|
-          File.open(file.path, 'r') do |fb|
-            while (line = fb.gets)
-              f.write(line)
-            end
-          end
-        end
-
-        ImportContactsLogger.create(
+        import_logger = ImportContactsLogger.create(
           retailer_user_id: retailer_user.id,
           retailer_id: retailer_user.retailer.id,
-          original_file_name: file&.original_filename
+          original_file_name: file&.original_filename,
+          file: file
         )
 
-        Customers::ImportCustomersJob.perform_later(name, retailer_user.id, file_type)
+        return error_response(['No fue posible cargar el archivo enviado']) unless import_logger.file.attached?
+
+        Customers::ImportCustomersJob.perform_later(import_logger.id, retailer_user.id)
         { body: nil, status: :ok }
       else
         error_response(@errors[:errors])
