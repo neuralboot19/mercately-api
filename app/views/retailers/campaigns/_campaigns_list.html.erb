@@ -21,7 +21,7 @@
       $<%= campaign.cost %>
     <% else %>
       <div class="tooltip">
-        $<%= campaign.estimated_cost %>
+        $<%= campaign.estimated_cost.round(2) %>
         <i class="fas fa-exclamation-circle"></i>
         <div class="tooltiptext--black tooltiptext tooltiptext--right">Costo apróximado, obtendrás el costo real cuando la campaña se envíe.</div>
       </div>
@@ -48,10 +48,12 @@
         <b class="cookie cookie--yellow fs-12" value="0">Procesando</b>
       <% when 'sent' %>
         <b class="cookie cookie--green fs-12" value="0">Envíado</b>
+        <%= link_to 'Descargar', download_retailers_campaign_path(current_retailer, campaign.web_id, format: "xlsx") , target: "_blank" %>
       <% when 'cancelled' %>
         <b class="cookie cookie--red fs-12" value="3">Cancelado</b>
       <% when 'failed' %>
         <b class="cookie cookie--red fs-12" value="3">Fallido</b>
+        <%= link_to 'Descargar', download_retailers_campaign_path(current_retailer, campaign.web_id, format: "xlsx") , target: "_blank" %>
       <% end %>
     </div>
   </div>

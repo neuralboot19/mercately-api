@@ -155,3 +155,5 @@ gem 'activerecord-import', '~> 1.0', '>= 1.0.6'
 
 # Exporting files
 gem 'caxlsx'
+gem 'rubyzip', '>= 1.2.1'
+gem 'caxlsx_rails'
