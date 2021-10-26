@@ -19,12 +19,16 @@ module MercadoLibreNotificationHelper
               nil
             end
     msg = object.as_json
+    retailer.reload
     retailer_users.active(retailer.id).each do |ret_u|
       redis.publish 'new_message_counter', {
         identifier: identifier,
         unread_total_messages: ret_u.ml_unread,
         unread_questions: retailer.unread_questions,
         unread_ml_messages: retailer.unread_messages,
+        unread_ml_chats_count: ret_u.unread_ml_chats_count,
+        unread_ml_questions_count: ret_u.unread_ml_questions_count,
+        total_unread_ml_count: ret_u.total_unread_ml_count,
         from: 'MercadoLibre',
         message_text: object&.question.presence || 'Archivo',
         order_id: object&.order_id,
@@ -59,6 +63,7 @@ module MercadoLibreNotificationHelper
               nil
             end
 
+    retailer.reload
     retailer.retailer_users.active(retailer.id).each do |ret_u|
       redis.publish 'new_message_counter',
         {
@@ -66,6 +71,9 @@ module MercadoLibreNotificationHelper
           unread_total_messages: ret_u.ml_unread,
           unread_questions: retailer.unread_questions,
           unread_ml_messages: retailer.unread_messages,
+          unread_ml_chats_count: ret_u.unread_ml_chats_count,
+          unread_ml_questions_count: ret_u.unread_ml_questions_count,
+          total_unread_ml_count: ret_u.total_unread_ml_count,
           from: 'MercadoLibre',
           execute_alert: false,
           type: 'mercadolibre_chats',
@@ -80,6 +88,7 @@ module MercadoLibreNotificationHelper
   end
 
   def self.mark_chat_as_read(retailer:, order_web_id:)
+    retailer.reload
     retailer.retailer_users.active(retailer.id).each do |ret_u|
       redis.publish 'new_message_counter',
         {
@@ -87,6 +96,9 @@ module MercadoLibreNotificationHelper
           unread_total_messages: ret_u.ml_unread,
           unread_questions: retailer.unread_questions,
           unread_ml_messages: retailer.unread_messages,
+          unread_ml_chats_count: ret_u.unread_ml_chats_count,
+          unread_ml_questions_count: ret_u.unread_ml_questions_count,
+          total_unread_ml_count: ret_u.total_unread_ml_count,
           from: 'MercadoLibre',
           execute_alert: false,
           type: 'mercadolibre_chats',

@@ -58,10 +58,16 @@ http_interactions:
       - 9h-vRu-ws0GvkiNS34lnq1Gts_pSNfJnLQwiPjhjzmney-Bb0HEsiw==
     body:
       encoding: ASCII-8BIT
-      string: '{"_id":"935039e5a90f4f428b7051931af04a0b","message_id":"935039e5a90f4f428b7051931af04a0b","date_received":"2019-10-29T21:21:18.000Z","date":"2019-10-29T21:21:18.000Z","date_available":"2019-10-29T21:21:18.000Z","date_notified":null,"date_read":"2019-10-29T21:21:21.000Z","from":{"user_id":"425933549","email":"test_user_67701524@testuser.com","name":"Test
-        Test","secure_email":"ttest.hyztj7d+2-ogiytsnbthaytqmzs@mail.mercadolibre.com.ec"},"to":[{"user_id":"425935489","email":"test_user_43176273@testuser.com","name":"Test
-        Test","secure_email":"ttest.y8ks62p+2-ogiytsnbthaytqmrx@mail.mercadolibre.com.ec"}],"subject":null,"text":{"plain":"My
-        first answer"},"attachments":[],"attachments_validations":{"invalid_size":[],"forbidden":[],"invalid_extension":[],"internal_error":[]},"headers":[],"site_id":"MEC","resource":"orders","resource_id":"2194381783","status":"available","moderation":{"status":"clean","date_moderated":"2019-10-29T21:21:18.000Z","source":"online","reason":null},"client_id":7158647239075991,"conversation_first_message":false}'
+      string: '{"paging": null, "conversation_status": null,
+      "messages": [{"id": "935039e5a90f4f428b7051931af04a0b",
+      "site_id": "MEC", "client_id": 7158647239075991, "from": {"user_id": 425935489},
+      "to": {"user_id": 425933549}, "status": "available", "subject": null, "text": "Test 1",
+      "message_date": {"received": "2021-10-13T16:53:25.000Z", "available": "2021-10-13T16:53:25.000Z",
+      "notified": "2021-10-13T16:53:25.000Z", "created": "2021-10-13T16:53:25.000Z", "read": null},
+      "message_moderation": {"status": "clean", "reason": null, "source": "online",
+      "moderation_date": "2021-10-13T16:53:25.000Z"}, "message_attachments": null,
+      "message_resources": [{"id": "2194381783", "name": "packs"}, {"id": "425933549", "name": "sellers"}],
+      "conversation_first_message": false}], "seller_max_message_length": 0, "buyer_max_message_length": 0}'
     http_version: 
   recorded_at: Wed, 30 Oct 2019 18:58:46 GMT
 - request:

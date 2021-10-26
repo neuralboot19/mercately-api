@@ -13,13 +13,15 @@ module MercadoLibre
     end
 
     def save_message(message_info)
+      message_info = message_info['messages'][0]
       is_an_answer = message_info['from']['user_id'] == @meli_retailer.meli_user_id
       customer = find_customer(is_an_answer, message_info)
 
-      message = Message.find_or_initialize_by(meli_id: message_info['message_id'])
+      message = Message.find_or_initialize_by(meli_id: message_info['id'])
       send_notification = message.new_record?
       sync = send_notification && !is_an_answer
-      order = Order.find_by(meli_order_id: message_info['resource_id'])
+      order_id = message_info['message_resources'].select { |x| x['name'] == 'packs' }[0]['id']
+      order = Order.find_by(meli_order_id: order_id)
 
       return if not_corresponding_message(order, customer, is_an_answer)
 
@@ -27,21 +29,21 @@ module MercadoLibre
         order: order,
         customer: customer,
         meli_question_type: Question.meli_question_types[:from_order],
-        attachments: message_info['attachments'],
-        created_at: message_info['date']
+        attachments: message_info['message_attachments'],
+        created_at: message_info['message_date']['created']
       )
 
-      if message_info['date_read'].present?
+      if message_info['message_date']['read'].present?
         unread_messages = order.messages.where(date_read: nil, answer: nil).where('created_at <= ?', message.created_at)
-        unread_messages.update_all(date_read: message_info['date_read'])
+        unread_messages.update_all(date_read: message_info['message_date']['read'])
         order.update_column(:count_unread_messages, 0)
         sync = false
       end
 
       if is_an_answer
-        message.update(answer: message_info['text']['plain'], sender_id: @retailer.retailer_user.id)
+        message.update(answer: message_info['text'], sender_id: @retailer.retailer_user.id)
       else
-        message.update(question: message_info['text']['plain'])
+        message.update(question: message_info['text'])
       end
 
       order.update_column(:count_unread_messages, order.count_unread_messages + 1) if sync
@@ -61,7 +63,7 @@ module MercadoLibre
 
       def find_customer(is_an_answer, message_info)
         if is_an_answer
-          MercadoLibre::Customers.new(@retailer).import(message_info['to'][0]['user_id'])
+          MercadoLibre::Customers.new(@retailer).import(message_info['to']['user_id'])
         else
           MercadoLibre::Customers.new(@retailer).import(message_info['from']['user_id'])
         end

@@ -208,8 +208,9 @@ hr.chat_separator {
 
   &__cookie {
     float: right;
-    width: 10px;
-    height: 10px;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
     background-color: #F00;
     color: #FFF;
     border-radius: 7px;
@@ -218,16 +219,6 @@ hr.chat_separator {
     position: absolute;
     top: 0;
     right: 0;
-
-    @media screen and (max-width: 1024px) {
-      margin-right: 16px !important;
-    }
-
-    &.counter {
-      width: 22px;
-      height: 22px;
-      font-size: 14px;
-    }
 
     &.notification {
       background-color: $notifications-color;
@@ -261,10 +252,6 @@ hr.chat_separator {
       width: 20px;
       top: -12px;
       left: 14px;
-    }
-
-    &.in_tooltip {
-      margin-top: 6px;
     }
   }
 }

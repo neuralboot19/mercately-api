@@ -1027,6 +1027,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_210144) do
     t.integer "unread_instagram_chats_count", default: 0, null: false
     t.integer "unread_ml_chats_count", default: 0, null: false
     t.integer "unread_ml_questions_count", default: 0, null: false
+    t.integer "total_unread_ml_count", default: 0, null: false
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"
