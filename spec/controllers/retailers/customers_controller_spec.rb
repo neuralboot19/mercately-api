@@ -474,6 +474,14 @@ RSpec.describe Retailers::CustomersController, type: :controller do
       end
 
       context 'when it is a csv file' do
+        let(:file) { File.open(Rails.root + 'spec/fixtures/customers.csv') }
+
+        before do
+          allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+          allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+          allow_any_instance_of(Customers::ImportCustomersJob).to receive(:open).and_return(file)
+        end
+
         it 'returns success message' do
           post :bulk_import, params: {
             slug: retailer.slug,
@@ -487,6 +495,14 @@ RSpec.describe Retailers::CustomersController, type: :controller do
       end
 
       context 'when it is an excel file' do
+        let(:file) { Roo::Spreadsheet.open(Rails.root + 'spec/fixtures/customers.xlsx', extension: :xlsx) }
+
+        before do
+          allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+          allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+          allow(Roo::Spreadsheet).to receive(:open).and_return(file)
+        end
+
         it 'returns success message' do
           post :bulk_import, params: {
             slug: retailer.slug,

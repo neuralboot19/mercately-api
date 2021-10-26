@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Retailers::CampaignsController < RetailersController
-  before_action :set_campaign, only: %i[edit archive cancel]
+  before_action :set_campaign, only: %i[edit archive cancel download]
   before_action :check_contact_groups, only: %i[index new]
   before_action :whatsapp_integrated?, only: %i[index new]
 
@@ -47,6 +47,16 @@ class Retailers::CampaignsController < RetailersController
     @campaign.cancelled!
 
     redirect_to retailers_campaigns_path(current_retailer)
+  end
+
+  def download
+    @messages = GupshupWhatsappMessage.where(campaign_id: @campaign.id, retailer_id: current_retailer.id).includes(:customer)
+
+    respond_to do |format|
+      format.xlsx {
+        response.headers['Content-Disposition'] = 'attachment; filename=mercately-campaign-results.xlsx'
+      }
+    end
   end
 
   private

@@ -31,6 +31,7 @@ import NoteModal from '../shared/NoteModal';
 import 'react-image-lightbox/style.css';
 import fileUtils from '../../util/fileUtils';
 import { DEFAULT_IMAGE_SIZE_TRANSFER, MAX_IMAGE_SIZE_TRANSFER } from '../../constants/chatFileSizes';
+import stringUtils from '../../util/stringUtils';
 
 let currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content;
@@ -522,7 +523,8 @@ class ChatMessages extends Component {
         }
       } else if (!fromSelector) {
         const text = clipboard.getData('text/plain');
-        e.target.innerText = text;
+        e.target.innerText = stringUtils.addStr(e.target.innerText, this.caretPosition, text);
+        this.setFocus(this.caretPosition + text.length);
       }
     }
 

@@ -15,11 +15,15 @@ module Whatsapp::Gupshup::V1
     end
 
     def process_error!(params)
+      app_name = params['app']
+      phone_to_find = params['payload']['source'] || params['payload']['destination'] ||
+        params['gupshup_whatsapp']['payload']['source'] || params['gupshup_whatsapp']['payload']['destination']
+      phone_to_find = "+#{phone_to_find}"
       # Gupshup Message Id
       event_id = params['payload']['id']
 
       # Find the message by its GupShup Message Id
-      gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(event_id)
+      gwm = find_gupshup_message(app_name, phone_to_find, event_id)
       if gwm.blank?
         error_msg = "El mensaje ID #{event_id} no fue encontrado"
         WhatsappLog.create(error_message: error_msg, response: params, retailer: @retailer, gupshup_message_id: event_id)
@@ -86,6 +90,7 @@ module Whatsapp::Gupshup::V1
       def message_event
         # Get incoming new event
         new_event = @params['payload']['type']
+        app_name = @params['app']
 
         if new_event == 'enqueued'
           # Get Whatsapp Message Id and Gupshup Message Id
@@ -93,7 +98,10 @@ module Whatsapp::Gupshup::V1
           event_id = @params['payload']['id']
 
           # Find the stored message by Gupshup Message Id
-          gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(event_id)
+          phone_to_find = @params['payload']['source'] || @params['payload']['destination'] ||
+            @params['gupshup_whatsapp']['payload']['source'] || @params['gupshup_whatsapp']['payload']['destination']
+          phone_to_find = "+#{phone_to_find}"
+          gwm = find_gupshup_message(app_name, phone_to_find, event_id)
           raise StandardError.new("El mensaje ID #{event_id} no fue encontrado") unless gwm.present?
 
           # Update the Whatsapp Message Id with the incoming one
@@ -125,7 +133,10 @@ module Whatsapp::Gupshup::V1
           end
         else
           gs_id = @params['payload']['gsId']
-          gwm = GupshupWhatsappMessage.find_by_gupshup_message_id(gs_id)
+          phone_to_find = @params['payload']['source'] || @params['payload']['destination'] ||
+            @params['gupshup_whatsapp']['payload']['source'] || @params['gupshup_whatsapp']['payload']['destination']
+          phone_to_find = "+#{phone_to_find}"
+          gwm = find_gupshup_message(app_name, phone_to_find, gs_id)
 
           if gwm
             if number_status_by_sym(gwm.status.to_sym) < number_status_by_sym(new_event.to_sym)
@@ -176,6 +187,12 @@ module Whatsapp::Gupshup::V1
           @retailer,
           @params.merge(direction: 'inbound')
         )
+      end
+
+      def find_gupshup_message(app_name, phone, id)
+        retailer = Retailer.find_by(gupshup_src_name: app_name)
+        customer = retailer.customers.find_by(phone: phone)
+        customer.gupshup_whatsapp_messages.find_by_gupshup_message_id(id)
       end
 
       def broadcast(msg)

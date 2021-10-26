@@ -7,92 +7,128 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
   let(:retailer_user) { create(:retailer_user, :admin, retailer: retailer) }
 
   describe '#perform' do
-    context 'when there are duplicated phones in the file' do
-      it 'does not import the row' do
-        copy_file('spec/fixtures/duplicated_data_in_customers.csv')
+    describe 'duplicated data' do
+      let(:file) { File.open(Rails.root + 'spec/fixtures/duplicated_data_in_customers.csv') }
 
-        expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
-        end.to change(Customer, :count).by(0)
+      let(:import_contacts_logger) do
+        create(:import_contacts_logger, retailer: retailer, retailer_user: retailer_user)
+      end
 
-        mail = ActionMailer::Base.deliveries.last
-        expect(mail.to).to eq([retailer_user.email])
-        expect(mail.body.encoded).to include('Este tel')
-        expect(mail.body.encoded).to include('duplicado en su archivo')
+      before do
+        allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+        allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+        allow_any_instance_of(Customers::ImportCustomersJob).to receive(:open).and_return(file)
+        import_contacts_logger.file.attach(
+          io: File.open(Rails.root + 'spec/fixtures/duplicated_data_in_customers.csv'),
+          filename: 'filename.csv',
+          content_type: 'text/csv'
+        )
+      end
+
+      context 'when there are duplicated phones in the file' do
+        it 'does not import the row' do
+          expect do
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
+          end.to change(Customer, :count).by(0)
+
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.to).to eq([retailer_user.email])
+          expect(mail.body.encoded).to include('Este tel')
+          expect(mail.body.encoded).to include('duplicado en su archivo')
+        end
+      end
+
+      context 'when there are duplicated emails in the file' do
+        it 'does not import the row' do
+          expect do
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
+          end.to change(Customer, :count).by(0)
+
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.to).to eq([retailer_user.email])
+          expect(mail.body.encoded).to include('Este email')
+          expect(mail.body.encoded).to include('duplicado en su archivo')
+        end
+      end
+
+      context 'when there are wrong formatted emails in the file' do
+        it 'does not import the row' do
+          expect do
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
+          end.to change(Customer, :count).by(0)
+
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.to).to eq([retailer_user.email])
+          expect(mail.body.encoded).to include('Error en el formato del email')
+        end
       end
     end
 
-    context 'when there are duplicated emails in the file' do
-      it 'does not import the row' do
-        copy_file('spec/fixtures/duplicated_data_in_customers.csv')
+    describe 'invalid data' do
+      let(:file) { File.open(Rails.root + 'spec/fixtures/invalid_data_customers.csv') }
 
-        expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
-        end.to change(Customer, :count).by(0)
-
-        mail = ActionMailer::Base.deliveries.last
-        expect(mail.to).to eq([retailer_user.email])
-        expect(mail.body.encoded).to include('Este email')
-        expect(mail.body.encoded).to include('duplicado en su archivo')
+      let(:import_contacts_logger) do
+        create(:import_contacts_logger, retailer: retailer, retailer_user: retailer_user)
       end
-    end
 
-    context 'when there are wrong formatted emails in the file' do
-      it 'does not import the row' do
-        copy_file('spec/fixtures/duplicated_data_in_customers.csv')
-
-        expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
-        end.to change(Customer, :count).by(0)
-
-        mail = ActionMailer::Base.deliveries.last
-        expect(mail.to).to eq([retailer_user.email])
-        expect(mail.body.encoded).to include('Error en el formato del email')
+      before do
+        allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+        allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+        allow_any_instance_of(Customers::ImportCustomersJob).to receive(:open).and_return(file)
+        import_contacts_logger.file.attach(
+          io: File.open(Rails.root + 'spec/fixtures/invalid_data_customers.csv'),
+          filename: 'filename.csv',
+          content_type: 'text/csv'
+        )
       end
-    end
 
-    context 'when there are wrong formatted phones in the file' do
-      it 'does not import the row' do
-        copy_file('spec/fixtures/invalid_data_customers.csv')
+      context 'when there are wrong formatted phones in the file' do
+        it 'does not import the row' do
+          expect do
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
+          end.to change(Customer, :count).by(2)
 
-        expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
-        end.to change(Customer, :count).by(2)
-
-        mail = ActionMailer::Base.deliveries.last
-        expect(mail.to).to eq([retailer_user.email])
-        expect(mail.body.encoded).to include('Error en el formato de tel')
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.to).to eq([retailer_user.email])
+          expect(mail.body.encoded).to include('Error en el formato de tel')
+        end
       end
-    end
 
-    context 'when there are rows without phone and email in the file' do
-      it 'does not import the row' do
-        copy_file('spec/fixtures/invalid_data_customers.csv')
+      context 'when there are rows without phone and email in the file' do
+        it 'does not import the row' do
+          expect do
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
+          end.to change(Customer, :count).by(2)
 
-        expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
-        end.to change(Customer, :count).by(2)
-
-        mail = ActionMailer::Base.deliveries.last
-        expect(mail.to).to eq([retailer_user.email])
-        expect(mail.body.encoded).to include('No tiene email ni tel')
+          mail = ActionMailer::Base.deliveries.last
+          expect(mail.to).to eq([retailer_user.email])
+          expect(mail.body.encoded).to include('No tiene email ni tel')
+        end
       end
     end
 
     context 'when occurs an error saving the customer' do
       let!(:customer) { create(:customer, retailer: retailer_user.retailer, phone: '59355555555', country_id: nil) }
+      let(:file) { File.open(Rails.root + 'spec/fixtures/customers.csv') }
+
+      let(:import_contacts_logger) do
+        create(:import_contacts_logger, retailer: retailer, retailer_user: retailer_user)
+      end
+
+      before do
+        allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+        allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+        allow_any_instance_of(Customers::ImportCustomersJob).to receive(:open).and_return(file)
+        import_contacts_logger.file.attach(
+          io: File.open(Rails.root + 'spec/fixtures/customers.csv'),
+          filename: 'filename.csv',
+          content_type: 'text/csv'
+        )
+      end
 
       it 'does not import the row' do
-        copy_file('spec/fixtures/customers.csv')
-
         expect do
-          Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-            'text/csv')
+          Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
         end.to change(Customer, :count).by(1)
 
         mail = ActionMailer::Base.deliveries.last
@@ -103,12 +139,26 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
 
     context 'when the row is filled well in the file' do
       context 'when it is a csv file' do
-        it 'imports the row' do
-          copy_file('spec/fixtures/customers.csv')
+        let(:file) { File.open(Rails.root + 'spec/fixtures/customers.csv') }
 
+        let(:import_contacts_logger) do
+          create(:import_contacts_logger, retailer: retailer, retailer_user: retailer_user)
+        end
+
+        before do
+          allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+          allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+          allow_any_instance_of(Customers::ImportCustomersJob).to receive(:open).and_return(file)
+          import_contacts_logger.file.attach(
+            io: File.open(Rails.root + 'spec/fixtures/customers.csv'),
+            filename: 'filename.csv',
+            content_type: 'text/csv'
+          )
+        end
+
+        it 'imports the row' do
           expect do
-            Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-              'text/csv')
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
           end.to change(Customer, :count).by(2)
 
           mail = ActionMailer::Base.deliveries.last
@@ -117,12 +167,26 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
       end
 
       context 'when it is an excel file' do
-        it 'imports the row' do
-          copy_file('spec/fixtures/customers.xlsx', 'xlsx')
+        let(:file) { Roo::Spreadsheet.open(Rails.root + 'spec/fixtures/customers.xlsx', extension: :xlsx) }
 
+        let(:import_contacts_logger) do
+          create(:import_contacts_logger, retailer: retailer, retailer_user: retailer_user)
+        end
+
+        before do
+          allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+          allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+          allow(Roo::Spreadsheet).to receive(:open).and_return(file)
+          import_contacts_logger.file.attach(
+            io: File.open(Rails.root + 'spec/fixtures/customers.xlsx'),
+            filename: 'filename.xlsx',
+            content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          )
+        end
+
+        it 'imports the row' do
           expect do
-            Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.xlsx", retailer_user.id,
-              'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
           end.to change(Customer, :count).by(2)
 
           mail = ActionMailer::Base.deliveries.last
@@ -135,12 +199,26 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
           create(:customer_related_field, retailer: retailer, name: 'Nombre completo', field_type: 'string')
         end
 
-        it 'imports the row and saves the custom fields' do
-          copy_file('spec/fixtures/custom_fields.csv')
+        let(:file) { File.open(Rails.root + 'spec/fixtures/custom_fields.csv') }
 
+        let(:import_contacts_logger) do
+          create(:import_contacts_logger, retailer: retailer, retailer_user: retailer_user)
+        end
+
+        before do
+          allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
+          allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
+          allow_any_instance_of(Customers::ImportCustomersJob).to receive(:open).and_return(file)
+          import_contacts_logger.file.attach(
+            io: File.open(Rails.root + 'spec/fixtures/custom_fields.csv'),
+            filename: 'filename.csv',
+            content_type: 'text/csv'
+          )
+        end
+
+        it 'imports the row and saves the custom fields' do
           expect do
-            Customers::ImportCustomersJob.perform_now("import-file-#{retailer_user.id}.csv", retailer_user.id,
-              'text/csv')
+            Customers::ImportCustomersJob.perform_now(import_contacts_logger.id, retailer_user.id)
           end.to change(Customer, :count).by(2)
 
           mail = ActionMailer::Base.deliveries.last
@@ -148,16 +226,6 @@ RSpec.describe Customers::ImportCustomersJob, type: :job do
 
           expect(Customer.last.customer_related_data.find_by(customer_related_field_id: customer_related_field.id))
             .not_to be_nil
-        end
-      end
-    end
-  end
-
-  def copy_file(file_name, extension = 'csv')
-    File.open(Rails.root.join('public', "import-file-#{retailer_user.id}.#{extension}"), 'wb') do |f|
-      File.open(Rails.root + file_name, 'r') do |fb|
-        while (line = fb.gets)
-          f.write(line)
         end
       end
     end

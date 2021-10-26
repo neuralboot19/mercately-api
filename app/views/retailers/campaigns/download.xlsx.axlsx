@@ -1,0 +1,30 @@
+wb = xlsx_package.workbook
+sheet_name = @campaign.name.parameterize
+sheet_name = sheet_name.size > 20 ? sheet_name[0, 19] + '...' : sheet_name
+
+wb.add_worksheet(name: sheet_name) do |sheet|
+  # Create the header row
+  sheet.add_row ['First Name', 'Last Name', 'Email', 'Phone', 'Status']
+
+  @messages.each do |message|
+    state = ''
+    case message.status
+    when 'sent'
+      state = 'Enviado'
+    when 'delivered'
+      state = 'Entregado'
+    when 'read'
+      state = 'Leido'
+    else
+      state = 'Error'
+    end
+
+    sheet.add_row [
+      message.customer&.first_name,
+      message.customer&.last_name,
+      message.customer&.email,
+      message.customer&.phone,
+      state,
+    ], types: [:string, :string, :string, :string, :string]
+  end
+end
