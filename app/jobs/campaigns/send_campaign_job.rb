@@ -30,7 +30,7 @@ module Campaigns
         # es de texto o archivo.
         if has_file
           params[:caption] = aux_message
-          params[:url] = campaign.file_url
+          params[:url] = campaign.file.service_url
           params[:file_name] = campaign.file.filename.to_s
           params[:template] = 'true'
         else

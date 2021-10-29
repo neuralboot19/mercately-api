@@ -39,7 +39,7 @@
                   <% if @whatsapp_template.file? %>
                     <div class="my-16 col-xs-12">
                       <%= f.label :file, 'Archivo' %>
-                      <%= f.file_field :file, required: true, class: 'input validate-required' %>
+                      <%= f.file_field :file, required: true, class: 'input validate-required', accept: 'application/pdf' %>
                       <i class="validation-msg"></i>
                     </div>
                   <% end %>
