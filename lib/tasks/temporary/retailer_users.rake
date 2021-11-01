@@ -169,4 +169,32 @@ namespace :retailer_users do
       .only_assigned_customers
       .update_all(update_only_assigned_sql)
   end
+
+  task update_unread_ml_count: :environment do
+    RetailerUser.update_all(
+      <<-SQL
+        unread_ml_questions_count = (
+          SELECT COUNT(DISTINCT questions.id)
+          FROM questions
+          INNER JOIN customers ON customers.id = questions.customer_id
+          WHERE (questions.product_id IS NOT NULL)
+          AND questions.date_read IS NULL
+          AND customers.retailer_id = retailer_users.retailer_id
+        ),
+        unread_ml_chats_count = (
+          SELECT COUNT(DISTINCT orders.id)
+          FROM orders
+          INNER JOIN customers ON customers.id = orders.customer_id
+          WHERE orders.count_unread_messages > 0
+          AND customers.retailer_id = retailer_users.retailer_id
+        )
+      SQL
+    )
+    RetailerUser.update_all(
+      <<-SQL
+        total_unread_ml_count = unread_ml_questions_count + unread_ml_chats_count
+      SQL
+    )
+    RetailerUser.where('total_unread_ml_count > 0').update_all(ml_unread: true)
+  end
 end

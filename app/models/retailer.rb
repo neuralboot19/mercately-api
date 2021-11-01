@@ -99,6 +99,14 @@ class Retailer < ApplicationRecord
     Question.includes(:customer).where(date_read: nil, customers: { retailer_id: id }).exists?
   end
 
+  def unread_questions_records
+    Question.includes(:customer).where(date_read: nil, customers: { retailer_id: id })
+  end
+
+  def unread_orders
+    Order.joins(:customer).where('orders.count_unread_messages > 0 AND customers.retailer_id = ?', id)
+  end
+
   def karix_unread_whatsapp_messages(retailer_user)
     return []
 
@@ -287,10 +295,14 @@ class Retailer < ApplicationRecord
   end
 
   def sync_ml_unread
-    unread = unread_questions || Order.joins(:customer)
-      .where('orders.count_unread_messages > 0 AND customers.retailer_id = ?', id).exists?
+    unread = unread_questions || unread_orders.exists?
 
-    retailer_users.update_all(ml_unread: unread)
+    retailer_users.update_all(
+      ml_unread: unread,
+      unread_ml_chats_count: unread_orders.count,
+      unread_ml_questions_count: unread_questions_records.count,
+      total_unread_ml_count: unread_orders.count + unread_questions_records.count
+    )
   end
 
   private

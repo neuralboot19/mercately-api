@@ -21,25 +21,33 @@ socket.on('new_message_counter', function(data) {
   } else {
     $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).hide();
   }
-  if (data['unread_chats_count']) $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).text(data['unread_chats_count']);
+  if (data['unread_chats_count'] || data['unread_chats_count'] === 0) {
+    $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).text(data['unread_chats_count']);
+  }
 
   if (data['identifier'] === '#item__cookie_message' || data['identifier'] === '#item__cookie_question') {
     if (data['unread_total_messages'] === true) {
+      $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').text(data['total_unread_ml_count']);
       $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').show();
     } else {
       $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').hide();
+      $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').text(data['total_unread_ml_count']);
     }
 
-    if (data['unread_ml_messages'] === true) {
-      $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).show();
+    if (data['unread_ml_chats_count'] > 0 && data['unread_ml_messages'] === true) {
+      $(`#sidebar #item__cookie_message, #sidebar--pc #item__cookie_message`).text(data['unread_ml_chats_count']);
+      $(`#sidebar #item__cookie_message, #sidebar--pc #item__cookie_message`).show();
     } else {
-      $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).hide();
+      $(`#sidebar #item__cookie_message, #sidebar--pc #item__cookie_message`).hide();
+      $(`#sidebar #item__cookie_message, #sidebar--pc #item__cookie_message`).text(data['unread_ml_chats_count']);
     }
 
-    if (data['unread_questions'] === true) {
-      $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).show();
+    if (data['unread_ml_questions_count'] > 0 && data['unread_questions'] === true) {
+      $(`#sidebar #item__cookie_question, #sidebar--pc #item__cookie_question`).text(data['unread_ml_questions_count']);
+      $(`#sidebar #item__cookie_question, #sidebar--pc #item__cookie_question`).show();
     } else {
-      $(`#sidebar ${data['identifier']}, #sidebar--pc ${data['identifier']}`).hide();
+      $(`#sidebar #item__cookie_question, #sidebar--pc #item__cookie_question`).hide();
+      $(`#sidebar #item__cookie_question, #sidebar--pc #item__cookie_question`).text(data['unread_ml_questions_count']);
     }
   }
 
@@ -51,6 +59,24 @@ function play(data) {
     let audio = new Audio('../../notification_tune.mp3');
     audio.play();
     showNotification(data);
+  }
+
+  let totalWs = $('#sidebar .item__cookie_whatsapp_messages, #sidebar--pc .item__cookie_whatsapp_messages').html();
+  let totalMsn = $('#sidebar .item__cookie_facebook_messages, #sidebar--pc .item__cookie_facebook_messages').html();
+  let totalIg = $('#sidebar .item__cookie_instagram_messages, #sidebar--pc .item__cookie_instagram_messages').html();
+  let totalMl = $('#sidebar #item__cookie_total, #sidebar--pc #item__cookie_total').html();
+
+  totalWs = totalWs ? parseInt(totalWs) : 0;
+  totalMsn = totalMsn ? parseInt(totalMsn) : 0;
+  totalIg = totalIg ? parseInt(totalIg) : 0;
+  totalMl = totalMl ? parseInt(totalMl) : 0;
+
+  const total = totalWs + totalMsn + totalMl + totalIg;
+
+  if (total > 0) {
+    document.title = `(${total}) Mercately`;
+  } else {
+    document.title = 'Mercately';
   }
 }
 

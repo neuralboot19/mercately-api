@@ -208,6 +208,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :customers, only: [:index, :show, :update] do
+        put 'custom_fields', to: 'custom_fields_mobile#bulk_update'
         resources :custom_fields, only: [:index, :update]
          collection do
           get 'search_customers', to: 'customers#search_customers'

@@ -80,15 +80,21 @@
           <i class="icon-mercadolibre-left item__icon fs-14 fw-bold"></i>
           <label for="item--inbox-4" class="item__name">Inbox</label>
           <i class="item__arrow right"></i>
-          <b id="item__cookie_total" class="item__cookie item__cookie_total" style="display: <%= ml_total_unread ? 'inline-block' : 'none' %>"></b>
+          <b id="item__cookie_total" class="item__cookie item__cookie_total" style="display: <%= ml_total_unread ? 'inline-block' : 'none' %>">
+            <%= current_retailer_user.total_unread_ml_count %>
+          </b>
           <ul class="submenu no-style">
             <li class="submenu__item">
               <%= link_to t('vertical_navbar.ml.questions'), retailers_questions_path(current_retailer), class: 'item__name no-style' %>
-              <b id="item__cookie_question" class="item__cookie" style="display: <%= ml_unread_questions ? 'inline-block' : 'none' %>"></b>
+              <b id="item__cookie_question" class="item__cookie" style="display: <%= ml_unread_questions ? 'inline-block' : 'none' %>">
+                <%= current_retailer_user.unread_ml_questions_count %>
+              </b>
             </li>
             <li class="submenu__item">
               <%= link_to t('vertical_navbar.ml.chats'), retailers_mercadolibre_chats_path(current_retailer), class: 'item__name no-style' %>
-              <b id="item__cookie_message" class="item__cookie" style="display: <%= ml_unread_messages ? 'inline-block' : 'none' %>"></b>
+              <b id="item__cookie_message" class="item__cookie" style="display: <%= ml_unread_messages ? 'inline-block' : 'none' %>">
+                <%= current_retailer_user.unread_ml_chats_count %>
+              </b>
             </li>
           </ul>
         </li>
@@ -115,7 +121,7 @@
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_whats_app_chats_path(current_retailer)) %>">
           <i class="icon-whatsapp-left item__icon"></i>
           <%= link_to 'WhatsApp', retailers_whats_app_chats_path(current_retailer), class: 'item__name no-style' %>
-          <b class="item__cookie item__cookie_whatsapp_messages counter" style="display: <%= whatsapp_unread_messages ? 'inline-block' : 'none' %>">
+          <b class="item__cookie item__cookie_whatsapp_messages" style="display: <%= whatsapp_unread_messages ? 'inline-block' : 'none' %>">
             <%= current_retailer_user.unread_whatsapp_chats_count %>
           </b>
         </li>
@@ -292,17 +298,23 @@
                 <div>
                   <%= link_to retailers_questions_path(current_retailer), class: 'c-secondary no-style' do %>
                     <%= t('vertical_navbar.ml.questions') %>
-                    <b id="item__cookie_question" class="item__cookie item__cookie_question in_tooltip"style="display: <%= ml_unread_questions ? 'inline-block' : 'none' %>"></b>
+                    <b id="item__cookie_question" class="item__cookie item__cookie_question" style="display: <%= ml_unread_questions ? 'inline-block' : 'none' %>">
+                      <%= current_retailer_user.unread_ml_questions_count %>
+                    </b>
                   <% end %>
                 </div>
                 <div>
                   <%= link_to retailers_mercadolibre_chats_path(current_retailer), class: 'c-secondary no-style' do %>
                     <%= t('vertical_navbar.ml.chats') %>
-                    <b id="item__cookie_message" class="item__cookie in_tooltip" style="display: <%= ml_unread_messages ? 'inline-block' : 'none' %>"></b>
+                    <b id="item__cookie_message" class="item__cookie" style="display: <%= ml_unread_messages ? 'inline-block' : 'none' %>">
+                      <%= current_retailer_user.unread_ml_chats_count %>
+                    </b>
                   <% end %>
                 </div>
               </div>
-              <b id="item__cookie_total" class="item__cookie item__cookie_total" style="display: <%= ml_total_unread ? 'inline-block' : 'none' %>"></b>
+              <b id="item__cookie_total" class="item__cookie item__cookie_total" style="display: <%= ml_total_unread ? 'inline-block' : 'none' %>">
+                <%= current_retailer_user.total_unread_ml_count %>
+              </b>
             </div>
           </li>
         <% end %>
@@ -339,7 +351,7 @@
                 <i class="icon-whatsapp-left"></i>
               <% end %>
               <div class="merc-tooltiptext">WhatsApp</div>
-              <b class="item__cookie item__cookie_whatsapp_messages counter" style="display: <%= whatsapp_unread_messages ? 'inline-block' : 'none' %>">
+              <b class="item__cookie item__cookie_whatsapp_messages" style="display: <%= whatsapp_unread_messages ? 'inline-block' : 'none' %>">
                 <%= current_retailer_user.unread_whatsapp_chats_count %>
               </b>
             </div>

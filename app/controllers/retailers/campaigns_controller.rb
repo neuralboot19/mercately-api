@@ -81,6 +81,7 @@ class Retailers::CampaignsController < RetailersController
         :send_at,
         :contact_group_id,
         :whatsapp_template_id,
+        :file,
         content_params: []
       )
     end
