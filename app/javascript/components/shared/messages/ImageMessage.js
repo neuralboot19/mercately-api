@@ -63,7 +63,7 @@ function ImageMessage({
             <div className="lds-dual-ring" />
           )}
           { error ? (
-            <blockquote className="text-center mt-140">
+            <blockquote className="text-center mt-140 c-black">
               Imagen temporal no disponible
             </blockquote>
           ) : (
