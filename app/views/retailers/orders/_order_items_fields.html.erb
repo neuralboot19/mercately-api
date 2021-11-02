@@ -34,7 +34,7 @@
     </div>
     <div class="col-xs-12 col-sm-2">
       <div class="product_subtotal">
-        $<%= f.object.quantity * f.object.unit_price %>
+        <%= current_retailer.currency_symbol %><%= f.object.quantity * f.object.unit_price %>
       </div>
     </div>
     <div class="col-xs-12 col-sm-1 center-xs end-sm p-0 mb-24 t-center">

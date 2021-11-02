@@ -60,7 +60,7 @@
           </div>
           <div class="row">
             <div class="col-xs-12 pl-0 mb-10 mt-15">
-              Ganancias Totales: <b class="c-secondary">$<%= @profit_total %></b>
+              Ganancias Totales: <b class="c-secondary"><%= current_retailer.currency_symbol %><%= @profit_total %></b>
             </div>
           </div>
           <div class="row">
@@ -126,7 +126,7 @@
                         </div>
                         <div class="col-xs-6 col-sm-6 t-center"><%= product.title %></div>
                         <div class="col-xs-2 col-sm-2 t-center"><%= product.range_total_sold(@start_date, @end_date) %></div>
-                        <div class="col-xs-2 col-sm-2 t-center c-green">$<%= product.range_total_earned(@start_date, @end_date) %></div>
+                        <div class="col-xs-2 col-sm-2 t-center c-green"><%= current_retailer.currency_symbol %><%= product.range_total_earned(@start_date, @end_date) %></div>
                       </div>
                     <% end %>
                   </div>
@@ -149,7 +149,7 @@
                         <div class="col-xs-5 col-sm-5 t-center"><%= cat.name %></div>
                         <div class="col-xs-2 col-sm-2 t-center"><%= cat.total_products(current_retailer) %></div>
                         <div class="col-xs-2 col-sm-2 t-center"><%= cat.total_products_sold(current_retailer, @start_date, @end_date) %></div>
-                        <div class="col-xs-3 col-sm-3 t-center c-green">$<%= cat.earnings(current_retailer, @start_date, @end_date) %></div>
+                        <div class="col-xs-3 col-sm-3 t-center c-green"><%= current_retailer.currency_symbol %><%= cat.earnings(current_retailer, @start_date, @end_date) %></div>
                       </div>
                     <% end %>
                   </div>
@@ -185,7 +185,7 @@
                             <div class="t-center"><%= customer.range_items_bought(@start_date, @end_date) %></div>
                           </div>
                           <div class="col-xs-4 col-sm-4">
-                            <div class="t-center c-green"><%= customer.range_earnings(@start_date, @end_date) %></div>
+                            <div class="t-center c-green"><%= current_retailer.currency_symbol %><%= customer.range_earnings(@start_date, @end_date) %></div>
                           </div>
                         </div>
                       <% end %>

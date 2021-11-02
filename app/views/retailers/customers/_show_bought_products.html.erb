@@ -20,7 +20,7 @@
         <div class="col-xs-4 col-sm-6 item__descriptor">Ventas:</div>
         <div class="col-xs-2 col-sm-6"><%= @customer.order_items_product(product) %></div>
         <div class="col-xs-4 col-sm-6 item__descriptor">Ganancia:</div>
-        <div class="col-xs-2 col-sm-6">$<%= @customer.earned_by_product(product) %></div>
+        <div class="col-xs-2 col-sm-6"><%= current_retailer.currency_symbol %><%= @customer.earned_by_product(product) %></div>
       </div>
     </div>
   </div>

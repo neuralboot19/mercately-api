@@ -42,7 +42,7 @@
     </div>
   </div>
   <div class="col-xs-4 col-sm-1 t-center money">
-    $<%= order.total %>
+    <%= @currency_symbol %><%= order.total %>
   </div>
   <div class="col-xs-4 col-sm-2 t-center">
     <%= show_date(order.created_at) %>
@@ -116,11 +116,11 @@
       </div>
       <div class="col-xs-4 col-sm-2 t-center c-secondary">
         <span class="hide-on-md-and-up mr-5">Precio:</span>
-        $<%= oi.unit_price %>
+        <%= @currency_symbol %><%= oi.unit_price %>
       </div>
       <div class="col-xs-4 col-sm-3 t-center c-secondary">
         <span class="hide-on-md-and-up mr-5">Sub-total:</span>
-        $<%= oi.subtotal %>
+        <%= @currency_symbol %><%= oi.subtotal %>
       </div>
       <div class="col-sm-1 col-xs-12 t-center p-0">
         <% if oi.product_variation %>

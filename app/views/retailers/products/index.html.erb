@@ -41,7 +41,7 @@
               <div class="col-sm-2">Inventario</div>
               <div class="col-sm-1"></div>
             </div>
-            <%= render partial: 'retailers/products/product_row', collection: @products, as: :product, cached: true %>
+            <%= render partial: 'retailers/products/product_row', collection: @products, as: :product %>
             <div class="row middle-xs center-xs">
               <div class="col-xs-12">
                 <%= paginate @products %>

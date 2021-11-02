@@ -116,7 +116,7 @@ const MessageForm = ({
     if (selectedProduct) {
       let productString = '';
       productString += (`${selectedProduct.attributes.title}\n`);
-      productString += (`Precio $${selectedProduct.attributes.price}\n`);
+      productString += (`Precio ${selectedProduct.attributes.currency}${selectedProduct.attributes.price}\n`);
       productString += (`${selectedProduct.attributes.description}\n`);
       productString += (selectedProduct.attributes.url ? selectedProduct.attributes.url : '');
       $('#divMessage')

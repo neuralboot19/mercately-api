@@ -203,7 +203,7 @@ class ChatMessages extends Component {
       this.state.selectedProduct = newProps.selectedProduct;
       let productString = '';
       productString += (`${this.state.selectedProduct.attributes.title}\n`);
-      productString += (`Precio $${this.state.selectedProduct.attributes.price}\n`);
+      productString += (`Precio ${this.state.selectedProduct.attributes.currency}${this.state.selectedProduct.attributes.price}\n`);
       productString += (`${this.state.selectedProduct.attributes.description}\n`);
       productString += (this.state.selectedProduct.attributes.url ? this.state.selectedProduct.attributes.url : '');
       $('#divMessage').html(productString);

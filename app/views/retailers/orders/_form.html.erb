@@ -3,6 +3,7 @@
     <%= form_for [:retailers, @order], html: { class: 'validate-form col-xs-12 p-0 order-form' } do |f| %>
       <input type="hidden" id="hidden-merc-status" value="<%= @order.status %>" />
       <input type="hidden" id="hidden-meli-id" value="<%= @order.meli_order_id %>" />
+      <input type="hidden" id="hidden-currency" value="<%= current_retailer.currency_symbol %>" />
       <%= f.hidden_field :customer_id, value: f.object&.customer&.id || current_retailer.customers.first&.id, id: 'order_customer' %>
       <div class="row">
         <div class="col-xs-12 col-sm-6">
@@ -131,7 +132,7 @@
                     <div>
                       <h3 class="total">
                         Total:
-                        <span class="money fs-19">$<%= @order.total %></span>
+                        <span class="money fs-19"><%= current_retailer.currency_symbol %><%= @order.total %></span>
                       </h3>
                     </div>
                   <% end %>

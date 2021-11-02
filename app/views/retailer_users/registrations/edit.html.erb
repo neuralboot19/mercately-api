@@ -40,6 +40,10 @@
                   <%= retailer.label :timezone, 'Zona horaria' %>
                   <%= retailer.select :timezone, timezones_list, { include_blank: true }, class: 'input' %>
                 </div>
+                <div class="my-16">
+                  <%= retailer.label :currency, 'Moneda' %>
+                  <%= retailer.currency_select(:currency, CurrencySelect.currencies_array, { include_blank: false }, class: 'input') %>
+                </div>
               <% end %>
             </fieldset>
 

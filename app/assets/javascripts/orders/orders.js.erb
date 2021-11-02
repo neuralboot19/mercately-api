@@ -371,8 +371,8 @@ function calculateTotal() {
       price = $(this).find('.product_price').val();
       subtotal = quantity * price;
       total += subtotal;
-      $(this).find('.product_subtotal').text('$' + subtotal.toFixed(2));
+      $(this).find('.product_subtotal').text($('#hidden-currency').val() + subtotal.toFixed(2));
     }
   });
-  $('.total .money').text('$' + total.toFixed(2));
+  $('.total .money').text($('#hidden-currency').val() + total.toFixed(2));
 }
