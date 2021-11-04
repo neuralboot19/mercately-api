@@ -197,4 +197,10 @@ namespace :retailer_users do
     )
     RetailerUser.where('total_unread_ml_count > 0').update_all(ml_unread: true)
   end
+
+  task update_token_expiration: :environment do
+    RetailerUser.where.not(api_session_expiration: nil)
+      .where('api_session_expiration > ?', Time.now)
+      .update_all(api_session_expiration: 1.year.from_now)
+  end
 end

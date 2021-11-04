@@ -128,7 +128,7 @@ class RetailerUser < ApplicationRecord
 
   def generate_api_token!(generate_device = false)
     new_token = SecureRandom.hex
-    attrs = { api_session_token: new_token, api_session_expiration: 1.week.from_now }
+    attrs = { api_session_token: new_token, api_session_expiration: 1.year.from_now }
     attrs[:api_session_device] = SecureRandom.hex(3) if generate_device || api_session_device.nil?
     update_attributes(attrs)
 
