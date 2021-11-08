@@ -97,6 +97,7 @@ class Api::V1::CustomersController < Api::ApiController
       filename = File.basename(params[:file_data].original_filename)
     end
 
+    filename ||= params[:file_name]
     message = @klass.new(
       customer: @customer,
       sender_uid: current_retailer_user.uid,

@@ -99,6 +99,6 @@ class PagesController < ApplicationController
   private
 
     def set_retailer
-      @retailer = Retailer.find_by_slug(params[:slug])
+      @retailer = Retailer.find_by_slug(params[:slug]) || not_found
     end
 end

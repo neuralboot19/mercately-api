@@ -1159,6 +1159,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_210144) do
     t.bigint "retailer_user_id"
     t.boolean "global", default: false
     t.boolean "enable_for_instagram", default: false
+    t.string "file_type"
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_templates_on_retailer_user_id"
   end

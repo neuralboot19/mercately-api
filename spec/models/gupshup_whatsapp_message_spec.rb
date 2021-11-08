@@ -858,6 +858,7 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
     let(:document_payload) do
       {
         'type': 'file',
+        'caption': '',
         'url': 'https://res.cloudinary.com/dhhrdm74a/raw/upload/v1617135241/' \
           'Informacio%CC%81n%20para%20el%20registro%20de%20la%20empresa%20%281%29.docx',
         'filename': 'informacion-para-el-registro-de-la-empresa-1'

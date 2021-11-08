@@ -146,29 +146,41 @@ class ChatMessages extends Component {
     this.setFocus();
   }
 
-  handleSubmitImg = (el, file_data) => {
-    let url, type, data;
+  handleSubmitImg = (el, fileData) => {
+    let url;
+    let type;
+    let data;
+    let filename;
     const uuid = uuidv4();
 
     if (this.state.selectedProduct || this.state.selectedFastAnswer) {
       url = this.state.selectedProduct ? this.state.selectedProduct.attributes.image : this.state.selectedFastAnswer.attributes.image_url;
-      type = 'image';
+      type = this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.file_type === 'file'
+        ? 'file'
+        : 'image';
 
       data = new FormData();
+      if (type !== 'image' && this.state.selectedFastAnswer) {
+        filename = this.state.selectedFastAnswer.attributes.file_name;
+        data.append('file_name', filename);
+      }
       data.append('url', url);
-      data.append('type', 'image');
+      data.append('type', type);
       data.append('message_identifier', uuid);
     } else {
       url = URL.createObjectURL(el.files[0]);
       type = this.fileType(el.files[0].type);
-      file_data.append('message_identifier', uuid);
+      fileData.append('message_identifier', uuid);
     }
+
+    filename = !filename && el ? el.files[0].name : filename || null;
 
     this.setState({
       messages: this.state.messages.concat({
-        url: url,
+        url,
+        filename,
         sent_by_retailer: true,
-        file_type: type, filename: el ? el.files[0].name : null,
+        file_type: type,
         created_at: new Date(),
         message_identifier: uuid
       }),
@@ -176,7 +188,7 @@ class ChatMessages extends Component {
       selectedProduct: null,
       selectedFastAnswer: null
     }, () => {
-      this.props.sendImg(this.props.currentCustomer, file_data ? file_data : data, csrfToken);
+      this.props.sendImg(this.props.currentCustomer, fileData || data, csrfToken);
       this.scrollToBottom();
     });
 
