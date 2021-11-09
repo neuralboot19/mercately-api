@@ -104,11 +104,11 @@
                   </div>
                   <div class="col-xs-4 col-sm-2 t-center c-secondary">
                     <span class="hide-on-md-and-up mr-5 hide-on-print">Precio:</span>
-                    $<%= oi.unit_price %>
+                    <%= current_retailer.currency_symbol %><%= oi.unit_price %>
                   </div>
                   <div class="col-xs-4 col-sm-3 t-center c-secondary">
                     <span class="hide-on-md-and-up mr-5 hide-on-print">Sub-total:</span>
-                    $<%= oi.subtotal %>
+                    <%= current_retailer.currency_symbol %><%= oi.subtotal %>
                   </div>
                 </div>
               <% end %>
@@ -122,7 +122,7 @@
                 </div>
                 <div class="col-xs-12 col-sm-3 t-center">
                   <h3>
-                    Total: <span class="ml-5 money" style="font-size: 22px;">$<%= @order.total %></span>
+                    Total: <span class="ml-5 money" style="font-size: 22px;"><%= current_retailer.currency_symbol %><%= @order.total %></span>
                   </h3>
                 </div>
               </div>

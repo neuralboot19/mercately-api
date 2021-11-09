@@ -43,12 +43,12 @@
               <div class="col-sm-1">Estado</div>
               <div class="col-sm-2">Cliente</div>
               <div class="col-sm-2">Vendedor</div>
-              <div class="col-sm-1">Total $</div>
+              <div class="col-sm-1">Total <%= current_retailer.currency_symbol %></div>
               <div class="col-sm-2">Fecha de compra</div>
               <div class="col-sm-2">Notas</div>
               <div class="col-sm-1"></div>
             </div>
-            <%= render partial: "sale", collection: @orders, as: :order, cached: true %>
+            <%= render partial: "sale", collection: @orders, as: :order %>
             <div class="row middle-xs center-xs">
               <div class="col-xs-12">
                 <%= paginate @orders %>

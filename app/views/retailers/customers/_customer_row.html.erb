@@ -81,7 +81,7 @@
     </div>
   </div>
   <div class="col-xs-12 col-sm-1 t-center">
-    <b class="c-green">$<%= customer.earnings %></b>
+    <b class="c-green"><%= @currency_symbol %><%= customer.earnings %></b>
   </div>
   <div class="col-xs-4 col-sm-2 c-grey t-center">
     <div class="t-center truncate"><%= customer.notes %></div>

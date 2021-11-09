@@ -497,6 +497,7 @@ es:
           type: Tipo
           usability: Usabilidad
           image_with_caption: Imagen con descripción
+          file_with_caption: Archivo con descripción
           text: Texto
           global: Global
           personal: Personal
@@ -510,9 +511,10 @@ es:
           description: Información de la respuesta
         form:
           description: Información de la respuesta
-          select_image: Seleccionar imagen
+          select_file: Seleccionar archivo
           texto_of_answer: Texto de respuesta
           alert_global_answer_question: Las respuestas globales pueden ser enviadas por todos los agentes. Las que no lo son, solo pueden ser enviadas y modificadas por el agente que las creó.
+          alert_instagram_answer_question: Instagram solo acepta imágenes
           mercado_libre_question: Preguntas de MercadoLibre
           note_mercado_libre_question: 'Nota: Para preguntas, no se debe incluir información de contacto, como teléfonos, direcciones exactas o nombres personales'
           mercado_libre_messages: Mensajes de MercadoLibre
@@ -521,6 +523,7 @@ es:
           content: Contenido
           platforms: Plataformas
           image: Imagen
+          file: Archivo
           global_answer_question: ¿Respuesta global?
           confirm_remove_text: ¿Estás seguro de eliminar la respuesta?
       welcome_messages:

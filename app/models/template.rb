@@ -3,10 +3,12 @@ class Template < ApplicationRecord
 
   belongs_to :retailer
   belongs_to :retailer_user, required: false
-  validates :title, presence: true
-
   has_one_attached :image
 
+  validate :correct_mime_type, if: -> { image.attached? }
+  validates :title, presence: true
+
+  before_save :set_file_type
   after_create :generate_web_id
 
   scope :for_questions, -> { where(enable_for_questions: true) }
@@ -22,4 +24,26 @@ class Template < ApplicationRecord
   def to_param
     web_id
   end
+
+  private
+
+    def correct_mime_type
+      if enable_for_instagram && !image.content_type.in?(%w[image/jpg image/jpeg image/png])
+        errors.add(:image, 'Solo imágenes')
+      elsif !image.content_type.in?(%w[image/jpg image/jpeg image/png application/pdf])
+        errors.add(:image, 'Solo imágenes o PDF')
+      end
+    end
+
+    def set_file_type
+      self.file_type = if image.attached?
+                         if image.content_type.first(5) == 'image'
+                           'image'
+                         else
+                           'file'
+                         end
+                       else
+                         nil
+                       end
+    end
 end

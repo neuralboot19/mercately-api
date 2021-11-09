@@ -1,6 +1,6 @@
 <div class="box">
   <div class="row">
-    <%= form_for([:retailers, @template], url: @template.new_record? ? retailers_templates_path(current_retailer, @template) : retailers_template_path(current_retailer, @template), local: true, html: { class: 'p-0 col-xs-12 validate-form' }) do |f| %>
+    <%= form_for([:retailers, @template], url: @template.new_record? ? retailers_templates_path(current_retailer, @template) : retailers_template_path(current_retailer, @template), local: true, html: { class: 'p-0 col-xs-12 validate-form template_form' }) do |f| %>
       <div class="box">
         <div class="row">
           <fieldset class="col-xs-12 fieldset mt-16">
@@ -16,19 +16,24 @@
             </div>
             <div class="row">
               <div class="mb-8 my-16 col-xs-12 col-sm-6 p-0">
-                <%= f.label :answer, t('retailer.settings.quick_answers.common.image') %><br/>
-                <%= f.file_field :image, accept: 'image/jpg, image/jpeg, image/png', class: 'uploadedImages', onchange: "previewImage(this)" %><br/>
+                <%= f.label :image, t('retailer.settings.quick_answers.common.file') %><br/>
+                <%= f.file_field :image, accept: 'image/jpg, image/jpeg, image/png, application/pdf', class: 'uploadedImages', onchange: "previewImage(this)" %>
+                <br/>
                 <label class='btn btn--cta' for="template_image">
                   <i class="fas fa-upload mr-5"></i>
-                  <%= t('retailer.settings.quick_answers.form.select_image') %>
+                  <%= t('retailer.settings.quick_answers.form.select_file') %>
                 </label><br/><br/>
                 <div id="preview-container-image" class="p-relative w-200 d-none">
                   <i class="fas fa-times-circle cursor-pointer delete-icon-right" onclick="removeImage()"></i>
-                  <img id="preview-template-image" class="w-200 h-200" />
+                  <embed id="preview-template-image" class="w-200 h-200" width="200" height="200" />
                 </div>
                 <% if f.object.image.attached? %>
                   <div id="current-template-image">
-                    <%= cl_image_tag("#{f.object.image.key}", width: 200, height: 200) %>
+                    <% if f.object.file_type == 'file' %>
+                      <embed src="<%= f.object.image.service_url %>" class="w-200 h-200" width="200" height="200" />
+                    <% else %>
+                      <%= cl_image_tag("#{f.object.image.key}", width: 200, height: 200) %>
+                    <% end %>
                   </div>
                 <% end %>
               </div>
@@ -85,6 +90,7 @@
                       <%= f.label :enable_for_instagram, 'Instagram' %>
                     </div>
                   </div>
+                  <p class="note-archived my-0"><i><%= t('retailer.settings.quick_answers.form.alert_instagram_answer_question') %></i></p>
                 </div>
               <% end %>
               <% if current_retailer.meli_retailer %>

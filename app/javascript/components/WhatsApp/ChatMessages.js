@@ -203,7 +203,7 @@ class ChatMessages extends Component {
       this.state.selectedProduct = newProps.selectedProduct;
       let productString = '';
       productString += (`${this.state.selectedProduct.attributes.title}\n`);
-      productString += (`Precio $${this.state.selectedProduct.attributes.price}\n`);
+      productString += (`Precio ${this.state.selectedProduct.attributes.currency}${this.state.selectedProduct.attributes.price}\n`);
       productString += (`${this.state.selectedProduct.attributes.description}\n`);
       productString += (this.state.selectedProduct.attributes.url ? this.state.selectedProduct.attributes.url : '');
       $('#divMessage').html(productString);
@@ -479,14 +479,20 @@ class ChatMessages extends Component {
       url = this.state.selectedProduct
         ? this.state.selectedProduct.attributes.image
         : this.state.selectedFastAnswer.attributes.image_url;
-      type = 'image';
+      type = this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.file_type === 'file'
+        ? 'application/pdf'
+        : 'image';
       caption = this.getText();
+      filename = type === 'application/pdf' && this.state.selectedFastAnswer ? this.state.selectedFastAnswer.attributes.file_name : null;
 
+      if (type !== 'image' && this.state.selectedFastAnswer) data.append('file_name', this.state.selectedFastAnswer.attributes.file_name);
       data.append('template', false);
       data.append('url', url);
+      data.append('content_type', type);
       data.append('type', 'file');
       data.append('caption', caption);
       data.append('message_identifier', uuid);
+      if (type === 'application/pdf') type = 'document';
     } else if (fileData && fileData.get('template') === 'true') {
       fileData.append('message_identifier', uuid);
       const auxFile = fileData.get('file_data');

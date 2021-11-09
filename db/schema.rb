@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_29_210144) do
+ActiveRecord::Schema.define(version: 2021_11_02_144452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1091,6 +1091,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_210144) do
     t.boolean "has_funnels", default: false
     t.string "timezone"
     t.boolean "send_max_size_files", default: false, null: false
+    t.string "currency", default: "USD", null: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -1159,6 +1160,7 @@ ActiveRecord::Schema.define(version: 2021_09_29_210144) do
     t.bigint "retailer_user_id"
     t.boolean "global", default: false
     t.boolean "enable_for_instagram", default: false
+    t.string "file_type"
     t.index ["retailer_id"], name: "index_templates_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_templates_on_retailer_user_id"
   end

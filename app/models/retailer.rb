@@ -45,6 +45,7 @@ class Retailer < ApplicationRecord
   has_many :customer_hubspot_fields
 
   validates :name, presence: true
+  validates :currency, presence: true
   validates :slug, uniqueness: true
 
   before_validation :gupshup_src_name_to_nil
@@ -303,6 +304,10 @@ class Retailer < ApplicationRecord
       unread_ml_questions_count: unread_questions_records.count,
       total_unread_ml_count: unread_orders.count + unread_questions_records.count
     )
+  end
+
+  def currency_symbol
+    Money::Currency.new(currency)&.symbol || currency
   end
 
   private
