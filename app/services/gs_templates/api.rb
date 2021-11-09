@@ -12,7 +12,11 @@ module GsTemplates
 
       conn = Connection.prepare_connection(url)
       response = Connection.get_request(conn, headers)
-      return unless response&.[]('status') == 'success'
+
+      if response&.[]('status') != 'success'
+        notify_error_to_slack(gs_template, url, headers, {}, response)
+        return
+      end
 
       data = if gs_template.ws_template_id
                response['templates'].select { |tpl| tpl['id'] == gs_template.ws_template_id }.first
@@ -25,6 +29,8 @@ module GsTemplates
       create_whatsapp_template(retailer, data)
       gs_template.status = set_response_status(data)
       gs_template.save
+    rescue => e
+      notify_error_to_slack(gs_template, url, headers, {}, e)
     end
 
     def submit_gs_template(gs_template)
@@ -50,11 +56,17 @@ module GsTemplates
       conn = Connection.prepare_connection(url)
       response = Connection.post_form_request(conn, body, headers)
       resp_json = JSON.parse(response.body)
-      return unless resp_json['template'].present?
+
+      if resp_json&.[]('status') != 'success'
+        notify_error_to_slack(gs_template, url, headers, body, resp_json)
+        return
+      end
 
       gs_template.status = set_response_status(resp_json['template'])
       gs_template.ws_template_id = resp_json['template']['id']
       gs_template.save
+    rescue => e
+      notify_error_to_slack(gs_template, url, headers, body, e)
     end
 
     private
@@ -86,6 +98,24 @@ module GsTemplates
         when 'REJECTED'
           'rejected'
         end
+      end
+
+      def notify_error_to_slack(gs_template, url, headers, body, resp)
+        return unless ENV['ENVIRONMENT'] == 'production'
+
+        slack_client = Slack::Notifier.new ENV['SLACK_GS_TEMPLATES'], channel: '#gs-templates'
+        retailer = gs_template.retailer
+
+        slack_client.ping([
+          "Template: (#{gs_template.id}) #{gs_template.label}",
+          "Retailer: (#{retailer.id}) #{retailer.name}",
+          "URL: #{url}",
+          "Headers: #{headers.to_json}",
+          "Body: #{body.to_json}",
+          "Response: #{resp.to_json}"
+        ].join("\n"))
+      rescue
+        Rails.logger.error('Slack disabled')
       end
   end
 end
