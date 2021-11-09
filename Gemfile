@@ -128,6 +128,7 @@ gem 'with_advisory_lock', '~> 4.6'
 gem 'country_select', '~> 4.0'
 gem 'phony', '~> 2.18.12'
 gem 'phonelib', '~> 0.6.43'
+gem 'currency_select', '~> 3.0.0'
 
 # MongoDB
 gem 'mongoid', '~> 7.1', '>= 7.1.1'

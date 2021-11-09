@@ -123,7 +123,7 @@ class Products extends Component {
                 <div className="info-container truncate ml-10">
                   <small className="fs-12 c-primary">{product.attributes.title}</small><br />
                   <small className="fs-10">{product.attributes.description}</small><br />
-                  <small className="fs-12">${product.attributes.price} - {product.attributes.available_quantity} disponibles</small>
+                  <small className="fs-12">{product.attributes.currency}{product.attributes.price} - {product.attributes.available_quantity} disponibles</small>
                 </div>
               </div>
               <div className="select-container t-center mt-15">

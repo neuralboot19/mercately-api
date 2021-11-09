@@ -13,5 +13,9 @@ module Api::V1
       key.present? ? url += key : url = nil
       url
     end
+
+    attribute :currency do |product|
+      product.retailer.currency_symbol
+    end
   end
 end

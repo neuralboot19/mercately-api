@@ -6,6 +6,7 @@ class Retailers::OrdersController < RetailersController
   before_action :process_customer, only: [:create, :update]
 
   def index
+    @currency_symbol = current_retailer.currency_symbol
     @orders = Order.retailer_orders(current_retailer.id, params['status'])
       .order('created_at desc').page(params[:page])
   end

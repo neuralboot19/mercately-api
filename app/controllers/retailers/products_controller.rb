@@ -7,6 +7,7 @@ class Retailers::ProductsController < RetailersController
   before_action :compile_variations, only: [:create, :update]
 
   def index
+    @currency_symbol = current_retailer.currency_symbol
     @q = if params[:q]&.[](:s).blank?
            current_retailer.products.order(created_at: :desc).preload(:category, :questions).ransack(params[:q])
          else

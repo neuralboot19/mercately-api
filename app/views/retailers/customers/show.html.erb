@@ -158,7 +158,7 @@ fieldset {
                             <div class="col-xs-12">
                               <div class="border-bottom mt-16"></div>
                               <div class="my-16">
-                                <h2 class="mb-0 c-green">$<%= @customer.earnings %></h2>
+                                <h2 class="mb-0 c-green"><%= current_retailer.currency_symbol %><%= @customer.earnings %></h2>
                                 <h6 class="mt-0">Ganancia</h6>
                               </div>
                             </div>

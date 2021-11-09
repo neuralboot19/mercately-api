@@ -12,6 +12,7 @@ class Retailers::CustomersController < RetailersController
   ]
 
   def index
+    @currency_symbol = current_retailer.currency_symbol
     @filter = build_ransack_query
     @customers = @filter.result.page(params[:page])
 
