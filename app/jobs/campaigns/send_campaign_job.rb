@@ -15,11 +15,13 @@ module Campaigns
         template = campaign.whatsapp_template
         # Se chequea si la campaña tiene asociado un archivo.
         has_file = campaign.file.attached?
+        resource_type = has_file ? 'file' : 'template'
 
         params = {
           gupshup_template_id: template.gupshup_template_id,
           template_params: campaign.customer_content_params(customer),
-          type: has_file ? 'file' : 'template'
+          type: has_file ? get_content_type(campaign) : 'text',
+          template: 'true'
         }
 
         # Se arma la plantilla con los parametros de los customers en la campaña
@@ -30,9 +32,8 @@ module Campaigns
         # es de texto o archivo.
         if has_file
           params[:caption] = aux_message
-          params[:url] = campaign.file.service_url
+          params[:url] = campaign.file_url
           params[:file_name] = campaign.file.filename.to_s
-          params[:template] = 'true'
         else
           params[:message] = aux_message
         end
@@ -40,13 +41,13 @@ module Campaigns
         if campaign.retailer.karix_integrated?
           send_karix_notification(campaign, params, customer)
         else
-          send_gupshup_notification(campaign, params, customer)
+          send_gupshup_notification(campaign, params, customer, resource_type)
         end
       end
 
-      def send_gupshup_notification(campaign, params, customer)
+      def send_gupshup_notification(campaign, params, customer, resource_type)
         gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(campaign.retailer, customer)
-        response = gws.send_message(type: params[:type], params: params)
+        response = gws.send_message(type: resource_type, params: params)
 
         # Guardamos el id del mensaje en la campaña para poder rastrear luego.
         message = response[:message]
@@ -67,6 +68,14 @@ module Campaigns
         message = karix_helper.ws_message_service.assign_message(message, retailer, response['objects'][0])
         message.campaign_id = campaign.id
         message.save
+      end
+
+      def get_content_type(campaign)
+        content_type = campaign.file.content_type
+        return 'image' if content_type.include?('image')
+        return 'video' if content_type.include?('video')
+
+        'document'
       end
   end
 end

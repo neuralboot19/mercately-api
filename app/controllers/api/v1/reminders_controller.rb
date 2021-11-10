@@ -3,11 +3,7 @@ class Api::V1::RemindersController < Api::ApiController
   before_action :authenticate_retailer_user!
 
   def create
-    params[:reminder][:content_params] = begin
-                                           JSON.parse(params[:reminder][:content_params].to_s)
-                                         rescue
-                                           []
-                                         end
+    params[:reminder][:content_params] = [] if params[:reminder][:content_params].blank?
     @reminder = current_retailer.reminders.new(reminder_params)
     @reminder.retailer_user_id = current_retailer_user.id
 

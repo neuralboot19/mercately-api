@@ -4,7 +4,8 @@ import {
   MAX_IMAGE_SIZE_TRANSFER,
   MAX_FILE_SIZE_TRANSFER,
   MAX_IMAGE_SIZE_TRANSFER_WS,
-  MAX_FILE_SIZE_TRANSFER_MSN_IG
+  MAX_FILE_SIZE_TRANSFER_MSN_IG,
+  MAX_VIDEO_SIZE_TRANSFER_WS
 } from '../constants/chatFileSizes';
 
 
@@ -28,6 +29,10 @@ const isValidImageSizeForWs = (file) => {
   return file.size <= MAX_IMAGE_SIZE_TRANSFER_WS
 };
 
+const isValidVideoSizeForWs = (file) => {
+  return file.size <= MAX_VIDEO_SIZE_TRANSFER_WS
+};
+
 const isValidFileSizeForMsnOrIg = (file) => {
   return file.size <= MAX_FILE_SIZE_TRANSFER_MSN_IG
 };
@@ -42,6 +47,7 @@ export default {
   isMaxImageSize,
   isMaxFileSize,
   isValidImageSizeForWs,
+  isValidVideoSizeForWs,
   isValidFileSizeForMsnOrIg,
   sizeFileInMB
 };

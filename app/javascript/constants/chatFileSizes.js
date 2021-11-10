@@ -4,3 +4,4 @@ export const MAX_FILE_SIZE_TRANSFER = (40 * 1024 * 1024);
 export const MAX_IMAGE_SIZE_TRANSFER = (15 * 1024 * 1024);
 export const MAX_FILE_SIZE_TRANSFER_MSN_IG = (25 * 1024 * 1024);
 export const MAX_IMAGE_SIZE_TRANSFER_WS = (5 * 1024 * 1024);
+export const MAX_VIDEO_SIZE_TRANSFER_WS = (14 * 1024 * 1024);

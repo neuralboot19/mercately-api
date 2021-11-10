@@ -24,11 +24,13 @@ module Reminders
         template = reminder.whatsapp_template
         # Se chequea si el recordatorio tiene asociado un archivo.
         has_file = reminder.file.attached?
+        resource_type = has_file ? 'file' : 'template'
 
         params = {
           gupshup_template_id: template.gupshup_template_id,
           template_params: reminder.content_params,
-          type: has_file ? 'file' : 'template'
+          type: has_file ? get_content_type(reminder) : 'text',
+          template: 'true'
         }
 
         # Se arma la plantilla con los parametros ingresados en la creacion del recordatorio
@@ -42,7 +44,6 @@ module Reminders
           params[:caption] = aux_message
           params[:url] = reminder.file_url
           params[:file_name] = reminder.file.filename.to_s
-          params[:template] = 'true'
         else
           params[:message] = aux_message
         end
@@ -50,13 +51,13 @@ module Reminders
         if reminder.retailer.karix_integrated?
           send_karix_notification(reminder, params)
         else
-          send_gupshup_notification(reminder, params)
+          send_gupshup_notification(reminder, params, resource_type)
         end
       end
 
-      def send_gupshup_notification(reminder, params)
+      def send_gupshup_notification(reminder, params, resource_type)
         gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(reminder.retailer, reminder.customer)
-        response = gws.send_message(type: params[:type], params: params)
+        response = gws.send_message(type: resource_type, params: params)
 
         # Si la respuesta del envio es exitosa y devuelve el mensaje, seteamos el status
         # del recordatorio en sent. Caso contrario seteamos en failed.
@@ -83,6 +84,14 @@ module Reminders
           # Guardamos el id del mensaje en el recordatorio para poder rastrear luego.
           reminder.update(status: status, karix_whatsapp_message_id: message.id)
         end
+      end
+
+      def get_content_type(reminder)
+        content_type = reminder.file.content_type
+        return 'image' if content_type.include?('image')
+        return 'video' if content_type.include?('video')
+
+        'document'
       end
   end
 end
