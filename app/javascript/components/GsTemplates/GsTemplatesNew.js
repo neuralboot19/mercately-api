@@ -221,6 +221,7 @@ const GsTemplatesNew = (props) => {
                         <i className="tag-description">
                           (Las variables deben ser números (a partir del 1) encerrados entre llaves dobles)
                           <br/>
+                          Ejemplo: Buenas tardes <b>{"{{1}}"}</b>, tu compra será entragada a las <b>{"{{2}}"}</b>
                         </i>
                       </div>
                     </div>
