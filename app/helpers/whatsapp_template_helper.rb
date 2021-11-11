@@ -2,6 +2,7 @@ module WhatsappTemplateHelper
   def whatsapp_template_type(type)
     return 'Texto' if type == 'text'
     return 'Imagen' if type == 'image'
+    return 'Video' if type == 'video'
 
     'PDF'
   end
@@ -31,5 +32,16 @@ module WhatsappTemplateHelper
     end
     txt.gsub!(/\\\*/, '*')
     txt.html_safe
+  end
+
+  def template_accepted_files(type)
+    case type
+    when 'image'
+      'image/jpg, image/jpeg, image/png'
+    when 'document'
+      'application/pdf'
+    when 'video'
+      'video/mp4, video/3gpp'
+    end
   end
 end

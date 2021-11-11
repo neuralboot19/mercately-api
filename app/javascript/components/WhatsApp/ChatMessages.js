@@ -39,7 +39,8 @@ import fileUtils from '../../util/fileUtils';
 import {
   DEFAULT_FILE_SIZE_TRANSFER,
   MAX_FILE_SIZE_TRANSFER,
-  MAX_IMAGE_SIZE_TRANSFER_WS
+  MAX_IMAGE_SIZE_TRANSFER_WS,
+  MAX_VIDEO_SIZE_TRANSFER_WS
 } from '../../constants/chatFileSizes';
 import stringUtils from '../../util/stringUtils';
 
@@ -501,6 +502,11 @@ class ChatMessages extends Component {
       type = this.fileType(auxFile.type);
       filename = type === 'document' ? auxFile.name : null;
       caption = fileData.get('caption');
+
+      fileData.append('gupshup_template_id', gupshupTemplateId);
+
+      const insertedParams = Object.values(templateParams);
+      insertedParams.forEach((value) => fileData.append('template_params[]', value));
     } else {
       fileData.append('message_identifier', uuid);
       url = URL.createObjectURL(el.files[0]);
@@ -734,13 +740,18 @@ class ChatMessages extends Component {
       message = this.getCleanTemplate(message);
 
       if (file) {
-        if (this.state.templateType === 'image' && this.validateImages(file) === false) return;
-        if (this.state.templateType === 'file' && this.validFile(file) === false) return;
+        if (this.state.templateType === 'image' && this.validateImages(file) === false) {
+          alert('La imagen debe ser JPG/JPEG o PNG, de máximo 5MB');
+          return;
+        }
+
+        if (this.state.templateType === 'document' && this.validFile(file) === false) return;
+        if (this.state.templateType === 'video' && this.validVideo(file) === false) return;
 
         const data = new FormData();
         data.append('template', true);
         data.append('file_data', file);
-        data.append('type', 'file');
+        data.append('type', this.state.templateType);
         data.append('caption', message);
         this.handleSubmitImg(null, data);
       } else {
@@ -1157,12 +1168,16 @@ class ChatMessages extends Component {
   getCleanTemplate = (text) => text.replaceAll('\\*', '*')
 
   setTemplateType = (type) => {
-    if (type === 'text') {
-      return 'Texto';
-    } if (type === 'image') {
-      return 'Imagen';
+    switch (type) {
+      case 'text':
+        return 'Texto';
+      case 'image':
+        return 'Imagen';
+      case 'video':
+        return 'Video';
+      default:
+        return 'PDF';
     }
-    return 'PDF';
   }
 
   validFile = (file) => {
@@ -1187,6 +1202,28 @@ class ChatMessages extends Component {
     return isValidFile;
   }
 
+  validVideo = (file) => {
+    let isValid = true;
+
+    if (!['video/mp4', 'video/3gpp'].includes(file.type)) {
+      isValid = false;
+    } else {
+      isValid = fileUtils.isValidVideoSizeForWs(file);
+    }
+
+    if (!isValid) {
+      this.displayVideoErrorAlert(MAX_VIDEO_SIZE_TRANSFER_WS);
+    }
+
+    return isValid;
+  }
+
+  displayVideoErrorAlert(size) {
+    const fileSize = fileUtils.sizeFileInMB(size);
+
+    alert(`Error: Los archivos deben ser videos MP4 o 3GPP, de máximo ${fileSize}MB`);
+  }
+
   displayFileErrorAlert() {
     let fileSize = fileUtils.sizeFileInMB(DEFAULT_FILE_SIZE_TRANSFER);
 
@@ -1200,10 +1237,16 @@ class ChatMessages extends Component {
   acceptedFiles = () => {
     let accepted = '';
 
-    if (this.state.templateType === 'image') {
-      accepted = 'image/jpg, image/jpeg, image/png';
-    } else if (this.state.templateType === 'file') {
-      accepted = 'application/pdf';
+    switch (this.state.templateType) {
+      case 'image':
+        accepted = 'image/jpg, image/jpeg, image/png';
+        break;
+      case 'document':
+        accepted = 'application/pdf';
+        break;
+      case 'video':
+        accepted = 'video/mp4, video/3gpp';
+        break;
     }
 
     this.setState({ acceptedFiles: accepted });
@@ -1282,7 +1325,8 @@ class ChatMessages extends Component {
         return;
       }
 
-      if (this.state.templateType === 'file' && this.validFile(file) === false) return;
+      if (this.state.templateType === 'document' && this.validFile(file) === false) return;
+      if (this.state.templateType === 'video' && this.validVideo(file) === false) return;
 
       const params = new FormData();
       params.append('reminder[customer_id]', this.props.currentCustomer);
@@ -1293,7 +1337,7 @@ class ChatMessages extends Component {
       if (file) params.append('reminder[file]', file);
 
       const insertedParams = Object.values(templateParams);
-      params.append('reminder[content_params]', JSON.stringify(insertedParams));
+      insertedParams.forEach((value) => params.append('reminder[content_params][]', value));
 
       this.props.createReminder(params, csrfToken);
       this.cancelTemplate('reminders');

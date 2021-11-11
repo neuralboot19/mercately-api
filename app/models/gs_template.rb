@@ -13,7 +13,7 @@ class GsTemplate < ApplicationRecord
   after_update :send_accepted_email, if: :accepted?
   after_update :send_rejected_email, if: :rejected?
 
-  enum key: %i[text image video file]
+  enum key: %i[text image video document location]
   enum status: %i[pending accepted rejected submitted]
 
   LANGUAGE_CODES = { spanish: 'es_ES', english: 'en_US' }.freeze

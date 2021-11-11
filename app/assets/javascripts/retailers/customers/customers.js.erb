@@ -86,25 +86,26 @@ function sendTemplate() {
     var data = new FormData();
     data.append('template', true);
     data.append('customer_id', $('#karix-customer-id').val() || $('#customer_id_index').val());
-    var url;
+    data.append('gupshup_template_id', gupshupTemplateId);
 
+    params = Object.values(templateParams);
+    for (x in params) {
+      data.append('template_params[]', params[x]);
+    }
+
+    let url;
     if (file) {
       if (templateType === 'image' && validImage(file) === false) return;
-      if (templateType === 'file' && validFile(file) === false) return;
+      if (templateType === 'document' && validFile(file) === false) return;
+      if (templateType === 'video' && validVideo(file) === false) return;
 
       data.append('caption', auxTemplate.join('').replaceAll('\\*', '*'));
       data.append('file_data', file);
-      data.append('type', 'file');
+      data.append('type', templateType);
       url = `/api/v1/karix_whatsapp_send_file/${$('#karix-customer-id').val() || $('#customer_id_index').val()}`;
     } else {
       data.append('message', auxTemplate.join('').replaceAll('\\*', '*'));
       data.append('type', 'text');
-      data.append('gupshup_template_id', gupshupTemplateId);
-
-      params = Object.values(templateParams);
-      for (x in params) {
-        data.append('template_params[]', params[x]);
-      }
 
       url = '/api/v1/karix_send_whatsapp_message';
     }
@@ -143,21 +144,36 @@ function validFile(file) {
   return true;
 }
 
+function validVideo(file) {
+  if (!['video/mp4', 'video/3gpp'].includes(file.type) || file.size > 14*1024*1024) {
+    alert('El video debe ser MP4 o 3GPP, de máximo 14MB');
+    return false;
+  }
+
+  return true;
+}
+
 function setTemplateType() {
-  if (templateType === 'text') {
-    return 'Texto';
-  } else if (templateType === 'image') {
-    return 'Imagen';
-  } else {
-    return 'PDF';
+  switch(templateType) {
+    case 'text':
+      return 'Texto';
+    case 'image':
+      return 'Imagen';
+    case 'video':
+      return 'Video';
+    default:
+      return 'PDF';
   }
 }
 
 function acceptedFiles() {
-  if (templateType === 'image') {
-    return 'image/jpg, image/jpeg, image/png';
-  } else {
-    return 'application/pdf';
+  switch(templateType) {
+    case 'image':
+      return 'image/jpg, image/jpeg, image/png';
+    case 'video':
+      return 'video/mp4, video/3gpp';
+    default:
+      return 'application/pdf';
   }
 }
 
