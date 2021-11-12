@@ -26,6 +26,16 @@ $light: #F7F8FD;
   cursor: pointer;;
 }
 
+.cursor:hover {
+  cursor: default;
+  &-pointer:hover {
+    cursor: pointer;
+  }
+  &-none:hover {
+    cursor: none;
+  }
+}
+
 @for $space from 0 through 250 {
   .border-#{$space} {
     border-radius: #{$space}px;

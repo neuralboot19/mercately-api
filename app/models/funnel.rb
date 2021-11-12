@@ -1,8 +1,16 @@
 class Funnel < ApplicationRecord
+  include WebIdGenerateableConcern
+
   belongs_to :retailer
   has_many :funnel_steps, dependent: :destroy
 
   validates :name, presence: true
+
+  after_create :generate_web_id
+
+  def to_param
+    web_id
+  end
 
   def update_column_order(columns)
     deleted = columns - funnel_steps.pluck(:web_id)

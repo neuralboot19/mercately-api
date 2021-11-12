@@ -541,6 +541,16 @@ class Customer < ApplicationRecord
     save_history(nil, 'customer_mark_as', 'chat_new')
   end
 
+  def channel
+    if ws_active
+      :whatsapp
+    elsif messenger?
+      :messenger
+    elsif instagram?
+      :instagram
+    end
+  end
+
   private
 
     def update_valid_customer

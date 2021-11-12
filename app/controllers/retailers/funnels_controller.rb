@@ -1,5 +1,7 @@
 class Retailers::FunnelsController < RetailersController
-  # GET /opportunities
+  layout 'chats/chat'
+
+  # GET /funnels
   def index
   end
 

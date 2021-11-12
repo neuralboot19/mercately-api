@@ -40,7 +40,6 @@ class Retailer < ApplicationRecord
   has_many :reminders, dependent: :destroy
   has_many :contact_groups, dependent: :destroy
   has_many :campaigns, dependent: :destroy
-
   has_many :hubspot_fields
   has_many :customer_hubspot_fields
 
@@ -53,6 +52,7 @@ class Retailer < ApplicationRecord
   before_save :set_ml_domain, if: :will_save_change_to_ml_site?
   after_create :save_free_plan
   after_create :send_to_mailchimp
+  after_create :create_funnel_steps
   after_update :import_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
   after_save :generate_slug, if: :saved_change_to_name?
   after_save :add_sales_channel

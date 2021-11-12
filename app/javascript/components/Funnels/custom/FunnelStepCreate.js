@@ -71,9 +71,13 @@ class FunnelStepCreate extends React.Component {
     return formIsValid;
   }
 
-  createNewStep = () => {
+  createNewStep = (e) => {
+    const el = e.target;
+    el.disabled = true;
     if (this.handleValidation()) {
       this.props.createStep(this.state.newStep);
+    } else {
+      el.disabled = false;
     }
   }
 
@@ -84,30 +88,29 @@ class FunnelStepCreate extends React.Component {
         style={customStyles}
         ariaHideApp={false}
       >
-        <button type="button" onClick={this.props.openCreateStep} className="f-right">Cerrar</button>
-        <div className="row">
-          <h4 className="my-0">Crear etapa de negocio</h4>
-        </div>
+        <button type="button" onClick={this.props.openCreateStep} className="f-right btn btn--no-border c-red">
+          <i className="fas fa-times mr-5" />
+          Cerrar
+        </button>
+        <h4 className="my-0">Crear etapa de negocio</h4>
         <div className="mb-15">
           <p className="my-0 index__desc">Las etapas del embudo representan los pasos de tu proceso de ventas</p>
         </div>
-        <div className="row">
-          <div className="mb-20 col-xs-12">
-            <input
-              value={this.state.newStep.name}
-              onChange={this.handleInputChange}
-              className="custom-input funnel-input"
-              placeholder="Nombre de la etapa"
-              name="name"
-            />
-            <span className="funnel-input-error">{this.state.errors.name}</span>
-          </div>
-
-          <div className="row">
-            <button type="button" className="py-5 px-15 funnel-btn btn--cta" onClick={this.createNewStep}>Crear Etapa</button>
-          </div>
-
+        <div className="mb-20 col-xs-12">
+          <input
+            value={this.state.newStep.name}
+            onChange={this.handleInputChange}
+            className="mercately-input"
+            placeholder="Nombre de la etapa"
+            name="name"
+          />
+          <span className="funnel-input-error">{this.state.errors.name}</span>
         </div>
+
+        <div className="text-center">
+          <button type="button" className="py-5 px-15 funnel-btn btn--cta" onClick={this.createNewStep}>Crear Etapa</button>
+        </div>
+
       </Modal>
     );
   }

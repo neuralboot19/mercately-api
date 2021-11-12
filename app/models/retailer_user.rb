@@ -39,6 +39,15 @@ class RetailerUser < ApplicationRecord
 
   attr_reader :raw_invitation_token
 
+  ransacker :full_name do |parent|
+    Arel::Nodes::NamedFunction.new('CONCAT_WS', [
+      Arel::Nodes.build_quoted(' '),
+      parent.table[:first_name],
+      parent.table[:last_name],
+      parent.table[:email]
+    ])
+  end
+
   def self.from_omniauth(auth, retailer_user, permissions, connection_type)
     retailer_user.update(provider: auth.provider, uid: auth.uid, facebook_access_token: auth.credentials.token)
     retailer_user.long_live_user_access_token

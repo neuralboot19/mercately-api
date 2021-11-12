@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import DealCreate from "./custom/DealCreate";
-import FunnelStepDelete from "./custom/FunnelStepDelete";
+import DealEdit from "./custom/DealEdit";
 import FunnelStepCreate from "./custom/FunnelStepCreate";
 import Funnel from "./Funnel";
 
@@ -9,20 +9,19 @@ import {
   deleteStep,
   deleteDeal
 } from '../../actions/funnels';
-import FunnelDealDelete from './custom/FunnelDealDelete';
 
 const Funnels = () => {
   const dispatch = useDispatch();
 
   const [state, setState] = useState({
     isCreateDealOpen: false,
-    isDeleteDealOpen: false,
-    isDeleteStepOpen: false,
+    isEditDealOpen: false,
     isCreateStepOpen: false,
     columnWebId: undefined,
     columnId: '',
     retailerId: '',
-    dealId: undefined
+    dealId: undefined,
+    deal: {}
   });
 
   const openCreateDeal = (columnId, columnWebId, retailerId) => {
@@ -35,20 +34,12 @@ const Funnels = () => {
     }));
   };
 
-  const openDeleteStep = (columnWebId) => {
+  const toggleEditDeal = (deal, columnWebId) => {
     setState((previousState) => ({
       ...state,
       columnWebId,
-      isDeleteStepOpen: !previousState.isDeleteStepOpen
-    }));
-  };
-
-  const openDeleteDeal = (dealId, columnWebId) => {
-    setState((previousState) => ({
-      ...state,
-      dealId,
-      columnWebId,
-      isDeleteDealOpen: !previousState.isDeleteDealOpen
+      deal,
+      isEditDealOpen: !previousState.isEditDealOpen
     }));
   };
 
@@ -66,40 +57,45 @@ const Funnels = () => {
     }));
   };
 
-  const handleDeleteStep = () => {
-    dispatch({ type: 'CLEAR_FUNNELS' });
-    setState((previousState) => ({
-      ...state,
-      isDeleteStepOpen: !previousState.isDeleteStepOpen
-    }));
-    dispatch(deleteStep(state.columnWebId));
+  const handleDeleteStep = (columnWebId) => {
+    const destroy = confirm('¿Estás seguro de eliminar esta etapa de negociación? (se borrarán todas las negociaciones adentro de esta etapa)');
+    if (destroy) {
+      dispatch({ type: 'CLEAR_FUNNELS' });
+      dispatch(deleteStep(columnWebId));
+    }
   };
 
-  const handleDeleteDeal = () => {
-    setState((previousState) => ({
-      ...state,
-      isDeleteDealOpen: !previousState.isDeleteDealOpen
-    }));
-    dispatch(deleteDeal(state.dealId, state.columnWebId));
+  const handleDeleteDeal = (dealId, columnWebId) => {
+    const destroy = confirm('¿Estás seguro de eliminar esta negociación?');
+    if (destroy) {
+      dispatch(deleteDeal(dealId, columnWebId));
+    }
   };
 
   return (
-    <div className="funnel_holder">
-
-      <div className="col-xs-12 col-sm-4">
-        <h1 className="d-inline index__title">Negociaciones</h1>
-        <div className="index__desc">
-          Lista de negociaciones
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col-xs-12 col-sm-4">
+          <h1 className="d-inline funnels__title">Negociaciones</h1>
         </div>
-        <button type="button" onClick={() => openCreateStep()} className="py-5 px-15 funnel-btn btn--cta">
-          Añadir etapa de negociación
-        </button>
+
+        <div className="col-sm-8">
+          <div className="d-flex justify-content-end">
+            <button type="button" onClick={() => openCreateStep()} className="btn-btn btn-submit btn-primary-style">
+              Añadir etapa de negociación
+            </button>
+          </div>
+        </div>
+        <div className="col-12">
+          <hr />
+        </div>
       </div>
 
       <Funnel
         openCreateDeal={openCreateDeal}
-        openDeleteStep={openDeleteStep}
-        openDeleteDeal={openDeleteDeal}
+        toggleEditDeal={toggleEditDeal}
+        deleteStep={handleDeleteStep}
+        deleteDeal={handleDeleteDeal}
       />
 
       {state.isCreateDealOpen
@@ -113,16 +109,16 @@ const Funnels = () => {
           retailerId={state.retailerId}
         />
         )}
-
-      {state.isDeleteStepOpen
+      {state.isEditDealOpen
         && (
-        <FunnelStepDelete
-          isOpen={state.isDeleteStepOpen}
-          openDeleteStep={openDeleteStep}
-          deleteStep={handleDeleteStep}
+        <DealEdit
+          isOpen={state.isEditDealOpen}
+          toggleEditDeal={toggleEditDeal}
+          createDeal={createDeal}
+          columnWebId={state.columnWebId}
+          deal={state.deal}
         />
         )}
-
       {state.isCreateStepOpen
         && (
         <FunnelStepCreate
@@ -130,18 +126,7 @@ const Funnels = () => {
           openCreateStep={openCreateStep}
         />
         )}
-
-      {state.isDeleteDealOpen
-        && (
-        <FunnelDealDelete
-          isOpen={state.isDeleteDealOpen}
-          openDeleteDeal={openDeleteDeal}
-          deleteDeal={handleDeleteDeal}
-        />
-        )}
-
     </div>
-
   );
 };
 

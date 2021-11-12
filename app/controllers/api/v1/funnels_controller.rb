@@ -13,12 +13,36 @@ class Api::V1::FunnelsController < Api::ApiController
     render status: 200, json: { funnelSteps: data }
   end
 
+  # TODO: move to deals controller
   def update_deal
     deal = Deal.find_by(web_id: params['deal']['deal_id'])
     funnel_step = FunnelStep.find_by(web_id: params['deal']['funnel_step_id'])
 
     if deal && funnel_step
-      render status: 200, json: {} if deal.update(funnel_step: funnel_step)
+      previous_funnel_step = deal.funnel_step
+      deal.update(funnel_step_id: funnel_step.id)
+      deal.update(deal_params.except(:funnel_step_id))
+      render status: 200, json: {
+        deal_id: deal.web_id,
+        funnel_step_id: funnel_step.web_id,
+        position: deal.position,
+        previous_funnel_step_amount: previous_funnel_step.total,
+        amount: funnel_step.total,
+        currency: funnel_step.currency_symbol,
+        previous_funnel_step_total: previous_funnel_step.deals.count,
+        total: funnel_step.deals.count,
+        deal: {
+          id: deal.web_id,
+          name: deal.name,
+          currency: deal.currency_symbol,
+          amount: deal.amount,
+          funnel_step_id: deal.funnel_step_id,
+          retailer_id: deal.retailer_id,
+          customer: deal.customer,
+          agent: deal.retailer_user,
+          channel: deal.customer&.channel
+        }
+      }
     else
       render status: 404, json: {}
     end
@@ -30,19 +54,25 @@ class Api::V1::FunnelsController < Api::ApiController
     end
   end
 
+  # TODO: move to deals controller
   def create_deal
-    deal = current_retailer_user.deals.new(deal_params)
+    deal = Deal.new(deal_params)
     if deal.save
       render status: 200, json:
       {
+        deal_id: deal.web_id,
+        funnel_step_id: deal.funnel_step.web_id,
+        amount: deal.funnel_step.total,
         deal: {
           id: deal.web_id,
           name: deal.name,
+          amount: deal.amount,
+          currency: deal.currency_symbol,
           funnel_step_id: deal.funnel_step_id,
           retailer_id: deal.retailer_id,
+          agent: deal.retailer_user,
           customer: deal.customer,
-          has_whastapp: deal&.customer&.ws_active,
-          has_fb: deal&.customer&.psid
+          channel: deal.customer&.channel
         }
       }
     else
@@ -93,6 +123,7 @@ class Api::V1::FunnelsController < Api::ApiController
       render status: 404, json: { message: 'Funnel does not exist' } unless @funnel
     end
 
+    # TODO: move to deals controller
     def set_deals
       #TODO SET SERIALIZER
       deals = {}
@@ -104,9 +135,11 @@ class Api::V1::FunnelsController < Api::ApiController
             id: deal.web_id,
             name: deal.name,
             amount: deal.amount,
+            currency: deal.currency_symbol,
+            funnel_step_id: deal.funnel_step_id,
+            agent: deal.retailer_user,
             customer: deal.customer,
-            has_whastapp: deal&.customer&.ws_active,
-            has_fb: deal&.customer&.psid
+            channel: deal.customer&.channel
           }
         end
       end
@@ -124,7 +157,9 @@ class Api::V1::FunnelsController < Api::ApiController
           internal_id: step.id,
           r_internal_id: @funnel.retailer_id,
           total: step.deals.count,
-          pages: (step.deals.count / 25) + 1
+          pages: (step.deals.count / Deal::PAGINATES_PER) + 1,
+          currency: step.currency_symbol,
+          amount: step.total
         }
       end
 
@@ -135,11 +170,15 @@ class Api::V1::FunnelsController < Api::ApiController
       @funnel.funnel_steps.order(:position).pluck(:web_id).map(&:to_s)
     end
 
+    # TODO: move to deals controller
     def deal_params
       params.require(:deal).permit(
         :name,
+        :amount,
+        :position,
         :funnel_step_id,
         :retailer_id,
+        :retailer_user_id,
         :customer_id
       )
     end
