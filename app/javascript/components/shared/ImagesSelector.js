@@ -26,7 +26,7 @@ class ImagesSelector extends Component {
       <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showLoadImages} style={modalCustomStyles(this.props.onMobile)}>
         <div className={this.props.onMobile ? "d-flex justify-content-between" : "d-flex justify-content-between" }>
           <div>
-            <p className={`font-weight-bold text-gray-dark ${fsTitle}`}>Imágenes</p>
+            <p className={`font-weight-bold ${fsTitle}`}>Imágenes</p>
           </div>
           <div className="t-right">
             <a className="px-8" onClick={(e) => this.props.toggleLoadImages()}>

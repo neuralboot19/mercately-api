@@ -10,6 +10,7 @@ import {
   sendImg,
   setMessageAsRead,
   sendBulkFiles,
+  sendFacebookMultipleAnswers,
   addNote as addNoteAction
 } from "../../actions/actions";
 
@@ -120,8 +121,18 @@ class ChatMessages extends Component {
     }
   }
 
+  hasAdditionalAnswers = () => {
+    return this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.additional_fast_answers.data.length > 0;
+  }
+
   handleSubmitMessage = (e, message) => {
     e.preventDefault();
+
+    if (this.hasAdditionalAnswers()) {
+      this.sendMultipleAnswers(message);
+      return;
+    }
+
     const uuid = uuidv4();
     let text = { message: message, message_identifier: uuid };
     const isText = message && message.trim() !== '';
@@ -150,6 +161,103 @@ class ChatMessages extends Component {
     );
 
     this.setFocus();
+  }
+
+  sendMultipleAnswers = (message) => {
+    const answer = this.state.selectedFastAnswer.attributes;
+    const insertedMessages = [];
+    const data = new FormData();
+    let uuid = uuidv4();
+    let type;
+    let url = stringUtils.formatSentUrl(answer.image_url);
+    let filename;
+    let isText = message && message.trim() !== '';
+
+    data.append('message', message);
+    data.append('message_identifier', uuid);
+    data.append('template_id', answer.id);
+
+    if (isText) {
+      insertedMessages.push({
+        text: message,
+        sent_by_retailer: true,
+        created_at: new Date(),
+        message_identifier: uuid
+      });
+    }
+
+    if (url) {
+      if (answer.file_type === 'file') {
+        type = 'file';
+        filename = answer.file_name;
+        data.append('file_name', filename);
+      } else if (answer.file_type === 'image') {
+        type = 'image';
+      }
+
+      uuid = uuidv4();
+      data.append('url', url);
+      data.append('type', type);
+      data.append('message_identifiers[]', uuid);
+
+      insertedMessages.push({
+        url: url,
+        filename: filename,
+        sent_by_retailer: true,
+        file_type: type,
+        created_at: new Date(),
+        message_identifier: uuid
+      });
+    }
+
+    answer.additional_fast_answers.data.forEach((afa) => {
+      url = afa.attributes.file_url;
+      message = afa.attributes.answer;
+      isText = message && message.trim() !== '';
+
+      if (isText) {
+        uuid = uuidv4();
+        data.append('message_identifiers[]', uuid);
+
+        insertedMessages.push({
+          text: message,
+          sent_by_retailer: true,
+          created_at: new Date(),
+          message_identifier: uuid
+        });
+      }
+
+      if (url) {
+        uuid = uuidv4();
+        data.append('message_identifiers[]', uuid);
+
+        if (afa.attributes.file_type === 'file') {
+          type = 'file';
+          filename = afa.attributes.file_name;
+        } else if (afa.attributes.file_type === 'image') {
+          type = 'image';
+        }
+
+        insertedMessages.push({
+          url: url,
+          filename: filename,
+          sent_by_retailer: true,
+          file_type: type,
+          created_at: new Date(),
+          message_identifier: uuid
+        });
+      }
+    });
+
+    this.setState({
+      messages: this.state.messages.concat(insertedMessages),
+      new_message: true,
+      selectedFastAnswer: null
+    });
+
+    this.props.sendFacebookMultipleAnswers(this.props.currentCustomer, data, csrfToken);
+    this.scrollToBottom();
+    this.maximizeInputText();
   }
 
   handleSubmitImg = (el, file_data) => {
@@ -924,6 +1032,9 @@ function mapDispatch(dispatch) {
     },
     fetchCurrentRetailerUser: () => {
       dispatch(fetchCurrentRetailerUser());
+    },
+    sendFacebookMultipleAnswers: (id, body, token) => {
+      dispatch(sendFacebookMultipleAnswers(id, body, token, 'instagram'));
     }
   };
 }

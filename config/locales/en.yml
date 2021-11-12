@@ -177,6 +177,7 @@ en:
           text: Text
           global: Global
           personal: Personal
+          with_additional_answers: Has additional answers
         new:
           create_answer: Create answer
         edit:
@@ -194,6 +195,12 @@ en:
           mercado_libre_question: MercadoLibre Questions
           note_mercado_libre_question: 'Note: For questions, do not include contact information, such as phone numbers, exact addresses, or personal names.'
           mercado_libre_messages: MercadoLibre Messages
+          additional_fast_answers: Additional canned responses
+          add_additional_fast_answer: Add Answer
+          new_additional_fast_answer:
+            add_image_or_pdf: Add image or PDF
+          edit_additional_fast_answer:
+            update_image_or_pdf: Update image or PDF
         common:
           title: Title
           content: Content
@@ -202,6 +209,8 @@ en:
           file: File
           global_answer_question: is global answer?
           confirm_remove_text: Are you sure to delete the answer?
+          additional_answer_input_label: Content
+          error_size_message: The image must be maximum 5MB and the PDF maximum 25MB
       welcome_messages:
         title: Welcome Messages
         messages_for_new_clients: Message for new customers
@@ -219,6 +228,7 @@ en:
     edit: Edit
     remove: Remove
     save: Save
+    nested_remove: Remove
   actions:
     view: View
     edit: Edit

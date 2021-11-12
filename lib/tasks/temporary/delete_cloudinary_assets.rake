@@ -274,6 +274,14 @@ def get_asset_keys(retailer)
         record_type: 'Template',
         record_id: retailer.templates.ids
       }).pluck(:key)
+
+    asset_keys += ActiveStorage::Blob.joins(:attachments)
+      .where(active_storage_attachments:
+      {
+        name: 'file',
+        record_type: 'AdditionalFastAnswer',
+        record_id: AdditionalFastAnswer.joins(:template).where(templates: { retailer_id: retailer.id }).ids
+      }).pluck(:key)
   end
 
   if retailer.reminders.exists?

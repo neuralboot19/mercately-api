@@ -10,6 +10,8 @@ $(function() {
     } else {
       document.getElementById("template_image").accept = "image/jpg, image/jpeg, image/png, application/pdf";
     }
+
+    handleAcceptedAdditionalFiles();
   }
 
   handleAcceptedFile();
@@ -106,4 +108,140 @@ function removeImage() {
   $('#template_image').val(null);
   $('#preview-container-image').hide();
   $('#current-template-image').show();
+}
+
+$(document).ready(function() {
+  $('#additional-fast-answer').on('cocoon:before-insert', function(e, insertedItem, originalEvent) {
+    const item = $(insertedItem);
+    const labelFor = item.find("input[type='file']").attr('id');
+
+    item.find('.label-for').attr('for', labelFor);
+  });
+
+  $('#additional-fast-answer').on('cocoon:after-insert', function(e, insertedItem, originalEvent) {
+    checkLimitAssociations();
+    handleAcceptedAdditionalFiles();
+  });
+
+  $('#additional-fast-answer').on('cocoon:after-remove', function(e, insertedItem, originalEvent) {
+    checkLimitAssociations();
+  });
+
+  initializeFileLabels();
+  checkLimitAssociations();
+});
+
+function checkLimitAssociations() {
+  if ($('#additional-fast-answer .nested-fields:visible').length >= 5) {
+    $('#add-additional-fast-answer').hide();
+  } else {
+    $('#add-additional-fast-answer').show();
+  }
+}
+
+function initializeFileLabels() {
+  let item, labelFor;
+
+  document.querySelectorAll('.existing-answers-container').forEach(function(input) {
+    item = $(input);
+    labelFor = item.find("input[type='file']").attr('id');
+
+    item.find('.label-for').attr('for', labelFor);
+  });
+}
+
+function handleAcceptedAdditionalFiles() {
+  let item, elem, type, file;
+  const igCheck = document.getElementById('template_enable_for_instagram');
+
+  document.querySelectorAll('.existing-answers-container, .new-answers-container').forEach(function(input) {
+    item = $(input);
+    elem = item.find("input[type='file']");
+    type = item.find('.hidden-type-file').val();
+
+    if (igCheck && igCheck.checked) {
+      file = elem.val().split('.').pop();
+
+      if (file === 'pdf' || type === 'file') {
+        elem.val(null);
+        item.find('.hidden-delete-file').val('true');
+        item.find('.preview-pdf-container').hide();
+        item.find('.current-additional-attach-container').hide();
+      }
+
+      elem.attr('accept', 'image/jpg, image/jpeg, image/png');
+    } else {
+      elem.attr('accept', 'image/jpg, image/jpeg, image/png, application/pdf');
+
+      if (type) {
+        item.find('.hidden-delete-file').removeAttr('value');
+        item.find('.current-additional-attach-container').show();
+      }
+    }
+  });
+}
+
+function previewAdditionalFile(input) {
+  if (input.files && input.files[0]) {
+    let item = $(input);
+    const closest = $(input).closest('.root-for-closest');
+    const type = fileType(input.files[0]);
+    let reader = new FileReader();
+
+    reader.onload = function (e) {
+      if (invalidAttachmentSize(input.files[0])) {
+        item.val('');
+        closest.find('.preview-img-container, .preview-pdf-container').hide();
+        closest.find('.preview-errors').show();
+      } else {
+        if (type === 'image') {
+          closest.find('.preview-pdf-container, .preview-errors').hide();
+          closest.find('.preview-img').attr('src', e.target.result);
+          closest.find('.preview-img-container').show();
+        } else if (type === 'pdf') {
+          closest.find('.preview-img-container, .preview-errors').hide();
+          closest.find('.preview-pdf-embed').attr('src', e.target.result);
+          closest.find('.preview-pdf-container').show();
+        }
+
+        closest.find('.current-additional-attach-container').hide();
+      }
+    }
+
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeAdditionalFile(input) {
+  const closest = $(input).closest('.root-for-closest');
+  let item = closest.find("input[type='file']");
+
+  item.val('');
+  closest.find('.preview-img-container, .preview-pdf-container').hide();
+  closest.find('.current-additional-attach-container').show();
+}
+
+function removeAdditionalAttachedFile(input) {
+  const closest = $(input).closest('.root-for-closest');
+  let item = closest.find("input[type='file']");
+
+  item.val('');
+  closest.find('.preview-img-container, .preview-pdf-container, .current-additional-attach-container').hide();
+  closest.find('.hidden-delete-file').val(true);
+}
+
+function fileType(file) {
+  if (['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)) {
+    return 'image';
+  } else if (file.type === 'application/pdf') {
+    return 'pdf';
+  }
+}
+
+function invalidAttachmentSize(file) {
+  if (['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)) {
+    return file.size > 5*1024*1024;
+  } else if (file.type === 'application/pdf') {
+    return file.size > 25*1024*1024;
+  }
 }

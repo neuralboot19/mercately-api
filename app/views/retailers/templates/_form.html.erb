@@ -123,6 +123,23 @@
               </div>
             <% end %>
 
+            <% if current_retailer.multiple_fast_answers %>
+              <fieldset class="col-xs-12 fieldset mt-16 mb-20 row">
+                <legend class="fs-20 mb-16"><%= t('retailer.settings.quick_answers.form.additional_fast_answers') %></legend>
+                <div id="additional-fast-answer" class="w-100">
+                  <%= f.fields_for :additional_fast_answers, @additional_fast_answers do |afa| %>
+                    <%= render "additional_fast_answer_fields", f: afa %>
+                  <% end %>
+                  <div>
+                    <%= link_to_add_association f, :additional_fast_answers, partial: 'new_additional_fast_answer_fields', id: 'add-additional-fast-answer', class: 'btn btn--cta' do %>
+                      <i class="fas fa-plus mr-5"></i>
+                      <%= t('retailer.settings.quick_answers.form.add_additional_fast_answer') %>
+                    <% end %>
+                  </div>
+                </div>
+              </fieldset>
+            <% end %>
+
             <div class="btn-box col-xs-12">
               <%= f.submit t('buttons.save'), class: 'btn-btn btn-submit', data: { disable_with: false } %>
             </div>

@@ -4,6 +4,7 @@ class Retailers::TemplatesController < RetailersController
   before_action :set_template, only: [:show, :edit, :update, :destroy]
   before_action :check_permissions, only: [:show, :edit, :update, :destroy]
   before_action :resize_image, only: [:create, :update]
+  before_action :check_additional_attachments, only: [:create, :update]
 
   # GET /templates
   def index
@@ -21,6 +22,7 @@ class Retailers::TemplatesController < RetailersController
 
   # GET /templates/1/edit
   def edit
+    @additional_fast_answers = @template.additional_fast_answers.order(id: :asc)
   end
 
   # POST /templates
@@ -96,7 +98,15 @@ class Retailers::TemplatesController < RetailersController
         :enable_for_whatsapp,
         :enable_for_instagram,
         :image,
-        :global
+        :global,
+        additional_fast_answers_attributes: [
+          :id,
+          :answer,
+          :file,
+          :file_deleted,
+          :file_type,
+          :_destroy
+        ]
       )
     end
 end

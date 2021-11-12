@@ -108,6 +108,10 @@ module Facebook
       Facebook::Api.new(@facebook_retailer, retailer_user, @type).send_bulk_files(customer, params)
     end
 
+    def send_multiple_answers(customer, retailer_user, params)
+      Facebook::Api.new(@facebook_retailer, retailer_user, @type).send_multiple_answers(customer, params)
+    end
+
     def save_postback_interaction(message_data)
       customer = Facebook::Customers.new(@facebook_retailer).import(message_data['sender']['id'])
 

@@ -31,7 +31,9 @@ ActiveAdmin.register Retailer do
                 :ml_site,
                 :gupshup_app_id,
                 :gupshup_app_token,
-                :send_max_size_files
+                :send_max_size_files,
+                :multiple_fast_answers
+
   filter :name
   filter :slug
   filter :meli_retailer_meli_user_id_cont, label: 'Meli user id'
@@ -118,6 +120,7 @@ ActiveAdmin.register Retailer do
       row :ml_domain
       row :ml_site
       row :send_max_size_files
+      row :multiple_fast_answers
       row :created_at
       row :updated_at
     end
@@ -363,6 +366,7 @@ ActiveAdmin.register Retailer do
       f.input :allow_send_videos, label: 'Permitir enviar videos'
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
       f.input :send_max_size_files, label: 'Enviar hasta 40MB en pdfs y 15MB en imagenes'
+      f.input :multiple_fast_answers, label: 'Permitir enviar multiples respuestas rápidas'
     end
     f.actions
   end

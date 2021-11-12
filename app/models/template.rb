@@ -4,6 +4,7 @@ class Template < ApplicationRecord
   belongs_to :retailer
   belongs_to :retailer_user, required: false
   has_one_attached :image
+  has_many :additional_fast_answers, dependent: :destroy
 
   validate :correct_mime_type, if: -> { image.attached? }
   validates :title, presence: true
@@ -20,6 +21,8 @@ class Template < ApplicationRecord
   scope :owned_and_filtered, -> (search, creator_id) { where('title ILIKE ?' \
     ' OR answer ILIKE ?', "%#{search}%", "%#{search}%").where('retailer_user_id = ?' \
     ' OR retailer_user_id IS NULL OR global = ?', creator_id, true) }
+
+  accepts_nested_attributes_for :additional_fast_answers, reject_if: :all_blank, allow_destroy: true
 
   def to_param
     web_id
