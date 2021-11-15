@@ -157,19 +157,45 @@ module Whatsapp::Gupshup::V1
         [bodyString, message]
       end
 
-      def document_template(file_url:, file_name:, file_caption:)
+      def media_template(file_url:, file_name:, file_caption:)
+        body_string = base_body
         message = {
           isHSM: 'true',
-          type: 'file',
+          type: @options[:params][:type] == 'document' ? 'file' : @options[:params][:type],
           url: file_url,
           caption: file_caption,
           filename: file_name
-        }.to_json
+        }
 
-        bodyString = base_body
-        bodyString += "&message=#{CGI.escape(message)}"
+        if @options[:params][:gupshup_template_id].present?
+          @is_template_with_id = true
+          id = @options[:params][:gupshup_template_id]
+          params = @options[:params][:template_params].presence || []
 
-        [bodyString, message]
+          template = {
+            id: id,
+            params: params
+          }.to_json
+
+          body_string += "&template=#{template}"
+
+          message[:id] = id
+          message[:params] = params
+          aux_message = {
+            type: @options[:params][:type]
+          }
+
+          aux_message[aux_message[:type]] = { link: file_url }
+          aux_message[aux_message[:type]]['filename'] = file_name if aux_message[:type] == 'document'
+
+          message = message.to_json
+          body_string += "&message=#{CGI.escape(aux_message.to_json)}"
+        else
+          message = message.to_json
+          body_string += "&message=#{CGI.escape(message)}"
+        end
+
+        [body_string, message]
       end
 
       # Send Audio
@@ -272,23 +298,23 @@ module Whatsapp::Gupshup::V1
       end
 
       def file
-        is_document_template = @options[:params][:type] == 'file' && @options[:params][:template] == 'true'
+        is_media_template = @options[:params][:type] != 'text' && @options[:params][:template] == 'true'
 
         if @options[:params][:file_data].present?
           file = @index ? @options[:params][:file_data][@index] : @options[:params][:file_data]
           resource_type = get_resource_type(file)
           response = Whatsapp::Karix::Api.new.upload_file_to_cloudinary(
             file,
-            resource_type
+            @options[:params][:type]
           )
 
-          file_name = ['document_template', 'document'].include?(resource_type) ? response['original_filename'] : ''
+          file_name = ['media_template', 'document'].include?(resource_type) ? response['original_filename'] : ''
           file_name = file_name.parameterize
-          file_name += '.pdf' if resource_type == 'document_template'
+          file_name += '.pdf' if @options[:params][:type] == 'document'
           file_url = response['secure_url'] || response['url']
-          file_caption = is_document_template ? @options[:params][:caption] || '' : ''
+          file_caption = is_media_template ? @options[:params][:caption] || '' : ''
         elsif @options[:params][:url].present?
-          resource_type = is_document_template ? 'document_template' : check_type_on_url
+          resource_type = is_media_template ? 'media_template' : check_type_on_url
           file_name = @options[:params][:file_name].present? ? @options[:params][:file_name] : ''
           file_url = @options[:params][:url]
           file_caption = @options[:params][:caption] || ''
@@ -302,11 +328,12 @@ module Whatsapp::Gupshup::V1
       end
 
       def get_resource_type(uploaded_file)
-        return 'document_template' if @options[:params][:type] == 'file' && @options[:params][:template] == 'true'
+        return 'media_template' if @options[:params][:type] != 'text' && @options[:params][:template] == 'true'
         return 'audio' if ['audio', 'voice'].include?(@options[:params][:type])
 
         content_type = MIME::Types.type_for(uploaded_file.tempfile.path).first.content_type
         return unless content_type.present?
+
         get_resource_from_content_type content_type
       end
 

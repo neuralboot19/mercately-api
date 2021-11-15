@@ -17,7 +17,34 @@ RSpec.describe Retailers::GsTemplatesController, type: :controller do
     attributes_for(:gs_template, text: 'Hi {{1}}, {{1}}', example: 'Hi [Daniel], is John')
   end
 
+  let(:submit_response_pending) do
+    {
+      'status': 'success',
+      'template': {
+        'category': 'TICKET_UPDATE',
+        'createdOn': 1607593307541,
+        'data': 'your ticket has been confirmed for {{1}} persons on date {{2}}.',
+        'elementName': 'ticket_check_url_334',
+        'id': '7423a738-5193-4cc2-9254-100ee002f98c',
+        'languageCode': 'en_US',
+        'languagePolicy': 'deterministic',
+        'master': true,
+        'meta': '{\'example\':\'your ticket has been confirmed for 4 persons on date 2020-05-04.\'}',
+        'modifiedOn': 1607593307934,
+        'status': 'PENDING',
+        'templateType': 'TEXT',
+        'vertical': 'BUTTON_CHECK'
+      }
+    }
+  end
+
   describe 'GET #index' do
+    before do
+      allow(Connection).to receive(:prepare_connection).and_return(true)
+      allow(Connection).to receive(:post_form_request).and_return(double('response', status: 200, body:
+        submit_response_pending.to_json))
+    end
+
     it 'returns a success response' do
       retailer.gs_templates.create! valid_attributes
       get :index, params: { slug: retailer_user.retailer.slug }
@@ -33,6 +60,12 @@ RSpec.describe Retailers::GsTemplatesController, type: :controller do
   end
 
   describe 'POST #create' do
+    before do
+      allow(Connection).to receive(:prepare_connection).and_return(true)
+      allow(Connection).to receive(:post_form_request).and_return(double('response', status: 200, body:
+        submit_response_pending.to_json))
+    end
+
     context 'with valid params' do
       it 'creates a new GsTemplate' do
         expect do

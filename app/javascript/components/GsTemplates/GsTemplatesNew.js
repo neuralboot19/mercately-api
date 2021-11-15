@@ -7,6 +7,7 @@ import { createGsTemplate } from '../../actions/gsTemplatesActions';
 
 import AttachEmojiIcon from "../shared/AttachEmojiIcon";
 import EmojisContainer from "../shared/EmojisContainer";
+import stringUtils from '../../util/string.utils';
 
 const csrfToken = document.querySelector('[name=csrf-token]').content;
 
@@ -29,15 +30,23 @@ const languages = [
   { value: 'english', label: 'Inglés' }
 ];
 
+const gsTemplatesTypes = [
+  { value: 'text', label: 'TEXTO' },
+  { value: 'image', label: 'IMAGEN' },
+  { value: 'document', label: 'DOCUMENTO' }
+];
+
 const GsTemplatesNew = (props) => {
   const [label, setLabel] = useState('');
   const [category, setCategory] = useState(categories[0]);
   const [language, setLanguage] = useState(languages[0]);
+  const [type, setType] = useState(gsTemplatesTypes[0]);
   const [templateText, setTemplateText] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [caretPosition, setCaretPosition] = useState(0);
   const [templateValues, setTemplateValues] = useState({});
   const [emoji, setEmoji] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const templateTextRef = useRef(null);
 
@@ -96,8 +105,8 @@ const GsTemplatesNew = (props) => {
           <input key={index}
                  value={templateValues[id] || ''}
                  onChange={e => setTemplateValues({...templateValues, [id]: e.target.value})}
-                 required={true}
-          />);
+                 required={true} />
+        );
       }
       else {
         return(<span key={index}>{key}</span>);
@@ -139,8 +148,127 @@ const GsTemplatesNew = (props) => {
       exampleText = exampleText.replace(`{{${key}}}`, `[${value}]`);
     })
 
-    let gs_template = {label: label, category: category.value, language: language.value, text: templateText, example: exampleText};
-    props.createGsTemplate({gs_template: gs_template}, csrfToken);
+    const formData  = new FormData();
+
+    formData.append('gs_template[label]', label);
+    formData.append('gs_template[category]', category.value);
+    formData.append('gs_template[language]', language.value);
+    formData.append('gs_template[key]', type.value);
+    formData.append('gs_template[text]', templateText);
+    formData.append('gs_template[example]', exampleText);
+
+    if (type.value == 'image' || type.value == 'document') {
+      if (!selectedFile) {
+        alert('Seleccione una imagen o ducumento pdf');
+        return;
+      }
+
+      let alertMessage;
+
+      switch (type.value) {
+        case 'image':
+          if (!['image/jpg', 'image/jpeg', 'image/png'].includes(selectedFile.type)) {
+            alertMessage = 'Imágenes permitidos: jpg, jpeg, png';
+          }
+          break;
+        case 'document':
+          if (selectedFile.type !== 'application/pdf') {
+            alertMessage = 'Debe seleccionar un documento pdf';
+          }
+          break;
+      }
+      
+      if (alertMessage) {
+        alert(alertMessage);
+        setSelectedFile(null);
+        return;
+      }
+
+      formData.append('gs_template[file]', selectedFile);
+    }
+
+    dispatch({ type: 'TOGGLE_SUBMITTED', submitted: true });
+    props.createGsTemplate(formData, csrfToken);
+  }
+
+  const renderButtonLabel = () => {
+    switch (type.value) {
+      case 'image':
+        return (
+          <label className="btn btn--cta label-for ml-0">
+            <i className="fas fa-upload mr-5"></i>
+            Agregar Imagen
+          </label>
+        )
+      case 'document':
+        return (
+          <label className="btn btn--cta label-for ml-0">
+            <i className="fas fa-upload mr-5"></i>
+            Agregar Documento
+          </label>
+        )
+      default:
+        return false;
+    }
+  }
+
+  const renderPreviewFile = () => {
+    if (selectedFile) {
+      switch (selectedFile.type) {
+        case 'image/jpg':
+        case 'image/jpeg':
+        case 'image/png':
+          return (
+            <div className="p-relative w-50 mt-10">
+              <i className="fas fa-times-circle cursor-pointer delete-icon-right" style={{ zIndex: '0' }} onClick={() => setSelectedFile(null)}></i>
+              <img src={URL.createObjectURL(selectedFile)} className="h-100" />
+            </div>
+          )
+        case 'application/pdf':
+          return (
+            <div className="p-relative mt-10">
+                <i className="fas fa-file-pdf mr-8"></i>
+                <span className="c-secondary fs-14">{stringUtils.truncate(selectedFile.name, 40)}</span>
+                <i className="fas fa-times-circle cursor-pointer delete-icon-right ml-5" style={{ zIndex: '0', position: 'relative' }} onClick={() => setSelectedFile(null)}></i>
+            </div>
+          )
+      }
+    }
+
+    return false;
+  }
+
+  const handleInputFile = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setSelectedFile(e.target.files[0]);
+    }
+  }
+
+  const renderInputFile = () => {
+    switch (type.value) {
+      case 'image':
+        return (
+          <>
+            <div className="custom-file" style={{ zIndex: 0}}>
+              <input type="file" className="custom-file-input" accept="image/jpg, image/jpeg, image/png" onChange={handleInputFile} />
+              {renderButtonLabel()}
+            </div>
+            {renderPreviewFile()}
+          </>
+        )
+      case 'document':
+        return (
+          <>
+            <div className="custom-file" style={{ zIndex: 0}}>
+              <input type="file" className="custom-file-input" accept="application/pdf" onChange={handleInputFile} />
+              {renderButtonLabel()}
+            </div>
+            {renderPreviewFile()}
+          </>
+        )
+    }
+
+    return false;
   }
 
   return (
@@ -165,7 +293,7 @@ const GsTemplatesNew = (props) => {
               <div className="box">
                 <div className="form-container">
                   <div className="row">
-                    <div className="col-md-4 col-sm-6 col-xs-12">
+                    <div className="col-md-3 col-sm-6 col-xs-12">
                       <div className="form-group">
                         <label htmlFor="label" className="form-label">Etiqueta</label>
                         <input id="label"
@@ -180,7 +308,7 @@ const GsTemplatesNew = (props) => {
                       </div>
                     </div>
 
-                    <div className="col-md-4 col-sm-6 col-xs-12">
+                    <div className="col-md-3 col-sm-6 col-xs-12">
                       <div className="form-group">
                         <label htmlFor="category" className="form-label">Categoría</label>
                         <Select options={categories}
@@ -189,13 +317,24 @@ const GsTemplatesNew = (props) => {
                       </div>
                     </div>
 
-                    <div className="col-md-4 col-sm-6 col-xs-12">
+                    <div className="col-md-3 col-sm-6 col-xs-12">
                       <div className="form-group">
                         <label htmlFor="language" className="form-label">Idioma</label>
                         <Select options={languages}
                                 value={language}
                                 onChange={value => setLanguage(value)} />
                       </div>
+                    </div>
+
+                    <div className="col-md-3 col-sm-6 col-xs-12">
+                      <div className="form-group">
+                        <label htmlFor="type" className="form-label">Tipo</label>
+                        <Select options={gsTemplatesTypes}
+                                value={type}
+                                onChange={value => {setType(value); setSelectedFile(null);}} />
+                      </div>
+
+                      {renderInputFile()}
                     </div>
                   </div>
 
@@ -215,12 +354,13 @@ const GsTemplatesNew = (props) => {
                                     value={templateText}
                                     onChange={e => setTemplateText(e.target.value)}
                                     className="form-control textarea-form"
-                                    rows="6" />
+                                    style={{ height:'128px'}} />
                           {props.textValidationText? <i className="validation-msg capitalize">{props.textValidationText}<br/></i>: null}
                         </div>
                         <i className="tag-description">
                           (Las variables deben ser números (a partir del 1) encerrados entre llaves dobles)
                           <br/>
+                          Ejemplo: Buenas tardes <b>{"{{1}}"}</b>, tu compra será entragada a las <b>{"{{2}}"}</b>
                         </i>
                       </div>
                     </div>
@@ -245,11 +385,12 @@ const GsTemplatesNew = (props) => {
               <div className="row">
                 <div className="col-md-12 text-right p-0">
                   <a className="cancel-link mr-30" href="/retailers/gupshup-retailer/gs_templates?q%5Bs%5D=created_at+desc">Cancelar</a>
-                  <input type="submit"
-                         name="commit"
-                         className="btn-btn btn-submit btn-primary-style"
-                         value="Guardar"
-                    />
+                  <button type="submit"
+                          className="btn-btn btn-submit btn-primary-style"
+                          disabled={props.submitted}>
+                      { props.submitted && <span className="pr-5"><i className="fas fa-spinner"></i></span> }
+                    Guardar
+                  </button>
                 </div>
               </div>
             </div>
@@ -263,7 +404,8 @@ const GsTemplatesNew = (props) => {
 function mapStateToProps(state) {
   return {
     labelValidationText: state.labelValidationText,
-    textValidationText: state.textValidationText
+    textValidationText: state.textValidationText,
+    submitted: state.submitted
   };
 }
 

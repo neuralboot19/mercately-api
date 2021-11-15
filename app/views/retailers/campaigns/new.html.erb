@@ -36,10 +36,10 @@
                     <label class="d-block">Texto de la plantilla</label>
                     <%= template_text(@whatsapp_template.text) %>
                   </div>
-                  <% if @whatsapp_template.file? %>
+                  <% if @whatsapp_template.template_type.in?(['image', 'document', 'video']) %>
                     <div class="my-16 col-xs-12">
                       <%= f.label :file, 'Archivo' %>
-                      <%= f.file_field :file, required: true, class: 'input validate-required', accept: 'application/pdf' %>
+                      <%= f.file_field :file, required: true, class: 'input validate-required', accept: template_accepted_files(@whatsapp_template.template_type) %>
                       <i class="validation-msg"></i>
                     </div>
                   <% end %>

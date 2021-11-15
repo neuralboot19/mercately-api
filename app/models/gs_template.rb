@@ -9,25 +9,38 @@ class GsTemplate < ApplicationRecord
   validate :vars_repeated?
 
   before_create :format_label
-  after_create :send_submitted_email, if: :pending?
+  after_create :submit_template, if: :pending?
   after_update :send_accepted_email, if: :accepted?
   after_update :send_rejected_email, if: :rejected?
 
-  enum key: %i[text image video file]
+  enum key: %i[text image video document location]
   enum status: %i[pending accepted rejected submitted]
+
+  attr_accessor :file
 
   LANGUAGE_CODES = { spanish: 'es_ES', english: 'en_US' }.freeze
 
   def submit_template
     return if ws_template_id || status != 'pending'
 
-    api_service.submit_gs_template(self)
+    send_submitted_email if api_service.submit_gs_template(self)
   end
 
   def accept_template
     return unless status == 'submitted'
 
     api_service.accept_gs_template(self)
+  end
+
+  def send_slack_notify(err)
+    slack_client.ping(
+      [
+        'Hola equipo de Marketing',
+        "La plantilla de WhatsApp con etiqueta: #{label}, que pertenece al retailer: #{retailer.name}, no fue enviada a Gupshup para su validación",
+        "Error: #{err}"
+      ].join("\n"))
+  rescue StandardError => e
+    Raven.capture_exception(e)
   end
 
   private
@@ -67,5 +80,9 @@ class GsTemplate < ApplicationRecord
 
     def api_service
       @api_service ||= GsTemplates::Api.new
+    end
+
+    def slack_client
+      Slack::Notifier.new ENV['SLACK_GS_TEMPLATES'], channel: '#gs-templates'
     end
 end

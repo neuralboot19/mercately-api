@@ -213,12 +213,7 @@ class Api::V1::CustomersController < Api::ApiController
     if params[:text].blank?
       customers = customers.limit(300)
     else
-      customers = customers.where("CONCAT(lower(first_name), lower(last_name)) ilike ?
-        OR email ILIKE ? OR phone ILIKE ?",
-        "%#{params[:text].downcase.delete(' ')}%",
-        "%#{params[:text].downcase}%",
-        "%#{params[:text].downcase}%"
-                                 )
+      customers = customers.ransack(full_name_or_email_or_phone_cont: params[:search]).result
     end
     render json: { customers: customers }
   end

@@ -22,7 +22,11 @@ class Reminder < ApplicationRecord
   end
 
   def file_url
-    "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{file.key}"
+    if file.content_type.include?('video/')
+      "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/video/upload/#{file.key}"
+    else
+      "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{file.key}"
+    end
   end
 
   private

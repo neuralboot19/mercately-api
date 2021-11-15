@@ -16,7 +16,7 @@ const VideoMessage = ({ chatType, handleMessageEvents, message }) => {
     <div className={error ? 'error-media-content' : ''}>
       <div className="video-content">
         { error ? (
-          <blockquote className="text-center py-115">
+          <blockquote className="text-center py-115 c-black">
             Video temporal no disponible
           </blockquote>
         ) : (

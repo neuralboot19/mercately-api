@@ -5,7 +5,7 @@ import Modal from 'react-modal';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncSelect from 'react-select/async';
 import {
-  createNewDeal,
+  updateFunnelStepDeal,
   clearNewDeal
 } from '../../../actions/funnels';
 
@@ -58,35 +58,33 @@ const customStyles = {
   }
 };
 
-const DealCreate = ({
-  openCreateDeal,
-  columnId,
-  retailerId,
+const DealEdit = ({
+  toggleEditDeal,
+  deal,
   columnWebId,
   isOpen
 }) => {
   const dispatch = useDispatch();
-  const newDealSuccess = useSelector((state) => state.newDealSuccess) || false;
-  const currentRetailerUser = useSelector((state) => state.currentRetailerUser) || {};
+  const dealSuccess = useSelector((state) => state.newDealSuccess) || false;
   const defaultDeal = { name: '', amount: '' };
 
   const [newDeal, setNewDeal] = useState({
-    name: '',
-    amount: '',
-    customerId: undefined,
-    selectedCustomer: 'Seleccionar cliente',
-    agentId: currentRetailerUser.id,
-    selectedAgent: `Agente: ${currentRetailerUser.first_name} ${currentRetailerUser.last_name}`
+    name: deal.name,
+    amount: deal.amount,
+    customerId: deal.customerId,
+    selectedCustomer: deal.customer ? `${deal.customer.first_name} ${deal.customer.last_name}` : 'Seleccionar cliente',
+    agentId: deal.agent.id || '',
+    selectedAgent: deal.agent ? `Agente: ${deal.agent.first_name} ${deal.agent.last_name}` : 'Seleccionar'
   });
   const [errors, setErrors] = useState(defaultDeal);
   const [typingTimeout, setTypingTimeout] = useState();
 
   useEffect(() => {
-    if (newDealSuccess) {
-      openCreateDeal();
+    if (dealSuccess) {
+      toggleEditDeal();
       dispatch(clearNewDeal());
     }
-  }, [newDealSuccess, openCreateDeal, dispatch]);
+  }, [dealSuccess, toggleEditDeal, dispatch]);
 
   const handleInputChange = (e) => {
     e.preventDefault();
@@ -103,7 +101,7 @@ const DealCreate = ({
   const handleValidation = () => {
     let formIsValid = true;
     const formErrors = { ...defaultDeal };
-    if (!newDeal.name) {
+    if (newDeal.name === '') {
       formIsValid = false;
       formErrors.name = "Nombre no puede estar vacio";
     }
@@ -119,42 +117,26 @@ const DealCreate = ({
   const closeDealModal = () => {
     setErrors(defaultDeal);
     setNewDeal(defaultDeal);
-    openCreateDeal();
+    toggleEditDeal();
   };
 
-  const handleCreateNewDeal = async (e) => {
+  const handleUpdateDeal = async (e) => {
     const el = e.target;
     el.disabled = true;
     if (handleValidation()) {
       const { name, amount, customerId, agentId } = newDeal;
-      const deal = {
+      const dealBody = {
+        deal_id: deal.id,
         name,
         amount,
-        customer_id: customerId,
         retailer_user_id: agentId,
-        funnel_step_id: columnId,
-        retailer_id: retailerId
+        customer_id: customerId,
+        funnel_step_id: columnWebId
       };
-      dispatch(createNewDeal(deal, columnWebId));
+      dispatch(updateFunnelStepDeal(dealBody));
     } else {
       el.disabled = false;
     }
-  };
-
-  const getAgentOptions = (inputValue, callback) => {
-    if (typingTimeout) clearTimeout(typingTimeout);
-    const timeout = setTimeout(async () => {
-      const endpoint = `/api/v1/retailer_users?search=${inputValue}`;
-      try {
-        const agentsResponse = await fetch(endpoint, { credentials: "same-origin" });
-        const { agents } = await agentsResponse.json();
-        const options = mapOptionsToValues(agents, 'selectedAgent');
-        callback(options);
-      } catch (error) {
-        callback([]);
-      }
-    }, 500);
-    setTypingTimeout(timeout);
   };
 
   const getOptions = (inputValue, callback) => {
@@ -165,6 +147,22 @@ const DealCreate = ({
         const customersResponse = await fetch(endpoint, { credentials: "same-origin" });
         const { customers } = await customersResponse.json();
         const options = mapOptionsToValues(customers, 'selectedCustomer');
+        callback(options);
+      } catch (error) {
+        callback([]);
+      }
+    }, 500);
+    setTypingTimeout(timeout);
+  };
+
+  const getAgentOptions = (inputValue, callback) => {
+    if (typingTimeout) clearTimeout(typingTimeout);
+    const timeout = setTimeout(async () => {
+      const endpoint = `/api/v1/retailer_users?search=${inputValue}`;
+      try {
+        const agentsResponse = await fetch(endpoint, { credentials: "same-origin" });
+        const { agents } = await agentsResponse.json();
+        const options = mapOptionsToValues(agents, 'selectedAgent');
         callback(options);
       } catch (error) {
         callback([]);
@@ -227,7 +225,7 @@ const DealCreate = ({
     >
       <div className="d-flex justify-content-between">
         <div>
-          <p className="font-weight-bold font-gray-dark fs-24">Nuevo negocio</p>
+          <p className="font-weight-bold font-gray-dark fs-24">Editar negocio</p>
         </div>
         <div>
           <a className="px-8" type="button" onClick={() => closeDealModal()}>
@@ -271,6 +269,7 @@ const DealCreate = ({
             placeholder="Monto de la negociación"
             name="amount"
           />
+          <span className="funnel-input-error">{errors.amount}</span>
         </div>
         <div className="mb-20 col-sm-12">
           <AsyncSelect
@@ -289,11 +288,11 @@ const DealCreate = ({
           />
         </div>
         <div className="col text-center">
-          <button type="button" className="py-5 px-15 funnel-btn btn--cta" onClick={handleCreateNewDeal}>Crear negocio</button>
+          <button type="button" className="py-5 px-15 funnel-btn btn--cta" onClick={handleUpdateDeal}>Guardar</button>
         </div>
       </div>
     </Modal>
   );
 };
 
-export default DealCreate;
+export default DealEdit;

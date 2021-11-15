@@ -12,7 +12,8 @@ class InnerList extends React.Component {
         key={deal.id}
         deal={deal}
         index={index}
-        openDeleteDeal={this.props.openDeleteDeal}
+        toggleEditDeal={this.props.toggleEditDeal}
+        deleteDeal={this.props.deleteDeal}
         columnId={this.props.columnId}
       />
     ));

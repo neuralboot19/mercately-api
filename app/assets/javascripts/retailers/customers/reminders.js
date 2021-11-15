@@ -10,7 +10,7 @@ function setReminderTemplate(index) {
     $('#reminder-template-file').hide();
   } else {
     $('#reminder-template-file').show();
-    $('#reminder-template_file').attr('accept', acceptedFiles());
+    $('#reminder-template_file').attr('accept', acceptedFilesReminder());
   }
 
   $('#reminder-karix-templates-list').hide();
@@ -77,24 +77,22 @@ function sendReminder() {
     }
   })
 
-  if (reminderTemplateType !== 'text') file = document.getElementById('template_file').files[0];
+  if (reminderTemplateType !== 'text') file = document.getElementById('reminder-template_file').files[0];
 
   fileSelected = reminderTemplateType === 'text' || file;
 
   if (allFilled && fileSelected) {
     let data = new FormData();
     data.append('reminder[customer_id]', $('#reminder-karix-customer-id').val() || $('#reminder-customer_id_index').val());
-    let url;
 
     if (file) {
       if (reminderTemplateType === 'image' && validImage(file) === false) return;
-      if (reminderTemplateType === 'file' && validFile(file) === false) return;
+      if (reminderTemplateType === 'document' && validFile(file) === false) return;
+      if (reminderTemplateType === 'video' && validVideo(file) === false) return;
 
       data.append('reminder[file]', file);
-      url = `/api/v1/karix_whatsapp_send_file/${$('#reminder-karix-customer-id').val() || $('#reminder-customer_id_index').val()}`;
-    } else {
-      url = '/api/v1/reminders';
     }
+
     params = Object.values(reminderTemplateParams);
     for (x in params) {
       data.append('reminder[content_params][]', params[x]);
@@ -106,7 +104,7 @@ function sendReminder() {
     data.append('reminder[timezone]', timezone);
 
     $.ajax({
-      url: url,
+      url: '/api/v1/reminders',
       type: 'POST',
       processData: false,
       contentType: false,
@@ -139,21 +137,36 @@ function validFile(file) {
   return true;
 }
 
+function validVideo(file) {
+  if (!['video/mp4', 'video/3gpp'].includes(file.type) || file.size > 14*1024*1024) {
+    alert('El video debe ser MP4 o 3GPP, de máximo 14MB');
+    return false;
+  }
+
+  return true;
+}
+
 function setReminderType() {
-  if (reminderTemplateType === 'text') {
-    return 'Texto';
-  } else if (reminderTemplateType === 'image') {
-    return 'Imagen';
-  } else {
-    return 'PDF';
+  switch(reminderTemplateType) {
+    case 'text':
+      return 'Texto';
+    case 'image':
+      return 'Imagen';
+    case 'video':
+      return 'Video';
+    default:
+      return 'PDF';
   }
 }
 
-function acceptedFiles() {
-  if (reminderTemplateType === 'image') {
-    return 'image/jpg, image/jpeg, image/png';
-  } else {
-    return 'application/pdf';
+function acceptedFilesReminder() {
+  switch(reminderTemplateType) {
+    case 'image':
+      return 'image/jpg, image/jpeg, image/png';
+    case 'video':
+      return 'video/mp4, video/3gpp';
+    default:
+      return 'application/pdf';
   }
 }
 

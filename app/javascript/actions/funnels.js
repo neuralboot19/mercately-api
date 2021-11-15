@@ -45,7 +45,7 @@ export const updateFunnelStepDeal = (body) => {
     })
       .then((res) => res.json())
       .then(
-        (data) => dispatch({ type: 'CHANGE_DEAL_COLUMN', data: body }),
+        (data) => dispatch({ type: 'CHANGE_DEAL_COLUMN', data }),
         (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
       ).catch((error) => {
         if (error.response) {
@@ -171,8 +171,8 @@ export const clearNewStep = () => {
   return (dispatch) => dispatch({ type: "CLEAR_NEW_STEP", data });
 };
 
-export const deleteDeal = (data, column) => {
-  const endpoint = `/api/v1/deals/${data}`;
+export const deleteDeal = (dealId, column) => {
+  const endpoint = `/api/v1/deals/${dealId}`;
   const header = {
     method: "DELETE",
     credentials: "same-origin",
@@ -184,8 +184,8 @@ export const deleteDeal = (data, column) => {
   return (dispatch) => {
     fetch(endpoint, header)
       .then((res) => res.json())
-      .then(() => {
-        dispatch({ type: ERASE_DEAL, data, column });
+      .then((data) => {
+        dispatch({ type: ERASE_DEAL, data, dealId, column });
       })
       .catch((err) => {
         dispatch({ type: LOAD_DATA_FAILURE, err });
@@ -193,8 +193,8 @@ export const deleteDeal = (data, column) => {
   };
 };
 
-export const loadMoreDeals = (column, page) => {
-  const endpoint = `/api/v1/deals?page=${page}&column_id=${column}`;
+export const loadMoreDeals = (column, page, offset = 0) => {
+  const endpoint = `/api/v1/deals?page=${page}&column_id=${column}&offset=${offset}`;
   const head = {
     method: "GET",
     credentials: "same-origin",

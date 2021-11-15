@@ -88,6 +88,14 @@ class Campaign < ApplicationRecord
     end
   end
 
+  def file_url
+    if file.content_type.include?('video/')
+      "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/video/upload/#{file.key}"
+    else
+      "https://res.cloudinary.com/#{ENV['CLOUDINARY_CLOUD_NAME']}/image/upload/#{file.key}"
+    end
+  end
+
   private
 
     def generate_template_text

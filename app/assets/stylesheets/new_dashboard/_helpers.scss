@@ -460,8 +460,18 @@ label:hover, a:hover, button:hover {
   margin: auto;
 }
 
-.cursor-pointer:hover {
-  cursor: pointer;
+.cursor {
+  &:hover {
+    cursor: default;
+  }
+
+  &-pointer:hover {
+    cursor: pointer;
+  }
+
+  &-none:hover {
+    cursor: none;
+  }
 }
 
 .no-border-right {

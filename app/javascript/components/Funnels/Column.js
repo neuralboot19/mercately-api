@@ -1,7 +1,9 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from "react";
-import styled from "styled-components";
-import { Droppable, Draggable } from "react-beautiful-dnd";
+import { Droppable, Draggable } from 'react-beautiful-dnd';
+import styled from 'styled-components';
+/* eslint-disable-next-line import/no-unresolved */
+import ArrowDown from 'images/down_arrow.svg';
 import InnerList from "./InnerList";
 import ColumnHeader from "./ColumnHeader";
 
@@ -10,30 +12,31 @@ const Container = styled.div`
   width: 325px;
   display: inline-block;
   vertical-align: text-top;
-  background-color: ${(props) => (props.isDragging ? "#ebf9ff" : "white")};
+  background-color: ${(props) => (props.isDragging ? "#ebf9ff" : "transparent")};
 `;
 
 const DealList = styled.div`
   padding: 8px;
   transition: background-color 0.2s ease;
-  min-height: 80vh;
-  border-right: 1px solid #eeeeee;
-  background-color: ${(props) => (props.isDraggingOver ? "#D3D3D3" : "#F8F8F8")};
+  height: calc(100vh - 400px);
+  max-height: calc(100vh - 400px);
+  overflow-y: auto;
+  background-color: ${(props) => (props.isDraggingOver ? "#D3D3D3" : "transparent")};
 `;
 
 const Column = ({
   column,
   index,
   openCreateDeal,
-  openDeleteStep,
-  openDeleteDeal,
-  allowColumn,
+  toggleEditDeal,
+  deleteStep,
+  deleteDeal,
   deals,
   loadMoreDeals
 }) => {
-  const [page, setPage] = useState(2);
+  const [page, setPage] = useState(1);
   const HandleLoadMoreDeals = () => {
-    loadMoreDeals(column.id, page);
+    loadMoreDeals(column.id, page, column.dealIds.length);
     setPage(page + 1);
   };
 
@@ -49,11 +52,10 @@ const Column = ({
             provided={provided}
             dealInfo={column}
             openCreateDeal={openCreateDeal}
-            openDeleteStep={openDeleteStep}
+            deleteStep={deleteStep}
           />
           <Droppable
             droppableId={column.id}
-            isDropDisabled={allowColumn === column.id}
             type="deal"
           >
             {(stepProvided, stepSnapshot) => (
@@ -64,24 +66,27 @@ const Column = ({
                 isDragging={stepSnapshot.isDragging}
               >
                 <InnerList
-                  openDeleteDeal={openDeleteDeal}
+                  deleteDeal={deleteDeal}
                   deals={deals}
+                  toggleEditDeal={toggleEditDeal}
                   columnId={column.id}
                 />
                 {stepProvided.placeholder}
+                {
+                  column.total > column.dealIds.length && column.dealIds.length > 0 && (
+                    <div className="text-center mt-25">
+                      <a
+                        className="fz-14 c-primary"
+                        onClick={() => HandleLoadMoreDeals(column.id, page)}
+                      >
+                        Cargar más <img src={ArrowDown} />
+                      </a>
+                    </div>
+                  )
+                }
               </DealList>
             )}
           </Droppable>
-          {
-            column.total > column.dealIds.length && (
-              <h1
-                className="py-5 px-15 funnel-btn btn--cta m-10"
-                onClick={()=>HandleLoadMoreDeals(column.id, page)}
-              >
-                <p style={{textAlign: 'center'}}>Ver Mas de la etapa: <b>{column.title}</b></p>
-              </h1>
-            )
-          }
         </Container>
       )}
     </Draggable>
