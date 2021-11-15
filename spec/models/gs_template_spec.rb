@@ -109,7 +109,20 @@ RSpec.describe GsTemplate, type: :model do
     }.with_indifferent_access
   end
 
+  let(:submit_response_error) do
+    {
+      'status': 'error',
+      'message': 'Template Not Supported On Gupshup Platform'
+    }
+  end
+
   describe '#format_label' do
+    before do
+      allow(Connection).to receive(:prepare_connection).and_return(true)
+      allow(Connection).to receive(:post_form_request).and_return(double('response', status: 200, body:
+        submit_response_pending.to_json))
+    end
+
     it 'formats the label field before saving' do
       subject.label = 'Example label'
       expect(subject.save).to be true
@@ -118,6 +131,12 @@ RSpec.describe GsTemplate, type: :model do
   end
 
   describe '#vars_repeated?' do
+    before do
+      allow(Connection).to receive(:prepare_connection).and_return(true)
+      allow(Connection).to receive(:post_form_request).and_return(double('response', status: 200, body:
+        submit_response_pending.to_json))
+    end
+
     context 'when there are repeated vars' do
       it 'does not save the template' do
         subject.text = 'My Text with var {{1}}, {{1}}'
@@ -203,6 +222,23 @@ RSpec.describe GsTemplate, type: :model do
 
         expect(gs_template.status).to eq('accepted')
         expect(gs_template.ws_template_id).to eq('7423a738-5193-4cc2-9254-100ee002f98c')
+      end
+    end
+
+    context 'when the gs template is submitted with status pending and return an error' do
+      before do
+        allow(Connection).to receive(:prepare_connection).and_return(true)
+        allow(Connection).to receive(:post_form_request).and_return(double('response', status: 200, body:
+          submit_response_error.to_json))
+      end
+
+      let(:gs_template) { create(:gs_template, retailer: retailer, status: 'pending') }
+
+      it 'does not update status and ws_templated_id' do
+        gs_template.submit_template
+
+        expect(gs_template.status).to eq('pending')
+        expect(gs_template.ws_template_id).to be_nil
       end
     end
   end

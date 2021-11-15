@@ -37,6 +37,26 @@ module GsTemplates
       retailer = gs_template.retailer
       retailer.update_gs_info if retailer.gupshup_app_id.blank? || retailer.gupshup_app_token.blank?
 
+      if gs_template.file&.present?
+        url = upload_media_url(retailer.gupshup_app_id)
+
+        headers = { 'Authorization': retailer.gupshup_app_token }
+
+        body = {
+          file: Faraday::FilePart.new(gs_template.file.tempfile.path, gs_template.file.content_type),
+          file_type: gs_template.file.content_type
+        }
+
+        conn = Connection.prepare_connection(url, :multipart)
+        response = Connection.post_form_request(conn, body, headers)
+        resp_upload_media_json = JSON.parse(response.body)
+
+        if resp_upload_media_json.blank? || resp_upload_media_json['status'] == 'error'
+          gs_template.send_slack_notify(resp_upload_media_json['message'])
+          return
+        end
+      end
+
       url = templates_url(retailer.gupshup_app_id)
       headers = {
         'Connection': 'keep-alive',
@@ -53,6 +73,11 @@ module GsTemplates
         vertical: gs_template.label
       }
 
+      if gs_template.file&.present? && resp_upload_media_json['status'] == 'success'
+          body[:exampleMedia] = resp_upload_media_json['handleId']['message']
+          body[:enableSample] = true
+      end
+
       conn = Connection.prepare_connection(url)
       response = Connection.post_form_request(conn, body, headers)
       resp_json = JSON.parse(response.body)
@@ -67,9 +92,14 @@ module GsTemplates
       gs_template.save
     rescue => e
       notify_error_to_slack(gs_template, url, headers, body, e)
+      Raven.capture_exception(e)
     end
 
     private
+
+      def upload_media_url(gs_app_id)
+        "https://partner.gupshup.io/partner/app/#{gs_app_id}/upload/media"
+      end
 
       def templates_url(gs_app_id)
         "https://partner.gupshup.io/partner/app/#{gs_app_id}/templates"
