@@ -52,6 +52,7 @@ class Retailer < ApplicationRecord
   before_save :set_ml_domain, if: :will_save_change_to_ml_site?
   after_create :save_free_plan
   after_create :send_to_mailchimp
+  after_create :send_to_slack
   after_create :create_funnel_steps
   after_update :import_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
   after_save :generate_slug, if: :saved_change_to_name?
@@ -317,7 +318,22 @@ class Retailer < ApplicationRecord
     end
 
     def send_to_mailchimp
+      # TODO Erase this as it is not longer used.
       Retailers::ListOnMailchimpJob.perform_later(id) if persisted? && ENV['ENVIRONMENT'] == 'production'
+    end
+
+    def send_to_slack
+      return unless ENV['ENVIRONMENT'] == 'production'
+      slack_client = Slack::Notifier.new(ENV['SLACK_MARKETING'], channel: '#mercately-marketing')
+
+      slack_client.ping([
+        "Nuevo Cliente Registrado",
+        "Comercio: #{retailer_user.email}",
+        "Nombre: #{retailer_user&.first_name} #{retailer_user&.last_name}",
+        "Teléfono: #{retailer_number}"
+      ].join("\n"))
+    rescue
+      Rails.logger.error('Slack disabled')
     end
 
     def format_phone_number
