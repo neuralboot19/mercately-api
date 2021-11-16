@@ -213,7 +213,7 @@ class Api::V1::CustomersController < Api::ApiController
     if params[:text].blank?
       customers = customers.limit(300)
     else
-      customers = customers.ransack(full_name_or_email_or_phone_cont: params[:search]).result
+      customers = customers.by_search_text(params[:text])
     end
     render json: { customers: customers }
   end
