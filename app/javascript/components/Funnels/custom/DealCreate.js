@@ -13,50 +13,24 @@ const customStyles = {
   option: (provided) => ({
     ...provided,
   }),
-  menu: () => ({
-    width: '100%',
-    position: 'relative',
-    backgroundColor: '#fff',
-    zIndex: '10',
-    boxShadow: '0 .125rem .25rem #00000013 !important',
-    maxHeight: '300px',
-    overflow: 'auto'
-  }),
-  menuList: () => ({
-    backgroundColor: '#fff'
-  }),
-  control: () => ({
-    width: '100%',
-    display: 'inline-block'
-  }),
-  valueContainer: () => ({
-    width: '96%',
-    display: 'inline-block'
-  }),
-  indicatorsContainer: () => ({
-    width: '4%',
-    display: 'inline-block'
-  }),
-  dropdownIndicator: () => ({
-    padding: '12px 0'
-  }),
-  container: () => ({
+  control: (provided, state) => ({
+    ...provided,
     background: '#F7F8FD',
     borderRadius: '12px',
     border: 'none',
-    padding: '0 12px',
     height: '48px',
     fontSize: '14px',
     color: '#3C4348',
     width: '100%'
   }),
-  singleValue: (provided, state) => {
-    const opacity = state.isDisabled ? 0.5 : 1;
-    const transition = 'opacity 300ms';
-
-    return { ...provided, opacity, transition };
-  }
+  placeholder: (provided, state) => {
+    return {
+      ...provided,
+      color: '#3C4348'
+    }
+  },
 };
+
 
 const DealCreate = ({
   openCreateDeal,
