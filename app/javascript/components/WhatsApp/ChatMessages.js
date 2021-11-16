@@ -435,6 +435,7 @@ class ChatMessages extends Component {
     let uuid;
     const data = new FormData();
     data.append('template', false);
+    data.append('type', 'image');
     this.state.loadedImages.forEach((image) => {
       uuid = uuidv4();
       data.append('file_data[]', image);
