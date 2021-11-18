@@ -1,6 +1,6 @@
 namespace :cloudinary do
   task delete_gupshup_assets_final: :environment do
-    date = 4.weeks.ago.beginning_of_day
+    date = 3.weeks.ago.beginning_of_day
     delete_data(date)
   end
 
@@ -23,8 +23,20 @@ namespace :cloudinary do
     delete_data_by_retailer(args[:retailer_id])
   end
 
+  task :delete_gupshup_assets_by_id_and_range, [:retailer_id] => :environment do |t, args|
+    start_date = 4.weeks.ago.beginning_of_day
+    end_date = (start_date + 1.week).end_of_day
+    delete_data_by_retailer_and_range(args[:retailer_id], start_date, end_date)
+  end
+
+  task delete_gupshup_assets_by_range: :environment do
+    start_date = 4.weeks.ago.beginning_of_day
+    end_date = (start_date + 1.week).end_of_day
+    delete_data_by_range(start_date, end_date)
+  end
+
   task delete_gupshup_assets: :environment do
-    date = 4.weeks.ago
+    date = 3.weeks.ago
     start_date = date.beginning_of_day
     end_date = date.end_of_day
 
@@ -101,7 +113,7 @@ def delete_data(date)
 end
 
 def delete_data_by_retailer(retailer_id)
-  date = 4.weeks.ago.beginning_of_day
+  date = 3.weeks.ago.beginning_of_day
   r = Retailer.find_by_id(retailer_id)
   return if r.blank?
 
@@ -130,6 +142,68 @@ def delete_data_by_retailer(retailer_id)
       filenames = get_filenames(messages, 'video')
       filenames -= @asset_keys
       delete_assets(filenames, 'video') if filenames.present?
+  end
+end
+
+def delete_data_by_retailer_and_range(retailer_id, start_date, end_date)
+  r = Retailer.find_by_id(retailer_id)
+  return if r.blank?
+
+  @asset_keys = get_asset_keys(r)
+
+  r.gupshup_whatsapp_messages.where("created_at >= ? AND created_at <= ? AND direction = 'outbound' AND " \
+    "message_payload ->> 'type' = 'image'", start_date, end_date)
+    .find_in_batches(batch_size: 100) do |messages|
+      filenames = get_filenames(messages, 'image')
+      filenames -= @asset_keys
+      delete_assets(filenames, 'image') if filenames.present?
+  end
+
+  r.gupshup_whatsapp_messages.where("created_at >= ? AND created_at <= ? AND direction = 'outbound' AND " \
+    "message_payload ->> 'type' = 'file'", start_date, end_date)
+    .find_in_batches(batch_size: 100) do |messages|
+      filenames = get_filenames(messages, 'file')
+      filenames -= @asset_keys
+      delete_assets(filenames, 'raw') if filenames.present?
+  end
+
+  r.gupshup_whatsapp_messages.where("created_at >= ? AND created_at <= ? AND direction = 'outbound' AND " \
+    "message_payload ->> 'type' IN ('audio', 'video')", start_date, end_date)
+    .find_in_batches(batch_size: 100) do |messages|
+      filenames = get_filenames(messages, 'video')
+      filenames -= @asset_keys
+      delete_assets(filenames, 'video') if filenames.present?
+  end
+end
+
+def delete_data_by_range(start_date, end_date)
+  retailers = Retailer.where('created_at < ?', end_date).where.not(gupshup_phone_number: nil, gupshup_src_name: nil)
+  retailers.find_each do |r|
+    @asset_keys = get_asset_keys(r)
+
+    r.gupshup_whatsapp_messages.where("created_at >= ? AND created_at <= ? AND direction = 'outbound' AND " \
+      "message_payload ->> 'type' = 'image'", start_date, end_date)
+      .find_in_batches(batch_size: 100) do |messages|
+        filenames = get_filenames(messages, 'image')
+        filenames -= @asset_keys
+        delete_assets(filenames, 'image') if filenames.present?
+    end
+
+    r.gupshup_whatsapp_messages.where("created_at >= ? AND created_at <= ? AND direction = 'outbound' AND " \
+      "message_payload ->> 'type' = 'file'", start_date, end_date)
+      .find_in_batches(batch_size: 100) do |messages|
+        filenames = get_filenames(messages, 'file')
+        filenames -= @asset_keys
+        delete_assets(filenames, 'raw') if filenames.present?
+    end
+
+    r.gupshup_whatsapp_messages.where("created_at >= ? AND created_at <= ? AND direction = 'outbound' AND " \
+      "message_payload ->> 'type' IN ('audio', 'video')", start_date, end_date)
+      .find_in_batches(batch_size: 100) do |messages|
+        filenames = get_filenames(messages, 'video')
+        filenames -= @asset_keys
+        delete_assets(filenames, 'video') if filenames.present?
+    end
   end
 end
 
