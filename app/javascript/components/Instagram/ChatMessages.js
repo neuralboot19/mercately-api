@@ -28,10 +28,14 @@ import TopChatBar from '../shared/TopChatBar';
 import AlreadyAssignedChatLabel from '../shared/AlreadyAssignedChatLabel';
 import MobileTopChatBar from '../shared/MobileTopChatBar';
 import NoteModal from '../shared/NoteModal';
+import DealModal from '../shared/DealModal';
+
 import 'react-image-lightbox/style.css';
 import fileUtils from '../../util/fileUtils';
 import { DEFAULT_IMAGE_SIZE_TRANSFER, MAX_IMAGE_SIZE_TRANSFER } from '../../constants/chatFileSizes';
 import stringUtils from '../../util/stringUtils';
+import { fetchFunnelSteps, fetchCustomerDeals } from '../../actions/funnels';
+import { fetchCurrentRetailerUser } from "../../actions/actions";
 
 let currentCustomer = 0;
 const csrfToken = document.querySelector('[name=csrf-token]').content;
@@ -57,7 +61,8 @@ class ChatMessages extends Component {
       showInputMenu: false,
       isNoteModalOpen: false,
       showOptions: !props.onMobile,
-      inputFilled: false
+      inputFilled: false,
+      isDealModalOpen: false
     };
     this.bottomRef = React.createRef();
     this.noteTextRef = React.createRef();
@@ -243,6 +248,9 @@ class ChatMessages extends Component {
       }
       this.scrollToBottom();
     });
+
+    this.props.fetchFunnelSteps();
+    this.props.fetchCurrentRetailerUser();
 
     socket.on('message_instagram_chat', (data) => this.updateChat(data));
 
@@ -708,6 +716,16 @@ class ChatMessages extends Component {
     if (this.state.inputFilled !== filled) this.setState({ inputFilled: filled });
   }
 
+  toggleDealModal = () => {
+    this.setState((prevState) => ({
+      isDealModalOpen: !prevState.isDealModalOpen
+    }))
+  }
+
+  getCustomerDeals = () => {
+    this.props.fetchCustomerDeals(this.props.currentCustomer);
+  }
+
   render() {
     const chatBoxClass = this.state.showOptions && this.props.onMobile
       ? 'chat__box chat__box-without-options'
@@ -799,6 +817,7 @@ class ChatMessages extends Component {
                   openNoteModal={this.toggleNoteModal}
                   maximizeInputText={this.maximizeInputText}
                   inputFilled={this.state.inputFilled}
+                  openDealModal={this.toggleDealModal}
                 />
               )
             )
@@ -832,6 +851,20 @@ class ChatMessages extends Component {
           isNoteModalOpen={this.state.isNoteModalOpen}
           toggleNoteModal={this.toggleNoteModal}
         />
+
+        { this.state.isDealModalOpen ?
+          <DealModal
+            customer={this.props.customer}
+            funnelSteps={this.props.funnelSteps}
+            isDealModalOpen={this.state.isDealModalOpen}
+            toggleDealModal={this.toggleDealModal}
+            dealSelected={null}
+            agents={this.props.agents}
+            getCustomerDeals={this.getCustomerDeals}
+          />
+          :
+          false
+        }
       </div>
     )
   }
@@ -845,7 +878,9 @@ function mapStateToProps(state) {
     agents: state.agents || [],
     agent_list: state.agent_list || [],
     customer: state.customer,
-    loadingMoreMessages: state.loadingMoreMessages || false
+    loadingMoreMessages: state.loadingMoreMessages || false,
+    funnelSteps: state.funnelSteps || {},
+    fetchingFunnels: state.fetching_funnels || false
   };
 }
 
@@ -880,6 +915,15 @@ function mapDispatch(dispatch) {
     },
     addNote: (body) => {
       dispatch(addNoteAction(body));
+    },
+    fetchFunnelSteps: () => {
+      dispatch(fetchFunnelSteps());
+    },
+    fetchCustomerDeals: (customerId) => {
+      dispatch(fetchCustomerDeals(customerId))
+    },
+    fetchCurrentRetailerUser: () => {
+      dispatch(fetchCurrentRetailerUser());
     }
   };
 }

@@ -37,7 +37,7 @@ const TopChatBar = ({
   const [chatStateOptions, setChatStateOptions] = useState(messagingStatesOptions);
   const [isUnreadChat, setIsUnreadChat] = useState(false);
 
-  const placeholderMessagingState = <div className="placeholder-messaging-state">Estado</div>;
+  const placeholderMessagingState = <div key='state-select-1' className="placeholder-messaging-state">Estado</div>;
 
   const isMounted = useRef(false);
 

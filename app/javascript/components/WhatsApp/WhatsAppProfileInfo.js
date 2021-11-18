@@ -6,6 +6,7 @@ import CustomerTags from '../shared/CustomerTags';
 import BotIcon from 'images/bot.svg';
 // eslint-disable-next-line import/no-unresolved
 import ReminderIcon from 'images/new_design/reminder-chat.svg';
+import DealIcon from 'images/new_design/deal.svg'
 
 const WhatsAppProfileInfo = ({customer, howLongAgo, agentName}) => {
   const messageStatusIcon = (message) => {
@@ -65,7 +66,10 @@ const WhatsAppProfileInfo = ({customer, howLongAgo, agentName}) => {
           <img src={BotIcon} alt="bot icon" className="w-18 h-18 mr-12" />
         )}
         {customer.has_pending_reminders && (
-          <img src={ReminderIcon} alt="reminder icon" className="w-18 h-18" />
+          <img src={ReminderIcon} alt="reminder icon" className="w-18 h-18 mr-12" />
+        )}
+        {customer.has_deals && (
+          <img src={DealIcon} alt="reminder icon" className="w-18 h-18" />
         )}
         {isReadWhatsapp && (
           <span className="float-right unread-messages rounded-pill float-right">

@@ -23,6 +23,10 @@ import CustomFieldsTabContent from "./CustomFieldsTabContent";
 import AutomationsTabContent from "./AutomationsTabContent";
 import IntegrationsTabContent from "./IntegrationsTabContent";
 import NotesTabContent from "./NotesTabContent";
+import { 
+  fetchCustomerDeals as fetchCustomerDealsAction,
+  fetchFunnelSteps as fetchFunnelStepsAction
+} from '../../../actions/funnels';
 
 const csrfToken = document.querySelector('[name=csrf-token]').content;
 
@@ -41,7 +45,8 @@ const CustomerDetails = ({
     showAutomationSettings: 'none',
     showIntegrationSettings: 'none',
     showNotes: 'none',
-    fieldDate: new Date()
+    fieldDate: new Date(),
+    deals: []
   });
 
   const [customerInfo, setCustomerInfo] = useState({});
@@ -49,6 +54,10 @@ const CustomerDetails = ({
   const [customerCustomFields, setCustomerCustomFields] = useState([]);
 
   const [customerNotes, setCustomerNotes] = useState([]);
+  
+  const [customerDeals, setCustomerDeals] = useState([]);
+
+  const [funnelSteps, setFunnelSteps] = useState([]);
 
   const containerClassName = onMobile ? "customer_sidebar no-border-left" : "customer_sidebar";
 
@@ -94,12 +103,22 @@ const CustomerDetails = ({
     dispatch(fetchCustomerFieldsAction(customerId));
   };
 
+  const fetchCustomerDeals = (id) => {
+    dispatch(fetchCustomerDealsAction(id))
+  }
+
+  const fetchFunnelSteps = (id) => {
+    dispatch(fetchFunnelStepsAction(id))
+  }
+
   const customer = useSelector((reduxState) => reduxState.customer) || {};
   const tags = useSelector((reduxState) => reduxState.tags) || [];
   const reminders = useSelector((reduxState) => reduxState.reminders) || [];
   const customerFields = useSelector((reduxState) => reduxState.customerFields);
   const customFields = useSelector((reduxState) => reduxState.customFields);
   const customerReduxNotes = useSelector((reduxState) => reduxState.customerNotes);
+  const customerReduxDeals = useSelector((reduxState) => reduxState.customerDeals);
+  const funnelReduxSteps = useSelector((reduxState) => reduxState.funnelSteps);
 
   /**
    * Initial customer info fetch
@@ -109,6 +128,8 @@ const CustomerDetails = ({
     fetchTagsFromRedux(customerId);
     fetchNotesFromRedux(customerId);
     fetchCustomerFieldsFromRedux(customerId);
+    fetchCustomerDeals(customerId);
+    fetchFunnelSteps(customerId);
   }, [customerId]);
 
   useEffect(() => {
@@ -125,7 +146,8 @@ const CustomerDetails = ({
       hs_active,
       hs_id,
       phone,
-      emoji_flag: emojiFlag
+      emoji_flag: emojiFlag,
+      assigned_agent
     } = customer;
     setCustomerInfo({
       first_name: firstName,
@@ -140,7 +162,8 @@ const CustomerDetails = ({
       hs_active,
       hs_id,
       phone,
-      emoji_flag: emojiFlag
+      emoji_flag: emojiFlag,
+      assigned_agent
     });
   }, [customer.id,
     customer.first_name,
@@ -193,6 +216,18 @@ const CustomerDetails = ({
   useEffect(() => {
     setCustomerNotes(customerReduxNotes);
   }, [customerReduxNotes]);
+
+  useEffect(() => {
+    setCustomerDeals(customerReduxDeals);
+  }, [customerReduxDeals]);
+
+  useEffect(() => {
+    setFunnelSteps(funnelReduxSteps);
+  }, [funnelReduxSteps]);
+
+  const getCustomerDeals = () => {
+    fetchCustomerDeals(customerId);
+  }
 
   const handleInputChange = (evt, name) => {
     setCustomerInfo({ ...customerInfo, ...{ [name]: evt.target.value } });
@@ -363,6 +398,9 @@ const CustomerDetails = ({
           handleNewTagChange={handleNewTagChange}
           onKeyPress={onKeyPress}
           removeCustomerTag={removeCustomerTag}
+          customerDeals={customerDeals}
+          funnelSteps={funnelSteps}
+          getCustomerDeals={getCustomerDeals}
         />
         <CustomFieldsTabContent
           customFields={customFields}

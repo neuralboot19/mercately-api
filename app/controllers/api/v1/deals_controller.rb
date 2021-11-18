@@ -1,7 +1,6 @@
 class Api::V1::DealsController < Api::ApiController
   include CurrentRetailer
 
-
   def index
     column = FunnelStep.find_by(web_id: params['column_id'])
     if column
@@ -26,6 +25,16 @@ class Api::V1::DealsController < Api::ApiController
       }
     else
       render status: 422, json: {}
+    end
+  end
+
+  def customer_deals
+    if !current_retailer.has_funnels
+      render status: 200, json: []
+    else
+      deals = Deal.joins(:funnel_step).where(customer_id: params['customer_id'])
+          .select('deals.*, funnel_steps.name as funnel_step_name');
+      render status: 200, json: deals
     end
   end
 

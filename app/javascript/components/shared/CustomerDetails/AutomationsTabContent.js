@@ -31,8 +31,8 @@ const AutomationsTabContent = ({
         <span>Recordatorios</span>
       </div>
       { (reminders.length > 0) ? (
-        reminders.map((reminder) => (
-          <div className="container-fluid p-0">
+        reminders.map((reminder, index) => (
+          <div key={index} className="container-fluid p-0">
             <div className="bordered-container py-8 px-r-2 mb-8">
               <div className="mb-8">
                 <div className=" fz-12 truncate-js">
