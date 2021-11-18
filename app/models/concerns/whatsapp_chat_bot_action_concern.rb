@@ -102,8 +102,9 @@ module WhatsappChatBotActionConcern
     def attachment_data(option, object, params, last = false)
       object ||= option
       # For pdf attachments, send caption in another message
+      content_type = object.file.content_type
       aux_url = object.file_url
-      is_pdf = object.file.content_type == 'application/pdf'
+      is_pdf = content_type == 'application/pdf'
 
       if is_pdf
         aux_url += '.pdf'
@@ -111,9 +112,13 @@ module WhatsappChatBotActionConcern
         params[:message] = chat_bot_service.append_options_to_message(option, params[:message]) if last
 
         send_bot_message(params)
+      elsif content_type.include?('image')
+        formats = 'if_w_gt_1000/c_scale,w_1000/if_end/q_auto'
+        aux_url = aux_url.gsub('/image/upload', "/image/upload/#{formats}")
       end
+
       params[:type] = 'file'
-      params[:content_type] = object.file.content_type
+      params[:content_type] = content_type
       params[:url] = aux_url
       # Karix service sets PDF name based on caption param
       if retailer.karix_integrated? && is_pdf

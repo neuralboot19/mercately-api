@@ -83,6 +83,11 @@ class Products extends Component {
     this.props.toggleProducts();
   }
 
+  formatUrl = (originalUrl) => {
+    const formats = 'c_scale,w_60,h_60/q_auto';
+    return originalUrl.replace('/image/upload', `/image/upload/${formats}`);
+  }
+
   render() {
     return (
       <div className={this.props.onMobile ? "customer_sidebar chat-right-side-selector no-border-left" : "customer_sidebar chat-right-side-selector" } onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
@@ -117,7 +122,7 @@ class Products extends Component {
               <div className="d-inline-flex">
                 <div className="products__img">
                   {product.attributes.image ?
-                    <img src={product.attributes.image} /> : <i className="fas fa-camera-retro fs-40 c-grey"></i>
+                    <img src={this.formatUrl(product.attributes.image)} /> : <i className="fas fa-camera-retro fs-40 c-grey"></i>
                   }
                 </div>
                 <div className="info-container truncate ml-10">

@@ -1,7 +1,9 @@
 class Retailers::TemplatesController < RetailersController
+  include TemplatesControllerConcern
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_template, only: [:show, :edit, :update, :destroy]
   before_action :check_permissions, only: [:show, :edit, :update, :destroy]
+  before_action :resize_image, only: [:create, :update]
 
   # GET /templates
   def index

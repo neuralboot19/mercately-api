@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class Retailers::CampaignsController < RetailersController
+  include ResizeFileConcern
   before_action :set_campaign, only: %i[edit archive cancel download]
   before_action :check_contact_groups, only: %i[index new]
   before_action :whatsapp_integrated?, only: %i[index new]
+  before_action :resize_file, only: :create
 
   # GET retailers/:slug/campaigns
   def index

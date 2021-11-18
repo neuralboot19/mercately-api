@@ -1,5 +1,6 @@
 import React from 'react';
 import PdfIcon from 'images/pdf_icon.png'
+import stringUtils from '../../util/stringUtils';
 
 const SelectedFastAnswerImageContainer = ({ onRemove, url, fileType }) => {
   let fileUrl = url;
@@ -11,7 +12,7 @@ const SelectedFastAnswerImageContainer = ({ onRemove, url, fileType }) => {
         className="fas fa-times-circle cursor-pointer"
         onClick={() => onRemove()}
       />
-      <img src={fileUrl} />
+      <img src={stringUtils.formatSelectedFastAnswerUrl(fileUrl, fileType)} />
     </div>
   );
 };

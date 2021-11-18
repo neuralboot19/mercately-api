@@ -178,7 +178,7 @@
                   </div>
                 </div>
                 <img class="preview_holder d-none-important" src="#" id="preview_image_<%= i %>"></img>
-                <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}") %>
+                <%= cl_image_tag("#{img.key}", class: "preview_holder", id: "image_#{i.to_s}", transformation: [{width: 109, height: 121, crop: :scale}]) %>
               </div>
               <div id="container_image_<%= i %>" class="uploader center mr-10 d-none-important">
                 <i class="fas fa-camera-retro fs-40"></i>

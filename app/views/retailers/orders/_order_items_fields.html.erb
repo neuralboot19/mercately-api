@@ -13,7 +13,7 @@
         <div class="col-xs-6">
           <div class="products__img">
             <% if f.object.product&.images&.attached? %>
-              <%= image_tag f.object.product&.images&.first&.service_url, class: 'product_img' %>
+              <%= cl_image_tag("#{f.object.product&.images&.first&.key}", class: 'product_img', transformation: [{width: 60, height: 60, crop: :scale}]) %>
             <% end %>
           </div>
         </div>

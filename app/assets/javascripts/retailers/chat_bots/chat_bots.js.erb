@@ -146,6 +146,11 @@ function appendSelectionList(str, path, node) {
   return [str, appended];
 }
 
+function formatUrl(originalUrl) {
+  const formats = 'c_scale,w_200';
+  return originalUrl.replace('/image/upload', `/image/upload/${formats}`);
+}
+
 function buildPreview(target, data, path, node, main, lastOne) {
   const type = data.attributes.type;
   let text = main ? data.attributes.answer : data.attributes.text;
@@ -155,7 +160,7 @@ function buildPreview(target, data, path, node, main, lastOne) {
   if (type === 'text') {
     string += `<span>${text}</span><br /><br />`;
   } else if (type === 'image') {
-    string += `<img class="w-200 h-150" src="${data.attributes.file_url}"/><br />
+    string += `<img class="w-200 h-150" src="${formatUrl(data.attributes.file_url)}"/><br />
       <span>${text}</span><br /><br />`;
   } else if (type === 'pdf') {
     let has_text = false;

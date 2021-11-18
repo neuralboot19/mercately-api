@@ -1,4 +1,5 @@
 import React from 'react';
+import stringUtils from '../../util/stringUtils';
 
 const SelectedProductImageContainer = ({
   removeSelectedProduct,
@@ -6,7 +7,7 @@ const SelectedProductImageContainer = ({
 }) => (
   <div className="selected-product-image-container">
     <i className="fas fa-times-circle cursor-pointer" onClick={() => removeSelectedProduct()}/>
-    <img src={selectedProduct.attributes.image}/>
+    <img src={stringUtils.formatSelectedProductUrl(selectedProduct.attributes.image)}/>
   </div>
 );
 

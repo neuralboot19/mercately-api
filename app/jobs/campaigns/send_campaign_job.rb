@@ -13,14 +13,9 @@ module Campaigns
 
       def send_campaign(campaign, customer)
         template = campaign.whatsapp_template
-        # Se chequea si la campaña tiene asociado un archivo.
-        has_file = campaign.file.attached?
-        resource_type = has_file ? 'file' : 'template'
-
         params = {
           gupshup_template_id: template.gupshup_template_id,
           template_params: campaign.customer_content_params(customer),
-          type: has_file ? get_content_type(campaign) : 'text',
           template: 'true'
         }
 
@@ -30,13 +25,26 @@ module Campaigns
 
         # Se insertan los datos restantes a los parametros para el envio, dependiendo si la plantilla
         # es de texto o archivo.
-        if has_file
+        if campaign.file.attached?
+          resource_type = 'file'
+          type = get_content_type(campaign)
           params[:caption] = aux_message
-          params[:url] = campaign.file_url
           params[:file_name] = campaign.file.filename.to_s
+          aux_url = campaign.file_url
+
+          if type == 'image'
+            formats = 'if_w_gt_1000/c_scale,w_1000/if_end/q_auto'
+            aux_url = aux_url.gsub('/image/upload', "/image/upload/#{formats}")
+          end
+
+          params[:url] = aux_url
         else
+          type = 'text'
+          resource_type = 'template'
           params[:message] = aux_message
         end
+
+        params[:type] = type
 
         if campaign.retailer.karix_integrated?
           send_karix_notification(campaign, params, customer)

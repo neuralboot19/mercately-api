@@ -121,6 +121,11 @@ class FastAnswers extends Component {
     }
   }
 
+  formatUrl = (originalUrl) => {
+    const formats = 'if_w_gt_300/c_scale,w_300/if_end/q_auto';
+    return originalUrl.replace('/image/upload', `/image/upload/${formats}`);
+  }
+
   render() {
     return (
       <div className={this.props.onMobile ? "customer_sidebar chat-right-side-selector no-border-left" : "quickly-answers-container customer_sidebar chat-right-side-selector" } onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
@@ -155,7 +160,7 @@ class FastAnswers extends Component {
                 {answer.attributes.image_url && (
                   <div className="image-answer-description">
                     {answer.attributes.file_type === 'image' ? (
-                      <img src={answer.attributes.image_url} />
+                      <img src={this.formatUrl(answer.attributes.image_url)} />
                     ) : (
                       <embed src={answer.attributes.image_url} />
                     )}
