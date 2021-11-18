@@ -33,6 +33,7 @@ import MobileTopChatBar from '../shared/MobileTopChatBar';
 import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
 import ReminderConfigModal from './ReminderConfigModal';
 import NoteModal from '../shared/NoteModal';
+import DealModal from '../shared/DealModal';
 import 'react-image-lightbox/style.css';
 
 import fileUtils from '../../util/fileUtils';
@@ -43,6 +44,8 @@ import {
   MAX_VIDEO_SIZE_TRANSFER_WS
 } from '../../constants/chatFileSizes';
 import stringUtils from '../../util/stringUtils';
+import { fetchFunnelSteps, fetchCustomerDeals } from '../../actions/funnels';
+import { fetchCurrentRetailerUser } from '../../actions/actions';
 
 let currentCustomer = 0;
 let totalPages = 0;
@@ -85,6 +88,7 @@ class ChatMessages extends Component {
       acceptedFiles: '',
       isReminderConfigModalOpen: false,
       isNoteModalOpen: false,
+      isDealModalOpen: false,
       isOpenImage: false,
       imageUrl: null,
       showInputMenu: false,
@@ -130,6 +134,8 @@ class ChatMessages extends Component {
     });
 
     this.props.fetchWhatsAppTemplates();
+    this.props.fetchFunnelSteps();
+    this.props.fetchCurrentRetailerUser();
     // eslint-disable-next-line no-undef
     socket.on("message_chat", (data) => this.updateChat(data));
 
@@ -1273,6 +1279,16 @@ class ChatMessages extends Component {
     }));
   }
 
+  toggleDealModal = () => {
+    this.setState((prevState) => ({
+      isDealModalOpen: !prevState.isDealModalOpen
+    }))
+  }
+
+  getCustomerDeals = () => {
+    this.props.fetchCustomerDeals(this.props.currentCustomer);
+  }
+
   toggleReminderConfigModal = () => {
     this.setState((prevState) => ({
       isReminderConfigModalOpen: !prevState.isReminderConfigModalOpen
@@ -1494,6 +1510,7 @@ class ChatMessages extends Component {
                   openProducts={this.openProducts}
                   openReminderConfigModal={this.openReminderConfigModal}
                   openNoteModal={this.toggleNoteModal}
+                  openDealModal={this.toggleDealModal}
                   showInputMenu={this.state.showInputMenu}
                   handleShowInputMenu={this.handleShowInputMenu}
                   wrapperInputMenu={this.wrapperInputMenu}
@@ -1565,6 +1582,20 @@ class ChatMessages extends Component {
           isNoteModalOpen={this.state.isNoteModalOpen}
           toggleNoteModal={this.toggleNoteModal}
         />
+
+        { this.state.isDealModalOpen ?
+          <DealModal
+            customer={this.props.customer}
+            funnelSteps={this.props.funnelSteps}
+            isDealModalOpen={this.state.isDealModalOpen}
+            toggleDealModal={this.toggleDealModal}
+            dealSelected={null}
+            agents={this.props.agents}
+            getCustomerDeals={this.getCustomerDeals}
+          />
+          :
+          false
+        }
       </div>
     );
   }
@@ -1587,7 +1618,9 @@ function mapStateToProps(state) {
     errorSendMessageText: state.errorSendMessageText,
     customer: state.customer,
     allowSendVoice: state.allowSendVoice,
-    loadingMoreMessages: state.loadingMoreMessages || false
+    loadingMoreMessages: state.loadingMoreMessages || false,
+    funnelSteps: state.funnelSteps || {},
+    fetchingFunnels: state.fetching_funnels || false
   };
 }
 
@@ -1628,6 +1661,15 @@ function mapDispatch(dispatch) {
     },
     addNote: (body) => {
       dispatch(addNoteAction(body));
+    },
+    fetchFunnelSteps: () => {
+      dispatch(fetchFunnelSteps());
+    },
+    fetchCustomerDeals: (customerId) => {
+      dispatch(fetchCustomerDeals(customerId))
+    },
+    fetchCurrentRetailerUser: () => {
+      dispatch(fetchCurrentRetailerUser());
     }
   };
 }

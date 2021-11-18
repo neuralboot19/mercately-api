@@ -1,3 +1,5 @@
+import { cloneDeep, remove } from 'lodash';
+
 import {
   SET_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS,
@@ -32,7 +34,8 @@ const initialState = {
   mlChats: [],
   totalMlChats: 0,
   loadingMoreMessages: false,
-  submitted: false
+  submitted: false,
+  customerDeals: []
 };
 
 const reducer = (state = initialState, action) => {
@@ -493,6 +496,19 @@ const reducer = (state = initialState, action) => {
         ...state,
         submitted: action.submitted
       }
+    case 'SET_CUSTOMER_DEALS':
+      return {
+        ...state,
+        customerDeals: action.data
+      };
+    case 'ERASE_SIMPLE_DEAL': {
+      let _customerDeals = cloneDeep(state.customerDeals);
+      _customerDeals = remove(_customerDeals, {id: action.data.deal.id});
+      return {
+        ...state,
+        customerDeals: _customerDeals
+      };
+    }
     default:
       return state;
   }

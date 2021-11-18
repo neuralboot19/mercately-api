@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { ScrollingCarousel } from '@trendyol-js/react-carousel';
+
 import 'emoji-mart/css/emoji-mart.css';
 // eslint-disable-next-line import/no-unresolved
 import PlusOutlineIcon from 'images/plusOutline.svg';
@@ -15,6 +17,7 @@ import MessageInputMenu from '../shared/MessageInputMenu';
 import SendButton from "./SendButton";
 import OpenNoteModalButton from '../shared/OpenNoteModalButton';
 import FastAnswerButton from '../shared/FastAnswerButton';
+import DealButton from "../shared/DealButton";
 
 import fileUtils from '../../util/fileUtils';
 import { DEFAULT_FILE_SIZE_TRANSFER, MAX_FILE_SIZE_TRANSFER_MSN_IG } from '../../constants/chatFileSizes';
@@ -39,7 +42,8 @@ const MessageForm = ({
   handleShowInputMenu,
   openNoteModal,
   maximizeInputText,
-  inputFilled
+  inputFilled,
+  openDealModal
 }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -150,8 +154,15 @@ const MessageForm = ({
 
   return (
     <div className="col-xs-12 chat-input mt-16">
-      <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
-      <OpenNoteModalButton openNoteModal={openNoteModal} />
+      <div className="scrolling-carousel-container">
+        <ScrollingCarousel className="scrolling-carousel">
+          <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
+          <OpenNoteModalButton openNoteModal={openNoteModal} />
+          {ENV.HAS_FUNNELS && (
+            <DealButton openDealModal={openDealModal} />
+          )}
+        </ScrollingCarousel>
+      </div>
       <div className="text-input row mx-0 no-gutters text-input-padding border-input-top">
         <div className="d-flex col-7 col-md-9">
           <span className="d-flex align-items-center position-relative mr-12 mr-md-24 min-w-input-menu">

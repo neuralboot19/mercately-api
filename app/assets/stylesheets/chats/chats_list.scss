@@ -130,8 +130,31 @@
   margin-top: 4px;
 }
 
+.card-link svg {
+  fill: #3C4348;
+}
+
+.chat-funnel-holder {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 10px;
+}
+
 @media screen and (max-width: 1024px) {
   .chat_list_holder {
     height: calc(100vh - 90px);
+  }
+}
+
+@media (max-width: 480px) {
+  .deal-name {
+    margin-top: 15px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1800px) {
+  .deal-name {
+    margin-top: 15px;
   }
 }

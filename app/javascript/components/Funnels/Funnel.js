@@ -7,6 +7,7 @@ import { withRouter } from "react-router-dom";
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import ColumnInnerList from "./ColumnInnerList";
+import EditIcon from 'images/edit.svg';
 
 import {
   fetchFunnelSteps,

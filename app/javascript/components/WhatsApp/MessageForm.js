@@ -1,4 +1,6 @@
 import React from 'react';
+import { ScrollingCarousel } from '@trendyol-js/react-carousel';
+
 // eslint-disable-next-line import/no-unresolved
 import PlusOutlineIcon from 'images/plusOutline.svg';
 import MessageInput from './MessageInput';
@@ -9,6 +11,7 @@ import MessageInputMenu from '../shared/MessageInputMenu';
 import FastAnswerButton from '../shared/FastAnswerButton';
 import RemindersButton from '../shared/RemindersButton';
 import OpenNoteModalButton from '../shared/OpenNoteModalButton';
+import DealButton from '../shared/DealButton';
 
 const MessageForm = ({
   allowSendVoice,
@@ -37,16 +40,24 @@ const MessageForm = ({
   openProducts,
   openReminderConfigModal,
   openNoteModal,
+  openDealModal,
   showInputMenu,
   handleShowInputMenu,
   inputFilled
 }) => (
   <div className="col-xs-12 chat-input mt-16">
-    <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
-    <RemindersButton openReminderConfigModal={openReminderConfigModal} />
-    {ENV.INTEGRATION === '1' && (
-      <OpenNoteModalButton openNoteModal={openNoteModal} />
-    )}
+    <div className="scrolling-carousel-container">
+      <ScrollingCarousel className="scrolling-carousel">
+        <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
+        <RemindersButton openReminderConfigModal={openReminderConfigModal} />
+        {ENV.INTEGRATION === '1' && (
+          <OpenNoteModalButton openNoteModal={openNoteModal} />
+        )}
+        {ENV.HAS_FUNNELS && (
+          <DealButton openDealModal={openDealModal} />
+        )}
+      </ScrollingCarousel>
+    </div>
     <div className="text-input row mx-0 no-gutters text-input-padding border-input-top">
       <div className="d-flex col-7 col-md-8">
         <span className="d-flex align-items-center position-relative mr-12 mr-md-24 min-w-input-menu">

@@ -214,3 +214,46 @@ export const loadMoreDeals = (column, page, offset = 0) => {
       });
   };
 };
+
+export const fetchCustomerDeals = (customerId) => {
+  const endpoint = `/api/v1/deals/customer_deals/${customerId}`;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "GET",
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json, text/plain, */*",
+        "Content-Type": "application/json"
+      }
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: "SET_CUSTOMER_DEALS", data }),
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      ).catch(
+        (err) => dispatch({ type: "LOAD_DATA_FAILURE", err })
+      );
+  };
+};
+
+export const deleteSimpleDeal = (dealId) => {
+  const endpoint = `/api/v1/deals/${dealId}`;
+  const header = {
+    method: "DELETE",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Access-Level": "read-write"
+    }
+  };
+  return (dispatch) => {
+    fetch(endpoint, header)
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch({ type: "ERASE_SIMPLE_DEAL", data});
+      })
+      .catch((err) => {
+        dispatch({ type: LOAD_DATA_FAILURE, err });
+      });
+  };
+};
