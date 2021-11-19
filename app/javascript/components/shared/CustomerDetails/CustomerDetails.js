@@ -146,8 +146,7 @@ const CustomerDetails = ({
       hs_active,
       hs_id,
       phone,
-      emoji_flag: emojiFlag,
-      assigned_agent
+      emoji_flag: emojiFlag
     } = customer;
     setCustomerInfo({
       first_name: firstName,
@@ -162,8 +161,7 @@ const CustomerDetails = ({
       hs_active,
       hs_id,
       phone,
-      emoji_flag: emojiFlag,
-      assigned_agent
+      emoji_flag: emojiFlag
     });
   }, [customer.id,
     customer.first_name,
@@ -385,7 +383,7 @@ const CustomerDetails = ({
         <CustomerDetailsTabContent
           chatType={chatType}
           showUserDetails={state.showUserDetails}
-          customer={customerInfo}
+          customer={{...customerInfo, assigned_agent: customer.assigned_agent}}
           customerId={customer.id}
           customerTags={customer.tags}
           handleEnter={handleEnter}
