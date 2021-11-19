@@ -11,7 +11,7 @@ class CustomerTag < ApplicationRecord
 
     def sync_tags
       return unless customer.retailer.hs_tags
-      return if hubspot.nil? || customer.retailer.hs_access_token.blank?
+      return if hubspot.nil? || customer.retailer.hs_access_token.blank? || !customer.hs_active
 
       hs_tag_fields = customer.retailer.customer_hubspot_fields.where(hs_tag: true, customer_field: tag.tag)
       params = {}
@@ -26,7 +26,7 @@ class CustomerTag < ApplicationRecord
 
     def remove_hs_value
       return unless customer.retailer.hs_tags
-      return if hubspot.nil? || customer.retailer.hs_access_token.blank?
+      return if hubspot.nil? || customer.retailer.hs_access_token.blank? || !customer.hs_active
 
       hs_tag_fields = customer.retailer.customer_hubspot_fields.where(hs_tag: true, customer_field: tag.tag)
       params = {}
