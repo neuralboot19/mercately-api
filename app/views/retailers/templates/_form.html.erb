@@ -32,7 +32,7 @@
                     <% if f.object.file_type == 'file' %>
                       <embed src="<%= f.object.image.service_url %>" class="w-200 h-200" width="200" height="200" />
                     <% else %>
-                      <%= cl_image_tag("#{f.object.image.key}", width: 200, height: 200) %>
+                      <%= cl_image_tag("#{f.object.image.key}", transformation: [{width: 200, height: 200, crop: :scale}]) %>
                     <% end %>
                   </div>
                 <% end %>

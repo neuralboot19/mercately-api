@@ -1,7 +1,9 @@
 class Retailers::ChatBotsController < RetailersController
+  include ChatBotsControllerConcern
   before_action :check_bots_access, except: :index
   before_action :check_ownership, except: [:index, :new, :create]
   before_action :set_chat_bot, except: [:index, :new, :create]
+  before_action :resize_images, only: [:create, :update]
   after_action :check_options_attachment, only: [:update]
 
   def index

@@ -28,7 +28,7 @@
               <section class="lazy slider">
                 <% ordered_images.each do |img| %>
                   <div class="image-slider-container">
-                    <%= cl_image_tag("#{img&.key}", class: 'my-35') %>
+                    <%= cl_image_tag("#{img&.key}", class: 'my-35', transformation: [{width: 421, height: 300, crop: :scale}]) %>
                   </div>
                 <% end %>
                 <% unless @product.images.exists? %>
@@ -42,7 +42,7 @@
               <section class="vertical slider draggable-container my-35">
                 <% ordered_images.each do |img| %>
                   <div>
-                    <%= cl_image_tag("#{img&.key}") %>
+                    <%= cl_image_tag("#{img&.key}", transformation: [{width: 124, crop: :scale}]) %>
                   </div>
                 <% end %>
                 <% unless @product.images.exists? %>

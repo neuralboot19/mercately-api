@@ -44,7 +44,7 @@
               </div>
             <% elsif f.object.file.content_type.include?('image/') %>
               <div class="p-relative w-200">
-                <%= cl_image_tag("#{f.object.file.key}", width: 200, height: 200) %>
+                <%= cl_image_tag("#{f.object.file.key}", transformation: [{width: 200, height: 200, crop: :scale}]) %>
               </div>
             <% elsif f.object.file.content_type.include?('video/') %>
               <div class="p-relative w-200">

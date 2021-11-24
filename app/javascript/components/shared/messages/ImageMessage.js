@@ -49,11 +49,23 @@ function ImageMessage({
 
   useEffect(() => {
     if (chatType === 'whatsapp') {
-      setUrl(message.content_media_url);
+      setUrl(formatUrl(message.content_media_url));
     } else {
       getMsnUrl();
     }
   }, []);
+
+  const formatUrl = (originalUrl) => {
+    const formats = 'if_w_gt_300/c_scale,w_300/if_end/q_auto';
+    return originalUrl.replace('/image/upload', `/image/upload/${formats}`);
+  }
+
+  const formatUrlZoom = (originalUrl) => {
+    if (chatType !== 'whatsapp') return originalUrl;
+
+    const formats = 'if_w_gt_1000/c_scale,w_1000/if_end';
+    return originalUrl.replace('if_w_gt_300/c_scale,w_300/if_end', `${formats}`);
+  }
 
   return (
     <div className="img-holder">
@@ -70,7 +82,7 @@ function ImageMessage({
             <img
               src={url}
               className="msg__img"
-              onClick={() => onClick(url)}
+              onClick={() => onClick(formatUrlZoom(url))}
               onError={errorLoadingImg}
               alt=""
               style={{display: "block"}}

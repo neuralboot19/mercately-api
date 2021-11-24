@@ -1,4 +1,5 @@
 import React from 'react';
+import stringUtils from '../../util/stringUtils';
 
 const SelectedFastAnswerImageContainer = ({
   selectedFastAnswer,
@@ -10,7 +11,7 @@ const SelectedFastAnswerImageContainer = ({
       onClick={removeSelectedFastAnswer}
     >
     </i>
-    <img src={selectedFastAnswer.attributes.image_url}>
+    <img src={stringUtils.formatSelectedFastAnswerUrl(selectedFastAnswer.attributes.image_url)}>
     </img>
   </div>
 );

@@ -95,10 +95,11 @@ module MessengerChatBotActionConcern
     # necesarios para su correcto envio.
     def attachment_data(option, object)
       object ||= option
+      content_type = object.file.content_type
       params = {}
 
       aux_url = object.file_url
-      if object.file.content_type == 'application/pdf'
+      if content_type == 'application/pdf'
         aux_url += '.pdf'
         # Esto se hace porque debemos enviar el PDF como objeto y no por URL,
         # ya que por URL no hay forma de colocarle un filename, y le llega
@@ -106,6 +107,9 @@ module MessengerChatBotActionConcern
         file = open(aux_url)
         params[:file_data] = file.path
         params[:file_content_type] = object.file.content_type
+      elsif content_type.include?('image')
+        formats = 'if_w_gt_1000/c_scale,w_1000/if_end/q_auto'
+        params[:file_url] = aux_url.gsub('/image/upload', "/image/upload/#{formats}")
       else
         params[:file_url] = aux_url
       end

@@ -1,5 +1,6 @@
 import React from 'react';
 import PdfIcon from 'images/pdf_icon.png'
+import stringUtils from '../../util/stringUtils';
 
 const SelectedFastAnswerImageContainer = ({
   selectedFastAnswer,
@@ -15,7 +16,7 @@ const SelectedFastAnswerImageContainer = ({
         onClick={removeSelectedFastAnswer}
       >
       </i>
-      <img src={url} />
+      <img src={stringUtils.formatSelectedFastAnswerUrl(url, selectedFastAnswer.attributes.file_type)} />
     </div>
   );
 };
