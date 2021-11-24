@@ -1,6 +1,8 @@
 class Api::V1::RemindersController < Api::ApiController
   include CurrentRetailer
+  include ResizeFileConcern
   before_action :authenticate_retailer_user!
+  before_action :resize_file, only: :create
 
   def create
     params[:reminder][:content_params] = [] if params[:reminder][:content_params].blank?

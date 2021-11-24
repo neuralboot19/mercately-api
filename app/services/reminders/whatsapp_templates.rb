@@ -22,14 +22,9 @@ module Reminders
       # Se encarga de armar la data necesaria para enviar una plantilla sea por Karix o GS.
       def send(reminder)
         template = reminder.whatsapp_template
-        # Se chequea si el recordatorio tiene asociado un archivo.
-        has_file = reminder.file.attached?
-        resource_type = has_file ? 'file' : 'template'
-
         params = {
           gupshup_template_id: template.gupshup_template_id,
           template_params: reminder.content_params,
-          type: has_file ? get_content_type(reminder) : 'text',
           template: 'true'
         }
 
@@ -38,15 +33,26 @@ module Reminders
         aux_message = template.template_text(params).gsub('\\*', '*')
         aux_message = aux_message.gsub(/(\r)/, '')
 
-        # Se insertan los datos restantes a los parametros para el envip, dependiendo si la plantilla
-        # es de texto o archivo.
-        if has_file
+        if reminder.file.attached?
+          type = get_content_type(reminder)
+          resource_type = 'file'
           params[:caption] = aux_message
-          params[:url] = reminder.file_url
           params[:file_name] = reminder.file.filename.to_s
+          aux_url = reminder.file_url
+
+          if type == 'image'
+            formats = 'if_w_gt_1000/c_scale,w_1000/if_end/q_auto'
+            aux_url = aux_url.gsub('/image/upload', "/image/upload/#{formats}")
+          end
+
+          params[:url] = aux_url
         else
+          type = 'text'
+          resource_type = 'template'
           params[:message] = aux_message
         end
+
+        params[:type] = type
 
         if reminder.retailer.karix_integrated?
           send_karix_notification(reminder, params)

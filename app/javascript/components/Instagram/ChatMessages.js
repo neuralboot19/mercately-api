@@ -161,7 +161,7 @@ class ChatMessages extends Component {
       type = 'image';
 
       data = new FormData();
-      data.append('url', url);
+      data.append('url', stringUtils.formatSentUrl(url));
       data.append('type', 'image');
       data.append('message_identifier', uuid);
     } else {

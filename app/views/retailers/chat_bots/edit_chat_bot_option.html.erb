@@ -146,7 +146,7 @@
                                   <% end %>
                                   <% if cbo.object.file.blob.content_type.include?('image/')  %>
                                     <div id="current-chat-bot-option-file" class="p-relative w-200">
-                                      <%= cl_image_tag("#{cbo.object.file.key}", width: 200, height: 200) %>
+                                      <%= cl_image_tag("#{cbo.object.file.key}", transformation: [{width: 200, height: 200, crop: :scale}]) %>
                                     </div>
                                   <% end %>
                                   <% if cbo.object.file.blob.content_type.include?('video/') %>

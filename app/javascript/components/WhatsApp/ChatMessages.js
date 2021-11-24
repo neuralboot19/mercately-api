@@ -495,7 +495,7 @@ class ChatMessages extends Component {
 
       if (type !== 'image' && this.state.selectedFastAnswer) data.append('file_name', this.state.selectedFastAnswer.attributes.file_name);
       data.append('template', false);
-      data.append('url', url);
+      data.append('url', stringUtils.formatSentUrl(url));
       data.append('content_type', type);
       data.append('type', 'file');
       data.append('caption', caption);

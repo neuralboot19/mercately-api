@@ -2,9 +2,9 @@
   <div class="col-xs-4 col-sm-1">
     <div class="products__img">
       <% if product.main_picture_id %>
-        <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}") %>
+        <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}", transformation: [{width: 60, height: 60, crop: :scale}]) %>
       <% elsif product.images&.first&.key.present? %>
-        <%= cl_image_tag("#{product.images&.first&.key}") %>
+        <%= cl_image_tag("#{product.images&.first&.key}", transformation: [{width: 60, height: 60, crop: :scale}]) %>
       <% else %>
         <i class="fas fa-camera-retro fs-40 c-grey"></i>
       <% end %>

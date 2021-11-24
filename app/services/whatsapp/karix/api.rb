@@ -71,19 +71,35 @@ module Whatsapp
 
       def upload_file_to_cloudinary(file, resource_type)
         timestamp = Time.now.to_i
-
+        r_type = cloudinary_resource_type(resource_type)
         params_to_sign = {
           timestamp: timestamp
         }
 
-        Cloudinary::Uploader.upload(
-          file,
-          api_key: ENV['CLOUDINARY_API_KEY'],
-          timestamp: timestamp,
-          signature: Cloudinary::Utils.api_sign_request(params_to_sign, ENV['CLOUDINARY_API_SECRET']),
-          resource_type: cloudinary_resource_type(resource_type),
-          use_filename: true
-        )
+        signature = Cloudinary::Utils.api_sign_request(params_to_sign, ENV['CLOUDINARY_API_SECRET'])
+
+        if r_type == 'image'
+          Cloudinary::Uploader.upload(
+            file,
+            api_key: ENV['CLOUDINARY_API_KEY'],
+            timestamp: timestamp,
+            signature: signature,
+            resource_type: r_type,
+            use_filename: true,
+            width: 1000,
+            height: 1000,
+            crop: :limit
+          )
+        else
+          Cloudinary::Uploader.upload(
+            file,
+            api_key: ENV['CLOUDINARY_API_KEY'],
+            timestamp: timestamp,
+            signature: signature,
+            resource_type: r_type,
+            use_filename: true
+          )
+        end
       end
 
       def get_resource_type(file)

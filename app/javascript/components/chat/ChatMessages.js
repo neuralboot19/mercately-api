@@ -168,7 +168,7 @@ class ChatMessages extends Component {
         filename = this.state.selectedFastAnswer.attributes.file_name;
         data.append('file_name', filename);
       }
-      data.append('url', url);
+      data.append('url', stringUtils.formatSentUrl(url));
       data.append('type', type);
       data.append('message_identifier', uuid);
     } else {
