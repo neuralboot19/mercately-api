@@ -29,8 +29,16 @@
             <div class="box pt-25">
               <div class="row">
                 <div class="col-xs-12 col-sm-3">
-                  <p>
+                  <p class="m-0">
                     <label class="c-grey fs-14">Etiqueta:</label><br /><span class="c-secondary fs-14"><%= @tag.tag %></span>
+                  </p>
+                </div>
+
+                <div class="col-xs-12 col-sm-3">
+                  <p class="m-0">
+                    <label class="c-grey fs-14">Color:</label>
+                    <div class='tag-content' style="background-color: <%= @tag.tag_color %>;
+                    border-color: <%= @tag.font_color %>;"></div>
                   </p>
                 </div>
               </div>

@@ -23,7 +23,7 @@ RSpec.describe 'TagsController', type: :request do
         get retailers_tags_path(retailer)
         expect(response).to have_http_status(:ok)
 
-        retailer_tags = retailer.tags
+        retailer_tags = retailer.tags.order(id: :desc)
         expect(assigns(:tags)).to eq(retailer_tags)
       end
     end

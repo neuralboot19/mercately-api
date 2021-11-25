@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_02_144452) do
+ActiveRecord::Schema.define(version: 2021_11_18_020557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1133,6 +1133,8 @@ ActiveRecord::Schema.define(version: 2021_11_02_144452) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "web_id"
+    t.string "tag_color", default: "#ffffff00"
+    t.string "font_color", default: "#B2B3BD"
     t.index ["retailer_id"], name: "index_tags_on_retailer_id"
   end
 
