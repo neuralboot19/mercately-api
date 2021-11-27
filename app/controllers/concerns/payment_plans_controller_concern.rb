@@ -1,22 +1,6 @@
 module PaymentPlansControllerConcern
   extend ActiveSupport::Concern
 
-  MONTH_NAMES = [
-    '',
-    'Enero',
-    'Febrero',
-    'Marzo',
-    'Abril',
-    'Mayo',
-    'Junio',
-    'Julio',
-    'Agosto',
-    'Septiembre',
-    'Octubre',
-    'Noviembre',
-    'Diciembre'
-  ].freeze
-
   def used_whatsapp_messages
     whatsapp_messages = current_retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
     messages = current_retailer.send(whatsapp_messages).range_between(@payment_plan.start_date, Time.now)
@@ -44,10 +28,10 @@ module PaymentPlansControllerConcern
   def load_messages
     @user_messages = []
 
-    @date_list.each do |date|
+    @date_list.sort { |a, b| b <=> a }.each do |date|
       @date = date
       @data = {
-        month: MONTH_NAMES[date.month],
+        month: I18n.l(date, format: "%B"),
         year: date.year.to_s,
         type: [],
         cost: [],
@@ -64,27 +48,27 @@ module PaymentPlansControllerConcern
   end
 
   def default_data
-    save_default('Conversación') unless @data[:type].include?('Conversación')
+    save_default('conversation') unless @data[:type].include?(t('retailer.profile.payment_plans.index.message_type_conversation'))
 
-    return if @data[:type].include?('Notificación')
+    return if @data[:type].include?(t('retailer.profile.payment_plans.index.message_type_notification'))
 
-    save_default('Notificación')
+    save_default('notification')
   end
 
   def process_messages
     @costs_list.each do |cl|
       if @count_conversations_by_cost.key?([@date, cl]) && @count_conversations_by_cost[[@date, cl]] != 0
-        save_data('Conversación', cl)
+        save_data('conversation', cl)
       end
 
       if @count_notifications_by_cost.key?([@date, cl]) && @count_notifications_by_cost[[@date, cl]] != 0
-        save_data('Notificación', cl)
+        save_data('notification', cl)
       end
     end
   end
 
   def save_data(type, cost)
-    if type == 'Conversación'
+    if type == 'conversation'
       aux_cost = @total_conversations_by_cost[[@date, cost]] || 0
       count = @count_conversations_by_cost[[@date, cost]] || 0
     else
@@ -92,7 +76,7 @@ module PaymentPlansControllerConcern
       count = @count_notifications_by_cost[[@date, cost]] || 0
     end
 
-    @data[:type] << type
+    @data[:type] << t("retailer.profile.payment_plans.index.message_type_#{type}")
     @data[:cost] << cost
     @data[:counter] << count
     @data[:sub_total] << aux_cost
@@ -100,7 +84,7 @@ module PaymentPlansControllerConcern
   end
 
   def save_default(type)
-    @data[:type] << type
+    @data[:type] << t("retailer.profile.payment_plans.index.message_type_#{type}")
     @data[:cost] << nil
     @data[:counter] << 0
     @data[:sub_total] << 0
@@ -112,10 +96,10 @@ module PaymentPlansControllerConcern
     total = current_retailer.chat_bot_customers.range_between(@payment_plan.start_date, Time.now)
       .group_by_month(:created_at).count
 
-    total.map do |key, val|
+    total.sort { |a, b| b.first <=> a.first }.map do |key, val|
       @interactions << {
         year: key.year.to_s,
-        month: MONTH_NAMES[key.month],
+        month: I18n.l(key, format: "%B"),
         total: val
       }
     end

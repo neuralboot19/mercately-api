@@ -490,7 +490,7 @@ h1 {
   }
 }
 
-.modal, .modal-index {
+.modal-mercately, .modal-index {
   position: fixed;
   top: 0;
   left: 0;
@@ -601,12 +601,12 @@ h1 {
   transition: all 0.4s ease-out;
 }
 
-#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal {
+#event-modal:checked ~ .modal-mercately, #event-modal--edit:checked ~ .modal-mercately {
   z-index: 300;
 }
 
-#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
-#event-modal:checked ~ .modal, #event-modal--edit:checked ~ .modal, input[name="modal--toggle"]:checked ~ .modal,
+#modal--toggle:checked ~ .modal-mercately, #modal--toggle-index:checked ~ .modal-index,
+#event-modal:checked ~ .modal-mercately, #event-modal--edit:checked ~ .modal-mercately, input[name="modal--toggle"]:checked ~ .modal-mercately,
 #modal-agent--toggle:checked ~ .modal-agent,
 .modal--toggler:checked ~ .modal-index {
   display: block;
@@ -645,7 +645,7 @@ h1 {
 }
 
 @media screen and (max-height: 680px) {
-  .modal__window, .modal-index__window {
+  .modal-mercately__window, .modal-index__window {
     height: 542px;
   }
 }
@@ -1785,13 +1785,6 @@ i {
   max-width: 320px;
   @media (max-width: 360px) {
     max-width: 260px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container-titles {
-    margin-left: 60px;
-    margin-top: 25px;
   }
 }
 

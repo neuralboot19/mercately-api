@@ -1,0 +1,39 @@
+<div class="modal fade" id="charge-balance-modal" tabindex="-1" role="dialog" aria-labelledby="charge-balance-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content container-payment-plan_card no-border">
+      <div class="modal-header pt-20 px-30">
+        <p class="mercately-modal-title fs-24"><%= t('retailer.profile.payment_plans.charge_balance.add_balance') %></p>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body py-20 px-30">
+        <div class="row ml-0 charge-balance-form">
+          <div class="col-12 p-0 mb-20">
+            <input type="number" class="input w-100" min="10" name="amount" id="amount" value="25">
+            <i class="validation-msg"></i>
+            <i class="subtitle fs-12"><%= t('retailer.profile.payment_plans.charge_balance.minimum_amount') %></i>
+          </div>
+          <div class="col-12 p-0">
+            <% if current_retailer.ecu_charges %>
+              <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
+            <% elsif current_retailer.int_charges %>
+              <%= select_tag :stripe_card, options_for_select(stripe_cards(current_retailer.payment_methods)), class: 'input' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-20 px-30">
+        <div class="row ml-0">
+          <div class="col-12 p-0">
+            <button class="btn btn-improve submit-card" id="submit_add_balance">
+              <i class="fas fa-dollar-sign fs-12" id="btn_cc"></i>
+              <i class="fas fa-spinner hidden" id="btn_spinner"></i>
+              <span class="fs-14"><%= t('retailer.profile.payment_plans.charge_balance.add_balance') %></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

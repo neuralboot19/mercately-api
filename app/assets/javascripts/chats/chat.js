@@ -2,7 +2,7 @@
 //= require popper
 //= require bootstrap-sprockets
 //= require notifications
-//= require select2
+//= require select2-full
 //= require full_calendar
 //= require agent_notifications
 

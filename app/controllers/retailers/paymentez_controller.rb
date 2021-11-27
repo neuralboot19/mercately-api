@@ -1,5 +1,5 @@
 class Retailers::PaymentezController < RetailersController
-  skip_before_action :validate_payment_plan, only: [:create, :purchase_plan]
+  skip_before_action :validate_payment_plan, only: [:create, :purchase_plan, :destroy]
   before_action :validate_terms, only: :purchase_plan
 
   def create
@@ -15,12 +15,14 @@ class Retailers::PaymentezController < RetailersController
     if paymentez_card.save
       return if purchasing_plan?(paymentez_card)
 
+      flash[:notice] = t('retailer.paymentez.added_card_success')
       render status: 200, json: {
-        notice: 'Tarjeta agregada exitosamente'
+        notice: t('retailer.paymentez.added_card_success')
       } and return
     end
 
-    render status: 500, json: { notice: 'Error al agregar tarjeta' }
+    flash[:notice] = t('retailer.paymentez.added_card_error')
+    render status: 500, json: { notice: t('retailer.paymentez.added_card_error') }
   end
 
   def destroy
@@ -29,25 +31,25 @@ class Retailers::PaymentezController < RetailersController
     redirect_path = retailers_payment_plans_path(current_retailer)
 
     if pcc && current_retailer.paymentez_credit_cards.count > 1 && pcc.delete_card!
-      redirect_to redirect_path, notice: 'Tarjeta eliminada satisfactoriamente.'
+      redirect_to redirect_path, notice: t('retailer.paymentez.deleted_card_success')
       return
     end
 
-    redirect_to redirect_path, notice: 'Error al eliminar tarjeta.'
+    redirect_to redirect_path, notice: t('retailer.paymentez.deleted_card_error')
   end
 
   def add_balance
     pcc = set_card(purchase_params['cc_id'])
 
     if pcc.create_transaction_with_amount(purchase_params['amount'].to_f)
-      flash[:notice] = 'Saldo agregado exitosamente'
+      flash[:notice] = t('retailer.paymentez.added_balance_success')
       render status: 200, json: {
-        message: 'Saldo agregado exitosamente'
+        message: t('retailer.paymentez.added_balance_success')
       } and return
     end
 
-    flash[:notice] = 'Error al agregar saldo'
-    render status: 500, json: { message: 'Error al agregar saldo' }
+    flash[:notice] = t('retailer.paymentez.added_balance_error')
+    render status: 500, json: { message: t('retailer.paymentez.added_balance_error') }
   end
 
   def purchase_plan

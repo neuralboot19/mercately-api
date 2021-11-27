@@ -9,16 +9,18 @@ $(document).ready(function () {
 
     card.mount('#card-element');
 
-    function changeLoadingState(show = false) {
+    function changeLoadingState(button, show = false) {
       var spinner = document.getElementById('btn_spinner');
       var credit_card = document.getElementById('btn_cc');
 
       if (show === false) {
+        button.disabled = false;
         spinner.classList.add('hidden');
         credit_card.classList.remove('hidden');
         return true;
       }
 
+      button.disabled = true;
       spinner.classList.remove('hidden');
       credit_card.classList.add('hidden');
     }
@@ -35,19 +37,22 @@ $(document).ready(function () {
       }
     });
 
+    let nameValid = 'El nombre no puede estar vacío';
+    if (ENV['CURRENT_AGENT_LANG'] === 'en') nameValid = 'The name cannot be empty';
+
     button.addEventListener('click', function(event) {
       event.preventDefault();
-      changeLoadingState(true);
+      changeLoadingState(button, true);
 
       var displayError = document.getElementById('stripe-error');
 
       if (card_name.value.replace(/\s/g,"") == ""){
-        displayError.textContent = "El nombre no puede estar vacío";
+        displayError.textContent = nameValid;
         displayError.classList.remove("hidden");
         setTimeout(function() {
           displayError.classList.add("hidden");
         }, 5000);
-        changeLoadingState(false);
+        changeLoadingState(button, false);
       } else {
         stripe
           .confirmCardSetup(setupIntent.client_secret, {
@@ -60,11 +65,11 @@ $(document).ready(function () {
           })
           .then(function(result) {
             if (result.error) {
-              changeLoadingState(false);
-              if (card_name.replace(/\s/g,"") == ""){
-                displayError.textContent = "El nombre no puede estar vacío";
+              changeLoadingState(button, false);
+              if (card_name.value.replace(/\s/g,"") == ""){
+                displayError.textContent = nameValid;
               } else {
-                displayError.textContent = "El nombre no puede estar vacío";
+                displayError.textContent = result.error.message;
               }
               displayError.classList.remove("hidden");
               setTimeout(function() {
@@ -103,15 +108,16 @@ $(document).ready(function () {
   var changeLoadingState = function(isLoading) {
     var spinner = document.getElementById('btn_spinner');
     var credit_card = document.getElementById('btn_cc');
+    const submit_button = document.getElementById('submit');
 
     if (isLoading) {
+      submit_button.disabled = true;
       spinner.classList.remove('hidden');
       credit_card.classList.add('hidden');
-      document.querySelector('button').disabled = true;
       return true;
     }
 
-    document.querySelector('button').disabled = false;
+    submit_button.disabled = false;
     spinner.classList.add('hidden');
     credit_card.classList.remove('hidden');
   };
@@ -133,10 +139,9 @@ $(document).ready(function () {
           return response.json();
         })
         .then(function(paymentMethodResponse) {
+          changeLoadingState(false);
           location.reload();
         });
-
-      changeLoadingState(false);
     });
   };
 

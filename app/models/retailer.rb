@@ -42,6 +42,7 @@ class Retailer < ApplicationRecord
   has_many :campaigns, dependent: :destroy
   has_many :hubspot_fields
   has_many :customer_hubspot_fields
+  has_many :plan_cancellations
 
   validates :name, presence: true
   validates :currency, presence: true
