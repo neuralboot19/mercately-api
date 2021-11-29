@@ -3,7 +3,7 @@ class Retailers::TagsController < RetailersController
   before_action :set_tag, only: [:show, :edit, :update, :destroy]
 
   def index
-    @tags = current_retailer.tags.page(params[:page])
+    @tags = current_retailer.tags.order(updated_at: :desc).page(params[:page])
   end
 
   def show
@@ -49,7 +49,7 @@ class Retailers::TagsController < RetailersController
   private
 
     def tag_params
-      params.require(:tag).permit(:tag)
+      params.require(:tag).permit(:tag, :tag_color)
     end
 
     def check_ownership

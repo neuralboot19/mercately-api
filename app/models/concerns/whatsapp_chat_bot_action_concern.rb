@@ -111,7 +111,7 @@ module WhatsappChatBotActionConcern
 
         params[:message] = chat_bot_service.append_options_to_message(option, params[:message]) if last
 
-        send_bot_message(params)
+        send_bot_message(params) if retailer.karix_integrated?
       elsif content_type.include?('image')
         formats = 'if_w_gt_1000/c_scale,w_1000/if_end/q_auto'
         aux_url = aux_url.gsub('/image/upload', "/image/upload/#{formats}")

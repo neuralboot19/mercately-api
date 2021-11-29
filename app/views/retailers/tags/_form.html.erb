@@ -10,6 +10,12 @@
               <%= f.text_field :tag, class: 'input validate-required', maxlength: '20' %>
               <i class="validation-msg"></i>
             </div>
+
+            <div class="mb-8 my-16">
+              <%= f.label :tag_color, 'Color' %><br/>
+              <%= f.color_field :tag_color, input_html: { class: 'colorpicker' } %>
+            </div>
+
             <div class="btn-box col-xs-12">
               <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
             </div>
