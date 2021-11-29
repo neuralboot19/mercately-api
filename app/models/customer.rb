@@ -114,27 +114,27 @@ class Customer < ApplicationRecord
 
   ransacker :full_name do |parent|
     Arel::Nodes::NamedFunction.new('CONCAT_WS', [
-      Arel::Nodes.build_quoted(' '),
-      parent.table[:first_name],
-      parent.table[:last_name],
-      parent.table[:whatsapp_name]
-    ])
+                                     Arel::Nodes.build_quoted(' '),
+                                     parent.table[:first_name],
+                                     parent.table[:last_name],
+                                     parent.table[:whatsapp_name]
+                                   ])
   end
 
   def self.public_fields
-    [
-      'email',
-      'first_name',
-      'last_name',
-      'phone',
-      'id_type',
-      'id_number',
-      'address',
-      'city',
-      'state',
-      'zip_code',
-      'country_id',
-      'notes'
+    %w[
+      email
+      first_name
+      last_name
+      phone
+      id_type
+      id_number
+      address
+      city
+      state
+      zip_code
+      country_id
+      notes
     ]
   end
 
@@ -355,9 +355,7 @@ class Customer < ApplicationRecord
 
   def whatsapp_answered_by_agent?
     msg_records = whatsapp_messages
-    if retailer.gupshup_integrated?
-      msg_records = msg_records.where.not(note: true)
-    end
+    msg_records = msg_records.where.not(note: true) if retailer.gupshup_integrated?
     msg_records.where(direction: 'outbound').where.not(retailer_user_id: nil).exists?
   end
 
@@ -403,7 +401,7 @@ class Customer < ApplicationRecord
   end
 
   def activate_chat_bot!
-    update(allow_start_bots: !self.allow_start_bots)
+    update(allow_start_bots: !allow_start_bots)
   end
 
   def endpoint_response
@@ -433,7 +431,7 @@ class Customer < ApplicationRecord
     def insert_return_options(opt, msg_options)
       size = msg_options.size
       if opt.go_past_option
-        size = size + 1
+        size += 1
 
         msg_options << Option.new({
           'key': '_back_',
@@ -442,7 +440,7 @@ class Customer < ApplicationRecord
       end
 
       if opt.go_start_option
-        size = size + 1
+        size += 1
 
         msg_options << Option.new({
           'key': '_start_',
@@ -552,7 +550,6 @@ class Customer < ApplicationRecord
   end
 
   def has_deals
-    return false if !retailer.has_funnels
     deals.exists?
   end
 
@@ -562,7 +559,7 @@ class Customer < ApplicationRecord
       return if valid_customer?
 
       self.valid_customer = first_name.present? || last_name.present? || email.present? || whatsapp_name.present? ||
-        psid.present?
+                            psid.present?
     end
 
     def strip_whitespace
@@ -578,11 +575,11 @@ class Customer < ApplicationRecord
 
       aux_phone = phone.gsub('+', '')
       if country_id.present?
-        if prefix == country.country_code
-          self.phone = "+#{aux_phone}"
-        else
-          self.phone = "+#{country.country_code}#{aux_phone}"
-        end
+        self.phone = if prefix == country.country_code
+                       "+#{aux_phone}"
+                     else
+                       "+#{country.country_code}#{aux_phone}"
+                     end
       end
     end
 
@@ -607,21 +604,19 @@ class Customer < ApplicationRecord
     end
 
     def valid_api_creation
-      if phone.blank? && email.blank?
-        errors.add(:base, 'Numero o email deben estar presentes.')
-      end
+      errors.add(:base, 'Numero o email deben estar presentes.') if phone.blank? && email.blank?
     end
 
     def verify_opt_in
       return unless retailer.gupshup_integrated? && ActiveModel::Type::Boolean.new.cast(send_for_opt_in) == true &&
-        whatsapp_opt_in == false && phone.present?
+                    whatsapp_opt_in == false && phone.present?
 
       number = phone_number(false)
       response = gupshup_service.opt_in(number)
 
-      Rails.logger.info('*'*100)
+      Rails.logger.info('*' * 100)
       Rails.logger.info(response)
-      Rails.logger.info('*'*100)
+      Rails.logger.info('*' * 100)
 
       return unless response.present? && response[:code] == '202'
 
@@ -741,7 +736,7 @@ class Customer < ApplicationRecord
       )
 
       true
-    rescue => e
+    rescue StandardError => e
       Rails.logger.info('******** Error al guardar ChatHistory ********')
       Rails.logger.error(e)
       SlackError.send_error(e)

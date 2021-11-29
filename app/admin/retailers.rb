@@ -31,7 +31,6 @@ ActiveAdmin.register Retailer do
                 :ml_site,
                 :gupshup_app_id,
                 :gupshup_app_token,
-                :has_funnels,
                 :send_max_size_files
   filter :name
   filter :slug
@@ -50,9 +49,7 @@ ActiveAdmin.register Retailer do
     column 'Facebook User Id' do |retailer|
       retailer.facebook_retailer&.uid
     end
-    column 'Karix Phone Number' do |retailer|
-      retailer.karix_whatsapp_phone
-    end
+    column 'Karix Phone Number', &:karix_whatsapp_phone
     column :ws_balance
     column :retailer_user
     column :created_at
@@ -120,7 +117,6 @@ ActiveAdmin.register Retailer do
       row :max_agents
       row :ml_domain
       row :ml_site
-      row :has_funnels
       row :send_max_size_files
       row :created_at
       row :updated_at
@@ -178,9 +174,7 @@ ActiveAdmin.register Retailer do
         row :gupshup_api_key
         row :gupshup_app_id
         row :gupshup_app_token
-        row 'Saldo' do |retailer|
-          retailer.ws_balance
-        end
+        row 'Saldo', &:ws_balance
         row 'Cantidad(Gupshup) de Mensajes de Entrada' do
           retailer.gupshup_whatsapp_messages.where(direction: 'inbound').count
         end
@@ -241,16 +235,12 @@ ActiveAdmin.register Retailer do
         end
       elsif retailer.int_charges
         table_for retailer.payment_methods do
-          column 'payment_type' do |pm|
-            pm.payment_type
-          end
+          column 'payment_type', &:payment_type
           column 'number' do |pm|
             card = JSON.parse(pm.payment_payload)['card']
             card['last4']
           end
-          column 'token' do |pm|
-            pm.stripe_pm_id
-          end
+          column 'token', &:stripe_pm_id
           column 'Expiration Date' do |pm|
             card = JSON.parse(pm.payment_payload)['card']
             "#{card['exp_month']}/#{card['exp_year']}"
@@ -274,9 +264,7 @@ ActiveAdmin.register Retailer do
           column :dev_reference
           column :message
           column :carrier_code
-          column 'REF #' do |pt|
-            pt.pt_id
-          end
+          column 'REF #', &:pt_id
           column :status_detail
           column :transaction_reference
           column 'Payment Plan' do |pt|
@@ -308,9 +296,7 @@ ActiveAdmin.register Retailer do
       table_for retailer.retailer_users do
         column :id
 
-        column 'Nombres' do |ret_u|
-          ret_u.full_name
-        end
+        column 'Nombres', &:full_name
 
         column :email
 
@@ -354,7 +340,7 @@ ActiveAdmin.register Retailer do
       f.input :phone_number
       f.input :unlimited_account
       f.input :whats_app_enabled
-      f.input :ml_site, as: :select, collection: [['Ecuador', 'MEC'], ['Chile', 'MLC'], ['Costa Rica', 'MCR']]
+      f.input :ml_site, as: :select, collection: [%w[Ecuador MEC], %w[Chile MLC], ['Costa Rica', 'MCR']]
       f.input :ml_domain
       f.input :karix_whatsapp_phone
       f.input :karix_account_uid
@@ -376,7 +362,6 @@ ActiveAdmin.register Retailer do
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
       f.input :allow_send_videos, label: 'Permitir enviar videos'
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
-      f.input :has_funnels, label: 'Permitir Etapas de negociación'
       f.input :send_max_size_files, label: 'Enviar hasta 40MB en pdfs y 15MB en imagenes'
     end
     f.actions

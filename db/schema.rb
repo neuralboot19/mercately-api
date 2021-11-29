@@ -1089,7 +1089,6 @@ ActiveRecord::Schema.define(version: 2021_11_18_020557) do
     t.string "ml_site", default: "MEC"
     t.string "gupshup_app_id"
     t.string "gupshup_app_token"
-    t.boolean "has_funnels", default: false
     t.string "timezone"
     t.boolean "send_max_size_files", default: false, null: false
     t.string "currency", default: "USD", null: false
