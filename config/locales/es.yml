@@ -407,6 +407,11 @@ es:
     api_key: 'API Key'
     logout: 'Cerrar sesión'
   mailer:
+    broken_hs_integration:
+      broken_integration: 'Integración con Hubspot desactivada'
+      p1: 'Su integración con Hubspot se ha interrumpido, esto puede deberse a muchas razones,'
+      p2: 'las más comúnes suelen ser cambios de contraseña o una inactivación de la cuenta por parte de Hubspot.'
+      p3: 'Para volver a integrarse con Hubspot, vaya a '
     failed_charge_subject: '[Urgente] Tu pago de Mercately no se realizó correctamente'
     failed_charge_greetings: 'Hola %{name}'
     failed_charge_message: 'No pudimos cobrar su tarjeta %{card} para su pago a Mercately, LLC. Actualice su información de facturación en el siguiente enlace:'
@@ -469,7 +474,7 @@ es:
         new_clients: Clientes nuevos
         recurring_customers: Clientes recurrentes
       performance:
-        performance_title: Rendimiento por agente 
+        performance_title: Rendimiento por agente
         agent: Agente
         assigned_chats: Chats asignados
         assigned_chats_answered: Chats asignados respondidos
