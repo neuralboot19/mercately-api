@@ -29,23 +29,19 @@ class Api::V1::DealsController < Api::ApiController
   end
 
   def customer_deals
-    if !current_retailer.has_funnels
-      render status: 200, json: []
-    else
-      deals = Deal.joins(:funnel_step).where(customer_id: params['customer_id'])
-          .select('deals.*, funnel_steps.name as funnel_step_name');
-      render status: 200, json: deals
-    end
+    deals = Deal.joins(:funnel_step).where(customer_id: params['customer_id'])
+      .select('deals.*, funnel_steps.name as funnel_step_name')
+    render status: 200, json: deals
   end
 
   private
 
-    def set_deals(column, page)
-      #TODO SET SERIALIZER
+    def set_deals(column, _page)
+      # TODO: SET SERIALIZER
       deals = {}
 
       column.deals.page(params[:page]).offset(false).offset(params[:offset]).each do |deal|
-        #TODO FIND A BETTER WAY TO DO THIS
+        # TODO: FIND A BETTER WAY TO DO THIS
         deals[deal.web_id] = {
           id: deal.web_id,
           name: deal.name,

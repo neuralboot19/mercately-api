@@ -47,12 +47,10 @@
           </li>
         </ul>
       </li>
-      <% if current_retailer.has_funnels %>
-        <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_funnels_path(current_retailer)) %>">
-          <i class="icon-funnels-left item__icon"></i>
-          <%= link_to t('vertical_navbar.deals.deals'), retailers_funnels_path(current_retailer), class: 'item__name no-style' %>
-        </li>
-      <% end %>
+      <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_funnels_path(current_retailer)) %>">
+        <i class="icon-funnels-left item__icon"></i>
+        <%= link_to t('vertical_navbar.deals.deals'), retailers_funnels_path(current_retailer), class: 'item__name no-style' %>
+      </li>
       <% if current_retailer.whatsapp_integrated? %>
         <li class="menu__item m-0 <%= 'menu__item--selected' if current_page?(retailers_campaigns_path(current_retailer)) %>">
           <i class="icon-campaigns-left item__icon"></i>
@@ -249,16 +247,14 @@
             </div>
           </div>
         </li>
-        <% if current_retailer.has_funnels %>
-          <li class="menu__item">
-            <div class="merc-tooltip <%= controller.controller_name == 'funnels' ? 'merc-tooltip-active' : '' %>">
-              <%= link_to retailers_funnels_path(current_retailer), class: 'item__name no-style' do %>
-                <i class="icon-funnels-left"></i>
-              <% end %>
-              <div class="merc-tooltiptext"><%= t('vertical_navbar.deals.deals') %></div>
-            </div>
-          </li>
-        <% end %>
+        <li class="menu__item">
+          <div class="merc-tooltip <%= controller.controller_name == 'funnels' ? 'merc-tooltip-active' : '' %>">
+            <%= link_to retailers_funnels_path(current_retailer), class: 'item__name no-style' do %>
+              <i class="icon-funnels-left"></i>
+            <% end %>
+            <div class="merc-tooltiptext"><%= t('vertical_navbar.deals.deals') %></div>
+          </div>
+        </li>
         <% if current_retailer.whatsapp_integrated? %>
           <li class="menu__item">
             <div class="merc-tooltip <%= controller.controller_name == 'campaigns' ? 'merc-tooltip-active' : '' %>">
