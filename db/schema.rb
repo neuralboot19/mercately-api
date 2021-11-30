@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_18_020557) do
+ActiveRecord::Schema.define(version: 2021_11_25_144538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -66,6 +66,15 @@ ActiveRecord::Schema.define(version: 2021_11_18_020557) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["chat_bot_option_id"], name: "index_additional_bot_answers_on_chat_bot_option_id"
+  end
+
+  create_table "additional_fast_answers", force: :cascade do |t|
+    t.bigint "template_id"
+    t.text "answer"
+    t.string "file_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["template_id"], name: "index_additional_fast_answers_on_template_id"
   end
 
   create_table "admin_users", force: :cascade do |t|
@@ -1092,6 +1101,7 @@ ActiveRecord::Schema.define(version: 2021_11_18_020557) do
     t.string "timezone"
     t.boolean "send_max_size_files", default: false, null: false
     t.string "currency", default: "USD", null: false
+    t.boolean "multiple_fast_answers", default: false
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

@@ -75,6 +75,10 @@
                   <% elsif template.image.attached? %>
                     <%= t('retailer.settings.quick_answers.common.file') %>
                   <% end %>
+
+                  <% if template.additional_fast_answers.exists? %>
+                    <p class="c-gray-label"><%= t('retailer.settings.quick_answers.list.with_additional_answers') %></p>
+                  <% end %>
                 </div>
                 <div class="col-xs-10 col-sm-2 c-grey t-center">
                   <% if template.global || template.retailer_user_id.blank? %>

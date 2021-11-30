@@ -479,3 +479,29 @@ export const fetchCurrentRetailerUser = () => {
       });
   };
 };
+
+export const sendFacebookMultipleAnswers = (id, body, token, platform = 'messenger') => {
+  const endpoint = `/api/v1/customers/${id}/messages/send_multiple_answers?platform=${platform}`;
+  const csrfToken = token;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: "POST",
+      credentials: 'same-origin',
+      headers: {
+        'X-CSRF-Token': csrfToken
+      },
+      body
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: 'SET_SEND_MESSAGE', data }),
+        (err) => dispatch({ type: 'LOAD_DATA_FAILURE', err })
+      ).catch((error) => {
+        if (error.response) {
+          alert(error.response);
+        } else {
+          alert("An unexpected error occurred.");
+        }
+      });
+  };
+};

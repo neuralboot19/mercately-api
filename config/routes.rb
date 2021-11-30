@@ -244,6 +244,7 @@ Rails.application.routes.draw do
       post 'customers/:id/messages/imgs', to: 'customers#send_img', as: :send_img
       post 'messages/:id/read', to: 'customers#set_message_as_read', as: :set_message_as_read
       post 'customers/:id/messages/send_bulk_files', to: 'customers#send_bulk_files', as: :send_bulk_files
+      post 'customers/:id/messages/send_multiple_answers', to: 'customers#send_multiple_answers'
       # For 360
       post 'whatsapp', to: 'whatsapp#create'
 
@@ -263,6 +264,7 @@ Rails.application.routes.draw do
       put 'whatsapp_update_message_read/:id', to: 'karix_whatsapp#message_read', as: :karix_message_read
       patch 'whatsapp_unread_chat/:id', to: 'karix_whatsapp#set_chat_as_unread', as: :set_chat_as_unread
       post 'karix_whatsapp_send_bulk_files/:id', to: 'karix_whatsapp#send_bulk_files', as: :karix_send_bulk_files
+      post 'send_multiple_whatsapp_answers/:id', to: 'karix_whatsapp#send_multiple_answers'
 
       resources :karix_whatsapp, only: [:index, :create]
       resources :whatsapp_templates, only: [:index]

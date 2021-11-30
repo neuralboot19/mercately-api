@@ -65,7 +65,7 @@ class GoogleMap extends Component {
     return (
       <Modal appElement={document.getElementById("react_content")} isOpen={this.props.showMap} style={modalCustomStyles(this.props.onMobile)}>
         <div className={this.props.onMobile ? "d-flex justify-content-between align-items-center mb-15" : "d-flex justify-content-between align-items-center mb-15" }>
-          <div className="text-gray-dark font-weight-bold">
+          <div className="font-weight-bold">
             <p className={`font-weight-bold m-0 ${fsTitle}`}>Selecciona la ubicación</p>
             <small className="d-none d-md-block">Asegúrate que la ubicación marcada en el mapa es la correcta antes de enviarla</small>
           </div>

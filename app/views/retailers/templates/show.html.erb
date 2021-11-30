@@ -76,6 +76,33 @@
               </div>
             </div>
           </fieldset>
+          <% if current_retailer.multiple_fast_answers && @template.additional_fast_answers.exists? %>
+            <fieldset class="fieldset mt-50">
+              <legend><%= t('retailer.settings.quick_answers.form.additional_fast_answers') %></legend>
+              <% @template.additional_fast_answers.order(id: :asc).each do |afa| %>
+                <div class="box pt-25">
+                  <div class="row">
+                    <div class="col-xs-12">
+                      <p>
+                        <label class="c-grey fs-14"><%= t('retailer.settings.quick_answers.common.content') %>:</label><br /><span class="c-secondary fs-14"><%= afa.answer %></span>
+                      </p>
+                    </div>
+                  </div>
+                  <% if afa.file.attached? %>
+                    <div class="row">
+                      <div class="col-xs-12">
+                        <% if afa.file_type == 'file' %>
+                          <embed src="<%= afa.file_url %>" class="w-200 h-200" width="200" height="200" />
+                        <% else %>
+                          <%= cl_image_tag("#{afa.file.key}", transformation: [{width: 200, height: 200, crop: :scale}]) %>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </fieldset>
+          <% end %>
         </div>
       </div>
     </div>

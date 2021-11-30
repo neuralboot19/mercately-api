@@ -62,7 +62,54 @@ module Whatsapp::Gupshup::V1
       end
     end
 
+    def send_multiple_answers(options)
+      @phone_number = @customer.phone_number(false)
+      @options = options
+      template = @retailer.templates.find_by_id(@options[:params][:template_id])
+      return unless template.present?
+
+      type = @options[:params][:type] != 'text' ? 'file' : @options[:params][:type]
+      request_body = self.send(type)
+      response = send_message_request(request_body[0])
+      response_body = JSON.parse(response.read_body)
+      save_message(response, response_body, request_body, @options[:retailer_user])
+
+      sleep 2 if @options[:params][:url].present?
+
+      template.additional_fast_answers.order(id: :asc).each_with_index do |afa, index|
+        type = afa.file_type.blank? ? 'text' : 'file'
+        update_params(afa, index)
+        request_body = self.send(type)
+        response = send_message_request(request_body[0])
+        response_body = JSON.parse(response.read_body)
+        save_message(response, response_body, request_body, @options[:retailer_user])
+
+        sleep 2 if @options[:params][:url].present?
+      end
+    end
+
     private
+
+      def update_params(afa, index)
+        case afa.file_type
+        when 'file'
+          @options[:params][:content_type] = 'application/pdf'
+          @options[:params][:caption] = afa.answer
+          @options[:params][:file_name] = afa.file.filename.to_s
+          aux_url = afa.file_url
+        when 'image'
+          @options[:params][:content_type] = 'image'
+          @options[:params][:caption] = afa.answer
+
+          formats = 'if_w_gt_1000/c_scale,w_1000/if_end/q_auto'
+          aux_url = afa.file_url.gsub('/image/upload', "/image/upload/#{formats}")
+        else
+          @options[:params][:message] = afa.answer
+        end
+
+        @options[:params][:url] = aux_url
+        @options[:params][:message_identifier] = @options[:params][:message_identifiers][index]
+      end
 
       def base_body
         unless @retailer.gupshup_phone_number.present?
