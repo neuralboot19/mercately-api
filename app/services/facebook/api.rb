@@ -122,6 +122,58 @@ module Facebook
       end
     end
 
+    def send_multiple_answers(customer, params)
+      return unless params[:template_id]
+
+      template = @facebook_retailer.retailer.templates.find_by_id(params[:template_id])
+      return unless template.present?
+
+      url = params[:url]
+      type = params[:type]
+
+      if params[:message].present?
+        params[:url] = nil
+        params[:type] = nil
+        save_message(customer, nil, nil, params)
+      end
+
+      if url.present?
+        params[:url] = url
+        params[:type] = type
+        params[:message] = nil
+        identifier = params[:message_identifiers][0]
+        params[:message_identifier] = identifier
+        params[:message_identifiers].delete(identifier)
+
+        save_message(customer, nil, nil, params)
+
+        sleep 2
+      end
+
+      index = 0
+      template.additional_fast_answers.order(id: :asc).each do |afa|
+        if afa.answer.present?
+          params[:url] = nil
+          params[:type] = nil
+          params[:message_identifier] = params[:message_identifiers][index]
+          params[:message] = afa.answer
+          index += 1
+          save_message(customer, nil, nil, params)
+        end
+
+        if afa.file.attached?
+          params[:message] = nil
+          params[:message_identifier] = params[:message_identifiers][index]
+          params[:url] = format_url(afa)
+          params[:type] = afa.file_type
+          index += 1
+          save_message(customer, nil, nil, params)
+
+          sleep 2
+        end
+      end
+    end
+
     private
 
       def pages_url
@@ -210,8 +262,17 @@ module Facebook
           filename: filename,
           retailer_user: @retailer_user,
           file_type: params[:type],
+          file_url: params[:url],
+          text: params[:message],
           message_identifier: @index ? params[:message_identifiers][@index] : params[:message_identifier]
         )
+      end
+
+      def format_url(afa)
+        return afa.file_url if afa.file_type != 'image'
+
+        formats = 'if_w_gt_1000/c_scale,w_1000/if_end/q_auto'
+        afa.file_url.gsub('/image/upload', "/image/upload/#{formats}")
       end
   end
 end

@@ -6,8 +6,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
   include CurrentRetailer
 
   before_action :set_customer, only: [:messages, :send_file, :message_read, :set_chat_as_unread, :send_bulk_files,
-    :create]
-  before_action :validate_balance, only: [:create, :send_file, :send_bulk_files]
+    :create, :send_multiple_answers]
+  before_action :validate_balance, only: [:create, :send_file, :send_bulk_files, :send_multiple_answers]
   protect_from_forgery only: [:save_message]
 
   def index
@@ -279,6 +279,28 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     elsif current_retailer.gupshup_integrated?
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, @customer)
       gws.send_bulk_files(type: 'file', params: params, retailer_user: current_retailer_user)
+    end
+
+    render status: 200, json: {
+      message: 'Notificación enviada',
+      recent_inbound_message_date: @customer.recent_inbound_message_date
+    }
+  rescue => e
+    Rails.logger.error(e)
+    SlackError.send_error(e)
+    render status: 400, json: {message: "Faltaron parámetros"}
+  end
+
+  def send_multiple_answers
+    assign_agent(@customer)
+
+    if current_retailer.karix_integrated?
+      karix_helper = KarixNotificationHelper
+      karix_helper.ws_message_service.send_multiple_answers(retailer: current_retailer,
+        retailer_user: current_retailer_user, customer: @customer, params: params)
+    elsif current_retailer.gupshup_integrated?
+      gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, @customer)
+      gws.send_multiple_answers(params: params, retailer_user: current_retailer_user)
     end
 
     render status: 200, json: {

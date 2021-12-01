@@ -5,19 +5,19 @@ class AgentCustomer < ApplicationRecord
 
   before_destroy :agent_data
   before_update :agent_data, if: :will_save_change_to_retailer_user_id?
-  before_save :send_push_notification
   after_destroy :free_spot_on_destroy
   after_update :free_spot_on_change, if: :saved_change_to_retailer_user_id?
+  after_commit :send_push_notification, on: [:create, :update]
 
   scope :update_range_between, -> (start_date, end_date) { where(updated_at: start_date..end_date) }
 
   private
 
     def send_push_notification
-      tokens = self.retailer_user.mobile_tokens
-                                 .active
-                                 .pluck(:mobile_push_token)
-                                 .compact
+      tokens = retailer_user.mobile_tokens
+        .active
+        .pluck(:mobile_push_token)
+        .compact
 
       # It is suposed that tokens should be an empty array
       # if not found any mobile push token, anyway, I rather
@@ -33,11 +33,11 @@ class AgentCustomer < ApplicationRecord
                   'messenger'
                 end
 
-      Retailers::MobilePushNotificationJob.perform_later(tokens, body, self.customer.id, channel)
+      Retailers::MobilePushNotificationJob.perform_later(tokens, body, customer.id, channel)
     end
 
     def customer_name
-      self.customer.full_names.blank? ? self.customer.phone : self.customer.full_names
+      customer.full_names.blank? ? customer.phone : customer.full_names
     end
 
     def agent_data

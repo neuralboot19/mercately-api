@@ -5,6 +5,7 @@ import { getMessengerFastAnswers, getInstagramFastAnswers } from "../../actions/
 import { getWhatsAppFastAnswers } from "../../actions/whatsapp_karix";
 
 import SearchIcon from 'images/search.svg';
+import MultipleFastAnswer from './MultipleFastAnswersModal';
 
 const csrfToken = document.querySelector('[name=csrf-token]').content
 
@@ -15,7 +16,9 @@ class FastAnswers extends Component {
       fastAnswers: [],
       searchString: '',
       shouldUpdate: true,
-      page: 1
+      page: 1,
+      showMultipleAnswers: false,
+      selectedAnswer: null
     };
   }
 
@@ -126,6 +129,15 @@ class FastAnswers extends Component {
     return originalUrl.replace('/image/upload', `/image/upload/${formats}`);
   }
 
+  toggleMultipleAnswersModal = (e, answer) => {
+    e.stopPropagation();
+
+    this.setState({
+      showMultipleAnswers: !this.state.showMultipleAnswers,
+      selectedAnswer: answer
+    });
+  }
+
   render() {
     return (
       <div className={this.props.onMobile ? "customer_sidebar chat-right-side-selector no-border-left" : "quickly-answers-container customer_sidebar chat-right-side-selector" } onScroll={(e) => this.handleLoadMoreOnScrollToBottom(e)}>
@@ -155,6 +167,9 @@ class FastAnswers extends Component {
                 <span className="answer-title">{answer.attributes.title}</span>
                 <span className="select_answer"><i className="fas fa-check-circle check-icon"></i></span>
               </div>
+              {answer.attributes.additional_fast_answers.data?.length > 0 &&
+                <span className="fs-12 c-secondary" onClick={(e) => this.toggleMultipleAnswersModal(e, answer)}>Multiples respuestas</span>
+              }
               <div className="divider"></div>
               <div className="container-answer-description">
                 {answer.attributes.image_url && (
@@ -171,6 +186,13 @@ class FastAnswers extends Component {
             </div>
           ))}
         </div>
+
+        <MultipleFastAnswer
+          onMobile={this.props.onMobile}
+          toggleMultipleAnswersModal={this.toggleMultipleAnswersModal}
+          showMultipleAnswers={this.state.showMultipleAnswers}
+          selectedAnswer={this.state.selectedAnswer}
+        />
       </div>
     );
   }

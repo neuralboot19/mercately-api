@@ -15,7 +15,8 @@ import {
   setWhatsAppMessageAsRead,
   toggleChatBot,
   createReminder,
-  setLastMessages
+  setLastMessages,
+  sendWhatsAppMultipleAnswers
 } from '../../actions/whatsapp_karix';
 import {
   addNote as addNoteAction
@@ -275,6 +276,11 @@ class ChatMessages extends Component {
       showEmojiPicker: false
     });
 
+    if (this.hasAdditionalAnswers()) {
+      this.sendMultipleAnswers();
+      return;
+    }
+
     if (this.objectPresence()) {
       this.handleSubmitImg();
       return;
@@ -299,6 +305,98 @@ class ChatMessages extends Component {
     });
 
     this.setFocus();
+  }
+
+  sendMultipleAnswers = () => {
+    const answer = this.state.selectedFastAnswer.attributes;
+    const insertedMessages = [];
+    const text = this.getText();
+    const data = new FormData();
+    let uuid = uuidv4();
+    let type = 'text';
+    let url = stringUtils.formatSentUrl(answer.image_url);
+    let filename;
+
+    data.append('template', false);
+    data.append('message_identifier', uuid);
+    data.append('template_id', answer.id);
+
+    if (answer.file_type === 'file') {
+      type = 'document';
+      filename = answer.file_name;
+      data.append('file_name', filename);
+      data.append('content_type', 'application/pdf');
+    } else if (answer.file_type === 'image') {
+      type = 'image';
+      data.append('content_type', 'image');
+    }
+
+    data.append('type', type);
+
+    if (url) {
+      data.append('url', url);
+      data.append('caption', text);
+    } else {
+      data.append('message', text);
+    }
+
+    insertedMessages.push({
+      content_type: type === 'text' ? 'text' : 'media',
+      content_media_type: type,
+      content_media_url: url,
+      direction: 'outbound',
+      content_text: type === 'text' ? text : null,
+      content_media_caption: type !== 'text' ? text : null,
+      status: 'enqueued',
+      filename: filename,
+      created_time: new Date(),
+      message_identifier: uuid
+    });
+
+    answer.additional_fast_answers.data.forEach((afa) => {
+      uuid = uuidv4();
+      data.append('message_identifiers[]', uuid);
+      type = 'text';
+      url = afa.attributes.file_url;
+
+      if (afa.attributes.file_type === 'file') {
+        type = 'document';
+      } else if (afa.attributes.file_type === 'image') {
+        type = 'image';
+      }
+
+      filename = type === 'document' ? afa.attributes.file_name : null;
+
+      insertedMessages.push({
+        content_type: type === 'text' ? 'text' : 'media',
+        content_media_type: type,
+        content_media_url: url,
+        direction: 'outbound',
+        content_text: type === 'text' ? afa.attributes.answer : null,
+        content_media_caption: type !== 'text' ? afa.attributes.answer : null,
+        status: 'enqueued',
+        filename: filename,
+        created_time: new Date(),
+        message_identifier: uuid
+      });
+    });
+
+    this.setState((prevState) => ({
+      messages: prevState.messages.concat(insertedMessages),
+      new_message: true,
+      selectedFastAnswer: null
+    }), () => {
+      this.props.sendWhatsAppMultipleAnswers(this.props.currentCustomer, data, csrfToken);
+      $('#divMessage').html(null);
+      this.maximizeInputText();
+      this.scrollToBottom();
+    });
+
+    this.setFocus();
+  }
+
+  hasAdditionalAnswers = () => {
+    return this.state.selectedFastAnswer && this.state.selectedFastAnswer.attributes.additional_fast_answers.data.length > 0;
   }
 
   handleSubmitWhatsAppMessage = (e, message, isTemplate) => {
@@ -1670,6 +1768,9 @@ function mapDispatch(dispatch) {
     },
     fetchCurrentRetailerUser: () => {
       dispatch(fetchCurrentRetailerUser());
+    },
+    sendWhatsAppMultipleAnswers: (id, body, token) => {
+      dispatch(sendWhatsAppMultipleAnswers(id, body, token));
     }
   };
 }

@@ -501,6 +501,7 @@ es:
           text: Texto
           global: Global
           personal: Personal
+          with_additional_answers: Tiene respuestas adicionales
         new:
           create_answer: Crear respuesta
         edit:
@@ -518,6 +519,12 @@ es:
           mercado_libre_question: Preguntas de MercadoLibre
           note_mercado_libre_question: 'Nota: Para preguntas, no se debe incluir información de contacto, como teléfonos, direcciones exactas o nombres personales'
           mercado_libre_messages: Mensajes de MercadoLibre
+          additional_fast_answers: Respuestas adicionales
+          add_additional_fast_answer: Agregar Respuesta
+          new_additional_fast_answer:
+            add_image_or_pdf: Agregar imagen o PDF
+          edit_additional_fast_answer:
+            update_image_or_pdf: Actualizar imagen o PDF
         common:
           title: Título
           content: Contenido
@@ -526,6 +533,8 @@ es:
           file: Archivo
           global_answer_question: ¿Respuesta global?
           confirm_remove_text: ¿Estás seguro de eliminar la respuesta?
+          additional_answer_input_label: Contenido
+          error_size_message: La imagen debe ser de máximo 5MB y el PDF de máximo 25MB
       welcome_messages:
         title: Mensajes de Bienvenida
         messages_for_new_clients: Mensaje para clientes nuevos
@@ -543,6 +552,7 @@ es:
     edit: Editar
     remove: Eliminar
     save: Guardar
+    nested_remove: Remover
   actions:
     view: Ver
     edit: Editar

@@ -207,6 +207,12 @@ class Api::V1::CustomersController < Api::ApiController
     render status: 200, json: { message: 'Mensaje enviado' }
   end
 
+  def send_multiple_answers
+    facebook_service.send_multiple_answers(@customer, current_retailer_user, params)
+
+    render status: 200, json: { message: 'Mensaje enviado' }
+  end
+
   def search_customers
     customers = current_retailer.customers
 

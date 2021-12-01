@@ -158,9 +158,7 @@ const MessageForm = ({
         <ScrollingCarousel className="scrolling-carousel">
           <FastAnswerButton toggleFastAnswers={toggleFastAnswers} />
           <OpenNoteModalButton openNoteModal={openNoteModal} />
-          {ENV.HAS_FUNNELS && (
-            <DealButton openDealModal={openDealModal} />
-          )}
+          <DealButton openDealModal={openDealModal} />
         </ScrollingCarousel>
       </div>
       <div className="text-input row mx-0 no-gutters text-input-padding border-input-top">
