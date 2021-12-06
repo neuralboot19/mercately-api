@@ -44,7 +44,7 @@ module PushNotificationable
 
     def users_to_be_notified
       msg_customer = Customer.eager_load(:agent, retailer: [:retailer_users])
-                             .find_by_id(customer_id)
+        .find_by_id(customer_id)
 
       assigned_agent = [msg_customer.agent]
       admins = gather_admins(msg_customer.retailer)
@@ -53,7 +53,7 @@ module PushNotificationable
 
     def users_tokens(users)
       tokens = users.compact.map do |ru|
-        active_tokens = ru.mobile_tokens.active
+        active_tokens = ru.mobile_tokens
         next unless active_tokens.exists?
 
         active_tokens.pluck(:mobile_push_token)

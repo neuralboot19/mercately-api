@@ -768,7 +768,6 @@ ActiveRecord::Schema.define(version: 2021_11_25_144538) do
     t.string "encrypted_token"
     t.string "encrypted_token_iv"
     t.string "encrypted_token_salt"
-    t.datetime "expiration"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "mobile_push_token"
