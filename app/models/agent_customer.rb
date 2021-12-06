@@ -15,7 +15,6 @@ class AgentCustomer < ApplicationRecord
 
     def send_push_notification
       tokens = retailer_user.mobile_tokens
-        .active
         .pluck(:mobile_push_token)
         .compact
 
