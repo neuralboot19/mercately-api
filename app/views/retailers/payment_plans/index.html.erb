@@ -281,68 +281,6 @@
         </div>
       <% end %>
     </div>
-
-    <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle"/>
-
-    <div class="modal">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-2"></div>
-          <div class="col-xs-12 col-md-8 middle">
-            <label class="modal__background" for="modal--toggle"></label>
-            <div class="modal__window box p-16">
-              <div class="row middle-xs">
-                <div class="col-xs-12 col-sm-8">
-                  <div class="index__ctas f-right">
-                    <label class="skip modal__close" for="modal--toggle">
-                      <i class="far fa-times-circle"></i>
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-xs-12 p-10">
-                  <legend>Plan:</legend>
-                  <h2 id="selected_plan_name" class="mt-10"></h2>
-                  <h2 id="selected_plan_price" class="mt-10"></h2>
-                  <input type="hidden" name="selected_plan" id="selected_plan">
-                  <%= check_box_tag :agree_terms, true, false, class: 'f-left w-auto', style: 'width: auto;' %>
-                  <%= label_tag :agree_terms, 'He leído y acepto los', class: 'p-static' %>
-                  <%= link_to 'términos y condiciones', terms_path, target: :_blank, class: 'link-register-terms' %>
-                </div>
-
-                <div class="col-xs-12 pb-10">
-                  <legend>Agregar Tarjeta</legend>
-                  <% if current_retailer.ecu_charges %>
-                    <%= render partial: 'paymentez_credit_card', locals: { pm: @pm, purchase_plan: true, is_modal: true } %>
-                  <% elsif current_retailer.int_charges %>
-                    <%= render partial: 'payment_method', locals: { pm: @pm, purchase_plan: true, is_modal: true } %>
-                  <% end %>
-
-                  <% if current_retailer.paymentez_credit_cards.any? %>
-                    <div class="my-16 col-xs-12">
-                      <legend>Seleccione una de sus tarjetas</legend>
-                      <%= select_tag :paymentez_credit_card, options_for_select(PaymentezCardHelper.credit_cards(current_retailer.paymentez_credit_cards)), class: 'input' %>
-                      <i class="validation-msg"></i>
-                    </div>
-                    </div>
-
-                    <div class="col-xs-12">
-                      <div class="row btn-box">
-                        <button class="btn btn--cta btn-small submit-card" id="submit_purchase_plan" disabled="disabled">
-                          <i class="fas fa-dollar-sign" id="btn_cc"></i>
-                          <i class="fas fa-spinner hidden" id="btn_spinner"></i>
-                          <span>Comprar</span>
-                        </button>
-                      </div>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   <% end %>
 </div>
 

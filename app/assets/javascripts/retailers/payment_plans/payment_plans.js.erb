@@ -8,36 +8,18 @@ document.addEventListener("DOMContentLoaded", function() {
   var submit_card = $('.submit-card');
 
   var toggler = document.getElementById('modal--toggle');
-  toggler.checked = false;
+
+  if (toggler) toggler.checked = false;
+
   document.querySelectorAll('.pricing__card label, #add_balance').forEach(function(el) {
     el.onclick = function() {
       $('#selected_plan_name').text(el.dataset.plan_name);
       $('#selected_plan_price').text(el.dataset.plan_price);
       $('#selected_plan').val(el.dataset.plan);
-      toggler.checked = true;
+
+      if (toggler) toggler.checked = true;
     }
-  })
-
-  var agree_terms = $('#agree_terms');
-
-  if (agree_terms.val() === 'true') {
-    agree_terms.attr('checked', false);
-    submit_card.attr('disabled', true);
-
-    agree_terms.click(function () {
-      if (submit_purchase_plan.attr('disabled')) {
-        submit_purchase_plan.attr('disabled', false);
-      } else {
-        submit_purchase_plan.attr('disabled', true);
-      }
-
-      if (submit_card.attr('disabled')) {
-        submit_card.attr('disabled', false);
-      } else {
-        submit_card.attr('disabled', true);
-      }
-    });
-  }
+  });
 
   if (submit_purchase_plan) {
     submit_purchase_plan.click(function(){
@@ -49,8 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
         card: {
           amount: $('#selected_plan_price').text(),
           cc_id: pcc,
-          plan: $('#selected_plan').val(),
-          terms: $('#agree_terms').prop('checked')
+          plan: $('#selected_plan').val()
         }
       };
 
