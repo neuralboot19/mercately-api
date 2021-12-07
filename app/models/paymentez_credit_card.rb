@@ -4,8 +4,8 @@ class PaymentezCreditCard < ApplicationRecord
   belongs_to :retailer
   has_many :paymentez_transactions, dependent: :destroy
 
-  before_save :set_default
   before_destroy :erase_from_paymentez
+  after_commit :set_default, on: :create
 
   default_scope -> { where(deleted: false).order(main: :desc) }
 
@@ -58,7 +58,8 @@ class PaymentezCreditCard < ApplicationRecord
   end
 
   def delete_card!
-    update(deleted: true)
+    return false unless update(deleted: true)
+
     erase_from_paymentez
   end
 
@@ -68,16 +69,18 @@ class PaymentezCreditCard < ApplicationRecord
     response = self.class.do_request('post', body, url)
 
     Rails.logger.info(response.body)
-    return true if response.status == 200
+    if response.status == 200
+      retailer.paymentez_credit_cards.order(id: :desc).first.update_column(:main, true) if main
+      return true
+    end
 
     update(deleted: false)
-    errors.add(:base, 'Error al borrar tarjeta')
-    throw(:abort)
+    false
   end
 
   def set_default
-    return true if self.retailer.main_paymentez_credit_card.present?
-    self.main = true
+    retailer.paymentez_credit_cards.update_all(main: false)
+    update_column(:main, true)
   end
 
   def self.erase_from_paymentez_with_id(id, token)

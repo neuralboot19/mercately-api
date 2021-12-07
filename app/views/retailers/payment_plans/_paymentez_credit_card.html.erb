@@ -3,7 +3,7 @@
     <% pm.each_slice(2) do |payment_method| %>
       <div class="row mt-25 ml-0">
         <div class="col-md-6 col-12 pl-0 odd-card-mobile">
-          <div class="credit-card-container row ml-0">
+          <div class="credit-card-container row ml-0 <%= payment_method[0].main ? 'main' : '' %>">
             <div class="col-9 col-md-9 pl-0">
               <% if payment_method[0].card_type == 'vi' %>
                 <%= image_tag 'dashboard/payments/visa-icon.svg', class: 'mr-20' %>
@@ -14,6 +14,11 @@
               <span class="fs-14"><%= "#{payment_method[0].expiry_month}/#{payment_method[0].expiry_year}" %></span>
             </div>
             <div class="col-3 col-md-3 pr-0 t-right">
+              <%= link_to retailers_paymentez_set_default_path(slug: current_retailer, id: payment_method[0].id),
+                method: :put, data: { confirm: t('retailer.profile.payment_plans.index.update_card_confirmation') },
+                class: '' do %>
+                <i class="fas fa-check-circle fs-16 mr-15 check-main-icon" data-toggle="tooltip" data-placement="top" title="<%= t('retailer.profile.payment_plans.set_as_main') %>"></i>
+              <% end %>
               <% if current_retailer.paymentez_credit_cards.count > 1 %>
                 <%= link_to retailers_paymentez_path(slug: current_retailer, id: payment_method[0].id),
                   method: :delete, data: { confirm: t('retailer.profile.payment_plans.index.delete_card_confirmation') },
@@ -26,7 +31,7 @@
         </div>
         <% if payment_method[1].present? %>
           <div class="col-md-6 col-12 pr-0 even-card-mobile">
-            <div class="credit-card-container row ml-0">
+            <div class="credit-card-container row ml-0 <%= payment_method[1].main ? 'main' : '' %>">
               <div class="col-9 col-md-9 pl-0">
                 <% if payment_method[1].card_type == 'vi' %>
                   <%= image_tag 'dashboard/payments/visa-icon.svg', class: 'mr-20' %>
@@ -37,6 +42,11 @@
                 <span class="fs-14"><%= "#{payment_method[1].expiry_month}/#{payment_method[1].expiry_year}" %></span>
               </div>
               <div class="col-3 col-md-3 pr-0 t-right">
+                <%= link_to retailers_paymentez_set_default_path(slug: current_retailer, id: payment_method[1].id),
+                  method: :put, data: { confirm: t('retailer.profile.payment_plans.index.update_card_confirmation') },
+                  class: '' do %>
+                  <i class="fas fa-check-circle fs-16 mr-15 check-main-icon" data-toggle="tooltip" data-placement="top" title="<%= t('retailer.profile.payment_plans.set_as_main') %>"></i>
+                <% end %>
                 <% if current_retailer.paymentez_credit_cards.count > 1 %>
                   <%= link_to retailers_paymentez_path(slug: current_retailer, id: payment_method[1].id),
                     method: :delete, data: { confirm: t('retailer.profile.payment_plans.index.delete_card_confirmation') },
