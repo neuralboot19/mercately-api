@@ -1,6 +1,6 @@
 en:
   locale: 'EN'
-  hello: 'Hello world'
+  hello: 'Hello %{name},'
   mongoid:
     errors:
       messages:
@@ -334,3 +334,26 @@ en:
     view: View
     edit: Edit
     remove: Remove
+  views:
+    dashboard:
+      greetings: 'Check what is happening in your commerce 🙌'
+      quick_check: 'Quick look'
+      successful_sales: 'Sales'
+      customers_registered: 'Customers registered'
+      messages: 'Messages'
+      events: 'Events'
+      latest_news: 'Latest news'
+      integrate_with: 'Integrate with'
+      connected: 'Conected'
+      configure: 'Configure'
+      recent_orders: 'Recent orders'
+      view_all: 'View all'
+      orders:
+        info: 'Information'
+        status: 'Status'
+        customer: 'Client / Channel'
+        total: 'Total'
+      best_sellers: 'Best sellers'
+      no_products: 'No products to show'
+      no_orders: 'No orders to show'
+      no_news: 'No news to show'

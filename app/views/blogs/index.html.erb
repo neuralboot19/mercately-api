@@ -42,8 +42,8 @@
           <div class="post-entry-wrapper">
             <div class="entry-image-post-thumb">
               <%= link_to blog_content_path(doc.uid), class: 'link_image featured-thumbnail' do %>
-              <img src="<%= doc['blogentry.blog_index_image']&.url %>" class="post-entry-img" alt="">
-              <div class="background_over_image"></div>
+                <img src="<%= doc['blogentry.blog_index_image']&.url %>" class="post-entry-img" alt="">
+                <div class="background_over_image"></div>
               <% end %>
               <span class="post-entry-category">
                 <a class="category-link" style="background:#36c942" href="#">

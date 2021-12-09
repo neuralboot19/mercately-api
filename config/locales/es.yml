@@ -1,5 +1,6 @@
 es:
   locale: ES
+  hello: 'Hola %{name},'
   activerecord:
     models:
       customer:
@@ -287,6 +288,28 @@ es:
       more_pages:
         display_entries: "Mostrando %{entry_name} <b>%{first}&nbsp;-&nbsp;%{last}</b> de <b>%{total}</b> en total"
   views:
+    dashboard:
+      greetings: 'Conoce lo que está pasando en tu comercio 🙌'
+      quick_check: 'Vistazo rápido'
+      successful_sales: 'Ventas realizadas'
+      customers_registered: 'Clientes registrados'
+      messages: 'Mensajes'
+      events: 'Eventos'
+      latest_news: 'Últimas noticias'
+      integrate_with: 'Integrate con'
+      connected: 'Conectado'
+      configure: 'Configurar'
+      recent_orders: 'Órdenes recientes'
+      view_all: 'Ver todos'
+      orders:
+        info: 'Información'
+        status: 'Estado'
+        customer: 'Cliente / Canal'
+        total: 'Total'
+      best_sellers: 'Productos más vendidos'
+      no_products: 'Sin productos para mostrar'
+      no_orders: 'Sin órdenes para mostrar'
+      no_news: 'Sin noticias para mostrar'
     pagination:
       first: "&laquo; Primera"
       last: "Última &raquo;"
