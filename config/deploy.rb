@@ -28,13 +28,6 @@ namespace :deploy do
      execute :sudo, :systemctl, :restart, :sidekiq
    end
  end
- desc "Restart nginx"
- task :restart_nginx do
-   on roles(:app), in: :sequence, wait: 5 do
-     execute :sudo, :systemctl, :restart, :nginx
-   end
- end
  after :finishing,   :restart_mercately
  after :finishing,   :restart_sidekiq
- after :finishing,   :restart_nginx
 end
