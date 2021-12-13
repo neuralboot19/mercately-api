@@ -33,6 +33,10 @@ class HsUpdateFieldJob < ApplicationJob
         end
       end
     end
+  rescue StandardError
+    chf = CustomerHubspotField.find(chf_id)
+    retailer = chf.retailer
+    HubspotService::Api.notify_broken_integration(retailer)
   end
 
   private

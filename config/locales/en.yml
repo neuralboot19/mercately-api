@@ -20,6 +20,11 @@ en:
     api_key: 'API Key'
     logout: 'Logout'
   mailer:
+    broken_hs_integration:
+      broken_integration: 'Hubspot integration disabled'
+      p1: 'Your Hubspot integration has been disabled, this can happen by multiple reasons,'
+      p2: 'the most common ones are password changing or account inactivation by Hubspot.'
+      p3: 'To re-integrate with Hubspot, go to '
     failed_charge_subject: '[Urgent] Your Mercately payment was not successful'
     failed_charge_greetings: 'Hello %{name}'
     failed_charge_message: 'We were unable to charge your card %{card} for your payment to Mercately, LLC. Update your billing information at the following link:'

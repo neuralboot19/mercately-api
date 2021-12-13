@@ -53,7 +53,7 @@ class Customer < ApplicationRecord
   before_validation :grab_country_on_import, if: -> { from_import_file }
   before_validation :format_phone_number
   before_validation :format_mexican_numbers, if: -> { country_id == 'MX' }
-  before_save :hs_active!, if: -> (obj) { obj.retailer.hubspot_integrated? && obj.hs_active.nil? && obj.retailer.all_customers_hs_integrated }
+  before_save :hs_active!, if: -> (obj) { obj.retailer.reload.hubspot_integrated? && obj.hs_active.nil? && obj.retailer.all_customers_hs_integrated }
   before_save :update_valid_customer
   before_save :calc_ws_notification_cost
   before_save :save_wa_name
@@ -62,7 +62,7 @@ class Customer < ApplicationRecord
   after_save :verify_opt_in
   after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
-  after_update :sync_hs, if: :hs_active?
+  after_commit :sync_hs, on: :update, if: :hs_active?
 
   enum id_type: %i[cedula pasaporte ruc rut otro]
   enum pstype: %i[messenger instagram]
@@ -664,7 +664,7 @@ class Customer < ApplicationRecord
     end
 
     def create_hs_customer
-      return false if email.blank?
+      return false if email.blank? || !retailer.reload.hubspot_integrated?
 
       params = {}
       self_hash = as_json
@@ -673,24 +673,37 @@ class Customer < ApplicationRecord
       end
       params['email'] = email
       hs_contact = hubspot.contact_create(params)
-      update_column(:hs_id, hs_contact['id'])
+      SlackError.send_error("create_hs_customer: #{id} #{hs_contact['id']}")
+      if hs_contact['id']
+        update_column(:hs_id, hs_contact['id'])
+      else
+        update_column(:hs_active, false)
+      end
+    rescue StandardError
+      HubspotService::Api.notify_broken_integration(retailer)
     end
 
     def sync_hs
+      SlackError.send_error("sync HS #{retailer.id}")
+      return unless retailer.reload.hubspot_integrated?
+
       if hs_id.nil?
         if retailer.hubspot_match_phone_or_email?
           hs_c = hubspot.search(email: email)
           hs_c = hubspot.search(phone: phone) if hs_c.blank?
+          SlackError.send_error("hubspot_match_phone_or_email: #{id} #{hs_c['id']}")
           return create_hs_customer if hs_c.blank?
 
           update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_phone?
           hs_c = hubspot.search(phone: phone)
+          SlackError.send_error("hubspot_match_phone: #{id} #{hs_c['id']}")
           return create_hs_customer if hs_c.blank?
 
           update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_email?
           hs_c = hubspot.search(email: email)
+          SlackError.send_error("hubspot_match_email: #{id} #{hs_c['id']}")
           return create_hs_customer if hs_c.blank?
 
           update_column(:hs_id, hs_c['id'])
@@ -705,10 +718,12 @@ class Customer < ApplicationRecord
         params[chf.hubspot_field.hubspot_field] = self_hash[chf.customer_field]
       end
       hubspot.contact_update(hs_id, params)
+    rescue StandardError
+      HubspotService::Api.notify_broken_integration(retailer)
     end
 
     def hubspot
-      return if retailer.hs_access_token.blank?
+      return if retailer.reload.hs_access_token.blank?
 
       @hubspot = HubspotService::Api.new(retailer.hs_access_token)
     end

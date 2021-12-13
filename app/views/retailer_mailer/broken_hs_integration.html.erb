@@ -1,0 +1,37 @@
+<%= stylesheet_link_tag "mailers/welcome_mailer" %>
+<div class="main-container-reset ff-welcome-mail">
+  <div class="inner-container-reset">
+    <div class="logo-container">
+      <%= image_tag 'mailer/logo.png', class: "image-logo-reset" %>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        <%= t('mailer.broken_hs_integration.broken_integration') %>
+      </p>
+    </div>
+
+    <div class="ml-45 mt-20 mr-45">
+      <p class="fs-16 p-color lg-18">
+        <%= t('mailer.broken_hs_integration.p1') %>
+        <br />
+        <%= t('mailer.broken_hs_integration.p2') %>
+        <br />
+        <%= t('mailer.broken_hs_integration.p3') %> <%= link_to retailers_integrations_url(@retailer), retailers_integrations_url(@retailer) %>
+      </p>
+
+    </div>
+
+    <div class="sign-container">
+      <p class="fs-16 p-color fw-bold">
+        <%= Date.current.year %> MERCATELY
+      </p>
+    </div>
+
+    <div id="social-media" class="social-media-container">
+      <%= image_tag 'facebook-logo.png', class:"social-media-icons" %>
+      <%= image_tag 'twitter.png', class:"social-media-icons" %>
+      <%= image_tag 'instagram.png', class:"social-media-icons" %>
+    </div>
+  </div>
+</div>

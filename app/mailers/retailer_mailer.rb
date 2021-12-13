@@ -27,6 +27,14 @@ class RetailerMailer < ApplicationMailer
     mail to: retailer_email, subject: 'Mercately Exportación de Clientes Completa'
   end
 
+  def broken_hs_integration(retailer_user)
+    @retailer = retailer_user.retailer
+
+    I18n.with_locale(retailer_user.locale) do
+      mail to: retailer_user.email, subject: t('mailer.broken_hs_integration.broken_integration')
+    end
+  end
+
   def running_out_balance(retailer, email)
     @retailer = retailer
     mail to: email, subject: 'Su saldo está a punto de terminarse'

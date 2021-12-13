@@ -7,7 +7,7 @@ class CustomerHubspotField < ApplicationRecord
 
   after_save :set_hubspot_field_taken
   after_save :save_tags
-  after_commit :update_hubspot, on: [:create, :update]
+  after_commit :update_hubspot, on: [:create, :update], if: -> { retailer.reload.hubspot_integrated? }
   after_destroy :set_hubspot_field_not_taken
 
   private

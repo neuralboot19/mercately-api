@@ -1,5 +1,17 @@
 module HubspotService
   class Api
+    def self.notify_broken_integration(retailer)
+      SlackError.send_error("HS broken #{retailer.id}, Backtrace notify_broken_integration: #{caller[0]}")
+
+      retailer.update(hs_access_token: nil)
+      admins_supervisors = retailer.admins | retailer.supervisors
+      admins_supervisors.each do |user|
+        RetailerMailer.broken_hs_integration(user).deliver_now
+      rescue StandardError => e
+        SlackError.send_error(e)
+      end
+    end
+
     def initialize(access_token = nil)
       config = {
         client_id: ENV['HUBSPOT_CLIENT'],
@@ -27,6 +39,9 @@ module HubspotService
       token = Hubspot::OAuth.refresh(refresh_token)
       @access_token = token['access_token']
       token
+    rescue StandardError
+      retailer = Retailer.find_by(hs_access_token: @access_token)
+      self.class.notify_broken_integration(retailer)
     end
 
     def update_token
