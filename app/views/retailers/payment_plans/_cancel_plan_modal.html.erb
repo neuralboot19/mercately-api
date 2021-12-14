@@ -1,0 +1,66 @@
+<div class="modal fade" id="cancel-modal" tabindex="-1" role="dialog" aria-labelledby="cancel-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content container-payment-plan_card no-border">
+      <div class="modal-header pt-20 px-30">
+        <div id="cancel-title-form">
+          <p class="mercately-modal-title fs-15" id="cancel-modal-label"><%= t('retailer.profile.payment_plans.cancel_plan.question_header') %></p>
+        </div>
+        <div id="cancel-title-confirmation">
+          <p class="mercately-modal-title fs-15" id="cancel-modal-label"><%= t('retailer.profile.payment_plans.cancel_plan.answer_header') %></p>
+        </div>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body py-20 px-30">
+        <div id="form-cancel-body" class="cancel-data-container">
+          <p class="p-description">
+            <%= t('retailer.profile.payment_plans.cancel_plan.details_body') %>:
+          </p>
+
+          <div>
+            <label class="mb-0"><%= radio_button_tag 'reason', 'expensive', false, class: 'radio-button' %><span class="radio-label"><%= t('retailer.profile.payment_plans.cancel_plan.high_price_option') %></span></label><br />
+            <label class="mb-0"><%= radio_button_tag 'reason', 'not_help', false, class: 'radio-button' %><span class="radio-label"><%= t('retailer.profile.payment_plans.cancel_plan.not_help_option') %></span></label><br />
+            <label class="mb-0"><%= radio_button_tag 'reason', 'add_more_functionality', false, class: 'radio-button' %><span class="radio-label"><%= t('retailer.profile.payment_plans.cancel_plan.more_functionality_option') %></span></label><br />
+            <label class="mb-0"><%= radio_button_tag 'reason', 'never_used', false, class: 'radio-button' %><span class="radio-label"><%= t('retailer.profile.payment_plans.cancel_plan.not_used_option') %></span></label><br />
+            <label class="mb-0"><%= radio_button_tag 'reason', 'other', false, class: 'radio-button' %><span class="radio-label"><%= t('retailer.profile.payment_plans.cancel_plan.other_option') %></span></label><br />
+          </div>
+
+          <div>
+            <%= text_area_tag 'comment', nil, { rows: 4, class: 'text-area input', placeholder: t('retailer.profile.payment_plans.cancel_plan.comment_placeholder') } %>
+          </div>
+        </div>
+        <div id="confirmation-cancel-body" class="cancel-data-container">
+          <p class="p-description">
+            <%= t('retailer.profile.payment_plans.cancel_plan.confirmation_advise') %>:
+          </p>
+
+          <div class="my-15">
+            <i class="fas fa-times-circle cancel-circle-icon"></i><span class="cancel-item"><%= t('retailer.profile.payment_plans.cancel_plan.advise_1') %></span>
+          </div>
+          <div class="my-15">
+            <i class="fas fa-times-circle cancel-circle-icon"></i><span class="cancel-item"><%= t('retailer.profile.payment_plans.cancel_plan.advise_2') %></span>
+          </div>
+          <div class="my-15">
+            <i class="fas fa-times-circle cancel-circle-icon"></i><span class="cancel-item"><%= t('retailer.profile.payment_plans.cancel_plan.advise_3') %></span>
+          </div>
+          <div class="my-15">
+            <i class="fas fa-times-circle cancel-circle-icon"></i><span class="cancel-item"><%= t('retailer.profile.payment_plans.cancel_plan.advise_4') %></span>
+          </div>
+          <div class="my-15">
+            <i class="fas fa-times-circle cancel-circle-icon"></i><span class="cancel-item"><%= t('retailer.profile.payment_plans.cancel_plan.advise_5') %></span>
+          </div>
+        </div>
+        <span class="c-red fs-12">* <%= t('retailer.profile.payment_plans.cancel_plan.cancellation_advise') %></span>
+      </div>
+      <div class="modal-footer py-20 px-30">
+        <div id="cancel-button-form">
+          <button type="button" class="btn btn-improve" onclick="validateCancelForm()"><%= t('buttons.send') %></button>
+        </div>
+        <div id="cancel-button-confirmation">
+          <button type="button" class="btn btn-improve" onclick="cancelPlan()"><%= t('retailer.profile.payment_plans.cancel_plan.cancel_button') %></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

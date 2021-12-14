@@ -8,8 +8,8 @@ class Retailers::StripeController < RetailersController
     )
 
     if st.save
-      flash[:notice] = 'Saldo agregado exitosamente'
-      render status: 200, json: { message: 'Saldo agregado exitosamente' }
+      flash[:notice] = t('retailer.stripe.added_balance_success')
+      render status: 200, json: { message: t('retailer.stripe.added_balance_success') }
     else
       error_msg = st.errors.values.join(', ')
       flash[:notice] = error_msg

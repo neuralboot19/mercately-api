@@ -8,13 +8,13 @@
 </style>
 <input type="hidden" id="current_step" value="1">
 <input type="checkbox" class="d-none" name="modal--toggle" id="modal--toggle" checked />
-<div class="modal">
+<div class="modal-mercately">
   <div id="onboarding" class="container">
     <div class="row center-xs">
       <div class="middle">
-        <label class="modal__background"></label>
-        <div class="modal__window box mx-12">
-          <label class="skip modal__close" for="modal--toggle">
+        <label class="modal-mercately__background"></label>
+        <div class="modal-mercately__window box mx-12">
+          <label class="skip modal-mercately__close" for="modal--toggle">
             <i class="far fa-times-circle"></i>
           </label>
           <div class="onboarding__arrow onboarding__arrow--previous" style="display: none;">
@@ -129,15 +129,15 @@
       if (nextSlide === 0) {
         $('.onboarding__arrow--previous').hide();
         $('.onboarding__arrow--next').show();
-        $('.modal__close').show();
+        $('.modal-mercately__close').show();
       } else if (nextSlide === 4) {
         $('.onboarding__arrow--next').hide();
         $('.onboarding__arrow--previous').show();
-        $('.modal__close').hide();
+        $('.modal-mercately__close').hide();
       } else {
         $('.onboarding__arrow--previous').show();
         $('.onboarding__arrow--next').show();
-        $('.modal__close').show();
+        $('.modal-mercately__close').show();
       }
     });
 

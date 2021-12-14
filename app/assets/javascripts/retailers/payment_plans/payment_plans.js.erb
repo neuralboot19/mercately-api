@@ -1,23 +1,18 @@
+let cancelReasonValue, cancelCommentValue;
+
 document.addEventListener("DOMContentLoaded", function() {
   var token =  $('meta[name="csrf-token"]').attr('content');
-  var pcc = $('#paymentez_credit_card').val();
 
   var submit_purchase_plan = $('#submit_purchase_plan');
   submit_purchase_plan.attr('disabled', true);
 
   var submit_card = $('.submit-card');
 
-  var toggler = document.getElementById('modal--toggle');
-
-  if (toggler) toggler.checked = false;
-
   document.querySelectorAll('.pricing__card label, #add_balance').forEach(function(el) {
     el.onclick = function() {
       $('#selected_plan_name').text(el.dataset.plan_name);
       $('#selected_plan_price').text(el.dataset.plan_price);
       $('#selected_plan').val(el.dataset.plan);
-
-      if (toggler) toggler.checked = true;
     }
   });
 
@@ -26,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
       $(this).attr('disabled', true);
       $(this).find('#btn_cc').addClass('hidden');
       $(this).find('#btn_spinner').removeClass('hidden');
+      const pcc = $('#paymentez_credit_card').val();
 
       body = {
         card: {
@@ -46,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function() {
       $(this).attr('disabled', true);
       $(this).find('#btn_cc').addClass('hidden');
       $(this).find('#btn_spinner').removeClass('hidden');
+      const pcc = $('#paymentez_credit_card').val();
 
       body = {
         card: {
@@ -78,4 +75,84 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     });
   }
+
+  $('#cancel-title-confirmation, #confirmation-cancel-body, #cancel-button-confirmation').hide();
+
+  let select2List = $('#stripe_card');
+  if (!select2List.length) select2List = $('#paymentez_credit_card');
+
+  select2List.select2({
+    dropdownCssClass: 'select2-dropdown-payments'
+  });
+
+  if (ENV['CURRENT_AGENT_LANG'] === 'es') {
+    $("#add-card-form").find('.name').attr('placeholder', 'Nombre del titular');
+    $("#add-card-form").find('.card-number').attr('placeholder', 'Número de la tarjeta');
+  } else if (ENV['CURRENT_AGENT_LANG'] === 'en') {
+    $("#add-card-form").find('.name').attr('placeholder', 'Cardholder Name');
+    $("#add-card-form").find('.card-number').attr('placeholder', 'Card number');
+  }
 });
+
+function validateCancelForm() {
+  const reasons = document.querySelectorAll("input[name='reason']");
+
+  for (const el of reasons) {
+    if (el.checked) {
+      cancelReasonValue = el.value;
+      break;
+    }
+  }
+
+  if (!cancelReasonValue) {
+    if (ENV['CURRENT_AGENT_LANG'] === 'es') {
+      alert('Debe seleccionar una de las razones para la cancelación del plan');
+    } else if (ENV['CURRENT_AGENT_LANG'] === 'en') {
+      alert('You must select one of the reasons for plan cancellation');
+    }
+
+    return;
+  }
+
+  cancelCommentValue = $('#comment').val();
+
+  if (cancelReasonValue === 'other' && !cancelCommentValue) {
+    if (ENV['CURRENT_AGENT_LANG'] === 'es') {
+      alert('Debe ingresar algún texto si la razón es Otro');
+    } else if (ENV['CURRENT_AGENT_LANG'] === 'en') {
+      alert('You must enter some text if the reason is Other');
+    }
+    
+    return;
+  }
+
+  $('#cancel-title-form, #form-cancel-body, #cancel-button-form').hide();
+  $('#cancel-title-confirmation, #confirmation-cancel-body, #cancel-button-confirmation').show();
+}
+
+function cancelPlan() {
+  const token = $('meta[name="csrf-token"]').attr('content');
+  const body = {
+    plan_cancellation: {
+      reason: cancelReasonValue,
+      comment: cancelCommentValue
+    }
+  }
+
+  $.ajax({
+    url: '/retailers/plan_cancellations',
+    type: 'POST',
+    beforeSend: function(xhr) {
+      xhr.setRequestHeader('X-CSRF-Token', token)
+    },
+    data: body,
+    statusCode: {
+      200: function() {
+        location.reload();
+      },
+      500: function() {
+        location.reload();
+      }
+    }
+  });
+}

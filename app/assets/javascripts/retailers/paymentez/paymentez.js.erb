@@ -8,8 +8,7 @@ var holder_name = '';
 $(function() {
   Payment.init(env,clientcode, clientkey);
 
-  var form              = $("#add-card-form");
-  var submitButton      = form.find("button");
+  var submitButton      = $('#submit');
   var submitInitialText = submitButton.text();
 
   $("#add-card-form").submit(function(e){
@@ -19,10 +18,14 @@ $(function() {
     var cardToSave = myCard.PaymentForm('card');
     holder_name = cardToSave['card']['holder_name'];
 
-    if(cardToSave == null){
-      $('#messages').html("COMPRA Invalida");
-    }else{
-      submitButton.attr("disabled", "disabled").text("Agregando Tarjeta...");
+    if (cardToSave == null) {
+      let sale = 'Compra inválida';
+      if (ENV['CURRENT_AGENT_LANG'] === 'en') sale = 'Invalid purchase';
+      $('#messages').html(sale);
+    } else {
+      let charging = 'Agregando tarjeta...';
+      if (ENV['CURRENT_AGENT_LANG'] === 'en') charging = 'Adding card...';
+      submitButton.attr("disabled", "disabled").text(charging);
       Payment.addCard(userid, useremail, cardToSave, successHandler, errorHandler);
     }
 
@@ -59,18 +62,26 @@ $(function() {
       });
 
       request.done(function( msg ) {
-        $('#messages').html('Tarjeta creada exitosamente');
+        let addedCard = 'Tarjeta creada exitosamente';
+        if (ENV['CURRENT_AGENT_LANG'] === 'en') addedCard = 'Successfully created card';
+        $('#messages').html(addedCard);
         location.reload();
       });
 
       request.fail(function( jqXHR, textStatus ) {
-        alert( "Error al agregar tarjeta: " + textStatus );
+        let addCardError = 'Error al agregar tarjeta: ';
+        if (ENV['CURRENT_AGENT_LANG'] === 'en') addCardError = 'Error adding card: ';
+        alert(addCardError + textStatus);
       });
 
-    } else if(cardResponse.card.status === 'review'){
-      $('#messages').html('La tarjeta está siendo revisada');
+    } else if (cardResponse.card.status === 'review') {
+      let reviewCard = 'La tarjeta está siendo revisada';
+      if (ENV['CURRENT_AGENT_LANG'] === 'en') reviewCard = 'The card is being reviewed';
+      $('#messages').html(reviewCard);
     } else {
-      $('#messages').html('Se produjo un error, por favor intente más tarde o cambie su tarjeta');
+      let error = 'Se produjo un error, por favor intente más tarde o cambie su tarjeta';
+      if (ENV['CURRENT_AGENT_LANG'] === 'en') error = 'An error occurred, please try again later or change your card';
+      $('#messages').html(error);
     }
     submitButton.removeAttr("disabled");
     submitButton.text(submitInitialText);

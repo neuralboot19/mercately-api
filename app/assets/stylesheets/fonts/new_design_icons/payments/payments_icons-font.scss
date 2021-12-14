@@ -1,0 +1,31 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url(asset_path('fonts/new_design_icons/payments/information.eot?qa0d7w'));
+  src:  url(asset_path('fonts/new_design_icons/payments/information.eot?qa0d7w#iefix')) format('embedded-opentype'),
+    url(asset_path('fonts/new_design_icons/payments/information.ttf?qa0d7w')) format('truetype'),
+    url(asset_path('fonts/new_design_icons/payments/information.woff?qa0d7w')) format('woff'),
+    url(asset_path('fonts/new_design_icons/payments/information.svg?qa0d7w#information')) format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'icomoon';
+  src:  url(asset_path('fonts/new_design_icons/payments/usage.eot?rahq30'));
+  src:  url(asset_path('fonts/new_design_icons/payments/usage.eot?rahq30#iefix')) format('embedded-opentype'),
+    url(asset_path('fonts/new_design_icons/payments/usage.ttf?rahq30')) format('truetype'),
+    url(asset_path('fonts/new_design_icons/payments/usage.woff?rahq30')) format('woff'),
+    url(asset_path('fonts/new_design_icons/payments/usage.svg?rahq30#usage')) format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.icon-information:before {
+  content: "\e912";
+}
+
+.icon-usage-icon:before {
+  content: "\e913";
+}

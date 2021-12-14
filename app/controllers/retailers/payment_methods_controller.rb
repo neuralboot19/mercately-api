@@ -1,4 +1,6 @@
 class Retailers::PaymentMethodsController < RetailersController
+  skip_before_action :validate_payment_plan, only: [:create, :create_setup_intent, :destroy]
+
   def create_setup_intent
     retailer = Retailer.find_by(slug: params[:slug])
     payment_methods = PaymentMethod.find_by(retailer_id: retailer.id)
@@ -26,7 +28,7 @@ class Retailers::PaymentMethodsController < RetailersController
     if pm.save
       update_stripe_customer(stripe_pm['customer'], params['payment_method'])
 
-      flash[:notice] = 'Método de pago almacenado con éxito.'
+      flash[:notice] = t('retailer.payment_methods.added_payment_method_success')
       render status: 200, json: {
         data: pm.payment_payload
       }
@@ -45,11 +47,11 @@ class Retailers::PaymentMethodsController < RetailersController
     if pm && current_retailer.payment_methods.count > 1
       pm.destroy
       Stripe::PaymentMethod.detach(pm.stripe_pm_id)
-      redirect_to redirect_path, notice: 'Método de pago eliminado con éxito.'
+      redirect_to redirect_path, notice: t('retailer.payment_methods.deleted_payment_method_success')
       return
     end
 
-    redirect_to redirect_path, alert: 'Método de pago no encontrado.'
+    redirect_to redirect_path, alert: t('retailer.payment_methods.payment_method_not_found')
   end
 
   private
