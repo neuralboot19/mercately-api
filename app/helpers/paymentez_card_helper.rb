@@ -34,13 +34,18 @@ module PaymentezCardHelper
 
   def self.credit_cards(cards)
     cards.map do |cc|
-      PaymentezCardHelper.credit_card(cc.id)
+      PaymentezCardHelper.credit_card_selection(cc)
     end
   end
 
   def self.credit_card(card_id)
     card = PaymentezCreditCard.unscoped.find(card_id)
     type = PaymentezCardHelper.brand(card.card_type)
-    ["#{type} #{card.number} #{card.expiry_month}/#{card.expiry_year}", card.id]
+    ["****#{card.number} #{card.expiry_month}/#{card.expiry_year}", card.id, type&.to_s]
+  end
+
+  def self.credit_card_selection(card)
+    type = PaymentezCardHelper.brand(card.card_type)
+    ["#{type} ****#{card.number} #{card.expiry_month}/#{card.expiry_year}", card.id]
   end
 end

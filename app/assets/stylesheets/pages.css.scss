@@ -615,7 +615,7 @@ footer {
   display: block;
 }
 
-.modal {
+.modal-mercately {
   position: fixed;
   top: 0;
   left: 0;
@@ -665,12 +665,12 @@ footer {
   }
 }
 
-#modal--toggle:checked ~ .modal {
+#modal--toggle:checked ~ .modal-mercately {
   display: block;
 }
 
 @media screen and (max-height: 680px) {
-  .modal__window, .modal-index__window {
+  .modal-mercately__window, .modal-index__window {
     height: 542px;
   }
 }

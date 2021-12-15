@@ -677,7 +677,7 @@ p{
   }
 }
 
-.modal, .modal-index {
+.modal-mercately, .modal-index {
   position: fixed;
   top: 0;
   left: 0;
@@ -717,7 +717,7 @@ p{
   }
 }
 
-#modal--toggle:checked ~ .modal, #modal--toggle-index:checked ~ .modal-index,
+#modal--toggle:checked ~ .modal-mercately, #modal--toggle-index:checked ~ .modal-index,
 #modal-agent--toggle:checked ~ .modal-agent {
   display: block;
 }
@@ -728,7 +728,7 @@ p{
 }
 
 @media screen and (max-height: 680px) {
-  .modal__window, .modal-index__window {
+  .modal-mercately__window, .modal-index__window {
     height: 542px;
   }
 }

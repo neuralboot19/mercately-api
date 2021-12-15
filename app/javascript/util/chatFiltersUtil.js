@@ -1,6 +1,6 @@
 const checkFilters = (customer, filters, chatType) => {
   if (filters.searchString === '' && filters.agent === 'all' && filters.type === 'all' && filters.tag === 'all'
-    && filters.tab === 'all')
+    && filters.tab === 'all' && status === 'all')
     return true;
 
   let matchFilters = [];
@@ -45,13 +45,13 @@ const checkFilters = (customer, filters, chatType) => {
   return matchFilters.indexOf(false) < 0;
 };
 
-const includeFilter = (search, item) => {
-  return search.some(elem => elementWithValue(elem, item));
-}
+const includeFilter = (search, item) => (
+  search.some((elem) => elementWithValue(item, elem))
+);
 
-const elementWithValue = (elem, item) => {
-  return elem.includes(item.toLowerCase());
-}
+const elementWithValue = (elem, item) => (
+  elem.includes(item.toLowerCase())
+);
 
 const readOrNotFacebook = (customer, filters) => {
   let isTrue = false;

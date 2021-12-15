@@ -22,9 +22,13 @@ class Tag < ApplicationRecord
   private
 
     def update_hs_fields
+      return unless retailer.hubspot_integrated?
+
       retailer.customer_hubspot_fields.where(hs_tag: true, customer_field: saved_change_to_tag.first).each do |chf|
         chf.update(customer_field: tag)
       end
+    rescue StandardError
+      HubspotService::Api.notify_broken_integration(retailer)
     end
 
     def remove_mapped_fields
@@ -34,11 +38,11 @@ class Tag < ApplicationRecord
     def generate_font_color
       if tag_color != '#ffffff00'
         colors = tag_color.match(/^#(..)(..)(..)$/).captures.map(&:hex)
-        if (colors[0]*0.299 + colors[1]*0.587 + colors[2]*0.114) > 186
-          self.font_color = '#000000'
-        else
-          self.font_color = '#FFFFFF'
-        end
+        self.font_color = if (colors[0] * 0.299 + colors[1] * 0.587 + colors[2] * 0.114) > 186
+                            '#000000'
+                          else
+                            '#FFFFFF'
+                          end
       end
     end
 end

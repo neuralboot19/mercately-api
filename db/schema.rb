@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_25_144538) do
+ActiveRecord::Schema.define(version: 2021_12_01_185818) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -885,6 +885,15 @@ ActiveRecord::Schema.define(version: 2021_11_25_144538) do
     t.index ["payment_plan_id"], name: "index_paymentez_transactions_on_payment_plan_id"
     t.index ["paymentez_credit_card_id"], name: "index_paymentez_transactions_on_paymentez_credit_card_id"
     t.index ["retailer_id"], name: "index_paymentez_transactions_on_retailer_id"
+  end
+
+  create_table "plan_cancellations", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.integer "reason"
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_plan_cancellations_on_retailer_id"
   end
 
   create_table "product_variations", force: :cascade do |t|

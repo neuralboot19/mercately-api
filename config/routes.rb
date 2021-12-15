@@ -179,8 +179,11 @@ Rails.application.routes.draw do
     get 'templates/templates_for_questions', to: 'templates#templates_for_questions'
     get 'templates/templates_for_chats', to: 'templates#templates_for_chats'
     post 'plan_subscribe', to: 'payment_plans#subscribe', as: :plan_subscribe
+    put 'plan_unsubscribe', to: 'payment_plans#unsubscribe', as: :plan_unsubscribe
     get 'chat_bots/:id/tree_options', to: 'chat_bots#tree_options', as: :chat_bot_tree_options
     get 'chat_bots/:id/path_option', to: 'chat_bots#path_option', as: :chat_bot_path_option
+
+    resources :plan_cancellations, only: :create
   end
 
   put 'retailer_user/onboarding_status', to: 'retailer_users#update_onboarding_info', as: :update_onboarding_info

@@ -11,6 +11,7 @@
 @import 'full_calendar';
 
 @import 'funnel';
+@import 'payment_plans';
 
 // Variables
 
@@ -643,11 +644,11 @@ hr.chat_separator {
 #onboarding {
   z-index: 100;
 
-  .modal__background:hover {
+  .modal-mercately__background:hover {
     cursor: unset;
   }
 
-  .modal__window {
+  .modal-mercately__window {
     height: unset;
     max-width: 450px;
   }

@@ -1,0 +1,63 @@
+<div class="modal fade" id="add-card-modal" tabindex="-1" role="dialog" aria-labelledby="add-card-modal-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content container-payment-plan_card no-border">
+      <div class="modal-header pt-20 px-30">
+        <p class="mercately-modal-title fs-24"><%= t('retailer.profile.payment_plans.add_card.add_card') %></p>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body py-20 px-30">
+        <% if current_retailer.int_charges %>
+          <div class="row ml-0 mb-20">
+            <div class="col-12 p-0 stripe-element">
+              <input id="card_name" placeholder="<%= t('retailer.profile.payment_plans.add_card.cardholder_name') %>" class="no-border input" />
+            </div>
+          </div>
+          <div class="row ml-0">
+            <div class="col-12 p-0 stripe-element">
+              <div class="card-element form-control no-border" id="card-element"></div>
+            </div>
+            <div class="col-12 p-0 hidden" id="stripe-error"></div>
+          </div>
+        <% elsif current_retailer.ecu_charges %>
+          <div class="container-payment-plan_add_card_modal">
+            <form id="add-card-form">
+              <div class="payment-form paymentez-form" id="my-card" data-capture-name="true">
+                <input class="name" name="card-holder" placeholder="Nombre del titular">
+                <input class="card-number" name="card-number" placeholder="Número de tarjeta">
+                <input class="expiry-month" name="expiry-month">
+                <input class="expiry-year" name="expiry-year">
+                <input class="cvc" name="cvc">
+              </div>
+              <div id="messages"></div>
+            </form>
+          </div>
+        <% end %>
+      </div>
+      <div class="modal-footer py-20 px-30">
+        <% if current_retailer.int_charges %>
+          <div class="row ml-0">
+            <div class="col-12 p-0 stripe-element">
+              <button class="btn btn-improve submit-card" id="submit" disabled="disabled">
+                <i class="fas fa-credit-card mr-7" id="btn_cc"></i>
+                <i class="fas fa-spinner hidden" id="btn_spinner"></i>
+                <span class="fs-14"><%= t('retailer.profile.payment_plans.add_card.add_card') %></span>
+              </button>
+            </div>
+          </div>
+        <% elsif current_retailer.ecu_charges %>
+          <div class="row ml-0">
+            <div class="col-12 p-0">
+              <button class="btn btn-improve submit-card m-0" id="submit" type="submit" form="add-card-form">
+                <i class="fas fa-credit-card mr-7" id="btn_cc"></i>
+                <i class="fas fa-spinner hidden" id="btn_spinner"></i>
+                <span class="fs-14"><%= t('retailer.profile.payment_plans.add_card.add_card') %></span>
+              </button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

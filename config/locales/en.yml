@@ -20,6 +20,11 @@ en:
     api_key: 'API Key'
     logout: 'Logout'
   mailer:
+    broken_hs_integration:
+      broken_integration: 'Hubspot integration disabled'
+      p1: 'Your Hubspot integration has been disabled, this can happen by multiple reasons,'
+      p2: 'the most common ones are password changing or account inactivation by Hubspot.'
+      p3: 'To re-integrate with Hubspot, go to '
     failed_charge_subject: '[Urgent] Your Mercately payment was not successful'
     failed_charge_greetings: 'Hello %{name}'
     failed_charge_message: 'We were unable to charge your card %{card} for your payment to Mercately, LLC. Update your billing information at the following link:'
@@ -82,6 +87,13 @@ en:
         statuses:
           active: Active
           inactive: Inactive
+      plan_cancellation:
+        reasons:
+          expensive: The price is too high
+          not_help: The platform did not help me to improve my communication and sales
+          add_more_functionality: Needs to incorporate more functionalities
+          never_used: I never used the service
+          other: Other
   time:
     datepicker:
       format: DD/MM/YYYY
@@ -118,6 +130,9 @@ en:
         oct: 'Octubre'
         nov: 'November'
         dec: 'December'
+    year: Year
+    month: Month
+    day: Day
   social_networks:
     whatsapp: Whatsapp
     messenger: Messenger
@@ -223,12 +238,94 @@ en:
         message_not_found: Message not found
         message_saved_successfully: Message saved successfully
         all_fields_is_required: All fields are required
+    profile:
+      payment_plans:
+        index:
+          title: Payment plans
+          subtitle: Payment plans
+          information: Information
+          consumption: Consumption
+          current_plan: Current plan
+          add_balance: Add balance
+          plan: Plan
+          ws_balance: WhatsApp balance
+          next_pay: Next payment
+          cancel_plan: Cancel plan
+          country_prices: View prices by country
+          my_cards: My cards
+          add_card: Add card
+          charges_history: Top-up history
+          cost: Cost
+          status: Status
+          card: Card
+          paid: Paid
+          authorization: Authorization
+          reference: Reference
+          payments_history: Payment history
+          ws_consumption: WhatsApp consumption
+          monthly_cost: Monthly cost
+          message_type: Message type
+          consumption_cost: Consumption cost
+          messages: Messages
+          subtotal: Subtotal
+          chatbots_interactions: ChatBots interaction
+          interactions: Interactions
+          payment_success: Paid
+          payment_refund: Refund
+          card_not_found: Card not found
+          message_type_conversation: Conversation
+          message_type_notification: Notification
+          delete_card_confirmation: Are you sure to delete this card?
+          deactivated_plan_text_1: Your plan has been deactivated, update your card and contact
+          deactivated_plan_text_2: to reactivate it.
+          payment_methods: Payment methods
+        charge_balance:
+          add_balance: Add balance
+          minimum_amount: The minimum amount is $10
+        cancel_plan:
+          question_header: Are you sure you want to leave Mercately?
+          answer_header: Thank you very much for your answer
+          details_body: Please tell us the reasons why you no longer want to continue with the service, your feedback will be of great help to continue improving
+          high_price_option: The price is too high.
+          not_help_option: The platform did not help me to improve my communication and sales.
+          more_functionality_option: Needs to incorporate more functionalities.
+          not_used_option: I never used the service.
+          other_option: Other.
+          cancellation_advise: Your plan will be canceled immediately. After this you will not be able to perform your daily actions in Mercately.
+          comment_placeholder: Leave a comment
+          cancel_button: Cancel plan
+          confirmation_advise: Remember that by leaving Mercately you will be losing
+          advise_1: The ability to manage your WhatsApp line with multiple agents.
+          advise_2: Personal and Business WhatsApp services with your phone line.
+          advise_3: The data of clients that you managed with us.
+          advise_4: The chats of people who chatted with your company.
+          advise_5: The time invested in improving communication and sales with our service.
+        add_card:
+          add_card: Add card
+          cardholder_name: Cardholder Name
+    paymentez:
+      added_card_success: Card added successfully
+      added_card_error: Error adding card
+      deleted_card_success: Card successfully removed.
+      deleted_card_error: Failed to delete card.
+      added_balance_success: Balance successfully added
+      added_balance_error: Error adding balance
+    payment_methods:
+      added_payment_method_success: Payment method successfully added.
+      deleted_payment_method_success: Payment method removed successfully.
+      payment_method_not_found: Payment method not found.
+    plan_cancellations:
+      canceled_plan_success: Plan successfully canceled
+      canceled_plan_error: An error occurred while canceling the plan
+    stripe:
+      added_balance_success: Balance successfully added
   buttons:
     back: Back
     edit: Edit
     remove: Remove
     save: Save
     nested_remove: Remove
+    send: Send
   actions:
     view: View
     edit: Edit

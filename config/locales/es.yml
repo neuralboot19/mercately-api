@@ -1,4 +1,3 @@
----
 es:
   locale: ES
   activerecord:
@@ -120,6 +119,13 @@ es:
           phone_or_email: 'Teléfono o email'
           email: 'Email'
           phone: 'Teléfono'
+      plan_cancellation:
+        reasons:
+          expensive: El precio es muy alto
+          not_help: La plataforma no me ayudó a mejorar mi comunicación y ventas
+          add_more_functionality: Falta incorporar más funcionalidades
+          never_used: Nunca utilicé el servicio
+          other: Otro
     errors:
       messages:
         record_invalid: 'La validación falló: %{errors}'
@@ -388,6 +394,9 @@ es:
         oct: 'Octubre'
         nov: 'Noviembre'
         dec: 'Diciembre'
+    year: Año
+    month: Mes
+    day: Día
   mongoid:
     errors:
       messages:
@@ -407,6 +416,11 @@ es:
     api_key: 'API Key'
     logout: 'Cerrar sesión'
   mailer:
+    broken_hs_integration:
+      broken_integration: 'Integración con Hubspot desactivada'
+      p1: 'Su integración con Hubspot se ha interrumpido, esto puede deberse a muchas razones,'
+      p2: 'las más comúnes suelen ser cambios de contraseña o una inactivación de la cuenta por parte de Hubspot.'
+      p3: 'Para volver a integrarse con Hubspot, vaya a '
     failed_charge_subject: '[Urgente] Tu pago de Mercately no se realizó correctamente'
     failed_charge_greetings: 'Hola %{name}'
     failed_charge_message: 'No pudimos cobrar su tarjeta %{card} para su pago a Mercately, LLC. Actualice su información de facturación en el siguiente enlace:'
@@ -469,7 +483,7 @@ es:
         new_clients: Clientes nuevos
         recurring_customers: Clientes recurrentes
       performance:
-        performance_title: Rendimiento por agente 
+        performance_title: Rendimiento por agente
         agent: Agente
         assigned_chats: Chats asignados
         assigned_chats_answered: Chats asignados respondidos
@@ -547,12 +561,94 @@ es:
         message_not_found: Mensaje no encontrado
         message_saved_successfully: Mensaje guardado con éxito
         all_fields_is_required: Debe llenar todos los campos
+    profile:
+      payment_plans:
+        index:
+          title: Planes de pago
+          subtitle: Planes de pago
+          information: Información
+          consumption: Consumo
+          current_plan: Plan actual
+          add_balance: Agregar saldo
+          plan: Plan
+          ws_balance: Saldo de WhatsApp
+          next_pay: Próximo pago
+          cancel_plan: Cancelar plan
+          country_prices: Ver precios por país
+          my_cards: Mis tarjetas
+          add_card: Añadir tarjeta
+          charges_history: Historial de recargas
+          cost: Costo
+          status: Estado
+          card: Tarjeta
+          paid: Pagado
+          authorization: Autorización
+          reference: Referencia
+          payments_history: Historial de pagos
+          ws_consumption: Consumo de WhatsApp
+          monthly_cost: Costo mensual
+          message_type: Tipo de mensaje
+          consumption_cost: Costo consumo
+          messages: Mensajes
+          subtotal: Subtotal
+          chatbots_interactions: Interacción de ChatBots
+          interactions: Interacciones
+          payment_success: Pagado
+          payment_refund: Devuelto
+          card_not_found: Tarjeta no encontrada
+          message_type_conversation: Conversación
+          message_type_notification: Notificación
+          delete_card_confirmation: Estás seguro de eliminar esta tarjeta?
+          deactivated_plan_text_1: Tu plan ha sido desactivado, actualiza tu tarjeta y comunicate con
+          deactivated_plan_text_2: para reactivarlo.
+          payment_methods: Métodos de Pago
+        charge_balance:
+          add_balance: Agregar saldo
+          minimum_amount: El monto mínimo son $10
+        cancel_plan:
+          question_header: ¿Estás seguro de querer abandonar Mercately?
+          answer_header: Muchas gracias por tu respuesta
+          details_body: Por favor detállanos las razones por las cuales ya no deseas continuar con el servicio, tu retroalimentación será de gran ayuda para seguir mejorando
+          high_price_option: El precio es muy alto.
+          not_help_option: La plataforma no me ayudó a mejorar mi comunicación y ventas.
+          more_functionality_option: Falta incorporar más funcionalidades.
+          not_used_option: Nunca utilicé el servicio.
+          other_option: Otro.
+          cancellation_advise: Tu plan será cancelado de inmediato. Luego de esto no podrás realizar tus acciones cotidianas en Mercately.
+          comment_placeholder: Deja un comentario
+          cancel_button: Cancelar el plan
+          confirmation_advise: Recuerda que al estar abandonando Mercately estarás perdiendo
+          advise_1: La capacidad de gestionar tu línea de Whatsapp con múltiples agentes.
+          advise_2: Los servicios de Whatsapp personal y Business con tu línea de teléfono.
+          advise_3: Los datos de clientes que gestionaste con nosotros.
+          advise_4: Los chats de personas que conversaron con tu empresa.
+          advise_5: El tiempo invertido en mejorar la comunicación y ventas con nuestro servicio.
+        add_card:
+          add_card: Añadir tarjeta
+          cardholder_name: Nombre del titular
+    paymentez:
+      added_card_success: Tarjeta agregada exitosamente
+      added_card_error: Error al agregar tarjeta
+      deleted_card_success: Tarjeta eliminada satisfactoriamente.
+      deleted_card_error: Error al eliminar tarjeta.
+      added_balance_success: Saldo agregado exitosamente
+      added_balance_error: Error al agregar saldo
+    payment_methods:
+      added_payment_method_success: Método de pago almacenado con éxito.
+      deleted_payment_method_success: Método de pago eliminado con éxito.
+      payment_method_not_found: Método de pago no encontrado.
+    plan_cancellations:
+      canceled_plan_success: Plan cancelado con éxito
+      canceled_plan_error: Ocurrió un error al cancelar el plan
+    stripe:
+      added_balance_success: Saldo agregado exitosamente
   buttons:
     back: Volver
     edit: Editar
     remove: Eliminar
     save: Guardar
     nested_remove: Remover
+    send: Enviar
   actions:
     view: Ver
     edit: Editar
