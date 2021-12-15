@@ -22,12 +22,6 @@ RSpec.describe PaymentezCreditCard, type: :model do
         payment_plan.update(price: 20, plan: 1)
       end
 
-      it 'inactivates the plan if response status is not 200' do
-        expect {
-          subject.create_transaction
-        }.to change{ payment_plan.status }.to('inactive')
-      end
-
       it 'returns false if response status is not 200' do
         expect(subject.create_transaction).to eq(false)
       end
@@ -55,14 +49,6 @@ RSpec.describe PaymentezCreditCard, type: :model do
         expect {
           subject.create_transaction
         }.to change(PaymentezTransaction, :count).by(1)
-      end
-
-      it 'sets the next pay date to 30 days from now if not present' do
-        payment_plan.update(next_pay_date: nil)
-
-        expect {
-          subject.create_transaction
-        }.to change{ payment_plan.next_pay_date }.to(Date.today + 30.days)
       end
 
       it 'returns true' do

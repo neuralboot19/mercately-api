@@ -8,6 +8,8 @@ class PaymentMethod < ApplicationRecord
 
   default_scope -> { where(deleted: false).order(main: :desc) }
 
+  scope :main, -> { find_by(main: true) }
+
   def card_type
     JSON.parse(payment_payload).try(:[], 'card').try(:[], 'brand')
   end
