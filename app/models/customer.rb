@@ -679,7 +679,8 @@ class Customer < ApplicationRecord
       else
         update_column(:hs_active, false)
       end
-    rescue StandardError
+    rescue StandardError => e
+      SlackError.send_error(e)
       HubspotService::Api.notify_broken_integration(retailer)
     end
 
