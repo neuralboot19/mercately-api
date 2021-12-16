@@ -27,7 +27,8 @@ class Tag < ApplicationRecord
       retailer.customer_hubspot_fields.where(hs_tag: true, customer_field: saved_change_to_tag.first).each do |chf|
         chf.update(customer_field: tag)
       end
-    rescue StandardError
+    rescue StandardError => e
+      SlackError.send_error(e)
       HubspotService::Api.notify_broken_integration(retailer)
     end
 
