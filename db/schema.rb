@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_01_185818) do
+ActiveRecord::Schema.define(version: 2021_12_08_195253) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1001,6 +1001,28 @@ ActiveRecord::Schema.define(version: 2021_12_01_185818) do
     t.index ["retailer_id"], name: "index_reminders_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_reminders_on_retailer_user_id"
     t.index ["whatsapp_template_id"], name: "index_reminders_on_whatsapp_template_id"
+  end
+
+  create_table "retailer_amount_messages", force: :cascade do |t|
+    t.bigint "retailer_id", null: false
+    t.date "calculation_date"
+    t.integer "ws_inbound", default: 0
+    t.integer "ws_outbound", default: 0
+    t.integer "total_ws_messages", default: 0
+    t.integer "msn_inbound", default: 0
+    t.integer "msn_outbound", default: 0
+    t.integer "total_msn_messages", default: 0
+    t.integer "ig_inbound", default: 0
+    t.integer "ig_outbound", default: 0
+    t.integer "total_ig_messages", default: 0
+    t.integer "ml_inbound", default: 0
+    t.integer "ml_outbound", default: 0
+    t.integer "total_ml_messages", default: 0
+    t.bigint "retailer_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_retailer_amount_messages_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_retailer_amount_messages_on_retailer_user_id"
   end
 
   create_table "retailer_users", force: :cascade do |t|
