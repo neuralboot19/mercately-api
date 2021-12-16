@@ -33,7 +33,8 @@ class HsUpdateFieldJob < ApplicationJob
         end
       end
     end
-  rescue StandardError
+  rescue StandardError => e
+    SlackError.send_error(e)
     chf = CustomerHubspotField.find(chf_id)
     retailer = chf.retailer
     HubspotService::Api.notify_broken_integration(retailer)

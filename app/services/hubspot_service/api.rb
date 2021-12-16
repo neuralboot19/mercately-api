@@ -13,33 +13,26 @@ module HubspotService
     end
 
     def initialize(access_token = nil)
-      config = {
-        client_id: ENV['HUBSPOT_CLIENT'],
-        client_secret: ENV['HUBSPOT_CLIENT_SECRET'],
-        redirect_uri: ENV['HUBSPOT_REDIRECT_URL']
-      }
-      if access_token
-        @access_token = access_token
-        config[:access_token] = @access_token
-      end
-      Hubspot.configure(config)
-    end
-
-    def reconfig
-      Hubspot.configure(
-        client_id: ENV['HUBSPOT_CLIENT'],
-        client_secret: ENV['HUBSPOT_CLIENT_SECRET'],
-        redirect_uri: ENV['HUBSPOT_REDIRECT_URL'],
-        access_token: @access_token
-      )
+      @access_token = access_token if access_token
     end
 
     def refresh_token(refresh_token)
-      reconfig
-      token = Hubspot::OAuth.refresh(refresh_token)
+      token = HTTParty.post(
+        'https://api.hubapi.com/oauth/v1/token',
+        body: {
+          'grant_type': 'refresh_token',
+          'client_id': ENV['HUBSPOT_CLIENT'],
+          'client_secret': ENV['HUBSPOT_CLIENT_SECRET'],
+          'redirect_uri': ENV['HUBSPOT_REDIRECT_URL'],
+          'refresh_token': refresh_token
+        },
+        headers: { 'Content-Type' => 'application/x-www-form-urlencoded;charset=utf-8' }
+      ).parsed_response
+
       @access_token = token['access_token']
       token
-    rescue StandardError
+    rescue StandardError => e
+      SlackError.send_error(e)
       retailer = Retailer.find_by(hs_access_token: @access_token)
       self.class.notify_broken_integration(retailer)
     end
