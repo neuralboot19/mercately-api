@@ -685,7 +685,6 @@ class Customer < ApplicationRecord
     end
 
     def sync_hs
-      SlackError.send_error("sync HS #{retailer.id}")
       return unless retailer.reload.hubspot_integrated?
 
       if hs_id.nil?
@@ -719,7 +718,13 @@ class Customer < ApplicationRecord
         params[chf.hubspot_field.hubspot_field] = self_hash[chf.customer_field]
       end
       hubspot.contact_update(hs_id, params)
-    rescue StandardError
+    rescue StandardError => e
+      begin
+        SlackError.send_error("HS retailer: #{retailer.id}, customer: #{id}, params: #{params}")
+      rescue StandardError
+        SlackError.send_error("HS retailer: #{retailer.id}, customer: #{id}")
+      end
+      SlackError.send_error(e)
       HubspotService::Api.notify_broken_integration(retailer)
     end
 
