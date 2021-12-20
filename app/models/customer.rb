@@ -673,7 +673,7 @@ class Customer < ApplicationRecord
       end
       params['email'] = email
       hs_contact = hubspot.contact_create(params)
-      SlackError.send_error("create_hs_customer: #{id} #{hs_contact['id']}")
+      SlackError.send_error("create_hs_customer: #{id}")
       if hs_contact['id']
         update_column(:hs_id, hs_contact['id'])
       else
@@ -691,19 +691,19 @@ class Customer < ApplicationRecord
         if retailer.hubspot_match_phone_or_email?
           hs_c = hubspot.search(email: email)
           hs_c = hubspot.search(phone: phone) if hs_c.blank?
-          SlackError.send_error("hubspot_match_phone_or_email: #{id} #{hs_c['id']}")
+          SlackError.send_error("hubspot_match_phone_or_email: #{id}")
           return create_hs_customer if hs_c.blank?
 
           update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_phone?
           hs_c = hubspot.search(phone: phone)
-          SlackError.send_error("hubspot_match_phone: #{id} #{hs_c['id']}")
+          SlackError.send_error("hubspot_match_phone: #{id}")
           return create_hs_customer if hs_c.blank?
 
           update_column(:hs_id, hs_c['id'])
         elsif retailer.hubspot_match_email?
           hs_c = hubspot.search(email: email)
-          SlackError.send_error("hubspot_match_email: #{id} #{hs_c['id']}")
+          SlackError.send_error("hubspot_match_email: #{id}")
           return create_hs_customer if hs_c.blank?
 
           update_column(:hs_id, hs_c['id'])
