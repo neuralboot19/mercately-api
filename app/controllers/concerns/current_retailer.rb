@@ -14,20 +14,9 @@ module CurrentRetailer
   protected
 
     def set_retailer
-      @retailer = @current_retailer and return if @current_retailer
+      @retailer = current_retailer_user&.retailer
 
-      unless session[:current_retailer]
-        @retailer = if params[:slug].present?
-          Retailer.find_by(slug: params[:slug])
-        else
-          current_retailer_user&.retailer
-        end
-        session[:current_retailer] = @retailer
-      else
-        Retailer.with_advisory_lock('retailers_lock') do
-          @retailer = Retailer.find(session[:current_retailer]['id'])
-        end
-      end
+      session[:current_retailer] = @retailer if session[:current_retailer].blank?
     end
 
     def check_notifications

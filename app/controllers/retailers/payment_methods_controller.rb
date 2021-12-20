@@ -1,5 +1,5 @@
 class Retailers::PaymentMethodsController < RetailersController
-  skip_before_action :validate_payment_plan, only: [:create, :create_setup_intent, :destroy]
+  skip_before_action :validate_payment_plan, only: [:create, :create_setup_intent, :destroy, :set_default]
 
   def create_setup_intent
     retailer = Retailer.find_by(slug: params[:slug])
@@ -45,13 +45,24 @@ class Retailers::PaymentMethodsController < RetailersController
     redirect_path = retailers_payment_plans_path(current_retailer)
 
     if pm && current_retailer.payment_methods.count > 1
-      pm.destroy
+      pm.delete_card!
       Stripe::PaymentMethod.detach(pm.stripe_pm_id)
       redirect_to redirect_path, notice: t('retailer.payment_methods.deleted_payment_method_success')
       return
     end
 
     redirect_to redirect_path, alert: t('retailer.payment_methods.payment_method_not_found')
+  end
+
+  def set_default
+    pm = current_retailer.payment_methods.find_by(stripe_pm_id: params[:id])
+    notice = if pm&.set_default
+               t('retailer.paymentez.updated_card_success')
+             else
+               t('retailer.paymentez.updated_card_error')
+             end
+
+    redirect_to retailers_payment_plans_path(current_retailer), notice: notice
   end
 
   private

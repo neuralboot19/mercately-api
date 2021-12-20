@@ -142,6 +142,7 @@ Rails.application.routes.draw do
       get 'select_catalog', to: 'facebook_catalogs#select_catalog'
       put 'save_selected_catalog', to: 'facebook_catalogs#save_selected_catalog', as: :save_selected_catalog
       post 'payment_methods/create-setup-intent', to: 'payment_methods#create_setup_intent', as: :payment_create_setup_intent
+      put 'payment_methods/set_default', to: 'payment_methods#set_default', as: :payment_set_default
       resources :payment_methods, only: [:create, :destroy]
       resources :paymentez, only: [:create, :destroy] do
         collection do
@@ -166,6 +167,7 @@ Rails.application.routes.draw do
       resources :team_assignments
       resources :stats, only: :index
       resources :customer_related_fields
+      put 'paymentez_credit_cards/set_default', to: 'paymentez_credit_cards#set_default', as: :paymentez_set_default
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'

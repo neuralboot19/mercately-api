@@ -279,6 +279,7 @@ en:
           deactivated_plan_text_1: Your plan has been deactivated, update your card and contact
           deactivated_plan_text_2: to reactivate it.
           payment_methods: Payment methods
+          update_card_confirmation: Are you sure to update this card?
         charge_balance:
           add_balance: Add balance
           minimum_amount: The minimum amount is $10
@@ -303,6 +304,7 @@ en:
         add_card:
           add_card: Add card
           cardholder_name: Cardholder Name
+        set_as_main: Set as main card
     paymentez:
       added_card_success: Card added successfully
       added_card_error: Error adding card
@@ -310,6 +312,8 @@ en:
       deleted_card_error: Failed to delete card.
       added_balance_success: Balance successfully added
       added_balance_error: Error adding balance
+      updated_card_success: Card updated successfully
+      updated_card_error: Error updating card
     payment_methods:
       added_payment_method_success: Payment method successfully added.
       deleted_payment_method_success: Payment method removed successfully.

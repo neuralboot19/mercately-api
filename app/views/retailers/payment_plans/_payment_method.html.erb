@@ -1,22 +1,27 @@
 <% unless purchase_plan %>
   <% pms = pm %>
   <% pms.each_slice(2) do |pm| %>
-    <% pm[0] = JSON.parse(pm[0].payment_payload) %>
+    <% pmp = JSON.parse(pm[0].payment_payload) %>
     <div class="row ml-0 mt-25">
       <div class="col-md-6 col-12 pl-0 odd-card-mobile">
-        <div class="credit-card-container row ml-0">
-          <div class="col-9 col-md-9 pl-0">
-            <% if pm[0]['card']['brand'] == 'visa' %>
+        <div class="credit-card-container row ml-0 <%= pm[0].main ? 'main' : '' %>">
+          <div class="col-8 col-md-9 pl-0">
+            <% if pmp['card']['brand'] == 'visa' %>
               <%= image_tag 'dashboard/payments/visa-icon.svg', class: 'mr-20' %>
-            <% elsif pm[0]['card']['brand'] == 'mastercard' %>
+            <% elsif pmp['card']['brand'] == 'mastercard' %>
               <%= image_tag 'dashboard/payments/mastercard-icon.svg', class: 'mr-20' %>
             <% end %>
-            <span class="fs-14 mr-15">****<%= pm[0]['card']['last4'] %></span>
-            <span class="fs-14"><%= "#{pm[0]['card']['exp_month']}/#{pm[0]['card']['exp_year']}" %></span>
+            <span class="fs-14 mr-15">****<%= pmp['card']['last4'] %></span>
+            <span class="fs-14"><%= "#{pmp['card']['exp_month']}/#{pmp['card']['exp_year']}" %></span>
           </div>
-          <div class="col-3 col-md-3 pr-0 t-right">
+          <div class="col-4 col-md-3 pr-0 t-right">
+            <%= link_to retailers_payment_set_default_path(slug: current_retailer, id: pmp['id']),
+              method: :put, data: { confirm: t('retailer.profile.payment_plans.index.update_card_confirmation') },
+              class: '' do %>
+              <i class="fas fa-check-circle fs-16 mr-15 check-main-icon" data-toggle="tooltip" data-placement="top" title="<%= t('retailer.profile.payment_plans.set_as_main') %>"></i>
+            <% end %>
             <% if pms.length > 1 %>
-              <%= link_to retailers_payment_method_path(slug: current_retailer, id: pm[0]['id']),
+              <%= link_to retailers_payment_method_path(slug: current_retailer, id: pmp['id']),
                 method: :delete, data: { confirm: t('retailer.profile.payment_plans.index.delete_card_confirmation') },
                 class: '' do %>
                 <i class="far fa-trash-alt c-black"></i>
@@ -26,21 +31,26 @@
         </div>
       </div>
       <% if pm[1].present? %>
-        <% pm[1] = JSON.parse(pm[1].payment_payload) %>
+        <% pmp = JSON.parse(pm[1].payment_payload) %>
         <div class="col-md-6 col-12 pr-0 even-card-mobile">
-          <div class="credit-card-container row ml-0">
-            <div class="col-9 col-md-9 pl-0">
-              <% if pm[1]['card']['brand'] == 'visa' %>
+          <div class="credit-card-container row ml-0 <%= pm[1].main ? 'main' : '' %>">
+            <div class="col-8 col-md-9 pl-0">
+              <% if pmp['card']['brand'] == 'visa' %>
                 <%= image_tag 'dashboard/payments/visa-icon.svg', class: 'mr-20' %>
-              <% elsif pm[1]['card']['brand'] == 'mastercard' %>
+              <% elsif pmp['card']['brand'] == 'mastercard' %>
                 <%= image_tag 'dashboard/payments/mastercard-icon.svg', class: 'mr-20' %>
               <% end %>
-              <span class="fs-14 mr-15">****<%= pm[1]['card']['last4'] %></span>
-              <span class="fs-14"><%= "#{pm[1]['card']['exp_month']}/#{pm[1]['card']['exp_year']}" %></span>
+              <span class="fs-14 mr-15">****<%= pmp['card']['last4'] %></span>
+              <span class="fs-14"><%= "#{pmp['card']['exp_month']}/#{pmp['card']['exp_year']}" %></span>
             </div>
-            <div class="col-3 col-md-3 pr-0 t-right">
+            <div class="col-4 col-md-3 pr-0 t-right">
+              <%= link_to retailers_payment_set_default_path(slug: current_retailer, id: pmp['id']),
+                method: :put, data: { confirm: t('retailer.profile.payment_plans.index.update_card_confirmation') },
+                class: '' do %>
+                <i class="fas fa-check-circle fs-16 mr-15 check-main-icon" data-toggle="tooltip" data-placement="top" title="<%= t('retailer.profile.payment_plans.set_as_main') %>"></i>
+              <% end %>
               <% if pms.length > 1 %>
-                <%= link_to retailers_payment_method_path(slug: current_retailer, id: pm[1]['id']),
+                <%= link_to retailers_payment_method_path(slug: current_retailer, id: pmp['id']),
                   method: :delete, data: { confirm: t('retailer.profile.payment_plans.index.delete_card_confirmation') },
                   class: '' do %>
                   <i class="far fa-trash-alt c-black"></i>

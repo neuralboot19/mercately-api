@@ -92,6 +92,10 @@ document.addEventListener("DOMContentLoaded", function() {
     $("#add-card-form").find('.name').attr('placeholder', 'Cardholder Name');
     $("#add-card-form").find('.card-number').attr('placeholder', 'Card number');
   }
+
+  $('[data-toggle="tooltip"]').each(function() {
+    $(this).tooltip({ container: $(this).parent() });
+  });
 });
 
 function validateCancelForm() {

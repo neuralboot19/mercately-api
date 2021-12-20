@@ -51,7 +51,23 @@ $font-color-gray: #808191;
     padding: 20px;
 
     &.main {
-      border: 1px solid #3CAAE1;
+      border: 1px solid $secondary-color;
+
+      i.check-main-icon {
+        color: $secondary-color;
+      }
+    }
+
+    .check-main-icon {
+      color: $font-color-gray;
+
+      &:hover {
+        color: $secondary-color;
+      }
+    }
+
+    a {
+      text-decoration: none;
     }
   }
 
@@ -497,6 +513,24 @@ $font-color-gray: #808191;
   @media (min-width: 1024px) {
     .container-titles {
       margin-top: 25px;
+    }
+  }
+
+  @media screen and (min-width: 1024px) and (max-width: 1090px) {
+    .check-main-icon {
+      margin-right: 0 !important;
+    }
+  }
+
+  @media screen and (min-width: 768px) and (max-width: 953px) {
+    .check-main-icon {
+      margin-right: 0 !important;
+    }
+  }
+
+  @media screen and (max-width: 392px) {
+    .check-main-icon {
+      margin-right: 0 !important;
     }
   }
 }
