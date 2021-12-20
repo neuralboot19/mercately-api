@@ -54,56 +54,64 @@ module HubspotService
 
     def me
       update_token
-      connection = Connection.prepare_connection('https://api.hubapi.com/integrations/v1/me')
-      Connection.get_request(
-        connection,
-        authorization: "Bearer #{@access_token}"
-      )
+      HTTParty.get(
+        'https://api.hubapi.com/integrations/v1/me',
+        headers: {
+          'Content-Type' => 'application/json',
+          authorization: "Bearer #{@access_token}"
+        }
+      ).parsed_response
     end
 
     def contact_properties
       update_token
-      connection = Connection.prepare_connection('https://api.hubapi.com/crm/v3/properties/contacts?archived=false')
-      response = Connection.get_request(
-        connection,
-        authorization: "Bearer #{@access_token}"
-      )
+      response = HTTParty.get(
+        'https://api.hubapi.com/crm/v3/properties/contacts?archived=false',
+        headers: {
+          'Content-Type' => 'application/json',
+          authorization: "Bearer #{@access_token}"
+        }
+      ).parsed_response
       response['results']
     end
 
     def contact(vid)
       update_token
-      connection = Connection.prepare_connection("https://api.hubapi.com/crm/v3/objects/contacts/#{vid}?paginateAssociations=false&archived=false")
-      Connection.get_request(
-        connection,
-        authorization: "Bearer #{@access_token}"
-      )
+      HTTParty.get(
+        "https://api.hubapi.com/crm/v3/objects/contacts/#{vid}?paginateAssociations=false&archived=false",
+        headers: {
+          'Content-Type' => 'application/json',
+          authorization: "Bearer #{@access_token}"
+        }
+      ).parsed_response
     end
 
     def contact_create(params = {})
       update_token
-      connection = Connection.prepare_connection('https://api.hubapi.com/crm/v3/objects/contacts')
-      response = Connection.post_request(
-        connection,
-        {
-          "properties": params
+      HTTParty.post(
+        'https://api.hubapi.com/crm/v3/objects/contacts',
+        body: {
+          properties: params
         }.to_json,
-        authorization: "Bearer #{@access_token}"
-      )
-      JSON.parse(response.body)
+        headers: {
+          'Content-Type' => 'application/json',
+          authorization: "Bearer #{@access_token}"
+        }
+      ).parsed_response
     end
 
     def contact_update(vid, params = {})
       update_token
-      connection = Connection.prepare_connection("https://api.hubapi.com/crm/v3/objects/contacts/#{vid}")
-      response = Connection.patch_request(
-        connection,
-        {
-          "properties": params
+      HTTParty.patch(
+        "https://api.hubapi.com/crm/v3/objects/contacts/#{vid}",
+        body: {
+          properties: params
         }.to_json,
-        authorization: "Bearer #{@access_token}"
-      )
-      JSON.parse(response.body)
+        headers: {
+          'Content-Type' => 'application/json',
+          authorization: "Bearer #{@access_token}"
+        }
+      ).parsed_response
     end
 
     def search(params = {})
@@ -116,19 +124,20 @@ module HubspotService
           'value': v
         }
       end
-      connection = Connection.prepare_connection('https://api.hubapi.com/crm/v3/objects/contacts/search')
-      response = Connection.post_request(
-        connection,
-        {
+      body = HTTParty.post(
+        'https://api.hubapi.com/crm/v3/objects/contacts/search',
+        body: {
           "filterGroups": [
             {
               "filters": filters
             }
           ]
         }.to_json,
-        authorization: "Bearer #{@access_token}"
-      )
-      body = JSON.parse(response.body)
+        headers: {
+          'Content-Type' => 'application/json',
+          authorization: "Bearer #{@access_token}"
+        }
+      ).parsed_response
       body['results']&.first
     end
   end
