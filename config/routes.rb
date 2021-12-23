@@ -134,6 +134,7 @@ Rails.application.routes.draw do
       put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
       get 'questions_list', to: 'messages#questions_list'
       get 'pricing', to: 'payment_plans#index', as: :payment_plans
+      post 'charge', to: 'payment_plans#charge', as: :payment_plan_charge
       get 'import', to: 'customers#import', as: :customers_import
       post 'export_customers', to: 'customers#export', as: :export_customers
       post 'bulk_import', to: 'customers#bulk_import', as: :customers_bulk_import

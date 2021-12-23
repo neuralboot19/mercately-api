@@ -708,6 +708,10 @@ label:hover, a:hover, button:hover {
   }
 }
 
+.bc-danger {
+  background-color: $danger-color;
+}
+
 .min-w-input-menu {
   min-width: 24px;
 

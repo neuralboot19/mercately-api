@@ -12,6 +12,17 @@ class Retailers::PaymentPlansController < RetailersController
     bot_interactions_counter
   end
 
+  def charge
+    pp = current_retailer.payment_plan
+    alert = if pp.charge!(force_retry: true)
+              pp.status_active!
+              'Plan reactivado exitosamente.'
+            else
+              'Ocurrió un error al cobrar.'
+            end
+    redirect_to retailers_payment_plans_path(current_retailer), notice: alert
+  end
+
   def subscribe
     redirect_to retailers_payment_plans_path(current_retailer), alert: 'Gracias por adquirir tu plan. ' \
       'Puedes continuar usando Mercately libremente.'

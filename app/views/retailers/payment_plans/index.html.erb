@@ -241,8 +241,47 @@
   <% else %>
     <div class="row ml-0">
       <div class="col-12 pl-0">
+        <div class="alert alert-danger c-white br-16 bc-danger" role="alert">
+          <div class="row m-0 align-items-center">
+            <div class="col-sm-10 p-0">
+              <%= image_tag 'alert.png' %>
+              <span class="ml-8">
+                <%= t('retailer.profile.payment_plans.index.inactive_plan') %>
+              </span>
+            </div>
+            <div class="col-sm-2 p-0 text-center text-sm-right">
+              <%= link_to t('retailer.profile.payment_plans.index.retry'),
+                retailers_payment_plan_charge_path(current_retailer),
+                method: :post,
+                class: 'btn-white-danger my-8 d-inline-block' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 pl-0">
+        <div class="container-payment-plan_card py-20 px-30 mb-16">
+          <div class="row ml-0">
+            <div class="col-12 col-md-6 pl-0">
+              <p class="container-payment-plan_current-plan-label mb-10"><%= t('retailer.profile.payment_plans.index.current_plan') %></p>
+            </div>
+          </div>
+          <p class="container-payment-plan_current-plan mb-10"><%= t('retailer.profile.payment_plans.index.plan') %> <%= @payment_plan.plan.capitalize %></p>
+          <p class="container-payment-plan_current-plan mb-10"><%= '$%05.2f' % @payment_plan.price.to_f %></p>
+          <p class="container-payment-plan_next-pay mb-10"><%= t('retailer.profile.payment_plans.index.ws_balance') %>:
+            <%= '$%05.2f' % current_retailer.ws_balance %>
+          </p>
+          <div class="row ml-0">
+            <div class="col-md-6 col-12 pl-0">
+              <p class="container-payment-plan_next-pay mb-10"><%= t('retailer.profile.payment_plans.index.next_pay') %>:
+                <% if @payment_plan.plan != 0 %>
+                  <%= @payment_plan.next_pay_date&.strftime("%d/%m/%Y") %>
+                <% end %>
+              </p>
+            </div>
+          </div>
+          <%= link_to t('retailer.profile.payment_plans.index.country_prices'), 'https://mercately.crunch.help/pagos/costos-de-hsm-o-templates-de-whats-app', class: 'fz-11 no-style fw-bold', target: '_blank' %>
+        </div>
         <div class="container-payment-plan_card pt-20">
-          <span class="ml-30"><%= t('retailer.profile.payment_plans.index.deactivated_plan_text_1') %> <%= mail_to 'hola@mercately.com' %> <%= t('retailer.profile.payment_plans.index.deactivated_plan_text_2') %></span>
           <% if current_retailer.ecu_charges || current_retailer.int_charges %>
             <div class="container-payment-plan_card py-20 px-30">
               <div class="row ml-0">

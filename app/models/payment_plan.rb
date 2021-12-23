@@ -6,7 +6,7 @@ class PaymentPlan < ApplicationRecord
 
   MAX_ATTEMPTS = 4
 
-  def charge!
+  def charge!(force_retry: false)
     if retailer.int_charges
       pm = retailer.payment_methods.main
       attempt = retailer.stripe_transactions.new(
@@ -15,21 +15,23 @@ class PaymentPlan < ApplicationRecord
         create_charge: true
       )
       unless attempt.save
-        increment!(:charge_attempt)
-        status_inactive! if charge_attempt > MAX_ATTEMPTS
+        payment_failed(force_retry)
         return false
       end
     else
       attempt = retailer.paymentez_credit_cards.main.create_transaction
       unless attempt
-        increment!(:charge_attempt)
-        status_inactive! if charge_attempt > MAX_ATTEMPTS
+        payment_failed(force_retry)
         return false
       end
     end
 
     # Updates the next notification date
-    npd = (next_pay_date || Date.today) + month_interval.month
+    npd = if next_pay_date.day == 15.days.ago.day
+            month_interval.months.from_now
+          else
+            month_interval.months.from_now.change(day: next_pay_date&.day || Date.today.day)
+          end
     update(next_pay_date: npd, charge_attempt: 0)
     true
   end
@@ -92,5 +94,10 @@ class PaymentPlan < ApplicationRecord
 
     def slack_client
       Slack::Notifier.new ENV['SLACK_WEBHOOK']
+    end
+
+    def payment_failed(force_retry = false)
+      increment!(:charge_attempt)
+      status_inactive! if charge_attempt > MAX_ATTEMPTS && force_retry == false
     end
 end
