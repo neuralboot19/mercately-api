@@ -2015,3 +2015,27 @@ i {
     }
   }
 }
+
+#head-alert {
+  color: #FFF;
+  background-color: #F7923B;
+  text-align: center;
+  padding-top: 4px;
+  padding-bottom: 4px;
+
+  a {
+    text-decoration: none;
+
+    &:visited {
+      color: #FFF;
+    }
+  }
+
+  @media screen and (min-width: 1026px) {
+    margin-left: 80px;
+  }
+
+  @media screen and (max-width: 1025px) {
+    transform: translateY(-30px);
+  }
+}
