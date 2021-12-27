@@ -1,0 +1,18 @@
+<div class="row align-items-center my-8 hover-blue">
+  <div class="col-3">
+    <% if product.main_picture_id %>
+      <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}", transformation: [{width: 60, height: 60, crop: :scale}], class: 'rounded mr-6') %>
+    <% elsif product.images&.first&.key.present? %>
+      <%= cl_image_tag("#{product.images&.first&.key}", transformation: [{width: 60, height: 60, crop: :scale}], class: 'rounded mr-6') %>
+    <% else %>
+      <i class="fas fa-camera-retro fs-40 c-grey"></i>
+    <% end %>
+  </div>
+  <div class="col-9 truncate text-left" title="Bomber Capsule Jacket White Model">
+    <%= product.title %>
+    <br />
+    <span class="subtitle">
+      Código: <%= product.code %>
+    </span>
+  </div>
+</div>

@@ -1,283 +1,208 @@
-<div class="container-fluid reduced-container-padding mb-16">
-  <div class="card">
-    <div class="container-fluid index">
-      <div class="row">
-        <div class="col-xs-12 col-md-6 mb-20">
-          <h1 class="d-inline index__title">Dashboard</h1>
-          <div class="index__desc">
+<div class="content_width ml-sm-108 mt-25 px-15 no-left-margin-xs fz-14">
+  <div class="row mb-32">
+    <div class="col-12">
+      <% if flash[:alert] %>
+        <div class="warning-box" role="alert">
+          <strong>¡Ups!</strong> <%= flash[:alert] %>
+        </div>
+      <% end %>
+      <h1 class="d-inline funnels__title fz-40"><%= t('hello', name: current_retailer_user.first_name) %></h1>
+      <div>
+        <b class="fz-16"><%= t('views.dashboard.greetings') %></b>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 mb-32">
+      <b class="fz-16"><%= t('views.dashboard.quick_check') %></b>
+      <br />
+      <%= @start_date %> - <%= @end_date %>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card border-16 m-0 mh-auto b-transparent shadow-none" style="background-color: #EBF7FC;">
+        <div class="card-body">
+          <div class="text-center">
+            <h1 class="funnels__title c-grey-dark d-block fz-40"><%= @success_orders_count %></h1>
+            <div class="c-grey-light fz-16"><%= t('views.dashboard.successful_sales') %></div>
           </div>
         </div>
-        <% if flash[:alert] %>
-          <div class="col-xs-12 mb-20">
-            <div class="warning-box" role="alert">
-              <strong>¡Ups!</strong> <%= flash[:alert] %>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card border-16 m-0 mh-auto b-transparent shadow-none" style="background-color: #F8EBF8;">
+        <div class="card-body">
+          <div class="text-center">
+            <h1 class="funnels__title c-grey-dark d-block fz-40"><%= @best_clients.length %></h1>
+            <div class="c-grey-light fz-16"><%= t('views.dashboard.customers_registered') %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-md-4">
+      <div class="card border-16 m-0 mh-auto b-transparent shadow-none" style="background-color: #FDF5EC;">
+        <div class="card-body">
+          <div class="text-center">
+            <h1 class="funnels__title c-grey-dark d-block fz-40"><%= @wa_msgs_count %></h1>
+            <div class="c-grey-light fz-16"><%= t('views.dashboard.messages') %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-9">
+      <div class="card border-16 mx-0 mh-auto b-transparent shadow-none">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              <b class="fz-18"><%= t('views.dashboard.latest_news') %></b>
+              <br />
+              <br />
             </div>
           </div>
-        <% end %>
-        <div class="col-xs-12 col-md-6 mt-8 t-right button-sm-and-down mb-20">
-          <%= form_for(:search, url: retailers_dashboard_path(current_retailer), method: :get, html: { id: 'select_range' }) do |form| %>
-            <div id="date-picker-container" class="select-range">
-              <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
-              <span class="c-secondary"><i class="fas fa-caret-down"></i></span>
+          <div class="row">
+            <% if @documents.present? %>
+              <% @documents.each_with_index do |doc, index| %>
+                <div class="col-md-4">
+                  <%= link_to blog_content_path(doc.uid), class: 'text-decoration-none', target: :_blank do %>
+                    <div class="card border-16 mx-0 mh-auto p-0 m-0 shadow-none">
+                      <img src="<%= doc['blogentry.blog_index_image']&.url %>" class="post-entry-img" alt="" style="border-radius: 16px 16px 0 0;" />
+                      <div class="card-body">
+                        <span class="status--primary">
+                          <%= doc['blogentry.category']&.as_text %>
+                        </span>
+                        <br />
+                        <br />
+                        <strong class="c-black truncate-2">
+                          <%=  doc['blogentry.blog_title'].as_text %>
+                        </strong>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            <% else %>
+              <div class="text-center"><%= t('views.dashboard.no_news') %></div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="card border-16 mx-0 mh-auto b-transparent shadow-none">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-6">
+              <b class="fz-18"><%= t('views.dashboard.recent_orders') %></b>
             </div>
+            <div class="col-6 text-right">
+              <%= link_to t('views.dashboard.view_all'), retailers_orders_path(current_retailer) %>
+            </div>
+          </div>
+          <% if @first_five_orders.exists? %>
+            <table class="w-100">
+              <thead>
+                <tr class="c-grey-light border-bottom">
+                  <th class="py-16"><%= t('views.dashboard.orders.info') %></th>
+                  <th class="py-16"><%= t('views.dashboard.orders.status') %></th>
+                  <th class="py-16"><%= t('views.dashboard.orders.customer') %></th>
+                  <th class="py-16"><%= t('views.dashboard.orders.total') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <%= render partial: 'retailers/pages/order', collection: @first_five_orders, as: :order %>
+              </tbody>
+            </table>
+          <% else %>
+            <div class="text-center"><%= t('views.dashboard.no_orders') %></div>
           <% end %>
         </div>
-        <div class="col-xs-12 mt-40">
-          <div class="t-center">Visión General</div>
-          <div class="row">
-            <div class="col-xs-12 pl-0 mb-10 mt-15">
-              Órdenes Totales: <b class="c-secondary"><%= @orders_count %></b>
+      </div>
+    </div>
+    <div class="col-12 col-md-3">
+      <div class="card border-16 mx-0 mh-auto b-transparent shadow-none" style="height: 420px;">
+        <div class="card-body">
+          <b class="fz-16"><%= t('views.dashboard.integrate_with') %></b>
+          <div class="row align-items-center py-8 my-26">
+            <div class="col-3">
+              <%= image_tag 'new_design/wa.png' %>
             </div>
-            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
-              <div class="col-xs-3 col-sm-3 c-secondary t-center">
-                <i class="fas fa-check-circle fs-40 mt-5"></i>
-              </div>
-              <div class="col-xs-6 col-sm-6">
-                <div class="c-gray-label">Completadas</div>
-                <div class="c-secondary"><b><%= @success_orders_count %></b></div>
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-1"></div>
-            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
-              <div class="col-xs-3 col-sm-3 c-secondary t-center">
-                <i class="far fa-check-circle fs-40 mt-5"></i>
-              </div>
-              <div class="col-xs-6 col-sm-6">
-                <div class="c-gray-label">Pendientes</div>
-                <div class="c-secondary"><b><%= @pending_orders_count %></b></div>
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-1"></div>
-            <div class="col-xs-12 col-sm-3 splitted-stats d-inline-flex">
-              <div class="col-xs-3 col-sm-3 c-secondary t-center">
-                <i class="fas fa-times-circle fs-40 mt-5"></i>
-              </div>
-              <div class="col-xs-6 col-sm-6">
-                <div class="c-gray-label">Canceladas</div>
-                <div class="c-secondary"><b><%= @cancelled_orders_count %></b></div>
-              </div>
+            <div class="col-9 truncate text-left">
+              <b>WhatsApp</b>
+              <br />
+              <span class="subtitle">
+                <% if current_retailer.whatsapp_integrated? %>
+                  <%= image_tag 'new_design/green_dot.png' %>
+                  <%= t('views.dashboard.connected') %>
+                <% else %>
+                  <%= link_to t('views.dashboard.configure'), retailers_integrations_path(current_retailer) %>
+                <% end %>
+              </span>
             </div>
           </div>
-          <div class="row">
-            <div class="col-xs-12 pl-0 mb-10 mt-15">
-              Ganancias Totales: <b class="c-secondary"><%= current_retailer.currency_symbol %><%= @profit_total %></b>
+          <div class="row align-items-center py-8 my-26">
+            <div class="col-3">
+              <%= image_tag 'new_design/msm.png' %>
+            </div>
+            <div class="col-9 truncate text-left">
+              <b>Messenger</b>
+              <br />
+              <span class="subtitle">
+                <% if current_retailer.facebook_integrated? %>
+                  <%= image_tag 'new_design/green_dot.png' %>
+                  <%= t('views.dashboard.connected') %>
+                <% else %>
+                  <%= link_to t('views.dashboard.configure'), retailers_integrations_path(current_retailer) %>
+                <% end %>
+              </span>
             </div>
           </div>
-          <div class="row">
-            <div class="col-xs-12 pl-0 mb-10 mt-15">
-              Total Mensajes: <b class="c-secondary"><%= @total_chats + @total_questions %></b>
+          <div class="row align-items-center py-8 my-26">
+            <div class="col-3">
+              <%= image_tag 'new_design/ig.png' %>
             </div>
-            <div class="col-xs-12 col-sm-4 splitted-stats d-inline-flex">
-              <div class="col-xs-3 col-sm-3 c-secondary t-center">
-                <i class="far fa-comments fs-40 mt-5"></i>
-              </div>
-              <div class="col-xs-8 col-sm-8">
-                <div class="c-gray-label">Cantidad de Mensajes</div>
-                <div class="c-secondary"><b><%= @total_chats %></b></div>
-              </div>
-            </div>
-            <div class="col-xs-12 col-sm-1"></div>
-            <div class="col-xs-12 col-sm-4 splitted-stats d-inline-flex">
-              <div class="col-xs-3 col-sm-3 c-secondary t-center">
-                <i class="far fa-question-circle fs-40 mt-5"></i>
-              </div>
-              <div class="col-xs-8 col-sm-8">
-                <div class="c-gray-label">Cantidad de Preguntas</div>
-                <div class="c-secondary"><b><%= @total_questions %></b></div>
-              </div>
+            <div class="col-9 truncate text-left">
+              <b>Instagram</b>
+              <br />
+              <span class="subtitle">
+                <% if current_retailer.instagram_integrated? %>
+                  <%= image_tag 'new_design/green_dot.png' %>
+                  <%= t('views.dashboard.connected') %>
+                <% else %>
+                  <%= link_to t('views.dashboard.configure'), retailers_integrations_path(current_retailer) %>
+                <% end %>
+              </span>
             </div>
           </div>
-        </div>
-        <div class="col-xs-12 divider mt-30"></div>
-        <div class="col-xs-12 col-sm-7 mt-40">
-          <div class="t-center mb-10">Productos más vendidos</div>
-          <div class="dash-products-clients-container">
-            <!--
-            <div class="row col-xs-12 col-sm-12 dashboard-tabs px-0">
-              <div id="dash-products-tab" class="col-xs-12 tab-links t-center py-10 selected-tab">
-                Productos
-              </div>
-              <div id="dash-categories-tab" class="col-xs-12 col-sm-6 tab-links t-center py-10">
-                Categorías
-              </div>
+          <div class="row align-items-center py-8 mt-26">
+            <div class="col-3">
+              <%= image_tag 'new_design/ml.png' %>
             </div>
-            -->
-            <div id="dash-products-content" class="col-xs-12 col-sm-12 tabs-content">
-              <div class="row">
-                <div class="col-xs-12 col-sm-12 mt-10">
-                  <div class="table box">
-                    <div class="table__header row center-sm hide-on-sm-and-down table-header-labels">
-                      <div class="col-xs-2 col-sm-2">Imagen</div>
-                      <div class="col-xs-6 col-sm-6">Producto</div>
-                      <div class="col-xs-2 col-sm-2">Vendidos</div>
-                      <div class="col-xs-2 col-sm-2">Ganancia</div>
-                    </div>
-                    <% @best_products.each do |product| %>
-                      <div class="divider"></div>
-                      <div class="table__item row middle-xs py-0">
-                        <div class="col-xs-2 col-sm-2 t-center">
-                          <% if product.main_picture_id %>
-                            <%= cl_image_tag("#{product.images&.find(product.main_picture_id)&.key}", transformation: [{width: 50, height: 50, crop: :scale}]) %>
-                          <% elsif product.images&.first&.key.present? %>
-                            <%= cl_image_tag("#{product.images&.first&.key}", transformation: [{width: 50, height: 50, crop: :scale}]) %>
-                          <% else %>
-                            <i class="fas fa-camera-retro fs-40 c-grey"></i>
-                          <% end %>
-                        </div>
-                        <div class="col-xs-6 col-sm-6 t-center"><%= product.title %></div>
-                        <div class="col-xs-2 col-sm-2 t-center"><%= product.range_total_sold(@start_date, @end_date) %></div>
-                        <div class="col-xs-2 col-sm-2 t-center c-green"><%= current_retailer.currency_symbol %><%= product.range_total_earned(@start_date, @end_date) %></div>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div id="dash-categories-content" class="row col-xs-12 col-sm-12 tabs-content d-none">
-              <div class="row">
-                <div class="col-xs-12 col-sm-12 mt-10">
-                  <div class="table box">
-                    <div class="table__header row center-sm hide-on-sm-and-down table-header-labels">
-                      <div class="col-xs-5 col-sm-5">Nombre</div>
-                      <div class="col-xs-2 col-sm-2">Productos</div>
-                      <div class="col-xs-2 col-sm-2">Vendidos</div>
-                      <div class="col-xs-3 col-sm-3">Ganancia</div>
-                    </div>
-                    <% @best_categories.each do |cat| %>
-                      <div class="divider"></div>
-                      <div class="table__item row middle-xs py-0">
-                        <div class="col-xs-5 col-sm-5 t-center"><%= cat.name %></div>
-                        <div class="col-xs-2 col-sm-2 t-center"><%= cat.total_products(current_retailer) %></div>
-                        <div class="col-xs-2 col-sm-2 t-center"><%= cat.total_products_sold(current_retailer, @start_date, @end_date) %></div>
-                        <div class="col-xs-3 col-sm-3 t-center c-green"><%= current_retailer.currency_symbol %><%= cat.earnings(current_retailer, @start_date, @end_date) %></div>
-                      </div>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
+            <div class="col-9 truncate text-left">
+              <b>MercadoLibre</b>
+              <br />
+              <span class="subtitle">
+                <% if current_retailer.ml_integrated? %>
+                  <%= image_tag 'new_design/green_dot.png' %>
+                  <%= t('views.dashboard.connected') %>
+                <% else %>
+                  <%= link_to t('views.dashboard.configure'), retailers_integrations_path(current_retailer) %>
+                <% end %>
+              </span>
             </div>
           </div>
         </div>
-        <div class="col-xs-12 col-sm-5 mt-40">
-          <div class="t-center mb-10">Mejores clientes</div>
-          <div class="dash-products-clients-container">
-            <div class="row col-xs-12 col-sm-12 px-0">
-              <div class="col-xs-12 col-sm-12 dash-best-clients py-10">
-                <div class="row">
-                  <div class="col-xs-12">
-                    <div class="table box">
-                      <div class="table__header row center-sm hide-on-sm-and-down table-header-labels">
-                        <div class="col-sm-4">Cliente</div>
-                        <div class="col-sm-4">Items</div>
-                        <div class="col-sm-4">Ganancia</div>
-                      </div>
-                      <% @best_clients.each do |customer| %>
-                        <div class="divider"></div>
-                        <div class="table__item row middle-xs">
-                          <div class="col-xs-4 col-sm-4">
-                            <% if customer.full_names.present? %>
-                              <div class="t-center"><%= customer.full_names %></div>
-                            <% else %>
-                              <div class="t-center"><%= customer.meli_nickname || customer.email %></div>
-                            <% end %>
-                          </div>
-                          <div class="col-xs-4 col-sm-4">
-                            <div class="t-center"><%= customer.range_items_bought(@start_date, @end_date) %></div>
-                          </div>
-                          <div class="col-xs-4 col-sm-4">
-                            <div class="t-center c-green"><%= current_retailer.currency_symbol %><%= customer.range_earnings(@start_date, @end_date) %></div>
-                          </div>
-                        </div>
-                      <% end %>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xs-12 divider mt-30"></div>
-        <div class="col-xs-12 mt-40">
-          <div class="t-center">Total de ganancias</div>
-          <%= area_chart @incoming_total %>
+      </div>
+      <div class="card border-16 mx-0 mh-auto b-transparent shadow-none">
+        <div class="card-body">
+          <b class="fz-16"><%= t('views.dashboard.best_sellers') %></b>
+          <% if @best_products.exists? %>
+            <%= render partial: 'retailers/pages/product', collection: @best_products, as: :product %>
+          <% else %>
+            <br />
+            <br />
+            <div class="text-center"><%= t('views.dashboard.no_products') %></div>
+          <% end %>
         </div>
       </div>
     </div>
   </div>
 </div>
-<script type="text/javascript">
-  $(document).ready(function() {
-    var today = new Date;
-    $('[data-behavior="daterangepicker"]').daterangepicker({
-      opens: 'left',
-      startDate: '<%= @start_date %>',
-      endDate: '<%= @end_date %>',
-      maxDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
-      ranges: {
-        'Hoy': [moment(), moment()],
-        'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
-        'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-        'Este mes': [moment().startOf('month'), moment().endOf('month')],
-        'Mes pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-      },
-      locale: {
-        format: 'DD/MM/YYYY',
-        cancelLabel: 'Cancelar',
-        applyLabel: 'Aplicar',
-        fromLabel: 'Desde',
-        toLabel: 'Hasta',
-        customRangeLabel: 'Editar fecha',
-        weekLabel: 'Semana',
-        daysOfWeek: [
-          'Do',
-          'Lu',
-          'Ma',
-          'Mi',
-          'Ju',
-          'Vi',
-          'Sa'
-        ],
-        monthNames: [
-          'Enero',
-          'Febrero',
-          'Marzo',
-          'Abril',
-          'Mayo',
-          'Junio',
-          'Julio',
-          'Agosto',
-          'Septiembre',
-          'Octubre',
-          'Noviembre',
-          'Diciembre'
-        ],
-        firstDay: 1
-      }
-    }, function() {
-      setTimeout(function() {
-        $('#select_range').submit();
-      }, 100)
-    });
-
-    $('#dash-products-tab').on('click', function() {
-      $('#dash-products-tab').addClass('selected-tab');
-      // $('#dash-categories-tab').removeClass('selected-tab');
-      $('#dash-products-content').show();
-      $('#dash-categories-content').hide();
-    });
-
-      /*
-    $('#dash-categories-tab').on('click', function() {
-      $('#dash-categories-tab').addClass('selected-tab');
-      $('#dash-products-tab').removeClass('selected-tab');
-      $('#dash-products-content').hide();
-      $('#dash-categories-content').show();
-    });
-     */
-
-    $('#date-picker-container, #search_range').on('click', function() {
-      $('#search_range').data('daterangepicker').toggle();
-    });
-  });
-</script>

@@ -8,6 +8,7 @@ module PagesControllerConcern
     @customer_ids = current_retailer.customers.ids
     @orders = Order.where(customer_id: @customer_ids)
     @orders_range = @orders.range_between(@start_date, @end_date)
+    @first_five_orders = @orders_range.limit(5)
     @orders_count = @orders_range.count
     @profit_total = @orders_range.success.sum { |ord| ord.total_amount || 0 }.to_f.round(2)
     @success_orders_count = @orders_range.success.where(customer_id: @customer_ids).count
@@ -58,6 +59,6 @@ module PagesControllerConcern
       orders_created_at_lteq: @end_date,
       s: 'sort_by_total desc'
     }
-    @best_clients = current_retailer.customers.ransack(q).result.group('customers.id').limit(10)
+    @best_clients = current_retailer.customers.ransack(q).result.group('customers.id')
   end
 end

@@ -1,0 +1,41 @@
+<% main_product = order.order_items.first.product %>
+<tr>
+  <td class="py-8">
+    <div class="row align-items-center">
+      <div class="col-3">
+        <% if main_product.main_picture_id %>
+          <%= cl_image_tag("#{main_product.images&.find(main_product.main_picture_id)&.key}", transformation: [{width: 60, height: 60, crop: :scale}], class: 'rounded mr-6') %>
+        <% elsif main_product.images&.first&.key.present? %>
+          <%= cl_image_tag("#{main_product.images&.first&.key}", transformation: [{width: 60, height: 60, crop: :scale}], class: 'rounded mr-6') %>
+        <% else %>
+          <i class="fas fa-camera-retro fs-40 c-grey"></i>
+        <% end %>
+      </div>
+      <div class="col-9 truncate text-left" title="Bomber Capsule Jacket White Model">
+        <%= main_product.title %>
+        <br />
+        <span class="subtitle">
+          Código: <%= main_product.code %>
+        </span>
+      </div>
+    </div>
+  </td>
+  <td>
+    <% if order.pending? %>
+      <% order_status = 'status--warning' %>
+    <% elsif order.success? %>
+      <% order_status = 'status--success' %>
+    <% else %>
+      <% order_status = 'status--danger' %>
+    <% end %>
+    <div class="<%= order_status %>">
+      <%= t("activerecord.attributes.order.statuses.#{order.status}") %>
+    </div>
+  </td>
+  <td>
+    <%= order.customer.name %>
+  </td>
+  <td>
+    <%= current_retailer.currency_symbol %><%= order.total %>
+  </td>
+</tr>
