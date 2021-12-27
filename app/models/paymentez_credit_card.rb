@@ -9,15 +9,14 @@ class PaymentezCreditCard < ApplicationRecord
 
   default_scope -> { where(deleted: false).order(main: :desc) }
 
+  scope :main, -> { find_by(main: true) }
+
   def create_transaction
-    plan = self.retailer.payment_plan
+    plan = retailer.payment_plan
     return true if plan.plan == 'free' || plan.price.zero?
 
     response = transaction.debit_with_token(self)
-    plan.update(status: :inactive) and return false if response[:status] != 200
-
-    next_pay_date = plan.next_pay_date ? plan.next_pay_date : Date.today + 30.days
-    plan.update(next_pay_date: next_pay_date) if plan.next_pay_date != Date.today
+    return false if response[:status] != 200
 
     # Subscription payments will be disabled temporally
     # as @henry2992 requirement
