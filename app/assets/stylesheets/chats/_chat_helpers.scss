@@ -114,7 +114,7 @@ label:hover, a:hover, button:hover {
 
 @for $space from 0 through 250 {
   .fz-#{$space} {
-    font-size: #{$space}px;
+    font-size: #{$space}px !important;
   }
 
   .w-#{$space} {
@@ -185,6 +185,10 @@ label:hover, a:hover, button:hover {
 
 .w-400 {
   width: 400px;
+}
+
+.mh-auto {
+  min-height: auto !important;
 }
 
 .m-auto {
@@ -260,6 +264,14 @@ label:hover, a:hover, button:hover {
   color: #AAA;
 }
 
+.c-grey-dark {
+  color: #3C4348;
+}
+
+.c-grey-light {
+  color: #808191;
+}
+
 .c-green {
   color: #1DBF73;
 }
@@ -303,6 +315,10 @@ label:hover, a:hover, button:hover {
 
 .b-0 {
   border: 0;
+}
+
+.b-transparent {
+  border: 1px solid transparent;
 }
 
 .bg-transparent {

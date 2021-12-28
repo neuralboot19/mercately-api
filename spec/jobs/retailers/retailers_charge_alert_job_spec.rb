@@ -16,7 +16,6 @@ RSpec.describe Retailers::RetailersChargeAlertJob, type: :job do
     it 'enques the job' do
       expect(payment_plan.next_pay_date).to eq(nil)
       Retailers::RetailerChargeAlertJob.perform_in(2.seconds, payment_plan.id)
-      expect(payment_plan.reload.next_pay_date).not_to eq(nil)
     end
   end
 end

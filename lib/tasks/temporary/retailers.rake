@@ -7,4 +7,10 @@ namespace :retailers do
     end
     Retailer.all.find_each(&:create_funnel_steps)
   end
+
+  task set_last_card_main: :environment do
+    Retailer.joins(:payment_methods).find_each do |r|
+      r.payment_methods.last.main!
+    end
+  end
 end

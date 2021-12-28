@@ -848,6 +848,7 @@ ActiveRecord::Schema.define(version: 2021_12_13_200217) do
     t.integer "karix_available_messages", default: 0
     t.integer "karix_available_notifications", default: 0
     t.integer "month_interval", default: 1
+    t.integer "charge_attempt", default: 0, null: false
     t.index ["retailer_id"], name: "index_payment_plans_on_retailer_id"
   end
 

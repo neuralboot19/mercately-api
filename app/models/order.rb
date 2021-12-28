@@ -48,7 +48,7 @@ class Order < ApplicationRecord
   end
 
   def total
-    order_items.map { |order_item| order_item.unit_price * order_item.quantity }.sum
+    order_items.sum('unit_price * quantity')
   end
 
   def last_message

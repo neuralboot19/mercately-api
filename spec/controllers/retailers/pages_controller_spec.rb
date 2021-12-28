@@ -40,13 +40,6 @@ RSpec.describe Retailers::PagesController, type: :controller do
       get :dashboard, params: { slug: retailer_user.retailer.slug }
       expect(flash[:alert]).to_not be_present
     end
-
-    it 'returns a start_date and end_date' do
-      get :dashboard, params: { slug: retailer_user.retailer.slug , search: { range: "#{Time.now.strftime("%d/%m/%Y")} - #{(Time.now + 5.days).strftime("%d/%m/%Y")}"} }
-
-      expect(assigns(:start_date)).to eq(Time.now.strftime("%d/%m/%Y"))
-      expect(assigns(:end_date)).to eq((Time.now + 5.days).strftime("%d/%m/%Y"))
-    end
   end
 
   describe "before_action #validate_payment_plan" do

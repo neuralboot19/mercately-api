@@ -4,8 +4,37 @@ class PaymentPlan < ApplicationRecord
   enum status: %i[active inactive], _prefix: true
   enum plan: %i[free basic professional advanced enterprise]
 
-  def notify_slack
+  MAX_ATTEMPTS = 4
+
+  def charge!
+    if retailer.int_charges
+      pm = retailer.payment_methods.main
+      attempt = retailer.stripe_transactions.new(
+        amount: price.to_i,
+        payment_method: pm,
+        create_charge: true
+      )
+      unless attempt.save
+        increment!(:charge_attempt)
+        status_inactive! if charge_attempt > MAX_ATTEMPTS
+        return false
+      end
+    else
+      attempt = retailer.paymentez_credit_cards.main.create_transaction
+      unless attempt
+        increment!(:charge_attempt)
+        status_inactive! if charge_attempt > MAX_ATTEMPTS
+        return false
+      end
+    end
+
+    # Updates the next notification date
     npd = (next_pay_date || Date.today) + month_interval.month
+    update(next_pay_date: npd, charge_attempt: 0)
+    true
+  end
+
+  def notify_slack
     ws_msg = if retailer.gupshup_integrated?
                retailer.gupshup_whatsapp_messages.where(created_at: month_interval.months.ago..Time.now).where.not(note: true)
              elsif retailer.karix_integrated?
@@ -52,9 +81,6 @@ class PaymentPlan < ApplicationRecord
     end
 
     slack_client.ping(msg.join("\n"))
-
-    # Updates the next notification date
-    update(next_pay_date: npd)
   end
 
   def is_active?

@@ -250,6 +250,22 @@ class Retailer < ApplicationRecord
     hs_access_token.present?
   end
 
+  def facebook_integrated?
+    return unless facebook_retailer
+
+    facebook_retailer.connected?
+  end
+
+  def instagram_integrated?
+    return unless facebook_retailer
+
+    facebook_retailer.instagram_integrated?
+  end
+
+  def ml_integrated?
+    meli_retailer.present?
+  end
+
   def main_paymentez_credit_card
     self.paymentez_credit_cards.find_by_main(true)
   end
