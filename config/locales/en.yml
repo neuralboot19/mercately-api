@@ -19,6 +19,11 @@ en:
     payment_plans: 'Payment Plan'
     api_key: 'API Key'
     logout: 'Logout'
+    failed_charge:
+      1: 'Hello %{retailer}, unfortunately we could not execute the charge for the renewal of your plan.'
+      2: 'Please, review your payment method as soon as possible so as not to suffer interruptions in the service'
+      3: 'here.'
+      4: 'Thank you very much for your support. 💪'
   mailer:
     broken_hs_integration:
       broken_integration: 'Hubspot integration disabled'

@@ -438,6 +438,11 @@ es:
     payment_plans: 'Planes de pago'
     api_key: 'API Key'
     logout: 'Cerrar sesión'
+    failed_charge:
+      1: 'Hola %{retailer}, lamentablemente no pudimos ejecutar el cobro por renovación de tu plan.'
+      2: 'Por favor, revisa tu método de pago lo antes posible para no sufrir cortes en el servicio'
+      3: 'aquí.'
+      4: 'Muchas gracias por tu apoyo. 💪'
   mailer:
     broken_hs_integration:
       broken_integration: 'Integración con Hubspot desactivada'
