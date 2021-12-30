@@ -19,7 +19,11 @@ class StripeTransaction < ApplicationRecord
       desc = 'Recarga de saldo'
       err = 'Error al añadir saldo'
       if create_charge
-        desc = 'Pago cuota'
+        desc = if retailer.payment_plan.month_interval > 1
+                 "Mercately #{retailer.payment_plan.month_interval} Months Subscription"
+               else
+                 'Mercately Monthly Subscription'
+               end
         err = 'Error al procesar el pago, retailer desactivado'
       end
       charge = Stripe::PaymentIntent.create(

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_13_200217) do
+ActiveRecord::Schema.define(version: 2021_12_22_213304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1028,6 +1028,17 @@ ActiveRecord::Schema.define(version: 2021_12_13_200217) do
     t.index ["retailer_user_id"], name: "index_retailer_amount_messages_on_retailer_user_id"
   end
 
+  create_table "retailer_most_used_tags", force: :cascade do |t|
+    t.bigint "retailer_id", null: false
+    t.bigint "tag_id", null: false
+    t.integer "amount_used", default: 0
+    t.date "calculation_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_retailer_most_used_tags_on_retailer_id"
+    t.index ["tag_id"], name: "index_retailer_most_used_tags_on_tag_id"
+  end
+
   create_table "retailer_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -1284,6 +1295,8 @@ ActiveRecord::Schema.define(version: 2021_12_13_200217) do
   add_foreign_key "paymentez_transactions", "paymentez_credit_cards"
   add_foreign_key "paymentez_transactions", "retailers"
   add_foreign_key "questions", "products"
+  add_foreign_key "retailer_most_used_tags", "retailers"
+  add_foreign_key "retailer_most_used_tags", "tags"
   add_foreign_key "whatsapp_logs", "gupshup_whatsapp_messages"
   add_foreign_key "whatsapp_logs", "retailers"
 end

@@ -53,7 +53,7 @@ ActiveAdmin.register PaymentPlan, as: 'Charge' do
           else
             'Número de intentos de cobro máximo (4) alcanzado'
           end
-    notice_type = charged ? :notice : :error
+    notice_type = charged ? :notice : :alert
     redirect_to admin_charges_path, notice_type => msg
   end
 end

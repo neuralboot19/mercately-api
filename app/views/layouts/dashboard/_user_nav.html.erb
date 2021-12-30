@@ -101,3 +101,11 @@
     </div>
   </div>
 </header>
+<% if current_retailer.payment_plan.charge_attempt.positive? && current_retailer.payment_plan.status_active? %>
+  <section id="head-alert">
+    <%= t('horizontal_navbar.failed_charge.1', retailer: current_retailer.name) %>
+    <%= t('horizontal_navbar.failed_charge.2') %>
+    <b><%= link_to t('horizontal_navbar.failed_charge.3'), retailers_payment_plans_path(current_retailer), class: 'text-white' %></b>
+    <%= t('horizontal_navbar.failed_charge.4') %>
+  </section>
+<% end %>
