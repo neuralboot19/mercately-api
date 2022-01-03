@@ -1491,3 +1491,20 @@ hr.chat_separator {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.br-16 {
+  border-radius: 16px;
+}
+
+.btn-white-danger {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 12px 46px;
+  color: #EB686D;
+
+  &:hover {
+    text-decoration: none;
+    color: #EB686D;
+    cursor: pointer;
+  }
+}

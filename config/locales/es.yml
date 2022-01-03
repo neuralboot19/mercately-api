@@ -592,6 +592,8 @@ es:
     profile:
       payment_plans:
         index:
+          retry: Reactivar
+          inactive_plan: Tu plan ha sido desactivado, actualiza tu tarjeta y pulsa en el botón para reactivarlo.
           title: Planes de pago
           subtitle: Planes de pago
           information: Información
@@ -627,8 +629,6 @@ es:
           message_type_conversation: Conversación
           message_type_notification: Notificación
           delete_card_confirmation: ¿Estás seguro de eliminar esta tarjeta?
-          deactivated_plan_text_1: Tu plan ha sido desactivado, actualiza tu tarjeta y comunicate con
-          deactivated_plan_text_2: para reactivarlo.
           payment_methods: Métodos de Pago
           update_card_confirmation: ¿Estás seguro de actualizar esta tarjeta?
         charge_balance:
