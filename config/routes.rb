@@ -226,6 +226,8 @@ Rails.application.routes.draw do
         end
       end
 
+      post 'create_reminder', to: 'reminders_mobile#create'
+
       resources :funnels, only: [:index] do
         collection do
           post 'update_deal', to: 'funnels#update_deal'
