@@ -110,6 +110,14 @@ class Retailer < ApplicationRecord
     Order.joins(:customer).where('orders.count_unread_messages > 0 AND customers.retailer_id = ?', id)
   end
 
+  def transactions
+    if int_charges?
+      stripe_transactions
+    else
+      paymentez_transactions
+    end
+  end
+
   def karix_unread_whatsapp_messages(retailer_user)
     return []
 

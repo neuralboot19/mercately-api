@@ -685,3 +685,18 @@ es:
     view: Ver
     edit: Editar
     remove: Eliminar
+  invoice:
+    invoice: 'Factura'
+    paid: 'Pagado'
+    billed_to: 'Cobrado a'
+    description: 'Descripción'
+    amount: 'Monto'
+    warning: 'Por favor mantén una copia de esta factura para futura referencia'
+    questions: 'Si tiene preguntas tecnicas o acerca de la factura, por favor escriba a'
+    thanks: 'Gracias por usar Mercately'
+    team: 'El equipo de Mercately'
+    reference_code: 'Código de referencia'
+    monthly_sub: 'Suscripción mensual a Mercately'
+    months_sub: 'Suscripción de %{months} meses a Mercately'
+    balance_recharge: 'Recarga de saldo'
+    check: 'Ver factura'

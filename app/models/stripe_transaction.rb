@@ -1,4 +1,6 @@
 class StripeTransaction < ApplicationRecord
+  include WebIdGenerateableConcern
+
   belongs_to :retailer
   belongs_to :payment_method, optional: true
 
@@ -6,8 +8,13 @@ class StripeTransaction < ApplicationRecord
 
   before_create :create_payment
   after_create :recharge_balance, unless: :create_charge
+  after_create :generate_web_id
 
   attr_writer :create_charge
+
+  def to_param
+    web_id
+  end
 
   def create_charge
     @create_charge || false
@@ -18,9 +25,11 @@ class StripeTransaction < ApplicationRecord
     def create_payment
       desc = 'Recarga de saldo'
       err = 'Error al añadir saldo'
+      self.month_interval = 0
       if create_charge
-        desc = if retailer.payment_plan.month_interval > 1
-                 "Mercately #{retailer.payment_plan.month_interval} Months Subscription"
+        self.month_interval = retailer.payment_plan.month_interval
+        desc = if month_interval > 1
+                 "Mercately #{month_interval} Months Subscription"
                else
                  'Mercately Monthly Subscription'
                end

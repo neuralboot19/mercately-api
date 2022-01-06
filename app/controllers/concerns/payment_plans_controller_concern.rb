@@ -32,6 +32,7 @@ module PaymentPlansControllerConcern
       @date = date
       @data = {
         month: I18n.l(date, format: "%B"),
+        month_number: date.month,
         year: date.year.to_s,
         type: [],
         cost: [],

@@ -1,0 +1,79 @@
+<div class="row">
+  <div class="col">
+    <h3>
+      <b><%= t('invoice.invoice') %></b>
+      <h6 class="mb-4"><%= I18n.l @transaction.created_at, format: '%d %B %Y', locale: current_retailer_user.locale %></h6>
+    </h3>
+  </div>
+  <div class="col text-right">
+    <% if @transaction.class == PaymentezTransaction %>
+      <span class="badge <%= @transaction.status == 'success' ? 'badge-success' : 'badge-info' %>">
+        <%= t("retailer.profile.payment_plans.index.payment_#{@transaction.status}") %>
+      </span>
+    <% else %>
+      <span class="badge badge-success"><%= t('invoice.paid') %></span>
+    <% end %>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    Mercately LLC.
+    <br/>
+    30 N Gould St Ste R
+    <br/>
+    Sheridan, WY 82801
+  </div>
+  <div class="col">
+    <b><%= t('invoice.billed_to') %></b>
+    <br/>
+    <%= @retailer_admin.full_name %>
+    <br/>
+    <%= @retailer_admin.email %>
+  </div>
+</div>
+<div class="row mt-3">
+  <div class="col">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col"><%= t('invoice.description') %></th>
+          <th scope="col"><%= t('invoice.amount') %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <% if @transaction.month_interval.zero? %>
+              <%= t('invoice.balance_recharge') %>
+            <% elsif @transaction.month_interval > 1 %>
+              <%= t('invoice.months_sub', months: @transaction.month_interval) %>
+            <% else %>
+              <%= t('invoice.monthly_sub') %>
+            <% end %>
+          </td>
+          <td><%= current_retailer.currency_symbol %><%= @transaction.amount %></td>
+        </tr>
+        <tr>
+          <th scope="row" class="text-right">Total:</th>
+          <td>
+            <%= current_retailer.currency_symbol %><%= @transaction.amount %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <b><%= t('invoice.reference_code') %>: <%= "#{current_retailer.name.first.capitalize}-00#{@transaction.id}" %></b>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <br/>
+    <%= t('invoice.warning') %>.
+    <br />
+    <%= t('invoice.questions') %> <%= mail_to 'hola@mercately.com' %>.
+    <br />
+    <%= t('invoice.thanks') %>.
+    <br />
+    <br />
+    <%= t('invoice.team') %>.
+  </div>
+</div>

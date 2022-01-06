@@ -11,11 +11,12 @@ class PaymentezCreditCard < ApplicationRecord
 
   scope :main, -> { find_by(main: true) }
 
-  def create_transaction
+  # Si sub es false, se entiende que es una recarga de saldo y no una sub a Mercately
+  def create_transaction(sub = false)
     plan = retailer.payment_plan
     return true if plan.plan == 'free' || plan.price.zero?
 
-    response = transaction.debit_with_token(self)
+    response = transaction.debit_with_token(self, nil, nil, sub)
     return false if response[:status] != 200
 
     # Subscription payments will be disabled temporally

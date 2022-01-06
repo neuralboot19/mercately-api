@@ -43,5 +43,6 @@ Rails.application.config.assets.precompile += %w(
   retailers/gs_templates/gs_templates.js
   chats/chat.js
   chats/chat.css
+  document.css
 )
 Rails.application.config.assets.css_compressor = :sass
