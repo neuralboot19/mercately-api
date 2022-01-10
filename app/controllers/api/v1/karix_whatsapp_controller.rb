@@ -45,7 +45,8 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         filter_tags: current_retailer.tags,
         total_customers: total_pages,
         gupshup_integrated: current_retailer.gupshup_integrated?,
-        allow_send_voice: current_retailer.allow_voice_notes
+        allow_send_voice: current_retailer.allow_voice_notes,
+        balance_error_info: !current_retailer.positive_balance? ? balance_error : nil
       }
     else
       render status: 404, json: {
@@ -84,7 +85,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         ).reverse
       end
 
-      if current_retailer.unlimited_account || current_retailer.positive_balance?(@customer)
+      if current_retailer.positive_balance?(@customer)
         render status: 200, json: {
           messages: @messages,
           agents: agents,
@@ -321,16 +322,18 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     def balance_error
       {
         status: 401,
-        message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
-                 'por favor, contáctese con su agente de ventas para recargar su saldo'
+        message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, por favor recargue'
       }
     end
 
     def validate_balance
-      is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
+      if current_retailer.karix_integrated?
+        is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
 
-      return if current_retailer.unlimited_account && is_template == false
-      return if current_retailer.positive_balance?(@customer) || params[:note] == true
+        return if current_retailer.unlimited_account && is_template == false
+      end
+
+      return if params[:note] == true || current_retailer.positive_balance?(@customer)
 
       render status: 401, json: balance_error
     end

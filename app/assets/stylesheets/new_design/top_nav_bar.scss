@@ -44,7 +44,7 @@
 }
 
 .child_container {
-  width: 50%;
+  width: 40%;
   float: left;
 
   .right-content {
@@ -78,6 +78,44 @@
   font-size: 14px;
   line-height: 24px;
   text-transform: capitalize;
+}
+
+.free-conversations-container {
+  float: left;
+  height: 60px;
+  position: relative;
+  width: 20%;
+
+  .outer-free-conversations {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    width: 100%;
+
+    .labels-container {
+      display: flex;
+      margin-bottom: 5px;
+      position: relative;
+
+      .second-label {
+        position: absolute;
+        right: 0;
+        color: #808191;
+      }
+    }
+
+    .percentage-bar-container {
+      background: #E6E6E6;
+      height: 8px;
+      border-radius: 20px;
+
+      .percentage-bar {
+        background: $secondary-color;
+        height: 8px;
+        border-radius: 20px;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 1024px) {

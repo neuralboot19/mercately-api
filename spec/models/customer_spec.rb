@@ -1070,7 +1070,15 @@ RSpec.describe Customer, type: :model do
       let!(:customer) { create(:customer, phone: '+593123456789', country_id: 'EC') }
 
       it 'sets the notification cost belonging to that country' do
-        expect(customer.ws_notification_cost).to eq(country_codes['EC'])
+        expect(customer.ws_notification_cost).to eq(country_codes['EC'][0])
+      end
+
+      it 'sets the business conversation cost belonging to that country' do
+        expect(customer.ws_bic_cost).to eq(country_codes['EC'][1])
+      end
+
+      it 'sets the user conversation cost belonging to that country' do
+        expect(customer.ws_uic_cost).to eq(country_codes['EC'][2])
       end
     end
 
@@ -1078,7 +1086,15 @@ RSpec.describe Customer, type: :model do
       let!(:customer) { create(:customer, phone: '+593123456789', country_id: nil) }
 
       it 'sets the default notification cost' do
-        expect(customer.ws_notification_cost).to eq(country_codes['Others'])
+        expect(customer.ws_notification_cost).to eq(country_codes['Others'][0])
+      end
+
+      it 'sets the default business conversation cost' do
+        expect(customer.ws_bic_cost).to eq(country_codes['Others'][1])
+      end
+
+      it 'sets the default user conversation cost' do
+        expect(customer.ws_uic_cost).to eq(country_codes['Others'][2])
       end
     end
   end

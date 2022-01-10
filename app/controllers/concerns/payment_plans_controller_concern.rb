@@ -2,24 +2,35 @@ module PaymentPlansControllerConcern
   extend ActiveSupport::Concern
 
   def used_whatsapp_messages
-    whatsapp_messages = current_retailer.karix_integrated? ? 'karix_whatsapp_messages' : 'gupshup_whatsapp_messages'
-    messages = current_retailer.send(whatsapp_messages).range_between(@payment_plan.start_date, Time.now)
+    if current_retailer.karix_integrated?
+      whatsapp_messages = 'karix_whatsapp_messages'
+      until_date = Time.now
+    elsif current_retailer.gupshup_integrated?
+      whatsapp_messages = 'gupshup_whatsapp_messages'
+      until_date = Time.new(2022,01,31).end_of_day
+    end
+
+    messages = current_retailer.send(whatsapp_messages).range_between(@payment_plan.start_date, until_date)
 
     total_conversations = messages.group_by_month(:created_at).conversation_messages
     total_notifications = messages.group_by_month(:created_at).notification_messages
 
     @count_conversations_by_cost = total_conversations.group(:cost).count
     @count_notifications_by_cost = total_notifications.group(:cost).count
+    @count_conversations_by_cost.map { |k, v| k[1] = k[1].to_f }
+    @count_notifications_by_cost.map { |k, v| k[1] = k[1].to_f }
 
     @total_conversations_by_cost = total_conversations.group(:cost).sum(:cost)
     @total_notifications_by_cost = total_notifications.group(:cost).sum(:cost)
+    @total_conversations_by_cost.map { |k, v| k[1] = k[1].to_f }
+    @total_notifications_by_cost.map { |k, v| k[1] = k[1].to_f }
 
-    @cost_list_conversation = @total_conversations_by_cost.keys.map(&:second).uniq
-    @cost_list_notification = @total_notifications_by_cost.keys.map(&:second).uniq
-    @costs_list = @cost_list_conversation + @cost_list_notification
+    cost_list_conversation = @total_conversations_by_cost.keys.map(&:second)
+    cost_list_notification = @total_notifications_by_cost.keys.map(&:second)
+    @costs_list = (cost_list_conversation + cost_list_notification).uniq
 
-    date_list_conversation = @total_conversations_by_cost.keys.map(&:first).uniq
-    date_list_notification = @total_notifications_by_cost.keys.map(&:first).uniq
+    date_list_conversation = @total_conversations_by_cost.keys.map(&:first)
+    date_list_notification = @total_notifications_by_cost.keys.map(&:first)
     @date_list = (date_list_conversation + date_list_notification).uniq.sort
 
     load_messages
