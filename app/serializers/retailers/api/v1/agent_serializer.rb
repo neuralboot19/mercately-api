@@ -1,6 +1,6 @@
 module Retailers::Api::V1
   class AgentSerializer < ActiveModel::Serializer
-    attributes :id, :first_name, :last_name, :email, :retailer_id, :admin, :pending_payment?
+    attributes :id, :first_name, :last_name, :email, :retailer_id, :admin, :pending_payment?, :currency
 
     def admin
       object.retailer_admin
@@ -8,6 +8,10 @@ module Retailers::Api::V1
 
     def pending_payment?
       PaymentPlan.find_by_retailer_id(object.retailer_id).status_inactive?
+    end
+
+    def currency
+      object.retailer.currency_symbol
     end
   end
 end

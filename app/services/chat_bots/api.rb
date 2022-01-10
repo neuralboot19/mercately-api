@@ -65,8 +65,8 @@ module ChatBots
     # Setea la respuesta del endpoint en caso de que la opcion tenga dicha accion.
     # Si el parametro concat_answer_type es 'success', toma la respuesta de exito.
     # Si el parametro concat_answer_type es 'failed', toma la respuesta de fallo.
-    def set_text_from_response(chat_bot_option, customer, concat_answer_type, from_option)
-      @response = search_response(chat_bot_option, customer, concat_answer_type)
+    def set_text_from_response(chat_bot_option, customer, concat_answer_type, from_option, get_out)
+      @response = search_response(chat_bot_option, customer, concat_answer_type, get_out)
 
       message = if @response.present?
                   @response.message
@@ -110,7 +110,7 @@ module ChatBots
     # Se encarga de formar el mensaje con toda la informacion necesaria.
     def option_body(chat_bot_option, customer, get_out, error_exit, concat_answer_type, from_option)
       # inicializa el mensaje a enviar
-      message = set_text_from_response(chat_bot_option, customer, concat_answer_type, from_option)
+      message = set_text_from_response(chat_bot_option, customer, concat_answer_type, from_option, get_out)
 
       # Si no se esta saliendo del bot, ya sea por ejecucion o por intentos fallidos.
       if get_out == false && error_exit == false
@@ -144,7 +144,7 @@ module ChatBots
 
     # Busca la respuesta del endpoint guardada anteriormente para armar
     # el nuevo mensaje a enviar.
-    def search_response(chat_bot_option, customer, concat_answer_type)
+    def search_response(chat_bot_option, customer, concat_answer_type, get_out)
       if concat_answer_type == 'success'
         responses = customer.customer_bot_responses.order(chat_bot_option_id: :desc)
 
@@ -152,9 +152,7 @@ module ChatBots
           !chat_bot_option.execute_endpoint?)
           return if chat_bot_option.ancestry.blank?
 
-          ancestor_ids = chat_bot_option.ancestry.split('/')
-          responses.where('chat_bot_option_id IN (?) AND chat_bot_option_id < ? AND status = ?', ancestor_ids,
-            chat_bot_option.id, CustomerBotResponse.statuses[concat_answer_type]).first&.response
+          response_on_success(responses, chat_bot_option, concat_answer_type, get_out)
         else
           responses.where('chat_bot_option_id = ? AND status = ?', chat_bot_option.id,
             CustomerBotResponse.statuses[concat_answer_type]).first&.response
@@ -163,12 +161,24 @@ module ChatBots
         customer.customer_bot_responses
           .where(chat_bot_option_id: chat_bot_option.id, status: concat_answer_type).first&.response
       elsif chat_bot_option.parent&.execute_endpoint?
-        return if chat_bot_option.ancestry.blank?
+        return if chat_bot_option.ancestry.blank? || get_out
 
         ancestor_ids = chat_bot_option.ancestry.split('/')
         customer.customer_bot_responses.order(chat_bot_option_id: :desc)
           .where('chat_bot_option_id IN (?) AND chat_bot_option_id < ?', ancestor_ids, chat_bot_option.id)
           .order(updated_at: :desc).first&.response
+      end
+    end
+
+    # Busca y retorna la respuesta en success. Dependiendo si es un mensaje de salida o no.
+    def response_on_success(responses, chat_bot_option, concat_answer_type, get_out)
+      if get_out
+        responses.where('chat_bot_option_id = ? AND status = ?', chat_bot_option.id,
+          CustomerBotResponse.statuses[concat_answer_type]).first&.response
+      else
+        ancestor_ids = chat_bot_option.ancestry.split('/')
+        responses.where('chat_bot_option_id IN (?) AND chat_bot_option_id < ? AND status = ?', ancestor_ids,
+          chat_bot_option.id, CustomerBotResponse.statuses[concat_answer_type]).first&.response
       end
     end
   end
