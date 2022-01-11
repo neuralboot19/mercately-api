@@ -1,10 +1,18 @@
 class PaymentezTransaction < ApplicationRecord
+  include WebIdGenerateableConcern
   include PaymentezConcern
 
   belongs_to :retailer
   belongs_to :paymentez_credit_card
 
-  def debit_with_token(card, amount=nil, plan=nil)
+  after_create :generate_web_id
+
+  def to_param
+    web_id
+  end
+
+  def debit_with_token(card, amount = nil, plan = nil, sub = false)
+    self.month_interval = sub ? retailer.payment_plan.month_interval : 0
     retailer = card.retailer
     retailer_plan = retailer.payment_plan
     if plan.present?
@@ -22,7 +30,7 @@ class PaymentezTransaction < ApplicationRecord
     end
 
     prepare_new_transaction(body, card)
-    if debit_response.status == 200 && self.save
+    if debit_response.status == 200 && save
       if retailer_plan.save
         # send the email notification
         PaymentezTransactionMailer.debit_success(self).deliver_later
@@ -33,7 +41,7 @@ class PaymentezTransaction < ApplicationRecord
 
       message = "La transacción fue procesada,
                  pero hubo errores al
-                 almacenar: #{self.errors.full_messages}"
+                 almacenar: #{errors.full_messages}"
       return return_hash(400, message)
     end
 
@@ -65,6 +73,7 @@ class PaymentezTransaction < ApplicationRecord
   end
 
   private
+
     def prepare_new_transaction(body, card)
       self.status = body['transaction']['status']
       self.payment_date = body['transaction'].try(:[],'payment_date')
@@ -82,7 +91,7 @@ class PaymentezTransaction < ApplicationRecord
       self.paymentez_credit_card_id = card.id
     end
 
-    def build_debit_body(card, amount=nil, plan=nil)
+    def build_debit_body(card, amount = nil, plan = nil)
       retailer = card.retailer
       price = (amount || plan.price).round(2)
 
@@ -108,9 +117,9 @@ class PaymentezTransaction < ApplicationRecord
       }'
     end
 
-    def request_debit(card, amount=nil, plan=nil)
+    def request_debit(card, amount = nil, plan = nil)
       debit_body = build_debit_body(card, amount, plan)
-      url = "/v2/transaction/debit/"
+      url = '/v2/transaction/debit/'
 
       # Makes the payment request to Paymentez
       self.class.do_request('post', debit_body, url)
@@ -119,14 +128,14 @@ class PaymentezTransaction < ApplicationRecord
     def build_refund_body
       '{
         "transaction": {
-          "id": "' + self.pt_id + '"
+          "id": "' + pt_id + '"
         }
       }'
     end
 
     def request_refund
       refund_body = build_refund_body
-      url = "/v2/transaction/refund/"
+      url = '/v2/transaction/refund/'
 
       # Makes the refund request to Paymentez
       self.class.do_request('post', refund_body, url)

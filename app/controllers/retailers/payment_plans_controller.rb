@@ -12,6 +12,13 @@ class Retailers::PaymentPlansController < RetailersController
     bot_interactions_counter
   end
 
+  def invoice
+    @transaction = current_retailer.stripe_transactions.find_by_web_id(params[:id])
+    @transaction = current_retailer.paymentez_transactions.find_by_web_id(params[:id]) if @transaction.nil?
+    @retailer_admin = RetailerUser.active_admins(current_retailer.id).first
+    render layout: 'document'
+  end
+
   def charge
     pp = current_retailer.payment_plan
     alert = if pp.charge!(force_retry: true)

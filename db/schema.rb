@@ -885,6 +885,8 @@ ActiveRecord::Schema.define(version: 2021_12_22_213304) do
     t.bigint "paymentez_credit_card_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "month_interval", default: 0, null: false
+    t.string "web_id"
     t.index ["payment_plan_id"], name: "index_paymentez_transactions_on_payment_plan_id"
     t.index ["paymentez_credit_card_id"], name: "index_paymentez_transactions_on_paymentez_credit_card_id"
     t.index ["retailer_id"], name: "index_paymentez_transactions_on_retailer_id"
@@ -1177,6 +1179,8 @@ ActiveRecord::Schema.define(version: 2021_12_22_213304) do
     t.bigint "payment_method_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "month_interval", default: 0, null: false
+    t.string "web_id"
     t.index ["payment_method_id"], name: "index_stripe_transactions_on_payment_method_id"
   end
 
