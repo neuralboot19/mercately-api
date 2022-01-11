@@ -1,10 +1,10 @@
 class TopUp < ApplicationRecord
   belongs_to :retailer
 
-  after_create :update_ws_balance
-
   validates :amount, presence: true
   validates :retailer, presence: true
+
+  after_create :update_ws_balance
 
   private
 

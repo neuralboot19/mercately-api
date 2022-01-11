@@ -19,7 +19,7 @@ class PaymentPlan < ApplicationRecord
         return false
       end
     else
-      attempt = retailer.paymentez_credit_cards.main.create_transaction
+      attempt = retailer.paymentez_credit_cards.main.create_transaction(true)
       unless attempt
         payment_failed(force_retry)
         return false
