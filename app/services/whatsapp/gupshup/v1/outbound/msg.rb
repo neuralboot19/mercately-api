@@ -46,7 +46,7 @@ module Whatsapp::Gupshup::V1
     end
 
     def send_bulk_files(options)
-      @phone_number = @customer.phone_number(false)
+      @phone_number = @customer.phone_number_to_use(false).presence || @customer.phone_number(false)
       @options = options
 
       iteration_param = @options[:params][:url].present? ? [@options[:params][:url]] : @options[:params][:file_data]
@@ -63,7 +63,7 @@ module Whatsapp::Gupshup::V1
     end
 
     def send_multiple_answers(options)
-      @phone_number = @customer.phone_number(false)
+      @phone_number = @customer.phone_number_to_use(false).presence || @customer.phone_number(false)
       @options = options
       template = @retailer.templates.find_by_id(@options[:params][:template_id])
       return unless template.present?
