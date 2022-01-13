@@ -48,6 +48,7 @@ RSpec.describe RetailerUser, type: :model do
     it { is_expected.to have_many(:agent_teams).dependent(:destroy) }
     it { is_expected.to have_many(:team_assignments) }
     it { is_expected.to have_many(:templates) }
+    it { is_expected.to have_many(:retailer_average_response_times) }
   end
 
   describe 'validations' do
