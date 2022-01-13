@@ -605,8 +605,11 @@ h1 {
   z-index: 300;
 }
 
-#modal--toggle:checked ~ .modal-mercately, #modal--toggle-index:checked ~ .modal-index,
-#event-modal:checked ~ .modal-mercately, #event-modal--edit:checked ~ .modal-mercately, input[name="modal--toggle"]:checked ~ .modal-mercately,
+#modal--toggle:checked ~ .modal-mercately,
+#modal--toggle-index:checked ~ .modal-index,
+#event-modal:checked ~ .modal-mercately, #event-modal--edit:checked ~ .modal-mercately,
+input[name="modal--toggle"]:checked ~ .modal-mercately,
+input[name="modal--toggle-new"]:checked ~ .modal-index,
 #modal-agent--toggle:checked ~ .modal-agent,
 .modal--toggler:checked ~ .modal-index {
   display: block;
