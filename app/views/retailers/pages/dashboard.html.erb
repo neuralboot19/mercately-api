@@ -16,7 +16,7 @@
     <div class="col-12 mb-32">
       <b class="fz-16"><%= t('views.dashboard.quick_check') %></b>
       <br />
-      <%= @start_date %> - <%= @end_date %>
+      <%= @start_date_format %> - <%= @end_date_format %>
     </div>
     <div class="col-12 col-md-4">
       <div class="card border-16 m-0 mh-auto b-transparent shadow-none" style="background-color: #EBF7FC;">
@@ -32,7 +32,7 @@
       <div class="card border-16 m-0 mh-auto b-transparent shadow-none" style="background-color: #F8EBF8;">
         <div class="card-body">
           <div class="text-center">
-            <h1 class="funnels__title c-grey-dark d-block fz-40"><%= @best_clients.length %></h1>
+            <h1 class="funnels__title c-grey-dark d-block fz-40"><%= @clients.count %></h1>
             <div class="c-grey-light fz-16"><%= t('views.dashboard.customers_registered') %></div>
           </div>
         </div>
@@ -94,7 +94,7 @@
               <b class="fz-18"><%= t('views.dashboard.recent_orders') %></b>
             </div>
             <div class="col-6 text-right">
-              <%= link_to t('views.dashboard.view_all'), retailers_orders_path(current_retailer) %>
+              <%= link_to t('views.dashboard.view_all'), retailers_orders_path(current_retailer, status: 'all') %>
             </div>
           </div>
           <% if @first_five_orders.exists? %>
