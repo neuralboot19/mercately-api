@@ -297,6 +297,11 @@ module ChatBots
     def restart_bot(chat_bot_option = nil)
       root = @customer.chat_bot_option.root
 
+      if @concat_answer_type != nil && chat_bot_option.present? && send_option_on_jump?(chat_bot_option)
+        @origin_instance.send_answer(chat_bot_option, @concat_answer_type)
+        @origin_instance.send_additional_answers(chat_bot_option)
+      end
+
       # Revisamos si la opcion destino se ignora cuando tiene ya valor almacenado.
       if skip_this_action?(root)
         manage_skip_option(root, chat_bot_option)

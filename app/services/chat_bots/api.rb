@@ -76,7 +76,7 @@ module ChatBots
                   customer.endpoint_failed_response.message
                 end
 
-      if from_option.present? && chat_bot_option.id != from_option.id
+      if from_option.present? && chat_bot_option.id != from_option.id && append_from_option(from_option)
         from_option_response = customer.customer_bot_responses
           .where(chat_bot_option_id: from_option.id, status: concat_answer_type).first&.response
 
@@ -161,7 +161,8 @@ module ChatBots
         customer.customer_bot_responses
           .where(chat_bot_option_id: chat_bot_option.id, status: concat_answer_type).first&.response
       elsif chat_bot_option.parent&.execute_endpoint?
-        return if chat_bot_option.ancestry.blank? || get_out
+        parent = chat_bot_option.parent
+        return if chat_bot_option.ancestry.blank? || get_out || parent.option_type == 'decision'
 
         ancestor_ids = chat_bot_option.ancestry.split('/')
         customer.customer_bot_responses.order(chat_bot_option_id: :desc)
@@ -180,6 +181,11 @@ module ChatBots
         responses.where('chat_bot_option_id IN (?) AND chat_bot_option_id < ? AND status = ?', ancestor_ids,
           chat_bot_option.id, CustomerBotResponse.statuses[concat_answer_type]).first&.response
       end
+    end
+
+    def append_from_option(option)
+      option.option_type == 'form' || (option.answer.blank? && !option.file.attached? &&
+        !option.has_additional_answers_filled?)
     end
   end
 end
