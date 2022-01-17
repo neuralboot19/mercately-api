@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_22_213304) do
+ActiveRecord::Schema.define(version: 2022_01_10_174735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1030,6 +1030,34 @@ ActiveRecord::Schema.define(version: 2021_12_22_213304) do
     t.index ["retailer_user_id"], name: "index_retailer_amount_messages_on_retailer_user_id"
   end
 
+  create_table "retailer_average_response_times", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.bigint "retailer_user_id"
+    t.decimal "first_time_average"
+    t.decimal "conversation_time_average"
+    t.date "calculation_date"
+    t.integer "platform"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_retailer_average_response_times_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_retailer_average_response_times_on_retailer_user_id"
+  end
+
+  create_table "retailer_unfinished_message_blocks", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.bigint "customer_id"
+    t.datetime "message_created_date"
+    t.string "direction"
+    t.boolean "sent_by_retailer"
+    t.integer "platform"
+    t.date "message_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "statistics"
+    t.index ["customer_id"], name: "index_retailer_unfinished_message_blocks_on_customer_id"
+    t.index ["retailer_id"], name: "index_retailer_unfinished_message_blocks_on_retailer_id"
+  end
+
   create_table "retailer_most_used_tags", force: :cascade do |t|
     t.bigint "retailer_id", null: false
     t.bigint "tag_id", null: false
@@ -1301,6 +1329,9 @@ ActiveRecord::Schema.define(version: 2021_12_22_213304) do
   add_foreign_key "questions", "products"
   add_foreign_key "retailer_most_used_tags", "retailers"
   add_foreign_key "retailer_most_used_tags", "tags"
+  add_foreign_key "retailer_average_response_times", "retailers"
+  add_foreign_key "retailer_unfinished_message_blocks", "customers"
+  add_foreign_key "retailer_unfinished_message_blocks", "retailers"
   add_foreign_key "whatsapp_logs", "gupshup_whatsapp_messages"
   add_foreign_key "whatsapp_logs", "retailers"
 end
