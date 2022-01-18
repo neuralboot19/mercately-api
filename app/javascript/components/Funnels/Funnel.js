@@ -259,7 +259,7 @@ class Funnel extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({  mainReducer: state }) {
   return {
     funnelSteps: state.funnelSteps || {},
     fetchingFunnels: state.fetching_funnels || false

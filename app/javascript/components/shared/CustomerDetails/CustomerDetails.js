@@ -23,7 +23,7 @@ import CustomFieldsTabContent from "./CustomFieldsTabContent";
 import AutomationsTabContent from "./AutomationsTabContent";
 import IntegrationsTabContent from "./IntegrationsTabContent";
 import NotesTabContent from "./NotesTabContent";
-import { 
+import {
   fetchCustomerDeals as fetchCustomerDealsAction,
   fetchFunnelSteps as fetchFunnelStepsAction
 } from '../../../actions/funnels';
@@ -54,7 +54,7 @@ const CustomerDetails = ({
   const [customerCustomFields, setCustomerCustomFields] = useState([]);
 
   const [customerNotes, setCustomerNotes] = useState([]);
-  
+
   const [customerDeals, setCustomerDeals] = useState([]);
 
   const [funnelSteps, setFunnelSteps] = useState([]);
@@ -111,14 +111,14 @@ const CustomerDetails = ({
     dispatch(fetchFunnelStepsAction(id))
   }
 
-  const customer = useSelector((reduxState) => reduxState.customer) || {};
-  const tags = useSelector((reduxState) => reduxState.tags) || [];
-  const reminders = useSelector((reduxState) => reduxState.reminders) || [];
-  const customerFields = useSelector((reduxState) => reduxState.customerFields);
-  const customFields = useSelector((reduxState) => reduxState.customFields);
-  const customerReduxNotes = useSelector((reduxState) => reduxState.customerNotes);
-  const customerReduxDeals = useSelector((reduxState) => reduxState.customerDeals);
-  const funnelReduxSteps = useSelector((reduxState) => reduxState.funnelSteps);
+  const customer = useSelector((reduxState) => reduxState.mainReducer.customer) || {};
+  const tags = useSelector((reduxState) => reduxState.mainReducer.tags) || [];
+  const reminders = useSelector((reduxState) => reduxState.mainReducer.reminders) || [];
+  const customerFields = useSelector((reduxState) => reduxState.mainReducer.customerFields);
+  const customFields = useSelector((reduxState) => reduxState.mainReducer.customFields);
+  const customerReduxNotes = useSelector((reduxState) => reduxState.mainReducer.customerNotes);
+  const customerReduxDeals = useSelector((reduxState) => reduxState.mainReducer.customerDeals);
+  const funnelReduxSteps = useSelector((reduxState) => reduxState.mainReducer.funnelSteps);
 
   /**
    * Initial customer info fetch

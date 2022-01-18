@@ -978,7 +978,7 @@ class ChatMessages extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({  mainReducer: state }) {
   return {
     messages: state.messages || [],
     message: state.message || [],

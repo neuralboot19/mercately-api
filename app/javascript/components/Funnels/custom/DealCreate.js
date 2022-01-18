@@ -40,8 +40,8 @@ const DealCreate = ({
   isOpen
 }) => {
   const dispatch = useDispatch();
-  const newDealSuccess = useSelector((state) => state.newDealSuccess) || false;
-  const currentRetailerUser = useSelector((state) => state.currentRetailerUser) || {};
+  const newDealSuccess = useSelector((reduxState) => reduxState.mainReducer.newDealSuccess) || false;
+  const currentRetailerUser = useSelector((reduxState) => reduxState.mainReducer.currentRetailerUser) || {};
   const defaultDeal = { name: '', amount: '' };
 
   const [newDeal, setNewDeal] = useState({

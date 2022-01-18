@@ -58,11 +58,11 @@ const ChatSideBar = ({
   const isFirstSearch = useRef(true);
   const isFilteredChats = useRef(true);
 
-  const customers = useSelector((reduxState) => reduxState.customers || []);
-  const totalPages = useSelector((reduxState) => reduxState.total_customers || 0);
-  const agents = useSelector((reduxState) => reduxState.agents || []);
-  const filterTags = useSelector((reduxState) => reduxState.filter_tags || []);
-  const loadingMoreCustomers = useSelector((reduxState) => reduxState.loadingMoreCustomers);
+  const customers = useSelector((reduxState) => reduxState.mainReducer.customers || []);
+  const totalPages = useSelector((reduxState) => reduxState.mainReducer.total_customers || 0);
+  const agents = useSelector((reduxState) => reduxState.mainReducer.agents || []);
+  const filterTags = useSelector((reduxState) => reduxState.mainReducer.filter_tags || []);
+  const loadingMoreCustomers = useSelector((reduxState) => reduxState.mainReducer.loadingMoreCustomers);
 
   const dispatch = useDispatch();
   const fetchCustomers = (offset) => {

@@ -38,7 +38,7 @@ const DealEdit = ({
   isOpen
 }) => {
   const dispatch = useDispatch();
-  const dealSuccess = useSelector((state) => state.newDealSuccess) || false;
+  const dealSuccess = useSelector((reduxState) => reduxState.mainReducer.newDealSuccess) || false;
   const defaultDeal = { name: '', amount: '' };
 
   const [newDeal, setNewDeal] = useState({

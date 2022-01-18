@@ -403,11 +403,22 @@
         </li>
         <% if current_retailer_user.admin? || current_retailer_user.supervisor? %>
           <li class="menu__item">
-            <div class="merc-tooltip <%= controller.controller_name == 'stats' ? 'merc-tooltip-active' : '' %>">
-              <%= link_to retailers_total_messages_stats_path(current_retailer), class: 'item__name no-style' do %>
-                <i class="icon-stats-left"></i>
-              <% end %>
-              <div class="merc-tooltiptext"><%= t('vertical_navbar.statistics.statistics') %></div>
+            <div class="merc-tooltip <%='merc-tooltip-active' if %w(stats new_stats).include?(controller.controller_name) %>">
+              <i class="icon-stats-left"></i>
+              <div class="merc-tooltiptext merc-tooltiptext--medium" style="top: -28px;">
+                <div class="t-center"><%= t('vertical_navbar.statistics.statistics') %></div>
+                <div class="divider"></div>
+                <div>
+                  <%= link_to retailers_total_messages_stats_path(current_retailer), class: 'c-secondary no-style' do %>
+                    <%= t('vertical_navbar.statistics.basic') %>
+                  <% end %>
+                </div>
+                <div>
+                  <%= link_to retailers_new_stats_path(current_retailer), class: 'c-secondary no-style' do %>
+                    <%= t('vertical_navbar.statistics.advanced') %>
+                  <% end %>
+                </div>
+              </div>
             </div>
           </li>
         <% end %>
