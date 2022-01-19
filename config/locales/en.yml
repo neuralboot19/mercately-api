@@ -377,3 +377,5 @@ en:
     months_sub: 'Mercately %{months} Months Subscription'
     balance_recharge: 'Balance recharge'
     check: 'Check invoice'
+    phone: 'Phone'
+    email: 'Email'
