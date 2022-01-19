@@ -14,6 +14,10 @@
 
   /************************** Header **********************************/
 
+  .logo-home-fix {
+    width: 256px;
+  }
+
   .custom_navbar {
     position: absolute;
     width: 100%;
@@ -539,7 +543,7 @@
 
   .blog-footer-logo {
     margin-bottom: 25px;
-    width: 100%;
+    width: 250px;
   }
 
   .footer-title h2 {
@@ -708,7 +712,7 @@
 @media only screen and (min-width: 768px) {
 
   .blog-footer-logo {
-    width: 250px;
+    width: 200px;
   }
 
   .blog-hero-content {
@@ -786,6 +790,5 @@
 
 
 @media only screen and (max-width: 350px) {
-
 }
 
