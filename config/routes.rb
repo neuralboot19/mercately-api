@@ -323,6 +323,9 @@ Rails.application.routes.draw do
 
       put 'change_chat_status', to: 'chats#change_chat_status'
       resources :gs_templates, only: :create
+
+      # Stats
+      get 'stats/agent_performance', to: 'stats#agent_performance', as: :agent_performance
     end
   end
 
