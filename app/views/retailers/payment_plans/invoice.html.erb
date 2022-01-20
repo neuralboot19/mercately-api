@@ -26,9 +26,21 @@
   <div class="col">
     <b><%= t('invoice.billed_to') %></b>
     <br/>
-    <%= @retailer_admin.full_name %>
-    <br/>
-    <%= @retailer_admin.email %>
+    <% if @bill_details.present? %>
+      <%= @bill_details.business_name %>
+      <br/>
+      <%= @bill_details.identification_type %>: <%= @bill_details.identification_number %>
+      <br/>
+      <%= t('invoice.phone') %>: <%= @bill_details.business_phone %>
+      <br/>
+      <%= t('invoice.email') %>: <%= @bill_details.business_email %>
+      <br/>
+      <%= @bill_details.iva_description %>
+    <% else %>
+      <%= @retailer_admin.full_name %>
+      <br/>
+      <%= @retailer_admin.email %>
+    <% end %>
   </div>
 </div>
 <div class="row mt-3">

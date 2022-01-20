@@ -16,6 +16,7 @@ class Retailers::PaymentPlansController < RetailersController
     @transaction = current_retailer.stripe_transactions.find_by_web_id(params[:id])
     @transaction = current_retailer.paymentez_transactions.find_by_web_id(params[:id]) if @transaction.nil?
     @retailer_admin = RetailerUser.active_admins(current_retailer.id).first
+    @bill_details = current_retailer.retailer_bill_detail
     render layout: 'document'
   end
 

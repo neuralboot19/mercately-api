@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_10_174735) do
+ActiveRecord::Schema.define(version: 2022_01_19_184637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1043,6 +1043,32 @@ ActiveRecord::Schema.define(version: 2022_01_10_174735) do
     t.index ["retailer_user_id"], name: "index_retailer_average_response_times_on_retailer_user_id"
   end
 
+  create_table "retailer_bill_details", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "business_name"
+    t.string "identification_type"
+    t.string "identification_number"
+    t.string "business_phone"
+    t.string "business_email"
+    t.string "iva_description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_retailer_bill_details_on_retailer_id"
+  end
+
+  create_table "retailer_conversations", force: :cascade do |t|
+    t.bigint "retailer_id", null: false
+    t.bigint "retailer_user_id"
+    t.integer "new_conversations", default: 0
+    t.integer "recurring_conversations", default: 0
+    t.integer "platform"
+    t.date "calculation_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_retailer_conversations_on_retailer_id"
+    t.index ["retailer_user_id"], name: "index_retailer_conversations_on_retailer_user_id"
+  end
+
   create_table "retailer_unfinished_message_blocks", force: :cascade do |t|
     t.bigint "retailer_id"
     t.bigint "customer_id"
@@ -1330,6 +1356,7 @@ ActiveRecord::Schema.define(version: 2022_01_10_174735) do
   add_foreign_key "retailer_most_used_tags", "retailers"
   add_foreign_key "retailer_most_used_tags", "tags"
   add_foreign_key "retailer_average_response_times", "retailers"
+  add_foreign_key "retailer_conversations", "retailers"
   add_foreign_key "retailer_unfinished_message_blocks", "customers"
   add_foreign_key "retailer_unfinished_message_blocks", "retailers"
   add_foreign_key "whatsapp_logs", "gupshup_whatsapp_messages"
