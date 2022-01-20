@@ -12,6 +12,7 @@ class Retailer < ApplicationRecord
   has_one :facebook_retailer, dependent: :destroy
   has_one :facebook_catalog, dependent: :destroy
   has_one :payment_plan, dependent: :destroy
+  has_one :retailer_bill_detail, dependent: :destroy
   has_one_attached :avatar
   has_many :products, dependent: :destroy
   has_many :customers, dependent: :destroy
@@ -67,6 +68,8 @@ class Retailer < ApplicationRecord
 
   enum id_type: %i[cedula pasaporte ruc rut otro]
   enum hubspot_match: %i[phone_or_email phone email], _prefix: true
+
+  accepts_nested_attributes_for :retailer_bill_detail, reject_if: :all_blank, allow_destroy: true
 
   def facebook_unread_messages(retailer_user)
     facebook_retailer&.facebook_unread_messages(retailer_user)

@@ -32,7 +32,17 @@ ActiveAdmin.register Retailer do
                 :gupshup_app_id,
                 :gupshup_app_token,
                 :send_max_size_files,
-                :multiple_fast_answers
+                :multiple_fast_answers,
+                retailer_bill_detail_attributes: [
+                  :id,
+                  :business_name,
+                  :identification_type,
+                  :identification_number,
+                  :business_phone,
+                  :business_email,
+                  :iva_description,
+                  :_destroy
+                ]
 
   filter :name
   filter :slug
@@ -123,6 +133,20 @@ ActiveAdmin.register Retailer do
       row :multiple_fast_answers
       row :created_at
       row :updated_at
+    end
+
+    panel 'Detalles de factura' do
+      details = retailer.retailer_bill_detail
+      attributes_table_for details do
+        row :id
+        row :business_name
+        row :identification_type
+        row :identification_number
+        row :business_phone
+        row :business_email
+        row :created_at
+        row :updated_at
+      end
     end
 
     panel 'Información de Mercado Libre' do
@@ -367,6 +391,18 @@ ActiveAdmin.register Retailer do
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
       f.input :send_max_size_files, label: 'Enviar hasta 40MB en pdfs y 15MB en imagenes'
       f.input :multiple_fast_answers, label: 'Permitir enviar multiples respuestas rápidas'
+
+      f.inputs 'Detalles de factura', for: [
+        :retailer_bill_detail, f.object.retailer_bill_detail || RetailerBillDetail.new
+      ] do |rbd|
+        rbd.input :business_name
+        rbd.input :identification_type
+        rbd.input :identification_number
+        rbd.input :business_phone
+        rbd.input :business_email
+        rbd.input :iva_description
+        rbd.input :_destroy, as: :boolean, label: 'Eliminar detalles de factura' unless rbd.object.new_record?
+      end
     end
     f.actions
   end
