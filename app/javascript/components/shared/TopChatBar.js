@@ -7,6 +7,7 @@ import MailLunreadIcon from 'images/mail-unread-line.svg';
 import ArrowDownIcon from 'images/arrowDown.svg';
 import { changeChatMessagingState, fetchCustomer as fetchCustomerAction } from "../../actions/actions";
 import BotIcon from '../icons/BotIcon';
+import BlockUserIcon from '../icons/BlockUserIcon';
 
 const csrfToken = document.querySelector('[name=csrf-token]').content;
 
@@ -22,7 +23,8 @@ const TopChatBar = ({
   onMobile,
   toggleOptions,
   showOptions,
-  chatType
+  chatType,
+  toggleBlockUser
 }) => {
   const messagingStatesOptions = [
     { value: 'new_chat', label: 'Nuevo' },
@@ -180,12 +182,16 @@ const TopChatBar = ({
     : customer?.email;
 
   const allowStartBot = activeChatBot || customer?.allow_start_bots;
+  const allowBlockUser = customer?.blocked;
 
   const botIconColor = allowStartBot ? 'fill-blue' : 'fill-gray-icon';
+  const blockedUserIconColor = allowBlockUser ? 'fill-blue' : 'fill-gray-icon';
 
   const bgBotBtn = allowStartBot ? 'bg-blue-btn' : 'bg-light';
+  const bgBlockUserBtn = allowBlockUser ? 'bg-blue-btn' : 'bg-light';
 
   const botTooltiptext = allowStartBot ? 'Desactivar' : 'Activar';
+  const blockUserTooltiptext = allowBlockUser ? 'Desbloquear' : 'Bloquear';
 
   return (
     <>
@@ -213,6 +219,21 @@ const TopChatBar = ({
             </div>
 
             <div className="flex-grow-1 d-flex justify-content-end h-40">
+            {chatType === 'whatsapp' && ENV.INTEGRATION === '1' && (
+                <button
+                  className={`d-flex justify-content-center align-items-center p-12 border-8 cursor-pointer border-0 mr-8 tooltip-top ${bgBlockUserBtn}`}
+                  onClick={(e) => toggleBlockUser(e)}
+                >
+                  <div className="tooltip-top">
+                    <div className="tooltiptext">
+                      {blockUserTooltiptext}
+                      {' '}
+                      usuario
+                    </div>
+                    <BlockUserIcon className={blockedUserIconColor} />
+                  </div>
+                </button>
+              )}
               <button
                 type="button"
                 onClick={(e) => handleUnreadChat(e)}

@@ -47,10 +47,17 @@ class Connection
     post_connection
   end
 
-  def self.put_request(connection, body)
+  def self.put_request(connection, body, headers = {})
     put_connection = connection.put do |req|
       req.headers['Content-Type'] = 'application/json'
       req.headers['Accept'] = 'application/json'
+
+      if headers.present?
+        headers.each do |k, v|
+          req.headers[k] = v
+        end
+      end
+
       req.body = body
     end
 
