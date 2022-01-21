@@ -98,6 +98,7 @@ en:
           not_help: The platform did not help me to improve my communication and sales
           add_more_functionality: Needs to incorporate more functionalities
           never_used: I never used the service
+          unsupported_from_mercately: I did not receive help and support from Mercately
           other: Other
   time:
     datepicker:
@@ -296,6 +297,7 @@ en:
           not_help_option: The platform did not help me to improve my communication and sales.
           more_functionality_option: Needs to incorporate more functionalities.
           not_used_option: I never used the service.
+          unsupported_from_mercately_option: I did not receive help and support from Mercately.
           other_option: Other.
           cancellation_advise: Your plan will be canceled immediately. After this you will not be able to perform your daily actions in Mercately.
           comment_placeholder: Leave a comment
