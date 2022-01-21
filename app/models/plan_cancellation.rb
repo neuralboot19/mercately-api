@@ -1,7 +1,7 @@
 class PlanCancellation < ApplicationRecord
   belongs_to :retailer
 
-  enum reason: [:expensive, :not_help, :add_more_functionality, :never_used, :other]
+  enum reason: [:expensive, :not_help, :add_more_functionality, :never_used, :other, :unsupported_from_mercately]
 
   validates :reason, presence: true
 

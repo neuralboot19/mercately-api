@@ -224,6 +224,13 @@ class Api::V1::CustomersController < Api::ApiController
     render json: { customers: customers }
   end
 
+  def toggle_block_user
+    @customer.block_user
+    send_notification('whatsapp')
+
+    render status: 200, json: { customer: @customer }
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.

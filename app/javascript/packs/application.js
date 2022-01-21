@@ -8,6 +8,7 @@ import * as Sentry from "@sentry/react";
 import configureStore from "../store/configureStore";
 
 import AppRoutes from "../AppRoutes";
+import '../i18n';
 
 const store = configureStore();
 

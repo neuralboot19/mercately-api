@@ -16,7 +16,8 @@ import {
   toggleChatBot,
   createReminder,
   setLastMessages,
-  sendWhatsAppMultipleAnswers
+  sendWhatsAppMultipleAnswers,
+  toggleBlockUser
 } from '../../actions/whatsapp_karix';
 import {
   addNote as addNoteAction
@@ -35,6 +36,7 @@ import ErrorSendingMessageLabel from './ErrorSendingMessageLabel';
 import ReminderConfigModal from './ReminderConfigModal';
 import NoteModal from '../shared/NoteModal';
 import DealModal from '../shared/DealModal';
+import BlockedUserMessage from './BlockedUserMessage';
 import 'react-image-lightbox/style.css';
 
 import fileUtils from '../../util/fileUtils';
@@ -928,6 +930,16 @@ class ChatMessages extends Component {
     this.props.toggleChatBot(this.props.currentCustomer, params, csrfToken);
   }
 
+  toggleBlockUser = () => {
+    if (!this.props.customer?.blocked
+      && confirm('Al bloquear este número no recibirás sus mensajes. Podrás desbloquearlo luego.')) {
+      this.props.toggleBlockUser(this.props.currentCustomer, csrfToken);
+    } else if (this.props.customer?.blocked
+      && confirm('Al desbloquear este número podrás recibir sus mensajes. Puedes bloquearlo luego.')) {
+      this.props.toggleBlockUser(this.props.currentCustomer, csrfToken);
+    }
+  }
+
   toggleLoadImages = () => {
     this.setState((prevState) => ({
       showLoadImages: !prevState.showLoadImages,
@@ -1535,6 +1547,7 @@ class ChatMessages extends Component {
               toggleOptions={this.toggleOptions}
               showOptions={this.state.showOptions}
               chatType='whatsapp'
+              toggleBlockUser={this.toggleBlockUser}
             />
           )}
         {this.state.isOpenImage && (
@@ -1564,56 +1577,60 @@ class ChatMessages extends Component {
           <div id="bottomRef" ref={this.bottomRef} />
         </div>
         {/* eslint-disable-next-line no-nested-ternary */}
-        {this.chatAlreadyAssigned() ? (
-          <AlreadyAssignedChatLabel />
+        {this.props.customer?.blocked ? (
+          <BlockedUserMessage toggleNoteModal={this.toggleNoteModal} />
         ) : (
-          // eslint-disable-next-line no-nested-ternary
-          this.props.errorSendMessageStatus ? (
-            <ErrorSendingMessageLabel text={this.props.errorSendMessageText} />
+          this.chatAlreadyAssigned() ? (
+            <AlreadyAssignedChatLabel />
           ) : (
-            this.isChatClosed() ? (
-              <ClosedChannel
-                openModal={this.openModal}
-                openReminderConfigModal={this.openReminderConfigModal}
-                toggleNoteModal={this.toggleNoteModal}
-              />
+            // eslint-disable-next-line no-nested-ternary
+            this.props.errorSendMessageStatus ? (
+              <ErrorSendingMessageLabel text={this.props.errorSendMessageText} />
             ) : (
-              this.canSendMessages()
-              && (
-                <MessageForm
-                  allowSendVoice={this.props.allowSendVoice}
-                  audioMinutes={this.state.audioMinutes}
-                  audioSeconds={this.state.audioSeconds}
-                  cancelAudio={this.cancelAudio}
-                  getCaretPosition={this.getCaretPosition}
-                  getLocation={this.getLocation}
-                  handleFileSubmit={this.handleFileSubmit}
-                  handleSubmit={this.handleSubmit}
-                  insertEmoji={this.insertEmoji}
-                  mediaRecorder={this.mediaRecorder}
-                  onKeyPress={this.onKeyPress}
-                  onMobile={this.props.onMobile}
-                  pasteImages={this.pasteImages}
-                  recordAudio={this.recordAudio}
-                  recordingAudio={this.state.recordingAudio}
-                  removeSelectedFastAnswer={this.removeSelectedFastAnswer}
-                  removeSelectedProduct={this.removeSelectedProduct}
-                  selectedFastAnswer={this.state.selectedFastAnswer}
-                  selectedProduct={this.state.selectedProduct}
-                  showEmojiPicker={this.state.showEmojiPicker}
-                  toggleEmojiPicker={this.toggleEmojiPicker}
-                  toggleFastAnswers={this.toggleFastAnswers}
-                  toggleLoadImages={this.toggleLoadImages}
-                  toggleProducts={this.props.toggleProducts}
-                  openProducts={this.openProducts}
+              this.isChatClosed() ? (
+                <ClosedChannel
+                  openModal={this.openModal}
                   openReminderConfigModal={this.openReminderConfigModal}
-                  openNoteModal={this.toggleNoteModal}
-                  openDealModal={this.toggleDealModal}
-                  showInputMenu={this.state.showInputMenu}
-                  handleShowInputMenu={this.handleShowInputMenu}
-                  wrapperInputMenu={this.wrapperInputMenu}
-                  inputFilled={this.state.inputFilled}
+                  toggleNoteModal={this.toggleNoteModal}
                 />
+              ) : (
+                this.canSendMessages()
+                && (
+                  <MessageForm
+                    allowSendVoice={this.props.allowSendVoice}
+                    audioMinutes={this.state.audioMinutes}
+                    audioSeconds={this.state.audioSeconds}
+                    cancelAudio={this.cancelAudio}
+                    getCaretPosition={this.getCaretPosition}
+                    getLocation={this.getLocation}
+                    handleFileSubmit={this.handleFileSubmit}
+                    handleSubmit={this.handleSubmit}
+                    insertEmoji={this.insertEmoji}
+                    mediaRecorder={this.mediaRecorder}
+                    onKeyPress={this.onKeyPress}
+                    onMobile={this.props.onMobile}
+                    pasteImages={this.pasteImages}
+                    recordAudio={this.recordAudio}
+                    recordingAudio={this.state.recordingAudio}
+                    removeSelectedFastAnswer={this.removeSelectedFastAnswer}
+                    removeSelectedProduct={this.removeSelectedProduct}
+                    selectedFastAnswer={this.state.selectedFastAnswer}
+                    selectedProduct={this.state.selectedProduct}
+                    showEmojiPicker={this.state.showEmojiPicker}
+                    toggleEmojiPicker={this.toggleEmojiPicker}
+                    toggleFastAnswers={this.toggleFastAnswers}
+                    toggleLoadImages={this.toggleLoadImages}
+                    toggleProducts={this.props.toggleProducts}
+                    openProducts={this.openProducts}
+                    openReminderConfigModal={this.openReminderConfigModal}
+                    openNoteModal={this.toggleNoteModal}
+                    openDealModal={this.toggleDealModal}
+                    showInputMenu={this.state.showInputMenu}
+                    handleShowInputMenu={this.handleShowInputMenu}
+                    wrapperInputMenu={this.wrapperInputMenu}
+                    inputFilled={this.state.inputFilled}
+                  />
+                )
               )
             )
           )
@@ -1771,6 +1788,9 @@ function mapDispatch(dispatch) {
     },
     sendWhatsAppMultipleAnswers: (id, body, token) => {
       dispatch(sendWhatsAppMultipleAnswers(id, body, token));
+    },
+    toggleBlockUser: (customerId, token) => {
+      dispatch(toggleBlockUser(customerId, token));
     }
   };
 }

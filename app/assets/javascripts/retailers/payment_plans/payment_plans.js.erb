@@ -110,9 +110,9 @@ function validateCancelForm() {
 
   if (!cancelReasonValue) {
     if (ENV['CURRENT_AGENT_LANG'] === 'es') {
-      alert('Debe seleccionar una de las razones para la cancelación del plan');
+      alert('Debe seleccionar una de las razones para la cancelación del plan.');
     } else if (ENV['CURRENT_AGENT_LANG'] === 'en') {
-      alert('You must select one of the reasons for plan cancellation');
+      alert('You must select one of the reasons for plan cancellation.');
     }
 
     return;
@@ -120,13 +120,13 @@ function validateCancelForm() {
 
   cancelCommentValue = $('#comment').val();
 
-  if (cancelReasonValue === 'other' && !cancelCommentValue) {
+  if (!cancelCommentValue || cancelCommentValue.length < 50) {
     if (ENV['CURRENT_AGENT_LANG'] === 'es') {
-      alert('Debe ingresar algún texto si la razón es Otro');
+      alert('Debe ingresar un comentario. Por favor ingrese 50 caracteres mínimo.');
     } else if (ENV['CURRENT_AGENT_LANG'] === 'en') {
-      alert('You must enter some text if the reason is Other');
+      alert('You must enter a comment. Please enter 50 characters minimum.');
     }
-    
+
     return;
   }
 

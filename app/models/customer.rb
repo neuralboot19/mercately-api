@@ -553,6 +553,13 @@ class Customer < ApplicationRecord
     deals.exists?
   end
 
+  def block_user
+    response = gupshup_api_service.block_user(retailer, phone_number(false), !blocked)
+    return unless response.present?
+
+    update(blocked: !blocked) if response['status'] == 'success'
+  end
+
   private
 
     def update_valid_customer
@@ -764,5 +771,9 @@ class Customer < ApplicationRecord
       Raven.capture_exception(e)
 
       false
+    end
+
+    def gupshup_api_service
+      GupshupPartners::Api.new
     end
 end
