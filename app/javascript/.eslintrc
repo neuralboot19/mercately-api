@@ -9,6 +9,7 @@
     "extends": [
         "eslint:recommended",
         "plugin:react/recommended",
+        "plugin:i18next/recommended",
         "airbnb",
         "plugin:jest/all"
     ],
@@ -24,7 +25,8 @@
         "react",
         "enzyme",
         "jest",
-        "react-hooks"
+        "react-hooks",
+        "i18next"
     ],
     "rules": {
         "comma-dangle": ["error", "never"],
@@ -52,6 +54,7 @@
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
         "react/self-closing-comp": "off",
-        "no-cond-assign": ["error", "except-parens"]
+        "no-cond-assign": ["error", "except-parens"],
+        "i18next/no-literal-string": ["error", { "markupOnly": true }]
     }
 }

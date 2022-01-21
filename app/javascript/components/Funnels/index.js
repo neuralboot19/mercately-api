@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from "react-i18next";
 import DealCreate from "./custom/DealCreate";
 import DealEdit from "./custom/DealEdit";
 import FunnelStepCreate from "./custom/FunnelStepCreate";
@@ -12,6 +13,8 @@ import {
 
 const Funnels = () => {
   const dispatch = useDispatch();
+
+  const { t } = useTranslation();
 
   const [state, setState] = useState({
     isCreateDealOpen: false,
@@ -76,7 +79,7 @@ const Funnels = () => {
     <div className="container-fluid">
       <div className="row">
         <div className="col-xs-12 col-sm-4">
-          <h1 className="d-inline funnels__title">Negociaciones</h1>
+          <h1 className="d-inline funnels__title">{t('funnelsTitle')}</h1>
         </div>
 
         <div className="col-sm-8">

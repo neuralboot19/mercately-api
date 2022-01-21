@@ -48,6 +48,7 @@ default: &default
     - .gif
     - .jpeg
     - .jpg
+    - .json
 
 development:
   <<: *default
