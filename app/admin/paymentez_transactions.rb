@@ -2,6 +2,10 @@ ActiveAdmin.register PaymentezTransaction do
   menu parent: 'Transacciones'
   actions :all, except: %i[edit update destroy]
 
+  controller do
+    defaults finder: :find_by_web_id
+  end
+
   index do
     selectable_column
     id_column
