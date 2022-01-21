@@ -126,6 +126,7 @@ es:
           not_help: La plataforma no me ayudó a mejorar mi comunicación y ventas
           add_more_functionality: Falta incorporar más funcionalidades
           never_used: Nunca utilicé el servicio
+          unsupported_from_mercately: No recibí ayuda y soporte de Mercately
           other: Otro
     errors:
       messages:
@@ -642,6 +643,7 @@ es:
           not_help_option: La plataforma no me ayudó a mejorar mi comunicación y ventas.
           more_functionality_option: Falta incorporar más funcionalidades.
           not_used_option: Nunca utilicé el servicio.
+          unsupported_from_mercately_option: No recibí ayuda y soporte de Mercately.
           other_option: Otro.
           cancellation_advise: Tu plan será cancelado de inmediato. Luego de esto no podrás realizar tus acciones cotidianas en Mercately.
           comment_placeholder: Deja un comentario
