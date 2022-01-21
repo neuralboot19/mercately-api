@@ -10,7 +10,8 @@ import {
   SET_COLUMNS, SET_WHATSAPP_MESSAGES,
   SET_WHATSAPP_MESSAGES_REQUEST, SET_MESSAGES,
   SET_MESSAGES_REQUEST,
-  ADD_DEALS_TO_COLUMN
+  ADD_DEALS_TO_COLUMN,
+  SET_BLOCK_USER
 } from "../actionTypes";
 
 const initialState = {
@@ -508,7 +509,12 @@ const reducer = (state = initialState, action) => {
         ...state,
         customerDeals: _customerDeals
       };
-    }
+    };
+    case SET_BLOCK_USER:
+      return {
+        ...state,
+        customer: action.data.customer
+      };
     default:
       return state;
   }

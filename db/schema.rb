@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_19_184637) do
+ActiveRecord::Schema.define(version: 2022_01_20_184446) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -434,6 +434,7 @@ ActiveRecord::Schema.define(version: 2022_01_19_184637) do
     t.integer "status_chat", default: 0
     t.integer "count_unread_messages", default: 0
     t.boolean "number_to_use_opt_in", default: false, null: false
+    t.boolean "blocked", default: false
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"

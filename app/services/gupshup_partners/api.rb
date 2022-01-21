@@ -121,6 +121,26 @@ module GupshupPartners
       resp_json['token']
     end
 
+    def block_user(retailer, phone, status)
+      retailer.update_gs_info if retailer.gupshup_app_id.blank? || retailer.gupshup_app_token.blank?
+
+      url = block_user_url(retailer.gupshup_app_id)
+      headers = {
+        'token': retailer.gupshup_app_token,
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+
+      body = {
+        phone: phone,
+        isBlocked: status
+      }.to_query
+
+      conn = Connection.prepare_connection(url)
+      response = Connection.put_request(conn, body, headers)
+      JSON.parse(response.body)
+    end
+
     private
 
       def gs_token_url
@@ -133,6 +153,10 @@ module GupshupPartners
 
       def gs_app_tokens_url(gs_app_id)
         "https://partner.gupshup.io/partner/app/#{gs_app_id}/token"
+      end
+
+      def block_user_url(gs_app_id)
+        "https://partner.gupshup.io/partner/app/#{gs_app_id}/block"
       end
   end
 end

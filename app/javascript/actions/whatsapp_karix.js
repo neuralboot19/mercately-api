@@ -5,7 +5,8 @@ import {
   SET_WHATSAPP_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS_REQUEST,
   SET_WHATSAPP_MESSAGES,
-  SET_WHATSAPP_MESSAGES_REQUEST
+  SET_WHATSAPP_MESSAGES_REQUEST,
+  SET_BLOCK_USER
 } from "../actionTypes";
 
 export const fetchWhatsAppCustomers = (page = 1, params, offset) => {
@@ -486,6 +487,31 @@ export const sendWhatsAppMultipleAnswers = (id, body, token) => {
         } else {
           alert("An unexpected error occurred.");
         }
+      });
+  };
+};
+
+export const toggleBlockUser = (id, token) => {
+  const endpoint = `/api/v1/customers/${id}/toggle_block_user`;
+  const csrfToken = token;
+  return (dispatch) => {
+    fetch(endpoint, {
+      method: 'PUT',
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRF-Token': csrfToken,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*'
+      }
+    })
+      .then((res) => res.json())
+      .then(
+        (data) => dispatch({ type: SET_BLOCK_USER, data }),
+        (err) => dispatch({ type: LOAD_DATA_FAILURE, err })
+      ).catch((error) => {
+        if (error.response) alert(error.response);
+        else alert('An unexpected error occurred.');
       });
   };
 };

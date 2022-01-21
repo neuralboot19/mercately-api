@@ -293,6 +293,7 @@ Rails.application.routes.draw do
       delete 'customers/:id/remove_customer_tag', to: 'customers#remove_customer_tag', as: :remove_customer_tag
       post 'customers/:id/add_tag', to: 'customers#add_tag', as: :add_tag
       put 'customers/:id/toggle_chat_bot', to: 'customers#toggle_chat_bot', as: :toggle_chat_bot
+      put 'customers/:id/toggle_block_user', to: 'customers#toggle_block_user', as: :toggle_block_user
 
       resources :tags, only: :index
       resources :contact_groups, only: %i[create update] do
