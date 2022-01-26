@@ -4,8 +4,10 @@ class Retailers::PagesController < RetailersController
   before_action :set_prismic_variables
 
   def dashboard
-    @start_date = Date.today.beginning_of_week.strftime('%d/%m/%Y')
-    @end_date = Date.today.strftime('%d/%m/%Y')
+    @start_date_format = Date.today.beginning_of_week.strftime('%d/%m/%Y %H:%M:%S')
+    @end_date_format = Time.now.strftime('%d/%m/%Y %H:%M:%S')
+    @start_date = Date.today.beginning_of_week
+    @end_date = Time.now
 
     unless current_retailer_user.first_name.present? && current_retailer_user.last_name.present?
       flash[:alert] = "Usted no tiene un Nombre y/o Apellido registrado, \
@@ -32,8 +34,7 @@ class Retailers::PagesController < RetailersController
 
     general_info
     best_sold_products
-    best_categories
-    best_clients
+    clients
   end
 
   private
