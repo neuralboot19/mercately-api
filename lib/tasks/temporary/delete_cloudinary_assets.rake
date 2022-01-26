@@ -1,6 +1,6 @@
 namespace :cloudinary do
   task delete_gupshup_assets_final: :environment do
-    date = 3.weeks.ago.beginning_of_day
+    date = 6.weeks.ago.beginning_of_day
     delete_data(date)
   end
 
@@ -24,23 +24,25 @@ namespace :cloudinary do
   end
 
   task :delete_gupshup_assets_by_id_and_range, [:retailer_id] => :environment do |t, args|
-    start_date = 4.weeks.ago.beginning_of_day
+    start_date = 6.weeks.ago.beginning_of_day
     end_date = (start_date + 1.week).end_of_day
     delete_data_by_retailer_and_range(args[:retailer_id], start_date, end_date)
   end
 
   task delete_gupshup_assets_by_range: :environment do
-    start_date = 4.weeks.ago.beginning_of_day
+    start_date = 6.weeks.ago.beginning_of_day
     end_date = (start_date + 1.week).end_of_day
     delete_data_by_range(start_date, end_date)
   end
 
   task delete_gupshup_assets: :environment do
-    date = 3.weeks.ago
+    date = 6.weeks.ago
     start_date = date.beginning_of_day
     end_date = date.end_of_day
 
-    retailers = Retailer.where('created_at <= ?', end_date).where.not(gupshup_phone_number: nil, gupshup_src_name: nil)
+    retailers = Retailer.where('created_at <= ? AND delete_assets = TRUE', end_date)
+                        .where.not(gupshup_phone_number: nil, gupshup_src_name: nil)
+
     retailers.find_each do |r|
       @asset_keys = get_asset_keys(r)
       filenames = []
@@ -81,7 +83,9 @@ rescue Cloudinary::Api::BadRequest => e
 end
 
 def delete_data(date)
-  retailers = Retailer.where('created_at < ?', date).where.not(gupshup_phone_number: nil, gupshup_src_name: nil)
+  retailers = Retailer.where('created_at < ? AND delete_assets = TRUE', date)
+                      .where.not(gupshup_phone_number: nil, gupshup_src_name: nil)
+
   retailers.find_each do |r|
     @asset_keys = get_asset_keys(r)
     filenames = []
@@ -113,9 +117,9 @@ def delete_data(date)
 end
 
 def delete_data_by_retailer(retailer_id)
-  date = 3.weeks.ago.beginning_of_day
+  date = 6.weeks.ago.beginning_of_day
   r = Retailer.find_by_id(retailer_id)
-  return if r.blank?
+  return if r.blank? || r.delete_assets == false
 
   @asset_keys = get_asset_keys(r)
   filenames = []
@@ -147,7 +151,7 @@ end
 
 def delete_data_by_retailer_and_range(retailer_id, start_date, end_date)
   r = Retailer.find_by_id(retailer_id)
-  return if r.blank?
+  return if r.blank? || r.delete_assets == false
 
   @asset_keys = get_asset_keys(r)
 
@@ -177,7 +181,9 @@ def delete_data_by_retailer_and_range(retailer_id, start_date, end_date)
 end
 
 def delete_data_by_range(start_date, end_date)
-  retailers = Retailer.where('created_at < ?', end_date).where.not(gupshup_phone_number: nil, gupshup_src_name: nil)
+  retailers = Retailer.where('created_at < ? AND delete_assets = TRUE', end_date)
+                      .where.not(gupshup_phone_number: nil, gupshup_src_name: nil)
+
   retailers.find_each do |r|
     @asset_keys = get_asset_keys(r)
 
