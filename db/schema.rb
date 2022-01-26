@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_20_184446) do
+ActiveRecord::Schema.define(version: 2022_01_26_195856) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -1203,6 +1203,7 @@ ActiveRecord::Schema.define(version: 2022_01_20_184446) do
     t.boolean "send_max_size_files", default: false, null: false
     t.string "currency", default: "USD", null: false
     t.boolean "multiple_fast_answers", default: false
+    t.boolean "delete_assets", default: true
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
