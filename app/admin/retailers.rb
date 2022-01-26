@@ -33,6 +33,7 @@ ActiveAdmin.register Retailer do
                 :gupshup_app_token,
                 :send_max_size_files,
                 :multiple_fast_answers,
+                :delete_assets,
                 retailer_bill_detail_attributes: [
                   :id,
                   :business_name,
@@ -131,6 +132,7 @@ ActiveAdmin.register Retailer do
       row :ml_site
       row :send_max_size_files
       row :multiple_fast_answers
+      row :delete_assets
       row :created_at
       row :updated_at
     end
@@ -387,10 +389,11 @@ ActiveAdmin.register Retailer do
       f.input :manage_team_assignment, label: 'Activar Asignación Automática'
       f.input :show_stats, label: 'Activar acceso total a estadísticas'
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
-      f.input :allow_send_videos, label: 'Permitir enviar videos'
+      f.input :allow_send_videos, label: 'Permitir enviar videos en el ChatBot'
       f.input :allow_multiple_answers, label: 'Permitir enviar varias respuestas en el ChatBot'
       f.input :send_max_size_files, label: 'Enviar hasta 40MB en pdfs y 15MB en imagenes'
       f.input :multiple_fast_answers, label: 'Permitir enviar multiples respuestas rápidas'
+      f.input :delete_assets, label: 'Borrar archivos en Cloudinary'
 
       f.inputs 'Detalles de factura', for: [
         :retailer_bill_detail, f.object.retailer_bill_detail || RetailerBillDetail.new
