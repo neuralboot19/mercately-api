@@ -434,7 +434,7 @@ es:
   horizontal_navbar:
     calendar: 'Calendario'
     help: 'Ayuda'
-    edit_profile: 'Editar Perfil'
+    configurations: 'Configuración'
     team: 'Equipo'
     payment_plans: 'Planes de pago'
     api_key: 'API Key'
@@ -592,6 +592,31 @@ es:
         message_saved_successfully: Mensaje guardado con éxito
         all_fields_is_required: Debe llenar todos los campos
     profile:
+      my_account:
+        index:
+          title: Mi cuenta
+          breadcrumb:
+            root: Dashboard
+            my_account: Mi cuenta
+          my_data:
+            title: Mis datos
+            description: Configura las opciones de tu cuenta
+          my_business:
+            title: Mi comercio
+            description: Configura las opciones de tu comercio
+          my_team:
+            title: Mi equipo
+            description: Añade o elimina miembros en tu equipo
+          my_api_keys:
+            title: API Key
+            description: Configura las opciones de tu cuenta
+          my_integrations:
+            title: Integraciones
+            description: Integra todas las plataformas desde aquí
+          my_payment_plans:
+            title: Planes de pago
+            description: Planes de pago que tienes en Mercately
+
       payment_plans:
         index:
           retry: Reactivar

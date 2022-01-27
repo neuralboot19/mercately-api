@@ -1,0 +1,37 @@
+.container-my-account {
+  .my-account-item {
+    &-title {
+      font-family: 'Poppins-Bold';
+      font-weight: bold;
+      font-size: 18px;
+      line-height: 28px;
+      color: #3C4348;
+    }
+
+    &-description {
+      font-size: 14px;
+      line-height: 24px;
+      color: #808191;
+    }
+  }
+
+  .breadcrumb {
+    .breadcrumb-item a {
+      color: #808191;
+      font-size: 14px;
+    }
+
+    .breadcrumb-item.active  a {
+      color: #3C4348;
+      font-family: 'Poppins-SemiBold';
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+      content: url(image_path('breadcumb-separator.svg'));
+      padding-left: 8px;
+      padding-right: 16px;
+    }
+  }
+}
