@@ -178,7 +178,6 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       assign_agent(@customer)
       gws = Whatsapp::Gupshup::V1::Outbound::Msg.new(current_retailer, @customer)
       gws.send_message(type: 'file', params: params, retailer_user: current_retailer_user)
-
       render status: 200, json: {
         message: 'Notificación enviada',
         recent_inbound_message_date: @customer.recent_inbound_message_date
