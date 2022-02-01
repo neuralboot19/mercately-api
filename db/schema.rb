@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_26_195856) do
+ActiveRecord::Schema.define(version: 2022_01_27_134830) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "adminpack"
@@ -328,6 +328,19 @@ ActiveRecord::Schema.define(version: 2022_01_26_195856) do
     t.index ["web_id"], name: "index_contact_groups_on_web_id"
   end
 
+  create_table "country_conversations", force: :cascade do |t|
+    t.bigint "retailer_whatsapp_conversation_id"
+    t.string "country_code"
+    t.integer "total_uic", default: 0
+    t.integer "total_bic", default: 0
+    t.float "total_cost_uic", default: 0.0
+    t.float "total_cost_bic", default: 0.0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_whatsapp_conversation_id", "country_code"], name: "index_country_conversations_by_country", unique: true
+    t.index ["retailer_whatsapp_conversation_id"], name: "index_country_conversations_by_date"
+  end
+
   create_table "customer_bot_options", force: :cascade do |t|
     t.bigint "customer_id"
     t.bigint "chat_bot_option_id"
@@ -435,6 +448,9 @@ ActiveRecord::Schema.define(version: 2022_01_26_195856) do
     t.integer "count_unread_messages", default: 0
     t.boolean "number_to_use_opt_in", default: false, null: false
     t.boolean "blocked", default: false
+    t.string "current_conversation"
+    t.float "ws_uic_cost"
+    t.float "ws_bic_cost"
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"
@@ -603,6 +619,9 @@ ActiveRecord::Schema.define(version: 2022_01_26_195856) do
     t.string "sender_last_name"
     t.string "sender_email"
     t.boolean "note", default: false
+    t.boolean "initiate_conversation", default: false
+    t.integer "conversation_type"
+    t.json "conversation_payload"
     t.index ["campaign_id"], name: "index_gupshup_whatsapp_messages_on_campaign_id"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
@@ -761,6 +780,16 @@ ActiveRecord::Schema.define(version: 2022_01_26_195856) do
     t.boolean "meli_user_active", default: true
     t.index ["customer_id"], name: "index_meli_retailers_on_customer_id"
     t.index ["retailer_id"], name: "index_meli_retailers_on_retailer_id"
+  end
+
+  create_table "message_blocks", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "phone"
+    t.datetime "sent_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id", "phone"], name: "index_message_blocks_on_retailer_id_and_phone", unique: true
+    t.index ["retailer_id"], name: "index_message_blocks_on_retailer_id"
   end
 
   create_table "mobile_tokens", force: :cascade do |t|
@@ -1146,6 +1175,23 @@ ActiveRecord::Schema.define(version: 2022_01_26_195856) do
     t.index ["invited_by_type", "invited_by_id"], name: "index_retailer_users_on_invited_by_type_and_invited_by_id"
     t.index ["reset_password_token"], name: "index_retailer_users_on_reset_password_token", unique: true
     t.index ["retailer_id"], name: "index_retailer_users_on_retailer_id"
+  end
+
+  create_table "retailer_whatsapp_conversations", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.integer "year"
+    t.integer "month"
+    t.integer "free_uic_total", default: 0
+    t.integer "free_bic_total", default: 0
+    t.integer "free_point_total", default: 0
+    t.integer "user_initiated_total", default: 0
+    t.integer "business_initiated_total", default: 0
+    t.float "user_initiated_cost", default: 0.0
+    t.float "business_initiated_cost", default: 0.0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id", "year", "month"], name: "index_retailer_whatsapp_conversations_by_date", unique: true
+    t.index ["retailer_id"], name: "index_retailer_whatsapp_conversations_on_retailer_id"
   end
 
   create_table "retailers", force: :cascade do |t|

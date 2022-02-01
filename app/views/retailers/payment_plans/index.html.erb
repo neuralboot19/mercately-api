@@ -34,6 +34,17 @@
               <p class="container-payment-plan_next-pay mb-10"><%= t('retailer.profile.payment_plans.index.ws_balance') %>:
                 <%= '$%05.2f' % current_retailer.ws_balance %>
               </p>
+              <% if current_retailer.gupshup_integrated? %>
+                <div class="outer-free-conversations mb-15 w-50">
+                  <div class="labels-container">
+                    <div class="fs-13 first-label"><i class="fab fa-whatsapp fs-13 mr-5"></i><%= t('horizontal_navbar.free_tier') %> (<%= I18n.l(Time.now, format: "%b") %>)</div>
+                    <div class="fs-13 second-label"><%= total_free_conversations %> / 1000</div>
+                  </div>
+                  <div class="percentage-bar-container">
+                    <div class="percentage-bar" style="width: <%= total_free_conversations %>%;"></div>
+                  </div>
+                </div>
+              <% end %>
               <div class="row ml-0">
                 <div class="col-md-6 col-12 pl-0">
                   <p class="container-payment-plan_next-pay mb-10"><%= t('retailer.profile.payment_plans.index.next_pay') %>:
@@ -165,8 +176,46 @@
             <% end %>
           </div>
           <div class="tab-pane fade" id="v-pills-usage" role="tabpanel" aria-labelledby="v-pills-usage-tab">
-            <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>
+            <% if current_retailer.gupshup_integrated? %>
               <div class="container-payment-plan_card py-20 px-30">
+                <p class="container-payment-plan_sub-title"><%= t('retailer.profile.payment_plans.index.whatsapp_conversations') %></p>
+                <% current_retailer.retailer_whatsapp_conversations.order(year: :desc, month: :desc).each do |rwc| %>
+                  <div>
+                    <span class="fw-bold"><%= I18n.l(Date.new(rwc.year, rwc.month, 01), format: "%B") %>, <%= rwc.year %></span>
+                  </div>
+                  <div class="table-responsive mb-30">
+                    <table class="w-100 t-center">
+                      <thead>
+                        <tr>
+                          <th class="p-5"><%= t('retailer.profile.payment_plans.index.conversation_type') %></th>
+                          <th class="p-5"><%= t('retailer.profile.payment_plans.index.conversation_total') %></th>
+                          <th class="p-5"><%= t('retailer.profile.payment_plans.index.conversation_cost_total') %></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="p-5"><%= t('retailer.profile.payment_plans.index.free_entry_point') %></td>
+                          <td class="p-5"><%= rwc.free_point_total %></td>
+                          <td class="p-5">$<%= 0.0 %></td>
+                        </tr>
+                        <tr>
+                          <td class="p-5"><%= t('retailer.profile.payment_plans.index.paid_uic') %></td>
+                          <td class="p-5"><%= rwc.user_initiated_total %></td>
+                          <td class="p-5">$<%= rwc.user_initiated_cost %></td>
+                        </tr>
+                        <tr>
+                          <td class="p-5"><%= t('retailer.profile.payment_plans.index.paid_bic') %></td>
+                          <td class="p-5"><%= rwc.business_initiated_total %></td>
+                          <td class="p-5">$<%= rwc.business_initiated_cost %></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+            <% if current_retailer.whatsapp_integrated? && @user_messages.present? %>
+              <div class="container-payment-plan_card py-20 px-30 <%= current_retailer.gupshup_integrated? ? 'mt-30' : '' %>">
                 <p class="container-payment-plan_sub-title"><%= t('retailer.profile.payment_plans.index.ws_consumption') %></p>
                 <div class="table-responsive">
                   <table class="w-100 t-center">

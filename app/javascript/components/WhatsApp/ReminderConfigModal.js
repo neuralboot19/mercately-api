@@ -71,16 +71,6 @@ function ReminderConfigModal({
             submitReminder={submitReminder}
           />
         )}
-
-      {ENV.WS_BALANCE <= 1 && (
-        <div>
-          <div className="divider"></div>
-          <i className="fz-12 pb-8 d-inline-block">
-            Saldo insuficiente,
-            <a href={`/retailers/${ENV.SLUG}/pricing`}>¿desea realizar una recarga?</a>
-          </i>
-        </div>
-      )}
     </Modal>
   );
 }

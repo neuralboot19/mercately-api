@@ -13,19 +13,19 @@ module Campaigns
         end
 
         customers = c.contact_group.customers
-        customers = if c.retailer.karix_integrated?
-                      customers.where.not(phone: [nil, ''])
+        customers = if c.retailer.gupshup_integrated?
+                      customers.where(whatsapp_opt_in: true).order(ws_bic_cost: :desc)
                     else
-                      customers.where(whatsapp_opt_in: true)
+                      customers.where.not(phone: [nil, ''])
                     end
         customers.find_in_batches(batch_size: 100) do |batch|
           Campaigns::SendCampaignJob.perform_now(c.id, batch.pluck(:id))
         end
 
-        failed = if c.retailer.karix_integrated?
-                   c.karix_whatsapp_messages.count == c.karix_whatsapp_messages.where(status: 'failed').count
-                 else
+        failed = if c.retailer.gupshup_integrated?
                    c.gupshup_whatsapp_messages.count == c.gupshup_whatsapp_messages.error.count
+                 else
+                   c.karix_whatsapp_messages.count == c.karix_whatsapp_messages.where(status: 'failed').count
                  end
 
         if failed

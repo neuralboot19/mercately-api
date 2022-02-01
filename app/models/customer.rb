@@ -560,6 +560,17 @@ class Customer < ApplicationRecord
     update(blocked: !blocked) if response['status'] == 'success'
   end
 
+  def get_conversation_cost(category)
+    case category
+    when 'UIC'
+      ws_uic_cost
+    when 'BIC'
+      ws_bic_cost
+    else
+      0
+    end
+  end
+
   private
 
     def update_valid_customer
@@ -655,12 +666,10 @@ class Customer < ApplicationRecord
 
     def calc_ws_notification_cost
       country_codes = JSON.parse(File.read("#{Rails.public_path}/json/all_countries_price.json"))
-      price = country_codes[country_id]
-      self.ws_notification_cost = if price.nil?
-                                    country_codes['Others']
-                                  else
-                                    price
-                                  end
+      price = country_codes[country_id].presence || country_codes['Others']
+      self.ws_notification_cost = price[0]
+      self.ws_bic_cost = price[1]
+      self.ws_uic_cost = price[2]
     end
 
     def grab_country_on_import

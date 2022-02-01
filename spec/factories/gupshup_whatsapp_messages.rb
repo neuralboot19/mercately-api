@@ -51,8 +51,11 @@ FactoryBot.define do
     end
 
     trait :conversation do
-      message_payload { { 'isHSM': 'false' } }
-      message_type { 'conversation' }
+      after(:build) do |gsm|
+        create(:gupshup_whatsapp_message, :inbound, retailer: gsm.retailer, customer: gsm.customer, created_at: Time.now - 1.hour)
+        gsm.message_payload { { 'isHSM': 'false' } }
+        gsm.message_type { 'conversation' }
+      end
     end
   end
 end

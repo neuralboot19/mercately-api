@@ -540,6 +540,34 @@ $font-color-gray: #808191;
   border: none;
 }
 
+.outer-free-conversations {
+  width: 100%;
+
+  .labels-container {
+    display: flex;
+    margin-bottom: 5px;
+    position: relative;
+
+    .second-label {
+      position: absolute;
+      right: 0;
+      color: #808191;
+    }
+  }
+
+  .percentage-bar-container {
+    background: #E6E6E6;
+    height: 8px;
+    border-radius: 20px;
+
+    .percentage-bar {
+      background: $secondary-color;
+      height: 8px;
+      border-radius: 20px;
+    }
+  }
+}
+
 @media screen and (max-width: 1024px) {
   .container-payment-plan {
     margin-left: 20px;

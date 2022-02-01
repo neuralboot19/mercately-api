@@ -127,6 +127,11 @@ const reducer = (state = initialState, action) => {
         recentInboundMessageDate: action.data.recent_inbound_message_date
       }
     case SET_WHATSAPP_CUSTOMERS:
+      var balance_error = { status: null, message: null };
+
+      if (action.data.balance_error_info)
+        balance_error = action.data.balance_error_info;
+
       return {
         ...state,
         customers: action.data.customers,
@@ -136,7 +141,9 @@ const reducer = (state = initialState, action) => {
         agent_list: action.data.agent_list,
         filter_tags: action.data.filter_tags,
         allowSendVoice: action.data.allow_send_voice,
-        loadingMoreCustomers: false
+        loadingMoreCustomers: false,
+        errorSendMessageStatus: balance_error.status,
+        errorSendMessageText: balance_error.message
       }
     case SET_WHATSAPP_MESSAGES:
       var balance_error = { status: null, message: null };

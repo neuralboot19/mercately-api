@@ -19,6 +19,7 @@ en:
     payment_plans: 'Payment Plan'
     api_key: 'API Key'
     logout: 'Logout'
+    free_tier: Free chats
     failed_charge:
       1: 'Hello %{retailer}, unfortunately we could not execute the charge for the renewal of your plan.'
       2: 'Please, review your payment method as soon as possible so as not to suffer interruptions in the service'
@@ -286,6 +287,15 @@ en:
           delete_card_confirmation: Are you sure to delete this card?
           payment_methods: Payment methods
           update_card_confirmation: Are you sure to update this card?
+          whatsapp_conversations: WhatsApp conversations
+          conversation_type: Conversation type
+          conversation_total: Total
+          conversation_cost_total: Cost
+          free_entry_point: Free per entry point
+          free_uic: Free user initiated
+          free_bic: Free business initiated
+          paid_uic: User initiated paid
+          paid_bic: Business initiated paid
         charge_balance:
           add_balance: Add balance
           minimum_amount: The minimum amount is $10

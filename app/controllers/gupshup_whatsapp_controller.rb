@@ -4,7 +4,8 @@ class GupshupWhatsappController < ApplicationController
 
   def save_message
     return render status: :ok, json: '' if save_message_params.try(:[], :payload).try(:[], :type) == 'sandbox-start'
-    return render status: 500, json: '' unless save_message_params.try(:[], :payload).try(:[], :type).present?
+    return render status: 500, json: '' unless save_message_params.try(:[], :payload).try(:[], :type).present? ||
+      save_message_params[:type] == 'billing-event'
 
     event = save_message_params[:payload][:type]
 

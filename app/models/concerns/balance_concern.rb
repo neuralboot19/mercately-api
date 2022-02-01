@@ -2,37 +2,26 @@ module BalanceConcern
   extend ActiveSupport::Concern
 
   included do
-    after_create :substract_from_balance, unless: -> (obj) { ['error', 'failed'].include?(obj.status) }
+    after_create :substract_from_balance, unless: -> (obj) { obj.status == 'failed' }
   end
 
   private
 
     def substract_from_balance
       return if retailer.unlimited_account && (direction == 'inbound' || message_type == 'conversation')
+      return unless status != 'failed'
 
-      case self.class.name
-      when 'KarixWhatsappMessage'
-        return unless status != 'failed'
-
-        amount = retailer.send("ws_#{message_type}_cost")
-      when 'GupshupWhatsappMessage'
-        return unless status != 'error'
-
-        cost_type_message = 'conversation'
-        cost_type_message = 'notification' if message_payload['isHSM'] == 'true'
-
-        amount = customer.send("ws_#{cost_type_message}_cost")
-      end
+      amount = retailer.send("ws_#{message_type}_cost")
 
       chat_open = customer.is_chat_open?
       update_cost(amount, chat_open)
       retailer.ws_balance -= amount unless chat_open
 
       if retailer.ws_balance <= retailer.ws_next_notification_balance &&
-         retailer.ws_next_notification_balance > 0 &&
-         ((cost.to_f > 0 && self.class == GupshupWhatsappMessage) || self.class == KarixWhatsappMessage)
+         retailer.ws_next_notification_balance > 0
         will_send_notification = true
       end
+
       if retailer.ws_balance <= retailer.ws_next_notification_balance &&
          retailer.ws_next_notification_balance > 0
         retailer.ws_next_notification_balance -= 0.5

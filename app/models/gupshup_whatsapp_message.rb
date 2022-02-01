@@ -1,7 +1,6 @@
 class GupshupWhatsappMessage < ApplicationRecord
   include StatusChatConcern
   include ReactivateChatConcern
-  include BalanceConcern
   include AgentAssignmentConcern
   include WhatsappAutomaticAnswerConcern
   include WhatsappChatBotActionConcern
@@ -22,6 +21,7 @@ class GupshupWhatsappMessage < ApplicationRecord
                         :direction, :source, :destination, :channel
 
   enum status: %w[error submitted enqueued sent delivered read]
+  enum conversation_type: %w[free_point user_initiated business_initiated]
 
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :inbound_messages, -> { where(direction: 'inbound') }
@@ -87,9 +87,11 @@ class GupshupWhatsappMessage < ApplicationRecord
   private
 
     def set_message_type
-      return self.message_type = 'notification' if message_payload.try(:[], 'isHSM') == 'true'
-
-      self.message_type = 'conversation'
+      self.message_type = if direction == 'inbound' || customer.is_chat_open?
+                            'conversation'
+                          else
+                            'notification'
+                          end
     end
 
     def apply_cost

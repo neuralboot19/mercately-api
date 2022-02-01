@@ -113,12 +113,15 @@ module Retailers::Api::V1
           return
         end
 
-        is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
-        return if current_retailer.unlimited_account && is_template == false
+        if current_retailer.karix_integrated?
+          is_template = ActiveModel::Type::Boolean.new.cast(params[:template])
+          return if current_retailer.unlimited_account && is_template == false
+        end
+
         return if current_retailer.positive_balance?(@customer)
 
         render status: 401, json: { message: 'Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, ' \
-                                              'por favor, contáctese con su agente de ventas para recargar su saldo' }
+                                              'por favor recargue' }
         return
       end
 

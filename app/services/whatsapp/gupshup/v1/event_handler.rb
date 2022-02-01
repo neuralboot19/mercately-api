@@ -5,7 +5,15 @@ module Whatsapp::Gupshup::V1
       # Check direction
       @params = params
       gsw_type = @params['type']
-      direction = ['message', 'quick_reply'].include?(gsw_type) ? 'inbound' : 'message_event'
+      direction = case gsw_type
+                  when 'message', 'quick_reply'
+                    'inbound'
+                  when 'message-event'
+                    'message_event'
+                  when 'billing-event'
+                    'billing_event'
+                  end
+
       Rails.logger.debug '*'.*100
       Rails.logger.debug "PARAMS: #{params}"
       Rails.logger.debug "DIRECTION: #{direction}"
@@ -101,6 +109,12 @@ module Whatsapp::Gupshup::V1
           # Get Whatsapp Message Id and Gupshup Message Id
           wm_id = @params['payload']['payload']['whatsappMessageId']
           event_id = @params['payload']['id']
+          type = @params['payload']['payload']['type']
+          message_type = if type == 'session'
+                           'conversation'
+                         elsif type == 'template'
+                           'notification'
+                         end
 
           # Find the stored message by Gupshup Message Id
           gwm = find_gupshup_message(app_name, phone_to_find, event_id)
@@ -108,6 +122,8 @@ module Whatsapp::Gupshup::V1
 
           # Update the Whatsapp Message Id with the incoming one
           gwm.whatsapp_message_id = wm_id
+          # Update message type with result from GS
+          gwm.message_type = message_type
 
           # Find for all temporal events stored
           temp_events = GupshupTemporalMessageState.where(whatsapp_message_id: wm_id)
@@ -134,8 +150,13 @@ module Whatsapp::Gupshup::V1
             broadcast(gwm.reload)
           end
         when 'mismatch'
-          retailer = Retailer.find_by(gupshup_src_name: app_name)
-          find_customer(retailer, phone_to_find)
+          find_customer(@retailer, phone_to_find)
+        when 'sent'
+          event_id = @params['payload']['gsId']
+          gwm = find_gupshup_message(app_name, phone_to_find, event_id)
+          raise StandardError.new("El mensaje ID #{event_id} no fue encontrado") unless gwm.present?
+
+          Whatsapp::Gupshup::V1::ConversationDebit.new(@retailer, gwm.customer).track_conversation(gwm, @params)
         else
           gs_id = @params['payload']['gsId']
           gwm = find_gupshup_message(app_name, phone_to_find, gs_id)
@@ -180,6 +201,18 @@ module Whatsapp::Gupshup::V1
         false
       end
 
+      def billing_event
+        phone_to_find = @params['payload']['references']['destination']
+        phone_to_find = "+#{phone_to_find}"
+        gs_id = @params['payload']['references']['gsId']
+        app_name = @params['app']
+
+        gwm = find_gupshup_message(app_name, phone_to_find, gs_id)
+        customer = gwm&.customer || find_customer(@retailer, phone_to_find)
+
+        Whatsapp::Gupshup::V1::ConversationDebit.new(@retailer, customer).process_debit(gwm, @params)
+      end
+
       def number_status_by_sym(event)
         {enqueued: 2, sent: 3, delivered: 4, read: 5}[event]
       end
@@ -213,10 +246,10 @@ module Whatsapp::Gupshup::V1
           customer = retailer.customers.find_by(phone: phone)
         end
 
-        if customer.present?
-          customer.update_columns(number_to_use: original_phone, number_to_use_opt_in: true) if add_number
-          return customer
-        end
+        return unless customer.present?
+
+        customer.update_columns(number_to_use: original_phone, number_to_use_opt_in: true) if add_number
+        customer
       end
 
       def broadcast(msg)
