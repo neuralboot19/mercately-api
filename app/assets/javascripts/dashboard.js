@@ -8,13 +8,21 @@ $(document).ready(function(){
   // This will check for opt in permissions wherever
   // the Whatsapp button is located in the dashboard,
   // but the chat.
-  $('.ws-contact').click(function(){
-    if (!$(this).data('open_chat') && parseFloat($(this).data('ws_balance')) <= 1) {
+  $('.ws-contact').click(function() {
+    let noBalance = false;
+    if (ENV['INTEGRATION'] == '0' && !$(this).data('open_chat') && parseFloat($(this).data('ws_balance')) <= 1) {
+      noBalance = true;
+    } else if (ENV['INTEGRATION'] == '1' && parseFloat($(this).data('ws_balance')) <= -10) {
+      noBalance = true;
+    }
+
+    if (noBalance) {
       if (confirm('Saldo insuficiente, ¿deseas hacer una recarga?')) {
         window.location.pathname = `/retailers/${ENV.SLUG}/pricing`;
       }
       return false;
     }
+
     if ($(this).data('whatsapp_opt_in') || ENV['INTEGRATION'] == '0') return true;
 
     if (confirm('Tengo el permiso explícito de enviar mensajes a este número (opt-in)')) {
