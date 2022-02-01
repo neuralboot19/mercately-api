@@ -27,12 +27,12 @@ class PaymentPlan < ApplicationRecord
     end
 
     # Updates the next notification date
-    npd = if next_pay_date.day == 15.days.ago.day
+    npd = if (next_pay_date.to_date - 15.days.ago.to_date).to_i.abs < 15
             month_interval.months.from_now
           else
             month_interval.months.from_now.change(day: next_pay_date&.day || Date.today.day)
           end
-    update(next_pay_date: npd, charge_attempt: 0)
+    update(next_pay_date: npd, charge_attempt: 0, status: :active)
     true
   end
 
