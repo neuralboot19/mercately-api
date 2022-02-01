@@ -9,33 +9,33 @@ module Whatsapp::Gupshup::V1
         return
       end
 
-      if conversation.present? && conversation['id'] != @customer.current_conversation
-        @customer.update_column(:current_conversation, conversation['id'])
-        attrs = {
-          conversation_payload: params['payload'],
-          initiate_conversation: true,
-          conversation_type: get_conversation_type(conversation['type']),
-          whatsapp_message_id: message.whatsapp_message_id.presence || params['payload']['id']
-        }
+      return unless conversation.present? && conversation['id'] != @customer.current_conversation
 
-        message.update_columns(attrs)
-      end
+      @customer.update_column(:current_conversation, conversation['id'])
+      attrs = {
+        conversation_payload: params['payload'],
+        initiate_conversation: true,
+        conversation_type: get_conversation_type(conversation['type']),
+        whatsapp_message_id: message.whatsapp_message_id.presence || params['payload']['id']
+      }
 
-      type = pricing&.[]('category') || conversation&.[]('type')
-      return unless type.present?
+      message.update_columns(attrs)
 
-      time = Time.now
-      retailer_ws_conv = @retailer.retailer_whatsapp_conversations.find_or_create_by(year: time.year, month: time.month)
+      # type = pricing&.[]('category') || conversation&.[]('type')
+      # return unless type.present?
 
-      price_attrs = if type == 'UIC'
-                      { user_initiated_total: retailer_ws_conv.user_initiated_total + 1 }
-                    elsif type == 'BIC'
-                      { business_initiated_total: retailer_ws_conv.business_initiated_total + 1 }
-                    else
-                      { free_point_total: retailer_ws_conv.free_point_total + 1 }
-                    end
+      # time = Time.now
+      # retailer_ws_conv = @retailer.retailer_whatsapp_conversations.find_or_create_by(year: time.year, month: time.month)
 
-      retailer_ws_conv.update(price_attrs)
+      # price_attrs = if type == 'UIC'
+      #                 { user_initiated_total: retailer_ws_conv.user_initiated_total + 1 }
+      #               elsif type == 'BIC'
+      #                 { business_initiated_total: retailer_ws_conv.business_initiated_total + 1 }
+      #               else
+      #                 { free_point_total: retailer_ws_conv.free_point_total + 1 }
+      #               end
+
+      # retailer_ws_conv.update(price_attrs)
     end
 
     def process_debit(message, params)
@@ -44,8 +44,6 @@ module Whatsapp::Gupshup::V1
 
       case deductions['model']
       when 'CBP'
-        return if deductions['type'] == 'FEP'
-
         # Se ejecuta cobro de conversacion
         time = Time.now
         retailer_ws_conv = @retailer.retailer_whatsapp_conversations.find_or_create_by(year: time.year, month: time.month)
@@ -55,8 +53,10 @@ module Whatsapp::Gupshup::V1
         @retailer.update_column(:ws_balance, @retailer.ws_balance - amount)
         message&.update_column(:cost, amount)
 
-        if deductions['type'] == 'UIC'
+        case deductions['type']
+        when 'UIC'
           price_attrs = {
+            user_initiated_total: retailer_ws_conv.user_initiated_total + 1,
             user_initiated_cost: retailer_ws_conv.user_initiated_cost + amount
           }
 
@@ -64,8 +64,9 @@ module Whatsapp::Gupshup::V1
             total_uic: country_ws_conv.total_uic + 1,
             total_cost_uic: country_ws_conv.total_cost_uic + amount
           }
-        else
+        when 'BIC'
           price_attrs = {
+            business_initiated_total: retailer_ws_conv.business_initiated_total + 1,
             business_initiated_cost: retailer_ws_conv.business_initiated_cost + amount
           }
 
@@ -73,6 +74,8 @@ module Whatsapp::Gupshup::V1
             total_bic: country_ws_conv.total_bic + 1,
             total_cost_bic: country_ws_conv.total_cost_bic + amount
           }
+        when 'FEP'
+          price_attrs = { free_point_total: retailer_ws_conv.free_point_total + 1 }
         end
 
         retailer_ws_conv.update(price_attrs)
