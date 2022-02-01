@@ -34,7 +34,7 @@
               <p class="container-payment-plan_next-pay mb-10"><%= t('retailer.profile.payment_plans.index.ws_balance') %>:
                 <%= '$%05.2f' % current_retailer.ws_balance %>
               </p>
-              <% if current_retailer.gupshup_integrated? %>
+              <!--<% if current_retailer.gupshup_integrated? %>
                 <div class="outer-free-conversations mb-15 w-50">
                   <div class="labels-container">
                     <div class="fs-13 first-label"><i class="fab fa-whatsapp fs-13 mr-5"></i><%= t('horizontal_navbar.free_tier') %> (<%= I18n.l(Time.now, format: "%b") %>)</div>
@@ -44,7 +44,7 @@
                     <div class="percentage-bar" style="width: <%= total_free_conversations %>%;"></div>
                   </div>
                 </div>
-              <% end %>
+              <% end %>-->
               <div class="row ml-0">
                 <div class="col-md-6 col-12 pl-0">
                   <p class="container-payment-plan_next-pay mb-10"><%= t('retailer.profile.payment_plans.index.next_pay') %>:
