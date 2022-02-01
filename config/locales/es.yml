@@ -439,6 +439,7 @@ es:
     payment_plans: 'Planes de pago'
     api_key: 'API Key'
     logout: 'Cerrar sesión'
+    free_tier: Chats gratis
     failed_charge:
       1: 'Hola %{retailer}, lamentablemente no pudimos ejecutar el cobro por renovación de tu plan.'
       2: 'Por favor, revisa tu método de pago lo antes posible para no sufrir cortes en el servicio'
@@ -632,6 +633,15 @@ es:
           delete_card_confirmation: ¿Estás seguro de eliminar esta tarjeta?
           payment_methods: Métodos de Pago
           update_card_confirmation: ¿Estás seguro de actualizar esta tarjeta?
+          whatsapp_conversations: Conversaciones de WhatsApp
+          conversation_type: Tipo de conversación
+          conversation_total: Total
+          conversation_cost_total: Costo
+          free_entry_point: Gratis por punto de entrada
+          free_uic: Gratis iniciadas por el usuario
+          free_bic: Gratis iniciadas por el negocio
+          paid_uic: Pagadas iniciadas por el usuario
+          paid_bic: Pagadas iniciadas por el negocio
         charge_balance:
           add_balance: Agregar saldo
           minimum_amount: El monto mínimo son $10

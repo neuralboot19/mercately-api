@@ -132,6 +132,17 @@
                 <% if current_retailer.whatsapp_integrated? %>
                   <%= image_tag 'new_design/green_dot.png' %>
                   <%= t('views.dashboard.connected') %>
+                  <% if current_retailer.gupshup_integrated? %>
+                    <div class="outer-free-conversations">
+                      <div class="labels-container">
+                        <div class="first-label"><%= t('horizontal_navbar.free_tier') %> (<%= I18n.l(Time.now, format: "%b") %>)</div>
+                        <div class="second-label"><%= total_free_conversations %> / 1000</div>
+                      </div>
+                      <div class="percentage-bar-container">
+                        <div class="percentage-bar" style="width: <%= total_free_conversations %>%;"></div>
+                      </div>
+                    </div>
+                  <% end %>
                 <% else %>
                   <%= link_to t('views.dashboard.configure'), retailers_integrations_path(current_retailer) %>
                 <% end %>

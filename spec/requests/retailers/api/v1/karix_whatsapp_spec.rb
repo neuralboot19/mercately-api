@@ -179,7 +179,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
 
                 body = JSON.parse(response.body)
                 expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
-                                              'por favor, contáctese con su agente de ventas para recargar su saldo')
+                                              'por favor recargue')
               end
             end
           end
@@ -333,7 +333,7 @@ RSpec.describe 'Retailers::Api::V1::KarixWhatsappController', type: :request do
 
         body = JSON.parse(response.body)
         expect(body['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
-                                      'por favor, contáctese con su agente de ventas para recargar su saldo')
+                                      'por favor recargue')
       end
 
       it 'responses a 500 Internal Server Error response if raises an exception' do

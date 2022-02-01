@@ -27,16 +27,37 @@ class Campaign < ApplicationRecord
   end
 
   def estimated_cost
-    contact_group.customers.sum(:ws_notification_cost)
+    if retailer.gupshup_integrated?
+      if send_at < Time.new(2022, 01, 31).end_of_day
+        contact_group.customers.sum(:ws_notification_cost)
+      else
+        customers = contact_group.customers.where(whatsapp_opt_in: true)
+        remaining_conversations = retailer.remaining_free_conversations
+        return 0 if remaining_conversations >= customers.size
+
+        costs = customers.where.not(ws_bic_cost: nil).order(ws_bic_cost: :desc).pluck(:ws_bic_cost)
+        costs = costs[remaining_conversations, costs.size]
+
+        costs.sum
+      end
+    elsif retailer.karix_integrated?
+      customers = contact_group.customers.where.not(phone: [nil, ''])
+      customers.size * retailer.ws_notification_cost
+    end
   end
 
   def cost
     return 0 unless sent?
 
-    gupshup_whatsapp_messages
-      .includes(:customer)
-      .where.not(status: :error)
-      .sum('customers.ws_notification_cost')
+    if retailer.gupshup_integrated?
+      gupshup_whatsapp_messages
+        .where.not(status: :error)
+        .sum(:cost)
+    elsif retailer.karix_integrated?
+      karix_whatsapp_messages
+        .where.not(status: 'failed')
+        .sum(:cost)
+    end
   end
 
   def customer_details_template(customer)

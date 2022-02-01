@@ -265,6 +265,7 @@ Rails.application.routes.draw do
       get 'global_settings', to: 'global_settings#index'
       namespace :mobile do
         post 'sign_up', to: 'registrations#create', as: :sign_up
+        get 'dashboard', to: 'dashboard#index', as: :dashboard
       end
 
       # For Karix

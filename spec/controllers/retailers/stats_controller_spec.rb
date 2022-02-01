@@ -162,10 +162,10 @@ RSpec.describe 'StatsController', type: :request do
           it 'loads the total inbound and outbound messages for the last 5 days' do
             get retailers_total_messages_stats_path(retailer)
 
-            expect(assigns(:total_inbound_ws)).to eq(2)
+            expect(assigns(:total_inbound_ws)).to eq(4)
             expect(assigns(:total_outbound_ws)).to eq(3)
             expect(assigns(:ws_prospects)).to eq(0)
-            expect(assigns(:ws_currents)).to eq(1)
+            expect(assigns(:ws_currents)).to eq(2)
           end
 
           it 'counts the total and answered chats for the last 5 days' do

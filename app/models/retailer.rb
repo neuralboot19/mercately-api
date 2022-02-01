@@ -45,6 +45,8 @@ class Retailer < ApplicationRecord
   has_many :customer_hubspot_fields
   has_many :plan_cancellations
   has_many :retailer_unfinished_message_blocks
+  has_many :retailer_whatsapp_conversations
+  has_many :message_blocks
 
   validates :name, presence: true
   validates :currency, presence: true
@@ -187,13 +189,11 @@ class Retailer < ApplicationRecord
     retailer_users.where(retailer_supervisor: true, removed_from_team: false, invitation_token: nil)
   end
 
-  def positive_balance?(customer)
-    return true if customer.is_chat_open?
-
+  def positive_balance?(customer = nil)
     if karix_integrated?
-      ws_balance >= ws_notification_cost
+      customer&.is_chat_open? || ws_balance >= ws_notification_cost
     elsif gupshup_integrated?
-      ws_balance >= customer.ws_notification_cost
+      ws_balance > -10.0
     end
   end
 
@@ -338,6 +338,16 @@ class Retailer < ApplicationRecord
 
   def currency_symbol
     Money::Currency.new(currency)&.symbol || currency
+  end
+
+  def remaining_free_conversations
+    time = Time.now
+    year = time.year
+    month = time.month
+    retailer_ws_conv = retailer_whatsapp_conversations.find_by(year: year, month: month)
+    return 1000 unless retailer_ws_conv.present?
+
+    1000 - (retailer_ws_conv.free_uic_total + retailer_ws_conv.free_bic_total)
   end
 
   private
