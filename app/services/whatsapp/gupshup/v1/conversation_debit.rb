@@ -47,6 +47,12 @@ module Whatsapp::Gupshup::V1
         # Se ejecuta cobro de conversacion
         time = Time.now
         retailer_ws_conv = @retailer.retailer_whatsapp_conversations.find_or_create_by(year: time.year, month: time.month)
+
+        if (retailer_ws_conv.free_bic_total + retailer_ws_conv.free_uic_total) < 1000 && deductions['type'] != 'FEP'
+          count_free_conversations(retailer_ws_conv, deductions['type'])
+          return
+        end
+
         country_ws_conv = retailer_ws_conv.country_conversations.find_or_create_by(country_code: @customer.country_id)
 
         amount = @customer.get_conversation_cost(deductions['type'])
@@ -113,7 +119,22 @@ module Whatsapp::Gupshup::V1
         @retailer.message_blocks.create(phone: message.destination, sent_date: message.created_at)
       end
 
-      retailer_ws_conv.update(free_bic_total: retailer_ws_conv.free_bic_total + 1)
+      if message.message_type == 'conversation'
+        retailer_ws_conv.update(free_uic_total: retailer_ws_conv.free_uic_total + 1)
+      else
+        retailer_ws_conv.update(free_bic_total: retailer_ws_conv.free_bic_total + 1)
+      end
+    end
+
+    def count_free_conversations(retailer_ws_conv, type)
+      price_attrs = case type
+                    when 'UIC'
+                      { free_uic_total: retailer_ws_conv.free_uic_total + 1 }
+                    when 'BIC'
+                      { free_bic_total: retailer_ws_conv.free_bic_total + 1 }
+                    end
+
+      retailer_ws_conv.update(price_attrs)
     end
   end
 end
