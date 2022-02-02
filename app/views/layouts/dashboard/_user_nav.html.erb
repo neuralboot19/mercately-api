@@ -122,3 +122,50 @@
     <%= t('horizontal_navbar.failed_charge.4') %>
   </section>
 <% end %>
+
+<% if @news.present? %>
+  <% @news.each_with_index do |new, index| %>
+    <div>
+      <% if index.zero? %>
+        <input type="checkbox" class="d-none" name="modal--toggle-new" id="modal--toggle-new-<%= index %>" checked data-seen="true" />
+      <% else %>
+        <input type="checkbox" class="d-none" name="modal--toggle-new" id="modal--toggle-new-<%= index %>" data-seen="false" />
+      <% end %>
+      <div class="modal-index">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-xs-12 col-md-8 middle">
+              <label class="modal-index__background" for="modal--toggle-index"></label>
+              <div class="modal-index__window box p-4 h-unset mt-0" style="z-index: 1000;">
+                <h1 class="d-inline name mb-10 ml-14"><%= new.title %></h1>
+                <label class="modalindex__close f-right" for="modal--toggle-new-<%= index %>">
+                  <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
+                </label>
+                <div class="row">
+                  <div class="col-xs-12 col-12">
+                    <div class="divider"></div>
+                    <%= new.template_body(current_retailer, current_retailer_user).html_safe %>
+                    <p class="t-center">
+                      <label for="modal--toggle-new-<%= index %>" class="btn-btn btn-submit">Cerrar</label>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <script>
+    $(function() {
+      document.querySelector('input[data-seen="true"]').checked = true;
+      $('input[name="modal--toggle-new"]').on('change', function(e) {
+        let el = document.querySelector('input[data-seen="false"]');
+        el.checked = true;
+        el.dataset.seen = true;
+      })
+    });
+  </script>
+<% end %>

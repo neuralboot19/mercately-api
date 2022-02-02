@@ -805,6 +805,16 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.index ["retailer_user_id"], name: "index_mobile_tokens_on_retailer_user_id"
   end
 
+  create_table "notifications", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.integer "visible_for"
+    t.datetime "visible_until"
+    t.boolean "published", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "option_sub_lists", force: :cascade do |t|
     t.bigint "chat_bot_option_id"
     t.string "value_to_save"
@@ -1125,6 +1135,16 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.index ["tag_id"], name: "index_retailer_most_used_tags_on_tag_id"
   end
 
+  create_table "retailer_user_notifications", force: :cascade do |t|
+    t.bigint "retailer_user_id"
+    t.bigint "notification_id"
+    t.boolean "seen", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["notification_id"], name: "index_retailer_user_notifications_on_notification_id"
+    t.index ["retailer_user_id"], name: "index_retailer_user_notifications_on_retailer_user_id"
+  end
+
   create_table "retailer_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -1407,6 +1427,8 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
   add_foreign_key "retailer_conversations", "retailers"
   add_foreign_key "retailer_unfinished_message_blocks", "customers"
   add_foreign_key "retailer_unfinished_message_blocks", "retailers"
+  add_foreign_key "retailer_user_notifications", "notifications"
+  add_foreign_key "retailer_user_notifications", "retailer_users"
   add_foreign_key "whatsapp_logs", "gupshup_whatsapp_messages"
   add_foreign_key "whatsapp_logs", "retailers"
 end
