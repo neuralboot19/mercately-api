@@ -9,6 +9,6 @@ module RetailerHelper
 
   def percentage_free_conversations
     total_free = 1000 - current_retailer.remaining_free_conversations
-    total_free*100/1000
+    total_free.to_f*100/1000
   end
 end
