@@ -1,0 +1,74 @@
+<div class="container-payment-plan container-my-account">
+  <div class="container-titles mb-32">
+    <h1 class="d-inline container-payment-plan_header-title"><%= t('retailer.profile.my_account.index.title') %></h1>
+
+    <ol class="breadcrumb pl-0 pb-0 mb-0 bg-transparent">
+      <li class="breadcrumb-item">
+        <%= link_to retailers_dashboard_path(current_retailer), class: 'no-style' do %>
+          <%= t('retailer.profile.my_account.index.breadcrumb.root') %>
+        <% end %>
+      </li>
+      <li class="breadcrumb-item active"><a href="#"><%= t('retailer.profile.my_account.index.breadcrumb.my_account') %></a></li>
+    </ol>
+
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <%= link_to edit_retailer_info_path(current_retailer), class: 'no-style' do %>
+          <div class="flex-center-xy flex-column text-center my-account-item mb-32 pl-24 pr-24 pt-32 pb-32 bg-white br-16">
+            <%= image_tag 'my-info.png', class: 'w-64 h-64 mb-16' %>
+            <span class="my-account-item-title pb-8"><%= t('retailer.profile.my_account.index.my_data.title') %></span>
+            <span class="my-account-item-description"><%= t('retailer.profile.my_account.index.my_data.description') %></span>
+          </div>
+        <% end %>
+      </div>
+<!--      <div class="col-md-4">-->
+<!--        <div class="flex-center-xy flex-column text-center my-account-item mb-32 pl-24 pr-24 pt-32 pb-32 bg-white br-16">-->
+          <%#= image_tag 'my-business.png', class: 'w-64 h-64 mb-16' %>
+<!--          <span class="my-account-item-title pb-8"><%#= t('retailer.profile.my_account.index.my_business.title') %></span>-->
+<!--          <span class="my-account-item-description"><%#= t('retailer.profile.my_account.index.my_business.description') %></span>-->
+<!--        </div>-->
+<!--      </div>-->
+      <div class="col-md-4">
+        <%= link_to api_key_path(current_retailer), class: 'no-style' do %>
+          <div class="flex-center-xy flex-column text-center my-account-item mb-32 pl-24 pr-24 pt-32 pb-32 bg-white br-16">
+            <%= image_tag 'my-api-key.png', class: 'w-64 h-64 mb-16' %>
+            <span class="my-account-item-title pb-8"><%= t('retailer.profile.my_account.index.my_api_keys.title') %></span>
+            <span class="my-account-item-description"><%= t('retailer.profile.my_account.index.my_api_keys.description') %></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-md-4">
+        <%= link_to edit_team_path(current_retailer), class: 'no-style' do %>
+          <div class="flex-center-xy flex-column text-center my-account-item mb-32 pl-24 pr-24 pt-32 pb-32 bg-white br-16">
+            <%= image_tag 'my-team.png', class: 'w-64 h-64 mb-16' %>
+            <span class="my-account-item-title pb-8"><%= t('retailer.profile.my_account.index.my_team.title') %></span>
+            <span class="my-account-item-description"><%= t('retailer.profile.my_account.index.my_team.description') %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 offset-md-2">
+        <%= link_to retailers_integrations_path(current_retailer), class: 'no-style' do %>
+          <div class="flex-center-xy flex-column text-center my-account-item mb-32 pl-24 pr-24 pt-32 pb-32 bg-white br-16">
+            <%= image_tag 'my-integrations.png', class: 'w-64 h-64 mb-16' %>
+            <span class="my-account-item-title pb-8"><%= t('retailer.profile.my_account.index.my_integrations.title') %></span>
+            <span class="my-account-item-description"><%= t('retailer.profile.my_account.index.my_integrations.description') %></span>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-md-4">
+        <%= link_to retailers_payment_plans_path(current_retailer), class: 'no-style' do %>
+          <div class="flex-center-xy flex-column text-center my-account-item mb-32 pl-24 pr-24 pt-32 pb-32 bg-white br-16">
+            <%= image_tag 'my_payment_plans.png', class: 'w-64 h-64 mb-16' %>
+            <span class="my-account-item-title pb-8"><%= t('retailer.profile.my_account.index.my_payment_plans.title') %></span>
+            <span class="my-account-item-description"><%= t('retailer.profile.my_account.index.my_payment_plans.description') %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+

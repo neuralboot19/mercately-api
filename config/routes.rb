@@ -133,6 +133,7 @@ Rails.application.routes.draw do
       put 'products/:id/archive', to: 'products#archive_product', as: :archive_product
       put 'products/:id/upload_product_to_ml', to: 'products#upload_product_to_ml', as: :upload_product_to_ml
       get 'questions_list', to: 'messages#questions_list'
+      get 'my_account', to: 'my_account#index', as: :my_account
       get 'pricing', to: 'payment_plans#index', as: :payment_plans
       get 'invoice/:id', to: 'payment_plans#invoice', as: :invoice
       post 'charge', to: 'payment_plans#charge', as: :payment_plan_charge

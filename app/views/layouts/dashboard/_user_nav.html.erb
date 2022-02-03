@@ -75,32 +75,11 @@
             <input id="dropdown__menu--header" type="checkbox" class="dropdown__input"/>
             <ul class="dropdown__menu t-left">
               <li>
-                <%= link_to edit_retailer_info_path(current_retailer), class: 'no-style' do %>
-                  <i class="fas fa-user-cog mr-8"></i>
-                  <%= t('horizontal_navbar.edit_profile') %>
+                <%= link_to retailers_my_account_path(current_retailer), class: 'no-style' do %>
+                  <i class="fas fa-cog mr-8"></i>
+                  <%= t('horizontal_navbar.configurations') %>
                 <% end %>
               </li>
-              <% unless current_retailer_user.agent? %>
-                <li>
-                  <%= link_to edit_team_path(current_retailer), class: 'no-style' do %>
-                    <i class="fas fa-users mr-8"></i>
-                    <%= t('horizontal_navbar.team') %>
-                  <% end %>
-                </li>
-              <% end %>
-              <li>
-                <%= link_to retailers_payment_plans_path(current_retailer), class: 'no-style' do %>
-                  <i class="fas fa-credit-card mr-8"></i>
-                  <%= t('horizontal_navbar.payment_plans') %>
-                <% end %>
-              </li>
-              <li>
-                <%= link_to api_key_path(current_retailer), class: 'no-style' do %>
-                  <i class="fas fa-credit-card mr-8"></i>
-                  <%= t('horizontal_navbar.api_key') %>
-                <% end %>
-              </li>
-              <li class="divider"></li>
               <li>
                 <%= link_to destroy_retailer_user_session_path, method: :delete, class: 'no-style' do %>
                   <i class="fas fa-sign-out-alt mr-8"></i>
