@@ -714,3 +714,4 @@ es:
     check: 'Ver factura'
     phone: 'Teléfono'
     email: 'Correo'
+    address: 'Dirección'
