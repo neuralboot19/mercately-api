@@ -13,7 +13,6 @@ class PaymentezTransaction < ApplicationRecord
 
   def debit_with_token(card, amount = nil, plan = nil, sub = false)
     self.month_interval = sub ? retailer.payment_plan.month_interval : 0
-    retailer = card.retailer
     retailer_plan = retailer.payment_plan
     if plan.present?
       retailer_plan.plan = plan

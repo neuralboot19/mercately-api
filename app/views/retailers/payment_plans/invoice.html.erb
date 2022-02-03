@@ -35,6 +35,8 @@
       <br/>
       <%= t('invoice.email') %>: <%= @bill_details.business_email %>
       <br/>
+      <%= t('invoice.address') %>: <%= @bill_details.business_address %>
+      <br/>
       <%= @bill_details.iva_description %>
     <% else %>
       <%= @retailer_admin.full_name %>

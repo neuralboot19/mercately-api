@@ -13,6 +13,8 @@ class RetailerUser < ApplicationRecord
   has_many :templates, dependent: :destroy
   has_many :calendar_events, dependent: :destroy
   has_many :agent_notifications, dependent: :destroy
+  has_many :retailer_user_notifications, class_name: 'RetailerUserNotification'
+  has_many :notifications, through: :retailer_user_notifications
   has_many :deals
   has_many :retailer_average_response_times
 

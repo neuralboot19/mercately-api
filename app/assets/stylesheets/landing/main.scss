@@ -717,7 +717,9 @@ p{
   }
 }
 
-#modal--toggle:checked ~ .modal-mercately, #modal--toggle-index:checked ~ .modal-index,
+#modal--toggle:checked ~ .modal-mercately,
+#modal--toggle-index:checked ~ .modal-index,
+input[name="modal--toggle-new"]:checked ~ .modal-index,
 #modal-agent--toggle:checked ~ .modal-agent {
   display: block;
 }

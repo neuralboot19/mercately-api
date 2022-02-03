@@ -14,7 +14,7 @@ en:
   horizontal_navbar:
     calendar: 'Calendar'
     help: 'Help'
-    edit_profile: 'Edit Profile'
+    configurations: 'Settings'
     team: 'Team'
     payment_plans: 'Payment Plan'
     api_key: 'API Key'
@@ -246,6 +246,30 @@ en:
         message_saved_successfully: Message saved successfully
         all_fields_is_required: All fields are required
     profile:
+      my_account:
+        index:
+          title: My account
+          breadcrumb:
+            root: Dashboard
+            my_account: My account
+          my_data:
+            title: My data
+            description: Configure your account options
+          my_business:
+            title: My business
+            description: Configure the options of your business
+          my_team:
+            title: My team
+            description: Add or remove members in your team
+          my_api_keys:
+            title: API Key
+            description: Configure your account options
+          my_integrations:
+            title: Integrations
+            description: Integrate all platforms from here
+          my_payment_plans:
+            title: Payment plans
+            description: Payment plans you have in Mercately
       payment_plans:
         index:
           retry: Reactivate
@@ -391,3 +415,4 @@ en:
     check: 'Check invoice'
     phone: 'Phone'
     email: 'Email'
+    address: 'Address'

@@ -104,14 +104,15 @@ class PaymentezCreditCard < ApplicationRecord
   end
 
   private
+
     def transaction
-      PaymentezTransaction.new()
+      paymentez_transactions.new(retailer: retailer)
     end
 
     def schedule_payment(payment_date)
       Retailers::RetailerChargePlanJob.perform_at(
         payment_date,
-        self.id
+        id
       )
     end
 end

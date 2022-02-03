@@ -146,6 +146,7 @@ ActiveAdmin.register Retailer do
         row :identification_number
         row :business_phone
         row :business_email
+        row :business_address
         row :created_at
         row :updated_at
       end
@@ -403,6 +404,7 @@ ActiveAdmin.register Retailer do
         rbd.input :identification_number
         rbd.input :business_phone
         rbd.input :business_email
+        rbd.input :business_address
         rbd.input :iva_description
         rbd.input :_destroy, as: :boolean, label: 'Eliminar detalles de factura' unless rbd.object.new_record?
       end

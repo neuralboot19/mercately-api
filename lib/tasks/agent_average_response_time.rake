@@ -1,4 +1,36 @@
 namespace :agents do
+  task :average_response_time_by_date, [:date] => :environment do |t, args|
+    @start_date = Time.parse(Date.parse(args[:date]).strftime('%d/%m/%Y'))
+    @end_date = @start_date.end_of_day
+    @calculation_date = @end_date.to_date
+    @unfinished_message_blocks_date = (@start_date - 1.day).to_date
+
+    Retailer.find_each do |retailer|
+      @new_records_average_response_times = []
+      @new_records_unfinished_message_blocks = []
+
+      # AVERAGE FOR WHATSAPP MESSAGES
+      get_average_for_whatsapp_messages(retailer)
+
+      # AVERAGE FOR MESSENGER MESSAGES
+      get_average_for_facebook_messages(retailer)
+
+      # AVERAGE FOR INSTAGRAM MESSAGES
+      get_average_for_instagram_messages(retailer)
+
+      if @new_records_average_response_times.any?
+        RetailerAverageResponseTime.create(@new_records_average_response_times)
+      end
+
+      if @new_records_unfinished_message_blocks.any?
+        RetailerUnfinishedMessageBlock.create(@new_records_unfinished_message_blocks)
+      end
+
+      # Eliminar registro de la tabla retailer_unfinished_message_blocks
+      retailer.retailer_unfinished_message_blocks.where(message_date: @unfinished_message_blocks_date, statistics: 0).destroy_all
+    end
+  end
+
   task average_response_time: :environment do
     @start_date = Time.parse(1.day.ago.strftime('%d/%m/%Y'))
     @end_date = @start_date.end_of_day
@@ -32,8 +64,8 @@ namespace :agents do
   end
 
   def get_average_for_whatsapp_messages(retailer)
-    @retailer_user_response_first_time = []
-    @retailer_user_response_times = []
+    retailer_user_response_first_time = []
+    retailer_user_response_times = []
 
     return unless retailer.gupshup_integrated?
 
@@ -87,11 +119,23 @@ namespace :agents do
           "AND statistics = ?", customer[:customer_id], @unfinished_message_blocks_date, 0, 'inbound', 0).first
 
           if tmp_record.present?
-            @retailer_user_response_times.push({
-              retailer_user_id: row['retailer_user_id'],
-              response_time: Time.parse(row['start_date']) - Time.parse(tmp_record.message_created_date.strftime('%d/%m/%Y %H:%M:%S')),
-              occurrences: 1
-            })
+            # Calcular el tiempo de respuesta para el bloque de mensajes
+            retailer_user_in = retailer_user_response_times.find { |retailer_user|
+              retailer_user[:retailer_user_id] == row["retailer_user_id"]
+            }
+
+            response_time = Time.parse(row['start_date']) - Time.parse(tmp_record.message_created_date.strftime('%d/%m/%Y %H:%M:%S'))
+
+            if retailer_user_in.present?
+              retailer_user_in[:response_time] += response_time
+              retailer_user_in[:occurrences] += 1
+            else
+              retailer_user_response_times.push({
+                retailer_user_id: row['retailer_user_id'],
+                response_time: response_time,
+                occurrences: 1
+              })
+            end
           end
         else
           if row['direction'] == 'inbound'
@@ -112,7 +156,7 @@ namespace :agents do
             next
           end
 
-          retailer_user_response_first_time_in = @retailer_user_response_first_time
+          retailer_user_response_first_time_in = retailer_user_response_first_time
                                                 .find { |retailer_user|
                                                   retailer_user[:retailer_user_id] == row['retailer_user_id'] &&
                                                   retailer_user[:customer_id] == customer[:customer_id]
@@ -125,7 +169,7 @@ namespace :agents do
                                 .where.not(note: true).exists?
 
             if !old_conversations
-              @retailer_user_response_first_time.push({
+              retailer_user_response_first_time.push({
                 retailer_user_id: row['retailer_user_id'],
                 customer_id: customer[:customer_id],
                 response_first_time: Time.parse(row['start_date']) - Time.parse(result_wp[index - 1]['start_date'])
@@ -134,16 +178,17 @@ namespace :agents do
           end
 
           # Calcular el tiempo de respuesta para el bloque de mensajes
-          retailer_user_in = @retailer_user_response_times.find { |retailer_user|
+          retailer_user_in = retailer_user_response_times.find { |retailer_user|
             retailer_user[:retailer_user_id] == row['retailer_user_id']
           }
+
           response_time = Time.parse(row['start_date']) - Time.parse(result_wp[index - 1]['start_date'])
 
           if retailer_user_in.present?
             retailer_user_in[:response_time] += response_time
             retailer_user_in[:occurrences] += 1
           else
-            @retailer_user_response_times.push({
+            retailer_user_response_times.push({
               retailer_user_id: row['retailer_user_id'],
               response_time: response_time,
               occurrences: 1
@@ -153,18 +198,18 @@ namespace :agents do
       end
     end
 
-    total_retailer_user = @retailer_user_response_times.count
+    total_retailer_user = retailer_user_response_times.count
 
     return unless total_retailer_user > 0
 
     total_first_time_average = 0
     total_conversation_time_average = 0
 
-    @retailer_user_response_times.each do |retailer_user|
+    retailer_user_response_times.each do |retailer_user|
       first_time_average = 0
       occurrences = 0
 
-      @retailer_user_response_first_time.each do |retailer_user_first_time|
+      retailer_user_response_first_time.each do |retailer_user_first_time|
         next unless retailer_user[:retailer_user_id] == retailer_user_first_time[:retailer_user_id]
 
         first_time_average += retailer_user_first_time[:response_first_time]
@@ -197,8 +242,8 @@ namespace :agents do
   end
 
   def get_average_for_facebook_messages(retailer)
-    @retailer_user_response_first_time = []
-    @retailer_user_response_times = []
+    retailer_user_response_first_time = []
+    retailer_user_response_times = []
 
     return unless retailer.facebook_retailer&.connected?
 
@@ -251,11 +296,22 @@ namespace :agents do
                       "AND sent_by_retailer = ?", customer[:customer_id], @unfinished_message_blocks_date, 1, 0, false).first
 
           if tmp_record.present?
-            @retailer_user_response_times.push({
-              retailer_user_id: row['retailer_user_id'],
-              response_time: Time.parse(row['start_date']) - Time.parse(tmp_record.message_created_date.strftime('%d/%m/%Y %H:%M:%S')),
-              occurrences: 1
-            })
+            # Calcular el tiempo de respuesta para el bloque de mensajes
+            retailer_user_in = retailer_user_response_times.find { |retailer_user|
+              retailer_user[:retailer_user_id] == row['retailer_user_id']
+            }
+            response_time = Time.parse(row['start_date']) - Time.parse(tmp_record.message_created_date.strftime('%d/%m/%Y %H:%M:%S'))
+
+            if retailer_user_in.present?
+              retailer_user_in[:response_time] += response_time
+              retailer_user_in[:occurrences] += 1
+            else
+              retailer_user_response_times.push({
+                retailer_user_id: row['retailer_user_id'],
+                response_time: response_time,
+                occurrences: 1
+              })
+            end
           end
         else
           if row['sent_by_retailer'] == false
@@ -276,7 +332,7 @@ namespace :agents do
             next
           end
 
-          retailer_user_response_first_time_in = @retailer_user_response_first_time
+          retailer_user_response_first_time_in = retailer_user_response_first_time
                                                 .find { |retailer_user|
                                                   retailer_user[:retailer_user_id] == row['retailer_user_id'] &&
                                                   retailer_user[:customer_id] == customer[:customer_id]
@@ -289,7 +345,7 @@ namespace :agents do
                               .where.not(note: true).exists?
 
             if !old_conversations
-              @retailer_user_response_first_time.push({
+              retailer_user_response_first_time.push({
                 retailer_user_id: row['retailer_user_id'],
                 customer_id: customer[:customer_id],
                 response_first_time: Time.parse(row['start_date']) - Time.parse(result_msn[index - 1]['start_date'])
@@ -298,7 +354,7 @@ namespace :agents do
           end
 
           # Calcular el tiempo de respuesta para el bloque de mensajes
-          retailer_user_in = @retailer_user_response_times.find { |retailer_user|
+          retailer_user_in = retailer_user_response_times.find { |retailer_user|
             retailer_user[:retailer_user_id] == row['retailer_user_id']
           }
           response_time = Time.parse(row['start_date']) - Time.parse(result_msn[index - 1]['start_date'])
@@ -307,7 +363,7 @@ namespace :agents do
             retailer_user_in[:response_time] += response_time
             retailer_user_in[:occurrences] += 1
           else
-            @retailer_user_response_times.push({
+            retailer_user_response_times.push({
               retailer_user_id: row['retailer_user_id'],
               response_time: response_time,
               occurrences: 1
@@ -317,18 +373,18 @@ namespace :agents do
       end
     end
 
-    total_retailer_user = @retailer_user_response_times.count
+    total_retailer_user = retailer_user_response_times.count
 
     return unless total_retailer_user > 0
 
     total_first_time_average = 0
     total_conversation_time_average = 0
 
-    @retailer_user_response_times.each do |retailer_user|
+    retailer_user_response_times.each do |retailer_user|
       first_time_average = 0
       occurrences = 0
 
-      @retailer_user_response_first_time.each do |retailer_user_first_time|
+      retailer_user_response_first_time.each do |retailer_user_first_time|
         next unless retailer_user[:retailer_user_id] == retailer_user_first_time[:retailer_user_id]
 
         first_time_average += retailer_user_first_time[:response_first_time]
@@ -361,8 +417,8 @@ namespace :agents do
   end
 
   def get_average_for_instagram_messages(retailer)
-    @retailer_user_response_first_time = []
-    @retailer_user_response_times = []
+    retailer_user_response_first_time = []
+    retailer_user_response_times = []
 
     return unless retailer.facebook_retailer&.instagram_integrated?
 
@@ -415,11 +471,22 @@ namespace :agents do
                       customer[:customer_id], @unfinished_message_blocks_date, 2, false, 0).first
 
           if tmp_record.present?
-            @retailer_user_response_times.push({
-              retailer_user_id: row['retailer_user_id'],
-              response_time: Time.parse(row['start_date']) - Time.parse(tmp_record.message_created_date.strftime('%d/%m/%Y %H:%M:%S')),
-              occurrences: 1
-            })
+            # Calcular el tiempo de respuesta para el bloque de mensajes
+            retailer_user_in = retailer_user_response_times.find {
+              |retailer_user| retailer_user[:retailer_user_id] == row['retailer_user_id']
+            }
+            response_time = Time.parse(row['start_date']) - Time.parse(tmp_record.message_created_date.strftime('%d/%m/%Y %H:%M:%S'))
+
+            if retailer_user_in.present?
+              retailer_user_in[:response_time] += response_time
+              retailer_user_in[:occurrences] += 1
+            else
+              retailer_user_response_times.push({
+                retailer_user_id: row['retailer_user_id'],
+                response_time: response_time,
+                occurrences: 1
+              })
+            end
           end
         else
           if row['sent_by_retailer'] == false
@@ -440,7 +507,7 @@ namespace :agents do
             next
           end
 
-          retailer_user_response_first_time_in = @retailer_user_response_first_time
+          retailer_user_response_first_time_in = retailer_user_response_first_time
                                                 .find { |retailer_user|
                                                   retailer_user[:retailer_user_id] == row['retailer_user_id'] &&
                                                   retailer_user[:customer_id] == customer[:customer_id]
@@ -453,7 +520,7 @@ namespace :agents do
                               .where.not(note: true).exists?
 
             if !old_conversations
-              @retailer_user_response_first_time.push({
+              retailer_user_response_first_time.push({
                 retailer_user_id: row['retailer_user_id'],
                 customer_id: customer[:customer_id],
                 response_first_time: Time.parse(row['start_date']) - Time.parse(result_ig[index - 1]['start_date'])
@@ -462,7 +529,7 @@ namespace :agents do
           end
 
           # Calcular el tiempo de respuesta para el bloque de mensajes
-          retailer_user_in = @retailer_user_response_times.find {
+          retailer_user_in = retailer_user_response_times.find {
             |retailer_user| retailer_user[:retailer_user_id] == row['retailer_user_id']
           }
           response_time = Time.parse(row['start_date']) - Time.parse(result_ig[index - 1]['start_date'])
@@ -471,7 +538,7 @@ namespace :agents do
             retailer_user_in[:response_time] += response_time
             retailer_user_in[:occurrences] += 1
           else
-            @retailer_user_response_times.push({
+            retailer_user_response_times.push({
               retailer_user_id: row['retailer_user_id'],
               response_time: response_time,
               occurrences: 1
@@ -481,18 +548,18 @@ namespace :agents do
       end
     end
 
-    total_retailer_user = @retailer_user_response_times.count
+    total_retailer_user = retailer_user_response_times.count
 
     return unless total_retailer_user > 0
 
     total_first_time_average = 0
     total_conversation_time_average = 0
 
-    @retailer_user_response_times.each do |retailer_user|
+    retailer_user_response_times.each do |retailer_user|
       first_time_average = 0
       occurrences = 0
 
-      @retailer_user_response_first_time.each do |retailer_user_first_time|
+      retailer_user_response_first_time.each do |retailer_user_first_time|
         next unless retailer_user[:retailer_user_id] == retailer_user_first_time[:retailer_user_id]
 
         first_time_average += retailer_user_first_time[:response_first_time]

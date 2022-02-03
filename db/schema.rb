@@ -10,10 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_27_134830) do
+ActiveRecord::Schema.define(version: 2022_02_03_120509) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "adminpack"
   enable_extension "plpgsql"
 
   create_table "action_tags", force: :cascade do |t|
@@ -104,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.bigint "customer_id", null: false
     t.bigint "retailer_user_id", null: false
     t.string "notification_type"
-    t.integer "status", default: 0, null: false
+    t.string "status", default: "unread", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_agent_notifications_on_customer_id"
@@ -189,13 +188,14 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.string "web_id"
     t.integer "remember"
     t.string "timezone"
+    t.index ["remember_at"], name: "index_calendar_events_on_remember_at"
     t.index ["retailer_id"], name: "index_calendar_events_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_calendar_events_on_retailer_user_id"
   end
 
   create_table "campaigns", force: :cascade do |t|
     t.string "name"
-    t.text "template_text"
+    t.string "template_text"
     t.integer "status", default: 0
     t.datetime "send_at"
     t.jsonb "content_params"
@@ -439,11 +439,12 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.float "ws_notification_cost", default: 0.0672
     t.boolean "hs_active"
     t.string "hs_id"
-    t.string "number_to_use"
     t.boolean "api_created", default: false
+    t.string "number_to_use"
     t.boolean "ws_active", default: false
     t.datetime "last_chat_interaction"
     t.integer "pstype"
+    t.boolean "has_deals", default: false
     t.integer "status_chat", default: 0
     t.integer "count_unread_messages", default: 0
     t.boolean "number_to_use_opt_in", default: false, null: false
@@ -522,7 +523,7 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.string "sender_last_name"
     t.string "sender_email"
     t.string "message_identifier"
-    t.boolean "note", default: false
+    t.boolean "note", default: false, null: false
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_facebook_messages_on_retailer_user_id"
@@ -613,12 +614,12 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.string "message_type"
     t.bigint "retailer_user_id"
     t.float "cost"
-    t.bigint "campaign_id"
     t.string "message_identifier"
+    t.bigint "campaign_id"
     t.string "sender_first_name"
     t.string "sender_last_name"
     t.string "sender_email"
-    t.boolean "note", default: false
+    t.boolean "note", default: false, null: false
     t.boolean "initiate_conversation", default: false
     t.integer "conversation_type"
     t.json "conversation_payload"
@@ -673,10 +674,19 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "message_identifier"
-    t.boolean "note", default: false
+    t.boolean "note", default: false, null: false
     t.index ["customer_id"], name: "index_instagram_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_instagram_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_instagram_messages_on_retailer_user_id"
+  end
+
+  create_table "instagrams", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.string "uid"
+    t.string "access_token"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_instagrams_on_retailer_id"
   end
 
   create_table "karix_whatsapp_messages", force: :cascade do |t|
@@ -803,6 +813,16 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.string "mobile_push_token"
     t.index ["device", "retailer_user_id"], name: "index_mobile_tokens_on_device_and_retailer_user_id", unique: true
     t.index ["retailer_user_id"], name: "index_mobile_tokens_on_retailer_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "title"
+    t.text "body"
+    t.integer "visible_for"
+    t.datetime "visible_until"
+    t.boolean "published", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "option_sub_lists", force: :cascade do |t|
@@ -977,8 +997,8 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.string "manufacturer_part_number"
     t.string "gtin"
     t.string "brand"
-    t.boolean "connected_to_facebook", default: false
     t.string "url"
+    t.boolean "connected_to_facebook", default: false
     t.index ["category_id"], name: "index_products_on_category_id"
     t.index ["facebook_product_id"], name: "index_products_on_facebook_product_id", unique: true, where: "(facebook_product_id IS NOT NULL)"
     t.index ["meli_product_id"], name: "index_products_on_meli_product_id", unique: true, where: "(meli_product_id IS NOT NULL)"
@@ -1035,6 +1055,8 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.index ["karix_whatsapp_message_id"], name: "index_reminders_on_karix_whatsapp_message_id"
     t.index ["retailer_id"], name: "index_reminders_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_reminders_on_retailer_user_id"
+    t.index ["send_at_timezone"], name: "index_reminders_on_send_at_timezone"
+    t.index ["status"], name: "index_reminders_on_status"
     t.index ["whatsapp_template_id"], name: "index_reminders_on_whatsapp_template_id"
   end
 
@@ -1083,6 +1105,7 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.string "iva_description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "business_address"
     t.index ["retailer_id"], name: "index_retailer_bill_details_on_retailer_id"
   end
 
@@ -1097,6 +1120,17 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.datetime "updated_at", null: false
     t.index ["retailer_id"], name: "index_retailer_conversations_on_retailer_id"
     t.index ["retailer_user_id"], name: "index_retailer_conversations_on_retailer_user_id"
+  end
+
+  create_table "retailer_most_used_tags", force: :cascade do |t|
+    t.bigint "retailer_id", null: false
+    t.bigint "tag_id", null: false
+    t.integer "amount_used", default: 0
+    t.date "calculation_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["retailer_id"], name: "index_retailer_most_used_tags_on_retailer_id"
+    t.index ["tag_id"], name: "index_retailer_most_used_tags_on_tag_id"
   end
 
   create_table "retailer_unfinished_message_blocks", force: :cascade do |t|
@@ -1114,15 +1148,14 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.index ["retailer_id"], name: "index_retailer_unfinished_message_blocks_on_retailer_id"
   end
 
-  create_table "retailer_most_used_tags", force: :cascade do |t|
-    t.bigint "retailer_id", null: false
-    t.bigint "tag_id", null: false
-    t.integer "amount_used", default: 0
-    t.date "calculation_date"
+  create_table "retailer_user_notifications", force: :cascade do |t|
+    t.bigint "retailer_user_id"
+    t.bigint "notification_id"
+    t.boolean "seen", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["retailer_id"], name: "index_retailer_most_used_tags_on_retailer_id"
-    t.index ["tag_id"], name: "index_retailer_most_used_tags_on_tag_id"
+    t.index ["notification_id"], name: "index_retailer_user_notifications_on_notification_id"
+    t.index ["retailer_user_id"], name: "index_retailer_user_notifications_on_retailer_user_id"
   end
 
   create_table "retailer_users", force: :cascade do |t|
@@ -1136,6 +1169,10 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.datetime "updated_at", null: false
     t.boolean "agree_terms"
     t.jsonb "onboarding_status", default: {"step"=>0, "skipped"=>false, "completed"=>false}
+    t.string "provider"
+    t.string "uid"
+    t.string "facebook_access_token"
+    t.date "facebook_access_token_expiration"
     t.boolean "retailer_admin", default: true
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -1146,10 +1183,6 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "removed_from_team", default: false
-    t.string "provider"
-    t.string "uid"
-    t.string "facebook_access_token"
-    t.date "facebook_access_token_expiration"
     t.string "first_name"
     t.string "last_name"
     t.boolean "retailer_supervisor", default: false
@@ -1218,10 +1251,10 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.float "ws_next_notification_balance", default: 1.5
     t.float "ws_notification_cost", default: 0.0672
     t.float "ws_conversation_cost", default: 0.0
-    t.string "karix_account_uid"
-    t.string "karix_account_token"
     t.string "gupshup_phone_number"
     t.string "gupshup_src_name"
+    t.string "karix_account_uid"
+    t.string "karix_account_token"
     t.boolean "unlimited_account", default: false
     t.boolean "ecu_charges", default: false
     t.boolean "allow_bots", default: false
@@ -1230,6 +1263,8 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.boolean "manage_team_assignment", default: false
     t.boolean "show_stats", default: false
     t.boolean "allow_voice_notes", default: true
+    t.boolean "hubspot_integrated", default: false
+    t.string "hubspot_api_key", default: ""
     t.integer "hubspot_match", default: 0
     t.datetime "hs_expires_in"
     t.string "hs_access_token"
@@ -1237,8 +1272,8 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
     t.boolean "all_customers_hs_integrated", default: true
     t.boolean "hs_tags", default: false
     t.boolean "allow_send_videos", default: false
-    t.boolean "allow_multiple_answers", default: false
     t.string "hs_id"
+    t.boolean "allow_multiple_answers", default: false
     t.integer "max_agents", default: 2
     t.boolean "campaings_access", default: false
     t.string "ml_domain", default: "com.ec"
@@ -1391,6 +1426,7 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
   add_foreign_key "instagram_messages", "customers"
   add_foreign_key "instagram_messages", "facebook_retailers"
   add_foreign_key "instagram_messages", "retailer_users"
+  add_foreign_key "instagrams", "retailers"
   add_foreign_key "karix_whatsapp_messages", "customers"
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"
@@ -1401,12 +1437,16 @@ ActiveRecord::Schema.define(version: 2022_01_27_134830) do
   add_foreign_key "paymentez_transactions", "paymentez_credit_cards"
   add_foreign_key "paymentez_transactions", "retailers"
   add_foreign_key "questions", "products"
-  add_foreign_key "retailer_most_used_tags", "retailers"
-  add_foreign_key "retailer_most_used_tags", "tags"
+  add_foreign_key "retailer_amount_messages", "retailer_users"
+  add_foreign_key "retailer_amount_messages", "retailers"
   add_foreign_key "retailer_average_response_times", "retailers"
   add_foreign_key "retailer_conversations", "retailers"
+  add_foreign_key "retailer_most_used_tags", "retailers"
+  add_foreign_key "retailer_most_used_tags", "tags"
   add_foreign_key "retailer_unfinished_message_blocks", "customers"
   add_foreign_key "retailer_unfinished_message_blocks", "retailers"
+  add_foreign_key "retailer_user_notifications", "notifications"
+  add_foreign_key "retailer_user_notifications", "retailer_users"
   add_foreign_key "whatsapp_logs", "gupshup_whatsapp_messages"
   add_foreign_key "whatsapp_logs", "retailers"
 end
