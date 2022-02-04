@@ -263,7 +263,7 @@ en:
             description: Add or remove members in your team
           my_api_keys:
             title: API Key
-            description: Configure your account options
+            description: Configure your API Key and connect with other systems
           my_integrations:
             title: Integrations
             description: Integrate all platforms from here
