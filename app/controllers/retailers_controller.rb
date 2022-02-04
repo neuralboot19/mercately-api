@@ -8,6 +8,8 @@ class RetailersController < ApplicationController
   private
 
     def notification
+      return unless current_retailer_user.present?
+
       retailer_user_notifications = current_retailer_user
         .retailer_user_notifications
         .joins(:notification)
