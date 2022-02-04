@@ -609,7 +609,7 @@ es:
             description: Añade o elimina miembros en tu equipo
           my_api_keys:
             title: API Key
-            description: Configura las opciones de tu cuenta
+            description: Configura tu API Key y conecta con otros sistemas
           my_integrations:
             title: Integraciones
             description: Integra todas las plataformas desde aquí
