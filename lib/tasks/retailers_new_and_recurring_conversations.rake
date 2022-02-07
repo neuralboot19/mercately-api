@@ -1,4 +1,36 @@
 namespace :retailers do
+  task :new_and_recurring_conversations_by_date, [:date] => :environment do |t, args|
+    @start_date = Time.parse(Date.parse(args[:date]).strftime('%d/%m/%Y'))
+    @end_date = @start_date.end_of_day
+    @calculation_date = @end_date.to_date
+    @unfinished_message_blocks_date = (@start_date - 1.day).to_date
+
+    Retailer.find_each do |retailer|
+      @new_retailer_user_customer_conversations = []
+      @new_records_unfinished_message_blocks = []
+
+      # STATISTICS FOR WHATSAPP MESSAGES
+      conversation_statistics_for_wp(retailer)
+
+      # STATISTICS FOR MESSENGER MESSAGES
+      conversation_statistics_for_msn(retailer)
+
+      # STATISTICS FOR INSTAGRAM MESSAGES
+      conversation_statistics_for_ig(retailer)
+
+      if @new_retailer_user_customer_conversations.any?
+        RetailerConversation.create(@new_retailer_user_customer_conversations)
+      end
+
+      if @new_records_unfinished_message_blocks.any?
+        RetailerUnfinishedMessageBlock.create(@new_records_unfinished_message_blocks)
+      end
+
+      # Eliminar registro de la tabla retailer_unfinished_message_blocks
+      retailer.retailer_unfinished_message_blocks.where(message_date: @unfinished_message_blocks_date, statistics: 1).destroy_all
+    end
+  end
+
   task new_and_recurring_conversations: :environment do
     @start_date = Time.parse(1.day.ago.strftime('%d/%m/%Y'))
     @end_date = @start_date.end_of_day
@@ -87,6 +119,13 @@ namespace :retailers do
                               "AND statistics = ?", customer[:customer_id], @unfinished_message_blocks_date, 0, 'inbound', 1).exists?
 
           if tmp_record
+            retailer_user_customer_in = @retailer_user_customer_conversations
+                                        .find { |retailer_user|
+                                          retailer_user[:retailer_user_id] == row['retailer_user_id'] &&
+                                          retailer_user[:customer_id] == customer[:customer_id]
+                                        }
+            next unless retailer_user_customer_in.blank?
+
             @retailer_user_customer_conversations.push({
               retailer_user_id: row['retailer_user_id'],
               customer_id: customer[:customer_id]
@@ -213,6 +252,13 @@ namespace :retailers do
                               "AND sent_by_retailer = ?", customer[:customer_id], @unfinished_message_blocks_date, 1, 1, false).exists?
 
           if tmp_record
+            retailer_user_customer_in = @retailer_user_customer_conversations
+                                        .find { |retailer_user|
+                                          retailer_user[:retailer_user_id] == row['retailer_user_id'] &&
+                                          retailer_user[:customer_id] == customer[:customer_id]
+                                        }
+            next unless retailer_user_customer_in.blank?
+
             @retailer_user_customer_conversations.push({
               retailer_user_id: row['retailer_user_id'],
               customer_id: customer[:customer_id]
@@ -339,6 +385,13 @@ namespace :retailers do
                               customer[:customer_id], @unfinished_message_blocks_date, 2, false, 1).exists?
 
           if tmp_record
+            retailer_user_customer_in = @retailer_user_customer_conversations
+                                        .find { |retailer_user|
+                                          retailer_user[:retailer_user_id] == row['retailer_user_id'] &&
+                                          retailer_user[:customer_id] == customer[:customer_id]
+                                        }
+            next unless retailer_user_customer_in.blank?
+
             @retailer_user_customer_conversations.push({
               retailer_user_id: row['retailer_user_id'],
               customer_id: customer[:customer_id]
