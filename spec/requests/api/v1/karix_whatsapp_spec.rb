@@ -792,13 +792,13 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           end
 
           context 'when the retailer has not enough balance' do
-            it 'responses a 401 status' do
+            it 'responses a 200 status with an alert message' do
               retailer.update_attributes(ws_balance: 0.0671)
 
               get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages"
               body = JSON.parse(response.body)
 
-              expect(response.code).to eq('401')
+              expect(response.code).to eq('200')
               expect(body['messages'].count).to eq(6)
               expect(body['balance_error_info']['status']).to eq(401)
               expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\
@@ -858,7 +858,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
           end
 
           context 'when the retailer has not enough balance' do
-            it 'responses a 401 status' do
+            it 'responses a 200 status with an alert message' do
               retailer.update_attributes(ws_balance: 0.0671)
 
               get "/api/v1/karix_whatsapp_customers/#{customer1.id}/messages",
@@ -866,7 +866,7 @@ RSpec.describe 'Api::V1::KarixWhatsappController', type: :request do
 
               body = JSON.parse(response.body)
 
-              expect(response.code).to eq('401')
+              expect(response.code).to eq('200')
               expect(body['messages'].count).to eq(6)
               expect(body['balance_error_info']['status']).to eq(401)
               expect(body['balance_error_info']['message']).to eq('Usted no tiene suficiente saldo para enviar mensajes de Whatsapp, '\

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_03_120509) do
+ActiveRecord::Schema.define(version: 2022_02_03_204703) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,7 +103,7 @@ ActiveRecord::Schema.define(version: 2022_02_03_120509) do
     t.bigint "customer_id", null: false
     t.bigint "retailer_user_id", null: false
     t.string "notification_type"
-    t.string "status", default: "unread", null: false
+    t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_agent_notifications_on_customer_id"
@@ -195,7 +195,7 @@ ActiveRecord::Schema.define(version: 2022_02_03_120509) do
 
   create_table "campaigns", force: :cascade do |t|
     t.string "name"
-    t.string "template_text"
+    t.text "template_text"
     t.integer "status", default: 0
     t.datetime "send_at"
     t.jsonb "content_params"
@@ -537,7 +537,7 @@ ActiveRecord::Schema.define(version: 2022_02_03_120509) do
     t.datetime "updated_at", null: false
     t.boolean "instagram_integrated", default: false
     t.string "instagram_uid"
-    t.boolean "messenger_integrated"
+    t.boolean "messenger_integrated", default: false
     t.index ["retailer_id"], name: "index_facebook_retailers_on_retailer_id"
   end
 
@@ -678,15 +678,6 @@ ActiveRecord::Schema.define(version: 2022_02_03_120509) do
     t.index ["customer_id"], name: "index_instagram_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_instagram_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_instagram_messages_on_retailer_user_id"
-  end
-
-  create_table "instagrams", force: :cascade do |t|
-    t.bigint "retailer_id"
-    t.string "uid"
-    t.string "access_token"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["retailer_id"], name: "index_instagrams_on_retailer_id"
   end
 
   create_table "karix_whatsapp_messages", force: :cascade do |t|
@@ -1285,6 +1276,7 @@ ActiveRecord::Schema.define(version: 2022_02_03_120509) do
     t.string "currency", default: "USD", null: false
     t.boolean "multiple_fast_answers", default: false
     t.boolean "delete_assets", default: true
+    t.decimal "tax_amount", precision: 10, scale: 2, default: "0.0"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
@@ -1426,7 +1418,6 @@ ActiveRecord::Schema.define(version: 2022_02_03_120509) do
   add_foreign_key "instagram_messages", "customers"
   add_foreign_key "instagram_messages", "facebook_retailers"
   add_foreign_key "instagram_messages", "retailer_users"
-  add_foreign_key "instagrams", "retailers"
   add_foreign_key "karix_whatsapp_messages", "customers"
   add_foreign_key "karix_whatsapp_messages", "retailers"
   add_foreign_key "meli_retailers", "retailers"

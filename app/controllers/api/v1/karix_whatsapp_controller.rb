@@ -85,34 +85,26 @@ class Api::V1::KarixWhatsappController < Api::ApiController
         ).reverse
       end
 
+      resp = {
+        messages: @messages,
+        agents: agents,
+        agent_list: current_retailer.team_agents,
+        storage_id: current_retailer_user.storage_id,
+        handle_message_events: @customer.handle_message_events?,
+        total_pages: total_pages,
+        filter_tags: current_retailer.tags,
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
+      }
+
       if current_retailer.positive_balance?(@customer)
-        render status: 200, json: {
-          messages: @messages,
-          agents: agents,
-          agent_list: current_retailer.team_agents,
-          storage_id: current_retailer_user.storage_id,
-          handle_message_events: @customer.handle_message_events?,
-          total_pages: total_pages,
-          recent_inbound_message_date: @customer.recent_inbound_message_date,
-          customer_id: @customer.id,
-          filter_tags: current_retailer.tags,
-          gupshup_integrated: current_retailer.gupshup_integrated?,
-          allow_send_voice: current_retailer.allow_voice_notes
-        }
+        resp[:recent_inbound_message_date] = @customer.recent_inbound_message_date
+        resp[:customer_id] = @customer.id
       else
-        render status: 401, json: {
-          messages: @messages,
-          agents: agents,
-          agent_list: current_retailer.team_agents,
-          storage_id: current_retailer_user.storage_id,
-          handle_message_events: @customer.handle_message_events?,
-          total_pages: total_pages,
-          balance_error_info: balance_error,
-          filter_tags: current_retailer.tags,
-          gupshup_integrated: current_retailer.gupshup_integrated?,
-          allow_send_voice: current_retailer.allow_voice_notes
-        }
+        resp[:balance_error_info] = balance_error
       end
+
+      render status: 200, json: resp
     else
       render status: 404, json: {
         message: 'Messages not found',
