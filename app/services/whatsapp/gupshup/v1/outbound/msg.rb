@@ -338,10 +338,10 @@ module Whatsapp::Gupshup::V1
       end
 
       def send_message_request(body)
-        @retailer.with_advisory_lock(@retailer.to_global_id.to_s) do
-          url = @is_template_with_id ? TEMPLATE_URL : SM_URL
-          post(url, body)
-        end
+        # @retailer.with_advisory_lock(@retailer.to_global_id.to_s) do
+        # end
+        url = @is_template_with_id ? TEMPLATE_URL : SM_URL
+        post(url, body)
       end
 
       def file

@@ -145,10 +145,10 @@ module Whatsapp::Gupshup::V1
             temp_events.destroy_all if top_temp_event.event == 5
           end
 
-          gwm.with_advisory_lock(gwm.to_global_id.to_s) do
-            gwm.save!
-            broadcast(gwm.reload)
-          end
+          # gwm.with_advisory_lock(gwm.to_global_id.to_s) do
+          # end
+          gwm.save!
+          broadcast(gwm.reload)
         when 'mismatch'
           find_customer(@retailer, phone_to_find)
         when 'sent'
@@ -173,25 +173,25 @@ module Whatsapp::Gupshup::V1
                 temp_events.destroy_all
               end
 
-              gwm.with_advisory_lock(gwm.to_global_id.to_s) do
-                gwm.save!
-                broadcast(gwm.reload)
-              end
+              # gwm.with_advisory_lock(gwm.to_global_id.to_s) do
+              # end
+              gwm.save!
+              broadcast(gwm.reload)
             end
           else
             wm_id = @params['payload']['id']
-            GupshupWhatsappMessage.with_advisory_lock(
-              "#{@retailer.to_global_id}_#{wm_id}"
-            ) do
-              GupshupTemporalMessageState.create(
-                gupshup_message_id: gs_id,
-                whatsapp_message_id: wm_id,
-                event: number_status_by_sym(new_event.to_sym),
-                retailer_id: @retailer.id,
-                destination: @params['payload']['destination'],
-                event_timestamp: @params['timestamp'].to_i
-              )
-            end
+            # GupshupWhatsappMessage.with_advisory_lock(
+            #   "#{@retailer.to_global_id}_#{wm_id}"
+            # ) do
+            # end
+            GupshupTemporalMessageState.create(
+              gupshup_message_id: gs_id,
+              whatsapp_message_id: wm_id,
+              event: number_status_by_sym(new_event.to_sym),
+              retailer_id: @retailer.id,
+              destination: @params['payload']['destination'],
+              event_timestamp: @params['timestamp'].to_i
+            )
           end
         end
         true
