@@ -1,9 +1,9 @@
 class SlackError
-  def self.send_error(e)
+  def self.send_error(e, message = '')
     return if ENV['ENVIRONMENT'] != 'production' || ENV['SLACK_DEBUG'].nil?
 
     slack_client.ping([
-      "Error: #{e.message}",
+      "Error: #{e.message}\n#{message}",
       "Backtrace: #{e.backtrace.select { |x| x.match(/app/) }}"
     ].join("\n"))
   rescue

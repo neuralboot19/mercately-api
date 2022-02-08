@@ -18,6 +18,8 @@ module Whatsapp::Gupshup::V1
       Rails.logger.debug "PARAMS: #{params}"
       Rails.logger.debug "DIRECTION: #{direction}"
       Rails.logger.debug '*'.*100
+      return unless direction.present?
+
       # Call direction method
       self.send(direction)
     end

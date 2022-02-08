@@ -26,8 +26,9 @@ module Whatsapp::Gupshup::V1
         message: message
       }
     rescue StandardError => e
+      message = "#{e.class.name} #{@retailer.id} #{@retailer.name} #{@phone_number}"
       Rails.logger.error(e)
-      SlackError.send_error(e)
+      SlackError.send_error(e, message)
     end
 
     def create_note(params:, retailer_user:)
