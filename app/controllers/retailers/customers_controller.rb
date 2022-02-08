@@ -167,7 +167,8 @@ class Retailers::CustomersController < RetailersController
 
     def validate_permissions
       return unless current_retailer_user.agent?
-      return if params[:action] != 'import' && permissions?
+      return if !params[:action].in?(['import', 'bulk_import']) && permissions?
+      return if params[:action].in?(['import', 'bulk_import']) && current_retailer_user.allow_import
 
       flash[:notice] = 'Disculpe, no posee permisos para ver esta página'
       redirect_to retailers_customers_path params: {

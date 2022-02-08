@@ -98,7 +98,7 @@
                       </li>
                     </ul>
                   </label>
-                  <% unless current_retailer_user.agent? %>
+                  <% if !current_retailer_user.agent? || current_retailer_user.allow_import %>
                     <%= link_to 'Importar', retailers_customers_import_path(current_retailer), class: 'btn-import btn-btn btn-submit f-right btn-input' %>
                   <% end %>
                 </div>

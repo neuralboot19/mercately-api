@@ -31,6 +31,7 @@
                   <div class="col-md-4 m-16">
                     <%= f.label 'Rol' %> <label for="modal--toggle" class="c-secondary modal__toggler"><i class="fas fa-info-circle fs-15"></i></label> <br>
                     <%= f.radio_button :retailer_agent, 'retailer_agent', name: 'retailer_user[role]', checked: true, class: 'check-toggler' %> Agente<br>
+                    <span class="show-on-check config-agent-labels fs-13 ml-25">Acceso a chats</span>
                     <div class="pl-18 show-on-check">
                       <%= f.radio_button :only_assigned, false, checked: true %>
                       <%= f.label :only_assigned_false, 'Puede ver chats disponibles' %>
@@ -38,6 +39,11 @@
                     <div class="pl-18 show-on-check">
                       <%= f.radio_button :only_assigned, true %>
                       <%= f.label :only_assigned_true, 'Puede ver solo los chats asignados' %>
+                    </div>
+                    <span class="show-on-check config-agent-labels fs-13 ml-25">Importación de clientes</span>
+                    <div class="pl-18 show-on-check">
+                      <%= f.check_box :allow_import %>
+                      <%= f.label :allow_import, 'Puede importar clientes' %>
                     </div>
                     <% [:retailer_admin, :retailer_supervisor].each do |role| %>
                       <% role_label = role == :retailer_admin ? 'Administrador' : 'Supervisor' %>
@@ -112,6 +118,10 @@
                           <option value="false" <% 'selected' if !member.only_assigned %>>Ver chats disponibles</option>
                           <option value="true" <% 'selected' if member.only_assigned %>>Ver solo chats asignados</option>
                         </select>
+                        <input type="hidden" name="retailer_user[not_ask_terms]" value="true" />
+                        <input type="hidden" name="retailer_user[allow_import]" value="false" />
+                        <input type="checkbox" class="mt-10" name="retailer_user[allow_import]" id="retailer_user_allow_import_<%= member.id %>" <%= 'checked' if member.allow_import %> />
+                        <label class="c-black" for="retailer_user_allow_import_<%= member.id %>">Puede importar clientes</label>
                       <% end %>
                     </div>
                     <script charset="utf-8">
@@ -120,6 +130,9 @@
                           document.querySelector('#retailer_user_only_assigned_<%= member.id %>').value = 'true';
                         <% end %>
                         $('#retailer_user_only_assigned_<%= member.id %>').on('change', function() {
+                          $('#retailer_user_only_assigned_form_<%= member.id %>').submit();
+                        });
+                        $('#retailer_user_allow_import_<%= member.id %>').on('change', function() {
                           $('#retailer_user_only_assigned_form_<%= member.id %>').submit();
                         });
                       })
