@@ -142,7 +142,7 @@ class Products extends Component {
   }
 }
 
-function mapState(state) {
+function mapState({ mainReducer: state }) {
   return {
     products: state.products || [],
     total_pages: state.total_pages
