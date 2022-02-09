@@ -8,8 +8,8 @@ class GsTemplate < ApplicationRecord
 
   validate :vars_repeated?
 
+  after_commit :submit_template, on: :create, if: :pending?
   before_create :format_label
-  after_create :submit_template, if: :pending?
   after_update :send_accepted_email, if: :accepted?
   after_update :send_rejected_email, if: :rejected?
 
