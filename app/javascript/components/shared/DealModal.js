@@ -23,8 +23,8 @@ const DealModal = ({
   getCustomerDeals
 }) => {
   const dispatch = useDispatch();
-  const dealSuccess = useSelector((state) => state.newDealSuccess) || false;
-  const currentRetailerUser = useSelector((state) => state.currentRetailerUser) || {};
+  const dealSuccess = useSelector((reduxState) => reduxState.mainReducer.newDealSuccess) || false;
+  const currentRetailerUser = useSelector((reduxState) => reduxState.mainReducer.currentRetailerUser) || {};
 
   const [newDeal, setNewDeal] = useState({
     name: dealSelected ? dealSelected.name : '',
@@ -99,7 +99,7 @@ const DealModal = ({
   const mapSelectOptions = () => {
     let _funnelSteps = [];
     let funnelStep;
-    
+
     forEach(funnelSteps.columnOrder, (element) => {
       funnelStep = find(funnelSteps.columns, (value, key) => {
         if (key == element) {
@@ -159,7 +159,7 @@ const DealModal = ({
       customer_id: customer.id,
       retailer_user_id: selectedAgent.value
     };
-    
+
     if (dealSelected) {
       deal['deal_id'] = dealSelected.web_id;
       deal['funnel_step_id'] = selectedFunnelStep.value;

@@ -9,6 +9,7 @@ import ContactGroup from './components/ContactGroup';
 import Funnels from './components/Funnels';
 import MLChat from './components/MLChat';
 import GsTemplateNew from './components/GsTemplates/GsTemplatesNew';
+import Stats from './components/Stats';
 
 const customHistory = createBrowserHistory();
 
@@ -55,6 +56,11 @@ const AppRoutes = ({ store }) => (
           exact
           path="/retailers/:slug/gs_templates/new"
           component={GsTemplateNew}
+        />
+        <Route 
+          exact
+          path="/retailers/:slug/new_stats"
+          component={Stats}
         />
       </Router>
     </Suspense>

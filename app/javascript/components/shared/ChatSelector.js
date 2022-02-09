@@ -17,7 +17,7 @@ const ChatSelector = ({
 }) => {
   const location = useLocation();
   const history = useHistory();
-  const loadingMoreCustomers = useSelector((reduxState) => reduxState.loadingMoreCustomers);
+  const loadingMoreCustomers = useSelector((reduxState) => reduxState.mainReducer.loadingMoreCustomers);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);

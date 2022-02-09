@@ -532,7 +532,7 @@ class ChatMessages extends Component {
     if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)) {
       return false;
     }
-    
+
     return fileUtils.isValidImageSizeForWs(file);
   }
 
@@ -673,7 +673,7 @@ class ChatMessages extends Component {
       if (ENV.SEND_MAX_SIZE_FILES) {
         sizeFile = fileUtils.sizeFileInMB(MAX_FILE_SIZE_TRANSFER);
       }
-      
+
       alert(`Error: Maximo permitido ${sizeFile}MB`);
       return;
     }
@@ -1710,7 +1710,7 @@ class ChatMessages extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({  mainReducer: state }) {
   totalPages = state.total_pages || 0;
 
   return {

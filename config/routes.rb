@@ -171,6 +171,7 @@ Rails.application.routes.draw do
       resources :stats, only: :index
       resources :customer_related_fields
       put 'paymentez_credit_cards/set_default', to: 'paymentez_credit_cards#set_default', as: :paymentez_set_default
+      get 'new_stats', to: 'new_stats#index', as: :new_stats
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
@@ -328,7 +329,13 @@ Rails.application.routes.draw do
       resources :gs_templates, only: :create
 
       # Stats
+      get 'stats/messages_by_platform', to: 'stats#messages_by_platform', as: :messages_by_platform
+      get 'stats/usage_by_platform', to: 'stats#usage_by_platform', as: :usage_by_platform
       get 'stats/agent_performance', to: 'stats#agent_performance', as: :agent_performance
+      get 'stats/average_response_times', to: 'stats#average_response_times', as: :average_response_times
+      get 'stats/most_used_tags', to: 'stats#most_used_tags', as: :most_used_tags
+      get 'stats/new_and_recurring_conversations', to: 'stats#new_and_recurring_conversations', as: :new_and_recurring_conversations
+      get 'stats/sent_messages_by', to: 'stats#sent_messages_by', as: :sent_messages_by
     end
   end
 

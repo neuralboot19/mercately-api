@@ -10,7 +10,7 @@ const OrderList = ({
   selectedChat,
   loading
 }) => {
-  const loadingMoreCustomers = useSelector((reduxState) => reduxState.loadingMoreCustomers);
+  const loadingMoreCustomers = useSelector((reduxState) => reduxState.mainReducer.loadingMoreCustomers);
 
   return (
 

@@ -51,7 +51,7 @@ const GsTemplatesNew = (props) => {
   const templateTextRef = useRef(null);
 
   const dispatch = useDispatch();
-  
+
   const toggleEmojiPicker = () => {
     setShowEmojiPicker(!showEmojiPicker);
     templateTextRef.current.focus();
@@ -97,7 +97,7 @@ const GsTemplatesNew = (props) => {
     if (!textArray) {
       return;
     }
-  
+
     return textArray.map((key, index) => {
       if (/{{[1-9]+[0-9]*}}/.test(key)) {
         const id = getId(key);
@@ -177,7 +177,7 @@ const GsTemplatesNew = (props) => {
           }
           break;
       }
-      
+
       if (alertMessage) {
         alert(alertMessage);
         setSelectedFile(null);
@@ -401,7 +401,7 @@ const GsTemplatesNew = (props) => {
   )
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({  mainReducer: state }) {
   return {
     labelValidationText: state.labelValidationText,
     textValidationText: state.textValidationText,

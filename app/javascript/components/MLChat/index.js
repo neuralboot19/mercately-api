@@ -31,11 +31,11 @@ const MLChat = () => {
   const isMounted = useRef(false);
 
   const dispatch = useDispatch();
-  const orders = useSelector((reduxState) => reduxState.orders);
-  const totalOrderPages = useSelector((reduxState) => reduxState.totalOrders);
-  const orderMessages = useSelector((reduxState) => reduxState.mlChats);
-  const totalOrderMessages = useSelector((reduxState) => reduxState.totalMlChats);
-  const loadingMoreCustomers = useSelector((reduxState) => reduxState.loadingMoreCustomers);
+  const orders = useSelector((reduxState) => reduxState.mainReducer.orders);
+  const totalOrderPages = useSelector((reduxState) => reduxState.mainReducer.totalOrders);
+  const orderMessages = useSelector((reduxState) => reduxState.mainReducer.mlChats);
+  const totalOrderMessages = useSelector((reduxState) => reduxState.mainReducer.totalMlChats);
+  const loadingMoreCustomers = useSelector((reduxState) => reduxState.mainReducer.loadingMoreCustomers);
 
   const bottomRef = useRef(null);
 

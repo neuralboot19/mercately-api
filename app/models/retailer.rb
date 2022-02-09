@@ -44,9 +44,13 @@ class Retailer < ApplicationRecord
   has_many :hubspot_fields
   has_many :customer_hubspot_fields
   has_many :plan_cancellations
+  has_many :retailer_average_response_times
   has_many :retailer_unfinished_message_blocks
   has_many :retailer_whatsapp_conversations
   has_many :message_blocks
+  has_many :retailer_most_used_tags
+  has_many :retailer_conversations
+  has_many :retailer_amount_messages
 
   validates :name, presence: true
   validates :currency, presence: true

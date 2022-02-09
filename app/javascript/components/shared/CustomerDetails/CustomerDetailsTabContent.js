@@ -29,10 +29,10 @@ const CustomerDetailsTabContent = ({
 }) => {
   const dispatch = useDispatch();
 
-  const errors = useSelector((reduxState) => reduxState.errors) || {};
+  const errors = useSelector((reduxState) => reduxState.mainReducer.errors) || {};
   const [isDealModalOpen, setIsDealModalOpen] = useState(false);
   const [dealSelected, setDealSelected] = useState(null);
-  const agents = useSelector((reduxState) => reduxState.agents || []);
+  const agents = useSelector((reduxState) => reduxState.mainReducer.agents || []);
 
   const handleDeleteDeal = (deal) => {
     const destroy = confirm('¿Estás seguro de eliminar esta negociación?');

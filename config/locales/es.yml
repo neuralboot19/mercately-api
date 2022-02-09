@@ -487,6 +487,8 @@ es:
       automatic_assignment: 'Asignación Automática'
     statistics:
       statistics: 'Estadísticas'
+      basic: 'Básica'
+      advanced: 'Avanzada'
     integrations:
       integrations: 'Integraciones'
   social_networks:
