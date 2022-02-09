@@ -157,6 +157,10 @@ label:hover, a:hover, button:hover {
     padding-top: #{$space}px !important;
   }
 
+  .mh-vh-#{$space} {
+    min-height: #{$space}vh !important;
+  }
+
   @media screen and (min-width: 767px) {
     .m-sm-#{$space} {
       margin: #{$space}px !important;
@@ -718,6 +722,19 @@ label:hover, a:hover, button:hover {
   @media screen and (max-width: 1024px) {
     min-width: 24px;
   }
+}
+
+@media screen and (min-width: 768px) {
+  .content_width {
+    width: calc(100% - 140px);
+  }
+}
+
+.page__title {
+  font-family: 'Poppins-SemiBold';
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 48px;
 }
 
 .general-font-family {

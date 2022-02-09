@@ -562,7 +562,7 @@ class ChatMessages extends Component {
     if (ENV.SEND_MAX_SIZE_FILES) {
       return fileUtils.isMaxImageSize(file);
     }
-    
+
     return fileUtils.isDefaultImageSize(file);
   }
 
@@ -621,7 +621,7 @@ class ChatMessages extends Component {
 
       if (pos !== -1) {
         let file;
-        
+
         if (clipboard.items) {
           file = clipboard.items[pos].getAsFile();
         } else if (clipboard.files) {
@@ -982,7 +982,7 @@ class ChatMessages extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({  mainReducer: state }) {
   return {
     messages: state.messages || [],
     message: state.message || [],

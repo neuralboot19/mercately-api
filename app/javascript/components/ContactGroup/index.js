@@ -420,7 +420,7 @@ class ContactGroup extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({  mainReducer: state }) {
   return {
     name: state.contactGroupName || '',
     customers: state.customers || [],

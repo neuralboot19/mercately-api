@@ -116,7 +116,7 @@ class FunnelStepCreate extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({  mainReducer: state }) {
   return {
     newStepSuccess: state.newStepSuccess || false
   };

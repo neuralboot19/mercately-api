@@ -67,6 +67,8 @@ en:
       automatic_assignment: 'Automatic Assignment'
     statistics:
       statistics: 'Statistics'
+      basic: 'Basic'
+      advanced: 'Advanced'
     integrations:
       integrations: 'Integrations'
   activerecord:
