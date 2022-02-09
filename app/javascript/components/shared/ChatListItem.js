@@ -107,7 +107,7 @@ class ChatListItem extends Component {
   }
 }
 
-function mapState(state) {
+function mapState({ mainReducer: state }) {
   return {
     recentInboundMessageDate: state.recentInboundMessageDate || null,
     customerId: state.customerId || null

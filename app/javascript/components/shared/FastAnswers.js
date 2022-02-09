@@ -198,7 +198,7 @@ class FastAnswers extends Component {
   }
 }
 
-function mapState(state) {
+function mapState({ mainReducer: state }) {
   return {
     fastAnswers: state.fast_answers || [],
     total_pages: state.total_pages
