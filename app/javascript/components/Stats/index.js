@@ -59,6 +59,9 @@ ChartJS.register(
   Legend
 );
 
+const rangeStartDate = moment().subtract(1, 'months').toDate();
+const rangeEndDate = moment().toDate();
+
 const platforms = [
   { value: null, label: 'Todas las plataformas' },
   { value: 0, label: 'WhatsApp' },
@@ -122,10 +125,14 @@ const StatsComponent = () => {
   const { agents } = useSelector((reduxState) => reduxState.agentsReducer);
 
   const [showDateRange, setShowDateRange] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [initialStartDate, setInitialStartDate] = useState(new Date());
-  const [initialEndDate, setInitialEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(rangeStartDate);
+  const [endDate, setEndDate] = useState(rangeEndDate);
+  const [dateFilter, setDateFilter] = useState({
+    startDate: moment(rangeStartDate).format('YYYY-MM-DD'),
+    endDate: moment(rangeEndDate).format('YYYY-MM-DD')
+  });
+  const [initialStartDate, setInitialStartDate] = useState(rangeStartDate);
+  const [initialEndDate, setInitialEndDate] = useState(rangeEndDate);
   const [agentsOptions, setAgentsOptions] = useState([]);
   const [agentSelected1, setAgentSelected1] = useState();
   const [agentSelected2, setAgentSelected2] = useState();
@@ -164,6 +171,14 @@ const StatsComponent = () => {
   const applySearch = () => {
     setStartDate(initialStartDate);
     setEndDate(initialEndDate);
+    setDateFilter({
+      startDate: moment(initialStartDate).format('YYYY-MM-DD'),
+      endDate: moment(initialEndDate).format('YYYY-MM-DD')
+    });
+    setAgentSelected1(agentsOptions[0]);
+    setAgentSelected2(agentsOptions[0]);
+    setSelectedPlatform1(agentPerformancePlatforms[0]);
+    setSelectedPlatform2(platforms[0]);
     setShowDateRange(false);
 
     let paramStartDate = moment(initialStartDate).format('YYYY-MM-DD');
@@ -173,10 +188,7 @@ const StatsComponent = () => {
   };
 
   useEffect(() => {
-    let paramStartDate = moment().format('YYYY-MM-DD');
-    let paramEndDate = moment().format('YYYY-MM-DD');
-
-    fetchStatistics(paramStartDate, paramEndDate);
+    fetchStatistics(dateFilter.startDate, dateFilter.endDate);
   }, []);
 
   const cancelSearch = () => {
@@ -300,16 +312,12 @@ const StatsComponent = () => {
 
   const getAverageResponseTimes = (data) => {
     setAgentSelected1(data);
-    if (startDate && endDate) {
-      dispatch(fetchAverageResponseTimes(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    dispatch(fetchAverageResponseTimes(dateFilter.startDate, dateFilter.endDate, data.value));
   };
 
   const getAgentPerformance = (data) => {
     setSelectedPlatform1(data);
-    if (startDate && endDate) {
-      dispatch(fetchAgentPerformance(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    dispatch(fetchAgentPerformance(dateFilter.startDate, dateFilter.endDate, data.value));
   };
 
   useEffect(() => {
@@ -337,16 +345,12 @@ const StatsComponent = () => {
 
   const getNewAndRecurringConversations = (data) => {
     setAgentSelected2(data);
-    if (startDate && endDate) {
-      dispatch(fetchNewAndRecurringConversations(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    dispatch(fetchNewAndRecurringConversations(dateFilter.startDate, dateFilter.endDate, data.value));
   };
 
   const getSentMessagesBy = (data) => {
-    if (startDate && endDate) {
-      setSelectedPlatform2(data);
-      dispatch(fetchSentMessagesBy(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    setSelectedPlatform2(data);
+    dispatch(fetchSentMessagesBy(dateFilter.startDate, dateFilter.endDate, data.value));
   };
 
   return (
@@ -365,17 +369,15 @@ const StatsComponent = () => {
           <div className="d-flex col-md-12 beetwen-flex p-relative">
             <h5 className="form-container_sub-title ml-0">Mensajes por plataformas</h5>
             <div className="stats-date-range-button flex-center-xy" onClick={() => setShowDateRange(!showDateRange)}>
-              {moment(startDate).format('DD/MM/YYYY')}
+              {moment(initialStartDate).format('DD/MM/YYYY')}
               {' - '}
-              {moment(endDate).format('DD/MM/YYYY')}
+              {moment(initialEndDate).format('DD/MM/YYYY')}
               <i className="fas fa-chevron-down" />
             </div>
             {showDateRange && (
             <div className="stats-date-range bg-white" id="date-range-stats">
               <DateRange
                 locale={es}
-                // editableDateInputs={false}
-                // showDateDisplay={false}
                 ranges={[
                   {
                     startDate: initialStartDate,
@@ -396,7 +398,7 @@ const StatsComponent = () => {
           <div className="row col-md-12">
             <div className="col-lg-4 col-md-4 flex-column flex-center-xy p-12">
               <div className="stats-total-message-container">
-                <p>Mensaje en total</p>
+                <p>Mensajes en total</p>
                 <p>{(messagesByPlatform.ws.total_messages + messagesByPlatform.msn.total_messages + messagesByPlatform.ig.total_messages + messagesByPlatform.ml.total_messages)}</p>
               </div>
               <div className="stats-card-row-values w-100">
@@ -511,7 +513,7 @@ const StatsComponent = () => {
         <div className="row mt-24 col-md-12 pr-0 pl-0">
           <div className="col-md-6 pr-12 stats-card">
             <div className="col-md-12 box-container pt-30 pr-30 pb-30 pl-30 mh-vh-30">
-              <h5 className="form-container_sub-title ml-0 stats-card-title">Etiquetas mas utilizadas</h5>
+              <h5 className="form-container_sub-title ml-0 stats-card-title">Etiquetas más utilizadas</h5>
               {mostUsedTags.map((tag) => (
                 <div key={tag.id} className="stats-card-row-values">
                   <span className="stats-card-label">{tag.tag_name}</span>
@@ -559,7 +561,7 @@ const StatsComponent = () => {
           <div className="col-md-6 pr-12 stats-card">
             <div className="col-md-12 box-container pt-30 pr-30 pb-30 pl-30 mh-vh-40">
               <div className="d-flex justify-content-between col-md-12 pl-0 pr-0 align-items-center">
-                <h5 className="form-container_sub-title ml-0 stats-card-title pb-0 w-50">Rendiminto por agente</h5>
+                <h5 className="form-container_sub-title ml-0 stats-card-title pb-0 w-50">Rendimiento por agente</h5>
                 <div className="w-50 pl-20">
                   <Select
                     options={agentPerformancePlatforms}
