@@ -97,6 +97,7 @@ group :test do
   gem 'shoulda-matchers', '~> 4.1'
   gem 'rails-controller-testing', '~> 0.0.3'
   gem 'dox', require: false
+  gem 'mongoid-rspec', '~> 4.1'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

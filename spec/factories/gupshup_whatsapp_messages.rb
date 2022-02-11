@@ -6,6 +6,7 @@ FactoryBot.define do
     gupshup_message_id { "MyString" }
     status { 1 }
     direction { 'outbound' }
+    skip_automatic { nil }
     message_payload {
       {
          'app': 'MercatelyTest',

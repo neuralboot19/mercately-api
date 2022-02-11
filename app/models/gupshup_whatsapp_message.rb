@@ -23,6 +23,8 @@ class GupshupWhatsappMessage < ApplicationRecord
   enum status: %w[error submitted enqueued sent delivered read]
   enum conversation_type: %w[free_point user_initiated business_initiated]
 
+  attr_accessor :skip_automatic
+
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
   scope :inbound_messages, -> { where(direction: 'inbound') }
   scope :outbound_messages, -> { where(direction: 'outbound') }
