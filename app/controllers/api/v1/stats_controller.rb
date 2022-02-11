@@ -199,8 +199,9 @@ class Api::V1::StatsController < Api::ApiController
                             .retailer_most_used_tags
                             .joins(:tag)
                             .range_between(start_date, end_date)
-                            .select("retailer_most_used_tags.*, tags.tag AS tag_name")
-                            .order("retailer_most_used_tags.amount_used DESC")
+                            .select("tag_id, tags.tag AS tag_name, SUM(retailer_most_used_tags.amount_used) amount_used")
+                            .group("tag_id, tag_name")
+                            .order("SUM(amount_used) DESC")
 
       render status: 200, json: { most_used_tags: most_used_tags_data }
     else

@@ -45,6 +45,8 @@ import AvatarName from "./AvatarName";
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import PlatformMessageCounter from "./PlatformMessageCounter";
+import Tag from './Tag';
+import PaginatedItems from '../common/PaginatedItems';
 import timeUtils from '../../util/timeUtils';
 
 ChartJS.register(
@@ -514,12 +516,15 @@ const StatsComponent = () => {
           <div className="col-md-6 pr-12 stats-card">
             <div className="col-md-12 box-container pt-30 pr-30 pb-30 pl-30 mh-vh-30">
               <h5 className="form-container_sub-title ml-0 stats-card-title">Etiquetas más utilizadas</h5>
-              {mostUsedTags.map((tag) => (
-                <div key={tag.id} className="stats-card-row-values">
-                  <span className="stats-card-label">{tag.tag_name}</span>
-                  <span className="stats-card-label">{tag.amount_used}</span>
-                </div>
-              ))}
+              { mostUsedTags.length > 5 ?
+                <PaginatedItems items={mostUsedTags} itemsPerPage={5} />
+                :
+                <>
+                {mostUsedTags.map((item) => (
+                  <Tag key={item.id} tag={item} />
+                ))}
+                </>
+              }
             </div>
           </div>
 
