@@ -24,4 +24,19 @@ class Api::V1::RetailerUsersController < Api::ApiController
     serialized = Retailers::Api::V1::AgentSerializer.new(current_retailer_user)
     render status: :ok, json: { current_retailer_user: serialized }
   end
+
+  def retailer_users_actives
+    agents = RetailerUser.active(current_retailer.id)
+
+    serialized = ActiveModelSerializers::SerializableResource.new(
+      agents,
+      each_serializer: Retailers::Api::V1::AgentSerializer
+    ).as_json
+
+    if agents.present?
+      render status: 200, json: { agents: serialized }
+    else
+      render status: 404, json: { agents: serialized, message: 'Agente no encontrado' }
+    end
+  end
 end

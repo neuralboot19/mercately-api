@@ -52,8 +52,8 @@ export const fetchUsageByPlatform = (startDate, endDate) => {
   };
 };
 
-export const fetchAverageResponseTimes = (startDate, endDate, agent) => {
-  let endpoint = `/api/v1/stats/average_response_times?start_date=${startDate}&end_date=${endDate}&agent=${agent}`;
+export const fetchAverageResponseTimes = (startDate, endDate, agent, platform) => {
+  let endpoint = `/api/v1/stats/average_response_times?start_date=${startDate}&end_date=${endDate}&agent=${agent}&platform=${platform}`;
 
   return (dispatch) => {
     fetch(endpoint, {

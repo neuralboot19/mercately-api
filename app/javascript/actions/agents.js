@@ -1,5 +1,5 @@
 export const fetchAgents = () => {
-  let endpoint = `/api/v1/retailer_users`;
+  let endpoint = `/api/v1/retailer_users/actives`;
 
   return (dispatch) => {
     fetch(endpoint, {

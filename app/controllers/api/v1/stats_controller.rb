@@ -171,17 +171,21 @@ class Api::V1::StatsController < Api::ApiController
       start_date = Date.parse(params[:start_date])
       end_date = Date.parse(params[:end_date])
 
-      if params[:agent].present? && params[:agent] != 'null'
-        average_response_times_data = current_retailer
-                                      .retailer_average_response_times
-                                      .where(retailer_user_id: params[:agent])
-                                      .range_between(start_date, end_date)
+      if params[:agent].present? && params[:agent] != 'null' &&
+         params[:platform].present? && params[:platform] != 'null'
+        custom_where = "(retailer_user_id = #{params[:agent]} AND platform = #{params[:platform]})"
+      elsif params[:agent].present? && params[:agent] != 'null'
+        custom_where = "retailer_user_id = #{params[:agent]}"
+      elsif params[:platform].present? && params[:platform] != 'null'
+        custom_where = "platform = #{params[:platform]}"
       else
-        average_response_times_data = current_retailer
-                                      .retailer_average_response_times
-                                      .where('retailer_user_id IS NULL')
-                                      .range_between(start_date, end_date)
+        custom_where = "retailer_user_id IS NOT NULL"
       end
+
+      average_response_times_data = current_retailer
+                                    .retailer_average_response_times
+                                    .where(custom_where)
+                                    .range_between(start_date, end_date)
 
       render status: 200, json: { average_response_times: average_response_times_data }
     else
