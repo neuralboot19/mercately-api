@@ -44,6 +44,20 @@ module ContactGroups
         rows.each do |row|
           next unless valid_row?(row)
 
+          agent_email = row['Agent'] || row['agent']
+          if agent_email.present?
+            agent_email.gsub!(' ', '')
+            agent_email.gsub!('mailto:', '')
+            agent_email.gsub!('#', '')
+
+            unless retailer.retailer_users.where(email: agent_email.downcase).exists?
+              @errors[:errors] << "Fila #{row[:row_number] + 2} inválida: El agente con email #{agent_email} no existe."
+              next
+            end
+
+            assigned = true
+          end
+
           phone = row[:phone]&.strip
           email = row[:email]&.strip
           plus_phone = phone.to_s.first == '+' ? phone : "+#{phone}"
@@ -59,6 +73,8 @@ module ContactGroups
           customer.from_import_file = true
           customer.save!
           @customer_ids << customer.id
+
+          import_service.assign_agent(customer, retailer, agent_email) if assigned
 
           related_fields = retailer.customer_related_fields.where(identifier: exceptions)
           next unless related_fields.present?
@@ -92,6 +108,11 @@ module ContactGroups
 
           phone = row[:phone]&.gsub(' ', '')
           email = row[:email]&.gsub(' ', '')
+
+          if email.present?
+            email.gsub!('mailto:', '')
+            email.gsub!('#', '')
+          end
 
           duplicated?(index, phone, email)
           email_phone_valid?(index, phone, email)

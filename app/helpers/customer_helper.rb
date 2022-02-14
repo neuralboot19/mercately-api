@@ -11,9 +11,9 @@ module CustomerHelper
   end
 
   def can_send_whatsapp_notification?(retailer_user, customer)
+    return false unless customer.phone.present?
     return retailer_user.a_customers.where(id: customer.id).exists? if retailer_user.agent? && retailer_user.only_assigned
-
-    return true if retailer_user.retailer.gupshup_integrated? && customer.phone.present?
+    return true if retailer_user.retailer.gupshup_integrated?
 
     agent_or_asigned = retailer_user.agent? && retailer_user.customers.select { |c| c.id == customer.id }.any?
     return false unless retailer_user.admin? || retailer_user.supervisor? || agent_or_asigned

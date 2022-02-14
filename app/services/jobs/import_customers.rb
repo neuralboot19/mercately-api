@@ -45,5 +45,14 @@ module Jobs
       date.match?(/^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/) ||
       date.match?(/^(0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])[\/\-]\d{4}$/)
     end
+
+    def assign_agent(customer, retailer, email)
+      agent = retailer.retailer_users.find_by(email: email)
+      return unless agent.present?
+
+      assigned = AgentCustomer.find_or_create_by(customer: customer)
+      assigned.retailer_user = agent
+      assigned.save
+    end
   end
 end
