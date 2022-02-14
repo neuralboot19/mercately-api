@@ -219,6 +219,7 @@ Rails.application.routes.draw do
       resources :retailer_users, only: :index do
         collection do
           get 'current_retailer_user', to: 'retailer_users#loged_retailer_user'
+          get 'actives', to: 'retailer_users#retailer_users_actives'
         end
       end
       resources :customers, only: [:index, :show, :update] do

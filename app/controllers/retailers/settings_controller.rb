@@ -32,6 +32,7 @@ class Retailers::SettingsController < RetailersController
       retailer_admin: invitation_params[:retailer_admin] || false,
       retailer_supervisor: invitation_params[:retailer_supervisor] || false,
       only_assigned: invitation_params[:only_assigned] || false,
+      allow_import: invitation_params[:allow_import] || false,
       retailer: current_retailer) do |u|
       u.skip_invitation = true
     end
@@ -154,7 +155,9 @@ class Retailers::SettingsController < RetailersController
             :first_name,
             :last_name,
             :role,
-            :only_assigned
+            :only_assigned,
+            :allow_import,
+            :not_ask_terms
           ).tap do |param|
             if param[:role].present?
               role = param.delete(:role)

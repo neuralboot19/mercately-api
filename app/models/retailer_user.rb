@@ -19,7 +19,7 @@ class RetailerUser < ApplicationRecord
   has_many :retailer_average_response_times
 
   validate :onboarding_status_format
-  validates :agree_terms, presence: true
+  validates :agree_terms, presence: true, unless: -> { not_ask_terms == 'true' }
   validates :email, presence: true, uniqueness: true
 
   before_save :max_agents_limit
@@ -41,6 +41,7 @@ class RetailerUser < ApplicationRecord
   accepts_nested_attributes_for :retailer
 
   attr_reader :raw_invitation_token
+  attr_accessor :not_ask_terms
 
   ransacker :full_name do |parent|
     Arel::Nodes::NamedFunction.new('CONCAT_WS', [

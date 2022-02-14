@@ -16,10 +16,11 @@ import { Doughnut, Bar } from 'react-chartjs-2';
 import { useDispatch, useSelector } from 'react-redux';
 
 import moment from 'moment';
-import { forEach, filter, isEmpty } from 'lodash';
+import { forEach, filter, isEmpty, uniqBy } from 'lodash';
 
 import { LineChart } from 'react-chartkick';
 import 'chartkick/chart.js';
+import Big from 'big.js';
 
 import waIcon from 'images/new_design/wa.png';
 import msmIcon from 'images/new_design/msm.png';
@@ -45,6 +46,8 @@ import AvatarName from "./AvatarName";
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import PlatformMessageCounter from "./PlatformMessageCounter";
+import Tag from './Tag';
+import PaginatedItems from '../common/PaginatedItems';
 import timeUtils from '../../util/timeUtils';
 
 ChartJS.register(
@@ -58,6 +61,9 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const rangeStartDate = moment().subtract(1, 'months').toDate();
+const rangeEndDate = moment().toDate();
 
 const platforms = [
   { value: null, label: 'Todas las plataformas' },
@@ -89,6 +95,13 @@ const VBoptions = {
     },
     title: {
       display: false
+    },
+    tooltip: {
+      callbacks: {
+        label: function(tooltipItem) {
+          return `${tooltipItem.formattedValue} %`
+        }
+      }
     }
   },
   scales: {
@@ -122,10 +135,14 @@ const StatsComponent = () => {
   const { agents } = useSelector((reduxState) => reduxState.agentsReducer);
 
   const [showDateRange, setShowDateRange] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [initialStartDate, setInitialStartDate] = useState(new Date());
-  const [initialEndDate, setInitialEndDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(rangeStartDate);
+  const [endDate, setEndDate] = useState(rangeEndDate);
+  const [dateFilter, setDateFilter] = useState({
+    startDate: moment(rangeStartDate).format('YYYY-MM-DD'),
+    endDate: moment(rangeEndDate).format('YYYY-MM-DD')
+  });
+  const [initialStartDate, setInitialStartDate] = useState(rangeStartDate);
+  const [initialEndDate, setInitialEndDate] = useState(rangeEndDate);
   const [agentsOptions, setAgentsOptions] = useState([]);
   const [agentSelected1, setAgentSelected1] = useState();
   const [agentSelected2, setAgentSelected2] = useState();
@@ -141,6 +158,7 @@ const StatsComponent = () => {
   const [selectedPlatform2, setSelectedPlatform2] = useState(platforms[0]);
   const [doughnutData, setDoughnutData] = useState(defaultDoughnutData);
   const [averageResponseTimesText, setAverageResponseTimesText] = useState('');
+  const [selectedAverageResponseTimePlatform, setSelectedAverageResponseTimePlatform] = useState(agentPerformancePlatforms[0]);
 
   const formatAgents = () => {
     const data = [{ value: null, label: 'Todos los agentes' }];
@@ -155,7 +173,7 @@ const StatsComponent = () => {
   const fetchStatistics = (paramStartDate, paramEndDate) => {
     dispatch(fetchMessagesByPlatform(paramStartDate, paramEndDate));
     dispatch(fetchUsageByPlatform(paramStartDate, paramEndDate));
-    dispatch(fetchAverageResponseTimes(paramStartDate, paramEndDate, null));
+    dispatch(fetchAverageResponseTimes(paramStartDate, paramEndDate, null, null));
     dispatch(fetchMostUsedTags(paramStartDate, paramEndDate));
     dispatch(fetchNewAndRecurringConversations(paramStartDate, paramEndDate, null));
     dispatch(fetchAgentPerformance(paramStartDate, paramEndDate, null));
@@ -164,6 +182,14 @@ const StatsComponent = () => {
   const applySearch = () => {
     setStartDate(initialStartDate);
     setEndDate(initialEndDate);
+    setDateFilter({
+      startDate: moment(initialStartDate).format('YYYY-MM-DD'),
+      endDate: moment(initialEndDate).format('YYYY-MM-DD')
+    });
+    setAgentSelected1(agentsOptions[0]);
+    setAgentSelected2(agentsOptions[0]);
+    setSelectedPlatform1(agentPerformancePlatforms[0]);
+    setSelectedPlatform2(platforms[0]);
     setShowDateRange(false);
 
     let paramStartDate = moment(initialStartDate).format('YYYY-MM-DD');
@@ -173,10 +199,7 @@ const StatsComponent = () => {
   };
 
   useEffect(() => {
-    let paramStartDate = moment().format('YYYY-MM-DD');
-    let paramEndDate = moment().format('YYYY-MM-DD');
-
-    fetchStatistics(paramStartDate, paramEndDate);
+    fetchStatistics(dateFilter.startDate, dateFilter.endDate);
   }, []);
 
   const cancelSearch = () => {
@@ -276,22 +299,34 @@ const StatsComponent = () => {
     const range4 = filter(averageResponseTimes, (row) => Number(row.conversation_time_average) > 86400);
 
     let totalTime = 0;
+    let totalRange1 = 0;
+    let totalRange2 = 0;
+    let totalRange3 = 0;
+    let totalRange4 = 0;
 
     forEach(averageResponseTimes, (row) => {
       totalTime += Number(row.conversation_time_average);
     });
 
+    if (!isEmpty(averageResponseTimes)) {
+      totalTime = Number(Big(totalTime).div(averageResponseTimes.length).round(2));
+      totalRange1 = Number(Big(range1.length).times(100).div(averageResponseTimes.length).round(2));
+      totalRange2 = Number(Big(range2.length).times(100).div(averageResponseTimes.length).round(2));
+      totalRange3 = Number(Big(range3.length).times(100).div(averageResponseTimes.length).round(2));
+      totalRange4 = Number(Big(range4.length).times(100).div(averageResponseTimes.length).round(2));
+    }
+
     setAverageResponseTimesFormated({
       labels: ['0 - 1 hr', '1 - 8 hr', '8 - 24 hr', '> 24 hr'],
       datasets: [
         {
-          data: [range1.length, range2.length, range3.length, range4.length],
+          data: [totalRange1, totalRange2, totalRange3, totalRange4],
           backgroundColor: '#782F79'
         }
       ]
     });
 
-    setAverageResponseTimesText(timeUtils.secondsToHms(totalTime));
+    setAverageResponseTimesText(timeUtils.secondsToH(totalTime));
   };
 
   useEffect(() => {
@@ -300,16 +335,17 @@ const StatsComponent = () => {
 
   const getAverageResponseTimes = (data) => {
     setAgentSelected1(data);
-    if (startDate && endDate) {
-      dispatch(fetchAverageResponseTimes(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    dispatch(fetchAverageResponseTimes(dateFilter.startDate, dateFilter.endDate, data.value, selectedAverageResponseTimePlatform.value));
+  };
+
+  const getAverageResponseTimesByPlatform = (data) => {
+    setSelectedAverageResponseTimePlatform(data);
+    dispatch(fetchAverageResponseTimes(dateFilter.startDate, dateFilter.endDate, agentSelected1.value, data.value));
   };
 
   const getAgentPerformance = (data) => {
     setSelectedPlatform1(data);
-    if (startDate && endDate) {
-      dispatch(fetchAgentPerformance(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    dispatch(fetchAgentPerformance(dateFilter.startDate, dateFilter.endDate, data.value));
   };
 
   useEffect(() => {
@@ -337,16 +373,12 @@ const StatsComponent = () => {
 
   const getNewAndRecurringConversations = (data) => {
     setAgentSelected2(data);
-    if (startDate && endDate) {
-      dispatch(fetchNewAndRecurringConversations(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    dispatch(fetchNewAndRecurringConversations(dateFilter.startDate, dateFilter.endDate, data.value));
   };
 
   const getSentMessagesBy = (data) => {
-    if (startDate && endDate) {
-      setSelectedPlatform2(data);
-      dispatch(fetchSentMessagesBy(moment(startDate).format('YYYY-MM-DD'), moment(endDate).format('YYYY-MM-DD'), data.value));
-    }
+    setSelectedPlatform2(data);
+    dispatch(fetchSentMessagesBy(dateFilter.startDate, dateFilter.endDate, data.value));
   };
 
   return (
@@ -365,17 +397,15 @@ const StatsComponent = () => {
           <div className="d-flex col-md-12 beetwen-flex p-relative">
             <h5 className="form-container_sub-title ml-0">Mensajes por plataformas</h5>
             <div className="stats-date-range-button flex-center-xy" onClick={() => setShowDateRange(!showDateRange)}>
-              {moment(startDate).format('DD/MM/YYYY')}
+              {moment(initialStartDate).format('DD/MM/YYYY')}
               {' - '}
-              {moment(endDate).format('DD/MM/YYYY')}
+              {moment(initialEndDate).format('DD/MM/YYYY')}
               <i className="fas fa-chevron-down" />
             </div>
             {showDateRange && (
             <div className="stats-date-range bg-white" id="date-range-stats">
               <DateRange
                 locale={es}
-                // editableDateInputs={false}
-                // showDateDisplay={false}
                 ranges={[
                   {
                     startDate: initialStartDate,
@@ -396,7 +426,7 @@ const StatsComponent = () => {
           <div className="row col-md-12">
             <div className="col-lg-4 col-md-4 flex-column flex-center-xy p-12">
               <div className="stats-total-message-container">
-                <p>Mensaje en total</p>
+                <p>Mensajes en total</p>
                 <p>{(messagesByPlatform.ws.total_messages + messagesByPlatform.msn.total_messages + messagesByPlatform.ig.total_messages + messagesByPlatform.ml.total_messages)}</p>
               </div>
               <div className="stats-card-row-values w-100">
@@ -490,6 +520,15 @@ const StatsComponent = () => {
                     onChange={getAverageResponseTimes}
                     placeholder="Todos los agentes"
                   />
+
+                  <Select
+                    options={agentPerformancePlatforms}
+                    value={selectedAverageResponseTimePlatform}
+                    className="stats-selector col-md-5 pl-0"
+                    classNamePrefix="stats-selector"
+                    onChange={getAverageResponseTimesByPlatform}
+                    placeholder="Todas las plataformas"
+                  />
                 </div>
                 <div className="stats-chart-bar-value">{averageResponseTimesText}</div>
                 <span className="stats-chart-bar-label">Tiempo promedio de respuesta</span>
@@ -511,13 +550,16 @@ const StatsComponent = () => {
         <div className="row mt-24 col-md-12 pr-0 pl-0">
           <div className="col-md-6 pr-12 stats-card">
             <div className="col-md-12 box-container pt-30 pr-30 pb-30 pl-30 mh-vh-30">
-              <h5 className="form-container_sub-title ml-0 stats-card-title">Etiquetas mas utilizadas</h5>
-              {mostUsedTags.map((tag) => (
-                <div key={tag.id} className="stats-card-row-values">
-                  <span className="stats-card-label">{tag.tag_name}</span>
-                  <span className="stats-card-label">{tag.amount_used}</span>
-                </div>
-              ))}
+              <h5 className="form-container_sub-title ml-0 stats-card-title">Etiquetas más utilizadas</h5>
+              { mostUsedTags.length > 5 ?
+                <PaginatedItems items={mostUsedTags} itemsPerPage={5} />
+                :
+                <>
+                {mostUsedTags.map((item) => (
+                  <Tag key={item.id} tag={item} />
+                ))}
+                </>
+              }
             </div>
           </div>
 
@@ -559,7 +601,7 @@ const StatsComponent = () => {
           <div className="col-md-6 pr-12 stats-card">
             <div className="col-md-12 box-container pt-30 pr-30 pb-30 pl-30 mh-vh-40">
               <div className="d-flex justify-content-between col-md-12 pl-0 pr-0 align-items-center">
-                <h5 className="form-container_sub-title ml-0 stats-card-title pb-0 w-50">Rendiminto por agente</h5>
+                <h5 className="form-container_sub-title ml-0 stats-card-title pb-0 w-50">Rendimiento por agente</h5>
                 <div className="w-50 pl-20">
                   <Select
                     options={agentPerformancePlatforms}

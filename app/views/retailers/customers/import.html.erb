@@ -43,6 +43,8 @@
 
           <p>Entonces se debe colocar en la columna correspondiente a <strong>zona</strong> el valor <strong>guayaquil</strong> o <strong>quito</strong>.</p>
 
+          <p>Si desea asignar cada cliente a un agente específico, agregue una columna llamada <strong>Agent</strong>. Y allí coloca el email del agente a quien desea asignarlo.</p>
+
           <p>Usted puede descargarse esta plantilla <a href="/customers.xlsx" download>en formato Excel</a> o <a href="/customers.csv" download>en formato CSV</a> de ejemplo.</p>
             <%= form_tag(retailers_customers_bulk_import_path(current_retailer), :multipart => true) do %>
               <p>
