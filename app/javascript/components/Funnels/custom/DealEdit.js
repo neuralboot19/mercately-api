@@ -29,6 +29,7 @@ const customStyles = {
       color: '#3C4348'
     }
   },
+  menuPortal: base => ({ ...base, zIndex: 9999 })
 };
 
 const DealEdit = ({
