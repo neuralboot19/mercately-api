@@ -76,14 +76,22 @@ const CustomerDetailsTabContent = ({
         </div>
         <div className="d-flex">
           {customer.emoji_flag}
-          <EditableField
-            handleInputChange={handleInputChange}
-            content={customer.phone}
-            handleSubmit={handleSubmit}
-            givenClass="mb-6 custom-input text-gray-dark fs-14"
-            targetName="phone"
-            placeholder="Teléfono"
-          />
+          { chatType != 'whatsapp_chats'?
+            <EditableField
+              handleInputChange={handleInputChange}
+              content={customer.phone}
+              handleSubmit={handleSubmit}
+              givenClass="mb-6 custom-input text-gray-dark fs-14"
+              targetName="phone"
+              placeholder="Teléfono"
+            />
+            :
+            <input
+              value={customer.phone || ''}
+              className="mb-6 custom-input text-gray-dark fs-14"
+              disabled={true}
+            />
+          }
         </div>
       </div>
       <div className="text-gray-dark">
