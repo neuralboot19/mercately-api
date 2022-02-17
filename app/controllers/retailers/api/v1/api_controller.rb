@@ -2,7 +2,6 @@ module Retailers::Api::V1
   class ApiController < ActionController::Base
     include Responseable
     skip_before_action :verify_authenticity_token
-    skip_before_action :track_ahoy_visit
 
     include ActionController::MimeResponds
     respond_to :json

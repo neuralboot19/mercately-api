@@ -51,7 +51,6 @@ gem 'groupdate', '~> 4.2'
 gem 'active_model_serializers', '~> 0.10.0'
 gem 'recaptcha', '~> 5.3'
 gem 'gibbon', '~> 3.3', '>= 3.3.3'
-gem 'ahoy_matey', '~> 3.0', '>= 3.0.5'
 
 # Datepicker
 gem 'jquery-rails'
