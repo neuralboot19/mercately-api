@@ -151,7 +151,7 @@ en:
     statistics:
       messenger_service: Messaging service
       description: Statistics of sales, messaging and others
-      text_show_stats: You can only see data from the last 5 days. To see complete data upgrade to Premium.
+      text_show_stats: Your current basic plan does not include this module. Upgrade your plan and get all the statistics of your business.
       card:
         messages: Messages
         received: Received

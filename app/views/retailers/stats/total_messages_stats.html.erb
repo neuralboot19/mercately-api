@@ -1,557 +1,566 @@
-<div class="general-new-container">
-  <div class="card mt-14 py-35 general-new-container_card">
-    <div class="row">
-      <div class="col-xs-12 col-md-8 p-0">
-        <h1 class="m-0 mb-10 ml-20 general-new-container_sub-title d-inline index__title"><%= t('retailer.statistics.messenger_service') %></h1>
-        <div class="ml-20 index__desc">
-          <%= t('retailer.statistics.description')%>
+<% if current_retailer.show_stats %>
+  <div class="general-new-container">
+    <div class="card mt-14 py-35 general-new-container_card">
+      <div class="row">
+        <div class="col-xs-12 col-md-8 p-0">
+          <h1 class="m-0 mb-10 ml-20 general-new-container_sub-title d-inline index__title"><%= t('retailer.statistics.messenger_service') %></h1>
+          <div class="ml-20 index__desc">
+            <%= t('retailer.statistics.description')%>
+          </div>
         </div>
-        <% unless current_retailer.show_stats %>
-          <div class="fs-13 ml-20"><%= t('retailer.statistics.description.text_show_stats')%></div>
+        <div class="col-xs-12 col-md-4 pr-20">
+          <%= form_for(:search, url: retailers_total_messages_stats_path(current_retailer), method: :get, html: { id: 'select_range_stats' }) do |form| %>
+            <div id="date-picker-container" class="select-range">
+              <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
+              <span class="c-secondary"><i class="fas fa-caret-down"></i></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="px-20">
+        <div class="row mt-30 mb-10">
+          <div class="col-xs-12 col-md-4 mb-20">
+            <div class="social-newtork-card social-newtork-card-total px-10 py-5">
+              <div class="w-100 d-inline-flex fs-15 p-relative">
+                <span class="bold-font"><%= t('retailer.statistics.card.messages')%> (Total)</span><span class="icon-container"><i class="fas fa-comments fs-20"></i></span>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-15">
+                <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound + @total_outbound %></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-4 mb-20">
+            <div class="social-newtork-card social-newtork-card-ws px-10 py-5">
+              <div class="w-100 d-inline-flex fs-15 p-relative">
+                <span class="bold-font"><%= t('retailer.statistics.card.messages') %> - Whatsapp</span><%= image_tag 'ws_icon.png', class: 'image-icon' %>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_ws %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_ws %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-15">
+                <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_ws + @total_outbound_ws %></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-4 mb-20">
+            <div class="social-newtork-card social-newtork-card-msn px-10 py-5">
+              <div class="w-100 d-inline-flex fs-15 p-relative">
+                <span class="bold-font"><%= t('retailer.statistics.card.messages')%> - Messenger</span><%= image_tag 'dashboard/messenger.png', class: 'image-icon' %>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_msn %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_msn %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-15">
+                <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_msn + @total_outbound_msn %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-30 mb-10">
+          <div class="col-xs-12 col-md-4 mb-20">
+            <div class="social-newtork-card social-newtork-card-ml px-10 py-5">
+              <div class="w-100 d-inline-flex fs-15 p-relative">
+                <span class="bold-font"><%= t('retailer.statistics.card.messages')%> - MercadoLibre</span><%= image_tag 'ml_icon.png', class: 'image-icon' %>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_ml %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_ml %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-15">
+                <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_ml + @total_outbound_ml %></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xs-12 col-md-4 mb-20">
+            <div class="social-newtork-card social-newtork-card-ig px-10 py-5">
+              <div class="w-100 d-inline-flex fs-15 p-relative">
+                <span class="bold-font"><%= t('retailer.statistics.card.messages')%> - Instagram</span><%= image_tag 'ig.png', class: 'image-icon' %>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_ig %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-13 fw-bold">
+                <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_ig %></div>
+              </div>
+              <div class="w-100 d-inline-flex fs-15">
+                <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_ig + @total_outbound_ig %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xs-12">
+          <div class="stats-box px-20">
+            <p class="bold-font mb-30"><%= t('retailer.statistics.chart.title')%></p>
+            <%= line_chart @total_stats, legend: false, curve: false %>
+          </div>
+          <div class="t-center">
+            <div class="d-inline-flex mt-30 legend-messages-container">
+              <div class="center-flex">
+                <div class="circle-legend circle-legend-ws mr-20"></div>
+                <div class="fw-bold mr-40"><%= t('social_networks.whatsapp')%></div>
+              </div>
+              <div class="center-flex">
+                <div class="circle-legend circle-legend-msn mr-20"></div>
+                <div class="fw-bold mr-40"><%= t('social_networks.messenger')%></div>
+              </div>
+              <div class="center-flex">
+                <div class="circle-legend circle-legend-ml mr-20"></div>
+                <div class="fw-bold mr-40"><%= t('social_networks.mercadoLibre')%></div>
+              </div>
+              <div class="center-flex">
+                <div class="circle-legend circle-legend-ig mr-20"></div>
+                <div class="fw-bold mr-40"><%= t('social_networks.instagram')%></div>
+              </div>
+              <div class="center-flex">
+                <div class="circle-legend circle-legend-total mr-20"></div>
+                <div class="fw-bold mr-40"><%= t('retailer.statistics.chart.total_messages')%></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-30 py-35 general-new-container_card">
+      <h3 class="m-0 mb-10 ml-20 general-new-container_sub-title"><%= t('retailer.statistics.cliente_content.clients')%></h3>
+
+      <div class="px-20">
+        <div class="row my-30">
+          <div class="col-xs-12 col-md-6 mb-20">
+            <div class="d-inline-flex mb-15">
+              <div class="mr-80 fw-bold"><%= t('retailer.statistics.cliente_content.new_clients')%></div>
+              <div class=""><%= @ws_prospects + @msn_prospects + @ml_prospects %></div>
+            </div>
+            <div class="w-100 percentage-container">
+              <div class="percentage-div center-flex" style="width: <%= @percentage_prospects %>%;"><%= @percentage_prospects > 0 ? @percentage_prospects.to_s + '%' : '' %></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-md-6 mb-20">
+            <div class="d-inline-flex mb-15">
+              <div class="mr-80 fw-bold"><%= t('retailer.statistics.cliente_content.recurring_customers')%></div>
+              <div class=""><%= @ws_currents + @msn_currents + @ml_currents %></div>
+            </div>
+            <div class="w-100 percentage-container">
+              <div class="percentage-div center-flex" style="width: <%= @percentage_currents %>%;"><%= @percentage_currents > 0 ? @percentage_currents.to_s + '%' : '' %></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mt-30 py-35 general-new-container_card_agent-summary">
+      <div class="px-0 py-5 mb-20 fs-11 mr-20 no-style-filter p-relative select-range">
+        <label class="item__dropdown d-inline">
+          <a class="dropdown__button beetwen-flex px-10" tabindex="-1" href="#!" id="show-list-platform">
+            <span id="selected-platform">Total</span>&nbsp;<i class="fas fa-sort"></i>
+          </a>
+          <ul class="dropdown__menu w-100 t-left" id="options-list-platform">
+            <li value="total">Total</li>
+            <li value="whatsapp">WhatsApp</li>
+            <li value="msn">Messenger</li>
+            <li value="ig">Instagram</li>
+          </ul>
+        </label>
+      </div>
+
+      <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title"><%= t('retailer.statistics.performance.performance_title')%> - <span id="platform-title"><%= t('retailer.statistics.total')%></span></h3>
+
+      <div class="px-20" id="stats_table_total">
+        <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+          <div class="row">
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.agent')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_answered')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.messages')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.total_clients')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.recurring_customers')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.new_clients')%>
+            </div>
+          </div>
+        </div>
+
+        <% @agent_stats.each do |agent| %>
+          <div class="col-xs-12 py-15 stats-agent-items fs-14">
+            <div class="row">
+              <div class="col-xs-2 t-center truncate">
+                <%= agent[:name] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:chats_assigned] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:chats_answered] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%=  agent[:chats_not_answered] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:messages_sent] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:customers] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:currents] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:prospects] %>
+              </div>
+            </div>
+          </div>
         <% end %>
       </div>
-      <div class="col-xs-12 col-md-4 pr-20">
-        <%= form_for(:search, url: retailers_total_messages_stats_path(current_retailer), method: :get, html: { id: 'select_range_stats' }) do |form| %>
-          <div id="date-picker-container" class="select-range <%= 'disable-picker' unless current_retailer.show_stats %>">
-            <%= form.text_field :range, value: date_from_parameters, data: { behavior: 'daterangepicker' } %>
-            <span class="c-secondary"><i class="fas fa-caret-down"></i></span>
+
+      <div class="px-20 d-none" id="stats_table_whatsapp">
+        <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+          <div class="row">
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.agent')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_answered')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.mensajes')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.total_clients')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.recurring_customers')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.new_clients')%>
+            </div>
+          </div>
+        </div>
+
+        <% @agent_stats_ws.each do |agent| %>
+          <div class="col-xs-12 py-15 stats-agent-items fs-14">
+            <div class="row">
+              <div class="col-xs-2 t-center truncate">
+                <%= agent[:name] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:chats_assigned] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:chats_answered] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%=  agent[:chats_not_answered] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:messages_sent] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:customers] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:currents] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:prospects] %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="px-20 d-none" id="stats_table_msn">
+        <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+          <div class="row">
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.agent')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_answered')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.mensajes')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.total_clients')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.recurring_customers')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.new_clients')%>
+            </div>
+          </div>
+        </div>
+
+        <% @agent_stats_msn.each do |agent| %>
+          <div class="col-xs-12 py-15 stats-agent-items fs-14">
+            <div class="row">
+              <div class="col-xs-2 t-center truncate">
+                <%= agent[:name] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:chats_assigned] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:chats_answered] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%=  agent[:chats_not_answered] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:messages_sent] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:customers] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:currents] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:prospects] %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="px-20 d-none" id="stats_table_ig">
+        <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
+          <div class="row">
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.agent')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_answered')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.mensajes')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.total_clients')%>
+            </div>
+            <div class="col-xs-1 t-center">
+              <%= t('retailer.statistics.performance.recurring_customers')%>
+            </div>
+            <div class="col-xs-2 t-center">
+              <%= t('retailer.statistics.performance.new_clients')%>
+            </div>
+          </div>
+        </div>
+
+        <% @agent_stats_ig.each do |agent| %>
+          <div class="col-xs-12 py-15 stats-agent-items fs-14">
+            <div class="row">
+              <div class="col-xs-2 t-center truncate">
+                <%= agent[:name] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:chats_assigned] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:chats_answered] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%=  agent[:chats_not_answered] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:messages_sent] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:customers] %>
+              </div>
+              <div class="col-xs-1 t-center">
+                <%= agent[:currents] %>
+              </div>
+              <div class="col-xs-2 t-center">
+                <%= agent[:prospects] %>
+              </div>
+            </div>
           </div>
         <% end %>
       </div>
     </div>
 
-    <div class="px-20">
-      <div class="row mt-30 mb-10">
-        <div class="col-xs-12 col-md-4 mb-20">
-          <div class="social-newtork-card social-newtork-card-total px-10 py-5">
-            <div class="w-100 d-inline-flex fs-15 p-relative">
-              <span class="bold-font"><%= t('retailer.statistics.card.messages')%> (Total)</span><span class="icon-container"><i class="fas fa-comments fs-20"></i></span>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-15">
-              <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound + @total_outbound %></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xs-12 col-md-4 mb-20">
-          <div class="social-newtork-card social-newtork-card-ws px-10 py-5">
-            <div class="w-100 d-inline-flex fs-15 p-relative">
-              <span class="bold-font"><%= t('retailer.statistics.card.messages') %> - Whatsapp</span><%= image_tag 'ws_icon.png', class: 'image-icon' %>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_ws %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_ws %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-15">
-              <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_ws + @total_outbound_ws %></div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xs-12 col-md-4 mb-20">
-          <div class="social-newtork-card social-newtork-card-msn px-10 py-5">
-            <div class="w-100 d-inline-flex fs-15 p-relative">
-              <span class="bold-font"><%= t('retailer.statistics.card.messages')%> - Messenger</span><%= image_tag 'dashboard/messenger.png', class: 'image-icon' %>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_msn %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_msn %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-15">
-              <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_msn + @total_outbound_msn %></div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="card mt-30 py-35 general-new-container_card">
+      <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title"><%= t('retailer.statistics.chats_by_platform.title')%></h3>
 
-      <div class="row mt-30 mb-10">
-        <div class="col-xs-12 col-md-4 mb-20">
-          <div class="social-newtork-card social-newtork-card-ml px-10 py-5">
-            <div class="w-100 d-inline-flex fs-15 p-relative">
-              <span class="bold-font"><%= t('retailer.statistics.card.messages')%> - MercadoLibre</span><%= image_tag 'ml_icon.png', class: 'image-icon' %>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_ml %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_ml %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-15">
-              <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_ml + @total_outbound_ml %></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xs-12 col-md-4 mb-20">
-          <div class="social-newtork-card social-newtork-card-ig px-10 py-5">
-            <div class="w-100 d-inline-flex fs-15 p-relative">
-              <span class="bold-font"><%= t('retailer.statistics.card.messages')%> - Instagram</span><%= image_tag 'ig.png', class: 'image-icon' %>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.received')%></div><div class="col-xs-6"><%= @total_inbound_ig %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-13 fw-bold">
-              <div class="col-xs-6 p-0"><%= t('retailer.statistics.card.sent')%></div><div class="col-xs-6"><%= @total_outbound_ig %></div>
-            </div>
-            <div class="w-100 d-inline-flex fs-15">
-              <div class="col-xs-6 p-0 bold-font"><%= t('retailer.statistics.card.total')%></div><div class="col-xs-6 bold-font"><%= @total_inbound_ig + @total_outbound_ig %></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-xs-12">
-        <div class="stats-box px-20">
-          <p class="bold-font mb-30"><%= t('retailer.statistics.chart.title')%></p>
-          <%= line_chart @total_stats, legend: false, curve: false %>
-        </div>
-        <div class="t-center">
-          <div class="d-inline-flex mt-30 legend-messages-container">
-            <div class="center-flex">
-              <div class="circle-legend circle-legend-ws mr-20"></div>
-              <div class="fw-bold mr-40"><%= t('social_networks.whatsapp')%></div>
-            </div>
-            <div class="center-flex">
-              <div class="circle-legend circle-legend-msn mr-20"></div>
-              <div class="fw-bold mr-40"><%= t('social_networks.messenger')%></div>
-            </div>
-            <div class="center-flex">
-              <div class="circle-legend circle-legend-ml mr-20"></div>
-              <div class="fw-bold mr-40"><%= t('social_networks.mercadoLibre')%></div>
-            </div>
-            <div class="center-flex">
-              <div class="circle-legend circle-legend-ig mr-20"></div>
-              <div class="fw-bold mr-40"><%= t('social_networks.instagram')%></div>
-            </div>
-            <div class="center-flex">
-              <div class="circle-legend circle-legend-total mr-20"></div>
-              <div class="fw-bold mr-40"><%= t('retailer.statistics.chart.total_messages')%></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card mt-30 py-35 general-new-container_card">
-    <h3 class="m-0 mb-10 ml-20 general-new-container_sub-title"><%= t('retailer.statistics.cliente_content.clients')%></h3>
-
-    <div class="px-20">
-      <div class="row my-30">
-        <div class="col-xs-12 col-md-6 mb-20">
-          <div class="d-inline-flex mb-15">
-            <div class="mr-80 fw-bold"><%= t('retailer.statistics.cliente_content.new_clients')%></div>
-            <div class=""><%= @ws_prospects + @msn_prospects + @ml_prospects %></div>
-          </div>
-          <div class="w-100 percentage-container">
-            <div class="percentage-div center-flex" style="width: <%= @percentage_prospects %>%;"><%= @percentage_prospects > 0 ? @percentage_prospects.to_s + '%' : '' %></div>
-          </div>
-        </div>
-        <div class="col-xs-12 col-md-6 mb-20">
-          <div class="d-inline-flex mb-15">
-            <div class="mr-80 fw-bold"><%= t('retailer.statistics.cliente_content.recurring_customers')%></div>
-            <div class=""><%= @ws_currents + @msn_currents + @ml_currents %></div>
-          </div>
-          <div class="w-100 percentage-container">
-            <div class="percentage-div center-flex" style="width: <%= @percentage_currents %>%;"><%= @percentage_currents > 0 ? @percentage_currents.to_s + '%' : '' %></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card mt-30 py-35 general-new-container_card_agent-summary">
-    <div class="px-0 py-5 mb-20 fs-11 mr-20 no-style-filter p-relative select-range">
-      <label class="item__dropdown d-inline">
-        <a class="dropdown__button beetwen-flex px-10" tabindex="-1" href="#!" id="show-list-platform">
-          <span id="selected-platform">Total</span>&nbsp;<i class="fas fa-sort"></i>
-        </a>
-        <ul class="dropdown__menu w-100 t-left" id="options-list-platform">
-          <li value="total">Total</li>
-          <li value="whatsapp">WhatsApp</li>
-          <li value="msn">Messenger</li>
-          <li value="ig">Instagram</li>
-        </ul>
-      </label>
-    </div>
-
-    <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title"><%= t('retailer.statistics.performance.performance_title')%> - <span id="platform-title"><%= t('retailer.statistics.total')%></span></h3>
-
-    <div class="px-20" id="stats_table_total">
-      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
-        <div class="row">
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.agent')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_answered')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.messages')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.total_clients')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.recurring_customers')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.new_clients')%>
-          </div>
-        </div>
-      </div>
-
-      <% @agent_stats.each do |agent| %>
-        <div class="col-xs-12 py-15 stats-agent-items fs-14">
+      <div class="px-20">
+        <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
           <div class="row">
-            <div class="col-xs-2 t-center truncate">
-              <%= agent[:name] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:chats_assigned] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:chats_answered] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%=  agent[:chats_not_answered] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:messages_sent] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:customers] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:currents] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:prospects] %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="px-20 d-none" id="stats_table_whatsapp">
-      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
-        <div class="row">
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.agent')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_answered')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.mensajes')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.total_clients')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.recurring_customers')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.new_clients')%>
-          </div>
-        </div>
-      </div>
-
-      <% @agent_stats_ws.each do |agent| %>
-        <div class="col-xs-12 py-15 stats-agent-items fs-14">
-          <div class="row">
-            <div class="col-xs-2 t-center truncate">
-              <%= agent[:name] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:chats_assigned] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:chats_answered] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%=  agent[:chats_not_answered] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:messages_sent] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:customers] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:currents] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:prospects] %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="px-20 d-none" id="stats_table_msn">
-      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
-        <div class="row">
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.agent')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_answered')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.mensajes')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.total_clients')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.recurring_customers')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.new_clients')%>
-          </div>
-        </div>
-      </div>
-
-      <% @agent_stats_msn.each do |agent| %>
-        <div class="col-xs-12 py-15 stats-agent-items fs-14">
-          <div class="row">
-            <div class="col-xs-2 t-center truncate">
-              <%= agent[:name] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:chats_assigned] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:chats_answered] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%=  agent[:chats_not_answered] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:messages_sent] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:customers] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:currents] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:prospects] %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="px-20 d-none" id="stats_table_ig">
-      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
-        <div class="row">
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.agent')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_answered')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.assigned_chats_without_replying')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.mensajes')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.total_clients')%>
-          </div>
-          <div class="col-xs-1 t-center">
-            <%= t('retailer.statistics.performance.recurring_customers')%>
-          </div>
-          <div class="col-xs-2 t-center">
-            <%= t('retailer.statistics.performance.new_clients')%>
-          </div>
-        </div>
-      </div>
-
-      <% @agent_stats_ig.each do |agent| %>
-        <div class="col-xs-12 py-15 stats-agent-items fs-14">
-          <div class="row">
-            <div class="col-xs-2 t-center truncate">
-              <%= agent[:name] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:chats_assigned] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:chats_answered] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%=  agent[:chats_not_answered] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:messages_sent] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:customers] %>
-            </div>
-            <div class="col-xs-1 t-center">
-              <%= agent[:currents] %>
-            </div>
-            <div class="col-xs-2 t-center">
-              <%= agent[:prospects] %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-
-  <div class="card mt-30 py-35 general-new-container_card">
-    <h3 class="m-0 mb-20 ml-20 general-new-container_sub-title"><%= t('retailer.statistics.chats_by_platform.title')%></h3>
-
-    <div class="px-20">
-      <div class="col-xs-12 py-10 fw-bold stats-agent-headers">
-        <div class="row">
-          <div class="col-xs-3 t-center">
-            <%= t('retailer.statistics.chats_by_platform.platform')%>
-          </div>
-          <div class="col-xs-3 t-center">
-            <%= t('retailer.statistics.chats_by_platform.total_chats_assigned')%>
-          </div>
-          <div class="col-xs-3 t-center">
-            <%= t('retailer.statistics.chats_by_platform.total_assigned_chats_answered')%>
-          </div>
-          <div class="col-xs-3 t-center">
-            <%= t('retailer.statistics.chats_by_platform.total_assigned_chats_without_replying')%>
-          </div>
-        </div>
-      </div>
-
-      <% @total_chats.each_with_index do |chat, index| %>
-        <div class="col-xs-12 py-15 stats-agent-items fs-14 <%= 'fw-bold' if index == 3 %>">
-          <div class="row">
-            <div class="col-xs-3 t-center truncate">
-              <%= chat[:platform] %>
+            <div class="col-xs-3 t-center">
+              <%= t('retailer.statistics.chats_by_platform.platform')%>
             </div>
             <div class="col-xs-3 t-center">
-              <%= chat[:total_chats] %>
+              <%= t('retailer.statistics.chats_by_platform.total_chats_assigned')%>
             </div>
             <div class="col-xs-3 t-center">
-              <%= chat[:total_answered] %>
+              <%= t('retailer.statistics.chats_by_platform.total_assigned_chats_answered')%>
             </div>
             <div class="col-xs-3 t-center">
-              <%= chat[:total_not_answered] %>
+              <%= t('retailer.statistics.chats_by_platform.total_assigned_chats_without_replying')%>
             </div>
           </div>
         </div>
-      <% end %>
+
+        <% @total_chats.each_with_index do |chat, index| %>
+          <div class="col-xs-12 py-15 stats-agent-items fs-14 <%= 'fw-bold' if index == 3 %>">
+            <div class="row">
+              <div class="col-xs-3 t-center truncate">
+                <%= chat[:platform] %>
+              </div>
+              <div class="col-xs-3 t-center">
+                <%= chat[:total_chats] %>
+              </div>
+              <div class="col-xs-3 t-center">
+                <%= chat[:total_answered] %>
+              </div>
+              <div class="col-xs-3 t-center">
+                <%= chat[:total_not_answered] %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
 
-<script type="text/javascript">
-  $(document).ready(function() {
-    var today = new Date;
-    $('[data-behavior="daterangepicker"]').daterangepicker({
-      opens: 'left',
-      startDate: '<%= @start_date %>',
-      endDate: '<%= @end_date %>',
-      maxDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
-      ranges: {
-        '<%= I18n.t 'time.datepicker.today' %>': [moment(), moment()],
-        '<%= I18n.t 'time.datepicker.yesterday' %>': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        '<%= I18n.t 'time.datepicker.last_7_days' %>': [moment().subtract(6, 'days'), moment()],
-        '<%= I18n.t 'time.datepicker.last_30_days' %>': [moment().subtract(29, 'days'), moment()],
-        '<%= I18n.t 'time.datepicker.this_month' %>': [moment().startOf('month'), moment().endOf('month')],
-        '<%= I18n.t 'time.datepicker.last_month' %>': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-      },
-      locale: {
-        format: '<%= I18n.t 'time.datepicker.format' %>',
-        cancelLabel: '<%= I18n.t 'time.datepicker.cancelLabel' %>',
-        applyLabel: '<%= I18n.t 'time.datepicker.applyLabel' %>',
-        fromLabel: '<%= I18n.t 'time.datepicker.fromLabel' %>',
-        toLabel: '<%= I18n.t 'time.datepicker.toLabel' %>',
-        customRangeLabel: '<%= I18n.t 'time.datepicker.customRangeLabel' %>',
-        weekLabel: '<%= I18n.t 'time.datepicker.weekLabel' %>',
-        daysOfWeek: [
-          '<%= I18n.t 'time.datepicker.daysOfWeek.sun' %>',
-          '<%= I18n.t 'time.datepicker.daysOfWeek.mon' %>',
-          '<%= I18n.t 'time.datepicker.daysOfWeek.tues' %>',
-          '<%= I18n.t 'time.datepicker.daysOfWeek.wed' %>',
-          '<%= I18n.t 'time.datepicker.daysOfWeek.thurs' %>',
-          '<%= I18n.t 'time.datepicker.daysOfWeek.fri' %>',
-          '<%= I18n.t 'time.datepicker.daysOfWeek.fri' %>'
-        ],
-        monthNames: [
-          '<%= I18n.t 'time.datepicker.monthNames.jan' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.feb' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.mar' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.apr' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.may' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.jun' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.jul' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.aug' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.sep' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.oct' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.nov' %>',
-          '<%= I18n.t 'time.datepicker.monthNames.dec' %>',
-        ],
-        firstDay: 1
-      }
-    }, function() {
-      setTimeout(function() {
-        $('#select_range_stats').submit();
-      }, 100)
-    });
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var today = new Date;
+      $('[data-behavior="daterangepicker"]').daterangepicker({
+        opens: 'left',
+        startDate: '<%= @start_date %>',
+        endDate: '<%= @end_date %>',
+        maxDate: today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+        ranges: {
+          '<%= I18n.t 'time.datepicker.today' %>': [moment(), moment()],
+          '<%= I18n.t 'time.datepicker.yesterday' %>': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          '<%= I18n.t 'time.datepicker.last_7_days' %>': [moment().subtract(6, 'days'), moment()],
+          '<%= I18n.t 'time.datepicker.last_30_days' %>': [moment().subtract(29, 'days'), moment()],
+          '<%= I18n.t 'time.datepicker.this_month' %>': [moment().startOf('month'), moment().endOf('month')],
+          '<%= I18n.t 'time.datepicker.last_month' %>': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        locale: {
+          format: '<%= I18n.t 'time.datepicker.format' %>',
+          cancelLabel: '<%= I18n.t 'time.datepicker.cancelLabel' %>',
+          applyLabel: '<%= I18n.t 'time.datepicker.applyLabel' %>',
+          fromLabel: '<%= I18n.t 'time.datepicker.fromLabel' %>',
+          toLabel: '<%= I18n.t 'time.datepicker.toLabel' %>',
+          customRangeLabel: '<%= I18n.t 'time.datepicker.customRangeLabel' %>',
+          weekLabel: '<%= I18n.t 'time.datepicker.weekLabel' %>',
+          daysOfWeek: [
+            '<%= I18n.t 'time.datepicker.daysOfWeek.sun' %>',
+            '<%= I18n.t 'time.datepicker.daysOfWeek.mon' %>',
+            '<%= I18n.t 'time.datepicker.daysOfWeek.tues' %>',
+            '<%= I18n.t 'time.datepicker.daysOfWeek.wed' %>',
+            '<%= I18n.t 'time.datepicker.daysOfWeek.thurs' %>',
+            '<%= I18n.t 'time.datepicker.daysOfWeek.fri' %>',
+            '<%= I18n.t 'time.datepicker.daysOfWeek.fri' %>'
+          ],
+          monthNames: [
+            '<%= I18n.t 'time.datepicker.monthNames.jan' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.feb' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.mar' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.apr' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.may' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.jun' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.jul' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.aug' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.sep' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.oct' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.nov' %>',
+            '<%= I18n.t 'time.datepicker.monthNames.dec' %>',
+          ],
+          firstDay: 1
+        }
+      }, function() {
+        setTimeout(function() {
+          $('#select_range_stats').submit();
+        }, 100)
+      });
 
-    $('#date-picker-container, #search_range').on('click', function() {
-      $('#search_range').data('daterangepicker').toggle();
-    });
+      $('#date-picker-container, #search_range').on('click', function() {
+        $('#search_range').data('daterangepicker').toggle();
+      });
 
-    $('#options-list-platform li').each(function(index, li) {
-      if ($(li).text() === $('#platform-title').text()) {
-        $('#selected-platform').html($(li).html());
-      }
-    });
-    $('#options-list-platform li').on('click', function() {
-      $('#selected-platform').html($(this).html());
-      $('#platform-title').text($(this).text());
-      $('[id^="stats_table_"]').hide();
-      $('#stats_table_'+$(this).attr('value')).show();
-      $('#options-list-platform').hide();
-      console.log($(this).attr('value'));
-    });
+      $('#options-list-platform li').each(function(index, li) {
+        if ($(li).text() === $('#platform-title').text()) {
+          $('#selected-platform').html($(li).html());
+        }
+      });
+      $('#options-list-platform li').on('click', function() {
+        $('#selected-platform').html($(this).html());
+        $('#platform-title').text($(this).text());
+        $('[id^="stats_table_"]').hide();
+        $('#stats_table_'+$(this).attr('value')).show();
+        $('#options-list-platform').hide();
+        console.log($(this).attr('value'));
+      });
 
-    $('#show-list-platform').on('click', function() {
-      $('#options-list-platform').show();
+      $('#show-list-platform').on('click', function() {
+        $('#options-list-platform').show();
+      });
     });
-  });
-</script>
+  </script>
+<% else %>
+  <div class="content_width ml-sm-108 mt-25 px-15 no-left-margin-xs">
+    <div class="container-fluid-no-padding">
+      <div class="row">
+        <div class="warning-box col-md-12 pl-10" role="alert">
+          <%= t('retailer.statistics.text_show_stats')%></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

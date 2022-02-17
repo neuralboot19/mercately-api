@@ -501,7 +501,7 @@ es:
     statistics:
       messenger_service: 'Mensajería'
       description: Estadísticas de ventas, mensajería y otros
-      text_show_stats: Sólo puedes ver datos de los últimos 5 días. Para ver datos completos actualiza a Premium.
+      text_show_stats: Tu plan actual (básico) no incluye este módulo. Actualiza tu plan y obten todas las estadísticas de tu negocio.
       card:
         messages: Mensajes
         received: Recibidos
