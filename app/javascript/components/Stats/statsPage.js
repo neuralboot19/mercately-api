@@ -627,7 +627,7 @@ const StatsPageComponent = () => {
                   {agentPerformance.map((agentStat, index) => (
                     <tr key={index.toString()}>
                       <td>
-                        <AvatarName name={`${agentStat.first_name} ${agentStat.last_name}`} />
+                        <AvatarName firstName={agentStat.first_name} lastName={agentStat.last_name} />
                       </td>
                       <td className="text-right">{(agentStat.amount_chat_in_process + agentStat.amount_chat_resolved)}</td>
                       <td className="text-right">{agentStat.amount_chat_in_process}</td>
@@ -664,7 +664,7 @@ const StatsPageComponent = () => {
                   {setMessagesBy.map((agentStat) => (
                     <tr key={agentStat.retailer_user_id}>
                       <td>
-                        <AvatarName name={`${agentStat.first_name} ${agentStat.last_name}`} />
+                        <AvatarName firstName={agentStat.first_name} lastName={agentStat.last_name} />
                       </td>
                       <td className="text-right">{agentStat.total_messages}</td>
                     </tr>
