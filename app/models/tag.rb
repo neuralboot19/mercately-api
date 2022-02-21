@@ -15,6 +15,8 @@ class Tag < ApplicationRecord
 
   before_save :generate_font_color, if: :will_save_change_to_tag_color?
 
+  scope :find_tag, -> (value) { where('lower(tag) = ?', value.downcase) }
+
   def to_param
     web_id
   end
