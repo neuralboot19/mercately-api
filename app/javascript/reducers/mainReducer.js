@@ -1,5 +1,3 @@
-import { cloneDeep, remove } from 'lodash';
-
 import {
   SET_CUSTOMERS,
   SET_WHATSAPP_CUSTOMERS,
@@ -501,11 +499,9 @@ const mainReducer = (state = initialState, action) => {
         customerDeals: action.data
       };
     case 'ERASE_SIMPLE_DEAL': {
-      let _customerDeals = cloneDeep(state.customerDeals);
-      _customerDeals = remove(_customerDeals, { id: action.data.deal.id });
       return {
         ...state,
-        customerDeals: _customerDeals
+        customerDeals: state.customerDeals.filter((item) => item.id !== action.data.deal.id)
       };
     }
     case SET_BLOCK_USER:
