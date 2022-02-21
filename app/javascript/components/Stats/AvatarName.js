@@ -1,14 +1,18 @@
 import React from "react";
 
-const AvatarName = ({ name }) => {
-  const names = name.split(' ');
-  const initials = names.length > 1 ? `${names[0][0]}${names[1][0]}` : `${name[0]}${name[1]}`;
+const AvatarName = ({ firstName, lastName }) => {
+  firstName = firstName.trim();
+  lastName = lastName.trim();
+
+  let initials = firstName? `${firstName.charAt(0).toUpperCase()}` : '';
+  initials += lastName? `${lastName.charAt(0).toUpperCase()}` : '';
+
   return (
     <div className="d-flex align-items-center">
       <div className="stats-avatar flex-center-xy">
         {initials}
       </div>
-      {name}
+      {`${firstName} ${lastName}`}
     </div>
   );
 };

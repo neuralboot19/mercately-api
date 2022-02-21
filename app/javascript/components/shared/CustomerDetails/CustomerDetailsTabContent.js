@@ -32,7 +32,7 @@ const CustomerDetailsTabContent = ({
   const errors = useSelector((reduxState) => reduxState.mainReducer.errors) || {};
   const [isDealModalOpen, setIsDealModalOpen] = useState(false);
   const [dealSelected, setDealSelected] = useState(null);
-  const agents = useSelector((reduxState) => reduxState.mainReducer.agents || []);
+  const agents = useSelector((reduxState) => reduxState.mainReducer.agent_list || []);
 
   const handleDeleteDeal = (deal) => {
     const destroy = confirm('¿Estás seguro de eliminar esta negociación?');
@@ -76,14 +76,22 @@ const CustomerDetailsTabContent = ({
         </div>
         <div className="d-flex">
           {customer.emoji_flag}
-          <EditableField
-            handleInputChange={handleInputChange}
-            content={customer.phone}
-            handleSubmit={handleSubmit}
-            givenClass="mb-6 custom-input text-gray-dark fs-14"
-            targetName="phone"
-            placeholder="Teléfono"
-          />
+          { chatType != 'whatsapp_chats'?
+            <EditableField
+              handleInputChange={handleInputChange}
+              content={customer.phone}
+              handleSubmit={handleSubmit}
+              givenClass="mb-6 custom-input text-gray-dark fs-14"
+              targetName="phone"
+              placeholder="Teléfono"
+            />
+            :
+            <input
+              value={customer.phone || ''}
+              className="mb-6 custom-input text-gray-dark fs-14"
+              disabled={true}
+            />
+          }
         </div>
       </div>
       <div className="text-gray-dark">
@@ -198,6 +206,15 @@ const CustomerDetailsTabContent = ({
         <div>
           <i className="fs-18 mt-4 mr-4 fas fa-briefcase editable_name" />
           <p className="label inline-block fs-14 text-gray-dark font-weight-bold">Negociaciones:</p>
+          { customerDeals.length == 0 && (
+            <i className="fs-18 mt-4 ml-6 fas fa-plus editable_name cursor-pointer"
+              title='Crear negociación'
+              onClick={() => {
+                setIsDealModalOpen((prevState) => !prevState);
+                setDealSelected(null);
+              }}>
+            </i>
+          )}
         </div>
         { customerDeals.map((deal, index) => (
           <div key={index} className="card">

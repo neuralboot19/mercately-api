@@ -904,6 +904,7 @@ class ChatMessages extends Component {
               Este canal de chat no ha tenido actividad del cliente los últimos 7 días,
               por lo tanto se encuentra cerrado.
               Si lo desea puede <a href="#" onClick={() => this.toggleNoteModal()}>añadir una nota en el chat</a>
+              &nbsp;o <a href="#" onClick={() => this.toggleDealModal()}>crear una negociación</a>
             </p>
           )
           : (
@@ -971,7 +972,7 @@ class ChatMessages extends Component {
             isDealModalOpen={this.state.isDealModalOpen}
             toggleDealModal={this.toggleDealModal}
             dealSelected={null}
-            agents={this.props.agents}
+            agents={this.props.agent_list}
             getCustomerDeals={this.getCustomerDeals}
           />
           :

@@ -393,6 +393,10 @@ label:hover, a:hover, button:hover {
   white-space: pre-line;
 }
 
+.notification-spacing {
+  letter-spacing: 0.5px;
+}
+
 @mixin fs-mixin ($size) {
   font-size: $size !important;
 }
@@ -415,6 +419,12 @@ label:hover, a:hover, button:hover {
   .my-perc-#{$size} {
     margin-top: #{$size}% !important;
     margin-bottom: #{$size}% !important;
+  }
+}
+
+@for $size from 0 through 25 {
+  .lh-#{$size} {
+    line-height: #{$size}px;
   }
 }
 

@@ -36,7 +36,8 @@
         FANPAGE_TOKEN: "<%= current_retailer.facebook_retailer&.access_token %>",
         SENTRY_DSN: "<%= ENV['SENTRY_DSN'] %>",
         SEND_MAX_SIZE_FILES: <%= current_retailer.send_max_size_files %>,
-        CURRENT_AGENT_LANG: "<%= current_retailer_user.locale %>"
+        CURRENT_AGENT_LANG: "<%= current_retailer_user.locale %>",
+        SHOW_STATS: <%= current_retailer.show_stats %>
       }
     <% end %>
     <% if ENV['ENVIRONMENT'] == 'production' %>

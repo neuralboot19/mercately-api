@@ -1586,6 +1586,7 @@ class ChatMessages extends Component {
                   openModal={this.openModal}
                   openReminderConfigModal={this.openReminderConfigModal}
                   toggleNoteModal={this.toggleNoteModal}
+                  toggleDealModal={this.toggleDealModal}
                 />
               ) : (
                 this.canSendMessages()
@@ -1699,7 +1700,7 @@ class ChatMessages extends Component {
             isDealModalOpen={this.state.isDealModalOpen}
             toggleDealModal={this.toggleDealModal}
             dealSelected={null}
-            agents={this.props.agents}
+            agents={this.props.agent_list}
             getCustomerDeals={this.getCustomerDeals}
           />
           :
