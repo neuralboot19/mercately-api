@@ -6,7 +6,6 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
   before_action :check_passwords, only: :update
   before_action :configure_account_update_params, only: :update
   before_action :set_locale
-  before_action :track_ahoy_visit, only: :new
   skip_before_action :set_retailer, except: %i[edit update]
 
   def edit
@@ -18,15 +17,7 @@ class RetailerUsers::RegistrationsController < Devise::RegistrationsController
   end
 
   def create
-    super do
-      ahoy.track('User registered', {
-        utm_source: params[:utm_source],
-        utm_medium: params[:utm_medium],
-        utm_term: params[:utm_term],
-        utm_content: params[:utm_content],
-        utm_campaign: params[:utm_campaign]
-      })
-    end
+    super
   end
 
   def update

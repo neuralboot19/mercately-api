@@ -22,7 +22,6 @@
 //= require moment
 //= require moment/es.js
 //= require daterangepicker
-//= require ahoy
 //= require emojionearea.min
 //= require readMoreJS.min
 //= require fullcalendar/main.min
