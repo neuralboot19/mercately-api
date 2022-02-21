@@ -117,13 +117,17 @@
             <div class="col-xs-12 col-md-8 middle">
               <label class="modal-index__background" for="modal--toggle-index"></label>
               <div class="modal-index__window box p-4 h-unset mt-0" style="z-index: 1000;">
-                <h1 class="d-inline name mb-10 ml-14"><%= new.title %></h1>
+
                 <label class="modalindex__close f-right" for="modal--toggle-new-<%= index %>">
-                  <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle"></i>
+                  <i class="fs-22 mt-4 mr-4 f-right far fa-times-circle c-grey-light"></i>
                 </label>
-                <div class="row">
-                  <div class="col-xs-12 col-12">
-                    <div class="divider"></div>
+
+                <div class="t-center py-20">
+                  <h1 class="d-inline name mb-10 ml-14 fs-18"><%= new.title %></h1>
+                </div>
+
+                <div class="row-fix">
+                  <div class="col-xs-12 col-12 fs-12 lh-20 notification-spacing">
                     <%= new.template_body(current_retailer, current_retailer_user).html_safe %>
                     <p class="t-center">
                       <label for="modal--toggle-new-<%= index %>" class="btn-btn btn-submit">Cerrar</label>
