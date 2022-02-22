@@ -443,55 +443,36 @@ RSpec.describe Retailers::CustomersController, type: :controller do
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
       end
 
-      it 'returns an error if not a csv file' do
+      it 'returns an error if it is not a xlsx' do
         post :bulk_import, params: {
           slug: retailer.slug,
           csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/dummy.pdf', 'application/pdf')
         }
 
-        expect(flash[:notice][0]).to include('Tipo de archivo inválido. Debe ser CSV (.csv) o Excel (.xlsx)')
+        expect(flash[:notice][0]).to include('Tipo de archivo inválido. Debe ser Excel (.xlsx)')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
       end
 
-      it 'returns an error if csv columns not match' do
+      it 'returns an error if xlsx columns not match' do
         post :bulk_import, params: {
           slug: retailer.slug,
-          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/wrong_columns_customers.csv', 'text/csv')
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/wrong_columns_customers.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         }
 
         expect(flash[:notice][0]).to include('Las columnas del archivo no coinciden')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
       end
 
-      it 'returns an error when csv is empty' do
+      it 'returns an error when xlsx file is empty' do
         post :bulk_import, params: {
           slug: retailer.slug,
-          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/empty_customers.csv', 'text/csv')
+          csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/empty_customers.xlsx',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         }
 
         expect(flash[:notice][0]).to include('El archivo está vacío')
         expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
-      end
-
-      context 'when it is a csv file' do
-        let(:file) { File.open(Rails.root + 'spec/fixtures/customers.csv') }
-
-        before do
-          allow_any_instance_of(ImportContactsLogger).to receive(:file_url).and_return('https://mercately.com')
-          allow_any_instance_of(ImportContactsLogger).to receive(:delete_file).and_return(true)
-          allow_any_instance_of(Customers::ImportCustomersJob).to receive(:open).and_return(file)
-        end
-
-        it 'returns success message' do
-          post :bulk_import, params: {
-            slug: retailer.slug,
-            csv_file: fixture_file_upload(Rails.root + 'spec/fixtures/customers.csv', 'text/csv')
-          }
-
-          expect(flash[:notice][0]).to include('La importación está en proceso. Recibirá un correo cuando ' \
-            'haya culminado.')
-          expect(response).to redirect_to(retailers_customers_import_path(retailer.slug))
-        end
       end
 
       context 'when it is an excel file' do

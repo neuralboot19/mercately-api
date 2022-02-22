@@ -64,6 +64,9 @@ module Customers
           customer.from_import_file = true
           customer.save!
 
+          tags = row['Tags'] || row['tags']
+          import_service.assign_tags(customer, retailer, tags) if tags.present?
+
           import_service.assign_agent(customer, retailer, agent_email) if assigned
 
           related_fields = retailer.customer_related_fields.where(identifier: exceptions)
