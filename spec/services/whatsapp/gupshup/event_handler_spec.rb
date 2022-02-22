@@ -170,22 +170,76 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
   describe '#process_event!' do
     context 'when it is a message' do
       before do
+        allow_any_instance_of(GupshupWhatsappMessage).to receive(:send_push_notifications).and_return(true)
         allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+        allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
       end
 
-      context 'with text type' do
-        it 'will save a new inbound gupshup message' do
-          expect {
-            described_class.new(retailer, customer).process_event!(text_response)
-          }.to change(GupshupWhatsappMessage, :count).by(1)
+      context 'when the customer already exists in DB' do
+        let(:customer2) { create(:customer, retailer: retailer, phone: '584149999999', country_id: 'VE') }
+
+        context 'with text type' do
+          it 'will save a new inbound gupshup message' do
+            expect {
+              described_class.new(retailer, customer2).process_event!(text_response)
+            }.to change(GupshupWhatsappMessage, :count).by(1)
+          end
+        end
+
+        context 'with quick_reply type' do
+          it 'will save a new inbound gupshup message' do
+            expect {
+              described_class.new(retailer, customer2).process_event!(quick_reply_response)
+            }.to change(GupshupWhatsappMessage, :count).by(1)
+          end
         end
       end
 
-      context 'with quick_reply type' do
-        it 'will save a new inbound gupshup message' do
-          expect {
-            described_class.new(retailer, customer).process_event!(quick_reply_response)
-          }.to change(GupshupWhatsappMessage, :count).by(1)
+      context 'when the customer does not exist in DB yet' do
+        before do
+          CustomerQueue.destroy_all
+          CustomerQueue.create_indexes
+          MessageQueue.create_indexes
+        end
+
+        context 'with text type' do
+          it 'will insert a new customer on queue' do
+            expect {
+              described_class.new(retailer, nil).process_event!(text_response)
+            }.to change(CustomerQueue, :count).by(1)
+
+            cq = CustomerQueue.last
+            expect(cq.message_queues.count).to eq(1)
+          end
+        end
+
+        context 'with quick_reply type' do
+          it 'will insert a new customer on queue' do
+            expect {
+              described_class.new(retailer, nil).process_event!(quick_reply_response)
+            }.to change(CustomerQueue, :count).by(1)
+
+            cq = CustomerQueue.last
+            expect(cq.message_queues.count).to eq(1)
+          end
+        end
+
+        context 'when receiving multiple messages at the same time by the same phone number' do
+          let!(:retailer2) { create(:retailer, :gupshup_integrated) }
+
+          it 'will enqueued the phone number once and enqueued the messages' do
+            CustomerQueue.destroy_all
+            expect(CustomerQueue.count).to eq(0)
+
+            arr = (1..8).to_a
+            Parallel.each(arr, in_processes: 8) do
+              described_class.new(retailer2).process_event!(text_response)
+            end
+
+            expect(CustomerQueue.count).to eq(1)
+            cq = CustomerQueue.last
+            expect(cq.message_queues.count).to eq(8)
+          end
         end
       end
     end

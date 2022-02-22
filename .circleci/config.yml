@@ -30,6 +30,7 @@ jobs:
           POSTGRES_DB: mercately_test
           POSTGRES_PASSWORD: ""
       - image: redis
+      - image: circleci/mongo:4.4.4
 
     steps:
       - checkout
@@ -69,6 +70,10 @@ jobs:
       # Database setup
       - run: bin/rails db:schema:load --trace
       - run: bin/rails db:migrate RAILS_ENV=test
+
+      - run:
+          name: Wait for Mongo
+          command: dockerize -wait tcp://localhost:27017 -timeout 1m
 
       - run:
           name: Setup Code Climate test-reporter

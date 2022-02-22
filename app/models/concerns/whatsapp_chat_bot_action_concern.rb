@@ -2,7 +2,7 @@ module WhatsappChatBotActionConcern
   extend ActiveSupport::Concern
 
   included do
-    after_commit :chat_bot_execution, on: :create
+    after_commit :chat_bot_execution, on: :create, unless: -> (obj) { obj.class == GupshupWhatsappMessage && obj.skip_automatic }
   end
 
   def active_chat_bots

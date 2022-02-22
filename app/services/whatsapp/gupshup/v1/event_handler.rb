@@ -63,11 +63,39 @@ module Whatsapp::Gupshup::V1
       Raven.capture_exception(e)
     end
 
+    def process_queue_message!(params)
+      return if @retailer.blank? || @customer.blank?
+
+      gwm = GupshupWhatsappMessage.create!(
+        retailer: @retailer,
+        customer: @customer,
+        whatsapp_message_id: params[:payload][:id],
+        gupshup_message_id: params[:payload][:id],
+        status: :delivered,
+        direction: 'inbound',
+        message_payload: params,
+        source: params[:payload][:source],
+        destination: @retailer.whatsapp_phone_number(false),
+        channel: 'whatsapp',
+        delivered_at: Time.zone.now.to_i,
+        sent_at: params[:timestamp],
+        skip_automatic: true
+      )
+
+      # Broadcast to the proper chat
+      broadcast(gwm)
+    rescue StandardError => e
+      Rails.logger.error(e)
+      SlackError.send_error(e)
+      false
+    end
+
     private
 
       def inbound
         # Find or Store the client
         customer = save_customer
+        return unless customer.present?
 
         # Store in our database the incoming text message
         GupshupWhatsappMessage.with_advisory_lock(

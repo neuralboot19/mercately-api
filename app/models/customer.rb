@@ -3,6 +3,7 @@ class Customer < ApplicationRecord
   include PhoneNumberConcern
   include ImportCustomersConcern
   include ExportCustomersConcern
+  include ProcessMessageQueueConcern
 
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
@@ -68,7 +69,7 @@ class Customer < ApplicationRecord
   enum pstype: %i[messenger instagram]
   enum status_chat: %i[new_chat open_chat in_process resolved]
 
-  attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file, :from_api
+  attr_accessor :ml_generated_phone, :send_for_opt_in, :from_import_file, :from_api, :process_queue
 
   scope :active, -> { where(valid_customer: true) }
   scope :range_between, -> (start_date, end_date) { where(created_at: start_date..end_date) }
