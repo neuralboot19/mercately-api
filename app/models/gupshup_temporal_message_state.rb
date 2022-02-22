@@ -7,6 +7,7 @@ class GupshupTemporalMessageState
   field :retailer_id, type: Integer
   field :destination, type: String
   field :event_timestamp, type: Integer
+  field :gupshup_message_id, type: String
 
   # before_create :set_status
 

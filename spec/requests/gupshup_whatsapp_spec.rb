@@ -340,19 +340,40 @@ RSpec.describe 'GupshupWhatsappController', type: :request do
         expect(Customer.last.whatsapp_name).to eq(inbound_name)
       end
 
-      it 'stores a new gupshup message' do
-        allow_any_instance_of(GupshupWhatsappMessage).to receive(:send_push_notifications).and_return(true)
-        allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
-        allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
+      context 'when the customer already exists in DB' do
+        let!(:customer) { create(:customer, retailer: retailer, phone: '+593999999999') }
 
-        expect {
-          post '/gupshup/ws',
-            params: gupshup_inbound_payload
-        }.to change(GupshupWhatsappMessage, :count).by(1)
+        it 'stores a new gupshup message' do
+          allow_any_instance_of(GupshupWhatsappMessage).to receive(:send_push_notifications).and_return(true)
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
 
-        expect(response.code).to eq('200')
-        inbound_text = gupshup_inbound_payload['gupshup_whatsapp']['payload']['payload']['text']
-        expect(GupshupWhatsappMessage.last.message_payload['payload']['payload']['text']).to eq(inbound_text)
+          expect {
+            post '/gupshup/ws',
+              params: gupshup_inbound_payload
+          }.to change(GupshupWhatsappMessage, :count).by(1)
+
+          expect(response.code).to eq('200')
+          inbound_text = gupshup_inbound_payload['gupshup_whatsapp']['payload']['payload']['text']
+          expect(GupshupWhatsappMessage.last.message_payload['payload']['payload']['text']).to eq(inbound_text)
+        end
+      end
+
+      context 'when the customer does not exist in DB yet' do
+        it 'will insert a new customer on queue' do
+          allow_any_instance_of(GupshupWhatsappMessage).to receive(:send_push_notifications).and_return(true)
+          allow_any_instance_of(Customer).to receive(:verify_opt_in).and_return(true)
+          allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
+
+          expect {
+            post '/gupshup/ws',
+              params: gupshup_inbound_payload
+          }.to change(CustomerQueue, :count).by(1)
+
+          cq = CustomerQueue.last
+          expect(cq.message_queues.count).to eq(1)
+          expect(response.code).to eq('200')
+        end
       end
 
       it 'returns a code 200 if type is sandbox-start' do
