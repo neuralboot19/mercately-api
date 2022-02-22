@@ -8,7 +8,12 @@ module ProcessMessageQueueConcern
   private
 
     def create_messages
-      customer_queue = CustomerQueue.find_by(retailer_id: retailer.id, source: phone)
+      customer_queue = if number_to_use.present?
+                         CustomerQueue.where(retailer_id: retailer.id).in(source: [phone, number_to_use]).first
+                       else
+                         CustomerQueue.find_by(retailer_id: retailer.id, source: phone)
+                       end
+
       messages = customer_queue.message_queues.order(created_at: :asc)
 
       messages.each_with_index do |msg, index|
