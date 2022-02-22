@@ -412,14 +412,8 @@ class Retailer < ApplicationRecord
     end
 
     def set_ml_domain
-      self.ml_domain = case ml_site
-                       when 'MLC'
-                         'cl'
-                       when 'MCR'
-                         'co.cr'
-                       else
-                         'com.ec'
-                       end
+      ml_country = MlCountry.find_by_site(ml_site)
+      self.ml_domain = ml_country&.domain
     end
 
     def update_gupshup_info

@@ -34,7 +34,7 @@
         <% if current_retailer.gupshup_integrated? && @customer.whatsapp_opt_in == false %>
           <div class="row w-100">
             <div class="my-16 col-xs-12">
-              <%= f.check_box :send_for_opt_in %>
+              <%= f.check_box :send_for_opt_in, checked: true %>
               <%= f.label :send_for_opt_in, 'Tengo el permiso explícito de enviar mensajes a este número (opt-in)', class: 'fs-12' %><br/>
             </div>
           </div>
