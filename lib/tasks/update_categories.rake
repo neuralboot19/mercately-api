@@ -3,7 +3,7 @@ task update_categories: :environment do
   puts 'Downloading categories'
   ActiveRecord::Base.transaction do
     @ml_array = []
-    ['MEC', 'MLC', 'MCR'].each do |ml_site|
+    MlCountry.all.map(&:site).each do |ml_site|
       faraday_request_get("https://api.mercadolibre.com/sites/#{ml_site}/categories").each do |res|
         father = Category.find_or_create_by(meli_id: res['id'])
         father.update(name: res['name'])
