@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_16_203457) do
+ActiveRecord::Schema.define(version: 2022_02_22_152425) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -791,6 +791,14 @@ ActiveRecord::Schema.define(version: 2022_02_16_203457) do
     t.datetime "updated_at", null: false
     t.index ["retailer_id", "phone"], name: "index_message_blocks_on_retailer_id_and_phone", unique: true
     t.index ["retailer_id"], name: "index_message_blocks_on_retailer_id"
+  end
+
+  create_table "ml_countries", force: :cascade do |t|
+    t.string "name"
+    t.string "site"
+    t.string "domain"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "mobile_tokens", force: :cascade do |t|
