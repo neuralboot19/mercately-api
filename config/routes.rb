@@ -269,6 +269,7 @@ Rails.application.routes.draw do
       namespace :mobile do
         post 'sign_up', to: 'registrations#create', as: :sign_up
         get 'dashboard', to: 'dashboard#index', as: :dashboard
+        post 'set_app_version', to: 'retailer_users#set_app_version', as: :set_app_version
       end
 
       # For Karix

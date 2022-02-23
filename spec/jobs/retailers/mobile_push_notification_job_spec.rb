@@ -4,6 +4,8 @@ RSpec.describe Retailers::MobilePushNotificationJob, type: :job do
   let(:mobile_token) { create(:mobile_token) }
   let(:body) { 'Text message' }
   let(:customer) { create(:customer) }
+  let(:agent) { create(:retailer_user, retailer: customer.retailer) }
+  let!(:agent_customer) { create(:agent_customer, customer: customer, retailer_user: agent) }
   let(:data) do
     {
       data: {
