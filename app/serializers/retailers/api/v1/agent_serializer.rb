@@ -1,6 +1,6 @@
 module Retailers::Api::V1
   class AgentSerializer < ActiveModel::Serializer
-    attributes :id, :first_name, :last_name, :email, :retailer_id, :admin, :pending_payment?, :currency, :ws_balance
+    attributes :id, :first_name, :last_name, :email, :retailer_id, :mobile_type, :app_version, :admin, :pending_payment?, :currency, :ws_balance
 
     def admin
       object.retailer_admin

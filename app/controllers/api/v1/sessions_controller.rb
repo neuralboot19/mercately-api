@@ -14,9 +14,12 @@ module Api::V1
     end
 
     def create_mobile_push_token
+      @user.mobile_tokens.destroy_all
       mobile_token = @user.mobile_tokens.build(
         mobile_push_token: create_params[:mobile_push_token]
       )
+
+      @user.update(mobile_type: create_params[:mobile_type]) if create_params[:mobile_type]
 
       if mobile_token.save!
         mobile_token.generate!
@@ -33,7 +36,7 @@ module Api::V1
     private
 
       def create_params
-        params.require(:retailer_user).permit(:email, :password, :mobile_push_token)
+        params.require(:retailer_user).permit(:email, :password, :mobile_push_token, :mobile_type)
       end
 
       def valid_retailer_password
@@ -54,11 +57,9 @@ module Api::V1
       def serialize_retailer_user(retailer_user)
         Api::V1::RetailerUserSerializer.new(
           retailer_user,
-          {
-            include: [
-              :retailer
-            ]
-          }
+          include: [
+            :retailer
+          ]
         ).serialized_json
       end
   end

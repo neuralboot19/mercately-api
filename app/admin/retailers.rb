@@ -350,6 +350,8 @@ ActiveAdmin.register Retailer do
           end
         end
 
+        column 'Mobile app', &:mobile_info
+
         column 'Iniciar sesión' do |ret_u|
           link_to 'Login as', login_as_admin_retailer_path(ret_u.retailer, retailer_user_email: ret_u.email), class:
             'member_link edit_link'
