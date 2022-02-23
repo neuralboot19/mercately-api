@@ -185,7 +185,7 @@ const TopChatBar = ({
   const allowBlockUser = customer?.blocked;
 
   const botIconColor = allowStartBot ? 'fill-blue' : 'fill-gray-icon';
-  const blockedUserIconColor = allowBlockUser ? 'fill-blue' : 'fill-gray-icon';
+  const blockedUserIconColor = allowBlockUser ? 'color-blue-icon' : 'color-gray-icon';
 
   const bgBotBtn = allowStartBot ? 'bg-blue-btn' : 'bg-light';
   const bgBlockUserBtn = allowBlockUser ? 'bg-blue-btn' : 'bg-light';
