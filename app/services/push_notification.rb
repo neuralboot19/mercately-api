@@ -24,6 +24,14 @@ class PushNotification
       content_available: true
     }
 
+    if customer.agent.mobile_type == 'ios'
+      notification[:notification] = {
+        title: customer.notification_info,
+        body: @body
+      }
+      notification[:data].delete(:type)
+    end
+
     fcm.send(@tokens, notification)
   end
 end

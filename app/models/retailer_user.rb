@@ -32,11 +32,12 @@ class RetailerUser < ApplicationRecord
   scope :active_admins, lambda { |retailer_id|
     where(retailer_id: retailer_id, retailer_admin: true, removed_from_team: false, invitation_token: nil)
   }
-  scope :active_agents, -> do
+  scope :active_agents, lambda {
     where(retailer_admin: false, retailer_supervisor: false, removed_from_team: false, invitation_token: nil)
-  end
+  }
 
   enum locale: %i[es en]
+  enum mobile_type: %i[android ios]
 
   accepts_nested_attributes_for :retailer
 
@@ -45,11 +46,11 @@ class RetailerUser < ApplicationRecord
 
   ransacker :full_name do |parent|
     Arel::Nodes::NamedFunction.new('CONCAT_WS', [
-      Arel::Nodes.build_quoted(' '),
-      parent.table[:first_name],
-      parent.table[:last_name],
-      parent.table[:email]
-    ])
+                                     Arel::Nodes.build_quoted(' '),
+                                     parent.table[:first_name],
+                                     parent.table[:last_name],
+                                     parent.table[:email]
+                                   ])
   end
 
   def self.from_omniauth(auth, retailer_user, permissions, connection_type)
@@ -103,6 +104,10 @@ class RetailerUser < ApplicationRecord
     "#{first_name} #{last_name}"
   end
 
+  def mobile_info
+    "#{mobile_type}/#{app_version}"
+  end
+
   def supervisor?
     retailer_supervisor || false
   end
@@ -116,8 +121,8 @@ class RetailerUser < ApplicationRecord
   end
 
   def customers
-    Customer.joins("LEFT JOIN agent_customers ac ON ac.customer_id = customers.id")
-      .where("(ac.retailer_user_id = ? OR ac.retailer_user_id is NULL) AND customers.retailer_id = ?", id, retailer_id)
+    Customer.joins('LEFT JOIN agent_customers ac ON ac.customer_id = customers.id')
+      .where('(ac.retailer_user_id = ? OR ac.retailer_user_id is NULL) AND customers.retailer_id = ?', id, retailer_id)
   end
 
   def storage_id
