@@ -44,6 +44,9 @@ module RetailerUsers
         agents.where(id: assigned_users).update_all(update_sql(true)) if assigned_users.present?
         agents.where.not(id: assigned_users).update_all(update_sql(false))
       end
+    rescue StandardError => e
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 
     private

@@ -63,23 +63,24 @@ module Whatsapp::Gupshup::V1
       Raven.capture_exception(e)
     end
 
-    def process_queue_message!(params)
+    def process_queue_message!(message_queue)
       return if @retailer.blank? || @customer.blank?
 
       gwm = GupshupWhatsappMessage.create!(
         retailer: @retailer,
         customer: @customer,
-        whatsapp_message_id: params[:payload][:id],
-        gupshup_message_id: params[:payload][:id],
+        whatsapp_message_id: message_queue.payload[:payload][:id],
+        gupshup_message_id: message_queue.payload[:payload][:id],
         status: :delivered,
         direction: 'inbound',
-        message_payload: params,
-        source: params[:payload][:source],
+        message_payload: message_queue.payload,
+        source: message_queue.payload[:payload][:source],
         destination: @retailer.whatsapp_phone_number(false),
         channel: 'whatsapp',
-        delivered_at: Time.zone.now.to_i,
-        sent_at: params[:timestamp],
-        skip_automatic: true
+        delivered_at: message_queue.created_at,
+        sent_at: message_queue.payload[:timestamp],
+        skip_automatic: true,
+        created_at: message_queue.created_at
       )
 
       # Broadcast to the proper chat
