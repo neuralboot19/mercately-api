@@ -29,7 +29,12 @@ module PushNotificationable
                 when 'InstagramMessage'
                   'instagram'
                 end
-      Retailers::MobilePushNotificationJob.perform_later(tokens, message_info, customer_id, channel)
+      # Retailers::MobilePushNotificationJob.perform_later(tokens, message_info, customer_id, channel)
+      push_notification = PushNotification.new(tokens, message_info, customer_id, channel)
+      push_notification.send_messages
+    rescue StandardError => e
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 
     def customer_name

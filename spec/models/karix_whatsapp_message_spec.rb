@@ -330,19 +330,19 @@ RSpec.describe KarixWhatsappMessage, type: :model do
     end
   end
 
-  describe '#send_push_notifications' do
-    let(:mobile_token) { create(:mobile_token) }
-    let(:retailer) { mobile_token.retailer_user.retailer }
-    let(:customer) { create(:customer, retailer: retailer) }
+  # describe '#send_push_notifications' do
+  #   let(:mobile_token) { create(:mobile_token) }
+  #   let(:retailer) { mobile_token.retailer_user.retailer }
+  #   let(:customer) { create(:customer, retailer: retailer) }
 
-    it 'will send push notifications' do
-      ActiveJob::Base.queue_adapter = :test
+  #   it 'will send push notifications' do
+  #     ActiveJob::Base.queue_adapter = :test
 
-      expect {
-        create(:karix_whatsapp_message, :inbound, customer: customer)
-      }.to have_enqueued_job(Retailers::MobilePushNotificationJob)
-    end
-  end
+  #     expect {
+  #       create(:karix_whatsapp_message, :inbound, customer: customer)
+  #     }.to have_enqueued_job(Retailers::MobilePushNotificationJob)
+  #   end
+  # end
 
   describe '#assign_agent' do
     context 'when the retailer has assignment teams permission' do
