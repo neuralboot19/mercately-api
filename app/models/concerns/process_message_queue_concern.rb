@@ -14,9 +14,17 @@ module ProcessMessageQueueConcern
                          CustomerQueue.find_by(retailer_id: retailer.id, source: phone)
                        end
 
-      messages = customer_queue.message_queues.order(created_at: :asc)
+      return unless customer_queue.present?
 
+      messages = customer_queue.message_queues.order(created_at: :asc)
       messages.each_with_index do |msg, index|
+        if customer_queue.retry_customer_count > 0 &&
+          gupshup_whatsapp_messages.where(whatsapp_message_id: msg.payload['payload']['id']).exists?
+
+          msg.update(processed: true)
+          next
+        end
+
         # Store in our database the incoming text message
         gwm = GupshupWhatsappMessage.create!(
           retailer: retailer,
@@ -29,9 +37,10 @@ module ProcessMessageQueueConcern
           source: msg.payload['payload']['source'],
           destination: retailer.whatsapp_phone_number(false),
           channel: 'whatsapp',
-          delivered_at: Time.zone.now.to_i,
+          delivered_at: msg.created_at,
           sent_at: msg.payload['timestamp'],
-          skip_automatic: index > 0
+          skip_automatic: index > 0,
+          created_at: msg.created_at
         )
 
         # Marcamos el mensaje en la cola como procesado
@@ -44,6 +53,7 @@ module ProcessMessageQueueConcern
       # Destruimos la cola luego de procesada
       customer_queue.destroy
     rescue StandardError => e
+      customer_queue.retry_customer_process(self) if customer_queue.present?
       Rails.logger.error(e)
       SlackError.send_error(e)
     end

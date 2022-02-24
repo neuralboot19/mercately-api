@@ -200,6 +200,7 @@ RSpec.describe Whatsapp::Gupshup::V1::EventHandler do
           CustomerQueue.destroy_all
           CustomerQueue.create_indexes
           MessageQueue.create_indexes
+          allow_any_instance_of(CustomerQueue).to receive(:create_customer).and_return(true)
         end
 
         context 'with text type' do

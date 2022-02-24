@@ -37,5 +37,8 @@ module CounterMessagesConcern
       else
         retailer.retailer_users.active_agents.where(only_assigned: false).update_all(update_sql)
       end
+    rescue StandardError => e
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
 end

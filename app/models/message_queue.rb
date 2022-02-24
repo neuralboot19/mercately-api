@@ -18,6 +18,6 @@ class MessageQueue
       return unless retailer.present?
 
       customer = retailer.customers.find_by(phone: customer_queue.source)
-      Whatsapp::Gupshup::V1::EventHandler.new(retailer, customer).process_queue_message!(payload)
+      Whatsapp::Gupshup::V1::EventHandler.new(retailer, customer).process_queue_message!(self)
     end
 end

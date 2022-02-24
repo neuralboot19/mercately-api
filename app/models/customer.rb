@@ -572,6 +572,10 @@ class Customer < ApplicationRecord
     end
   end
 
+  def retry_create_messages
+    create_messages
+  end
+
   private
 
     def update_valid_customer

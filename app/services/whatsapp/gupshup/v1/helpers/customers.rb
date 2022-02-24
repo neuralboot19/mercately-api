@@ -57,7 +57,7 @@ module Whatsapp::Gupshup::V1::Helpers
       customer
     end
 
-    def self.create_customer(retailer, params)
+    def self.create_customer(customer_queue, retailer, params)
       phone_to_find = "+#{params[:payload][:source]}"
 
       parse_phone = Phonelib.parse(phone_to_find)
@@ -83,6 +83,10 @@ module Whatsapp::Gupshup::V1::Helpers
       customer.process_queue = true
 
       customer.save!
+    rescue StandardError => e
+      customer_queue.retry_process
+      Rails.logger.error(e)
+      SlackError.send_error(e)
     end
   end
 end
