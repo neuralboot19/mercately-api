@@ -96,6 +96,10 @@ document.addEventListener("DOMContentLoaded", function() {
   $('[data-toggle="tooltip"]').each(function() {
     $(this).tooltip({ container: $(this).parent() });
   });
+
+  if (window.location.href.includes('#consumption')) {
+    $('#v-pills-usage-tab').click();
+  }
 });
 
 function validateCancelForm() {
