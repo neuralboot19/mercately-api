@@ -40,8 +40,16 @@ module Whatsapp::Gupshup::V1::Helpers
 
           return
         rescue Mongo::Error::OperationFailure
-          cq = CustomerQueue.find_by(retailer_id: retailer.id, source: original_phone)
-          cq.message_queues.create(payload: params.except(:direction).to_h) if cq.present?
+          cq = CustomerQueue.where(retailer_id: retailer.id, source: original_phone).first
+          if cq.present?
+            cq.message_queues.create(payload: params.except(:direction).to_h)
+          else
+            CustomerQueue.create(
+              retailer_id: retailer.id,
+              source: original_phone,
+              payload: params.except(:direction).to_h
+            )
+          end
 
           return
         end
@@ -81,6 +89,7 @@ module Whatsapp::Gupshup::V1::Helpers
       customer.number_to_use = original_phone if add_number
       customer.send_for_opt_in = true if customer.new_record? || customer.whatsapp_opt_in == false
       customer.process_queue = true
+      customer.created_at = customer_queue.created_at
 
       customer.save!
     rescue StandardError => e
