@@ -1510,6 +1510,19 @@ hr.chat_separator {
   }
 }
 
+.btn-white-warning {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 12px 46px;
+  color: $warning-color;
+
+  &:hover {
+    text-decoration: none;
+    color: $warning-color;
+    cursor: pointer;
+  }
+}
+
 .container-fluid-no-padding {
   .row {
     margin-right: 0;

@@ -275,7 +275,9 @@ en:
       payment_plans:
         index:
           retry: Reactivate
+          pay: Pay
           inactive_plan: Your plan has been deactivated, update your card and click on the button to reactivate it.
+          unpaid_plan: It was not possible to charge your plan, update your card and click on the button to pay it.
           title: Payment plans
           subtitle: Payment plans
           information: Information
