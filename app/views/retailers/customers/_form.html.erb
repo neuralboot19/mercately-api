@@ -97,7 +97,7 @@
         <% if current_retailer.customer_related_fields.exists? %>
           <div class="row w-100">
             <div class="col-xs-12">
-              <div><b>Campos personalizados</b></div>
+              <%= f.label 'Campos personalizados' %><br />
               <input type="checkbox" id="show-custom-fields" class="check-toggler d-none"/>
               <label id="show-custom-fields-label" for="show-custom-fields">Mostrar campos personalizados</label>
               <div id="customer-custom-fields" class="row w-100 show-on-check">
@@ -113,6 +113,14 @@
             </div>
           </div>
         <% end %>
+        <div class="row w-100">
+          <div class="my-16 col-xs-12">
+            <%= f.label 'Asignar agente' %><br />
+            <%= f.fields_for :agent_customer, @agent_customer do |ac| %>
+              <%= ac.select :retailer_user_id, agents_allowed, { include_blank: true }, class: 'input' %>
+            <% end %>
+          </div>
+        </div>
       </fieldset>
       <div class="my-16 t-right hide-on-xs">
         <%= link_to 'Cancelar', retailers_customers_path(q: { 's': 'created_at desc' }), class: 'cancel-link mr-30' %>
