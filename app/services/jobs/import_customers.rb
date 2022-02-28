@@ -54,5 +54,18 @@ module Jobs
       assigned.retailer_user = agent
       assigned.save
     end
+
+    def assign_tags(customer, retailer, tags)
+      tags = tags.split(',')
+      tags = tags.uniq
+
+      tags.each do |tag|
+        tag_name = tag.strip
+        tag_created = retailer.tags.find_tag(tag_name).first
+        tag_created = retailer.tags.create(tag: tag_name) if tag_created.blank?
+
+        customer.customer_tags.find_or_create_by(tag_id: tag_created.id) if tag_created.present?
+      end
+    end
   end
 end

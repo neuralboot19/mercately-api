@@ -72,7 +72,11 @@ module ContactGroups
           customer.assign_attributes(row.except(*exceptions))
           customer.from_import_file = true
           customer.save!
+
           @customer_ids << customer.id
+
+          tags = row['Tags'] || row['tags']
+          import_service.assign_tags(customer, retailer, tags) if tags.present?
 
           import_service.assign_agent(customer, retailer, agent_email) if assigned
 
