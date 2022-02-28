@@ -21,7 +21,7 @@ class GupshupWhatsappMessage < ApplicationRecord
                         :direction, :source, :destination, :channel
 
   enum status: %w[error submitted enqueued sent delivered read]
-  enum conversation_type: %w[free_point user_initiated business_initiated]
+  enum conversation_type: %w[free_point user_initiated business_initiated free_tier]
 
   attr_accessor :skip_automatic
 

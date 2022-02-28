@@ -665,6 +665,7 @@ es:
           conversation_total: Total
           conversation_cost_total: Costo
           free_entry_point: Gratis por punto de entrada
+          free_tier: Gratis por cuota mensual
           free_uic: Gratis iniciadas por el usuario
           free_bic: Gratis iniciadas por el negocio
           paid_uic: Pagadas iniciadas por el usuario

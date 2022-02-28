@@ -48,7 +48,12 @@ module Whatsapp::Gupshup::V1
         time = Time.now
         retailer_ws_conv = @retailer.retailer_whatsapp_conversations.find_or_create_by(year: time.year, month: time.month)
 
-        if (retailer_ws_conv.free_bic_total + retailer_ws_conv.free_uic_total) < 1000 && deductions['type'] != 'FEP'
+        if deductions['billable'] == false
+          count_free_conversations(retailer_ws_conv, deductions['type'])
+          return
+        elsif deductions['billable'].nil? && (retailer_ws_conv.free_bic_total + retailer_ws_conv.free_uic_total +
+          retailer_ws_conv.free_tier_total) < 1000
+
           count_free_conversations(retailer_ws_conv, deductions['type'])
           return
         end
@@ -80,8 +85,6 @@ module Whatsapp::Gupshup::V1
             total_bic: country_ws_conv.total_bic + 1,
             total_cost_bic: country_ws_conv.total_cost_bic + amount
           }
-        when 'FEP'
-          price_attrs = { free_point_total: retailer_ws_conv.free_point_total + 1 }
         end
 
         retailer_ws_conv.update(price_attrs)
@@ -102,13 +105,16 @@ module Whatsapp::Gupshup::V1
         'user_initiated'
       when 'BIC'
         'business_initiated'
+      when 'FTC'
+        'free_tier'
       end
     end
 
     def check_free_conversation(message, params)
       time = Time.now
       retailer_ws_conv = @retailer.retailer_whatsapp_conversations.find_or_create_by(year: time.year, month: time.month)
-      return if (retailer_ws_conv.free_bic_total + retailer_ws_conv.free_uic_total) >= 1000
+      return if (retailer_ws_conv.free_bic_total + retailer_ws_conv.free_uic_total +
+        retailer_ws_conv.free_tier_total) >= 1000
 
       block = @retailer.message_blocks.find_by_phone(message.destination)
       if block.present?
@@ -132,6 +138,10 @@ module Whatsapp::Gupshup::V1
                       { free_uic_total: retailer_ws_conv.free_uic_total + 1 }
                     when 'BIC'
                       { free_bic_total: retailer_ws_conv.free_bic_total + 1 }
+                    when 'FEP'
+                      { free_point_total: retailer_ws_conv.free_point_total + 1 }
+                    when 'FTC'
+                      { free_tier_total: retailer_ws_conv.free_tier_total + 1 }
                     end
 
       retailer_ws_conv.update(price_attrs)
