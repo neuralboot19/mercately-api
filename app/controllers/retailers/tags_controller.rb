@@ -1,6 +1,7 @@
 class Retailers::TagsController < RetailersController
   before_action :check_ownership, only: [:show, :edit, :update, :destroy]
   before_action :set_tag, only: [:show, :edit, :update, :destroy]
+  before_action :set_tag_by_name, only: :create
 
   def index
     @tags = current_retailer.tags.order(updated_at: :desc).page(params[:page])
@@ -17,13 +18,22 @@ class Retailers::TagsController < RetailersController
   end
 
   def create
-    @tag = current_retailer.tags.new(tag_params)
-
-    if @tag.save
-      redirect_to retailers_tag_path(current_retailer, @tag), notice:
-        'Etiqueta creada con éxito.'
+    if @tag.present?
+      if @tag.update(tag_params)
+        redirect_to retailers_tag_path(current_retailer, @tag), notice:
+          'Etiqueta actualizada con éxito.'
+      else
+        render :new
+      end
     else
-      render :new
+      @tag = current_retailer.tags.new(tag_params)
+
+      if @tag.save
+        redirect_to retailers_tag_path(current_retailer, @tag), notice:
+          'Etiqueta creada con éxito.'
+      else
+        render :new
+      end
     end
   end
 
@@ -59,5 +69,10 @@ class Retailers::TagsController < RetailersController
 
     def set_tag
       @tag = Tag.find_by(web_id: params[:id])
+    end
+
+    def set_tag_by_name
+      tag_name = tag_params[:tag].strip
+      @tag = current_retailer.tags.find_tag(tag_name).first
     end
 end

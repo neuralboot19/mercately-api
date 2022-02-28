@@ -182,7 +182,9 @@ class Api::V1::CustomersController < Api::ApiController
   end
 
   def add_tag
-    tag = @customer.retailer.tags.create(tag: params[:tag])
+    tag_params = params[:tag].strip
+    tag = current_retailer.tags.find_tag(tag_params).first
+    tag = current_retailer.tags.create(tag: tag_params) if tag.blank?
     @customer.customer_tags.create(tag_id: tag.id) if tag.present?
     send_notification(params[:chat_service])
 
