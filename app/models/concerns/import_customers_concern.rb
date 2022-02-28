@@ -45,12 +45,8 @@ module ImportCustomersConcern
         file_type = file.content_type
         return unless right_file_type?(file_type)
 
-        data = if file_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-                 xlsx = Roo::Spreadsheet.open(file)
-                 xlsx.to_csv
-               else
-                 file.read
-               end
+        xlsx = Roo::Spreadsheet.open(file)
+        data = xlsx.to_csv
 
         data = data.gsub(';', ',')
 
@@ -76,7 +72,7 @@ module ImportCustomersConcern
       end
 
       def type_error_message
-        ['Tipo de archivo inválido. Debe ser CSV (.csv) o Excel (.xlsx)']
+        ['Tipo de archivo inválido. Debe ser Excel (.xlsx)']
       end
 
       def error_response(messages)
@@ -88,7 +84,7 @@ module ImportCustomersConcern
       end
 
       def right_file_type?(file_type)
-        unless ['text/csv', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'].include?(file_type)
+        if file_type != 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
           @errors[:errors] << type_error_message
           return false
         end
