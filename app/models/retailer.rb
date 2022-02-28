@@ -351,7 +351,7 @@ class Retailer < ApplicationRecord
     retailer_ws_conv = retailer_whatsapp_conversations.find_by(year: year, month: month)
     return 1000 unless retailer_ws_conv.present?
 
-    1000 - (retailer_ws_conv.free_uic_total + retailer_ws_conv.free_bic_total)
+    1000 - (retailer_ws_conv.free_uic_total + retailer_ws_conv.free_bic_total + retailer_ws_conv.free_tier_total)
   end
 
   private

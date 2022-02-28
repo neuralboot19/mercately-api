@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_22_133327) do
+ActiveRecord::Schema.define(version: 2022_02_28_191352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1225,6 +1225,7 @@ ActiveRecord::Schema.define(version: 2022_02_22_133327) do
     t.float "business_initiated_cost", default: 0.0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "free_tier_total", default: 0
     t.index ["retailer_id", "year", "month"], name: "index_retailer_whatsapp_conversations_by_date", unique: true
     t.index ["retailer_id"], name: "index_retailer_whatsapp_conversations_on_retailer_id"
   end
