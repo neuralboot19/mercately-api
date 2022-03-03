@@ -326,6 +326,8 @@ en:
         charge_balance:
           add_balance: Add balance
           minimum_amount: The minimum amount is $10
+          recharge_alert: Remember that your WhatsApp balance and your Mercately plan are different. Top up balance does not mean a plan payment.
+          more_info: More info...
         cancel_plan:
           question_header: Are you sure you want to leave Mercately?
           answer_header: Thank you very much for your answer

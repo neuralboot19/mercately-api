@@ -673,6 +673,8 @@ es:
         charge_balance:
           add_balance: Agregar saldo
           minimum_amount: El monto mínimo son $10
+          recharge_alert: Recuerda que tu saldo de WhatsApp y tu plan en Mercately son distintos. Recargar saldo no significa un pago de plan.
+          more_info: Saber más...
         cancel_plan:
           question_header: ¿Estás seguro de querer abandonar Mercately?
           answer_header: Muchas gracias por tu respuesta
