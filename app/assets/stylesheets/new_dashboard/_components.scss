@@ -2019,15 +2019,15 @@ i {
   }
 }
 
-#head-alert {
+.head-alerts {
   color: #FFF;
-  background-color: #F7923B;
   text-align: center;
   padding-top: 4px;
   padding-bottom: 4px;
+  background-color: #F7923B;
 
   a {
-    text-decoration: none;
+    text-decoration: underline;
 
     &:visited {
       color: #FFF;

@@ -445,6 +445,13 @@ es:
       2: 'Por favor, revisa tu método de pago lo antes posible para no sufrir cortes en el servicio'
       3: 'aquí.'
       4: 'Muchas gracias por tu apoyo. 💪'
+    insufficient_balance_alert:
+      1: 'Tu saldo de WhatsApp es: $%{ws_balance}, si tu saldo es menor a $-5 perderás tu conexión, no dejes que suceda y recarga saldo aquí:'
+      2: 'Recargar saldo'
+      3: 'Si quieres conocer la política haz click aquí:'
+      4: 'Política de WhatsApp'
+      5: 'Haz click aquí para conocer un consumo a detalle:'
+      6: 'Consumo'
   mailer:
     broken_hs_integration:
       broken_integration: 'Integración con Hubspot desactivada'
@@ -622,7 +629,9 @@ es:
       payment_plans:
         index:
           retry: Reactivar
+          pay: Pagar
           inactive_plan: Tu plan ha sido desactivado, actualiza tu tarjeta y pulsa en el botón para reactivarlo.
+          unpaid_plan: No fue posible cobrar tu plan, actualiza tu tarjeta y pulsa en el botón para pagarlo.
           title: Planes de pago
           subtitle: Planes de pago
           information: Información
@@ -673,6 +682,8 @@ es:
         charge_balance:
           add_balance: Agregar saldo
           minimum_amount: El monto mínimo son $10
+          recharge_alert: Recuerda que tu saldo de WhatsApp y tu plan en Mercately son distintos. Recargar saldo no significa un pago de plan.
+          more_info: Saber más...
         cancel_plan:
           question_header: ¿Estás seguro de querer abandonar Mercately?
           answer_header: Muchas gracias por tu respuesta

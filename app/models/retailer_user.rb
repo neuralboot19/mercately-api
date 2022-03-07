@@ -157,6 +157,14 @@ class RetailerUser < ApplicationRecord
     update(api_session_token: nil, api_session_expiration: nil)
   end
 
+  def android?
+    mobile_type == 'android' || mobile_type == nil
+  end
+
+  def ios?
+    mobile_type == 'ios'
+  end
+
   private
 
     def onboarding_status_format

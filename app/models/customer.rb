@@ -90,6 +90,7 @@ class Customer < ApplicationRecord
   end)
 
   accepts_nested_attributes_for :customer_related_data, reject_if: :all_blank, allow_destroy: true
+  accepts_nested_attributes_for :agent_customer, reject_if: :all_blank, allow_destroy: true
 
   ransack_alias :name_phone_email, :first_name_or_last_name_or_phone_or_email_or_whatsapp_name
 

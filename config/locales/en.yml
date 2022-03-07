@@ -25,6 +25,13 @@ en:
       2: 'Please, review your payment method as soon as possible so as not to suffer interruptions in the service'
       3: 'here.'
       4: 'Thank you very much for your support. 💪'
+    insufficient_balance_alert:
+      1: 'Your WhatsApp balance is: $%{ws_balance}, if your balance is less than $-5 you will lose your connection, do not let it happen and top up your balance here:'
+      2: 'Add balance'
+      3: 'If you want to know the policy click here:'
+      4: 'WhatsApp policy'
+      5: 'Click here to know a detailed consumption:'
+      6: 'Consumption'
   mailer:
     broken_hs_integration:
       broken_integration: 'Hubspot integration disabled'
@@ -275,7 +282,9 @@ en:
       payment_plans:
         index:
           retry: Reactivate
+          pay: Pay
           inactive_plan: Your plan has been deactivated, update your card and click on the button to reactivate it.
+          unpaid_plan: It was not possible to charge your plan, update your card and click on the button to pay it.
           title: Payment plans
           subtitle: Payment plans
           information: Information
@@ -326,6 +335,8 @@ en:
         charge_balance:
           add_balance: Add balance
           minimum_amount: The minimum amount is $10
+          recharge_alert: Remember that your WhatsApp balance and your Mercately plan are different. Top up balance does not mean a plan payment.
+          more_info: More info...
         cancel_plan:
           question_header: Are you sure you want to leave Mercately?
           answer_header: Thank you very much for your answer
