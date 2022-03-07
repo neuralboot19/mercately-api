@@ -236,6 +236,12 @@ $(document).ready(function() {
     maximumInputLength: 20
   });
 
+  $('#customer_agent_customer_attributes_retailer_user_id').select2({
+    placeholder: "Selecciona un agente",
+    language: "es",
+    allowClear: true
+  });
+
   $('#show-custom-fields').on('change', function() {
     if (this.checked) {
       $('#show-custom-fields-label').text('Ocultar campos personalizados');

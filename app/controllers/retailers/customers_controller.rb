@@ -51,10 +51,12 @@ class Retailers::CustomersController < RetailersController
 
   def new
     @customer = Customer.new
+    @agent_customer = @customer.agent_customer || AgentCustomer.new
     init_custom_fields
   end
 
   def edit
+    @agent_customer = @customer.agent_customer || AgentCustomer.new
     init_custom_fields
     edit_setup
   end
@@ -122,8 +124,22 @@ class Retailers::CustomersController < RetailersController
           :id,
           :customer_related_field_id,
           :data
+        ],
+        agent_customer_attributes: [
+          :id,
+          :retailer_user_id,
+          :team_assignment_id,
+          :_destroy
         ]
-      )
+      ).tap do |param|
+        if param[:agent_customer_attributes][:id].present?
+          if param[:agent_customer_attributes][:retailer_user_id].blank?
+            param[:agent_customer_attributes][:_destroy] = true
+          elsif param[:agent_customer_attributes][:retailer_user_id] != @customer.agent_customer.retailer_user_id
+            param[:agent_customer_attributes][:team_assignment_id] = nil
+          end
+        end
+      end
     end
 
     def export_params
