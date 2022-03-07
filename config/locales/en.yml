@@ -25,6 +25,13 @@ en:
       2: 'Please, review your payment method as soon as possible so as not to suffer interruptions in the service'
       3: 'here.'
       4: 'Thank you very much for your support. 💪'
+    insufficient_balance_alert:
+      1: 'Your WhatsApp balance is: $%{ws_balance}, if your balance is less than $-5 you will lose your connection, do not let it happen and top up your balance here:'
+      2: 'Add balance'
+      3: 'If you want to know the policy click here:'
+      4: 'WhatsApp policy'
+      5: 'Click here to know a detailed consumption:'
+      6: 'Consumption'
   mailer:
     broken_hs_integration:
       broken_integration: 'Hubspot integration disabled'
