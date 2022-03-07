@@ -14,9 +14,13 @@ class AgentCustomer < ApplicationRecord
   private
 
     def send_push_notification
-      tokens = retailer_user.mobile_tokens
-        .pluck(:mobile_push_token)
-        .compact
+      tokens = if retailer_user.android?
+                  retailer_user.mobile_tokens
+                  .pluck(:mobile_push_token)
+                  .compact
+                else
+                  [retailer_user.email]
+                end
 
       # It is suposed that tokens should be an empty array
       # if not found any mobile push token, anyway, I rather
@@ -31,8 +35,12 @@ class AgentCustomer < ApplicationRecord
                 else
                   'messenger'
                 end
-
-      Retailers::MobilePushNotificationJob.perform_later(tokens, body, customer.id, channel)
+      if retailer_user.android?
+        Retailers::MobilePushNotificationJob.perform_later(tokens, body, customer.id, channel)
+      else
+        push_notification = OneSignalPushNotification.new(tokens, body, customer.id, channel)
+        push_notification.send_messages
+      end
     end
 
     def customer_name

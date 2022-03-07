@@ -19,7 +19,9 @@ module PushNotificationable
       return true unless users.any?
 
       tokens = users_tokens(users)
-      return true if tokens.blank?
+      emails = users_emails(users)
+
+      return true if tokens.blank? && emails.blank?
 
       channel = case self.class.name
                 when 'GupshupWhatsappMessage', 'KarixWhatsappMessage'
@@ -29,9 +31,16 @@ module PushNotificationable
                 when 'InstagramMessage'
                   'instagram'
                 end
-      # Retailers::MobilePushNotificationJob.perform_later(tokens, message_info, customer_id, channel)
-      push_notification = PushNotification.new(tokens, message_info, customer_id, channel)
-      push_notification.send_messages
+      if tokens.any?
+        # Retailers::MobilePushNotificationJob.perform_later(tokens, message_info, customer_id, channel)
+        push_notification = PushNotification.new(tokens, message_info, customer_id, channel)
+        push_notification.send_messages
+      end
+
+      if emails.any?
+        push_notification = OneSignalPushNotification.new(emails, message_info, customer_id, channel)
+        push_notification.send_messages
+      end
     rescue StandardError => e
       Rails.logger.error(e)
       SlackError.send_error(e)
@@ -58,12 +67,20 @@ module PushNotificationable
 
     def users_tokens(users)
       tokens = users.compact.map do |ru|
+        next if ru.ios?
         active_tokens = ru.mobile_tokens
         next unless active_tokens.exists?
 
         active_tokens.pluck(:mobile_push_token)
       end
       tokens.flatten.compact
+    end
+
+    def users_emails(users)
+      users.compact.map do |ru|
+        next if ru.android?
+        ru.email
+      end
     end
 
     # Creado para aprovechar el eager loading
