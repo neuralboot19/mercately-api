@@ -3,8 +3,32 @@
     <h1 class="d-inline container-payment-plan_header-title"><%= t('retailer.profile.payment_plans.index.title') %></h1>
     <p class="container-payment-plan_sub"><%= t('retailer.profile.payment_plans.index.title') %></p>
   </div>
-  <% if @payment_plan.is_active? %>
-    <div class="row ml-0">
+  <div class="row ml-0">
+    <% if !@payment_plan.is_active? || @payment_plan.charge_attempt.positive? %>
+      <div class="col-12 pl-0">
+        <div class="alert alert-danger c-white br-16 <%= @payment_plan.is_active? ? 'bc-warning' : 'bc-danger' %>" role="alert">
+          <div class="row m-0 align-items-center">
+            <div class="col-sm-10 p-0">
+              <%= image_tag 'alert.png' %>
+              <span class="ml-8">
+                <% if @payment_plan.is_active? %>
+                  <%= t('retailer.profile.payment_plans.index.unpaid_plan') %>
+                <% else %>
+                  <%= t('retailer.profile.payment_plans.index.inactive_plan') %>
+                <% end %>
+              </span>
+            </div>
+            <div class="col-sm-2 p-0 text-center text-sm-right">
+              <%= link_to @payment_plan.is_active? ? t('retailer.profile.payment_plans.index.pay') : t('retailer.profile.payment_plans.index.retry'),
+                retailers_payment_plan_charge_path(current_retailer),
+                method: :post,
+                class: "#{@payment_plan.is_active? ? 'btn-white-warning' : 'btn-white-danger'} my-8 d-inline-block" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <% if @payment_plan.is_active? %>
       <div class="col-12 col-md-3 pl-0 menu-mobile">
         <div class="container-payment-plan_card py-20 px-30 nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
           <div class="menu-item nav-link active mb-5" id="v-pills-information-tab" data-toggle="pill" href="#v-pills-information" role="tab" aria-controls="v-pills-information" aria-selected="true">
@@ -309,27 +333,7 @@
           </div>
         </div>
       </div>
-    </div>
-  <% else %>
-    <div class="row ml-0">
-      <div class="col-12 pl-0">
-        <div class="alert alert-danger c-white br-16 bc-danger" role="alert">
-          <div class="row m-0 align-items-center">
-            <div class="col-sm-10 p-0">
-              <%= image_tag 'alert.png' %>
-              <span class="ml-8">
-                <%= t('retailer.profile.payment_plans.index.inactive_plan') %>
-              </span>
-            </div>
-            <div class="col-sm-2 p-0 text-center text-sm-right">
-              <%= link_to t('retailer.profile.payment_plans.index.retry'),
-                retailers_payment_plan_charge_path(current_retailer),
-                method: :post,
-                class: 'btn-white-danger my-8 d-inline-block' %>
-            </div>
-          </div>
-        </div>
-      </div>
+    <% else %>
       <div class="col-12 pl-0">
         <div class="container-payment-plan_card py-20 px-30 mb-16">
           <div class="row ml-0">
@@ -375,8 +379,8 @@
           <% end %>
         </div>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
 
   <%= render partial: 'cancel_plan_modal' %>
   <%= render partial: 'add_card_modal' %>

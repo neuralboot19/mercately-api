@@ -629,7 +629,9 @@ es:
       payment_plans:
         index:
           retry: Reactivar
+          pay: Pagar
           inactive_plan: Tu plan ha sido desactivado, actualiza tu tarjeta y pulsa en el botón para reactivarlo.
+          unpaid_plan: No fue posible cobrar tu plan, actualiza tu tarjeta y pulsa en el botón para pagarlo.
           title: Planes de pago
           subtitle: Planes de pago
           information: Información
