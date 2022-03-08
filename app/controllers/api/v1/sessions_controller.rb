@@ -44,6 +44,7 @@ module Api::V1
       end
 
       def valid_push_token
+        return if create_params[:mobile_type] == 'ios'
         return render_unauthorized unless create_params[:mobile_push_token].present?
       end
 

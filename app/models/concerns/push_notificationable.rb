@@ -77,10 +77,11 @@ module PushNotificationable
     end
 
     def users_emails(users)
-      users.compact.map do |ru|
+      emails = users.compact.map do |ru|
         next if ru.android?
         ru.email
       end
+      emails.flatten.compact
     end
 
     # Creado para aprovechar el eager loading
