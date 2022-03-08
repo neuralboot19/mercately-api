@@ -1535,3 +1535,231 @@ hr.chat_separator {
     }
   }
 }
+
+.blue-button {
+  background-color: #3CAAE1;
+  color: #fff !important;
+  display: inline-block;
+  border-radius: 12px;
+  padding: 12px 22px;
+  box-shadow: none;
+  border: 0;
+}
+
+.white-button {
+  background-color: #FFF;
+  color: #000 !important;
+  display: inline-block;
+  border-radius: 12px;
+  padding: 12px 22px;
+  box-shadow: none;
+  border: 0;
+}
+
+.search-input {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 12px 22px;
+  display: inline-block;
+
+  img {
+    margin-right: 8px;
+  }
+
+  input {
+    border: 0;
+    width: 165px;
+
+    @media screen and (min-width: 768px) {
+      max-width: 400px;
+      min-width: 300px;
+    }
+  }
+}
+
+.container-fluid-no-padding {
+  .row {
+    margin-right: 0;
+    margin-left: 0;
+
+    > .col,
+    > [class*="col-"] {
+      padding-right: 0;
+      padding-left: 0;
+    }
+  }
+}
+
+.edit-icon {
+  width: 15px;
+  transform: translateY(-2px);
+}
+
+.custom-modal-styles {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  height: 80vh;
+  border-radius: 12px;
+  width: 90%;
+  @media screen and (min-width: 768px) {
+    width: 50%;
+  }
+}
+
+/*******************************
+ * MODAL AS LEFT/RIGHT SIDEBAR
+ * Add "left" or "right" in modal parent div, after class="modal".
+ *******************************/
+.modal.left, .modal.right {
+  overflow: visible;
+}
+
+.modal.left .modal-dialog,
+.modal.right .modal-dialog {
+  position: fixed;
+  margin: auto;
+  width: 450px;
+  height: 100%;
+  -webkit-transform: translate3d(0%, 0, 0);
+  -ms-transform: translate3d(0%, 0, 0);
+  -o-transform: translate3d(0%, 0, 0);
+  transform: translate3d(0%, 0, 0);
+}
+
+.modal.left .modal-content,
+.modal.right .modal-content {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.modal.left .modal-body,
+.modal.right .modal-body {
+  padding: 15px 32px 80px 32px;
+}
+
+/*Left*/
+.modal.left.fade .modal-dialog{
+  left: -320px;
+  -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+  transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.modal.left.fade.show .modal-dialog{
+  left: 0;
+}
+
+/*Right*/
+.modal.right.fade .modal-dialog {
+  top: 0;
+  right: -320px;
+  -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+  -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+  -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+  transition: opacity 0.3s linear, right 0.3s ease-out;
+}
+
+.modal.right.fade.show .modal-dialog {
+  right: 0;
+}
+
+/* ----- MODAL STYLE ----- */
+.modal-content {
+  border-radius: 0;
+  border: none;
+}
+
+.modal-header {
+  border-bottom-color: #EEEEEE;
+  background-color: #FAFAFA;
+}
+
+.not-border-bottom {
+  border-bottom: transparent !important;
+}
+
+.funnels-modal-title {
+  font-family: 'Poppins-Bold';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 36px;
+  color: #3C4348;
+}
+
+.status {
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 12px;
+  display: inline;
+
+  &--success {
+    @extend .status;
+    color: #7BD6A2;
+    background: #EBF7FC;
+  }
+
+  &--warning {
+    @extend .status;
+    color: #FCB86A;
+    background: #FDF5EC;
+  }
+
+  &--danger {
+    @extend .status;
+    color: #f00;
+    background: #EB686D;
+  }
+}
+
+@media screen and (min-width: 540px) {
+  .w-sm-auto {
+    width: auto !important;
+  }
+}
+
+.funnles {
+  .search-funnels-input {
+    font-family: 'Poppins-Regular';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 24px;
+  }
+}
+
+.funnel-filters {
+  .form-label {
+    font-family: 'Poppins-SemiBold';
+    font-size: 14px;
+    line-height: 21px;
+    font-style: normal;
+    font-weight: 600;
+  }
+  .filter-funnel-input {
+    font-family: 'Poppins-Regular';
+    font-weight: 400;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 24px;
+  }
+  .clear-filters {
+    font-weight: 500;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 21px;
+    color: #3CAAE1;
+  }
+  .clear-filters:hover {
+    color: #3CAAE1;
+    font-weight: 900;
+  }
+  .select-input {
+    font-family: 'Poppins-Regular';
+  }
+}

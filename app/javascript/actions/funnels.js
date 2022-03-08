@@ -5,8 +5,13 @@ import {
 } from "../actionTypes";
 
 /* Customers */
-export const fetchFunnelSteps = () => {
-  const endpoint = `/api/v1/funnels`;
+export const fetchFunnelSteps = (params) => {
+  let endpoint = `/api/v1/funnels?`;
+
+  if (params) {
+    const queryString = new URLSearchParams(params).toString();
+    endpoint += queryString;
+  }
 
   return (dispatch) => {
     fetch(endpoint, {
@@ -193,8 +198,14 @@ export const deleteDeal = (dealId, column) => {
   };
 };
 
-export const loadMoreDeals = (column, page, offset = 0) => {
-  const endpoint = `/api/v1/deals?page=${page}&column_id=${column}&offset=${offset}`;
+export const loadMoreDeals = (column, page, offset = 0, params) => {
+  let endpoint = `/api/v1/deals?page=${page}&column_id=${column}&offset=${offset}`;
+
+  if (params) {
+    const queryString = new URLSearchParams(params).toString();
+    endpoint += `&${queryString}`;
+  }
+
   const head = {
     method: "GET",
     credentials: "same-origin",

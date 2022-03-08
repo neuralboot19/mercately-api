@@ -220,6 +220,7 @@ Rails.application.routes.draw do
         collection do
           get 'current_retailer_user', to: 'retailer_users#loged_retailer_user'
           get 'actives', to: 'retailer_users#retailer_users_actives'
+          get 'by_role', to: 'retailer_users#retailer_users_by_role'
         end
       end
       resources :customers, only: [:index, :show, :update] do
