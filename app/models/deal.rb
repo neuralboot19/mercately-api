@@ -16,6 +16,20 @@ class Deal < ApplicationRecord
   after_destroy :validate_customer_deals
   after_destroy :reposition_deals!
 
+  scope :by_search_text, -> (value) {
+    left_joins(:customer)
+    .where("name ILIKE :search OR first_name ILIKE :search OR last_name ILIKE :search OR email ILIKE :search OR phone ILIKE :search",
+    search: "%#{value}%")
+  }
+
+  scope :filter_by_agent, -> (retailer_user) {
+    if retailer_user.admin? || retailer_user.supervisor?
+      all
+    else
+      where(retailer_user_id: retailer_user)
+    end
+  }
+
   attr_accessor :previous_position
   attr_accessor :previous_funnel_step_id
 

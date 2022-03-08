@@ -40,7 +40,9 @@ class Api::V1::DealsController < Api::ApiController
       # TODO: SET SERIALIZER
       deals = {}
 
-      column.deals.page(params[:page]).offset(false).offset(params[:offset]).each do |deal|
+      column.deals
+      .by_search_text(params[:searchText])
+      .page(params[:page]).offset(false).offset(params[:offset]).each do |deal|
         # TODO: FIND A BETTER WAY TO DO THIS
         deals[deal.web_id] = {
           id: deal.web_id,

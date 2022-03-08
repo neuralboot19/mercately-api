@@ -26,7 +26,7 @@ const initialState = {
   customerFields: [],
   customFields: [],
   loadingMoreCustomers: false,
-  funnelSteps: [],
+  funnelSteps: {},
   orders: [],
   customerNotes: [],
   totalOrders: 0,

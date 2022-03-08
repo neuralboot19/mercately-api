@@ -12,7 +12,12 @@ const ColumnInnerList = ({
   deleteDeal,
   loadMoreDeals
 }) => {
-  const deals = column.dealIds.map((dealId) => dealMap[dealId]);
+  let deals = column.dealIds.map((dealId) => dealMap[dealId]);
+
+  deals = deals.filter(element => {
+    return element !== undefined;
+  });
+
   return (
     <Column
       column={column}

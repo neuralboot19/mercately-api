@@ -21,14 +21,24 @@ RSpec.describe 'Api::V1::FunnelsController', type: :request do
       let!(:funnel) { create(:funnel, retailer: retailer) }
       let!(:f_step_1) { create(:funnel_step, funnel: funnel) }
       let!(:f_step_2) { create(:funnel_step, funnel: funnel) }
-      let!(:deal_1) { create(:deal, name: 'Negocio 1', funnel_step: f_step_1, retailer: retailer, retailer_user_id: retailer_user.id) }
+      let!(:deal_1) { create(:deal, name: 'Primera face', funnel_step: f_step_1, retailer: retailer, retailer_user_id: retailer_user.id) }
+      let!(:deal_2) { create(:deal, name: 'Negocio 2', funnel_step: f_step_1, retailer: retailer, retailer_user_id: retailer_user.id) }
       let!(:deal_2) { create(:deal, name: 'Negocio 2', funnel_step: f_step_1, retailer: retailer, retailer_user_id: retailer_user.id) }
 
       it 'returns funnel information' do
-        get api_v1_funnels_path
+        get api_v1_funnels_path, params: { searchText: '' }
         body = JSON.parse(response.body)
         expect(body["funnelSteps"].keys).to eq(["deals", "columns", "columnOrder"])
         expect(body['funnelSteps']['deals'].keys).to eq(funnel.funnel_steps.first.deals.pluck(:web_id))
+        expect(body['funnelSteps']['columns'].keys).to eq(funnel.funnel_steps.pluck(:web_id))
+        expect(body['funnelSteps']['columnOrder']).to eq(funnel.funnel_steps.pluck(:web_id))
+      end
+
+      it 'returns funnel information with deals filtered by searchText' do
+        get api_v1_funnels_path, params: { searchText: 'primer' }
+        body = JSON.parse(response.body)
+        expect(body["funnelSteps"].keys).to eq(["deals", "columns", "columnOrder"])
+        expect(body['funnelSteps']['deals'].keys).to eq([deal_1.web_id])
         expect(body['funnelSteps']['columns'].keys).to eq(funnel.funnel_steps.pluck(:web_id))
         expect(body['funnelSteps']['columnOrder']).to eq(funnel.funnel_steps.pluck(:web_id))
       end

@@ -7,7 +7,6 @@ import { withRouter } from "react-router-dom";
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 import ColumnInnerList from "./ColumnInnerList";
-import EditIcon from 'images/edit.svg';
 
 import {
   fetchFunnelSteps,
@@ -49,7 +48,7 @@ class Funnel extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchFunnelSteps();
+    this.props.fetchFunnelSteps(this.props.searchFunnelsParams);
     this.props.fetchCurrentRetailerUser();
   }
 
@@ -72,12 +71,17 @@ class Funnel extends React.Component {
         deal_id: this.state.itemDraggableId,
         position: this.state.dealPosition
       });
-      this.setState(
-        () => ({
-          itemDroppableId: null,
-          itemDraggableId: null
-        })
-      );
+
+      setTimeout(() => {
+        this.props.fetchFunnelSteps(this.props.searchFunnelsParams);
+
+        this.setState(
+          () => ({
+            itemDroppableId: null,
+            itemDraggableId: null
+          })
+        );
+      }, 200);
     }
 
     if (this.props.fetchingFunnels && !_.isEqual(prevState.funnelSteps, this.props.funnelSteps)) {
@@ -268,8 +272,8 @@ function mapStateToProps({  mainReducer: state }) {
 
 function mapDispatch(dispatch) {
   return {
-    fetchFunnelSteps: () => {
-      dispatch(fetchFunnelSteps());
+    fetchFunnelSteps: (params) => {
+      dispatch(fetchFunnelSteps(params));
     },
     fetchCurrentRetailerUser: () => {
       dispatch(fetchCurrentRetailerUser());
@@ -283,8 +287,8 @@ function mapDispatch(dispatch) {
     updateFunnelStep: (body) => {
       dispatch(updateFunnelStep(body));
     },
-    loadMoreDeals: (column, page = 1, offset) => {
-      dispatch(loadMoreDeals(column, page, offset));
+    loadMoreDeals: (column, page = 1, offset, searchParams = {}) => {
+      dispatch(loadMoreDeals(column, page, offset, searchParams));
     }
   };
 }

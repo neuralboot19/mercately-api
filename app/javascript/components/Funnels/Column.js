@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from "react";
+import { useSelector } from 'react-redux';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import styled from 'styled-components';
 /* eslint-disable-next-line import/no-unresolved */
@@ -34,12 +35,13 @@ const Column = ({
   deals,
   loadMoreDeals
 }) => {
+  const { searchFunnelsParams } = useSelector((reduxState) => reduxState.funnelsReducer);
+
   const [page, setPage] = useState(1);
   const HandleLoadMoreDeals = () => {
-    loadMoreDeals(column.id, page, column.dealIds.length);
+    loadMoreDeals(column.id, page, column.dealIds.length, searchFunnelsParams);
     setPage(page + 1);
   };
-  // if (column.id === '108blwqt9' && column.total > column.dealIds.length && (column.total > 0 || column.dealIds.length > 0)) debugger;
 
   return (
     <Draggable draggableId={column.id} index={index}>

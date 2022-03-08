@@ -36,7 +36,8 @@ const DealEdit = ({
   toggleEditDeal,
   deal,
   columnWebId,
-  isOpen
+  isOpen,
+  reloadDeals
 }) => {
   const dispatch = useDispatch();
   const dealSuccess = useSelector((reduxState) => reduxState.mainReducer.newDealSuccess) || false;
@@ -108,6 +109,7 @@ const DealEdit = ({
         funnel_step_id: columnWebId
       };
       dispatch(updateFunnelStepDeal(dealBody));
+      reloadDeals();
     } else {
       el.disabled = false;
     }

@@ -38,7 +38,8 @@ const DealCreate = ({
   columnId,
   retailerId,
   columnWebId,
-  isOpen
+  isOpen,
+  reloadDeals
 }) => {
   const dispatch = useDispatch();
   const newDealSuccess = useSelector((reduxState) => reduxState.mainReducer.newDealSuccess) || false;
@@ -111,6 +112,7 @@ const DealCreate = ({
         retailer_id: retailerId
       };
       dispatch(createNewDeal(deal, columnWebId));
+      reloadDeals();
     } else {
       el.disabled = false;
     }

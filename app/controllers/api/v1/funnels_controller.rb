@@ -130,7 +130,8 @@ class Api::V1::FunnelsController < Api::ApiController
 
       @funnel.funnel_steps.each do |f_step|
         #TODO FIND A BETTER WAY TO DO THIS
-        f_step.deals.page(1).each do |deal|
+        deal_rows = deal_list(f_step.deals)
+        deal_rows.page(1).each do |deal|
           deals[deal.web_id] = {
             id: deal.web_id,
             name: deal.name,
@@ -149,17 +150,18 @@ class Api::V1::FunnelsController < Api::ApiController
     def set_columns(funnel_steps)
       columns = {}
       funnel_steps.each do |step|
+        deals = deal_list(step.deals)
         columns[step.web_id] = {
           id: step.web_id.to_s,
           title: step.name,
-          deals: step.deals.page.count,
-          dealIds: step.deals.page(1).pluck(:web_id).map(&:to_s),
+          deals: deals.page.count,
+          dealIds: deals.page(1).pluck(:web_id).map(&:to_s),
           internal_id: step.id,
           r_internal_id: @funnel.retailer_id,
-          total: step.deals.count,
-          pages: (step.deals.count / Deal::PAGINATES_PER) + 1,
+          total: deals.count,
+          pages: (deals.count / Deal::PAGINATES_PER) + 1,
           currency: step.currency_symbol,
-          amount: step.total
+          amount: deals.sum(:amount)
         }
       end
 
@@ -187,5 +189,30 @@ class Api::V1::FunnelsController < Api::ApiController
       params.require(:funnel_step).permit(
         :name
       )
+    end
+
+    def deal_list(deals)
+
+      deals = case params[:agent]
+              when 'all', '', nil
+                deals
+              else
+                deals.where('retailer_user_id = ?', params[:agent])
+              end
+
+      if params[:amount].present? && params[:amount_condition].present?
+        amount =  params[:amount]
+        deals = case params[:amount_condition]
+                when 'eq'
+                  deals.where(amount: amount)
+                when 'lt'
+                  deals.where("amount < ?", amount)
+                else
+                  deals.where("amount > ?", amount)
+                end
+      end
+
+      deals = deals.by_search_text(params[:searchText]) if params[:searchText]
+      deals.filter_by_agent(current_retailer_user)
     end
 end
