@@ -65,6 +65,7 @@ en:
       automations: 'Automations'
       chatbots: 'Chatbots'
       reminders: 'Reminders'
+      autoassigns: 'Autoassigns'
     messaging_configuration:
       messaging_configuration: 'Messaging Configuration'
       canned_responses: 'Canned Responses'

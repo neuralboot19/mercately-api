@@ -19,7 +19,7 @@ module ChatBotHelper
     end
   end
 
-  def action_types_list(classification)
+  def action_types_list(retailer, chat_bot, classification)
     except_actions = case classification
                      when 'default'
                        [:auto_generate_option, :repeat_endpoint_option]
@@ -28,6 +28,9 @@ module ChatBotHelper
                      when 'failed'
                        [:exec_callback, :auto_generate_option]
                      end
+
+    except_actions << :assign_team unless retailer.payment_plan.advanced? &&
+      retailer.team_assignments.where(chat_bot.platform.to_sym => true).active_for_assignments.exists?
 
     ChatBotAction.action_types.except(*except_actions).keys.collect do |a|
       [ChatBotAction.enum_translation(:action_type, a), a]
@@ -46,5 +49,10 @@ module ChatBotHelper
     ChatBot.platforms.except(*exceptions).keys.collect do |pl|
       [ChatBot.enum_translation(:platform, pl), pl]
     end
+  end
+
+  def team_assignment_list(retailer, chat_bot)
+    retailer.team_assignments.where(chat_bot.platform.to_sym => true).active_for_assignments
+      .map { |ta| [ta.name, ta.id] }
   end
 end

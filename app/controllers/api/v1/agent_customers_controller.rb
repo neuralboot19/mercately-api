@@ -13,6 +13,7 @@ class Api::V1::AgentCustomersController < Api::ApiController
 
       # Y se asigna el nuevo agente
       @agent_customer.retailer_user_id = assign_agent_params[:retailer_user_id]
+      @agent_customer.team_assignment_id = nil
     end
 
     # Si no hay problemas al guardar

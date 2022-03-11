@@ -135,7 +135,7 @@ class Retailers::CustomersController < RetailersController
         if param[:agent_customer_attributes][:id].present?
           if param[:agent_customer_attributes][:retailer_user_id].blank?
             param[:agent_customer_attributes][:_destroy] = true
-          elsif param[:agent_customer_attributes][:retailer_user_id] != @customer.agent_customer.retailer_user_id
+          elsif param[:agent_customer_attributes][:retailer_user_id].to_i != @customer.agent_customer.retailer_user_id
             param[:agent_customer_attributes][:team_assignment_id] = nil
           end
         end

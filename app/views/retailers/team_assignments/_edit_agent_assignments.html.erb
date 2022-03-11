@@ -1,0 +1,26 @@
+<%= form_for([:retailers, agent], url: update_assignments_retailers_agent_team_path(current_retailer, agent), local: true, html: { class: 'validate-form p-0 col-xs-12', method: :put }) do |f| %>
+  <div class="box">
+    <fieldset class="fieldset mt-16">
+      <div id="agent_teams" class="w-100">
+        <%= f.fields_for :agent_teams do |at| %>
+          <div class="col-xs-12 col-md-12 mb-8 my-16">
+            <%= render 'retailers/team_assignments/agent_agent_teams_fields', f: at %>
+          </div>
+        <% end %>
+      </div>
+      <div class="btn-box col-xs-12 mb-12 t-center">
+        <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+      </div>
+    </fieldset>
+  </div>
+<% end %>
+
+<script charset="utf-8">
+  <% if @team_assignment&.errors&.any? %>
+    <% @team_assignment.errors.each do |attribute, message| %>
+      showtoast("<%= message %>")
+    <% end %>
+  <% end %>
+</script>
+
+<script src="<%= asset_path 'retailers/team_assignments/team_assignments.js' %>" charset="utf-8"></script>

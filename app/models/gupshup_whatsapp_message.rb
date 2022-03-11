@@ -40,6 +40,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   after_save :apply_cost
   after_save :update_reminder
   after_save :notify_error_to_slack, if: :saved_change_to_status?
+  after_create :assign_agent, unless: :note
 
   def type
     message_payload.try(:[], 'payload').try(:[], 'type') || message_payload['type']

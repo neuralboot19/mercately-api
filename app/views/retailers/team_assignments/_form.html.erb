@@ -1,53 +1,83 @@
-<div class="box">
-  <div class="row">
-    <%= form_for([:retailers, @team_assignment], url: @team_assignment.new_record? ? retailers_team_assignments_path(current_retailer, @team_assignment) : retailers_team_assignment_path(current_retailer, @team_assignment), local: true, html: { class: 'validate-form p-0 col-xs-12' }) do |f| %>
-      <div class="box">
-        <fieldset class="col-xs-12 fieldset mt-16 row">
-          <legend>Información del Equipo</legend>
-          <div class="row w-100">
-            <div class="col-xs-12 col-md-12 mb-8 my-16">
-              <%= f.label :name, 'Nombre' %><br/>
-              <%= f.text_field :name, class: 'input validate-required' %>
-              <i class="validation-msg"></i>
-            </div>
-          </div>
-          <div class="row w-100">
-            <div class="col-xs-12 col-md-6 mb-8 my-16">
-              <%= f.label :active_assignment, 'Activar asignación para el equipo?' %><br/>
-              <%= f.check_box :active_assignment %>
-            </div>
-            <div class="col-xs-12 col-md-6 mb-8 my-16">
-              <%= f.label :default_assignment, 'Asignar por defecto a este equipo?' %><br/>
-              <%= f.check_box :default_assignment %>
-            </div>
-          </div>
-          <fieldset class="fieldset mt-20 w-100">
-            <legend>Miembros del Equipo</legend>
-            <div id="validate-unique-error" class="d-none">
-              <i class="validation-msg">Los agentes pueden ser agregados sólo una vez por equipo</i><br />
-            </div>
-            <div id="agent_teams" class="w-100">
-              <%= f.fields_for :agent_teams do |at| %>
-                <%= render "agent_teams_fields", f: at %>
-              <% end %>
-              <div id="agent-teams-container">
-              </div>
-              <div class="my-20">
-                <%= link_to_add_association f, :agent_teams, partial: 'new_agent_teams_fields', id: 'add_agent_teams', class: 'btn btn--cta' do %>
-                  <i class="fas fa-plus mr-5"></i>
-                  Añadir miembro
-                <% end %>
-              </div>
-            </div>
-          </fieldset>
-          <div class="btn-box col-xs-12">
-            <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
-          </div>
-        </fieldset>
+<%= form_for([:retailers, team_assignment], url: team_assignment.new_record? ? retailers_team_assignments_path(current_retailer, @team_assignment) : retailers_team_assignment_path(current_retailer, team_assignment), local: true, html: { class: 'validate-form p-0 col-xs-12' }) do |f| %>
+  <div class="box">
+    <fieldset class="fieldset mt-16">
+      <div class="row w-100">
+        <div class="col-xs-12 col-md-12 mb-8 my-16">
+          <%= f.label :name, 'Nombre' %><br/>
+          <%= f.text_field :name, class: 'input validate-required w-100' %>
+          <i class="validation-msg"></i>
+        </div>
       </div>
-    <% end %>
+      <div class="row w-100">
+        <div class="col-xs-12 col-12 mb-8 my-16">
+          <%= f.label :active_assignment, for: nil, class: 'switch' do %>
+            <%= f.check_box :active_assignment, id: nil %>
+            <span class="slider round" />
+          <% end %>
+          ¿Activar asignación para el equipo?
+          <br />
+        </div>
+        <div class="col-xs-12 col-12 mb-8 my-16">
+          <%= f.label :default_assignment, for: nil, class: 'switch' do %>
+            <%= f.check_box :default_assignment, id: nil %>
+            <span class="slider round" />
+          <% end %>
+          ¿Asignar por defecto a este equipo?
+          <br />
+        </div>
+      </div>
+      <div class="row w-100">
+        <div class="col-xs-12 col-md-12 mb-8 my-16">
+          <label>
+            Plataformas:
+          </label>
+          <br />
+          <% if current_retailer.karix_integrated? || current_retailer.gupshup_integrated? %>
+            <%= f.label :whatsapp, for: nil do %>
+              <%= f.check_box :whatsapp, class: 'validate-any-required d-none', id: nil %>
+              <div class="selected-platform t-center">
+                <%= image_tag 'dashboard/blue-check.png', class: 'selected-platform-check' %>
+                <%= image_tag 'dashboard/wa_icon.png' %>
+                <br />
+                WhatsApp
+              </div>
+            <% end %>
+          <% end %>
+          <% if current_retailer.facebook_integrated? %>
+            <%= f.label :messenger, for: nil do %>
+              <%= f.check_box :messenger, class: 'validate-any-required d-none', id: nil %>
+              <div class="selected-platform t-center">
+                <%= image_tag 'dashboard/blue-check.png', class: 'selected-platform-check' %>
+                <%= image_tag 'dashboard/msg_icon.png' %>
+                <br />
+                Messenger
+              </div>
+            <% end %>
+          <% end %>
+          <% if current_retailer.instagram_integrated? %>
+            <%= f.label :instagram, for: nil do %>
+              <%= f.check_box :instagram, class: 'validate-any-required d-none', id: nil %>
+              <div class="selected-platform t-center">
+                <%= image_tag 'dashboard/blue-check.png', class: 'selected-platform-check' %>
+                <%= image_tag 'dashboard/ig_icon.png' %>
+                <br />
+                Instagram
+              </div>
+            <% end %>
+          <% end %>
+          <br />
+          <i class="validation-msg"></i>
+          <div class="validate-any-error" style="display: none;">
+            <i class="validation-msg">Debes seleccionar al menos una plataforma</i><br />
+          </div>
+        </div>
+      </div>
+      <div class="btn-box col-xs-12 mb-12 t-center">
+        <%= f.submit 'Guardar', class: 'blue-button', data: { disable_with: false } %>
+      </div>
+    </fieldset>
   </div>
-</div>
+<% end %>
 
 <script charset="utf-8">
   <% if @team_assignment&.errors&.any? %>

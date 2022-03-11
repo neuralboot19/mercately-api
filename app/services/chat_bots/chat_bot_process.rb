@@ -237,6 +237,8 @@ module ChatBots
           repeat_option
         when 'jump_to_option'
           jump_to_chat_bot_option(act)
+        when 'assign_team'
+          assign_customer_team(act)
         end
       end
     end
@@ -432,6 +434,13 @@ module ChatBots
       @sent_in_action = true
       @origin_instance.send_answer(jump_option, @concat_answer_type, false, false, false, option)
       @origin_instance.send_additional_answers(jump_option)
+    end
+
+    # Asigna un equipo al customer/chat
+    def assign_customer_team(action)
+      return unless action.team_assignment.present?
+
+      action.team_assignment.assign_agent(@customer)
     end
 
     # En caso de que el bot tenga reactivacion, calcula si ya paso el tiempo desde la ultima vez

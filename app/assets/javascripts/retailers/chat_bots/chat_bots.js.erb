@@ -222,19 +222,19 @@ function showActionSelection(input) {
   switch (value) {
     case 'add_tag':
       $(input).addClass('validate-unique');
-      hideId = `#${id}_target_field, #${id}_retailer_user_id, #${id}_exit_message, #${id}_jump_option_id`;
+      hideId = `#${id}_target_field, #${id}_retailer_user_id, #${id}_exit_message, #${id}_jump_option_id, #${id}_team_assignment_id`;
       showId = id + "_tag_ids";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'assign_agent':
       $(input).addClass('validate-unique');
-      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_exit_message, #${id}_jump_option_id`;
+      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_exit_message, #${id}_jump_option_id, #${id}_team_assignment_id`;
       showId = id + "_retailer_user_id";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'get_out_bot':
       $(input).addClass('validate-unique');
-      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_retailer_user_id, #${id}_jump_option_id`;
+      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_retailer_user_id, #${id}_jump_option_id, #${id}_team_assignment_id`;
       showId = id + "_exit_message";
       showHideSelectFields(value, hideId, showId);
       break;
@@ -248,13 +248,13 @@ function showActionSelection(input) {
       break;
     case 'save_on_db':
       $(input).addClass('validate-unique');
-      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_exit_message, #${id}_jump_option_id`;
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_exit_message, #${id}_jump_option_id, #${id}_team_assignment_id`;
       showId = id + "_target_field";
       showHideSelectFields(value, hideId, showId);
       break;
     case 'exec_callback':
       $(input).addClass('validate-unique');
-      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message, #${id}_jump_option_id`;
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message, #${id}_jump_option_id, #${id}_team_assignment_id`;
       showId = "webhook-action-container";
       setGlobalWebhookId(id);
       showHideSelectFields(value, hideId, showId, id);
@@ -269,10 +269,16 @@ function showActionSelection(input) {
       break;
     case 'jump_to_option':
       $(input).removeClass('validate-unique');
-      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message`;
+      hideId = `#${id}_tag_ids, #${id}_retailer_user_id, #${id}_target_field, #${id}_exit_message, #${id}_team_assignment_id`;
       const enableId = id + '_jump_option_id';
       showHideJumpOption(hideId, enableId);
       root.find('.show-on-jump-to-option').show();
+      break;
+    case 'assign_team':
+      $(input).addClass('validate-unique');
+      hideId = `#${id}_tag_ids, #${id}_target_field, #${id}_exit_message, #${id}_jump_option_id, #${id}_retailer_user_id`;
+      showId = id + "_team_assignment_id";
+      showHideSelectFields(value, hideId, showId);
       break;
   }
 }

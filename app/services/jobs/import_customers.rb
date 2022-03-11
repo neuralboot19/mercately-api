@@ -50,7 +50,8 @@ module Jobs
       agent = retailer.retailer_users.find_by(email: email)
       return unless agent.present?
 
-      assigned = AgentCustomer.find_or_create_by(customer: customer)
+      assigned = AgentCustomer.find_or_initialize_by(customer: customer)
+      assigned.team_assignment_id = nil if assigned.retailer_user_id != agent.id
       assigned.retailer_user = agent
       assigned.save
     end

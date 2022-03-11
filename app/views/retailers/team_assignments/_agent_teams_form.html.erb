@@ -1,0 +1,38 @@
+<%= form_for([:retailers, @agent_team], url: retailers_agent_teams_path(current_retailer), local: true, html: { class: 'validate-form p-0 col-xs-12' }) do |f| %>
+  <div class="box">
+    <fieldset class="fieldset mt-16">
+      <div class="my-16 bottom-xs">
+        <div class="row">
+          <div class="col-xs-12 col-sm-6 mb-12">
+            <label class="m-0">Agente</label>
+            <%= f.select :retailer_user_id, current_retailer.retailer_users.map { |t| [(t.full_name.presence || t.email), t.id] }, { include_blank: false }, class: 'input validate-unique' %>
+          </div>
+          <div class="col-xs-12 col-sm-6 mb-12">
+            <label class="m-0">Equipo</label>
+            <%= f.select :team_assignment_id, current_retailer.team_assignments.map { |t| [t.name, t.id] }, { include_blank: false }, class: 'input validate-unique' %>
+          </div>
+          <div class="col-xs-12 col-sm-6 mb-12">
+            <%= f.label :max_assignments, 'Asignaciones máximas', class: 'm-0' %>
+            <%= f.text_field :max_assignments, class: 'input validate-required', onkeypress: 'onlyNumber(event)' %>
+            <i class="validation-msg">&nbsp;</i>
+          </div>
+          <div class="col-xs-12 col-sm-6 mb-12">
+            <%= f.check_box :active, class: 'm-0' %>
+            <%= f.label :active, '¿Agente activo?' %>
+          </div>
+        </div>
+        <div class="btn-box col-xs-12 mt-12 t-center">
+          <%= f.submit 'Guardar', class: 'btn-btn btn-submit', data: { disable_with: false } %>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+<% end %>
+
+<script charset="utf-8">
+  <% if @agent_team&.errors&.any? %>
+    <% @agent_team.errors.each do |attribute, message| %>
+      showtoast("<%= message %>")
+    <% end %>
+  <% end %>
+</script>

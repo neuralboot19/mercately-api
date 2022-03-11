@@ -27,6 +27,7 @@ class KarixWhatsappMessage < ApplicationRecord
   scope :outbound_messages, -> { where(direction: 'outbound') }
 
   after_save :apply_cost
+  after_create :assign_agent
 
   def message_info
     return 'Archivo' if content_media_type == 'document'

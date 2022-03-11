@@ -90,6 +90,8 @@ module Whatsapp::Gupshup::V1::Helpers
       customer,
       removed_agent = args
 
+      customer&.reload
+
       if @msg.is_a?(ActiveRecord::AssociationRelation)
         customer ||= @msg.first.customer
         message = @msg.first

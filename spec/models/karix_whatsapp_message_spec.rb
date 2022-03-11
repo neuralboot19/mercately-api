@@ -346,7 +346,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
 
   describe '#assign_agent' do
     context 'when the retailer has assignment teams permission' do
-      let(:retailer) { create(:retailer, :karix_integrated, :with_team_assignment) }
+      let(:retailer) { create(:retailer, :karix_integrated) }
       let(:retailer_user) { create(:retailer_user, retailer: retailer) }
       let(:another_retailer_user) { create(:retailer_user, retailer: retailer) }
       let(:customer) { create(:customer, retailer: retailer) }
@@ -383,34 +383,15 @@ RSpec.describe KarixWhatsappMessage, type: :model do
         end
 
         context 'when the retailer does not have a default team assignment activated' do
-          let!(:default_team) { create(:team_assignment, retailer: retailer, active_assignment: false) }
+          let!(:default_team) { create(:team_assignment, retailer: retailer, active_assignment: false, whatsapp: true) }
 
           it 'returns nil' do
             expect(message.send(:assign_agent)).to be_nil
           end
         end
 
-        context 'when there is not any agent with free spots to assign' do
-          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
-          let!(:agent_team1) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
-              max_assignments: 2, assigned_amount: 2)
-          end
-
-          let!(:agent_team2) do
-            create(:agent_team, :activated, team_assignment: default_team, retailer_user: another_retailer_user,
-              max_assignments: 4, assigned_amount: 4)
-          end
-
-          it 'does not assign an agent to the customer' do
-            expect {
-              create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
-            }.to change(AgentCustomer, :count).by(0)
-          end
-        end
-
         context 'when there is at least one agent with free spots to assign' do
-          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer, whatsapp: true) }
           let!(:agent_team1) do
             create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
               max_assignments: 2, assigned_amount: 2)
@@ -422,6 +403,8 @@ RSpec.describe KarixWhatsappMessage, type: :model do
           end
 
           it 'assigns an agent to the customer' do
+            retailer.payment_plan.update(plan: :advanced)
+
             expect {
               create(:karix_whatsapp_message, :inbound, customer: customer, retailer: retailer)
             }.to change(AgentCustomer, :count).by(1)
@@ -429,7 +412,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
         end
 
         context 'when there is more than one agent with free spots to assign' do
-          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer, whatsapp: true) }
           let(:agent_team1) do
             create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
               max_assignments: 2, assigned_amount: 0)
@@ -441,6 +424,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
           end
 
           it 'assigns the agent with less assignments to the customer and so on' do
+            retailer.payment_plan.update(plan: :advanced)
             agent_team1
             agent_team2
 
@@ -500,7 +484,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
         end
 
         context 'when the message is not the first one sent to the customer' do
-          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer, whatsapp: true) }
           let!(:agent_team) do
             create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
               max_assignments: 2, assigned_amount: 0)
@@ -520,8 +504,8 @@ RSpec.describe KarixWhatsappMessage, type: :model do
           end
         end
 
-        context 'when the message is the first one sent to the customer' do
-          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer) }
+        context 'when the customer is resolved' do
+          let(:default_team) { create(:team_assignment, :assigned_default, retailer: retailer, whatsapp: true) }
           let!(:agent_team) do
             create(:agent_team, :activated, team_assignment: default_team, retailer_user: retailer_user,
               max_assignments: 2, assigned_amount: 1)
@@ -534,8 +518,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
           it 'decreases by one the assigned amount of the agent team' do
             expect(agent_team.assigned_amount).to eq(1)
 
-            create(:karix_whatsapp_message, :outbound, customer: customer, retailer: retailer, retailer_user:
-              retailer_user)
+            customer.resolved!
 
             expect(agent_team.reload.assigned_amount).to eq(0)
           end
@@ -621,6 +604,40 @@ RSpec.describe KarixWhatsappMessage, type: :model do
       expect(message.sender_first_name).to eq(retailer_user.first_name)
       expect(message.sender_last_name).to eq(retailer_user.last_name)
       expect(message.sender_email).to eq(retailer_user.email)
+    end
+  end
+
+  describe '#insert_on_agent_queue' do
+    let(:retailer) { create(:retailer, :karix_integrated) }
+    let(:team_assignment) { create(:team_assignment, :assigned_default, retailer: retailer, whatsapp: true) }
+    let(:agent1) { create(:retailer_user, retailer: retailer) }
+    let(:agent2) { create(:retailer_user, retailer: retailer) }
+    let(:agent3) { create(:retailer_user, retailer: retailer) }
+    let(:agent_team1) { create(:agent_team, team_assignment: team_assignment, retailer_user: agent1) }
+    let(:agent_team2) { create(:agent_team, team_assignment: team_assignment, retailer_user: agent2) }
+    let(:agent_team3) { create(:agent_team, team_assignment: team_assignment, retailer_user: agent3) }
+    let(:customer1) { create(:customer, retailer: retailer) }
+    let(:customer2) { create(:customer, retailer: retailer) }
+    let(:customer3) { create(:customer, retailer: retailer) }
+    let(:message1) { build(:karix_whatsapp_message, :inbound, retailer: retailer, customer: customer1) }
+    let(:message2) { build(:karix_whatsapp_message, :inbound, retailer: retailer, customer: customer2) }
+    let(:message3) { build(:karix_whatsapp_message, :inbound, retailer: retailer, customer: customer3) }
+
+    it 'assigns one chat to every agent team' do
+      retailer.payment_plan.update(plan: :advanced)
+      agent_team1
+      agent_team2
+      agent_team3
+
+      arr = [message1, message2, message3]
+      Parallel.each(arr, in_threads: 3) do |msg|
+        msg.save
+      end
+
+      expect(agent_team1.reload.assigned_amount).to eq(1)
+      expect(agent_team2.reload.assigned_amount).to eq(1)
+      expect(agent_team3.reload.assigned_amount).to eq(1)
+      expect(team_assignment.reload.last_assigned).to eq(agent_team3.id)
     end
   end
 end

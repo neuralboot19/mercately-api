@@ -87,6 +87,7 @@ es:
           auto_generate_option: Generar opción hija dinámica
           repeat_endpoint_option: Reenviar opción
           jump_to_option: Saltar a una opción
+          assign_team: Asignar Equipo
         action_events:
           post: POST
           get: GET
@@ -485,6 +486,7 @@ es:
       automations: 'Automatizaciones'
       chatbots: 'Chatbots'
       reminders: 'Recordatorios'
+      autoassigns: 'Autoasignaciones'
     messaging_configuration:
       messaging_configuration: 'Configuración de mensajería'
       canned_responses: 'Respuestas Rápidas'
@@ -508,7 +510,7 @@ es:
     statistics:
       messenger_service: 'Mensajería'
       description: Estadísticas de ventas, mensajería y otros
-      text_show_stats: Tu plan actual (básico) no incluye este módulo. Actualiza tu plan y obten todas las estadísticas de tu negocio.
+      text_show_stats: Tu plan actual (básico) no incluye este módulo. Actualiza tu plan y obtén todas las estadísticas de tu negocio.
       card:
         messages: Mensajes
         received: Recibidos
