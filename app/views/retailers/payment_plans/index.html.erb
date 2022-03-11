@@ -22,6 +22,7 @@
               <%= link_to @payment_plan.is_active? ? t('retailer.profile.payment_plans.index.pay') : t('retailer.profile.payment_plans.index.retry'),
                 retailers_payment_plan_charge_path(current_retailer),
                 method: :post,
+                id: 'make_payment',
                 class: "#{@payment_plan.is_active? ? 'btn-white-warning' : 'btn-white-danger'} my-8 d-inline-block" %>
             </div>
           </div>

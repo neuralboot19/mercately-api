@@ -32,7 +32,7 @@ class PaymentPlan < ApplicationRecord
           else
             month_interval.months.from_now.change(day: next_pay_date&.day || Date.today.day)
           end
-    update(next_pay_date: npd, charge_attempt: 0, status: :active)
+    update_columns(next_pay_date: npd, charge_attempt: 0, status: :active)
     true
   end
 
