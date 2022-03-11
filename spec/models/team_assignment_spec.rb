@@ -72,4 +72,33 @@ RSpec.describe TeamAssignment, type: :model do
       end
     end
   end
+
+  describe '#assign_agent' do
+    let(:agent1) { create(:retailer_user, retailer: retailer) }
+    let(:agent2) { create(:retailer_user, retailer: retailer) }
+    let(:agent3) { create(:retailer_user, retailer: retailer) }
+    let(:agent_team1) { create(:agent_team, team_assignment: team_assignment, retailer_user: agent1) }
+    let(:agent_team2) { create(:agent_team, team_assignment: team_assignment, retailer_user: agent2) }
+    let(:agent_team3) { create(:agent_team, team_assignment: team_assignment, retailer_user: agent3) }
+    let(:customer1) { create(:customer, retailer: retailer) }
+    let(:customer2) { create(:customer, retailer: retailer) }
+    let(:customer3) { create(:customer, retailer: retailer) }
+
+    it 'assigns one chat to every agent team' do
+      allow_any_instance_of(TeamAssignment).to receive(:notify_agents).and_return(true)
+      agent_team1
+      agent_team2
+      agent_team3
+
+      arr = [customer1, customer2, customer3]
+      Parallel.each(arr, in_threads: 3) do |c|
+        team_assignment.assign_agent(c)
+      end
+
+      expect(agent_team1.reload.assigned_amount).to eq(1)
+      expect(agent_team2.reload.assigned_amount).to eq(1)
+      expect(agent_team3.reload.assigned_amount).to eq(1)
+      expect(team_assignment.reload.last_assigned).to eq(agent_team3.id)
+    end
+  end
 end

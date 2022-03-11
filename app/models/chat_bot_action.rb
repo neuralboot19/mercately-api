@@ -3,10 +3,11 @@ class ChatBotAction < ApplicationRecord
   belongs_to :retailer_user, required: false
   belongs_to :customer_related_field, required: false
   belongs_to :jump_option, class_name: "ChatBotOption", required: false
+  belongs_to :team_assignment, required: false
   has_many :action_tags, dependent: :destroy
   has_many :tags, through: :action_tags
 
-  EXECUTION_ORDER = [0, 1, 5, 6, 8, 7, 2, 9, 3, 4].freeze
+  EXECUTION_ORDER = [0, 1, 10, 5, 6, 8, 7, 2, 9, 3, 4].freeze
 
   validate :avoid_same_option_to_jump
 
@@ -24,6 +25,7 @@ class ChatBotAction < ApplicationRecord
     auto_generate_option
     repeat_endpoint_option
     jump_to_option
+    assign_team
   ]
   enum classification: %i[default success failed]
   enum action_event: %i[post get put patch remove]

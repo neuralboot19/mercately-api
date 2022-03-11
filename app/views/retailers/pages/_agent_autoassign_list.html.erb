@@ -1,0 +1,167 @@
+<div class="card min-h-unset m-0 shadow-none no-border p-0 border-0" style="background-color: #EFEFEF;">
+  <div class="card-header bg-transparent border-0 fz-14 px-0 py-12">
+    <div class="mb-0 row text-center align-items-center">
+      <div class="col-12 col-md-3">
+        <label for="team_assignments_<%= team.id %>" class="mb-0">
+          Detalles
+          <i class="fas fa-caret-down"></i>
+        </label>
+      </div>
+      <div class="col-12 col-md-2 my-8">
+        <%= team.name %>
+      </div>
+      <div class="col-6 col-md-2 my-8">
+        <% if team.active_assignment %>
+          <%= image_tag 'dashboard/check.png', class: 'mr-8' %>
+          Activo
+        <% else %>
+          <%= image_tag 'dashboard/uncheck.png', class: 'mr-8' %>
+          Inactivo
+        <% end %>
+      </div>
+      <div class="col-6 my-8 col-md-3">
+        <% if team.default_assignment %>
+          <span class="status--success">Por defecto</span>
+        <% end %>
+        <% if team.whatsapp %>
+          <%= image_tag 'dashboard/wa_icon.png', class: 'ml-4' %>
+        <% end %>
+        <% if team.messenger %>
+          <%= image_tag 'dashboard/msg_icon.png', class: 'ml-4' %>
+        <% end %>
+        <% if team.instagram %>
+          <%= image_tag 'dashboard/ig_icon.png', class: 'ml-4' %>
+        <% end %>
+      </div>
+      <div class="col-12 col-md-2 my-8 text-center text-sm-left">
+        <label for="modal--edit_members-<%= team.id %>" class="cursor-pointer d-inline-block fz-14">
+          <i class="fas fa-user-plus"></i>
+          <div class="ml-8 d-inline-block">
+            Editar miembros
+          </div>
+        </label>
+        <br />
+        <label for="modal--edit_assign-<%= team.id %>" class="cursor-pointer d-inline-block fz-14 mr-12">
+          <%= image_tag 'edit.svg', class: 'edit-icon' %>
+          <div class="ml-8 d-inline-block">
+            Editar
+          </div>
+        </label>
+        <br />
+        <%= link_to retailers_team_assignment_path(current_retailer, team), method: :delete, data: { confirm: '¿Estás seguro de eliminar el equipo?' }, class: 'cursor-pointer d-inline-block fz-14 no-style', style: 'color: #212529;' do %>
+          <i class="fas fa-trash-alt mr-8"></i>
+          Eliminar
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="checkbox" id="team_assignments_<%= team.id %>" class="toggle_order_items d-none" checked="true" />
+<div class="table box order_items pb-0 bg-white">
+  <% team.agent_teams.each do |agent_team| %>
+    <div class="box">
+      <div class="my-16 bottom-xs t-center fz-14">
+        <div class="row align-items-center py-12">
+          <div class="col-sm-3 text-left pl-sm-5">
+            <div class="d-inline info__logo mr-6">
+              <strong>
+                <%= two_upper_case_letters(agent_team.retailer_user.full_name.presence || agent_team.retailer_user.email) %>
+              </strong>
+            </div>
+            <%= agent_team.retailer_user.full_name.presence || agent_team.retailer_user.email %>
+          </div>
+          <div class="col-sm-2">
+            <%= agent_team.assigned_amount %>
+          </div>
+          <div class="col-sm-2">
+            <% if agent_team.active %>
+              <%= image_tag 'dashboard/check.png', class: 'mr-8' %>
+              Activo
+            <% else %>
+              <%= image_tag 'dashboard/uncheck.png', class: 'mr-8' %>
+              Inactivo
+            <% end %>
+          </div>
+          <div class="col-sm-3">
+          </div>
+          <div class="col-sm-2 center-xs end-sm p-0 my-12 t-right">
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div>
+  <input type="checkbox" class="d-none modal--toggler" name="modal--edit_assign-<%= team.id %>" id="modal--edit_assign-<%= team.id %>" />
+  <div class="modal-index">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-xs-12 col-md-8 middle">
+          <label class="modal-index__background" for="modal--edit_assign-<%= team.id %>"></label>
+          <div class="modal-index__window box py-20 px-10 h-unset mt-0" style="z-index: 1000; border-radius: 12px;">
+            <p class="font-weight-bold font-gray-dark fs-24 d-inline name mb-10 ml-14">Editar equipo</p>
+            <label class="modalindex__close f-right mr-13" for="modal--edit_assign-<%= team.id %>">
+              <svg class="fill-dark" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.40994 6.99994L12.7099 2.70994C12.8982 2.52164 13.004 2.26624 13.004 1.99994C13.004 1.73364 12.8982 1.47825 12.7099 1.28994C12.5216 1.10164 12.2662 0.99585 11.9999 0.99585C11.7336 0.99585 11.4782 1.10164 11.2899 1.28994L6.99994 5.58994L2.70994 1.28994C2.52164 1.10164 2.26624 0.99585 1.99994 0.99585C1.73364 0.99585 1.47824 1.10164 1.28994 1.28994C1.10164 1.47825 0.995847 1.73364 0.995847 1.99994C0.995847 2.26624 1.10164 2.52164 1.28994 2.70994L5.58994 6.99994L1.28994 11.2899C1.19621 11.3829 1.12182 11.4935 1.07105 11.6154C1.02028 11.7372 0.994141 11.8679 0.994141 11.9999C0.994141 12.132 1.02028 12.2627 1.07105 12.3845C1.12182 12.5064 1.19621 12.617 1.28994 12.7099C1.3829 12.8037 1.4935 12.8781 1.61536 12.9288C1.73722 12.9796 1.86793 13.0057 1.99994 13.0057C2.13195 13.0057 2.26266 12.9796 2.38452 12.9288C2.50638 12.8781 2.61698 12.8037 2.70994 12.7099L6.99994 8.40994L11.2899 12.7099C11.3829 12.8037 11.4935 12.8781 11.6154 12.9288C11.7372 12.9796 11.8679 13.0057 11.9999 13.0057C12.132 13.0057 12.2627 12.9796 12.3845 12.9288C12.5064 12.8781 12.617 12.8037 12.7099 12.7099C12.8037 12.617 12.8781 12.5064 12.9288 12.3845C12.9796 12.2627 13.0057 12.132 13.0057 11.9999C13.0057 11.8679 12.9796 11.7372 12.9288 11.6154C12.8781 11.4935 12.8037 11.3829 12.7099 11.2899L8.40994 6.99994Z" />
+              </svg>
+            </label>
+            <div class="row">
+              <div class="col-xs-12 col-12 px-15">
+                <%= render 'retailers/team_assignments/form', team_assignment: team %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div>
+  <input type="checkbox" class="d-none modal--toggler" name="modal--edit_members-<%= team.id %>" id="modal--edit_members-<%= team.id %>" />
+  <div class="modal-index">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-xs-12 col-md-8 middle">
+          <label class="modal-index__background" for="modal--edit_members-<%= team.id %>"></label>
+          <div class="modal-index__window box py-20 px-10 h-unset mt-0" style="z-index: 1000; border-radius: 12px;">
+            <p class="font-weight-bold font-gray-dark fs-24 d-inline name mb-10 ml-14">Editar miembros del equipo</p>
+            <label class="modalindex__close f-right mr-13" for="modal--edit_members-<%= team.id %>">
+              <svg class="fill-dark" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8.40994 6.99994L12.7099 2.70994C12.8982 2.52164 13.004 2.26624 13.004 1.99994C13.004 1.73364 12.8982 1.47825 12.7099 1.28994C12.5216 1.10164 12.2662 0.99585 11.9999 0.99585C11.7336 0.99585 11.4782 1.10164 11.2899 1.28994L6.99994 5.58994L2.70994 1.28994C2.52164 1.10164 2.26624 0.99585 1.99994 0.99585C1.73364 0.99585 1.47824 1.10164 1.28994 1.28994C1.10164 1.47825 0.995847 1.73364 0.995847 1.99994C0.995847 2.26624 1.10164 2.52164 1.28994 2.70994L5.58994 6.99994L1.28994 11.2899C1.19621 11.3829 1.12182 11.4935 1.07105 11.6154C1.02028 11.7372 0.994141 11.8679 0.994141 11.9999C0.994141 12.132 1.02028 12.2627 1.07105 12.3845C1.12182 12.5064 1.19621 12.617 1.28994 12.7099C1.3829 12.8037 1.4935 12.8781 1.61536 12.9288C1.73722 12.9796 1.86793 13.0057 1.99994 13.0057C2.13195 13.0057 2.26266 12.9796 2.38452 12.9288C2.50638 12.8781 2.61698 12.8037 2.70994 12.7099L6.99994 8.40994L11.2899 12.7099C11.3829 12.8037 11.4935 12.8781 11.6154 12.9288C11.7372 12.9796 11.8679 13.0057 11.9999 13.0057C12.132 13.0057 12.2627 12.9796 12.3845 12.9288C12.5064 12.8781 12.617 12.8037 12.7099 12.7099C12.8037 12.617 12.8781 12.5064 12.9288 12.3845C12.9796 12.2627 13.0057 12.132 13.0057 11.9999C13.0057 11.8679 12.9796 11.7372 12.9288 11.6154C12.8781 11.4935 12.8037 11.3829 12.7099 11.2899L8.40994 6.99994Z" />
+              </svg>
+            </label>
+            <div class="row">
+              <div class="col-xs-12 col-12 px-15">
+                <%= form_for([:retailers, team], url: retailers_team_assignment_path(current_retailer, team), local: true, html: { class: 'validate-form p-0 col-xs-12' }) do |f| %>
+                  <div id="agent_teams" class="w-100">
+                    <%= f.fields_for :agent_teams do |at| %>
+                      <%= render 'retailers/team_assignments/agent_teams_fields', f: at %>
+                    <% end %>
+                    <div class="row my-20">
+                      <div class="col-xl-6 mb-12">
+                        <div class="validate-unique-error" style="display: none;">
+                          <i class="validation-msg">Este agente ya está en el equipo</i>
+                          <br />
+                          <br />
+                        </div>
+                        <%= link_to_add_association f, :agent_teams, partial: 'retailers/team_assignments/new_agent_teams_fields', id: 'add_agent_teams' do %>
+                          <i class="fas fa-plus mr-5"></i>
+                          Añadir miembro
+                        <% end %>
+                      </div>
+                      <div class="btn-box col-xl-6 mb-12 t-right">
+                        <%= f.submit 'Guardar', class: 'blue-button mr-8', data: { disable_with: false } %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

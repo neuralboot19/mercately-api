@@ -1,25 +1,24 @@
-<div class="nested-fields box">
-  <div class="my-16 bottom-xs divider pb-16">
-    <div class="row">
-      <div class="col-xs-12 col-sm-6">
-        <%= f.label :retailer_user_id, 'Agente' %>
-        <%= f.select :retailer_user_id, current_retailer.team_agents.map { |t| [(t.full_name.presence || t.email), t.id] }, { include_blank: false }, class: 'input validate-unique' %>
-      </div>
-      <div class="col-xs-12 col-sm-2">
-        <%= f.label :max_assignments, 'Asignaciones máximas' %>
-        <%= f.text_field :max_assignments, class: 'input validate-required', onkeypress: 'onlyNumber(event)' %>
-        <i class="validation-msg">&nbsp;</i>
-      </div>
-      <div class="col-xs-12 col-sm-2">
-        <%= f.label :active, 'Agente activo?' %><br/>
+<div class="nested-fields box col-xl-12">
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.select :retailer_user_id, current_retailer.team_agents.map { |t| [(t.full_name.presence || t.email), t.id] }, { include_blank: false }, class: 'input validate-unique mercately-select' %>
+    </div>
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-2 text-center">
+      <label class="switch mt-14">
         <%= f.check_box :active %>
-      </div>
-      <div class="col-xs-12 col-sm-2 center-xs end-sm p-0 mb-24">
-        <%= link_to_remove_association f, class: 'btn btn--destroy d-inline-block m-0' do %>
-          <i class="fas fa-times mr-5"></i>
-          Remover miembro
-        <% end %>
-      </div>
+        <span class="slider round" />
+      </label>
+      Activo
+    </div>
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-2 center-xs end-sm p-0 mb-24 t-right">
+      <%= link_to_remove_association f, class: 'cursor-pointer d-inline-block fz-14 no-style mr-10 mt-14', style: 'color: #212529;' do %>
+        <i class="fas fa-trash-alt mr-8"></i>
+        Remover
+      <% end %>
     </div>
   </div>
 </div>

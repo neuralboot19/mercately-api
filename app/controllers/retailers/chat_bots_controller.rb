@@ -119,6 +119,7 @@ class Retailers::ChatBotsController < RetailersController
             :classification,
             :exit_message,
             :jump_option_id,
+            :team_assignment_id,
             tag_ids: [],
             headers_attributes: [
               :key,

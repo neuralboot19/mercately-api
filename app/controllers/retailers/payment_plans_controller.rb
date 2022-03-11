@@ -24,6 +24,7 @@ class Retailers::PaymentPlansController < RetailersController
     pp = current_retailer.payment_plan
     alert = if pp.charge!(force_retry: true)
               pp.status_active!
+              pp.update_column(:charge_attempt, 0)
               'Plan reactivado exitosamente.'
             else
               'Ocurrió un error al cobrar.'

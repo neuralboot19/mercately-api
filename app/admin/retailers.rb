@@ -21,7 +21,6 @@ ActiveAdmin.register Retailer do
                 :int_charges,
                 :allow_bots,
                 :gupshup_api_key,
-                :manage_team_assignment,
                 :show_stats,
                 :allow_voice_notes,
                 :allow_send_videos,
@@ -122,7 +121,6 @@ ActiveAdmin.register Retailer do
       row :ecu_charges
       row :int_charges
       row :allow_bots
-      row :manage_team_assignment
       row :show_stats
       row :allow_voice_notes
       row :allow_send_videos
@@ -389,7 +387,6 @@ ActiveAdmin.register Retailer do
       f.input :ecu_charges, label: 'Hace pagos en Ecuador'
       f.input :int_charges, label: 'Hace pagos Internacionales'
       f.input :allow_bots, label: 'Tiene permitido administrar ChatBots'
-      f.input :manage_team_assignment, label: 'Activar Asignación Automática'
       f.input :show_stats, label: 'Activar acceso total a estadísticas'
       f.input :allow_voice_notes, label: 'Permitir envío de notas de voz'
       f.input :allow_send_videos, label: 'Permitir enviar videos en el ChatBot'

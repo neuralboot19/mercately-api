@@ -1,7 +1,7 @@
 class Retailers::PagesController < RetailersController
   include PagesControllerConcern
   layout 'chats/chat'
-  before_action :set_prismic_variables
+  before_action :set_prismic_variables, only: :dashboard
 
   def dashboard
     @start_date_format = Date.today.beginning_of_week.strftime('%d/%m/%Y %H:%M:%S')

@@ -168,6 +168,11 @@ Rails.application.routes.draw do
         post 'delete_chat_bot_option', to: 'chat_bots#delete_chat_bot_option', as: :delete_chat_bot_option
       end
       resources :team_assignments
+      resources :agent_teams do
+        member do
+          put 'update_assignments', to: 'agent_teams#update_assignments', as: :update_assignments
+        end
+      end
       resources :stats, only: :index
       resources :customer_related_fields
       put 'paymentez_credit_cards/set_default', to: 'paymentez_credit_cards#set_default', as: :paymentez_set_default

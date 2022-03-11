@@ -32,13 +32,11 @@
             <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Canales de Venta</span>
           <% end %>
         </div>
-        <% if current_retailer.manage_team_assignment %>
-          <div class="col-xs-12 mt-20">
-            <%= link_to retailers_team_assignments_path(current_retailer), class: 'no-style' do %>
-              <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Asignación Automática</span>
-            <% end %>
-          </div>
-        <% end %>
+        <div class="col-xs-12 mt-20">
+          <%= link_to retailers_team_assignments_path(current_retailer), class: 'no-style' do %>
+            <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Asignación Automática</span>
+          <% end %>
+        </div>
         <div class="col-xs-12 mt-20">
           <%= link_to retailers_customer_related_fields_path(current_retailer), class: 'no-style' do %>
             <i class="fas fa-plus-circle c-secondary fs-20 mr-10"></i><span class="c-secondary fs-18">Campos personalizados</span>

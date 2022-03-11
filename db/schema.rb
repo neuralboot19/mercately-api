@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_28_191352) do
+ActiveRecord::Schema.define(version: 2022_03_11_144343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,6 +95,7 @@ ActiveRecord::Schema.define(version: 2022_02_28_191352) do
     t.datetime "updated_at", null: false
     t.bigint "team_assignment_id"
     t.index ["customer_id"], name: "index_agent_customers_on_customer_id"
+    t.index ["retailer_user_id", "customer_id"], name: "index_agent_customers_on_retailer_user_id_and_customer_id", unique: true, where: "(team_assignment_id IS NOT NULL)"
     t.index ["retailer_user_id"], name: "index_agent_customers_on_retailer_user_id"
     t.index ["team_assignment_id"], name: "index_agent_customers_on_team_assignment_id"
   end
@@ -243,10 +244,12 @@ ActiveRecord::Schema.define(version: 2022_02_28_191352) do
     t.string "exit_message"
     t.bigint "customer_related_field_id"
     t.bigint "jump_option_id"
+    t.bigint "team_assignment_id"
     t.index ["chat_bot_option_id"], name: "index_chat_bot_actions_on_chat_bot_option_id"
     t.index ["customer_related_field_id"], name: "index_chat_bot_actions_on_customer_related_field_id"
     t.index ["jump_option_id"], name: "index_chat_bot_actions_on_jump_option_id"
     t.index ["retailer_user_id"], name: "index_chat_bot_actions_on_retailer_user_id"
+    t.index ["team_assignment_id"], name: "index_chat_bot_actions_on_team_assignment_id"
   end
 
   create_table "chat_bot_customers", force: :cascade do |t|
@@ -1344,6 +1347,10 @@ ActiveRecord::Schema.define(version: 2022_02_28_191352) do
     t.string "web_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "whatsapp", default: false, null: false
+    t.boolean "messenger", default: false, null: false
+    t.boolean "instagram", default: false, null: false
+    t.bigint "last_assigned"
     t.index ["retailer_id"], name: "index_team_assignments_on_retailer_id"
   end
 

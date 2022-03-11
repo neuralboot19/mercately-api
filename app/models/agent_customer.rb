@@ -3,10 +3,10 @@ class AgentCustomer < ApplicationRecord
   belongs_to :customer
   belongs_to :team_assignment, required: false
 
-  before_destroy :agent_data
-  before_update :agent_data, if: :will_save_change_to_retailer_user_id?
+  before_destroy :agent_data_destroy
+  before_update :agent_data, if: :will_save_change_to_team_assignment_id?
   after_destroy :free_spot_on_destroy
-  after_update :free_spot_on_change, if: :saved_change_to_retailer_user_id?
+  after_update :free_spot_on_change, if: :saved_change_to_team_assignment_id?
   after_commit :send_push_notification, on: [:create, :update]
 
   scope :update_range_between, -> (start_date, end_date) { where(updated_at: start_date..end_date) }
@@ -48,22 +48,22 @@ class AgentCustomer < ApplicationRecord
     end
 
     def agent_data
-      @agent_data = self
       @team_assignment_id_was = team_assignment_id_was
       @retailer_user_id_was = retailer_user_id_was
+    end
+
+    def agent_data_destroy
+      @agent_data = reload
     end
 
     def free_spot_on_destroy
       return if @agent_data.team_assignment_id.blank?
 
-      update_agent_team('destroy') unless not_update_agent?(@agent_data.customer)
+      update_agent_team('destroy') unless @agent_data.customer.resolved?
     end
 
     def free_spot_on_change
-      return if team_assignment_id.blank?
-
-      update_agent_team('update') unless not_update_agent?(customer)
-      update_column(:team_assignment_id, nil)
+      update_agent_team('update') unless customer.resolved?
     end
 
     def update_agent_team(action)
@@ -75,13 +75,9 @@ class AgentCustomer < ApplicationRecord
         ret_user_id = @retailer_user_id_was
       end
 
-      agent_team = AgentTeam.where(team_assignment_id: team_id, retailer_user_id: ret_user_id).first
-      agent_team&.update(assigned_amount: agent_team.assigned_amount - 1)
-    end
+      agent_team = AgentTeam.find_by(team_assignment_id: team_id, retailer_user_id: ret_user_id)
+      return if agent_team.blank? || agent_team.assigned_amount <= 0
 
-    def not_update_agent?(customer)
-      return customer.messenger_answered_by_agent? if customer.facebook_messages.first
-
-      customer.whatsapp_answered_by_agent?
+      agent_team.update(assigned_amount: agent_team.assigned_amount - 1)
     end
 end

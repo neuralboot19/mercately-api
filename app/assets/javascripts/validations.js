@@ -102,12 +102,14 @@ function validateImages(form) {
 }
 
 function validateAnyRequired(form) {
-  var anyFilled = false;
-  var count = 0
-  var message = document.getElementById('validate-any-error');
+  let anyFilled = false;
+  let count = 0;
+  let message = document.querySelector(`#${form.id} .validate-any-error`);
 
   document.querySelectorAll(`#${form.id} .validate-any-required`).forEach(function(input) {
-    if (input.value) {
+    if (input.type !== 'checkbox' && input.value) {
+      anyFilled = true;
+    } else if (input.type === 'checkbox' && input.checked) {
       anyFilled = true;
     }
 
@@ -124,8 +126,8 @@ function validateAnyRequired(form) {
 }
 
 function validateUniqueness(form) {
-  var message = document.getElementById('validate-unique-error');
-  var selectedOptions = [];
+  let message = document.querySelector(`#${form.id} .validate-unique-error`);
+  let selectedOptions = [];
 
   document.querySelectorAll(`#${form.id} .validate-unique`).forEach(function(input) {
     if (input.value && input.value !== "") {
@@ -133,8 +135,8 @@ function validateUniqueness(form) {
     }
   });
 
-  var initCount = selectedOptions.length;
-  var unique = selectedOptions.filter(onlyUnique);
+  let initCount = selectedOptions.length;
+  let unique = selectedOptions.filter(onlyUnique);
 
   if (initCount === unique.length) {
     $(message).hide();

@@ -1,6 +1,11 @@
 let cancelReasonValue, cancelCommentValue;
 
 document.addEventListener("DOMContentLoaded", function() {
+  $('#make_payment').on('click', function() {
+    $(this).prop('disabled',true);
+    $(this).off("click").attr('href', "javascript: void(0);");
+  });
+
   var token =  $('meta[name="csrf-token"]').attr('content');
 
   var submit_purchase_plan = $('#submit_purchase_plan');

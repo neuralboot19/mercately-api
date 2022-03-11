@@ -58,6 +58,7 @@ class Customer < ApplicationRecord
   before_save :update_valid_customer
   before_save :calc_ws_notification_cost
   before_save :save_wa_name
+  before_update :adjust_agent_assigned_amount, if: :will_save_change_to_status_chat?
   before_update :verify_new_phone, if: -> { phone_changed? }
   after_save :opt_in_number_to_use, if: :saved_change_to_number_to_use?
   after_save :verify_opt_in
@@ -539,6 +540,19 @@ class Customer < ApplicationRecord
     end
 
     save_history(nil, 'customer_mark_as', 'chat_new')
+  end
+
+  def adjust_agent_assigned_amount
+    return unless agent_customer
+
+    agent_team = agent.agent_teams.find_by(team_assignment: agent_customer.team_assignment)
+    return unless agent_team
+
+    if resolved? && agent_team.assigned_amount > 0
+      agent_team.update(assigned_amount: agent_team.assigned_amount - 1)
+    elsif status_chat_was == 'resolved' && !resolved?
+      agent_team.update(assigned_amount: agent_team.assigned_amount + 1)
+    end
   end
 
   def channel

@@ -27,20 +27,18 @@
     }
   }
 
-  .info {
-    &__logo {
-      width: $header-height;
-      line-height: $header-height;
-      padding: 5px 6px;
-      border-radius: 20px;
-      background-color: #EBF7FC;
-      color: #3CAAE1;
-    }
-  }
-
   .user__dropdown {
     position: relative;
   }
+}
+
+.info__logo {
+  width: $header-height;
+  line-height: $header-height;
+  padding: 5px 6px;
+  border-radius: 20px;
+  background-color: #EBF7FC;
+  color: #3CAAE1;
 }
 
 .child_container {

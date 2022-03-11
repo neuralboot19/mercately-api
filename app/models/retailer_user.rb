@@ -40,6 +40,7 @@ class RetailerUser < ApplicationRecord
   enum mobile_type: %i[android ios]
 
   accepts_nested_attributes_for :retailer
+  accepts_nested_attributes_for :agent_teams, reject_if: :all_blank, allow_destroy: true
 
   attr_reader :raw_invitation_token
   attr_accessor :not_ask_terms
