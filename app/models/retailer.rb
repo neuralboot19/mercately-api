@@ -54,19 +54,23 @@ class Retailer < ApplicationRecord
 
   validates :name, presence: true
   validates :currency, presence: true
-  validates :slug, uniqueness: true
+  validates :slug, :catalog_slug, uniqueness: true
+  validates :description, length: { maximum: 140 }
 
   before_validation :gupshup_src_name_to_nil
+  before_validation :set_catalog_slug, if: :will_save_change_to_name?
   before_create :format_phone_number
   before_save :set_ml_domain, if: :will_save_change_to_ml_site?
   after_create :save_free_plan
   after_create :send_to_mailchimp
   after_create :send_to_slack
   after_create :create_funnel_steps
+  after_update :update_shop
   after_update :import_hubspot_properties, if: -> (obj) { obj.hubspot_integrated? && obj.hs_access_token_before_last_save.nil? }
-  after_save :generate_slug, if: :saved_change_to_name?
+  after_commit :generate_slug, on: %i[create update]
   after_save :add_sales_channel
   after_save :update_gupshup_info, if: :saved_change_to_gupshup_src_name?
+  after_save :create_shop
 
   validates :slug,
             exclusion: { in: %w(www),
@@ -90,11 +94,16 @@ class Retailer < ApplicationRecord
   end
 
   def generate_slug
-    update slug: if Retailer.where('LOWER(name) LIKE ?', "%#{name.downcase}%").where.not(id: id).count.positive?
-                   "#{name}-#{id}".parameterize
-                 else
-                   name.parameterize
-                 end
+    return if saved_change_to_slug?
+
+    new_slug = if Retailer.where('LOWER(name) LIKE ?', "%#{name.downcase}%").where.not(id: id).exists?
+                 "#{name}-#{id}".parameterize
+               else
+                 name.parameterize
+               end
+    return if slug == new_slug
+
+    update slug: new_slug
   end
 
   # Actualiza el token de ML si esta a punto de vencer
@@ -430,5 +439,51 @@ class Retailer < ApplicationRecord
 
     def gs_service_api
       @gs_service_api ||= GupshupPartners::Api.new
+    end
+
+    def create_shop
+      return if Rails.env.test? || shop_updated
+
+      shop.create
+      update_column(:shop_updated, true)
+    rescue StandardError => e
+      Rails.logger.error(e.message)
+      SlackError.send_error(e)
+      Raven.capture_exception(e)
+      update_column(:shop_updated, false)
+    end
+
+    def update_shop
+      return if Rails.env.test? || !shop_updated
+      return unless saved_change_to_name? || saved_change_to_description? || saved_change_to_country_code? ||
+        saved_change_to_currency? || saved_change_to_unique_key?
+
+      shop.update
+    rescue StandardError => e
+      Rails.logger.error(e.message)
+      SlackError.send_error(e)
+      Raven.capture_exception(e)
+      errors.add(:base, 'Error al actualizar la tienda virtual')
+      raise ActiveRecord::RecordInvalid, self
+    end
+
+    def shop
+      @shop ||= Shops::Api.new(self)
+    end
+
+    def set_catalog_slug
+      if catalog_slug.nil?
+        retailers_with_same_name = Retailer.where('name ILIKE ?', "%#{name}%")
+        generated_catalog_slug = if retailers_with_same_name.exists?
+                                   "#{name}#{retailers_with_same_name.count}"
+                                 else
+                                   name.dup
+                                 end
+        generated_catalog_slug = generated_catalog_slug.parameterize
+        generated_catalog_slug.gsub!(/-/, '')
+        self.catalog_slug = generated_catalog_slug
+      else
+        self.catalog_slug = catalog_slug.parameterize.gsub(/-/, '')
+      end
     end
 end

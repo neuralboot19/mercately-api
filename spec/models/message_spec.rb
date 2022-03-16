@@ -13,11 +13,9 @@ RSpec.describe Message, type: :model do
   end
 
   describe '#generate_web_id' do
-    let(:message) { build(:message) }
+    let(:message) { create(:message) }
 
     it 'generates the web_id field to messages' do
-      expect(message.web_id).to be_nil
-      message.save
       expect(message.web_id).not_to be_nil
     end
   end
