@@ -325,17 +325,13 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
 
   context '#type' do
     it 'returns the message outbound payload type' do
-      message = build(:gupshup_whatsapp_message)
-      message.message_payload = { 'isHSM': 'false', 'type': 'text' }
-      message.save!
+      message = create(:gupshup_whatsapp_message, message_payload: { 'isHSM': 'false', 'type': 'text' })
 
       expect(message.type).to eq('text')
     end
 
     it 'returns the message inbound payload type' do
-      message = build(:gupshup_whatsapp_message)
-      message.message_payload = { 'payload': { 'type': 'document' } }
-      message.save!
+      message = create(:gupshup_whatsapp_message, message_payload: { 'payload': { 'type': 'document' } })
 
       expect(message.type).to eq('document')
     end

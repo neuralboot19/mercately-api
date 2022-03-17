@@ -8,7 +8,7 @@ class Retailers::TemplatesController < RetailersController
 
   # GET /templates
   def index
-    @templates = current_retailer.templates.owned(current_retailer_user.id).page(params[:page])
+    @templates = current_retailer.templates.owned(current_retailer_user.id, current_retailer.id).page(params[:page])
   end
 
   # GET /templates/1

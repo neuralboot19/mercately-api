@@ -57,6 +57,7 @@ const ChatSideBar = ({
   const isMountedForListAssembly = useRef(false);
   const isFirstSearch = useRef(true);
   const isFilteredChats = useRef(true);
+  const openChatFromOtherPage = useRef(false);
 
   const customers = useSelector((reduxState) => reduxState.mainReducer.customers || []);
   const totalPages = useSelector((reduxState) => reduxState.mainReducer.total_customers || 0);
@@ -187,6 +188,11 @@ const ChatSideBar = ({
       });
     } else {
       isMounted.current = true;
+    }
+
+    if (openChatFromOtherPage.current && customers.length > 0) {
+      handleOpenChat(customers[0]);
+      openChatFromOtherPage.current = false;
     }
   }, [customers]);
 
@@ -497,6 +503,9 @@ const ChatSideBar = ({
         tab: 'all'
       }
     };
+
+    isFirstSearch.current = true;
+    openChatFromOtherPage.current = true;
 
     setState({
       ...state,

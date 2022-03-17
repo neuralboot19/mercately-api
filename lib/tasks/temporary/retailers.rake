@@ -44,4 +44,17 @@ namespace :retailers do
       end
     end
   end
+
+  task generate_catalog_slug: :environment do
+    errors = []
+    Retailer.joins(:payment_plan).where(payment_plans: { status: :active }, shop_updated: false).find_each do |r|
+      r.send :set_catalog_slug
+      r.update_column :catalog_slug, r.catalog_slug
+      r.send :create_shop
+    rescue => e
+      errors << [r.id, e]
+    end
+
+    puts errors
+  end
 end

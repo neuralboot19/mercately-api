@@ -14,6 +14,7 @@ ActiveRecord::Schema.define(version: 2022_03_11_144343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
   create_table "action_tags", force: :cascade do |t|
     t.bigint "chat_bot_action_id"
@@ -1290,8 +1291,14 @@ ActiveRecord::Schema.define(version: 2022_03_11_144343) do
     t.boolean "send_max_size_files", default: false, null: false
     t.string "currency", default: "USD", null: false
     t.boolean "multiple_fast_answers", default: false
+    t.text "description"
+    t.string "country_code"
+    t.string "unique_key", default: -> { "uuid_generate_v4()" }, null: false
+    t.string "catalog_slug"
     t.boolean "delete_assets", default: true
     t.decimal "tax_amount", precision: 10, scale: 2, default: "0.0"
+    t.boolean "shop_updated", default: false, null: false
+    t.index ["catalog_slug"], name: "index_retailers_on_catalog_slug", unique: true
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true

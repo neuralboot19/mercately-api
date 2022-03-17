@@ -279,6 +279,13 @@ class Customer < ApplicationRecord
     }
   end
 
+  #TODO improve this for mobile endpoint
+  def assigned_agent_mobile
+    {
+      full_name: agent&.full_name || '',
+    }
+  end
+
   def last_whatsapp_message
     msg_records = whatsapp_messages
     msg_records = msg_records.where.not(note: true) if retailer.gupshup_integrated?
