@@ -62,6 +62,56 @@ class Api::V1::KarixWhatsappController < Api::ApiController
     end
   end
 
+  # Improved endpoint for mobile apps
+  def index_mobile
+    customers = if current_retailer_user.admin? || current_retailer_user.supervisor?
+                  current_retailer.customers.active_whatsapp
+                elsif current_retailer_user.agent?
+                  current_retailer_user.customers.active_whatsapp
+                end
+    @customers = customer_list(customers)
+    # Se debe quitar primero el offset de Kaminari para que pueda tomar el del parametro
+    @customers = @customers&.offset(false)&.offset(params[:offset])
+    total_pages = @customers&.total_pages
+
+    #TODO necesitamos mover el agents a su propio endpoint y borrarlo de aqui
+    #TODO filter_tags mover a su propio endpoint y borrarlo de aqui.
+
+    if @customers.present?
+      render status: 200, json: {
+        customers: @customers.as_json(
+          methods: [
+            :unread_whatsapp_message?,
+            :recent_inbound_message_date,
+            :assigned_agent_mobile,
+            :handle_message_events?,
+            :unread_whatsapp_messages,
+            :tags,
+            :has_pending_reminders,
+            :has_deals
+          ]
+        ),
+        agents: agents,
+        storage_id: current_retailer_user.storage_id,
+        filter_tags: current_retailer.tags,
+        total_customers: total_pages,
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes,
+        balance_error_info: !current_retailer.positive_balance? ? balance_error : nil
+      }
+    else
+      render status: 404, json: {
+        message: 'Customers not found',
+        agents: agents,
+        storage_id: current_retailer_user.storage_id,
+        filter_tags: current_retailer.tags,
+        customers: [],
+        gupshup_integrated: current_retailer.gupshup_integrated?,
+        allow_send_voice: current_retailer.allow_voice_notes
+      }
+    end
+  end
+
   def create
     integration = current_retailer.karix_integrated? ? 'karix' : 'gupshup'
     self.send("send_#{integration}_notification", @customer, params, params[:type])

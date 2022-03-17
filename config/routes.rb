@@ -289,7 +289,12 @@ Rails.application.routes.draw do
       post 'karix_whatsapp_send_bulk_files/:id', to: 'karix_whatsapp#send_bulk_files', as: :karix_send_bulk_files
       post 'send_multiple_whatsapp_answers/:id', to: 'karix_whatsapp#send_multiple_answers'
 
-      resources :karix_whatsapp, only: [:index, :create]
+      resources :karix_whatsapp, only: %i[:index, :create] do
+        collection do
+          get 'index_mobile', to: 'karix_whatsapp#index_mobile'
+          get 'index_mobile/:id/messages', to: 'karix_whatsapp#messages', as: :karix_mobile_customer_messages
+        end
+      end
       resources :whatsapp_templates, only: [:index]
       resources :products, only: [:index]
       get 'retailer_customers', to: 'retailer_customers#index', as: :retailer_customers
