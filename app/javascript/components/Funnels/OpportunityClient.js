@@ -116,7 +116,7 @@ const OpportunityClient = ({
                           <img src={WhatsApp} className="funnel-client-whatsapp" />
                         </a>
                       )}
-                  {deal.channel === 'facebook'
+                  {deal.channel === 'messenger'
                       && (
                         <a
                           href={`/retailers/${ENV.SLUG}/facebook_chats?cid=${deal.customer.id}`}

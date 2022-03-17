@@ -310,6 +310,7 @@ class Api::V1::CustomersController < Api::ApiController
       end
 
       customers = customers.by_search_text(params[:searchString]) if params[:searchString]
+      customers = customers.where('customers.id = ?', params[:customer_id]) if params[:customer_id].present?
       order = 'recent_message_date desc'
       if params[:order].present?
         case params[:order]
