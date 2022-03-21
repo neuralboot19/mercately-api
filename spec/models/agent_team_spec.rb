@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe AgentTeam, type: :model do
+  subject(:agent_team) { create(:agent_team, retailer_user: agent) }
+  let(:retailer) { create(:retailer) }
+  let(:agent) { create(:retailer_user, retailer: retailer) }
+
   describe 'associations' do
     it { is_expected.to belong_to(:retailer_user) }
     it { is_expected.to belong_to(:team_assignment) }

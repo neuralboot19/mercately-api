@@ -305,6 +305,10 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
     end
 
     describe 'when chat service is WhatsApp' do
+      before do
+        allow_any_instance_of(Shared::AutomaticAssignments).to receive(:notify_agents).and_return(true)
+      end
+
       context 'when local request' do
         describe 'when karix_integrated' do
           let(:customer) { create(:customer, :with_retailer_karix_integrated) }
@@ -454,6 +458,7 @@ RSpec.describe 'Api::V1::AgentCustomersController', type: :request do
 
       before do
         allow(FacebookNotificationHelper).to receive(:broadcast_data).and_return(true)
+        allow_any_instance_of(Shared::AutomaticAssignments).to receive(:notify_agents).and_return(true)
       end
 
       context 'when the agent customer is a new record' do

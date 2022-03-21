@@ -9,11 +9,13 @@
         <%= f.object.assigned_amount %>
       </div>
       <div class="col-sm-2 text-center">
-        <label class="switch">
-          <%= f.check_box :active %>
-          <span class="slider round" />
-        </label>
-        Activo
+        <% if f.object.active %>
+          <%= image_tag 'dashboard/check.png', class: 'mr-8' %>
+          Activo
+        <% else %>
+          <%= image_tag 'dashboard/uncheck.png', class: 'mr-8' %>
+          Inactivo
+        <% end %>
       </div>
       <div class="col-sm-2">
       </div>

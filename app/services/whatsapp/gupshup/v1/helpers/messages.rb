@@ -22,34 +22,21 @@ module Whatsapp::Gupshup::V1::Helpers
     end
 
     def notify_agent!(*args)
-      retailer, retailer_users, assigned_agent = args
+      retailer, retailer_users, assigned_agent, customer = args
 
       retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
       retailer_users.each do |ret_u|
-        removed_agent = false
-
-        if ret_u.agent? && ret_u.only_assigned?
-          removed_agent = (!assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id) ||
-            (assigned_agent.persisted? && assigned_agent.retailer_user_id != ret_u.id)
-          add_agent = assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id
-
-          next if !removed_agent && !add_agent
-        end
-
-        remove = (assigned_agent.persisted? &&
-          assigned_agent.retailer_user_id != ret_u.id &&
-          ret_u.admin? == false &&
-          ret_u.supervisor? == false) || removed_agent
+        remove = ret_u.remove_agent?(assigned_agent)
 
         redis.publish 'customer_chat',
                       {
-                        customer: serialize_customer(assigned_agent.customer),
+                        customer: serialize_customer(customer),
                         remove_only: remove,
                         room: ret_u.id
                       }.to_json
 
-        notify_new_counter(ret_u, assigned_agent.customer, removed_agent)
+        notify_new_counter(ret_u, customer, remove)
       end
     rescue StandardError => e
       Rails.logger.error(e)

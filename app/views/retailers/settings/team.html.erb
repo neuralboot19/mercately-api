@@ -82,7 +82,12 @@
               <div class="divider"></div>
               <div class="table__item row middle-xs">
                 <div class="col-xs-6 col-sm-2">
-                  <div class="t-center truncate"><%= member.full_name %></div>
+                  <div class="t-center truncate">
+                    <%= member.full_name %>
+                    <% unless member.removed_from_team || ( member.invitation_token.present? && member.invitation_accepted_at.blank?) %>
+                      <i class="fas fa-circle ml-8 <%= member.active ? 'status-icon-active' : 'status-icon-away' %>"></i>
+                    <% end %>
+                  </div>
                   <% if index == 0 %>
                     <div class="t-center truncate c-green">Dueño de la cuenta</div>
                   <% end %>

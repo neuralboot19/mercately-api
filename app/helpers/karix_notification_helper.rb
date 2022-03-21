@@ -17,7 +17,7 @@ module KarixNotificationHelper
         ).serializable_hash
     end
 
-    customer = message&.customer || assigned_agent&.customer || customer
+    customer = customer || message&.customer || assigned_agent&.customer
     serialized_customer = ActiveModelSerializers::Adapter::Json.new(
       KarixCustomerSerializer.new(customer)
     ).serializable_hash if customer
@@ -25,16 +25,6 @@ module KarixNotificationHelper
     retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
     retailer_users.each do |ret_u|
-      removed_agent = false
-
-      if ret_u.agent? && ret_u.only_assigned?
-        removed_agent = (!assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id) ||
-          (assigned_agent.persisted? && assigned_agent.retailer_user_id != ret_u.id)
-        add_agent = assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id
-
-        next if !removed_agent && !add_agent
-      end
-
       redis.publish 'new_message_counter',
                     {
                       identifier: '.item__cookie_whatsapp_messages',
@@ -55,42 +45,17 @@ module KarixNotificationHelper
                       }.to_json
       end
 
-      if customer
-        remove = customer.agent.present? ? (
-          customer.persisted? &&
-          customer&.agent&.id != ret_u.id &&
-          ret_u.admin? == false &&
-          ret_u.supervisor? == false
-        ) : false
-        customer_chat_args = {
-          customer: serialized_customer,
-          remove_only: remove || removed_agent,
-          room: ret_u.id
-        }
-        redis.publish 'customer_chat', customer_chat_args.to_json
-      end
-      if assigned_agent.present?
-        customer_chat_args = {
-          customer: serialized_agent_customer(assigned_agent.customer),
-          remove_only: (
-            assigned_agent.persisted? &&
-            assigned_agent.retailer_user_id != ret_u.id &&
-            ret_u.admin? == false &&
-            ret_u.supervisor? == false
-          ) || removed_agent,
-          room: ret_u.id,
-          recent_inbound_message_date: message&.customer&.recent_inbound_message_date
-        }.to_json
+      next unless customer
 
-        redis.publish 'customer_chat', customer_chat_args.to_json
-      end
+      customer_chat_args = {
+        customer: serialized_customer,
+        remove_only: ret_u.remove_agent?(assigned_agent),
+        room: ret_u.id,
+        recent_inbound_message_date: customer.recent_inbound_message_date
+      }
+
+      redis.publish 'customer_chat', customer_chat_args.to_json
     end
-  end
-
-  def self.serialized_agent_customer(customer)
-    ActiveModelSerializers::Adapter::Json.new(
-      KarixCustomerSerializer.new(customer)
-      ).serializable_hash
   end
 
   def self.redis
