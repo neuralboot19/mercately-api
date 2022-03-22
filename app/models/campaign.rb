@@ -36,6 +36,7 @@ class Campaign < ApplicationRecord
         return 0 if remaining_conversations >= customers.size
 
         costs = customers.where.not(ws_bic_cost: nil).order(ws_bic_cost: :desc).pluck(:ws_bic_cost)
+        remaining_conversations = 0 if remaining_conversations.negative?
         costs = costs[remaining_conversations, costs.size]
 
         costs.sum
