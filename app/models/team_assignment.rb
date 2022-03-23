@@ -27,7 +27,7 @@ class TeamAssignment < ApplicationRecord
       return unless active_assignment
 
       agents = agent_teams.active_ones.order(id: :asc)
-      return unless agents
+      return unless agents.present?
 
       agent_ids = agents.ids
       pos = agent_ids.index { |a| a > last_assigned.to_i }
