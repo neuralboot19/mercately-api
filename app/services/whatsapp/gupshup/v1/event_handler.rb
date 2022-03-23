@@ -181,7 +181,7 @@ module Whatsapp::Gupshup::V1
           gwm.save!
           broadcast(gwm.reload)
         when 'mismatch'
-          find_customer(@retailer, phone_to_find)
+          find_customer(@retailer, phone_to_find, 'mismatch')
         when 'sent'
           event_id = @params['payload']['gsId']
           gwm = find_gupshup_message(app_name, phone_to_find, event_id)
@@ -263,7 +263,7 @@ module Whatsapp::Gupshup::V1
         customer.gupshup_whatsapp_messages.find_by_gupshup_message_id(id)
       end
 
-      def find_customer(retailer, phone)
+      def find_customer(retailer, phone, from = nil)
         customer = retailer.customers.find_by(phone: phone)
         return customer if customer.present?
 
@@ -279,7 +279,10 @@ module Whatsapp::Gupshup::V1
 
         return unless customer.present?
 
-        customer.update_columns(number_to_use: original_phone, number_to_use_opt_in: true) if add_number
+        if add_number && from == 'mismatch'
+          customer.update_columns(number_to_use: original_phone, number_to_use_opt_in: true)
+        end
+
         customer
       end
 

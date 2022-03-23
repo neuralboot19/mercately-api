@@ -60,7 +60,8 @@ class Customer < ApplicationRecord
   before_save :save_wa_name
   before_update :adjust_agent_assigned_amount, if: :will_save_change_to_status_chat?
   before_update :verify_new_phone, if: -> { phone_changed? }
-  after_save :opt_in_number_to_use, if: :saved_change_to_number_to_use?
+  after_create :opt_in_number_to_use
+  after_update :opt_in_number_to_use, if: :saved_change_to_number_to_use?
   after_save :verify_opt_in
   after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
