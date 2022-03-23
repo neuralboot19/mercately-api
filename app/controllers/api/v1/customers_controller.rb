@@ -27,7 +27,8 @@ class Api::V1::CustomersController < Api::ApiController
           :assigned_agent,
           :tags,
           :unread_messenger_messages,
-          :last_fb_messages
+          :last_fb_messages,
+          :assigned_agent_mobile
         ]
       ) : [],
       agents: agents,
@@ -42,7 +43,7 @@ class Api::V1::CustomersController < Api::ApiController
     read_messages! if @customer.instagram?
 
     render status: 200, json: {
-      customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]),
+      customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent, :assigned_agent_mobile]),
       hubspot_integrated: @customer.retailer.hubspot_integrated?,
       reminders: serialize_reminders(@customer.reminders.order(created_at: :desc)),
       tags: current_retailer.available_customer_tags(@customer.id)
@@ -51,10 +52,10 @@ class Api::V1::CustomersController < Api::ApiController
 
   def update
     if @customer.update(customer_params)
-      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), tags:
+      render status: 200, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent, :assigned_agent_mobile]), tags:
                                   current_retailer.available_customer_tags(@customer.id) }
     else
-      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent]), errors:
+      render status: 400, json: { customer: @customer.as_json(methods: [:emoji_flag, :tags, :assigned_agent, :assigned_agent_mobile]), errors:
                                   @customer.errors, tags: current_retailer.available_customer_tags(@customer.id) }
     end
   end

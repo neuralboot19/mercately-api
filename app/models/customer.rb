@@ -282,7 +282,7 @@ class Customer < ApplicationRecord
   #TODO improve this for mobile endpoint
   def assigned_agent_mobile
     {
-      full_name: agent&.full_name || '',
+      full_name: agent&.full_name || ''
     }
   end
 
