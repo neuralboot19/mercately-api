@@ -970,6 +970,10 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
     end
 
     context 'when the message destination is equal to the number to use' do
+      before do
+        allow_any_instance_of(Customer).to receive(:opt_in_number_to_use).and_return(true)
+      end
+
       let(:same_customer) do
         create(:customer, retailer: retailer, phone: '+5215599999999', number_to_use: '+525599999999',
           country_id: 'MX')

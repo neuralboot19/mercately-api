@@ -5,4 +5,10 @@ namespace :customers do
       c.save
     end
   end
+
+  task optin_backup_numbers: :environment do
+    Customer.where.not(number_to_use: [nil, '']).find_each do |c|
+      c.send(:opt_in_number_to_use)
+    end
+  end
 end
