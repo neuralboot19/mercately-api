@@ -16,7 +16,7 @@ module AgentAssignmentConcern
 
       team.with_lock do
         agents = team.agent_teams.active_ones.order(id: :asc)
-        return unless agents
+        return unless agents.present?
 
         agent_ids = agents.ids
         pos = agent_ids.index { |a| a > team.last_assigned.to_i }
