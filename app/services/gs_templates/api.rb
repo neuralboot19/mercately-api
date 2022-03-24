@@ -95,6 +95,10 @@ module GsTemplates
       Raven.capture_exception(e)
     end
 
+    def create_only_whatsapp_template(retailer, data)
+      create_whatsapp_template(retailer, data)
+    end
+
     private
 
       def upload_media_url(gs_app_id)
