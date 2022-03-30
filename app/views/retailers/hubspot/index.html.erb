@@ -94,6 +94,31 @@
               </div>
             </div>
           </div>
+
+          <div class="box mt-30">
+            <%= form_tag update_sync_conversation_retailers_hubspot_index_path(current_retailer.slug) do %>
+              <div class="row mb-25">
+                <div class="px-0 col-sm-3 col-xs-12">
+                  <div class="index__desc">
+                    <%= label_tag :hs_sync_conversation, 'Sincronizar conversaciones' %>
+                  </div>
+                  <%= select_tag :hs_sync_conversation, options_for_select(hs_sync_options, current_retailer.hs_sync_conversation), class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-sm-3 fs-14 no-style-filter p-relative">
+                  <div class="index__desc">
+                    Periodo de tiempo:
+                  </div>
+                  <%= select_tag :hs_conversacion_sync_time, options_for_select(hs_sync_time_options, current_retailer.hs_conversacion_sync_time), prompt: 'Seleccione uno', class: 'input' %>
+                </div>
+                <div class="col-xs-12 col-sm-3 fs-14 no-style-filter p-relative">
+                  <div>
+                    &nbsp;
+                  </div>
+                  <%= submit_tag 'Guardar', class: 'btn-btn btn-submit h-40' %>
+                </div>
+              </div>
+            <% end %>
+          </div>
           <!-- campos mapeados -->
           <div class="container-fluid products mt-50">
             <div class="row">

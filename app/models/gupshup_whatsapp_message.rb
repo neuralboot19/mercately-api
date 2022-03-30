@@ -9,6 +9,7 @@ class GupshupWhatsappMessage < ApplicationRecord
   include CustomerActiveWhatsappConcern
   include MessageSenderInformationConcern
   include RetryGupshupMessageConcern
+  include CustomerTmpMessagesConcern
 
   belongs_to :retailer
   belongs_to :customer

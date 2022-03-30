@@ -116,6 +116,7 @@ Rails.application.routes.draw do
           post 'update_matching', to: 'hubspot#update_matching'
           get 'update_properties', to: 'hubspot#update_properties_list'
           delete 'mapped_field/:id', to: 'hubspot#destroy', as: :delete_mapped_field
+          post 'update_sync_conversation', to: 'hubspot#update_sync_conversation'
         end
       end
       #Facebook Chats
