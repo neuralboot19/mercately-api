@@ -56,6 +56,20 @@ class Retailers::HubspotController < RetailersController
     redirect_to retailers_hubspot_index_path(current_retailer), notice: notice
   end
 
+  def update_sync_conversation
+    if params[:hs_conversacion_sync_time].blank?
+      notice = t('retailer.integrations.hubspot.sync_conversation.select_time_period')
+    else
+      notice = t('retailer.integrations.hubspot.sync_conversation.updated_fields')
+      current_retailer.update(
+        hs_sync_conversation: params[:hs_sync_conversation],
+        hs_conversacion_sync_time: params[:hs_conversacion_sync_time]
+      )
+    end
+
+    redirect_to retailers_hubspot_index_path(current_retailer), notice: notice
+  end
+
   private
 
     def mapped_fields_params

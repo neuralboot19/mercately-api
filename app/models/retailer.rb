@@ -71,6 +71,7 @@ class Retailer < ApplicationRecord
   after_save :add_sales_channel
   after_save :update_gupshup_info, if: :saved_change_to_gupshup_src_name?
   after_save :create_shop
+  after_save :update_hs_next_sync, if: :saved_change_to_hs_sync_conversation?
 
   validates :slug,
             exclusion: { in: %w(www),
@@ -435,6 +436,10 @@ class Retailer < ApplicationRecord
         aux_app_token = gs_service_api.set_app_token(aux_app_id)
         update(gupshup_app_id: aux_app_id, gupshup_app_token: aux_app_token)
       end
+    end
+
+    def update_hs_next_sync
+      update(hs_next_sync: hs_conversacion_sync_time.hours.from_now) if hs_sync_conversation
     end
 
     def gs_service_api

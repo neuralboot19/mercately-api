@@ -5,6 +5,7 @@ module FacebookMessages
     include AgentMessengerAssignmentConcern
     include MessengerChatBotActionConcern
     include PushNotificationable
+    include CustomerTmpMessagesConcern
     belongs_to :facebook_retailer
     belongs_to :customer
     belongs_to :retailer_user, required: false

@@ -379,6 +379,16 @@ en:
       canceled_plan_error: An error occurred while canceling the plan
     stripe:
       added_balance_success: Balance successfully added
+    integrations:
+      hubspot:
+        sync_conversation:
+          select_time_period: Select time period
+          updated_fields: Campos fields
+  customer:
+    sync_conversation:
+      ws_conversations: WhatsApp conversations
+      msn_conversations: Messenger conversations
+      ig_conversations: Instagram conversations
   buttons:
     back: Back
     edit: Edit

@@ -140,5 +140,41 @@ module HubspotService
       ).parsed_response
       body['results']&.first
     end
+
+    def sync_conversations(email, messages, title)
+      return if messages.empty?
+
+      event_template = GlobalSetting.find_by_setting_key('event_template_id')
+      return if event_template.blank?
+
+      update_token
+      response = HTTParty.post(
+        'https://api.hubapi.com/crm/v3/timeline/events',
+        body: {
+          eventTemplateId: event_template.value,
+          email: email,
+          tokens: {
+            event_title: title,
+            amount_messages: messages.count
+          },
+          extraData: {
+            messages: messages
+          }
+        }.to_json,
+        headers: {
+          'Content-Type' => 'application/json',
+          authorization: "Bearer #{@access_token}"
+        }
+      ).parsed_response
+
+      if response["status"].present? && response["status"] == 'error'
+        SlackError.send_error(response["message"])
+      end
+
+      response
+    rescue StandardError => e
+      SlackError.send_error(e)
+      Raven.capture_exception(e)
+    end
   end
 end

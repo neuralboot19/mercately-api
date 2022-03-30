@@ -4,6 +4,7 @@ class Customer < ApplicationRecord
   include ImportCustomersConcern
   include ExportCustomersConcern
   include ProcessMessageQueueConcern
+  include HsSyncConversationConcern
 
   belongs_to :retailer
   belongs_to :meli_customer, optional: true
@@ -65,6 +66,7 @@ class Customer < ApplicationRecord
   after_save :verify_opt_in
   after_create :create_hs_customer, if: :hs_active?
   after_create :generate_web_id
+  after_commit :hs_sync_conversations, if: :saved_change_to_hs_active?
   after_commit :sync_hs, on: :update, if: :hs_active?
 
   enum id_type: %i[cedula pasaporte ruc rut otro]
@@ -597,6 +599,10 @@ class Customer < ApplicationRecord
 
   def retry_create_messages
     create_messages
+  end
+
+  def hs_sync_conversations
+    sync_conversations
   end
 
   private

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_11_144343) do
+ActiveRecord::Schema.define(version: 2022_03_16_174300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -456,6 +456,7 @@ ActiveRecord::Schema.define(version: 2022_03_11_144343) do
     t.string "current_conversation"
     t.float "ws_uic_cost"
     t.float "ws_bic_cost"
+    t.jsonb "tmp_messages", default: []
     t.index ["chat_bot_option_id"], name: "index_customers_on_chat_bot_option_id"
     t.index ["last_chat_interaction"], name: "index_customers_on_last_chat_interaction"
     t.index ["psid"], name: "index_customers_on_psid"
@@ -528,6 +529,7 @@ ActiveRecord::Schema.define(version: 2022_03_11_144343) do
     t.string "sender_email"
     t.string "message_identifier"
     t.boolean "note", default: false, null: false
+    t.boolean "hs_sync", default: false
     t.index ["customer_id"], name: "index_facebook_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_facebook_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_facebook_messages_on_retailer_user_id"
@@ -627,6 +629,7 @@ ActiveRecord::Schema.define(version: 2022_03_11_144343) do
     t.boolean "initiate_conversation", default: false
     t.integer "conversation_type"
     t.json "conversation_payload"
+    t.boolean "hs_sync", default: false
     t.index ["campaign_id"], name: "index_gupshup_whatsapp_messages_on_campaign_id"
     t.index ["customer_id"], name: "index_gupshup_whatsapp_messages_on_customer_id"
     t.index ["gupshup_message_id"], name: "index_gupshup_whatsapp_messages_on_gupshup_message_id"
@@ -679,6 +682,7 @@ ActiveRecord::Schema.define(version: 2022_03_11_144343) do
     t.datetime "updated_at", null: false
     t.string "message_identifier"
     t.boolean "note", default: false, null: false
+    t.boolean "hs_sync", default: false
     t.index ["customer_id"], name: "index_instagram_messages_on_customer_id"
     t.index ["facebook_retailer_id"], name: "index_instagram_messages_on_facebook_retailer_id"
     t.index ["retailer_user_id"], name: "index_instagram_messages_on_retailer_user_id"
@@ -1299,6 +1303,9 @@ ActiveRecord::Schema.define(version: 2022_03_11_144343) do
     t.decimal "tax_amount", precision: 10, scale: 2, default: "0.0"
     t.boolean "shop_updated", default: false, null: false
     t.index ["catalog_slug"], name: "index_retailers_on_catalog_slug", unique: true
+    t.boolean "hs_sync_conversation", default: false
+    t.integer "hs_conversacion_sync_time", default: 4
+    t.datetime "hs_next_sync", default: "2022-03-17 19:54:46"
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
