@@ -159,7 +159,7 @@ class RetailerUser < ApplicationRecord
   end
 
   def android?
-    mobile_type == 'android' || mobile_type == nil
+    mobile_type == 'android' || mobile_type.nil?
   end
 
   def ios?

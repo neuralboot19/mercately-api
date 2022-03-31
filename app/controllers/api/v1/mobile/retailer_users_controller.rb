@@ -10,6 +10,17 @@ class Api::V1::Mobile::RetailerUsersController < Api::MobileController
     end
   end
 
+  def toggle_active
+    status = !@user.active
+
+    if @user.update(active: status)
+      @user.agent_teams.update_all(active: status)
+      render status: 200, json: { status: status }
+    else
+      render status: 403, json: { error: I18n.t('retailer_user.status.failed') }
+    end
+  end
+
   private
 
     def set_retailer
