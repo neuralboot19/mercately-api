@@ -441,6 +441,9 @@ es:
     api_key: 'API Key'
     logout: 'Cerrar sesión'
     free_tier: Chats gratis
+    change_status: Cambiar a
+    status_available: disponible
+    status_away: ausente
     failed_charge:
       1: 'Hola %{retailer}, lamentablemente no pudimos ejecutar el cobro por renovación de tu plan.'
       2: 'Por favor, revisa tu método de pago lo antes posible para no sufrir cortes en el servicio'
@@ -489,11 +492,12 @@ es:
       autoassigns: 'Autoasignaciones'
     messaging_configuration:
       messaging_configuration: 'Configuración de mensajería'
-      canned_responses: 'Respuestas Rápidas'
+      canned_responses: 'Respuestas rápidas'
       whatsapp_templates: 'Plantillas de WhatsApp'
       welcome_messages: 'Mensajes de bienvenida'
       tags: 'Etiquetas'
-      automatic_assignment: 'Asignación Automática'
+      automatic_assignment: 'Asignación automática'
+      messaging_rules: Reglas de mensajería
     statistics:
       statistics: 'Estadísticas'
       basic: 'Básica'
@@ -602,6 +606,8 @@ es:
         message_not_found: Mensaje no encontrado
         message_saved_successfully: Mensaje guardado con éxito
         all_fields_is_required: Debe llenar todos los campos
+      business_rule:
+        title: Reglas de mensajería
     profile:
       my_account:
         index:
@@ -609,6 +615,7 @@ es:
           breadcrumb:
             root: Dashboard
             my_account: Mi cuenta
+            messaging_rules: Reglas de mensajería
           my_data:
             title: Mis datos
             description: Configura las opciones de tu cuenta
@@ -766,3 +773,7 @@ es:
     phone: 'Teléfono'
     email: 'Correo'
     address: 'Dirección'
+  retailer_user:
+    status:
+      success: Cambiaste tu estado exitosamente
+      failed: No fue posible cambiar tu estado

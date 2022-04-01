@@ -27,7 +27,7 @@ RSpec.describe 'TeamAssignmentsController', type: :request do
         get retailers_team_assignments_path(retailer)
         expect(response).to have_http_status(:ok)
 
-        retailer_teams = retailer.team_assignments
+        retailer_teams = retailer.team_assignments.order(:name)
         expect(assigns(:teams)).to eq(retailer_teams)
       end
     end

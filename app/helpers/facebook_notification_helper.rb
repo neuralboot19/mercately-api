@@ -16,7 +16,7 @@ module FacebookNotificationHelper
 
     retailer_users = retailer_users | retailer.admins | retailer.supervisors
 
-    customer = message&.customer || assigned_agent&.customer || customer
+    customer = customer || message&.customer || assigned_agent&.customer
     if customer.present?
       serialized_customer = ActiveModelSerializers::Adapter::Json.new(
         CustomerSerializer.new(customer)
@@ -24,20 +24,12 @@ module FacebookNotificationHelper
     end
 
     retailer_users.each do |ret_u|
-      removed_agent = false
       if platform == 'instagram'
         unread_messages = ret_u.instagram_unread
         unread_chats_count = ret_u.unread_instagram_chats_count
       else
         unread_messages = ret_u.messenger_unread
         unread_chats_count = ret_u.unread_messenger_chats_count
-      end
-
-      if ret_u.agent? && ret_u.only_assigned?
-        removed_agent = is_removed(ret_u, assigned_agent)
-        add_agent = assigned_agent.present? && assigned_agent.persisted? && assigned_agent.retailer_user_id == ret_u.id
-
-        next if !removed_agent && !add_agent
       end
 
       redis.publish 'new_message_counter', {
@@ -64,16 +56,9 @@ module FacebookNotificationHelper
         room: ret_u.id
       }
 
-      if assigned_agent.present?
-        customer_chat_args.merge!({
-          remove_only: (
-            assigned_agent.persisted? &&
-            assigned_agent.retailer_user_id != ret_u.id &&
-            ret_u.admin? == false &&
-            ret_u.supervisor? == false
-          ) || removed_agent
-        })
-      end
+      customer_chat_args.merge!({
+        remove_only: ret_u.remove_agent?(assigned_agent)
+      })
 
       redis.publish "customer_#{platform}_chat", customer_chat_args.to_json
     end
@@ -102,11 +87,5 @@ module FacebookNotificationHelper
     else
       message.text
     end
-  end
-
-  def self.is_removed(ret_u, assigned_agent)
-    assigned_agent.present? && ((!assigned_agent.persisted? &&
-      assigned_agent.retailer_user_id == ret_u.id) || (assigned_agent.persisted? &&
-      assigned_agent.retailer_user_id != ret_u.id))
   end
 end

@@ -152,9 +152,16 @@
           <li class="submenu__item">
             <%= link_to t('vertical_navbar.messaging_configuration.tags'), retailers_tags_path(current_retailer), class: 'item__name no-style' %>
           </li>
-          <li class="submenu__item">
-            <%= link_to t('vertical_navbar.messaging_configuration.automatic_assignment'), retailers_team_assignments_path(current_retailer), class: 'item__name no-style' %>
-          </li>
+          <% unless current_retailer_user.agent? %>
+            <li class="submenu__item">
+              <%= link_to t('vertical_navbar.messaging_configuration.automatic_assignment'), retailers_team_assignments_path(current_retailer), class: 'item__name no-style' %>
+            </li>
+          <% end %>
+          <% unless current_retailer_user.agent? %>
+            <li class="submenu__item">
+              <%= link_to t('vertical_navbar.messaging_configuration.messaging_rules'), retailers_business_rules_path(current_retailer), class: 'item__name no-style' %>
+            </li>
+          <% end %>
         </ul>
       </li>
       <% if current_retailer_user.admin? || current_retailer_user.supervisor? %>
@@ -389,11 +396,20 @@
                   <%= t('vertical_navbar.messaging_configuration.tags') %>
                 <% end %>
               </div>
-              <div>
-                <%= link_to retailers_team_assignments_path(current_retailer), class: 'c-secondary no-style' do %>
-                  <%= t('vertical_navbar.messaging_configuration.automatic_assignment') %>
-                <% end %>
-              </div>
+              <% unless current_retailer_user.agent? %>
+                <div>
+                  <%= link_to retailers_team_assignments_path(current_retailer), class: 'c-secondary no-style' do %>
+                    <%= t('vertical_navbar.messaging_configuration.automatic_assignment') %>
+                  <% end %>
+                </div>
+              <% end %>
+              <% unless current_retailer_user.agent? %>
+                <div>
+                  <%= link_to retailers_business_rules_path(current_retailer), class: 'c-secondary no-style' do %>
+                    <%= t('vertical_navbar.messaging_configuration.messaging_rules') %>
+                  <% end %>
+                </div>
+              <% end %>
             </div>
           </div>
         </li>

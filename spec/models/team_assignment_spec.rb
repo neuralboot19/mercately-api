@@ -85,7 +85,7 @@ RSpec.describe TeamAssignment, type: :model do
     let(:customer3) { create(:customer, retailer: retailer) }
 
     it 'assigns one chat to every agent team' do
-      allow_any_instance_of(TeamAssignment).to receive(:notify_agents).and_return(true)
+      allow_any_instance_of(Shared::AutomaticAssignments).to receive(:notify_agents).and_return(true)
       agent_team1
       agent_team2
       agent_team3

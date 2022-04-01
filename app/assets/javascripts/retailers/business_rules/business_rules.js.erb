@@ -1,0 +1,21 @@
+function manageRetailerRule(input, ruleId) {
+  $(input).attr('disabled', 'disabled');
+
+  let request = $.ajax({
+    url: '/retailers/' + ENV['SLUG'] + '/business_rules/manage_retailer_rule',
+    beforeSend: function(xhr) {xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))},
+    method: "POST",
+    data: { rule_id: ruleId },
+    dataType: "json"
+  });
+
+  request.done(function(msg) {
+    $(input).removeAttr('disabled');
+    showtoast(msg.message);
+  });
+
+  request.fail(function(jqXHR, textStatus) {
+    $(input).removeAttr('disabled');
+    showtoast(textStatus);
+  });
+}

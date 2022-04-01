@@ -116,6 +116,36 @@
   }
 }
 
+.agent-status-mark {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  font-size: 12px;
+  border-radius: 50rem;
+
+   &.active {
+    background-color: #55AD77;
+  }
+
+  &.away {
+    background-color: #808191;
+  }
+}
+
+.status-icon-active {
+  color: #55AD77;
+}
+
+.status-icon-away {
+  color: #808191;
+}
+
+.no-width {
+  width: unset;
+}
+
 @media screen and (max-width: 1024px) {
   .header--dashboard {
     background-color: #FFF;

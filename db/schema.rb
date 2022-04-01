@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_16_174300) do
+ActiveRecord::Schema.define(version: 2022_03_28_185131) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -176,6 +176,16 @@ ActiveRecord::Schema.define(version: 2022_03_16_174300) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["retailer_id"], name: "index_automatic_answers_on_retailer_id"
+  end
+
+  create_table "business_rules", force: :cascade do |t|
+    t.bigint "rule_category_id"
+    t.string "name"
+    t.text "description"
+    t.string "identifier"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["rule_category_id"], name: "index_business_rules_on_rule_category_id"
   end
 
   create_table "calendar_events", force: :cascade do |t|
@@ -1116,6 +1126,15 @@ ActiveRecord::Schema.define(version: 2022_03_16_174300) do
     t.index ["retailer_id"], name: "index_retailer_bill_details_on_retailer_id"
   end
 
+  create_table "retailer_business_rules", force: :cascade do |t|
+    t.bigint "retailer_id"
+    t.bigint "business_rule_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_rule_id"], name: "index_retailer_business_rules_on_business_rule_id"
+    t.index ["retailer_id"], name: "index_retailer_business_rules_on_retailer_id"
+  end
+
   create_table "retailer_conversations", force: :cascade do |t|
     t.bigint "retailer_id", null: false
     t.bigint "retailer_user_id"
@@ -1211,6 +1230,7 @@ ActiveRecord::Schema.define(version: 2022_03_16_174300) do
     t.boolean "allow_import", default: false
     t.integer "mobile_type"
     t.string "app_version"
+    t.boolean "active", default: true
     t.index ["email"], name: "index_retailer_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_retailer_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_retailer_users_on_invitations_count"
@@ -1309,6 +1329,12 @@ ActiveRecord::Schema.define(version: 2022_03_16_174300) do
     t.index ["encrypted_api_key"], name: "index_retailers_on_encrypted_api_key"
     t.index ["gupshup_src_name"], name: "index_retailers_on_gupshup_src_name", unique: true
     t.index ["slug"], name: "index_retailers_on_slug", unique: true
+  end
+
+  create_table "rule_categories", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "sales_channels", force: :cascade do |t|

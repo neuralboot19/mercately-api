@@ -178,6 +178,9 @@ Rails.application.routes.draw do
       resources :customer_related_fields
       put 'paymentez_credit_cards/set_default', to: 'paymentez_credit_cards#set_default', as: :paymentez_set_default
       get 'new_stats', to: 'new_stats#index', as: :new_stats
+
+      resources :business_rules, only: :index
+      post 'business_rules/manage_retailer_rule', to: 'business_rules#manage_retailer_rule'
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
@@ -200,6 +203,7 @@ Rails.application.routes.draw do
 
   put 'retailer_user/onboarding_status', to: 'retailer_users#update_onboarding_info', as: :update_onboarding_info
   put 'retailer_user/locale', to: 'retailer_users#locale'
+  put 'retailer_user/active', to: 'retailer_users#toggle_active'
 
   get 'categories', to: 'categories#roots'
   get 'categories/:id', to: 'categories#childs', as: :categories_childs

@@ -56,7 +56,10 @@
           <%= render "layouts/dashboard/notifications/notifications" %>
           <!-- Notifications end -->
           <div class="bar__right-info">
-            <div class="d-inline info__logo"><strong><%= two_upper_case_letters(current_retailer_user.full_name.presence || current_retailer_user.email) %></strong></div>
+            <div class="d-inline info__logo p-relative">
+              <strong><%= two_upper_case_letters(current_retailer_user.full_name.presence || current_retailer_user.email) %></strong>
+              <span class="agent-status-mark <%= current_retailer_user.active ? 'active' : 'away' %>"></span>
+            </div>
           </div>
           <div class="mobile-header-links hide-on-pc">
             <div class="calendar-button">
@@ -73,11 +76,24 @@
               </div>
             </label>
             <input id="dropdown__menu--header" type="checkbox" class="dropdown__input"/>
-            <ul class="dropdown__menu t-left">
+            <ul class="dropdown__menu t-left no-width">
               <li>
                 <%= link_to retailers_my_account_path(current_retailer), class: 'no-style' do %>
                   <i class="fas fa-cog mr-8"></i>
                   <%= t('horizontal_navbar.configurations') %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to retailer_user_active_path, method: :put, class: 'no-style' do %>
+                  <i class="fas fa-circle mr-8 <%= current_retailer_user.active ? 'status-icon-away' : 'status-icon-active' %>"></i>
+                  <%= t('horizontal_navbar.change_status') %>
+                  <span class="bold-font">
+                    <% if current_retailer_user.active %>
+                      <%= t('horizontal_navbar.status_away') %>
+                    <% else %>
+                      <%= t('horizontal_navbar.status_available') %>
+                    <% end %>
+                  </span>
                 <% end %>
               </li>
               <li>
