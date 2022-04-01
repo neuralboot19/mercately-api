@@ -493,7 +493,7 @@ class Api::V1::KarixWhatsappController < Api::ApiController
       message_helper = Whatsapp::Gupshup::V1::Helpers::Messages.new
 
       agents = current_retailer.retailer_users.all_customers.to_a
-      message_helper.notify_agent!(current_retailer, agents, agent_customer)
+      message_helper.notify_agent!(current_retailer, agents, agent_customer, customer)
 
       render status: 200, json: {
         message: 'Notificación enviada',

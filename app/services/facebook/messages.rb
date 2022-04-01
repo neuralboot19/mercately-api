@@ -77,6 +77,7 @@ module Facebook
       end
       response = Connection.post_form_request(conn, prepare_attachment(to, file_data, filename, url, file_type,
         file_content_type))
+      SlackError.send_error("Customer FB id: #{to}, facebook_attachment_response: #{response.body}")
       JSON.parse(response.body)
     end
 

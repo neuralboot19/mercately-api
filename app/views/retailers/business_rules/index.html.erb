@@ -1,0 +1,74 @@
+<% if current_retailer.payment_plan.advanced? %>
+  <div class="content_width ml-sm-108 mt-25 px-15 no-left-margin-xs">
+    <div class="container-fluid-no-padding">
+      <div class="row align-items-center">
+        <div class="col col-sm-5">
+          <h1 class="funnels__title mb-0"><%= t('retailer.settings.business_rule.title') %></h1>
+
+          <ol class="breadcrumb pl-0 pb-0 mb-0 bg-transparent">
+            <li class="breadcrumb-item">
+              <%= link_to retailers_dashboard_path(current_retailer), class: 'no-style' do %>
+                <%= t('retailer.profile.my_account.index.breadcrumb.root') %>
+              <% end %>
+            </li>
+            <li class="breadcrumb-item active"><a href="#"><%= t('retailer.profile.my_account.index.breadcrumb.messaging_rules') %></a></li>
+          </ol>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="table box">
+            <div class="row">
+              <div class="col">
+                <div class="card min-h-unset ml-0 no-border shadow-none px-30 border-24">
+                  <ul class="list-group list-group-flush d-none d-md-block bg-transparent">
+                    <li class="list-group-item text-secondary py-30 px-0 bg-transparent">
+                      <div class="fz-14 row hide-on-tablet-and-down center-sm">
+                        <div class="col-4">Regla</div>
+                        <div class="col-6">Descripción</div>
+                        <div class="col-2">Estado</div>
+                      </div>
+                    </li>
+                  </ul>
+                  <% @rules.each do |rule| %>
+                    <div class="card min-h-unset m-0 shadow-none no-border px-0 border-0">
+                      <div class="card-header bg-transparent border-0 fz-13 px-0 py-12">
+                        <div class="mb-0 row align-items-center">
+                          <div class="col-12 col-md-4">
+                            <%= rule.name %>
+                          </div>
+                          <div class="col-12 col-md-6 text-secondary">
+                            <%= rule.description %>
+                          </div>
+                          <div class="col-12 col-md-2 text-secondary pl-15">
+                            <label class="switch">
+                              <input type="checkbox" onchange="manageRetailerRule(this, <%= rule.id %>)" <%= current_retailer.has_rule?(rule.identifier) ? 'checked' : '' %> />
+                              <span class="slider round" />
+                            </label>
+                            Activo
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="content_width ml-sm-108 mt-25 px-15 no-left-margin-xs">
+    <div class="container-fluid-no-padding">
+      <div class="row">
+        <div class="warning-box col-md-12 pl-10" role="alert">
+          Tu plan actual (básico) no incluye este módulo. Actualiza tu plan y configura reglas de mensajería para tu negocio.
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script src="<%= asset_path 'retailers/business_rules/business_rules.js' %>" charset="utf-8"></script>

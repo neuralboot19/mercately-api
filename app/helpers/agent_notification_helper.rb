@@ -1,5 +1,7 @@
 module AgentNotificationHelper
   def self.notify_agent(agent_customer, chat_type)
+    return unless agent_customer.present?
+
     agent_notification = AgentNotification.new do |notification|
       notification.customer_id = agent_customer.customer.id
       notification.retailer_user_id = agent_customer.retailer_user.id
@@ -24,7 +26,7 @@ module AgentNotificationHelper
 
   def self.serialize_customer(customer, chat_type)
     case chat_type
-    when 'messenger', 'instagram'
+    when 'messenger', 'facebook', 'instagram'
       ActiveModelSerializers::Adapter::Json.new(
         CustomerSerializer.new(customer)
       ).serializable_hash

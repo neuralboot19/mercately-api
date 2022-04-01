@@ -20,6 +20,9 @@ en:
     api_key: 'API Key'
     logout: 'Logout'
     free_tier: Free chats
+    change_status: Set yourself as
+    status_available: active
+    status_away: away
     failed_charge:
       1: 'Hello %{retailer}, unfortunately we could not execute the charge for the renewal of your plan.'
       2: 'Please, review your payment method as soon as possible so as not to suffer interruptions in the service'
@@ -73,6 +76,7 @@ en:
       welcome_messages: 'Welcome Messages'
       tags: 'Tags'
       automatic_assignment: 'Automatic Assignment'
+      messaging_rules: Messaging Rules
     statistics:
       statistics: 'Statistics'
       basic: 'Basic'
@@ -255,6 +259,8 @@ en:
         message_not_found: Message not found
         message_saved_successfully: Message saved successfully
         all_fields_is_required: All fields are required
+      business_rule:
+        title: Messaging rules
     profile:
       my_account:
         index:
@@ -262,6 +268,7 @@ en:
           breadcrumb:
             root: Dashboard
             my_account: My account
+            messaging_rules: Messaging rules
           my_data:
             title: My data
             description: Configure your account options
@@ -441,3 +448,7 @@ en:
     phone: 'Phone'
     email: 'Email'
     address: 'Address'
+  retailer_user:
+    status:
+      success: Status changed successfully
+      failed: Status change failed

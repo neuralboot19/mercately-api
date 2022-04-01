@@ -166,6 +166,22 @@ class RetailerUser < ApplicationRecord
     mobile_type == 'ios'
   end
 
+  def remove_agent?(assigned_agent)
+    if !agent?
+      false
+    elsif only_assigned?
+      if assigned_agent.blank? || assigned_agent.retailer_user_id != id
+        true
+      else
+        false
+      end
+    elsif assigned_agent.present? && assigned_agent.retailer_user_id != id
+      true
+    else
+      false
+    end
+  end
+
   private
 
     def onboarding_status_format

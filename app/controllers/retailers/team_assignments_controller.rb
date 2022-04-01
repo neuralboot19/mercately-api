@@ -3,7 +3,7 @@ class Retailers::TeamAssignmentsController < RetailersController
   layout 'chats/chat', only: :index
 
   def index
-    @teams = current_retailer.team_assignments.page(params[:page])
+    @teams = current_retailer.team_assignments.order(:name).page(params[:page])
     @team_assignment = TeamAssignment.new(retailer: current_retailer)
     @agent_team = AgentTeam.new
   end

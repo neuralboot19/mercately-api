@@ -4,9 +4,9 @@ class AgentCustomer < ApplicationRecord
   belongs_to :team_assignment, required: false
 
   before_destroy :agent_data_destroy
-  before_update :agent_data, if: :will_save_change_to_team_assignment_id?
+  before_update :agent_data, if: :assignment_will_change?
   after_destroy :free_spot_on_destroy
-  after_update :free_spot_on_change, if: :saved_change_to_team_assignment_id?
+  after_update :free_spot_on_change, if: :assignment_changed?
   after_commit :send_push_notification, on: [:create, :update]
 
   scope :update_range_between, -> (start_date, end_date) { where(updated_at: start_date..end_date) }
@@ -79,5 +79,13 @@ class AgentCustomer < ApplicationRecord
       return if agent_team.blank? || agent_team.assigned_amount <= 0
 
       agent_team.update(assigned_amount: agent_team.assigned_amount - 1)
+    end
+
+    def assignment_changed?
+      saved_change_to_retailer_user_id? || saved_change_to_team_assignment_id?
+    end
+
+    def assignment_will_change?
+      will_save_change_to_retailer_user_id? || will_save_change_to_team_assignment_id?
     end
 end

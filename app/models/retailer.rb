@@ -51,6 +51,8 @@ class Retailer < ApplicationRecord
   has_many :retailer_most_used_tags
   has_many :retailer_conversations
   has_many :retailer_amount_messages
+  has_many :retailer_business_rules, dependent: :destroy
+  has_many :business_rules, through: :retailer_business_rules
 
   validates :name, presence: true
   validates :currency, presence: true
@@ -362,6 +364,10 @@ class Retailer < ApplicationRecord
     return 1000 unless retailer_ws_conv.present?
 
     1000 - (retailer_ws_conv.free_uic_total + retailer_ws_conv.free_bic_total + retailer_ws_conv.free_tier_total)
+  end
+
+  def has_rule?(identifier)
+    business_rules.where(identifier: identifier).exists?
   end
 
   private

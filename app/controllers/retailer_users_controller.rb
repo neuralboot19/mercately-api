@@ -18,4 +18,15 @@ class RetailerUsersController < ApplicationController
     current_retailer_user.update(locale: params[:locale])
     redirect_back fallback_location: root_path
   end
+
+  def toggle_active
+    status = current_retailer_user.active
+
+    if current_retailer_user.update(active: !status)
+      current_retailer_user.agent_teams.update_all(active: !status)
+      redirect_back fallback_location: root_path, notice: I18n.t('retailer_user.status.success')
+    else
+      redirect_back fallback_location: root_path, notice: I18n.t('retailer_user.status.failed')
+    end
+  end
 end
