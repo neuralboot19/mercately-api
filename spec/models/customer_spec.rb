@@ -951,15 +951,7 @@ RSpec.describe Customer, type: :model do
       end
     end
 
-    context 'when country_id is not blank' do
-      let(:customer) { create(:customer, phone: '123456789', country_id: 'EC') }
-
-      it 'returns nil' do
-        expect(customer.send(:grab_country_on_import)).to be_nil
-      end
-    end
-
-    context 'when country_id is blank and phone is present' do
+    context 'when phone is present' do
       context 'when phone is well formatted' do
         let(:customer) { create(:customer, phone: '584141234567', country_id: nil) }
 
@@ -973,7 +965,7 @@ RSpec.describe Customer, type: :model do
       context 'when phone is not well formatted' do
         let(:customer) { create(:customer, phone: '04141234567', country_id: nil) }
 
-        it 'sets the country_id to the customer' do
+        it 'does not set the country_id to the customer' do
           expect(customer.country_id).to be_nil
           customer.send(:grab_country_on_import)
           expect(customer.country_id).to be_nil
