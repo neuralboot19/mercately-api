@@ -281,6 +281,7 @@ Rails.application.routes.draw do
         post 'sign_up', to: 'registrations#create', as: :sign_up
         get 'dashboard', to: 'dashboard#index', as: :dashboard
         post 'set_app_version', to: 'retailer_users#set_app_version', as: :set_app_version
+        put 'toggle_retailer_user_status', to: 'retailer_users#toggle_active', as: :toggle_retailer_user_status
       end
 
       # For Karix
