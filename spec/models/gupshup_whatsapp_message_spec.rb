@@ -362,6 +362,7 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
 
     context 'when the customer does not text for the first time' do
       let!(:automatic_answer) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :gupshup_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 
@@ -380,6 +381,7 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
 
     context 'when the message is not inbound' do
       let!(:automatic_answer) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :gupshup_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 
@@ -393,7 +395,8 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
     end
 
     context 'when all conditions are present' do
-      let!(:automatic_answer) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer) { create(:automatic_answer, :welcome, whatsapp: true, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :gupshup_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 
@@ -436,6 +439,7 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
 
     context 'when the customer does not have a prior message sent' do
       let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :gupshup_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 
@@ -468,6 +472,7 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
 
     context 'when the created time of the prior message is not passed yet' do
       let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :gupshup_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 
@@ -486,7 +491,8 @@ RSpec.describe GupshupWhatsappMessage, type: :model do
     end
 
     context 'when all conditions are present' do
-      let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer) { create(:automatic_answer, :inactive, whatsapp: true, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :gupshup_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 

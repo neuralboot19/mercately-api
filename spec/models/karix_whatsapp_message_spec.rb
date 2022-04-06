@@ -191,6 +191,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
 
     context 'when all conditions are present' do
       let!(:automatic_answer) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :karix_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 
@@ -285,6 +286,7 @@ RSpec.describe KarixWhatsappMessage, type: :model do
 
     context 'when all conditions are present' do
       let!(:automatic_answer) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:retailer) { create(:retailer, :karix_integrated) }
       let(:customer) { create(:customer, retailer: retailer) }
 

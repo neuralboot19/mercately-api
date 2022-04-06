@@ -142,11 +142,7 @@
           <% end %>
           <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer %>
             <li class="submenu__item">
-              <% if current_retailer.whatsapp_integrated? %>
-                <%= link_to t('vertical_navbar.messaging_configuration.welcome_messages'), retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'item__name no-style' %>
-              <% elsif current_retailer.facebook_retailer %>
-                <%= link_to t('vertical_navbar.messaging_configuration.welcome_messages'), retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'item__name no-style' %>
-              <% end %>
+                <%= link_to t('vertical_navbar.messaging_configuration.welcome_messages'), retailers_new_manage_automatic_answers_path(current_retailer), class: 'item__name no-style' %>
             </li>
           <% end %>
           <li class="submenu__item">
@@ -380,14 +376,8 @@
               <% end %>
               <% if current_retailer.whatsapp_integrated? || current_retailer.facebook_retailer %>
                 <div>
-                  <% if current_retailer.whatsapp_integrated? %>
-                    <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'whatsapp'), class: 'c-secondary no-style' do %>
-                      <%= t('vertical_navbar.messaging_configuration.welcome_messages') %>
-                    <% end %>
-                  <% elsif current_retailer.facebook_retailer %>
-                    <%= link_to retailers_manage_automatic_answers_path(current_retailer, platform: 'messenger'), class: 'c-secondary no-style' do %>
-                      <%= t('vertical_navbar.messaging_configuration.welcome_messages') %>
-                    <% end %>
+                  <%= link_to retailers_new_manage_automatic_answers_path(current_retailer), class: 'c-secondary no-style' do %>
+                    <%= t('vertical_navbar.messaging_configuration.welcome_messages') %>
                   <% end %>
                 </div>
               <% end %>
@@ -435,7 +425,7 @@
           </li>
         <% end %>
         <li class="menu__item">
-          <div class="merc-tooltip <%= controller.controller_name == 'integrations' ? 'merc-tooltip-active' : '' %>"">
+          <div class="merc-tooltip <%= controller.controller_name == 'integrations' ? 'merc-tooltip-active' : '' %>">
             <%= link_to retailers_integrations_path(current_retailer), class: 'item__name no-style' do %>
               <i class="icon-integrations-left fs-10"></i>
             <% end %>

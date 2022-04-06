@@ -435,10 +435,11 @@ RSpec.describe Retailer, type: :model do
   end
 
   describe '#whatsapp_welcome_message' do
-    subject(:retailer) { create(:retailer) }
+    subject(:retailer) { create(:retailer, :gupshup_integrated) }
 
     context 'when the retailer has a whatsapp active welcome message configured' do
-      let!(:welcome_message) { create(:automatic_answer, :welcome, :whatsapp, retailer: retailer) }
+      let!(:welcome_message) { create(:automatic_answer, :welcome, whatsapp: true, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: welcome_message)}
 
       it 'returns it' do
         expect(retailer.whatsapp_welcome_message).to be_an_instance_of(AutomaticAnswer)
@@ -453,10 +454,11 @@ RSpec.describe Retailer, type: :model do
   end
 
   describe '#whatsapp_inactive_message' do
-    subject(:retailer) { create(:retailer) }
+    subject(:retailer) { create(:retailer, :gupshup_integrated) }
 
     context 'when the retailer has a whatsapp inactive message configured' do
-      let!(:inactive_message) { create(:automatic_answer, :inactive, :whatsapp, retailer: retailer) }
+      let!(:inactive_message) { create(:automatic_answer, :inactive, whatsapp: true, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: inactive_message)}
 
       it 'returns it' do
         expect(retailer.whatsapp_inactive_message).to be_an_instance_of(AutomaticAnswer)
@@ -472,9 +474,11 @@ RSpec.describe Retailer, type: :model do
 
   describe '#messenger_welcome_message' do
     subject(:retailer) { create(:retailer) }
+    let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
 
     context 'when the retailer has a messenger active welcome message configured' do
       let!(:welcome_message) { create(:automatic_answer, :welcome, :messenger, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: welcome_message)}
 
       it 'returns it' do
         expect(retailer.messenger_welcome_message).to be_an_instance_of(AutomaticAnswer)
@@ -490,9 +494,11 @@ RSpec.describe Retailer, type: :model do
 
   describe '#messenger_inactive_message' do
     subject(:retailer) { create(:retailer) }
+    let!(:facebook_retailer) { create(:facebook_retailer, retailer: retailer) }
 
     context 'when the retailer has a messenger inactive message configured' do
       let!(:inactive_message) { create(:automatic_answer, :inactive, :messenger, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: inactive_message)}
 
       it 'returns it' do
         expect(retailer.messenger_inactive_message).to be_an_instance_of(AutomaticAnswer)
@@ -508,9 +514,11 @@ RSpec.describe Retailer, type: :model do
 
   describe '#instagram_welcome_message' do
     subject(:retailer) { create(:retailer) }
+    let!(:facebook_retailer) { create(:facebook_retailer, :with_instagram, retailer: retailer) }
 
     context 'when the retailer has a instagram active welcome message configured' do
       let!(:welcome_message) { create(:automatic_answer, :welcome, :instagram, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: welcome_message)}
 
       it 'returns it' do
         expect(retailer.instagram_welcome_message).to be_an_instance_of(AutomaticAnswer)
@@ -526,9 +534,11 @@ RSpec.describe Retailer, type: :model do
 
   describe '#instagram_inactive_message' do
     subject(:retailer) { create(:retailer) }
+    let!(:facebook_retailer) { create(:facebook_retailer, :with_instagram, retailer: retailer) }
 
     context 'when the retailer has a instagram inactive message configured' do
       let!(:inactive_message) { create(:automatic_answer, :inactive, :instagram, retailer: retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: inactive_message)}
 
       it 'returns it' do
         expect(retailer.instagram_inactive_message).to be_an_instance_of(AutomaticAnswer)

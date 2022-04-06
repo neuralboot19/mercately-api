@@ -1,17 +1,13 @@
 require 'rails_helper'
 
-RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
+RSpec.describe 'Api::V1::AutomaticAnswersController', type: :request do
   describe '#save_automatic_answer' do
     context 'when the retailer does not have whatsapp integrated' do
       let(:retailer_user) { create(:retailer_user, :with_retailer) }
 
-      before do
-        sign_in retailer_user
-      end
-
       it 'does not create or update an automatic answer' do
         automatic_answer = {
-          platform: 'whatsapp',
+          whatsapp: true,
           message_type: 'inactive_customer',
           status: 'active',
           interval: 12,
@@ -19,7 +15,7 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(0)
       end
     end
@@ -33,15 +29,15 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
 
       it 'does not create or update an automatic answer' do
         automatic_answer = {
-          platform: 'messenger',
+          messenger: true,
           message_type: 'inactive_customer',
-          status: 'active',
           interval: 12,
-          message: 'Algún otro texto de prueba.'
+          message: 'Algún otro texto de prueba.',
+          always_active: true
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(0)
       end
     end
@@ -55,20 +51,20 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
 
       it 'does not create or update an automatic answer' do
         automatic_answer = {
-          platform: 'instagram',
+          instagram: true,
           message_type: 'inactive_customer',
-          status: 'active',
           interval: 12,
-          message: 'Test message'
+          message: 'Test message',
+          always_active: true,
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(0)
       end
     end
 
-    context 'when the retailer does not have neither whatsapp nor messenger integrated' do
+    context 'when the retailer does not have neither whatsapp or messenger integrated' do
       let(:retailer_user) { create(:retailer_user, :with_retailer) }
 
       before do
@@ -77,15 +73,15 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
 
       it 'does not create or update an automatic answer' do
         automatic_answer = {
-          platform: 'whatsapp',
+          whatsapp: true,
           message_type: 'inactive_customer',
-          status: 'active',
           interval: 12,
-          message: 'Algún otro texto de prueba.'
+          message: 'Algún otro texto de prueba.',
+          always_active: true
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(0)
       end
     end
@@ -100,15 +96,15 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
 
       it 'does not create or update an automatic answer' do
         automatic_answer = {
-          platform: 'whatsapp',
+          whatsapp: true,
           message_type: 'inactive_customer',
-          status: 'active',
           interval: 12,
-          message: ''
+          message: '',
+          always_active: true
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(0)
       end
     end
@@ -123,15 +119,15 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
 
       it 'creates or updates an automatic answer' do
         automatic_answer = {
-          platform: 'whatsapp',
+          whatsapp: true,
           message_type: 'inactive_customer',
-          status: 'active',
           interval: 12,
-          message: 'Algún otro texto de prueba.'
+          message: 'Algún otro texto de prueba.',
+          always_active: true
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(1)
       end
     end
@@ -146,15 +142,16 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
 
       it 'creates or updates an automatic answer' do
         automatic_answer = {
-          platform: 'messenger',
+          messenger: true,
           message_type: 'inactive_customer',
           status: 'active',
           interval: 12,
-          message: 'Algún otro texto de prueba.'
+          message: 'Algún otro texto de prueba.',
+          always_active: true
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(1)
       end
     end
@@ -169,15 +166,16 @@ RSpec.describe Retailers::AutomaticAnswersController, type: :controller do
 
       it 'creates or updates an automatic answer' do
         automatic_answer = {
-          platform: 'instagram',
+          instagram: true,
           message_type: 'inactive_customer',
           status: 'active',
           interval: 12,
-          message: 'Test message'
+          message: 'Test message',
+          always_active: true
         }
 
         expect {
-          post :save_automatic_answer, params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
+          post '/api/v1/automatic_answers', params: { slug: retailer_user.retailer.slug, automatic_answer: automatic_answer }
         }.to change { AutomaticAnswer.count }.by(1)
       end
     end

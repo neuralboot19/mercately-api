@@ -91,6 +91,8 @@ module FacebookMessages
     end
 
     def send_welcome_message
+      return if sent_by_retailer
+
       retailer = facebook_retailer.retailer
       welcome_message = customer.messenger? ? retailer.messenger_welcome_message : retailer.instagram_welcome_message
       total_messages = customer.total_messenger_messages
@@ -100,6 +102,8 @@ module FacebookMessages
     end
 
     def send_inactive_message
+      return if sent_by_retailer
+
       retailer = facebook_retailer.retailer
       inactive_message = customer.messenger? ? retailer.messenger_inactive_message : retailer.instagram_inactive_message
       before_last_message_msn = customer.before_last_messenger_message

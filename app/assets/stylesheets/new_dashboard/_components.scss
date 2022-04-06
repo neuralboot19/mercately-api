@@ -2274,12 +2274,14 @@ i {
 }
 
 .stats-pagination {
+  ul {
+    margin-bottom: 0px;
+  }
   .pagination {
     a {
       color: $secondary-color;
       font-size: 13px;
     }
-
     li {
       display: inline-block;
     }

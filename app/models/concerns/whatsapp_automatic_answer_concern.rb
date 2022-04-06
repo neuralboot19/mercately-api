@@ -2,8 +2,13 @@ module WhatsappAutomaticAnswerConcern
   extend ActiveSupport::Concern
 
   included do
-    after_create :send_welcome_message, unless: -> (obj) { obj.class == GupshupWhatsappMessage && obj.skip_automatic }
-    after_create :send_inactive_message, unless: -> (obj) { obj.class == GupshupWhatsappMessage && obj.skip_automatic }
+    after_create :send_welcome_message, unless: -> (obj) do
+      (obj.class == GupshupWhatsappMessage && obj.skip_automatic) || obj.direction == 'outbound'
+    end
+
+    after_create :send_inactive_message, unless: -> (obj) do
+      (obj.class == GupshupWhatsappMessage && obj.skip_automatic) || obj.direction == 'outbound'
+    end
   end
 
   private

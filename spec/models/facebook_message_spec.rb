@@ -153,6 +153,7 @@ RSpec.describe FacebookMessage, type: :model do
 
     context 'when all conditions are present' do
       let!(:automatic_answer) { create(:automatic_answer, :welcome, :messenger, retailer: facebook_retailer.retailer) }
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
       let(:customer) { create(:customer, retailer: facebook_retailer.retailer, pstype: :messenger) }
 
       let(:facebook_msg_sent) do
@@ -261,6 +262,7 @@ RSpec.describe FacebookMessage, type: :model do
       let!(:automatic_answer) do
         create(:automatic_answer, :inactive, :messenger, retailer: facebook_retailer.retailer)
       end
+      let!(:automatic_answer_day) { create(:automatic_answer_day, automatic_answer: automatic_answer)}
 
       let!(:first_facebook_message) do
         create(:facebook_message, facebook_retailer: facebook_retailer, customer: customer, sent_by_retailer:

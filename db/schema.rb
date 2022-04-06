@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_28_185131) do
+ActiveRecord::Schema.define(version: 2022_03_28_145753) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -166,6 +166,17 @@ ActiveRecord::Schema.define(version: 2022_03_28_185131) do
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true
   end
 
+  create_table "automatic_answer_days", force: :cascade do |t|
+    t.bigint "automatic_answer_id"
+    t.integer "day", null: false
+    t.boolean "all_day", default: false
+    t.integer "start_time"
+    t.integer "end_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["automatic_answer_id"], name: "index_automatic_answer_days_on_automatic_answer_id"
+  end
+
   create_table "automatic_answers", force: :cascade do |t|
     t.bigint "retailer_id"
     t.string "message"
@@ -175,6 +186,10 @@ ActiveRecord::Schema.define(version: 2022_03_28_185131) do
     t.integer "platform"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "whatsapp", default: false
+    t.boolean "messenger", default: false
+    t.boolean "instagram", default: false
+    t.boolean "always_active", default: true
     t.index ["retailer_id"], name: "index_automatic_answers_on_retailer_id"
   end
 
