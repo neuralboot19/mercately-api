@@ -59,7 +59,7 @@ class Retailer < ApplicationRecord
   validates :slug, :catalog_slug, uniqueness: true
   validates :description, length: { maximum: 140 }
 
-  before_validation :gupshup_src_name_to_nil
+  before_validation :attributes_to_nil
   before_validation :set_catalog_slug, if: :will_save_change_to_name?
   before_create :format_phone_number
   before_save :set_ml_domain, if: :will_save_change_to_ml_site?
@@ -405,8 +405,9 @@ class Retailer < ApplicationRecord
         retailer_number.size == 12 && retailer_number[0,3] == '593'
     end
 
-    def gupshup_src_name_to_nil
+    def attributes_to_nil
       self.gupshup_src_name = nil if gupshup_src_name.blank?
+      self.timezone = nil if timezone.blank?
     end
 
     def import_hubspot_properties
