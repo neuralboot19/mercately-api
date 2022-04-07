@@ -571,7 +571,7 @@ RSpec.describe Retailer, type: :model do
     end
   end
 
-  describe '#gupshup_src_name_to_nil' do
+  describe '#attributes_to_nil' do
     context 'when the gupshup src name is given' do
       let(:retailer) { create(:retailer, gupshup_src_name: 'MercatelyTest') }
 
@@ -585,6 +585,22 @@ RSpec.describe Retailer, type: :model do
 
       it 'saves the attribute as nil' do
         expect(retailer.gupshup_src_name).to be nil
+      end
+    end
+
+    context 'when the timezone is given' do
+      let(:retailer) { create(:retailer, timezone: 'America/Guayaquil') }
+
+      it 'saves the attribute as it comes' do
+        expect(retailer.timezone).to eq('America/Guayaquil')
+      end
+    end
+
+    context 'when the timezone is blank' do
+      let(:retailer) { create(:retailer, timezone: '') }
+
+      it 'saves the attribute as nil' do
+        expect(retailer.timezone).to be_nil
       end
     end
   end
