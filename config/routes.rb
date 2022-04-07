@@ -181,6 +181,8 @@ Rails.application.routes.draw do
 
       resources :business_rules, only: :index
       post 'business_rules/manage_retailer_rule', to: 'business_rules#manage_retailer_rule'
+
+      get 'new_manage_automatic_answers', to: 'new_automatic_answers#index', as: :new_manage_automatic_answers
     end
     get 'integrations/mercadolibre', to: 'integrations#connect_to_ml'
     post 'callbacks', to: 'integrations#callbacks'
@@ -281,6 +283,7 @@ Rails.application.routes.draw do
         post 'sign_up', to: 'registrations#create', as: :sign_up
         get 'dashboard', to: 'dashboard#index', as: :dashboard
         post 'set_app_version', to: 'retailer_users#set_app_version', as: :set_app_version
+        put 'toggle_retailer_user_status', to: 'retailer_users#toggle_active', as: :toggle_retailer_user_status
       end
 
       # For Karix
@@ -354,6 +357,11 @@ Rails.application.routes.draw do
       get 'stats/most_used_tags', to: 'stats#most_used_tags', as: :most_used_tags
       get 'stats/new_and_recurring_conversations', to: 'stats#new_and_recurring_conversations', as: :new_and_recurring_conversations
       get 'stats/sent_messages_by', to: 'stats#sent_messages_by', as: :sent_messages_by
+
+      # Manage Automatic Answers
+      resources :automatic_answers
+
+      get 'retailer_info', to: 'retailers#info'
     end
   end
 

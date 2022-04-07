@@ -707,7 +707,7 @@ class Customer < ApplicationRecord
     end
 
     def grab_country_on_import
-      return unless phone.present? && country_id.blank?
+      return unless phone.present?
 
       parse_phone = Phonelib.parse(phone)
       self.country_id = parse_phone&.country

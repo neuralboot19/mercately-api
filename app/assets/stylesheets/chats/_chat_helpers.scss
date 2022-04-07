@@ -755,10 +755,19 @@ label:hover, a:hover, button:hover {
 .page__title {
   font-family: 'Poppins-SemiBold';
   font-weight: bold;
-  font-size: 24px;
+  font-size: 40px;
   line-height: 48px;
+  font-style: normal;
+  margin-bottom: 0px;
 }
 
 .general-font-family {
   font-family: 'Poppins-Regular';
+}
+
+.table-body {
+  font-size: 14px;
+  font-family: 'Poppins-Regular';
+  line-height: 24px;
+  color: #3C4348;
 }

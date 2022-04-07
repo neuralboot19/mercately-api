@@ -387,9 +387,11 @@ const StatsPageComponent = () => {
         <div className="row">
           <div className="col-12 col-sm-9">
             <h1 className="page__title">Estadísticas de mensajería</h1>
-            <span className="current-page">
-              Datos interesantes que tienes en cada plataforma de mensajería
-            </span>
+            <div className="col-md-12 mt-10 px-0">
+              <span className="current-page">
+                Datos interesantes que tienes en cada plataforma de mensajería
+              </span>
+            </div>
           </div>
         </div>
 

@@ -14,15 +14,15 @@ FactoryBot.define do
     end
 
     trait :whatsapp do
-      platform { 'whatsapp' }
+      whatsapp {true}
     end
 
     trait :messenger do
-      platform { 'messenger' }
+      messenger { true }
     end
 
     trait :instagram do
-      platform { 'instagram' }
+      instagram { true }
     end
   end
 end

@@ -243,27 +243,27 @@ class Retailer < ApplicationRecord
   end
 
   def whatsapp_welcome_message
-    automatic_answers.find_by(platform: :whatsapp, message_type: :new_customer, status: :active)
+    get_automatic_answer('whatsapp', 0)
   end
 
   def whatsapp_inactive_message
-    automatic_answers.find_by(platform: :whatsapp, message_type: :inactive_customer, status: :active)
+    get_automatic_answer('whatsapp', 1)
   end
 
   def messenger_welcome_message
-    automatic_answers.find_by(platform: :messenger, message_type: :new_customer, status: :active)
+    get_automatic_answer('messenger', 0)
   end
 
   def messenger_inactive_message
-    automatic_answers.find_by(platform: :messenger, message_type: :inactive_customer, status: :active)
+    get_automatic_answer('messenger', 1)
   end
 
   def instagram_welcome_message
-    automatic_answers.find_by(platform: :instagram, message_type: :new_customer, status: :active)
+    get_automatic_answer('instagram', 0)
   end
 
   def instagram_inactive_message
-    automatic_answers.find_by(platform: :instagram, message_type: :inactive_customer, status: :active)
+    get_automatic_answer('instagram', 1)
   end
 
   def retailer_user_connected_to_fb
@@ -496,5 +496,20 @@ class Retailer < ApplicationRecord
       else
         self.catalog_slug = catalog_slug.parameterize.gsub(/-/, '')
       end
+    end
+
+    def get_automatic_answer(platform, message_type)
+      service = AutomaticAnswers::AutomaticAnswerQuery.new
+
+      message = service.always_active_answer(id, platform, message_type)
+      return message if message.present?
+
+      time = if timezone
+              Time.now.in_time_zone(timezone)
+            else
+              Time.now
+            end
+
+      service.match_schedule_answer(id, platform, message_type, time)
     end
 end

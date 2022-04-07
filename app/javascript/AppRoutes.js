@@ -10,6 +10,7 @@ import Funnels from './components/Funnels';
 import MLChat from './components/MLChat';
 import GsTemplateNew from './components/GsTemplates/GsTemplatesNew';
 import Stats from './components/Stats';
+import AutomaticAnswers from './components/AutomaticAnswers';
 
 const customHistory = createBrowserHistory();
 
@@ -61,6 +62,11 @@ const AppRoutes = ({ store }) => (
           exact
           path="/retailers/:slug/new_stats"
           component={Stats}
+        />
+        <Route 
+          exact
+          path="/retailers/:slug/new_manage_automatic_answers"
+          component={AutomaticAnswers}
         />
       </Router>
     </Suspense>
