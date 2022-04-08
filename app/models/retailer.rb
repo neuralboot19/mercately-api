@@ -54,13 +54,12 @@ class Retailer < ApplicationRecord
   has_many :retailer_business_rules, dependent: :destroy
   has_many :business_rules, through: :retailer_business_rules
 
-  validates :name, presence: true
-  validates :currency, presence: true
+  validates :name, :currency, presence: true
   validates :slug, :catalog_slug, uniqueness: true
   validates :description, length: { maximum: 140 }
 
   before_validation :attributes_to_nil
-  before_validation :set_catalog_slug, if: :will_save_change_to_name?
+  before_validation :set_catalog_slug
   before_create :format_phone_number
   before_save :set_ml_domain, if: :will_save_change_to_ml_site?
   after_create :save_free_plan
@@ -468,7 +467,7 @@ class Retailer < ApplicationRecord
     def update_shop
       return if Rails.env.test? || !shop_updated
       return unless saved_change_to_name? || saved_change_to_description? || saved_change_to_country_code? ||
-        saved_change_to_currency? || saved_change_to_unique_key?
+        saved_change_to_currency? || saved_change_to_unique_key? || saved_change_to_catalog_slug?
 
       shop.update
     rescue StandardError => e
@@ -484,15 +483,18 @@ class Retailer < ApplicationRecord
     end
 
     def set_catalog_slug
+      return if catalog_slug_was == catalog_slug && !new_record?
+
       if catalog_slug.nil?
-        retailers_with_same_name = Retailer.where('name ILIKE ?', "%#{name}%")
-        generated_catalog_slug = if retailers_with_same_name.exists?
-                                   "#{name}#{retailers_with_same_name.count}"
-                                 else
-                                   name.dup
-                                 end
+        generated_catalog_slug = name.first(20)
         generated_catalog_slug = generated_catalog_slug.parameterize
         generated_catalog_slug.gsub!(/-/, '')
+        retailers_with_same_catalog_slug = Retailer.where('catalog_slug ILIKE ?', "#{generated_catalog_slug}%")
+          .where.not(id: id).order(id: :desc)
+        if retailers_with_same_catalog_slug.exists?
+          latest_catalog_slug = retailers_with_same_catalog_slug.first.catalog_slug.to_s.scan(/\d/).last.to_i + 1
+          generated_catalog_slug = "#{generated_catalog_slug}#{latest_catalog_slug}"
+        end
         self.catalog_slug = generated_catalog_slug
       else
         self.catalog_slug = catalog_slug.parameterize.gsub(/-/, '')
