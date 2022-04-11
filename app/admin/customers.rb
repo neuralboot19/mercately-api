@@ -1,4 +1,5 @@
 ActiveAdmin.register Customer do
+  actions :all, except: :destroy
   permit_params :email,
                 :id_type,
                 :id_number,

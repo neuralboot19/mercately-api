@@ -39,6 +39,18 @@ RSpec.describe Retailer, type: :model do
     expect(retailer.slug).not_to be_nil
   end
 
+  it 'after save a name generates a catalog_slug' do
+    expect(retailer.catalog_slug).to be_nil
+    retailer.save
+    expect(retailer.catalog_slug).not_to be_nil
+    same_retailer = build(:retailer, name: retailer.name)
+    same_retailer.save!
+    expect(same_retailer.catalog_slug).to eq "#{retailer.catalog_slug}1"
+    same_retailer2 = build(:retailer, name: retailer.name)
+    same_retailer2.save!
+    expect(same_retailer2.catalog_slug).to eq "#{retailer.catalog_slug}2"
+  end
+
   it 'sets default ws_conversation_cost int_charges allow_voice_notes when created' do
     retailer = Retailer.create(name: 'Retailer Name')
 

@@ -43,7 +43,8 @@ module Shops
           name: @retailer.name,
           description: @retailer.description,
           country: @retailer.country_code,
-          currency: @retailer.currency_symbol
+          currency: @retailer.currency_symbol,
+          catalog_slug: @retailer.catalog_slug
         }
       }
       body.merge!(params)

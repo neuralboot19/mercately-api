@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_28_145753) do
+ActiveRecord::Schema.define(version: 2022_04_11_164608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1391,6 +1391,7 @@ ActiveRecord::Schema.define(version: 2022_03_28_145753) do
     t.string "web_id"
     t.string "tag_color", default: "#ffffff00"
     t.string "font_color", default: "#B2B3BD"
+    t.boolean "deleted", default: false
     t.index ["retailer_id"], name: "index_tags_on_retailer_id"
   end
 

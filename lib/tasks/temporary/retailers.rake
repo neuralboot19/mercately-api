@@ -57,4 +57,24 @@ namespace :retailers do
 
     puts errors
   end
+
+  task fix_catalog_slug: :environment do
+    errors = []
+    Retailer.joins(:payment_plan).where(payment_plans: { status: :active }, shop_updated: true).find_each do |r|
+      generated_catalog_slug = r.name.first(20)
+      generated_catalog_slug = generated_catalog_slug.parameterize
+      generated_catalog_slug.gsub!(/-/, '')
+      retailers_with_same_catalog_slug = Retailer.where('catalog_slug ILIKE ?', "#{generated_catalog_slug}%")
+        .where.not(id: r.id).order(id: :desc)
+      if retailers_with_same_catalog_slug.exists?
+        latest_catalog_slug = retailers_with_same_catalog_slug.first.catalog_slug.to_s.scan(/\d/).last.to_i + 1
+        generated_catalog_slug = "#{generated_catalog_slug}#{latest_catalog_slug}"
+      end
+      r.update catalog_slug: generated_catalog_slug
+    rescue => e
+      errors << [r.id, e]
+    end
+
+    puts errors
+  end
 end

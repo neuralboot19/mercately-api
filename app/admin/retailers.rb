@@ -1,4 +1,5 @@
 ActiveAdmin.register Retailer do
+  actions :all, except: :destroy
   permit_params :name,
                 :id_type,
                 :id_number,

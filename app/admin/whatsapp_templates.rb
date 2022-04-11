@@ -1,4 +1,5 @@
 ActiveAdmin.register WhatsappTemplate do
+  actions :all, except: :destroy
   permit_params :text, :status, :retailer_id, :template_type, :gupshup_template_id
 
   filter :text

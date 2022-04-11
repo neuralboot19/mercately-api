@@ -3,7 +3,7 @@ class Tag < ApplicationRecord
 
   belongs_to :retailer
   has_many :customer_tags, dependent: :destroy
-  has_many :customers, through: :customer_tags, dependent: :destroy
+  has_many :customers, through: :customer_tags
   has_many :action_tags, dependent: :destroy
   has_many :chat_bot_actions, through: :action_tags
 
@@ -11,10 +11,12 @@ class Tag < ApplicationRecord
 
   after_create :generate_web_id
   after_update :update_hs_fields, if: :saved_change_to_tag?
+  after_update :destroy_dependents, if: :saved_change_to_deleted?
   after_destroy :remove_mapped_fields
 
   before_save :generate_font_color, if: :will_save_change_to_tag_color?
 
+  default_scope { where(deleted: false) }
   scope :find_tag, -> (value) { where('lower(tag) = ?', value.downcase) }
 
   def to_param
@@ -47,5 +49,12 @@ class Tag < ApplicationRecord
                             '#FFFFFF'
                           end
       end
+    end
+
+    def destroy_dependents
+      return unless deleted
+
+      customer_tags.destroy_all
+      action_tags.destroy_all
     end
 end
