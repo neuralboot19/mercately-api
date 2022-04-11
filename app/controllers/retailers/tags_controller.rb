@@ -47,7 +47,7 @@ class Retailers::TagsController < RetailersController
   end
 
   def destroy
-    if @tag.destroy
+    if @tag.update(deleted: true)
       redirect_to retailers_tags_path(current_retailer), notice:
         'Etiqueta eliminada con éxito.'
     else
