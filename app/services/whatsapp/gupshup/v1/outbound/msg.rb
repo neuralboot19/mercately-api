@@ -144,6 +144,8 @@ module Whatsapp::Gupshup::V1
 
           except = [:isHSM, :type, :text]
           aux_message = message.except(*except).to_json
+          aux_message.gsub!('%', '%25')
+          aux_message.gsub!('+', '%2B')
           message = message.to_json
           body_string += "&template=#{aux_message}"
         else
@@ -224,6 +226,9 @@ module Whatsapp::Gupshup::V1
             id: id,
             params: params
           }.to_json
+
+          template.gsub!('%', '%25')
+          template.gsub!('+', '%2B')
 
           body_string += "&template=#{template}"
 
