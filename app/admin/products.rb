@@ -1,4 +1,5 @@
 ActiveAdmin.register Product do
+  actions :all, except: :destroy
   preserve_default_filters!
   remove_filter :category, :order_items, :questions, :images_blobs, :images_attachments, :product_variations
 

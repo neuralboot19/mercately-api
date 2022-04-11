@@ -1,4 +1,5 @@
 ActiveAdmin.register Order do
+  actions :all, except: :destroy
   controller do
     defaults finder: :find_by_web_id
   end

@@ -1,4 +1,5 @@
 ActiveAdmin.register Category do
+  actions :all, except: :destroy
   scope :active, default: true
   scope :inactive
 

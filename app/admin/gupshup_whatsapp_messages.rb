@@ -1,4 +1,5 @@
 ActiveAdmin.register GupshupWhatsappMessage do
+  actions :all, except: :destroy
   filter :retailer, as: :searchable_select
   filter :retailer_user, as: :searchable_select
 

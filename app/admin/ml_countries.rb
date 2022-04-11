@@ -1,4 +1,5 @@
 ActiveAdmin.register MlCountry do
+  actions :all, except: :destroy
   permit_params :name,
                 :site,
                 :domain

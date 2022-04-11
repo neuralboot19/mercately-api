@@ -1,4 +1,5 @@
 ActiveAdmin.register Notification do
+  actions :all, except: :destroy
   permit_params :title, :body, :visible_for, :visible_until, :published
 
   controller do

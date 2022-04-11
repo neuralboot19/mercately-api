@@ -1,4 +1,5 @@
 ActiveAdmin.register TopUp do
+  actions :all, except: :destroy
   permit_params :retailer_id,
                 :amount
 
