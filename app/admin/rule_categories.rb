@@ -1,4 +1,5 @@
 ActiveAdmin.register RuleCategory do
+  actions :all, except: :destroy
   permit_params :name,
                 business_rules_attributes: [
                   :id,

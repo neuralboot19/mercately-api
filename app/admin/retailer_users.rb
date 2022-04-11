@@ -1,4 +1,5 @@
 ActiveAdmin.register RetailerUser do
+  actions :all, except: :destroy
   permit_params :first_name,
                 :last_name,
                 :email,

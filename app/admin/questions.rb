@@ -1,4 +1,5 @@
 ActiveAdmin.register Question do
+  actions :all, except: :destroy
   index do
     selectable_column
     id_column
