@@ -27,12 +27,12 @@ const AutomaticAnswerFields = forwardRef((
 
   const [automaticAnswerDays, setAutomaticAnswerDays] = useState([
     {day: 1, name: 'Lunes', startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
-    {day: 2, name: 'Martes',  startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
-    {day: 3, name: 'Miercoles',  startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
-    {day: 4, name: 'Jueves',  startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
-    {day: 5, name: 'Viernes',  startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
-    {day: 6, name: 'Sabado',  startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
-    {day: 0, name: 'Domingo',  startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false}
+    {day: 2, name: 'Martes', startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
+    {day: 3, name: 'Miércoles', startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
+    {day: 4, name: 'Jueves', startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
+    {day: 5, name: 'Viernes', startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
+    {day: 6, name: 'Sábado', startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false},
+    {day: 0, name: 'Domingo', startTime: HOURS_OPTIONS[8], endTime: HOURS_OPTIONS[17], allDay: false, enabled: false}
   ]);
 
   const parseAutomaticAnswerDays = () => {

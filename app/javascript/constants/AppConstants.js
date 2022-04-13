@@ -8,6 +8,10 @@ for (let i = 0; i <= 24; i++) {
 export const HOURS_OPTIONS = hours;
 
 export const INTERVALS = [
+  {value: 1, label: '1 hora'},
+  {value: 2, label: '2 horas'},
+  {value: 4, label: '4 horas'},
+  {value: 8, label: '8 horas'},
   {value: 12, label: '12 horas'},
   {value: 24, label: '24 horas'},
   {value: 48, label: '48 horas'},
